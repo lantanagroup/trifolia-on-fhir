@@ -1,0 +1,10 @@
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\bin\Debug\netcoreapp1.1\TrifoliaFhir.deps.json
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\bin\Debug\netcoreapp1.1\TrifoliaFhir.runtimeconfig.json
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\bin\Debug\netcoreapp1.1\TrifoliaFhir.runtimeconfig.dev.json
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\bin\Debug\netcoreapp1.1\TrifoliaFhir.dll
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\bin\Debug\netcoreapp1.1\TrifoliaFhir.pdb
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\obj\Debug\netcoreapp1.1\TrifoliaFhir.csproj.CoreCompileInputs.cache
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\obj\Debug\netcoreapp1.1\TrifoliaFhir.AssemblyInfo.cs
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\obj\Debug\netcoreapp1.1\TrifoliaFhir.dll
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\obj\Debug\netcoreapp1.1\TrifoliaFhir.pdb
+C:\Users\sean.mcilvenna\Code\TrifoliaFhir\TrifoliaFhir\obj\Debug\netcoreapp1.1\TrifoliaFhir.csprojResolveAssemblyReference.cache
