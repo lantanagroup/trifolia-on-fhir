@@ -1,2 +1,4 @@
 .vs/
 TrifoliaFhir/wwwroot/
+TrifoliaFhir/bin/
+TrifoliaFhir/obj/
