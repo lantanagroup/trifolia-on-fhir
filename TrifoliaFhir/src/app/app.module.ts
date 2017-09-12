@@ -12,11 +12,19 @@ import { RouterModule, Routes } from '@angular/router';
 import { ExportComponent } from './export/export.component';
 import { ImportComponent } from './import/import.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ValuesetsComponent } from './valuesets/valuesets.component';
+import { ValuesetComponent } from './valueset/valueset.component';
+import { CodesystemsComponent } from './codesystems/codesystems.component';
+import { CodesystemComponent } from './codesystem/codesystem.component';
 
 const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'implementation-guides', component: ImplementationGuidesComponent },
   { path: 'implementation-guide/:id', component: ImplementationGuideComponent },
+  { path: 'valuesets', component: ValuesetsComponent },
+  { path: 'valuesets/:id', component: ValuesetComponent },
+  { path: 'codesystems', component: CodesystemsComponent },
+  { path: 'codesystems/:id', component: CodesystemComponent },
   { path: 'export', component: ExportComponent },
   { path: 'import', component: ImportComponent },
   { path: 'profile', component: ProfileComponent },
@@ -34,7 +42,11 @@ const appRoutes: Routes = [
     ImplementationGuideComponent,
     ExportComponent,
     ImportComponent,
-    ProfileComponent
+    ProfileComponent,
+    ValuesetsComponent,
+    ValuesetComponent,
+    CodesystemsComponent,
+    CodesystemComponent
   ],
   imports: [
       RouterModule.forRoot(
