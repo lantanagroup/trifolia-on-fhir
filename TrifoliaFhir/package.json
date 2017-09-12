@@ -22,6 +22,8 @@
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-beta.4",
+    "angular2-jwt": "^0.2.3",
+    "auth0-js": "^8.9.3",
     "bootstrap": "^4.0.0-beta",
     "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.1",

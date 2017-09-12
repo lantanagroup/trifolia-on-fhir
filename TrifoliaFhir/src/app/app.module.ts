@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule, Http, RequestOptions } from '@angular/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImplementationGuidesComponent } from './implementation-guides/implementation-guides.component';
 import { HomeComponent } from './home/home.component';
@@ -16,6 +16,14 @@ import { ValuesetsComponent } from './valuesets/valuesets.component';
 import { ValuesetComponent } from './valueset/valueset.component';
 import { CodesystemsComponent } from './codesystems/codesystems.component';
 import { CodesystemComponent } from './codesystem/codesystem.component';
+import { LoginComponent } from './login/login.component';
+import { AuthHttp, AuthConfig } from 'angular2-jwt';
+
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig({
+    tokenGetter: (() => localStorage.getItem('access_token'))
+  }), http, options);
+}
 
 const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -28,6 +36,7 @@ const appRoutes: Routes = [
   { path: 'export', component: ExportComponent },
   { path: 'import', component: ImportComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'login', component: LoginComponent },
   { path: '',
     redirectTo: '/home',
     pathMatch: 'full'
@@ -46,7 +55,8 @@ const appRoutes: Routes = [
     ValuesetsComponent,
     ValuesetComponent,
     CodesystemsComponent,
-    CodesystemComponent
+    CodesystemComponent,
+    LoginComponent
   ],
   imports: [
       RouterModule.forRoot(
@@ -58,7 +68,13 @@ const appRoutes: Routes = [
       HttpModule,
       NgbModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    {
+        provide: AuthHttp,
+        useFactory: authHttpServiceFactory,
+        deps: [Http, RequestOptions]
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
