@@ -18,11 +18,10 @@ import { CodesystemsComponent } from './codesystems/codesystems.component';
 import { CodesystemComponent } from './codesystem/codesystem.component';
 import { LoginComponent } from './login/login.component';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
+import { UserService } from './user.service';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp(new AuthConfig({
-    tokenGetter: (() => localStorage.getItem('access_token'))
-  }), http, options);
+    return new AuthHttp(new AuthConfig(), http, options);
 }
 
 const appRoutes: Routes = [

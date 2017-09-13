@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth.service';
+import { UserService } from './user.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [AuthService]
+  providers: [AuthService, UserService]
 })
 export class AppComponent implements OnInit {
   profile: any;
 
-  constructor(public auth: AuthService) {        
+  constructor(public auth: AuthService, public userService: UserService) {        
   }
 
   ngOnInit() {
@@ -18,7 +19,9 @@ export class AppComponent implements OnInit {
       this.profile = this.auth.userProfile;
     } else {
       this.auth.getProfile((err, profile) => {
-        this.profile = profile;
+          this.profile = profile;
+
+          this.userService.getUsers();
       });
     }
   }
