@@ -1,0 +1,174 @@
+<h1>Structure Definition</h1>
+<div class="sd-main" *ngIf="structureDefinition" [class.small]="!!selectedElement">
+    <h2>{{structureDefinition.name || 'No name'}}</h2>
+
+    <ngb-tabset (tabChange)="beforeTabChange($event)">
+        <ngb-tab id="general" title="General">
+            <ng-template ngbTabContent>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    URL
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.url']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.url" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Name
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.name']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.name" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('title')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'title', '')" />
+                                    Title
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.title']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('title')" [(ngModel)]="structureDefinition.title" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('description')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'description', '')" />
+                                    Description
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.description']}}" placement="top"></i>
+                                </label>
+                                <app-markdown [(ngModel)]="structureDefinition.description"></app-markdown>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>
+                                    ID
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['resource.id']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('version')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'version', '')" />
+                                    Version
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.version']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('version')" [(ngModel)]="structureDefinition.version" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('publisher')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'publisher', '')" />
+                                    Publisher
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.publisher']}}" placement="top"></i>
+                                </label>
+                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('publisher')" [(ngModel)]="structureDefinition.publisher" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>
+                                    Status
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.status']}}" placement="top"></i>
+                                </label>
+                                <select class="form-control" [(ngModel)]="structureDefinition.status">
+                                    <option>draft</option>
+                                    <option>active</option>
+                                    <option>retired</option>
+                                    <option>unknown</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('experimental')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'experimental', false)" />
+                                    Experimental
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.experimental']}}" placement="top"></i>
+                                </label>
+                                <select class="form-control" [disabled]="!structureDefinition.hasOwnProperty('experimental')" [(ngModel)]="structureDefinition.experimental">
+                                    <option [ngValue]="false">No</option>
+                                    <option [ngValue]="true">Yes</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('date')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'date', false)" />
+                                    Date
+                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.date']}}" placement="top"></i>
+                                </label>
+                                <input type="date" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('date')" [(ngModel)]="structureDefinition.date" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab id="elements" title="Elements">
+            <ng-template ngbTabContent>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Element/Attribute</th>
+                        <th>Type</th>
+                        <th>Cardinality</th>
+                        <th>Binding</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="clickable" *ngFor="let e of elements" (click)="toggleSelectedElement(e)" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement">
+                        <td>
+                            <span style="white-space: pre;">{{e.tabs}}</span>
+                            <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren" (click)="toggleElementExpand(e)"></i>
+                            <span>{{e.id}}</span>
+                            <i class="fa fa-edit" *ngIf="e.id.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i>
+                        </td>
+                        <td>{{getTypeDisplay(e)}}</td>
+                        <td>{{e.min}}..{{e.max}}</td>
+                        <td>{{e.binding}}</td>
+                        <td>
+                            <div class="pull-right">
+                                <i class="fa fa-remove"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab id="json" title="JSON">
+            <ng-template ngbTabContent>
+                <t-json-viewer [json]="structureDefinition"></t-json-viewer>
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
+</div>
+
+<div class="selected-element" *ngIf="selectedElement">
+    <div class="element-definition card">
+        <div class="card-header">
+            Element Definition
+
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
+                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElement(selectedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fa fa-remove"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <app-element-definition-panel *ngIf="selectedElement.constrainedElement" [elementTreeModel]="selectedElement" [disabled]="false"></app-element-definition-panel>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <span class="message">{{message}}</span>
+</footer>

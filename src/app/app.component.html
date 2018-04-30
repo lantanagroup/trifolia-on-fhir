@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="#">Trifolia</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
+        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="igMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="sub-nav-link">Implementation Guides</a>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="igMenu">
+          <a class="dropdown-item" routerLink="/implementation-guide">Browse</a>
+          <a class="dropdown-item" href="#">Recent...</a>
+        </div>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/structure-definition">Structure Definitions</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/valuesets">Value Sets</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/codesystems">Code Systems</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/export">Export</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/import">Import</a>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="nav-item" *ngIf="configService.config">
+        <select class="form-control" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
+          <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
+        </select>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="helpMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Help
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpMenu">
+          <a class="dropdown-item" href="/help" target="_new">Documentation</a>
+          <a class="dropdown-item" href="#">Request Support</a>
+          <a class="dropdown-item" href="#">:Version:</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" *ngIf="authService.isAuthenticated()" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
+          {{getDisplayName()}}
+        </a>
+        <a class="nav-link dropdown-toggle" *ngIf="!authService.isAuthenticated()" href="#" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Not Logged In</a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileMenu">
+          <a class="dropdown-item" *ngIf="authService.isAuthenticated()" routerLink="/users/me">Profile</a>
+          <a class="dropdown-item" *ngIf="!authService.isAuthenticated()" (click)="authService.login()">Login</a>
+          <a class="dropdown-item" *ngIf="authService.isAuthenticated()" (click)="authService.logout()">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container" [class.container-large]="isBigContainer">
+  <div class="jumbotron">
+    <div class="alert alert-warning" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

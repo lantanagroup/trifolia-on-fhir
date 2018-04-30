@@ -1,0 +1,43 @@
+tr.selected > td {
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+tr.selected > td:first-child {
+    border-left: 2px solid black;
+}
+
+tr.selected > td:last-child {
+    border-right: 2px solid black;
+}
+
+.element-definition .card-body {
+    padding: 0px;
+    margin-top: -1px;
+}
+
+tr.constrained {
+    font-weight: bold;
+}
+
+.sd-main:not(.small) {
+    width: 100%;
+}
+
+.sd-main.small {
+    width: 75%;
+    display: inline-table;
+    padding-right: 10px;
+}
+
+.selected-element {
+    width: 25%;
+    position: fixed;
+    right: 29px;
+    top: 88px;
+}
+
+.selected-element {
+    overflow-y: auto;
+    max-height: 85%;
+}

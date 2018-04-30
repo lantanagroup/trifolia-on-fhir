@@ -1,0 +1,43 @@
+body {
+  min-height: 75rem;
+  padding-top: 4.5rem;
+}
+
+footer.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 5px;
+  background-color: black;
+  width: 100%;
+  z-index: 2;
+}
+
+footer.footer span.message {
+  color: white;
+}
+
+.tab-pane {
+  padding-top: 5px;
+}
+
+.jumbotron {
+  padding-top: 20px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.fixed-top {
+  z-index: 2;
+}
+
+div.t-json-viewer {
+  background-color: white;
+  padding: 5px;
+}
+
+.clickable {
+  pointer: cursor;
+}

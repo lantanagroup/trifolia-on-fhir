@@ -1,0 +1,4 @@
+<div [class.input-group]="!!title">
+    <div class="input-group-addon" *ngIf="!!title">{{title}}</div>
+    <input type="text" class="form-control" [(ngModel)]="parent[property]" />
+</div>

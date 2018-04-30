@@ -1,0 +1,31 @@
+<div class="form-group">
+  <label>{{title}}</label>
+  <button type="button" class="btn btn-default btn-sm" *ngIf="humanNames" (click)="initProperty(false)">Exclude</button>
+  <button type="button" class="btn btn-default btn-sm" *ngIf="!humanNames" (click)="initProperty(true)">Include</button>
+  <button type="button" class="btn btn-default btn-sm" *ngIf="humanNames" (click)="addName(true)">Add Name</button>
+  <ul *ngIf="humanNames">
+    <li *ngFor="let hn of humanNames; let hi = index" [attr.data-index]="hi">
+      <div *ngIf="hn.given">
+        <div class="input-group" *ngFor="let given of hn.given; index as gi; trackBy: trackByIndex">
+          <div class="input-group-addon">Given</div>
+          <input type="text" class="form-control" [(ngModel)]="hn.given[gi]" />
+          <div class="input-group-btn" *ngIf="gi === hn.given.length-1">
+            <button type="button" class="btn btn-default" (click)="hn.given.push('')"><i class="fa fa-plus"></i></button>
+            <button type="button" class="btn btn-default" (click)="hn.given.splice(gi, 1)"><i class="fa fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="input-group" *ngIf="!hn.given || hn.given.length == 0">
+        <div class="input-group-addon">Given</div>
+        <input type="text" class="form-control" [disabled]="true" />
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-default" (click)="addGiven(hn)"><i class="fa fa-plus"></i></button>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-group-addon">Family</div>
+        <input type="text" class="form-control" [(ngModel)]="hn.family" />
+      </div>
+    </li>
+  </ul>
+</div>

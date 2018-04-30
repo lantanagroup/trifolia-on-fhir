@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 
 namespace TrifoliaFhir
 {
@@ -32,8 +34,15 @@ namespace TrifoliaFhir
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression();
+
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.InputFormatters.Insert(0, new FhirInputFormatter());
+                options.OutputFormatters.Insert(0, new FhirOutputFormatter());
+            });
 
             services.AddAuthentication(options =>
             {
@@ -47,9 +56,19 @@ namespace TrifoliaFhir
 
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    NameClaimType = "name"
+                    NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
                 };
             });
+
+            services.Configure<ServerConfig>(Configuration);
+
+            // Registers the following lambda used to configure options.
+            services.Configure<ServerConfig>(options =>
+            {
+                options.FhirBase = Configuration["FhirBase"];
+            });
+
+            SeedFHIRServer.Seed(Configuration["FhirBase"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

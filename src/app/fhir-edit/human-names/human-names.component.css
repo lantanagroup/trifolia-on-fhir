@@ -1,0 +1,16 @@
+label {
+  font-weight: bold;
+}
+
+li {
+  padding-top: 5px;
+}
+
+li > .input-group {
+  margin-top: 2px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0px;
+}

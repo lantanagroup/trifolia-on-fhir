@@ -1,0 +1,29 @@
+<h1>Structure Definitions</h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Experimental</th>
+      <th>Description</th>
+      <th>
+        <div class="pull-right">
+          <a class="btn btn-default" routerLink="/structure-definition/new">Add</a>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of structureDefinitions">
+      <td>{{p.name}} <span class="badge">{{p.id}}</span></td>
+      <td>{{p.experimental ? "Yes" : "No"}}</td>
+      <td>{{p.description}}</td>
+      <td>
+        <div class="pull-right">
+          <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]">Edit</a>
+          <button type="button" class="btn btn-default" (click)="delete(p.id)">Delete</button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

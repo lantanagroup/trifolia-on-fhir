@@ -1,0 +1,8 @@
+<h1>Edit User/Person</h1>
+
+<fhir-edit-human-names *ngIf="person" [parent]="person" property="name"></fhir-edit-human-names>
+
+<footer class="footer">
+  <button type="button" class="btn btn-default" (click)="save()">Save</button>
+  <span class="message">{{message}}</span>
+</footer>

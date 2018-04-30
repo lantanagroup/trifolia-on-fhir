@@ -1,0 +1,27 @@
+{
+  "fhir": {
+    "publishedVersions": [{
+      "version": "0.4.0 - 1.0.2",
+      "url": "http://hl7.org/fhir/DSTU2/"
+    }, {
+      "version": "1.1.0 - 3.0.1",
+      "url": "http://hl7.org/fhir/STU3/"
+    }, {
+      "version": ">3.0.1",
+      "url": "http://hl7.org/fhir/DSTU2/"
+    }],
+    "servers": [{
+      "id": "lantana_hapi_stu3",
+      "name": "Lantana HAPI STU3 Server",
+      "uri": "https://hapi.lantanagroup.com/baseDstu3"
+    }, {
+      "id": "grahame_r4",
+      "name": "Grahame's R4 Server",
+      "uri": "http://test.fhir.org/r4/"
+    }, {
+      "id": "vonk",
+      "name": "Vonk",
+      "uri": "http://vonk.fire.ly/"
+    }]
+  }
+}

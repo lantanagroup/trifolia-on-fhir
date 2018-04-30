@@ -1,0 +1,31 @@
+<h1>Implementation Guides</h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>
+        <div class="pull-right">
+          <button type="button" class="btn btn-default">Add</button>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ig of implementationGuides">
+      <td>{{ig.name}}</td>
+      <td>{{ig.type}}</td>
+      <td>
+        <div class="pull-right">
+          <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}">Edit</a>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3">{{implementationGuides.length}} total implementation guides</td>
+    </tr>
+  </tfoot>
+</table>

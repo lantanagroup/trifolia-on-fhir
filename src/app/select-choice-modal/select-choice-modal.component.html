@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <h4 class="modal-title">Select Choice</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" *ngIf="element && structureDefinition">
+    <div class="form-group">
+        <label>Type</label>
+        <select class="form-control" [(ngModel)]="selectedType">
+            <option *ngFor="let type of element.element.type" [ngValue]="type.code">{{type.code}}</option>
+        </select>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close(selectedType)" [disabled]="!selectedType">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>
