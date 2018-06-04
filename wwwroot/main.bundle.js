@@ -11754,8 +11754,6 @@ var PageComponent = (function (_super) {
     __extends(PageComponent, _super);
     function PageComponent(obj) {
         var _this = _super.call(this, obj) || this;
-        _this.kind = 'page';
-        _this.format = 'markdown';
         if (obj) {
             if (obj.source) {
                 _this.source = obj.source;
@@ -11793,8 +11791,6 @@ var ImplementationGuide = (function (_super) {
     function ImplementationGuide(obj) {
         var _this = _super.call(this, obj) || this;
         _this.resourceType = 'ImplementationGuide';
-        _this.version = '1';
-        _this.status = 'draft';
         if (obj) {
             if (obj.url) {
                 _this.url = obj.url;

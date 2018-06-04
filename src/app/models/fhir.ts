@@ -1,6 +1,6 @@
 export class Base {
     public fhir_comments?: string[];
-
+    
     constructor(obj?: any) {
         if (obj) {
             if (obj.fhir_comments) {
@@ -14,7 +14,7 @@ export class Base {
 export class Element extends Base {
     public id?: string;
     public extension?: Extension[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -23,9 +23,7 @@ export class Element extends Base {
             }
             if (obj.extension) {
                 this.extension = [];
-                for (let o of obj.extension || []) {
-                    this.extension.push(new Extension(o));
-                }
+                for (let o of obj.extension || []) { this.extension.push(new Extension(o)); }
             }
         }
     }
@@ -34,7 +32,7 @@ export class Element extends Base {
 
 export class Extension extends Element {
     public url: string;
-    public value: Element;
+    public value?: Element;
 
     constructor(obj?: any) {
         super(obj);
@@ -56,7 +54,7 @@ export class Coding extends Element {
     public code?: string;
     public display?: string;
     public userSelected?: boolean;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -81,12 +79,12 @@ export class Coding extends Element {
 }
 
 export class Meta extends Element {
-    public versionId: string;
-    public lastUpdated: Date;
-    public profile: string[];
-    public security: Coding[];
-    public tag: Coding[];
-
+    public versionId?: string;
+    public lastUpdated?: Date;
+    public profile?: string[];
+    public security?: Coding[];
+    public tag?: Coding[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -101,15 +99,11 @@ export class Meta extends Element {
             }
             if (obj.security) {
                 this.security = [];
-                for (let o of obj.security || []) {
-                    this.security.push(new Coding(o));
-                }
+                for (let o of obj.security || []) { this.security.push(new Coding(o)); }
             }
             if (obj.tag) {
                 this.tag = [];
-                for (let o of obj.tag || []) {
-                    this.tag.push(new Coding(o));
-                }
+                for (let o of obj.tag || []) { this.tag.push(new Coding(o)); }
             }
         }
     }
@@ -121,7 +115,7 @@ export class Resource extends Base {
     public meta?: Meta;
     public implicitRules?: string;
     public language?: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -145,7 +139,7 @@ export class Resource extends Base {
 export class Narrative extends Element {
     public status: string;
     public div: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -166,7 +160,7 @@ export class DomainResource extends Resource {
     public contained?: Resource[];
     public extension?: Extension[];
     public modifierExtension?: Extension[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -175,21 +169,15 @@ export class DomainResource extends Resource {
             }
             if (obj.contained) {
                 this.contained = [];
-                for (let o of obj.contained || []) {
-                    this.contained.push(new Resource(o));
-                }
+                for (let o of obj.contained || []) { this.contained.push(new Resource(o)); }
             }
             if (obj.extension) {
                 this.extension = [];
-                for (let o of obj.extension || []) {
-                    this.extension.push(new Extension(o));
-                }
+                for (let o of obj.extension || []) { this.extension.push(new Extension(o)); }
             }
             if (obj.modifierExtension) {
                 this.modifierExtension = [];
-                for (let o of obj.modifierExtension || []) {
-                    this.modifierExtension.push(new Extension(o));
-                }
+                for (let o of obj.modifierExtension || []) { this.modifierExtension.push(new Extension(o)); }
             }
         }
     }
@@ -199,15 +187,13 @@ export class DomainResource extends Resource {
 export class CodeableConcept extends Element {
     public coding?: Coding[];
     public text?: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.coding) {
                 this.coding = [];
-                for (let o of obj.coding || []) {
-                    this.coding.push(new Coding(o));
-                }
+                for (let o of obj.coding || []) { this.coding.push(new Coding(o)); }
             }
             if (obj.text) {
                 this.text = obj.text;
@@ -218,9 +204,9 @@ export class CodeableConcept extends Element {
 }
 
 export class Period extends Element {
-    public start: Date;
-    public end: Date;
-
+    public start?: Date;
+    public end?: Date;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -236,10 +222,10 @@ export class Period extends Element {
 }
 
 export class ResourceReference extends Element {
-    public reference: string;
-    public identifier: Identifier;
-    public display: string;
-
+    public reference?: string;
+    public identifier?: Identifier;
+    public display?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -264,7 +250,7 @@ export class Identifier extends Element {
     public value?: string;
     public period?: Period;
     public assigner?: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -292,12 +278,12 @@ export class Identifier extends Element {
 }
 
 export class ContactPoint extends Element {
-    public system: string;
-    public value: string;
-    public use: string;
-    public rank: number;
-    public period: Period;
-
+    public system?: string;
+    public value?: string;
+    public use?: string;
+    public rank?: number;
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -322,9 +308,9 @@ export class ContactPoint extends Element {
 }
 
 export class ContactDetail extends Element {
-    public name: string;
-    public telecom: ContactPoint[];
-
+    public name?: string;
+    public telecom?: ContactPoint[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -333,9 +319,7 @@ export class ContactDetail extends Element {
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
         }
     }
@@ -345,7 +329,7 @@ export class ContactDetail extends Element {
 export class UsageContext extends Element {
     public code: Coding;
     public value: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -362,15 +346,13 @@ export class UsageContext extends Element {
 
 export class BackboneElement extends Element {
     public modifierExtension?: Extension[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.modifierExtension) {
                 this.modifierExtension = [];
-                for (let o of obj.modifierExtension || []) {
-                    this.modifierExtension.push(new Extension(o));
-                }
+                for (let o of obj.modifierExtension || []) { this.modifierExtension.push(new Extension(o)); }
             }
         }
     }
@@ -379,10 +361,10 @@ export class BackboneElement extends Element {
 
 export class MappingComponent extends BackboneElement {
     public identity: string;
-    public uri: string;
-    public name: string;
-    public comment: string;
-
+    public uri?: string;
+    public name?: string;
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -406,7 +388,7 @@ export class MappingComponent extends BackboneElement {
 export class DiscriminatorComponent extends Element {
     public type: string;
     public path: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -422,19 +404,17 @@ export class DiscriminatorComponent extends Element {
 }
 
 export class SlicingComponent extends Element {
-    public discriminator: DiscriminatorComponent[];
-    public description: string;
-    public ordered: boolean;
+    public discriminator?: DiscriminatorComponent[];
+    public description?: string;
+    public ordered?: boolean;
     public rules: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.discriminator) {
                 this.discriminator = [];
-                for (let o of obj.discriminator || []) {
-                    this.discriminator.push(new DiscriminatorComponent(o));
-                }
+                for (let o of obj.discriminator || []) { this.discriminator.push(new DiscriminatorComponent(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
@@ -454,7 +434,7 @@ export class BaseComponent extends Element {
     public path: string;
     public min: number;
     public max: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -474,11 +454,11 @@ export class BaseComponent extends Element {
 
 export class TypeRefComponent extends Element {
     public code: string;
-    public profile: string;
-    public targetProfile: string;
-    public aggregation: string[];
-    public versioning: string;
-
+    public profile?: string;
+    public targetProfile?: string;
+    public aggregation?: string[];
+    public versioning?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -505,7 +485,7 @@ export class TypeRefComponent extends Element {
 export class ExampleComponent extends Element {
     public label: string;
     public value: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -522,13 +502,13 @@ export class ExampleComponent extends Element {
 
 export class ConstraintComponent extends Element {
     public key: string;
-    public requirements: string;
+    public requirements?: string;
     public severity: string;
     public human: string;
     public expression: string;
-    public xpath: string;
-    public source: string;
-
+    public xpath?: string;
+    public source?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -560,9 +540,9 @@ export class ConstraintComponent extends Element {
 
 export class ElementDefinitionBindingComponent extends Element {
     public strength: string;
-    public description: string;
-    public valueSet: Element;
-
+    public description?: string;
+    public valueSet?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -582,38 +562,38 @@ export class ElementDefinitionBindingComponent extends Element {
 
 export class ElementDefinition extends Element {
     public path: string;
-    public representation: string[];
-    public sliceName: string;
-    public label: string;
-    public code: Coding[];
-    public slicing: SlicingComponent;
-    public short: string;
-    public definition: string;
-    public comment: string;
-    public requirements: string;
-    public alias: string[];
-    public min: number;
-    public max: string;
-    public base: BaseComponent;
-    public contentReference: string;
-    public type: TypeRefComponent[];
-    public defaultValue: Element;
-    public meaningWhenMissing: string;
-    public orderMeaning: string;
-    public fixed: Element;
-    public pattern: Element;
-    public example: ExampleComponent[];
-    public minValue: Element;
-    public maxValue: Element;
-    public maxLength: number;
-    public condition: string[];
-    public constraint: ConstraintComponent[];
-    public mustSupport: boolean;
-    public isModifier: boolean;
-    public isSummary: boolean;
-    public binding: ElementDefinitionBindingComponent;
-    public mapping: MappingComponent[];
-
+    public representation?: string[];
+    public sliceName?: string;
+    public label?: string;
+    public code?: Coding[];
+    public slicing?: SlicingComponent;
+    public short?: string;
+    public definition?: string;
+    public comment?: string;
+    public requirements?: string;
+    public alias?: string[];
+    public min?: number;
+    public max?: string;
+    public base?: BaseComponent;
+    public contentReference?: string;
+    public type?: TypeRefComponent[];
+    public defaultValue?: Element;
+    public meaningWhenMissing?: string;
+    public orderMeaning?: string;
+    public fixed?: Element;
+    public pattern?: Element;
+    public example?: ExampleComponent[];
+    public minValue?: Element;
+    public maxValue?: Element;
+    public maxLength?: number;
+    public condition?: string[];
+    public constraint?: ConstraintComponent[];
+    public mustSupport?: boolean;
+    public isModifier?: boolean;
+    public isSummary?: boolean;
+    public binding?: ElementDefinitionBindingComponent;
+    public mapping?: MappingComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -631,9 +611,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new Coding(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new Coding(o)); }
             }
             if (obj.slicing) {
                 this.slicing = new SlicingComponent(obj.slicing);
@@ -667,9 +645,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new TypeRefComponent(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new TypeRefComponent(o)); }
             }
             if (obj.defaultValue) {
                 this.defaultValue = new Element(obj.defaultValue);
@@ -688,9 +664,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.example) {
                 this.example = [];
-                for (let o of obj.example || []) {
-                    this.example.push(new ExampleComponent(o));
-                }
+                for (let o of obj.example || []) { this.example.push(new ExampleComponent(o)); }
             }
             if (obj.minValue) {
                 this.minValue = new Element(obj.minValue);
@@ -706,9 +680,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.constraint) {
                 this.constraint = [];
-                for (let o of obj.constraint || []) {
-                    this.constraint.push(new ConstraintComponent(o));
-                }
+                for (let o of obj.constraint || []) { this.constraint.push(new ConstraintComponent(o)); }
             }
             if (obj.mustSupport) {
                 this.mustSupport = obj.mustSupport;
@@ -724,9 +696,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.mapping) {
                 this.mapping = [];
-                for (let o of obj.mapping || []) {
-                    this.mapping.push(new MappingComponent(o));
-                }
+                for (let o of obj.mapping || []) { this.mapping.push(new MappingComponent(o)); }
             }
         }
     }
@@ -735,15 +705,13 @@ export class ElementDefinition extends Element {
 
 export class SnapshotComponent extends BackboneElement {
     public element: ElementDefinition[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.element) {
                 this.element = [];
-                for (let o of obj.element || []) {
-                    this.element.push(new ElementDefinition(o));
-                }
+                for (let o of obj.element || []) { this.element.push(new ElementDefinition(o)); }
             }
         }
     }
@@ -752,15 +720,13 @@ export class SnapshotComponent extends BackboneElement {
 
 export class DifferentialComponent extends BackboneElement {
     public element: ElementDefinition[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.element) {
                 this.element = [];
-                for (let o of obj.element || []) {
-                    this.element.push(new ElementDefinition(o));
-                }
+                for (let o of obj.element || []) { this.element.push(new ElementDefinition(o)); }
             }
         }
     }
@@ -770,34 +736,34 @@ export class DifferentialComponent extends BackboneElement {
 export class StructureDefinition extends DomainResource {
     public resourceType = 'StructureDefinition';
     public url: string;
-    public identifier: Identifier[];
-    public version: string;
+    public identifier?: Identifier[];
+    public version?: string;
     public name: string;
-    public title: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public keyword: Coding[];
-    public fhirVersion: string;
-    public mapping: MappingComponent[];
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public keyword?: Coding[];
+    public fhirVersion?: string;
+    public mapping?: MappingComponent[];
     public kind: string;
     public abstract: boolean;
-    public contextType: string;
-    public context: string[];
-    public contextInvariant: string[];
+    public contextType?: string;
+    public context?: string[];
+    public contextInvariant?: string[];
     public type: string;
-    public baseDefinition: string;
-    public derivation: string;
-    public snapshot: SnapshotComponent;
-    public differential: DifferentialComponent;
-
+    public baseDefinition?: string;
+    public derivation?: string;
+    public snapshot?: SnapshotComponent;
+    public differential?: DifferentialComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -806,9 +772,7 @@ export class StructureDefinition extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -833,24 +797,18 @@ export class StructureDefinition extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -860,18 +818,14 @@ export class StructureDefinition extends DomainResource {
             }
             if (obj.keyword) {
                 this.keyword = [];
-                for (let o of obj.keyword || []) {
-                    this.keyword.push(new Coding(o));
-                }
+                for (let o of obj.keyword || []) { this.keyword.push(new Coding(o)); }
             }
             if (obj.fhirVersion) {
                 this.fhirVersion = obj.fhirVersion;
             }
             if (obj.mapping) {
                 this.mapping = [];
-                for (let o of obj.mapping || []) {
-                    this.mapping.push(new MappingComponent(o));
-                }
+                for (let o of obj.mapping || []) { this.mapping.push(new MappingComponent(o)); }
             }
             if (obj.kind) {
                 this.kind = obj.kind;
@@ -910,10 +864,10 @@ export class StructureDefinition extends DomainResource {
 
 export class ParameterComponent extends BackboneElement {
     public name: string;
-    public value: Element;
-    public resource: Resource;
-    public part: ParameterComponent[];
-
+    public value?: Element;
+    public resource?: Resource;
+    public part?: ParameterComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -928,9 +882,7 @@ export class ParameterComponent extends BackboneElement {
             }
             if (obj.part) {
                 this.part = [];
-                for (let o of obj.part || []) {
-                    this.part.push(new ParameterComponent(o));
-                }
+                for (let o of obj.part || []) { this.part.push(new ParameterComponent(o)); }
             }
         }
     }
@@ -939,16 +891,14 @@ export class ParameterComponent extends BackboneElement {
 
 export class Parameters extends Resource {
     public resourceType = 'Parameters';
-    public parameter: ParameterComponent[];
-
+    public parameter?: ParameterComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.parameter) {
                 this.parameter = [];
-                for (let o of obj.parameter || []) {
-                    this.parameter.push(new ParameterComponent(o));
-                }
+                for (let o of obj.parameter || []) { this.parameter.push(new ParameterComponent(o)); }
             }
         }
     }
@@ -957,7 +907,7 @@ export class Parameters extends Resource {
 
 export class Query extends Parameters {
     public resourceType = 'Query';
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -969,7 +919,7 @@ export class Query extends Parameters {
 export class LinkComponent extends BackboneElement {
     public relation: string;
     public url: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -985,9 +935,9 @@ export class LinkComponent extends BackboneElement {
 }
 
 export class SearchComponent extends BackboneElement {
-    public mode: string;
-    public score: number;
-
+    public mode?: string;
+    public score?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1005,11 +955,11 @@ export class SearchComponent extends BackboneElement {
 export class RequestComponent extends BackboneElement {
     public method: string;
     public url: string;
-    public ifNoneMatch: string;
-    public ifModifiedSince: Date;
-    public ifMatch: string;
-    public ifNoneExist: string;
-
+    public ifNoneMatch?: string;
+    public ifModifiedSince?: Date;
+    public ifMatch?: string;
+    public ifNoneExist?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1038,11 +988,11 @@ export class RequestComponent extends BackboneElement {
 
 export class ResponseComponent extends BackboneElement {
     public status: string;
-    public location: string;
-    public etag: string;
-    public lastModified: Date;
-    public outcome: Resource;
-
+    public location?: string;
+    public etag?: string;
+    public lastModified?: Date;
+    public outcome?: Resource;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1067,21 +1017,19 @@ export class ResponseComponent extends BackboneElement {
 }
 
 export class EntryComponent extends BackboneElement {
-    public link: LinkComponent[];
-    public fullUrl: string;
-    public resource: Resource;
-    public search: SearchComponent;
-    public request: RequestComponent;
-    public response: ResponseComponent;
-
+    public link?: LinkComponent[];
+    public fullUrl?: string;
+    public resource?: Resource;
+    public search?: SearchComponent;
+    public request?: RequestComponent;
+    public response?: ResponseComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
             if (obj.fullUrl) {
                 this.fullUrl = obj.fullUrl;
@@ -1104,7 +1052,7 @@ export class EntryComponent extends BackboneElement {
 }
 
 export class ResourceEntry extends EntryComponent {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1115,23 +1063,21 @@ export class ResourceEntry extends EntryComponent {
 
 export class Flag extends DomainResource {
     public resourceType = 'Flag';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public category: CodeableConcept;
+    public category?: CodeableConcept;
     public code: CodeableConcept;
     public subject: ResourceReference;
-    public period: Period;
-    public encounter: ResourceReference;
-    public author: ResourceReference;
-
+    public period?: Period;
+    public encounter?: ResourceReference;
+    public author?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -1161,7 +1107,7 @@ export class Flag extends DomainResource {
 
 export class Alert extends Flag {
     public resourceType = 'Alert';
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1171,12 +1117,12 @@ export class Alert extends Flag {
 }
 
 export class Quantity extends Element {
-    public value: number;
-    public comparator: string;
-    public unit: string;
-    public system: string;
-    public code: string;
-
+    public value?: number;
+    public comparator?: string;
+    public unit?: string;
+    public system?: string;
+    public code?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1201,7 +1147,7 @@ export class Quantity extends Element {
 }
 
 export class SimpleQuantity extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1211,9 +1157,9 @@ export class SimpleQuantity extends Quantity {
 }
 
 export class Range extends Element {
-    public low: Quantity;
-    public high: Quantity;
-
+    public low?: Quantity;
+    public high?: Quantity;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1229,13 +1175,13 @@ export class Range extends Element {
 }
 
 export class ReferenceRangeComponent extends BackboneElement {
-    public low: SimpleQuantity;
-    public high: SimpleQuantity;
-    public type: CodeableConcept;
-    public appliesTo: CodeableConcept[];
-    public age: Range;
-    public text: string;
-
+    public low?: SimpleQuantity;
+    public high?: SimpleQuantity;
+    public type?: CodeableConcept;
+    public appliesTo?: CodeableConcept[];
+    public age?: Range;
+    public text?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1250,9 +1196,7 @@ export class ReferenceRangeComponent extends BackboneElement {
             }
             if (obj.appliesTo) {
                 this.appliesTo = [];
-                for (let o of obj.appliesTo || []) {
-                    this.appliesTo.push(new CodeableConcept(o));
-                }
+                for (let o of obj.appliesTo || []) { this.appliesTo.push(new CodeableConcept(o)); }
             }
             if (obj.age) {
                 this.age = new Range(obj.age);
@@ -1266,9 +1210,9 @@ export class ReferenceRangeComponent extends BackboneElement {
 }
 
 export class RelatedComponent extends BackboneElement {
-    public type: string;
+    public type?: string;
     public target: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1285,11 +1229,11 @@ export class RelatedComponent extends BackboneElement {
 
 export class ComponentComponent extends BackboneElement {
     public code: CodeableConcept;
-    public value: Element;
-    public dataAbsentReason: CodeableConcept;
-    public interpretation: CodeableConcept;
-    public referenceRange: ReferenceRangeComponent[];
-
+    public value?: Element;
+    public dataAbsentReason?: CodeableConcept;
+    public interpretation?: CodeableConcept;
+    public referenceRange?: ReferenceRangeComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1307,9 +1251,7 @@ export class ComponentComponent extends BackboneElement {
             }
             if (obj.referenceRange) {
                 this.referenceRange = [];
-                for (let o of obj.referenceRange || []) {
-                    this.referenceRange.push(new ReferenceRangeComponent(o));
-                }
+                for (let o of obj.referenceRange || []) { this.referenceRange.push(new ReferenceRangeComponent(o)); }
             }
         }
     }
@@ -1318,51 +1260,45 @@ export class ComponentComponent extends BackboneElement {
 
 export class Observation extends DomainResource {
     public resourceType = 'Observation';
-    public identifier: Identifier[];
-    public basedOn: ResourceReference[];
+    public identifier?: Identifier[];
+    public basedOn?: ResourceReference[];
     public status: string;
-    public category: CodeableConcept[];
+    public category?: CodeableConcept[];
     public code: CodeableConcept;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public effective: Element;
-    public issued: Date;
-    public performer: ResourceReference[];
-    public value: Element;
-    public dataAbsentReason: CodeableConcept;
-    public interpretation: CodeableConcept;
-    public comment: string;
-    public bodySite: CodeableConcept;
-    public method: CodeableConcept;
-    public specimen: ResourceReference;
-    public device: ResourceReference;
-    public referenceRange: ReferenceRangeComponent[];
-    public related: RelatedComponent[];
-    public component: ComponentComponent[];
-
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public effective?: Element;
+    public issued?: Date;
+    public performer?: ResourceReference[];
+    public value?: Element;
+    public dataAbsentReason?: CodeableConcept;
+    public interpretation?: CodeableConcept;
+    public comment?: string;
+    public bodySite?: CodeableConcept;
+    public method?: CodeableConcept;
+    public specimen?: ResourceReference;
+    public device?: ResourceReference;
+    public referenceRange?: ReferenceRangeComponent[];
+    public related?: RelatedComponent[];
+    public component?: ComponentComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -1381,9 +1317,7 @@ export class Observation extends DomainResource {
             }
             if (obj.performer) {
                 this.performer = [];
-                for (let o of obj.performer || []) {
-                    this.performer.push(new ResourceReference(o));
-                }
+                for (let o of obj.performer || []) { this.performer.push(new ResourceReference(o)); }
             }
             if (obj.value) {
                 this.value = new Element(obj.value);
@@ -1411,21 +1345,15 @@ export class Observation extends DomainResource {
             }
             if (obj.referenceRange) {
                 this.referenceRange = [];
-                for (let o of obj.referenceRange || []) {
-                    this.referenceRange.push(new ReferenceRangeComponent(o));
-                }
+                for (let o of obj.referenceRange || []) { this.referenceRange.push(new ReferenceRangeComponent(o)); }
             }
             if (obj.related) {
                 this.related = [];
-                for (let o of obj.related || []) {
-                    this.related.push(new RelatedComponent(o));
-                }
+                for (let o of obj.related || []) { this.related.push(new RelatedComponent(o)); }
             }
             if (obj.component) {
                 this.component = [];
-                for (let o of obj.component || []) {
-                    this.component.push(new ComponentComponent(o));
-                }
+                for (let o of obj.component || []) { this.component.push(new ComponentComponent(o)); }
             }
         }
     }
@@ -1435,9 +1363,9 @@ export class Observation extends DomainResource {
 export class Binary extends Resource {
     public resourceType = 'Binary';
     public contentType: string;
-    public securityContext: ResourceReference;
+    public securityContext?: ResourceReference;
     public content: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1459,18 +1387,16 @@ export class Signature extends Element {
     public type: Coding[];
     public when: Date;
     public who: Element;
-    public onBehalfOf: Element;
-    public contentType: string;
-    public blob: string;
-
+    public onBehalfOf?: Element;
+    public contentType?: string;
+    public blob?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new Coding(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new Coding(o)); }
             }
             if (obj.when) {
                 this.when = new Date(obj.when);
@@ -1494,13 +1420,13 @@ export class Signature extends Element {
 
 export class Bundle extends Resource {
     public resourceType = 'Bundle';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public type: string;
-    public total: number;
-    public link: LinkComponent[];
-    public entry: EntryComponent[];
-    public signature: Signature;
-
+    public total?: number;
+    public link?: LinkComponent[];
+    public entry?: EntryComponent[];
+    public signature?: Signature;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1515,15 +1441,11 @@ export class Bundle extends Resource {
             }
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
             if (obj.entry) {
                 this.entry = [];
-                for (let o of obj.entry || []) {
-                    this.entry.push(new EntryComponent(o));
-                }
+                for (let o of obj.entry || []) { this.entry.push(new EntryComponent(o)); }
             }
             if (obj.signature) {
                 this.signature = new Signature(obj.signature);
@@ -1534,7 +1456,7 @@ export class Bundle extends Resource {
 }
 
 export class BundleExtensions {
-
+    
     constructor(obj?: any) {
         if (obj) {
         }
@@ -1544,10 +1466,10 @@ export class BundleExtensions {
 
 export class FilterComponent extends BackboneElement {
     public code: string;
-    public description: string;
+    public description?: string;
     public operator: string[];
     public value: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1570,10 +1492,10 @@ export class FilterComponent extends BackboneElement {
 
 export class PropertyComponent extends BackboneElement {
     public code: string;
-    public uri: string;
-    public description: string;
+    public uri?: string;
+    public description?: string;
     public type: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1595,10 +1517,10 @@ export class PropertyComponent extends BackboneElement {
 }
 
 export class DesignationComponent extends BackboneElement {
-    public language: string;
-    public use: Coding;
+    public language?: string;
+    public use?: Coding;
     public value: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1619,7 +1541,7 @@ export class DesignationComponent extends BackboneElement {
 export class ConceptPropertyComponent extends BackboneElement {
     public code: string;
     public value: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1636,12 +1558,12 @@ export class ConceptPropertyComponent extends BackboneElement {
 
 export class ConceptDefinitionComponent extends BackboneElement {
     public code: string;
-    public display: string;
-    public definition: string;
-    public designation: DesignationComponent[];
-    public property: ConceptPropertyComponent[];
-    public concept: ConceptDefinitionComponent[];
-
+    public display?: string;
+    public definition?: string;
+    public designation?: DesignationComponent[];
+    public property?: ConceptPropertyComponent[];
+    public concept?: ConceptDefinitionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1656,21 +1578,15 @@ export class ConceptDefinitionComponent extends BackboneElement {
             }
             if (obj.designation) {
                 this.designation = [];
-                for (let o of obj.designation || []) {
-                    this.designation.push(new DesignationComponent(o));
-                }
+                for (let o of obj.designation || []) { this.designation.push(new DesignationComponent(o)); }
             }
             if (obj.property) {
                 this.property = [];
-                for (let o of obj.property || []) {
-                    this.property.push(new ConceptPropertyComponent(o));
-                }
+                for (let o of obj.property || []) { this.property.push(new ConceptPropertyComponent(o)); }
             }
             if (obj.concept) {
                 this.concept = [];
-                for (let o of obj.concept || []) {
-                    this.concept.push(new ConceptDefinitionComponent(o));
-                }
+                for (let o of obj.concept || []) { this.concept.push(new ConceptDefinitionComponent(o)); }
             }
         }
     }
@@ -1679,32 +1595,32 @@ export class ConceptDefinitionComponent extends BackboneElement {
 
 export class CodeSystem extends DomainResource {
     public resourceType = 'CodeSystem';
-    public url: string;
-    public identifier: Identifier;
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier;
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public caseSensitive: boolean;
-    public valueSet: string;
-    public hierarchyMeaning: string;
-    public compositional: boolean;
-    public versionNeeded: boolean;
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public caseSensitive?: boolean;
+    public valueSet?: string;
+    public hierarchyMeaning?: string;
+    public compositional?: boolean;
+    public versionNeeded?: boolean;
     public content: string;
-    public count: number;
-    public filter: FilterComponent[];
-    public property: PropertyComponent[];
-    public concept: ConceptDefinitionComponent[];
-
+    public count?: number;
+    public filter?: FilterComponent[];
+    public property?: PropertyComponent[];
+    public concept?: ConceptDefinitionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1737,24 +1653,18 @@ export class CodeSystem extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -1785,21 +1695,15 @@ export class CodeSystem extends DomainResource {
             }
             if (obj.filter) {
                 this.filter = [];
-                for (let o of obj.filter || []) {
-                    this.filter.push(new FilterComponent(o));
-                }
+                for (let o of obj.filter || []) { this.filter.push(new FilterComponent(o)); }
             }
             if (obj.property) {
                 this.property = [];
-                for (let o of obj.property || []) {
-                    this.property.push(new PropertyComponent(o));
-                }
+                for (let o of obj.property || []) { this.property.push(new PropertyComponent(o)); }
             }
             if (obj.concept) {
                 this.concept = [];
-                for (let o of obj.concept || []) {
-                    this.concept.push(new ConceptDefinitionComponent(o));
-                }
+                for (let o of obj.concept || []) { this.concept.push(new ConceptDefinitionComponent(o)); }
             }
         }
     }
@@ -1807,7 +1711,7 @@ export class CodeSystem extends DomainResource {
 }
 
 export class CodeSystemExtensions {
-
+    
     constructor(obj?: any) {
         if (obj) {
         }
@@ -1817,10 +1721,10 @@ export class CodeSystemExtensions {
 
 export class OtherElementComponent extends BackboneElement {
     public property: string;
-    public system: string;
+    public system?: string;
     public code: string;
-    public display: string;
-
+    public display?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1842,13 +1746,13 @@ export class OtherElementComponent extends BackboneElement {
 }
 
 export class TargetElementComponent extends BackboneElement {
-    public code: string;
-    public display: string;
-    public equivalence: string;
-    public comment: string;
-    public dependsOn: OtherElementComponent[];
-    public product: OtherElementComponent[];
-
+    public code?: string;
+    public display?: string;
+    public equivalence?: string;
+    public comment?: string;
+    public dependsOn?: OtherElementComponent[];
+    public product?: OtherElementComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1866,15 +1770,11 @@ export class TargetElementComponent extends BackboneElement {
             }
             if (obj.dependsOn) {
                 this.dependsOn = [];
-                for (let o of obj.dependsOn || []) {
-                    this.dependsOn.push(new OtherElementComponent(o));
-                }
+                for (let o of obj.dependsOn || []) { this.dependsOn.push(new OtherElementComponent(o)); }
             }
             if (obj.product) {
                 this.product = [];
-                for (let o of obj.product || []) {
-                    this.product.push(new OtherElementComponent(o));
-                }
+                for (let o of obj.product || []) { this.product.push(new OtherElementComponent(o)); }
             }
         }
     }
@@ -1882,10 +1782,10 @@ export class TargetElementComponent extends BackboneElement {
 }
 
 export class SourceElementComponent extends BackboneElement {
-    public code: string;
-    public display: string;
-    public target: TargetElementComponent[];
-
+    public code?: string;
+    public display?: string;
+    public target?: TargetElementComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1897,9 +1797,7 @@ export class SourceElementComponent extends BackboneElement {
             }
             if (obj.target) {
                 this.target = [];
-                for (let o of obj.target || []) {
-                    this.target.push(new TargetElementComponent(o));
-                }
+                for (let o of obj.target || []) { this.target.push(new TargetElementComponent(o)); }
             }
         }
     }
@@ -1908,10 +1806,10 @@ export class SourceElementComponent extends BackboneElement {
 
 export class UnmappedComponent extends BackboneElement {
     public mode: string;
-    public code: string;
-    public display: string;
-    public url: string;
-
+    public code?: string;
+    public display?: string;
+    public url?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1933,13 +1831,13 @@ export class UnmappedComponent extends BackboneElement {
 }
 
 export class GroupComponent extends BackboneElement {
-    public source: string;
-    public sourceVersion: string;
-    public target: string;
-    public targetVersion: string;
+    public source?: string;
+    public sourceVersion?: string;
+    public target?: string;
+    public targetVersion?: string;
     public element: SourceElementComponent[];
-    public unmapped: UnmappedComponent;
-
+    public unmapped?: UnmappedComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -1957,9 +1855,7 @@ export class GroupComponent extends BackboneElement {
             }
             if (obj.element) {
                 this.element = [];
-                for (let o of obj.element || []) {
-                    this.element.push(new SourceElementComponent(o));
-                }
+                for (let o of obj.element || []) { this.element.push(new SourceElementComponent(o)); }
             }
             if (obj.unmapped) {
                 this.unmapped = new UnmappedComponent(obj.unmapped);
@@ -1971,25 +1867,25 @@ export class GroupComponent extends BackboneElement {
 
 export class ConceptMap extends DomainResource {
     public resourceType = 'ConceptMap';
-    public url: string;
-    public identifier: Identifier;
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier;
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public source: Element;
-    public target: Element;
-    public group: GroupComponent[];
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public source?: Element;
+    public target?: Element;
+    public group?: GroupComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2022,24 +1918,18 @@ export class ConceptMap extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -2055,9 +1945,7 @@ export class ConceptMap extends DomainResource {
             }
             if (obj.group) {
                 this.group = [];
-                for (let o of obj.group || []) {
-                    this.group.push(new GroupComponent(o));
-                }
+                for (let o of obj.group || []) { this.group.push(new GroupComponent(o)); }
             }
         }
     }
@@ -2065,7 +1953,7 @@ export class ConceptMap extends DomainResource {
 }
 
 export class ElementDefinitionExtensions {
-
+    
     constructor(obj?: any) {
         if (obj) {
         }
@@ -2074,7 +1962,7 @@ export class ElementDefinitionExtensions {
 }
 
 export class Money extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2085,8 +1973,8 @@ export class Money extends Quantity {
 
 export class CoverageComponent extends BackboneElement {
     public coverage: ResourceReference;
-    public priority: number;
-
+    public priority?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2103,9 +1991,9 @@ export class CoverageComponent extends BackboneElement {
 
 export class GuarantorComponent extends BackboneElement {
     public party: ResourceReference;
-    public onHold: boolean;
-    public period: Period;
-
+    public onHold?: boolean;
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2125,27 +2013,25 @@ export class GuarantorComponent extends BackboneElement {
 
 export class Account extends DomainResource {
     public resourceType = 'Account';
-    public identifier: Identifier[];
-    public status: string;
-    public type: CodeableConcept;
-    public name: string;
-    public subject: ResourceReference;
-    public period: Period;
-    public active: Period;
-    public balance: Money;
-    public coverage: CoverageComponent[];
-    public owner: ResourceReference;
-    public description: string;
-    public guarantor: GuarantorComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public type?: CodeableConcept;
+    public name?: string;
+    public subject?: ResourceReference;
+    public period?: Period;
+    public active?: Period;
+    public balance?: Money;
+    public coverage?: CoverageComponent[];
+    public owner?: ResourceReference;
+    public description?: string;
+    public guarantor?: GuarantorComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -2170,9 +2056,7 @@ export class Account extends DomainResource {
             }
             if (obj.coverage) {
                 this.coverage = [];
-                for (let o of obj.coverage || []) {
-                    this.coverage.push(new CoverageComponent(o));
-                }
+                for (let o of obj.coverage || []) { this.coverage.push(new CoverageComponent(o)); }
             }
             if (obj.owner) {
                 this.owner = new ResourceReference(obj.owner);
@@ -2182,9 +2066,7 @@ export class Account extends DomainResource {
             }
             if (obj.guarantor) {
                 this.guarantor = [];
-                for (let o of obj.guarantor || []) {
-                    this.guarantor.push(new GuarantorComponent(o));
-                }
+                for (let o of obj.guarantor || []) { this.guarantor.push(new GuarantorComponent(o)); }
             }
         }
     }
@@ -2194,8 +2076,8 @@ export class Account extends DomainResource {
 export class Contributor extends Element {
     public type: string;
     public name: string;
-    public contact: ContactDetail[];
-
+    public contact?: ContactDetail[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2207,9 +2089,7 @@ export class Contributor extends Element {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
         }
     }
@@ -2217,15 +2097,15 @@ export class Contributor extends Element {
 }
 
 export class Attachment extends Element {
-    public contentType: string;
-    public language: string;
-    public data: string;
-    public url: string;
-    public size: number;
-    public hash: string;
-    public title: string;
-    public creation: Date;
-
+    public contentType?: string;
+    public language?: string;
+    public data?: string;
+    public url?: string;
+    public size?: number;
+    public hash?: string;
+    public title?: string;
+    public creation?: Date;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2260,12 +2140,12 @@ export class Attachment extends Element {
 
 export class RelatedArtifact extends Element {
     public type: string;
-    public display: string;
-    public citation: string;
-    public url: string;
-    public document: Attachment;
-    public resource: ResourceReference;
-
+    public display?: string;
+    public citation?: string;
+    public url?: string;
+    public document?: Attachment;
+    public resource?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2294,8 +2174,8 @@ export class RelatedArtifact extends Element {
 
 export class ParticipantComponent extends BackboneElement {
     public type: string;
-    public role: CodeableConcept;
-
+    public role?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2311,22 +2191,22 @@ export class ParticipantComponent extends BackboneElement {
 }
 
 export class RepeatComponent extends Element {
-    public bounds: Element;
-    public count: number;
-    public countMax: number;
-    public duration: number;
-    public durationMax: number;
-    public durationUnit: string;
-    public frequency: number;
-    public frequencyMax: number;
-    public period: number;
-    public periodMax: number;
-    public periodUnit: string;
-    public dayOfWeek: string[];
-    public timeOfDay: Date[];
-    public when: string[];
-    public offset: number;
-
+    public bounds?: Element;
+    public count?: number;
+    public countMax?: number;
+    public duration?: number;
+    public durationMax?: number;
+    public durationUnit?: string;
+    public frequency?: number;
+    public frequencyMax?: number;
+    public period?: number;
+    public periodMax?: number;
+    public periodUnit?: string;
+    public dayOfWeek?: string[];
+    public timeOfDay?: Date[];
+    public when?: string[];
+    public offset?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2381,10 +2261,10 @@ export class RepeatComponent extends Element {
 }
 
 export class Timing extends Element {
-    public event: Date[];
-    public repeat: RepeatComponent;
-    public code: CodeableConcept;
-
+    public event?: Date[];
+    public repeat?: RepeatComponent;
+    public code?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2403,9 +2283,9 @@ export class Timing extends Element {
 }
 
 export class Ratio extends Element {
-    public numerator: Quantity;
-    public denominator: Quantity;
-
+    public numerator?: Quantity;
+    public denominator?: Quantity;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2421,21 +2301,21 @@ export class Ratio extends Element {
 }
 
 export class Dosage extends Element {
-    public sequence: number;
-    public text: string;
-    public additionalInstruction: CodeableConcept[];
-    public patientInstruction: string;
-    public timing: Timing;
-    public asNeeded: Element;
-    public site: CodeableConcept;
-    public route: CodeableConcept;
-    public method: CodeableConcept;
-    public dose: Element;
-    public maxDosePerPeriod: Ratio;
-    public maxDosePerAdministration: Quantity;
-    public maxDosePerLifetime: Quantity;
-    public rate: Element;
-
+    public sequence?: number;
+    public text?: string;
+    public additionalInstruction?: CodeableConcept[];
+    public patientInstruction?: string;
+    public timing?: Timing;
+    public asNeeded?: Element;
+    public site?: CodeableConcept;
+    public route?: CodeableConcept;
+    public method?: CodeableConcept;
+    public dose?: Element;
+    public maxDosePerPeriod?: Ratio;
+    public maxDosePerAdministration?: Quantity;
+    public maxDosePerLifetime?: Quantity;
+    public rate?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2447,9 +2327,7 @@ export class Dosage extends Element {
             }
             if (obj.additionalInstruction) {
                 this.additionalInstruction = [];
-                for (let o of obj.additionalInstruction || []) {
-                    this.additionalInstruction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.additionalInstruction || []) { this.additionalInstruction.push(new CodeableConcept(o)); }
             }
             if (obj.patientInstruction) {
                 this.patientInstruction = obj.patientInstruction;
@@ -2490,11 +2368,11 @@ export class Dosage extends Element {
 }
 
 export class DynamicValueComponent extends BackboneElement {
-    public description: string;
-    public path: string;
-    public language: string;
-    public expression: string;
-
+    public description?: string;
+    public path?: string;
+    public language?: string;
+    public expression?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2517,41 +2395,41 @@ export class DynamicValueComponent extends BackboneElement {
 
 export class ActivityDefinition extends DomainResource {
     public resourceType = 'ActivityDefinition';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public usage: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public topic: CodeableConcept[];
-    public contributor: Contributor[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public relatedArtifact: RelatedArtifact[];
-    public library: ResourceReference[];
-    public kind: string;
-    public code: CodeableConcept;
-    public timing: Element;
-    public location: ResourceReference;
-    public participant: ParticipantComponent[];
-    public product: Element;
-    public quantity: SimpleQuantity;
-    public dosage: Dosage[];
-    public bodySite: CodeableConcept[];
-    public transform: ResourceReference;
-    public dynamicValue: DynamicValueComponent[];
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public usage?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public topic?: CodeableConcept[];
+    public contributor?: Contributor[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public relatedArtifact?: RelatedArtifact[];
+    public library?: ResourceReference[];
+    public kind?: string;
+    public code?: CodeableConcept;
+    public timing?: Element;
+    public location?: ResourceReference;
+    public participant?: ParticipantComponent[];
+    public product?: Element;
+    public quantity?: SimpleQuantity;
+    public dosage?: Dosage[];
+    public bodySite?: CodeableConcept[];
+    public transform?: ResourceReference;
+    public dynamicValue?: DynamicValueComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2560,9 +2438,7 @@ export class ActivityDefinition extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -2605,48 +2481,34 @@ export class ActivityDefinition extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new CodeableConcept(o)); }
             }
             if (obj.contributor) {
                 this.contributor = [];
-                for (let o of obj.contributor || []) {
-                    this.contributor.push(new Contributor(o));
-                }
+                for (let o of obj.contributor || []) { this.contributor.push(new Contributor(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.library) {
                 this.library = [];
-                for (let o of obj.library || []) {
-                    this.library.push(new ResourceReference(o));
-                }
+                for (let o of obj.library || []) { this.library.push(new ResourceReference(o)); }
             }
             if (obj.kind) {
                 this.kind = obj.kind;
@@ -2662,9 +2524,7 @@ export class ActivityDefinition extends DomainResource {
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.product) {
                 this.product = new Element(obj.product);
@@ -2674,24 +2534,18 @@ export class ActivityDefinition extends DomainResource {
             }
             if (obj.dosage) {
                 this.dosage = [];
-                for (let o of obj.dosage || []) {
-                    this.dosage.push(new Dosage(o));
-                }
+                for (let o of obj.dosage || []) { this.dosage.push(new Dosage(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = [];
-                for (let o of obj.bodySite || []) {
-                    this.bodySite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.bodySite || []) { this.bodySite.push(new CodeableConcept(o)); }
             }
             if (obj.transform) {
                 this.transform = new ResourceReference(obj.transform);
             }
             if (obj.dynamicValue) {
                 this.dynamicValue = [];
-                for (let o of obj.dynamicValue || []) {
-                    this.dynamicValue.push(new DynamicValueComponent(o));
-                }
+                for (let o of obj.dynamicValue || []) { this.dynamicValue.push(new DynamicValueComponent(o)); }
             }
         }
     }
@@ -2699,17 +2553,17 @@ export class ActivityDefinition extends DomainResource {
 }
 
 export class Address extends Element {
-    public use: string;
-    public type: string;
-    public text: string;
-    public line: string[];
-    public city: string;
-    public district: string;
-    public state: string;
-    public postalCode: string;
-    public country: string;
-    public period: Period;
-
+    public use?: string;
+    public type?: string;
+    public text?: string;
+    public line?: string[];
+    public city?: string;
+    public district?: string;
+    public state?: string;
+    public postalCode?: string;
+    public country?: string;
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2750,13 +2604,13 @@ export class Address extends Element {
 
 export class SuspectEntityComponent extends BackboneElement {
     public instance: ResourceReference;
-    public causality: string;
-    public causalityAssessment: CodeableConcept;
-    public causalityProductRelatedness: string;
-    public causalityMethod: CodeableConcept;
-    public causalityAuthor: ResourceReference;
-    public causalityResult: CodeableConcept;
-
+    public causality?: string;
+    public causalityAssessment?: CodeableConcept;
+    public causalityProductRelatedness?: string;
+    public causalityMethod?: CodeableConcept;
+    public causalityAuthor?: ResourceReference;
+    public causalityResult?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2788,23 +2642,23 @@ export class SuspectEntityComponent extends BackboneElement {
 
 export class AdverseEvent extends DomainResource {
     public resourceType = 'AdverseEvent';
-    public identifier: Identifier;
-    public category: string;
-    public type: CodeableConcept;
-    public subject: ResourceReference;
-    public date: Date;
-    public reaction: ResourceReference[];
-    public location: ResourceReference;
-    public seriousness: CodeableConcept;
-    public outcome: CodeableConcept;
-    public recorder: ResourceReference;
-    public eventParticipant: ResourceReference;
-    public description: string;
-    public suspectEntity: SuspectEntityComponent[];
-    public subjectMedicalHistory: ResourceReference[];
-    public referenceDocument: ResourceReference[];
-    public study: ResourceReference[];
-
+    public identifier?: Identifier;
+    public category?: string;
+    public type?: CodeableConcept;
+    public subject?: ResourceReference;
+    public date?: Date;
+    public reaction?: ResourceReference[];
+    public location?: ResourceReference;
+    public seriousness?: CodeableConcept;
+    public outcome?: CodeableConcept;
+    public recorder?: ResourceReference;
+    public eventParticipant?: ResourceReference;
+    public description?: string;
+    public suspectEntity?: SuspectEntityComponent[];
+    public subjectMedicalHistory?: ResourceReference[];
+    public referenceDocument?: ResourceReference[];
+    public study?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2825,9 +2679,7 @@ export class AdverseEvent extends DomainResource {
             }
             if (obj.reaction) {
                 this.reaction = [];
-                for (let o of obj.reaction || []) {
-                    this.reaction.push(new ResourceReference(o));
-                }
+                for (let o of obj.reaction || []) { this.reaction.push(new ResourceReference(o)); }
             }
             if (obj.location) {
                 this.location = new ResourceReference(obj.location);
@@ -2849,27 +2701,19 @@ export class AdverseEvent extends DomainResource {
             }
             if (obj.suspectEntity) {
                 this.suspectEntity = [];
-                for (let o of obj.suspectEntity || []) {
-                    this.suspectEntity.push(new SuspectEntityComponent(o));
-                }
+                for (let o of obj.suspectEntity || []) { this.suspectEntity.push(new SuspectEntityComponent(o)); }
             }
             if (obj.subjectMedicalHistory) {
                 this.subjectMedicalHistory = [];
-                for (let o of obj.subjectMedicalHistory || []) {
-                    this.subjectMedicalHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.subjectMedicalHistory || []) { this.subjectMedicalHistory.push(new ResourceReference(o)); }
             }
             if (obj.referenceDocument) {
                 this.referenceDocument = [];
-                for (let o of obj.referenceDocument || []) {
-                    this.referenceDocument.push(new ResourceReference(o));
-                }
+                for (let o of obj.referenceDocument || []) { this.referenceDocument.push(new ResourceReference(o)); }
             }
             if (obj.study) {
                 this.study = [];
-                for (let o of obj.study || []) {
-                    this.study.push(new ResourceReference(o));
-                }
+                for (let o of obj.study || []) { this.study.push(new ResourceReference(o)); }
             }
         }
     }
@@ -2877,7 +2721,7 @@ export class AdverseEvent extends DomainResource {
 }
 
 export class Age extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2887,10 +2731,10 @@ export class Age extends Quantity {
 }
 
 export class Annotation extends Element {
-    public author: Element;
-    public time: Date;
+    public author?: Element;
+    public time?: Date;
     public text: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2909,14 +2753,14 @@ export class Annotation extends Element {
 }
 
 export class ReactionComponent extends BackboneElement {
-    public substance: CodeableConcept;
+    public substance?: CodeableConcept;
     public manifestation: CodeableConcept[];
-    public description: string;
-    public onset: Date;
-    public severity: string;
-    public exposureRoute: CodeableConcept;
-    public note: Annotation[];
-
+    public description?: string;
+    public onset?: Date;
+    public severity?: string;
+    public exposureRoute?: CodeableConcept;
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -2925,9 +2769,7 @@ export class ReactionComponent extends BackboneElement {
             }
             if (obj.manifestation) {
                 this.manifestation = [];
-                for (let o of obj.manifestation || []) {
-                    this.manifestation.push(new CodeableConcept(o));
-                }
+                for (let o of obj.manifestation || []) { this.manifestation.push(new CodeableConcept(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
@@ -2943,9 +2785,7 @@ export class ReactionComponent extends BackboneElement {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -2954,30 +2794,28 @@ export class ReactionComponent extends BackboneElement {
 
 export class AllergyIntolerance extends DomainResource {
     public resourceType = 'AllergyIntolerance';
-    public identifier: Identifier[];
-    public clinicalStatus: string;
+    public identifier?: Identifier[];
+    public clinicalStatus?: string;
     public verificationStatus: string;
-    public type: string;
-    public category: string[];
-    public criticality: string;
-    public code: CodeableConcept;
+    public type?: string;
+    public category?: string[];
+    public criticality?: string;
+    public code?: CodeableConcept;
     public patient: ResourceReference;
-    public onset: Element;
-    public assertedDate: Date;
-    public recorder: ResourceReference;
-    public asserter: ResourceReference;
-    public lastOccurrence: Date;
-    public note: Annotation[];
-    public reaction: ReactionComponent[];
-
+    public onset?: Element;
+    public assertedDate?: Date;
+    public recorder?: ResourceReference;
+    public asserter?: ResourceReference;
+    public lastOccurrence?: Date;
+    public note?: Annotation[];
+    public reaction?: ReactionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.clinicalStatus) {
                 this.clinicalStatus = obj.clinicalStatus;
@@ -3017,15 +2855,11 @@ export class AllergyIntolerance extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.reaction) {
                 this.reaction = [];
-                for (let o of obj.reaction || []) {
-                    this.reaction.push(new ReactionComponent(o));
-                }
+                for (let o of obj.reaction || []) { this.reaction.push(new ReactionComponent(o)); }
             }
         }
     }
@@ -3034,35 +2868,33 @@ export class AllergyIntolerance extends DomainResource {
 
 export class Appointment extends DomainResource {
     public resourceType = 'Appointment';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public serviceCategory: CodeableConcept;
-    public serviceType: CodeableConcept[];
-    public specialty: CodeableConcept[];
-    public appointmentType: CodeableConcept;
-    public reason: CodeableConcept[];
-    public indication: ResourceReference[];
-    public priority: number;
-    public description: string;
-    public supportingInformation: ResourceReference[];
-    public start: Date;
-    public end: Date;
-    public minutesDuration: number;
-    public slot: ResourceReference[];
-    public created: Date;
-    public comment: string;
-    public incomingReferral: ResourceReference[];
+    public serviceCategory?: CodeableConcept;
+    public serviceType?: CodeableConcept[];
+    public specialty?: CodeableConcept[];
+    public appointmentType?: CodeableConcept;
+    public reason?: CodeableConcept[];
+    public indication?: ResourceReference[];
+    public priority?: number;
+    public description?: string;
+    public supportingInformation?: ResourceReference[];
+    public start?: Date;
+    public end?: Date;
+    public minutesDuration?: number;
+    public slot?: ResourceReference[];
+    public created?: Date;
+    public comment?: string;
+    public incomingReferral?: ResourceReference[];
     public participant: ParticipantComponent[];
-    public requestedPeriod: Period[];
-
+    public requestedPeriod?: Period[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -3072,30 +2904,22 @@ export class Appointment extends DomainResource {
             }
             if (obj.serviceType) {
                 this.serviceType = [];
-                for (let o of obj.serviceType || []) {
-                    this.serviceType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.serviceType || []) { this.serviceType.push(new CodeableConcept(o)); }
             }
             if (obj.specialty) {
                 this.specialty = [];
-                for (let o of obj.specialty || []) {
-                    this.specialty.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialty || []) { this.specialty.push(new CodeableConcept(o)); }
             }
             if (obj.appointmentType) {
                 this.appointmentType = new CodeableConcept(obj.appointmentType);
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.indication) {
                 this.indication = [];
-                for (let o of obj.indication || []) {
-                    this.indication.push(new ResourceReference(o));
-                }
+                for (let o of obj.indication || []) { this.indication.push(new ResourceReference(o)); }
             }
             if (obj.priority) {
                 this.priority = obj.priority;
@@ -3105,9 +2929,7 @@ export class Appointment extends DomainResource {
             }
             if (obj.supportingInformation) {
                 this.supportingInformation = [];
-                for (let o of obj.supportingInformation || []) {
-                    this.supportingInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInformation || []) { this.supportingInformation.push(new ResourceReference(o)); }
             }
             if (obj.start) {
                 this.start = new Date(obj.start);
@@ -3120,9 +2942,7 @@ export class Appointment extends DomainResource {
             }
             if (obj.slot) {
                 this.slot = [];
-                for (let o of obj.slot || []) {
-                    this.slot.push(new ResourceReference(o));
-                }
+                for (let o of obj.slot || []) { this.slot.push(new ResourceReference(o)); }
             }
             if (obj.created) {
                 this.created = new Date(obj.created);
@@ -3132,21 +2952,15 @@ export class Appointment extends DomainResource {
             }
             if (obj.incomingReferral) {
                 this.incomingReferral = [];
-                for (let o of obj.incomingReferral || []) {
-                    this.incomingReferral.push(new ResourceReference(o));
-                }
+                for (let o of obj.incomingReferral || []) { this.incomingReferral.push(new ResourceReference(o)); }
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.requestedPeriod) {
                 this.requestedPeriod = [];
-                for (let o of obj.requestedPeriod || []) {
-                    this.requestedPeriod.push(new Period(o));
-                }
+                for (let o of obj.requestedPeriod || []) { this.requestedPeriod.push(new Period(o)); }
             }
         }
     }
@@ -3155,23 +2969,21 @@ export class Appointment extends DomainResource {
 
 export class AppointmentResponse extends DomainResource {
     public resourceType = 'AppointmentResponse';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public appointment: ResourceReference;
-    public start: Date;
-    public end: Date;
-    public participantType: CodeableConcept[];
-    public actor: ResourceReference;
+    public start?: Date;
+    public end?: Date;
+    public participantType?: CodeableConcept[];
+    public actor?: ResourceReference;
     public participantStatus: string;
-    public comment: string;
-
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.appointment) {
                 this.appointment = new ResourceReference(obj.appointment);
@@ -3184,9 +2996,7 @@ export class AppointmentResponse extends DomainResource {
             }
             if (obj.participantType) {
                 this.participantType = [];
-                for (let o of obj.participantType || []) {
-                    this.participantType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.participantType || []) { this.participantType.push(new CodeableConcept(o)); }
             }
             if (obj.actor) {
                 this.actor = new ResourceReference(obj.actor);
@@ -3203,9 +3013,9 @@ export class AppointmentResponse extends DomainResource {
 }
 
 export class NetworkComponent extends BackboneElement {
-    public address: string;
-    public type: string;
-
+    public address?: string;
+    public type?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3232,15 +3042,13 @@ export class AgentComponent extends BackboneElement {
     public media?: Coding;
     public network?: NetworkComponent;
     public purposeOfUse?: CodeableConcept[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.role) {
                 this.role = [];
-                for (let o of obj.role || []) {
-                    this.role.push(new CodeableConcept(o));
-                }
+                for (let o of obj.role || []) { this.role.push(new CodeableConcept(o)); }
             }
             if (obj.reference) {
                 this.reference = new ResourceReference(obj.reference);
@@ -3271,9 +3079,7 @@ export class AgentComponent extends BackboneElement {
             }
             if (obj.purposeOfUse) {
                 this.purposeOfUse = [];
-                for (let o of obj.purposeOfUse || []) {
-                    this.purposeOfUse.push(new CodeableConcept(o));
-                }
+                for (let o of obj.purposeOfUse || []) { this.purposeOfUse.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -3284,7 +3090,7 @@ export class SourceComponent extends BackboneElement {
     public site?: string;
     public identifier: Identifier;
     public type?: Coding[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3296,9 +3102,7 @@ export class SourceComponent extends BackboneElement {
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new Coding(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new Coding(o)); }
             }
         }
     }
@@ -3308,7 +3112,7 @@ export class SourceComponent extends BackboneElement {
 export class DetailComponent extends BackboneElement {
     public type: string;
     public value: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3334,7 +3138,7 @@ export class EntityComponent extends BackboneElement {
     public description?: string;
     public query?: string;
     public detail?: DetailComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3355,9 +3159,7 @@ export class EntityComponent extends BackboneElement {
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new Coding(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new Coding(o)); }
             }
             if (obj.name) {
                 this.name = obj.name;
@@ -3370,12 +3172,11 @@ export class EntityComponent extends BackboneElement {
             }
             if (obj.detail) {
                 this.detail = [];
-                for (let o of obj.detail || []) {
-                    this.detail.push(new DetailComponent(o));
-                }
+                for (let o of obj.detail || []) { this.detail.push(new DetailComponent(o)); }
             }
         }
     }
+
 }
 
 export class AuditEvent extends DomainResource {
@@ -3390,7 +3191,7 @@ export class AuditEvent extends DomainResource {
     public agent: AgentComponent[];
     public source: SourceComponent;
     public entity?: EntityComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3399,9 +3200,7 @@ export class AuditEvent extends DomainResource {
             }
             if (obj.subtype) {
                 this.subtype = [];
-                for (let o of obj.subtype || []) {
-                    this.subtype.push(new Coding(o));
-                }
+                for (let o of obj.subtype || []) { this.subtype.push(new Coding(o)); }
             }
             if (obj.action) {
                 this.action = obj.action;
@@ -3417,24 +3216,18 @@ export class AuditEvent extends DomainResource {
             }
             if (obj.purposeOfEvent) {
                 this.purposeOfEvent = [];
-                for (let o of obj.purposeOfEvent || []) {
-                    this.purposeOfEvent.push(new CodeableConcept(o));
-                }
+                for (let o of obj.purposeOfEvent || []) { this.purposeOfEvent.push(new CodeableConcept(o)); }
             }
             if (obj.agent) {
                 this.agent = [];
-                for (let o of obj.agent || []) {
-                    this.agent.push(new AgentComponent(o));
-                }
+                for (let o of obj.agent || []) { this.agent.push(new AgentComponent(o)); }
             }
             if (obj.source) {
                 this.source = new SourceComponent(obj.source);
             }
             if (obj.entity) {
                 this.entity = [];
-                for (let o of obj.entity || []) {
-                    this.entity.push(new EntityComponent(o));
-                }
+                for (let o of obj.entity || []) { this.entity.push(new EntityComponent(o)); }
             }
         }
     }
@@ -3443,20 +3236,18 @@ export class AuditEvent extends DomainResource {
 
 export class Basic extends DomainResource {
     public resourceType = 'Basic';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public code: CodeableConcept;
-    public subject: ResourceReference;
-    public created: Date;
-    public author: ResourceReference;
-
+    public subject?: ResourceReference;
+    public created?: Date;
+    public author?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -3477,22 +3268,20 @@ export class Basic extends DomainResource {
 
 export class BodySite extends DomainResource {
     public resourceType = 'BodySite';
-    public identifier: Identifier[];
-    public active: boolean;
-    public code: CodeableConcept;
-    public qualifier: CodeableConcept[];
-    public description: string;
-    public image: Attachment[];
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public code?: CodeableConcept;
+    public qualifier?: CodeableConcept[];
+    public description?: string;
+    public image?: Attachment[];
     public patient: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -3502,18 +3291,14 @@ export class BodySite extends DomainResource {
             }
             if (obj.qualifier) {
                 this.qualifier = [];
-                for (let o of obj.qualifier || []) {
-                    this.qualifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.qualifier || []) { this.qualifier.push(new CodeableConcept(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.image) {
                 this.image = [];
-                for (let o of obj.image || []) {
-                    this.image.push(new Attachment(o));
-                }
+                for (let o of obj.image || []) { this.image.push(new Attachment(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
@@ -3525,9 +3310,9 @@ export class BodySite extends DomainResource {
 
 export class SoftwareComponent extends BackboneElement {
     public name: string;
-    public version: string;
-    public releaseDate: Date;
-
+    public version?: string;
+    public releaseDate?: Date;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3547,8 +3332,8 @@ export class SoftwareComponent extends BackboneElement {
 
 export class ImplementationComponent extends BackboneElement {
     public description: string;
-    public url: string;
-
+    public url?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3564,9 +3349,9 @@ export class ImplementationComponent extends BackboneElement {
 }
 
 export class CertificateComponent extends BackboneElement {
-    public type: string;
-    public blob: string;
-
+    public type?: string;
+    public blob?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3582,11 +3367,11 @@ export class CertificateComponent extends BackboneElement {
 }
 
 export class SecurityComponent extends BackboneElement {
-    public cors: boolean;
-    public service: CodeableConcept[];
-    public description: string;
-    public certificate: CertificateComponent[];
-
+    public cors?: boolean;
+    public service?: CodeableConcept[];
+    public description?: string;
+    public certificate?: CertificateComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3595,18 +3380,14 @@ export class SecurityComponent extends BackboneElement {
             }
             if (obj.service) {
                 this.service = [];
-                for (let o of obj.service || []) {
-                    this.service.push(new CodeableConcept(o));
-                }
+                for (let o of obj.service || []) { this.service.push(new CodeableConcept(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.certificate) {
                 this.certificate = [];
-                for (let o of obj.certificate || []) {
-                    this.certificate.push(new CertificateComponent(o));
-                }
+                for (let o of obj.certificate || []) { this.certificate.push(new CertificateComponent(o)); }
             }
         }
     }
@@ -3615,8 +3396,8 @@ export class SecurityComponent extends BackboneElement {
 
 export class ResourceInteractionComponent extends BackboneElement {
     public code: string;
-    public documentation: string;
-
+    public documentation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3633,10 +3414,10 @@ export class ResourceInteractionComponent extends BackboneElement {
 
 export class SearchParamComponent extends BackboneElement {
     public name: string;
-    public definition: string;
+    public definition?: string;
     public type: string;
-    public documentation: string;
-
+    public documentation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3659,21 +3440,21 @@ export class SearchParamComponent extends BackboneElement {
 
 export class ResourceComponent extends BackboneElement {
     public type: string;
-    public profile: ResourceReference;
-    public documentation: string;
+    public profile?: ResourceReference;
+    public documentation?: string;
     public interaction: ResourceInteractionComponent[];
-    public versioning: string;
-    public readHistory: boolean;
-    public updateCreate: boolean;
-    public conditionalCreate: boolean;
-    public conditionalRead: string;
-    public conditionalUpdate: boolean;
-    public conditionalDelete: string;
-    public referencePolicy: string[];
-    public searchInclude: string[];
-    public searchRevInclude: string[];
-    public searchParam: SearchParamComponent[];
-
+    public versioning?: string;
+    public readHistory?: boolean;
+    public updateCreate?: boolean;
+    public conditionalCreate?: boolean;
+    public conditionalRead?: string;
+    public conditionalUpdate?: boolean;
+    public conditionalDelete?: string;
+    public referencePolicy?: string[];
+    public searchInclude?: string[];
+    public searchRevInclude?: string[];
+    public searchParam?: SearchParamComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3688,9 +3469,7 @@ export class ResourceComponent extends BackboneElement {
             }
             if (obj.interaction) {
                 this.interaction = [];
-                for (let o of obj.interaction || []) {
-                    this.interaction.push(new ResourceInteractionComponent(o));
-                }
+                for (let o of obj.interaction || []) { this.interaction.push(new ResourceInteractionComponent(o)); }
             }
             if (obj.versioning) {
                 this.versioning = obj.versioning;
@@ -3724,9 +3503,7 @@ export class ResourceComponent extends BackboneElement {
             }
             if (obj.searchParam) {
                 this.searchParam = [];
-                for (let o of obj.searchParam || []) {
-                    this.searchParam.push(new SearchParamComponent(o));
-                }
+                for (let o of obj.searchParam || []) { this.searchParam.push(new SearchParamComponent(o)); }
             }
         }
     }
@@ -3735,8 +3512,8 @@ export class ResourceComponent extends BackboneElement {
 
 export class SystemInteractionComponent extends BackboneElement {
     public code: string;
-    public documentation: string;
-
+    public documentation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3754,7 +3531,7 @@ export class SystemInteractionComponent extends BackboneElement {
 export class OperationComponent extends BackboneElement {
     public name: string;
     public definition: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3771,14 +3548,14 @@ export class OperationComponent extends BackboneElement {
 
 export class RestComponent extends BackboneElement {
     public mode: string;
-    public documentation: string;
-    public security: SecurityComponent;
-    public resource: ResourceComponent[];
-    public interaction: SystemInteractionComponent[];
-    public searchParam: SearchParamComponent[];
-    public operation: OperationComponent[];
-    public compartment: string[];
-
+    public documentation?: string;
+    public security?: SecurityComponent;
+    public resource?: ResourceComponent[];
+    public interaction?: SystemInteractionComponent[];
+    public searchParam?: SearchParamComponent[];
+    public operation?: OperationComponent[];
+    public compartment?: string[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3793,27 +3570,19 @@ export class RestComponent extends BackboneElement {
             }
             if (obj.resource) {
                 this.resource = [];
-                for (let o of obj.resource || []) {
-                    this.resource.push(new ResourceComponent(o));
-                }
+                for (let o of obj.resource || []) { this.resource.push(new ResourceComponent(o)); }
             }
             if (obj.interaction) {
                 this.interaction = [];
-                for (let o of obj.interaction || []) {
-                    this.interaction.push(new SystemInteractionComponent(o));
-                }
+                for (let o of obj.interaction || []) { this.interaction.push(new SystemInteractionComponent(o)); }
             }
             if (obj.searchParam) {
                 this.searchParam = [];
-                for (let o of obj.searchParam || []) {
-                    this.searchParam.push(new SearchParamComponent(o));
-                }
+                for (let o of obj.searchParam || []) { this.searchParam.push(new SearchParamComponent(o)); }
             }
             if (obj.operation) {
                 this.operation = [];
-                for (let o of obj.operation || []) {
-                    this.operation.push(new OperationComponent(o));
-                }
+                for (let o of obj.operation || []) { this.operation.push(new OperationComponent(o)); }
             }
             if (obj.compartment) {
                 this.compartment = obj.compartment;
@@ -3826,7 +3595,7 @@ export class RestComponent extends BackboneElement {
 export class EndpointComponent extends BackboneElement {
     public protocol: Coding;
     public address: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3844,7 +3613,7 @@ export class EndpointComponent extends BackboneElement {
 export class SupportedMessageComponent extends BackboneElement {
     public mode: string;
     public definition: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3861,13 +3630,13 @@ export class SupportedMessageComponent extends BackboneElement {
 
 export class EventComponent extends BackboneElement {
     public code: Coding;
-    public category: string;
+    public category?: string;
     public mode: string;
     public focus: string;
     public request: ResourceReference;
     public response: ResourceReference;
-    public documentation: string;
-
+    public documentation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3898,20 +3667,18 @@ export class EventComponent extends BackboneElement {
 }
 
 export class MessagingComponent extends BackboneElement {
-    public endpoint: EndpointComponent[];
-    public reliableCache: number;
-    public documentation: string;
-    public supportedMessage: SupportedMessageComponent[];
-    public event: EventComponent[];
-
+    public endpoint?: EndpointComponent[];
+    public reliableCache?: number;
+    public documentation?: string;
+    public supportedMessage?: SupportedMessageComponent[];
+    public event?: EventComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new EndpointComponent(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new EndpointComponent(o)); }
             }
             if (obj.reliableCache) {
                 this.reliableCache = obj.reliableCache;
@@ -3921,15 +3688,11 @@ export class MessagingComponent extends BackboneElement {
             }
             if (obj.supportedMessage) {
                 this.supportedMessage = [];
-                for (let o of obj.supportedMessage || []) {
-                    this.supportedMessage.push(new SupportedMessageComponent(o));
-                }
+                for (let o of obj.supportedMessage || []) { this.supportedMessage.push(new SupportedMessageComponent(o)); }
             }
             if (obj.event) {
                 this.event = [];
-                for (let o of obj.event || []) {
-                    this.event.push(new EventComponent(o));
-                }
+                for (let o of obj.event || []) { this.event.push(new EventComponent(o)); }
             }
         }
     }
@@ -3938,9 +3701,9 @@ export class MessagingComponent extends BackboneElement {
 
 export class DocumentComponent extends BackboneElement {
     public mode: string;
-    public documentation: string;
+    public documentation?: string;
     public profile: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -3960,34 +3723,34 @@ export class DocumentComponent extends BackboneElement {
 
 export class CapabilityStatement extends DomainResource {
     public resourceType = 'CapabilityStatement';
-    public url: string;
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
+    public experimental?: boolean;
     public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
     public kind: string;
-    public instantiates: string[];
-    public software: SoftwareComponent;
-    public implementation: ImplementationComponent;
+    public instantiates?: string[];
+    public software?: SoftwareComponent;
+    public implementation?: ImplementationComponent;
     public fhirVersion: string;
     public acceptUnknown: string;
     public format: string[];
-    public patchFormat: string[];
-    public implementationGuide: string[];
-    public profile: ResourceReference[];
-    public rest: RestComponent[];
-    public messaging: MessagingComponent[];
-    public document: DocumentComponent[];
-
+    public patchFormat?: string[];
+    public implementationGuide?: string[];
+    public profile?: ResourceReference[];
+    public rest?: RestComponent[];
+    public messaging?: MessagingComponent[];
+    public document?: DocumentComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4017,24 +3780,18 @@ export class CapabilityStatement extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -4071,27 +3828,19 @@ export class CapabilityStatement extends DomainResource {
             }
             if (obj.profile) {
                 this.profile = [];
-                for (let o of obj.profile || []) {
-                    this.profile.push(new ResourceReference(o));
-                }
+                for (let o of obj.profile || []) { this.profile.push(new ResourceReference(o)); }
             }
             if (obj.rest) {
                 this.rest = [];
-                for (let o of obj.rest || []) {
-                    this.rest.push(new RestComponent(o));
-                }
+                for (let o of obj.rest || []) { this.rest.push(new RestComponent(o)); }
             }
             if (obj.messaging) {
                 this.messaging = [];
-                for (let o of obj.messaging || []) {
-                    this.messaging.push(new MessagingComponent(o));
-                }
+                for (let o of obj.messaging || []) { this.messaging.push(new MessagingComponent(o)); }
             }
             if (obj.document) {
                 this.document = [];
-                for (let o of obj.document || []) {
-                    this.document.push(new DocumentComponent(o));
-                }
+                for (let o of obj.document || []) { this.document.push(new DocumentComponent(o)); }
             }
         }
     }
@@ -4099,32 +3848,26 @@ export class CapabilityStatement extends DomainResource {
 }
 
 export class ActivityComponent extends BackboneElement {
-    public outcomeCodeableConcept: CodeableConcept[];
-    public outcomeReference: ResourceReference[];
-    public progress: Annotation[];
-    public reference: ResourceReference;
-    public detail: DetailComponent;
-
+    public outcomeCodeableConcept?: CodeableConcept[];
+    public outcomeReference?: ResourceReference[];
+    public progress?: Annotation[];
+    public reference?: ResourceReference;
+    public detail?: DetailComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.outcomeCodeableConcept) {
                 this.outcomeCodeableConcept = [];
-                for (let o of obj.outcomeCodeableConcept || []) {
-                    this.outcomeCodeableConcept.push(new CodeableConcept(o));
-                }
+                for (let o of obj.outcomeCodeableConcept || []) { this.outcomeCodeableConcept.push(new CodeableConcept(o)); }
             }
             if (obj.outcomeReference) {
                 this.outcomeReference = [];
-                for (let o of obj.outcomeReference || []) {
-                    this.outcomeReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.outcomeReference || []) { this.outcomeReference.push(new ResourceReference(o)); }
             }
             if (obj.progress) {
                 this.progress = [];
-                for (let o of obj.progress || []) {
-                    this.progress.push(new Annotation(o));
-                }
+                for (let o of obj.progress || []) { this.progress.push(new Annotation(o)); }
             }
             if (obj.reference) {
                 this.reference = new ResourceReference(obj.reference);
@@ -4139,59 +3882,49 @@ export class ActivityComponent extends BackboneElement {
 
 export class CarePlan extends DomainResource {
     public resourceType = 'CarePlan';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public replaces: ResourceReference[];
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public replaces?: ResourceReference[];
+    public partOf?: ResourceReference[];
     public status: string;
     public intent: string;
-    public category: CodeableConcept[];
-    public title: string;
-    public description: string;
+    public category?: CodeableConcept[];
+    public title?: string;
+    public description?: string;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public period: Period;
-    public author: ResourceReference[];
-    public careTeam: ResourceReference[];
-    public addresses: ResourceReference[];
-    public supportingInfo: ResourceReference[];
-    public goal: ResourceReference[];
-    public activity: ActivityComponent[];
-    public note: Annotation[];
-
+    public context?: ResourceReference;
+    public period?: Period;
+    public author?: ResourceReference[];
+    public careTeam?: ResourceReference[];
+    public addresses?: ResourceReference[];
+    public supportingInfo?: ResourceReference[];
+    public goal?: ResourceReference[];
+    public activity?: ActivityComponent[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -4201,9 +3934,7 @@ export class CarePlan extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.title) {
                 this.title = obj.title;
@@ -4222,45 +3953,31 @@ export class CarePlan extends DomainResource {
             }
             if (obj.author) {
                 this.author = [];
-                for (let o of obj.author || []) {
-                    this.author.push(new ResourceReference(o));
-                }
+                for (let o of obj.author || []) { this.author.push(new ResourceReference(o)); }
             }
             if (obj.careTeam) {
                 this.careTeam = [];
-                for (let o of obj.careTeam || []) {
-                    this.careTeam.push(new ResourceReference(o));
-                }
+                for (let o of obj.careTeam || []) { this.careTeam.push(new ResourceReference(o)); }
             }
             if (obj.addresses) {
                 this.addresses = [];
-                for (let o of obj.addresses || []) {
-                    this.addresses.push(new ResourceReference(o));
-                }
+                for (let o of obj.addresses || []) { this.addresses.push(new ResourceReference(o)); }
             }
             if (obj.supportingInfo) {
                 this.supportingInfo = [];
-                for (let o of obj.supportingInfo || []) {
-                    this.supportingInfo.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInfo || []) { this.supportingInfo.push(new ResourceReference(o)); }
             }
             if (obj.goal) {
                 this.goal = [];
-                for (let o of obj.goal || []) {
-                    this.goal.push(new ResourceReference(o));
-                }
+                for (let o of obj.goal || []) { this.goal.push(new ResourceReference(o)); }
             }
             if (obj.activity) {
                 this.activity = [];
-                for (let o of obj.activity || []) {
-                    this.activity.push(new ActivityComponent(o));
-                }
+                for (let o of obj.activity || []) { this.activity.push(new ActivityComponent(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -4269,36 +3986,32 @@ export class CarePlan extends DomainResource {
 
 export class CareTeam extends DomainResource {
     public resourceType = 'CareTeam';
-    public identifier: Identifier[];
-    public status: string;
-    public category: CodeableConcept[];
-    public name: string;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public period: Period;
-    public participant: ParticipantComponent[];
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public managingOrganization: ResourceReference[];
-    public note: Annotation[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public category?: CodeableConcept[];
+    public name?: string;
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public period?: Period;
+    public participant?: ParticipantComponent[];
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public managingOrganization?: ResourceReference[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.name) {
                 this.name = obj.name;
@@ -4314,33 +4027,23 @@ export class CareTeam extends DomainResource {
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.managingOrganization) {
                 this.managingOrganization = [];
-                for (let o of obj.managingOrganization || []) {
-                    this.managingOrganization.push(new ResourceReference(o));
-                }
+                for (let o of obj.managingOrganization || []) { this.managingOrganization.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -4349,30 +4052,30 @@ export class CareTeam extends DomainResource {
 
 export class ChargeItem extends DomainResource {
     public resourceType = 'ChargeItem';
-    public identifier: Identifier;
-    public definition: string[];
+    public identifier?: Identifier;
+    public definition?: string[];
     public status: string;
-    public partOf: ResourceReference[];
+    public partOf?: ResourceReference[];
     public code: CodeableConcept;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public participant: ParticipantComponent[];
-    public performingOrganization: ResourceReference;
-    public requestingOrganization: ResourceReference;
-    public quantity: Quantity;
-    public bodysite: CodeableConcept[];
-    public factorOverride: number;
-    public priceOverride: Money;
-    public overrideReason: string;
-    public enterer: ResourceReference;
-    public enteredDate: Date;
-    public reason: CodeableConcept[];
-    public service: ResourceReference[];
-    public account: ResourceReference[];
-    public note: Annotation[];
-    public supportingInformation: ResourceReference[];
-
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public participant?: ParticipantComponent[];
+    public performingOrganization?: ResourceReference;
+    public requestingOrganization?: ResourceReference;
+    public quantity?: Quantity;
+    public bodysite?: CodeableConcept[];
+    public factorOverride?: number;
+    public priceOverride?: Money;
+    public overrideReason?: string;
+    public enterer?: ResourceReference;
+    public enteredDate?: Date;
+    public reason?: CodeableConcept[];
+    public service?: ResourceReference[];
+    public account?: ResourceReference[];
+    public note?: Annotation[];
+    public supportingInformation?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4387,9 +4090,7 @@ export class ChargeItem extends DomainResource {
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -4405,9 +4106,7 @@ export class ChargeItem extends DomainResource {
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.performingOrganization) {
                 this.performingOrganization = new ResourceReference(obj.performingOrganization);
@@ -4420,9 +4119,7 @@ export class ChargeItem extends DomainResource {
             }
             if (obj.bodysite) {
                 this.bodysite = [];
-                for (let o of obj.bodysite || []) {
-                    this.bodysite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.bodysite || []) { this.bodysite.push(new CodeableConcept(o)); }
             }
             if (obj.factorOverride) {
                 this.factorOverride = obj.factorOverride;
@@ -4441,33 +4138,23 @@ export class ChargeItem extends DomainResource {
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.service) {
                 this.service = [];
-                for (let o of obj.service || []) {
-                    this.service.push(new ResourceReference(o));
-                }
+                for (let o of obj.service || []) { this.service.push(new ResourceReference(o)); }
             }
             if (obj.account) {
                 this.account = [];
-                for (let o of obj.account || []) {
-                    this.account.push(new ResourceReference(o));
-                }
+                for (let o of obj.account || []) { this.account.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.supportingInformation) {
                 this.supportingInformation = [];
-                for (let o of obj.supportingInformation || []) {
-                    this.supportingInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInformation || []) { this.supportingInformation.push(new ResourceReference(o)); }
             }
         }
     }
@@ -4475,10 +4162,10 @@ export class ChargeItem extends DomainResource {
 }
 
 export class RelatedClaimComponent extends BackboneElement {
-    public claim: ResourceReference;
-    public relationship: CodeableConcept;
-    public reference: Identifier;
-
+    public claim?: ResourceReference;
+    public relationship?: CodeableConcept;
+    public reference?: Identifier;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4498,9 +4185,9 @@ export class RelatedClaimComponent extends BackboneElement {
 
 export class PayeeComponent extends BackboneElement {
     public type: CodeableConcept;
-    public resourceType: Coding;
-    public party: ResourceReference;
-
+    public resourceType?: Coding;
+    public party?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4521,10 +4208,10 @@ export class PayeeComponent extends BackboneElement {
 export class CareTeamComponent extends BackboneElement {
     public sequence: number;
     public provider: ResourceReference;
-    public responsible: boolean;
-    public role: CodeableConcept;
-    public qualification: CodeableConcept;
-
+    public responsible?: boolean;
+    public role?: CodeableConcept;
+    public qualification?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4551,11 +4238,11 @@ export class CareTeamComponent extends BackboneElement {
 export class SpecialConditionComponent extends BackboneElement {
     public sequence: number;
     public category: CodeableConcept;
-    public code: CodeableConcept;
-    public timing: Element;
-    public value: Element;
-    public reason: CodeableConcept;
-
+    public code?: CodeableConcept;
+    public timing?: Element;
+    public value?: Element;
+    public reason?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4585,9 +4272,9 @@ export class SpecialConditionComponent extends BackboneElement {
 export class DiagnosisComponent extends BackboneElement {
     public sequence: number;
     public diagnosis: Element;
-    public type: CodeableConcept[];
-    public packageCode: CodeableConcept;
-
+    public type?: CodeableConcept[];
+    public packageCode?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4599,9 +4286,7 @@ export class DiagnosisComponent extends BackboneElement {
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.packageCode) {
                 this.packageCode = new CodeableConcept(obj.packageCode);
@@ -4613,9 +4298,9 @@ export class DiagnosisComponent extends BackboneElement {
 
 export class ProcedureComponent extends BackboneElement {
     public sequence: number;
-    public date: Date;
+    public date?: Date;
     public procedure: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4637,10 +4322,10 @@ export class InsuranceComponent extends BackboneElement {
     public sequence: number;
     public focal: boolean;
     public coverage: ResourceReference;
-    public businessArrangement: string;
-    public preAuthRef: string[];
-    public claimResponse: ResourceReference;
-
+    public businessArrangement?: string;
+    public preAuthRef?: string[];
+    public claimResponse?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4669,9 +4354,9 @@ export class InsuranceComponent extends BackboneElement {
 
 export class AccidentComponent extends BackboneElement {
     public date: Date;
-    public type: CodeableConcept;
-    public location: Element;
-
+    public type?: CodeableConcept;
+    public location?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4691,27 +4376,27 @@ export class AccidentComponent extends BackboneElement {
 
 export class ItemComponent extends BackboneElement {
     public sequence: number;
-    public careTeamLinkId: number[];
-    public diagnosisLinkId: number[];
-    public procedureLinkId: number[];
-    public informationLinkId: number[];
-    public revenue: CodeableConcept;
-    public category: CodeableConcept;
-    public service: CodeableConcept;
-    public modifier: CodeableConcept[];
-    public programCode: CodeableConcept[];
-    public serviced: Element;
-    public location: Element;
-    public quantity: SimpleQuantity;
-    public unitPrice: Money;
-    public factor: number;
-    public net: Money;
-    public udi: ResourceReference[];
-    public bodySite: CodeableConcept;
-    public subSite: CodeableConcept[];
-    public encounter: ResourceReference[];
-    public detail: DetailComponent[];
-
+    public careTeamLinkId?: number[];
+    public diagnosisLinkId?: number[];
+    public procedureLinkId?: number[];
+    public informationLinkId?: number[];
+    public revenue?: CodeableConcept;
+    public category?: CodeableConcept;
+    public service?: CodeableConcept;
+    public modifier?: CodeableConcept[];
+    public programCode?: CodeableConcept[];
+    public serviced?: Element;
+    public location?: Element;
+    public quantity?: SimpleQuantity;
+    public unitPrice?: Money;
+    public factor?: number;
+    public net?: Money;
+    public udi?: ResourceReference[];
+    public bodySite?: CodeableConcept;
+    public subSite?: CodeableConcept[];
+    public encounter?: ResourceReference[];
+    public detail?: DetailComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4741,15 +4426,11 @@ export class ItemComponent extends BackboneElement {
             }
             if (obj.modifier) {
                 this.modifier = [];
-                for (let o of obj.modifier || []) {
-                    this.modifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.modifier || []) { this.modifier.push(new CodeableConcept(o)); }
             }
             if (obj.programCode) {
                 this.programCode = [];
-                for (let o of obj.programCode || []) {
-                    this.programCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.programCode || []) { this.programCode.push(new CodeableConcept(o)); }
             }
             if (obj.serviced) {
                 this.serviced = new Element(obj.serviced);
@@ -4771,30 +4452,22 @@ export class ItemComponent extends BackboneElement {
             }
             if (obj.udi) {
                 this.udi = [];
-                for (let o of obj.udi || []) {
-                    this.udi.push(new ResourceReference(o));
-                }
+                for (let o of obj.udi || []) { this.udi.push(new ResourceReference(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = new CodeableConcept(obj.bodySite);
             }
             if (obj.subSite) {
                 this.subSite = [];
-                for (let o of obj.subSite || []) {
-                    this.subSite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.subSite || []) { this.subSite.push(new CodeableConcept(o)); }
             }
             if (obj.encounter) {
                 this.encounter = [];
-                for (let o of obj.encounter || []) {
-                    this.encounter.push(new ResourceReference(o));
-                }
+                for (let o of obj.encounter || []) { this.encounter.push(new ResourceReference(o)); }
             }
             if (obj.detail) {
                 this.detail = [];
-                for (let o of obj.detail || []) {
-                    this.detail.push(new DetailComponent(o));
-                }
+                for (let o of obj.detail || []) { this.detail.push(new DetailComponent(o)); }
             }
         }
     }
@@ -4803,45 +4476,43 @@ export class ItemComponent extends BackboneElement {
 
 export class Claim extends DomainResource {
     public resourceType = 'Claim';
-    public identifier: Identifier[];
-    public status: string;
-    public type: CodeableConcept;
-    public subType: CodeableConcept[];
-    public use: string;
-    public patient: ResourceReference;
-    public billablePeriod: Period;
-    public created: Date;
-    public enterer: ResourceReference;
-    public insurer: ResourceReference;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public priority: CodeableConcept;
-    public fundsReserve: CodeableConcept;
-    public related: RelatedClaimComponent[];
-    public prescription: ResourceReference;
-    public originalPrescription: ResourceReference;
-    public payee: PayeeComponent;
-    public referral: ResourceReference;
-    public facility: ResourceReference;
-    public careTeam: CareTeamComponent[];
-    public information: SpecialConditionComponent[];
-    public diagnosis: DiagnosisComponent[];
-    public procedure: ProcedureComponent[];
-    public insurance: InsuranceComponent[];
-    public accident: AccidentComponent;
-    public employmentImpacted: Period;
-    public hospitalization: Period;
-    public item: ItemComponent[];
-    public total: Money;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public type?: CodeableConcept;
+    public subType?: CodeableConcept[];
+    public use?: string;
+    public patient?: ResourceReference;
+    public billablePeriod?: Period;
+    public created?: Date;
+    public enterer?: ResourceReference;
+    public insurer?: ResourceReference;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public priority?: CodeableConcept;
+    public fundsReserve?: CodeableConcept;
+    public related?: RelatedClaimComponent[];
+    public prescription?: ResourceReference;
+    public originalPrescription?: ResourceReference;
+    public payee?: PayeeComponent;
+    public referral?: ResourceReference;
+    public facility?: ResourceReference;
+    public careTeam?: CareTeamComponent[];
+    public information?: SpecialConditionComponent[];
+    public diagnosis?: DiagnosisComponent[];
+    public procedure?: ProcedureComponent[];
+    public insurance?: InsuranceComponent[];
+    public accident?: AccidentComponent;
+    public employmentImpacted?: Period;
+    public hospitalization?: Period;
+    public item?: ItemComponent[];
+    public total?: Money;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -4851,9 +4522,7 @@ export class Claim extends DomainResource {
             }
             if (obj.subType) {
                 this.subType = [];
-                for (let o of obj.subType || []) {
-                    this.subType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.subType || []) { this.subType.push(new CodeableConcept(o)); }
             }
             if (obj.use) {
                 this.use = obj.use;
@@ -4887,9 +4556,7 @@ export class Claim extends DomainResource {
             }
             if (obj.related) {
                 this.related = [];
-                for (let o of obj.related || []) {
-                    this.related.push(new RelatedClaimComponent(o));
-                }
+                for (let o of obj.related || []) { this.related.push(new RelatedClaimComponent(o)); }
             }
             if (obj.prescription) {
                 this.prescription = new ResourceReference(obj.prescription);
@@ -4908,33 +4575,23 @@ export class Claim extends DomainResource {
             }
             if (obj.careTeam) {
                 this.careTeam = [];
-                for (let o of obj.careTeam || []) {
-                    this.careTeam.push(new CareTeamComponent(o));
-                }
+                for (let o of obj.careTeam || []) { this.careTeam.push(new CareTeamComponent(o)); }
             }
             if (obj.information) {
                 this.information = [];
-                for (let o of obj.information || []) {
-                    this.information.push(new SpecialConditionComponent(o));
-                }
+                for (let o of obj.information || []) { this.information.push(new SpecialConditionComponent(o)); }
             }
             if (obj.diagnosis) {
                 this.diagnosis = [];
-                for (let o of obj.diagnosis || []) {
-                    this.diagnosis.push(new DiagnosisComponent(o));
-                }
+                for (let o of obj.diagnosis || []) { this.diagnosis.push(new DiagnosisComponent(o)); }
             }
             if (obj.procedure) {
                 this.procedure = [];
-                for (let o of obj.procedure || []) {
-                    this.procedure.push(new ProcedureComponent(o));
-                }
+                for (let o of obj.procedure || []) { this.procedure.push(new ProcedureComponent(o)); }
             }
             if (obj.insurance) {
                 this.insurance = [];
-                for (let o of obj.insurance || []) {
-                    this.insurance.push(new InsuranceComponent(o));
-                }
+                for (let o of obj.insurance || []) { this.insurance.push(new InsuranceComponent(o)); }
             }
             if (obj.accident) {
                 this.accident = new AccidentComponent(obj.accident);
@@ -4947,9 +4604,7 @@ export class Claim extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
             if (obj.total) {
                 this.total = new Money(obj.total);
@@ -4961,10 +4616,10 @@ export class Claim extends DomainResource {
 
 export class AdjudicationComponent extends BackboneElement {
     public category: CodeableConcept;
-    public reason: CodeableConcept;
-    public amount: Money;
-    public value: number;
-
+    public reason?: CodeableConcept;
+    public amount?: Money;
+    public value?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -4986,14 +4641,14 @@ export class AdjudicationComponent extends BackboneElement {
 }
 
 export class AddedItemsDetailComponent extends BackboneElement {
-    public revenue: CodeableConcept;
-    public category: CodeableConcept;
-    public service: CodeableConcept;
-    public modifier: CodeableConcept[];
-    public fee: Money;
-    public noteNumber: number[];
-    public adjudication: AdjudicationComponent[];
-
+    public revenue?: CodeableConcept;
+    public category?: CodeableConcept;
+    public service?: CodeableConcept;
+    public modifier?: CodeableConcept[];
+    public fee?: Money;
+    public noteNumber?: number[];
+    public adjudication?: AdjudicationComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5008,9 +4663,7 @@ export class AddedItemsDetailComponent extends BackboneElement {
             }
             if (obj.modifier) {
                 this.modifier = [];
-                for (let o of obj.modifier || []) {
-                    this.modifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.modifier || []) { this.modifier.push(new CodeableConcept(o)); }
             }
             if (obj.fee) {
                 this.fee = new Money(obj.fee);
@@ -5020,9 +4673,7 @@ export class AddedItemsDetailComponent extends BackboneElement {
             }
             if (obj.adjudication) {
                 this.adjudication = [];
-                for (let o of obj.adjudication || []) {
-                    this.adjudication.push(new AdjudicationComponent(o));
-                }
+                for (let o of obj.adjudication || []) { this.adjudication.push(new AdjudicationComponent(o)); }
             }
         }
     }
@@ -5030,16 +4681,16 @@ export class AddedItemsDetailComponent extends BackboneElement {
 }
 
 export class AddedItemComponent extends BackboneElement {
-    public sequenceLinkId: number[];
-    public revenue: CodeableConcept;
-    public category: CodeableConcept;
-    public service: CodeableConcept;
-    public modifier: CodeableConcept[];
-    public fee: Money;
-    public noteNumber: number[];
-    public adjudication: AdjudicationComponent[];
-    public detail: AddedItemsDetailComponent[];
-
+    public sequenceLinkId?: number[];
+    public revenue?: CodeableConcept;
+    public category?: CodeableConcept;
+    public service?: CodeableConcept;
+    public modifier?: CodeableConcept[];
+    public fee?: Money;
+    public noteNumber?: number[];
+    public adjudication?: AdjudicationComponent[];
+    public detail?: AddedItemsDetailComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5057,9 +4708,7 @@ export class AddedItemComponent extends BackboneElement {
             }
             if (obj.modifier) {
                 this.modifier = [];
-                for (let o of obj.modifier || []) {
-                    this.modifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.modifier || []) { this.modifier.push(new CodeableConcept(o)); }
             }
             if (obj.fee) {
                 this.fee = new Money(obj.fee);
@@ -5069,15 +4718,11 @@ export class AddedItemComponent extends BackboneElement {
             }
             if (obj.adjudication) {
                 this.adjudication = [];
-                for (let o of obj.adjudication || []) {
-                    this.adjudication.push(new AdjudicationComponent(o));
-                }
+                for (let o of obj.adjudication || []) { this.adjudication.push(new AdjudicationComponent(o)); }
             }
             if (obj.detail) {
                 this.detail = [];
-                for (let o of obj.detail || []) {
-                    this.detail.push(new AddedItemsDetailComponent(o));
-                }
+                for (let o of obj.detail || []) { this.detail.push(new AddedItemsDetailComponent(o)); }
             }
         }
     }
@@ -5085,11 +4730,11 @@ export class AddedItemComponent extends BackboneElement {
 }
 
 export class ErrorComponent extends BackboneElement {
-    public sequenceLinkId: number;
-    public detailSequenceLinkId: number;
-    public subdetailSequenceLinkId: number;
+    public sequenceLinkId?: number;
+    public detailSequenceLinkId?: number;
+    public subdetailSequenceLinkId?: number;
     public code: CodeableConcept;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5111,13 +4756,13 @@ export class ErrorComponent extends BackboneElement {
 }
 
 export class PaymentComponent extends BackboneElement {
-    public type: CodeableConcept;
-    public adjustment: Money;
-    public adjustmentReason: CodeableConcept;
-    public date: Date;
-    public amount: Money;
-    public identifier: Identifier;
-
+    public type?: CodeableConcept;
+    public adjustment?: Money;
+    public adjustmentReason?: CodeableConcept;
+    public date?: Date;
+    public amount?: Money;
+    public identifier?: Identifier;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5145,11 +4790,11 @@ export class PaymentComponent extends BackboneElement {
 }
 
 export class NoteComponent extends BackboneElement {
-    public number: number;
-    public type: CodeableConcept;
-    public text: string;
-    public language: CodeableConcept;
-
+    public number?: number;
+    public type?: CodeableConcept;
+    public text?: string;
+    public language?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5172,38 +4817,36 @@ export class NoteComponent extends BackboneElement {
 
 export class ClaimResponse extends DomainResource {
     public resourceType = 'ClaimResponse';
-    public identifier: Identifier[];
-    public status: string;
-    public patient: ResourceReference;
-    public created: Date;
-    public insurer: ResourceReference;
-    public requestProvider: ResourceReference;
-    public requestOrganization: ResourceReference;
-    public request: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public payeeType: CodeableConcept;
-    public item: ItemComponent[];
-    public addItem: AddedItemComponent[];
-    public error: ErrorComponent[];
-    public totalCost: Money;
-    public unallocDeductable: Money;
-    public totalBenefit: Money;
-    public payment: PaymentComponent;
-    public reserved: Coding;
-    public form: CodeableConcept;
-    public processNote: NoteComponent[];
-    public communicationRequest: ResourceReference[];
-    public insurance: InsuranceComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public patient?: ResourceReference;
+    public created?: Date;
+    public insurer?: ResourceReference;
+    public requestProvider?: ResourceReference;
+    public requestOrganization?: ResourceReference;
+    public request?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public payeeType?: CodeableConcept;
+    public item?: ItemComponent[];
+    public addItem?: AddedItemComponent[];
+    public error?: ErrorComponent[];
+    public totalCost?: Money;
+    public unallocDeductable?: Money;
+    public totalBenefit?: Money;
+    public payment?: PaymentComponent;
+    public reserved?: Coding;
+    public form?: CodeableConcept;
+    public processNote?: NoteComponent[];
+    public communicationRequest?: ResourceReference[];
+    public insurance?: InsuranceComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -5237,21 +4880,15 @@ export class ClaimResponse extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
             if (obj.addItem) {
                 this.addItem = [];
-                for (let o of obj.addItem || []) {
-                    this.addItem.push(new AddedItemComponent(o));
-                }
+                for (let o of obj.addItem || []) { this.addItem.push(new AddedItemComponent(o)); }
             }
             if (obj.error) {
                 this.error = [];
-                for (let o of obj.error || []) {
-                    this.error.push(new ErrorComponent(o));
-                }
+                for (let o of obj.error || []) { this.error.push(new ErrorComponent(o)); }
             }
             if (obj.totalCost) {
                 this.totalCost = new Money(obj.totalCost);
@@ -5273,21 +4910,15 @@ export class ClaimResponse extends DomainResource {
             }
             if (obj.processNote) {
                 this.processNote = [];
-                for (let o of obj.processNote || []) {
-                    this.processNote.push(new NoteComponent(o));
-                }
+                for (let o of obj.processNote || []) { this.processNote.push(new NoteComponent(o)); }
             }
             if (obj.communicationRequest) {
                 this.communicationRequest = [];
-                for (let o of obj.communicationRequest || []) {
-                    this.communicationRequest.push(new ResourceReference(o));
-                }
+                for (let o of obj.communicationRequest || []) { this.communicationRequest.push(new ResourceReference(o)); }
             }
             if (obj.insurance) {
                 this.insurance = [];
-                for (let o of obj.insurance || []) {
-                    this.insurance.push(new InsuranceComponent(o));
-                }
+                for (let o of obj.insurance || []) { this.insurance.push(new InsuranceComponent(o)); }
             }
         }
     }
@@ -5296,8 +4927,8 @@ export class ClaimResponse extends DomainResource {
 
 export class InvestigationComponent extends BackboneElement {
     public code: CodeableConcept;
-    public item: ResourceReference[];
-
+    public item?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5306,9 +4937,7 @@ export class InvestigationComponent extends BackboneElement {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ResourceReference(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ResourceReference(o)); }
             }
         }
     }
@@ -5317,8 +4946,8 @@ export class InvestigationComponent extends BackboneElement {
 
 export class FindingComponent extends BackboneElement {
     public item: Element;
-    public basis: string;
-
+    public basis?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5335,34 +4964,32 @@ export class FindingComponent extends BackboneElement {
 
 export class ClinicalImpression extends DomainResource {
     public resourceType = 'ClinicalImpression';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public code: CodeableConcept;
-    public description: string;
+    public code?: CodeableConcept;
+    public description?: string;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public effective: Element;
-    public date: Date;
-    public assessor: ResourceReference;
-    public previous: ResourceReference;
-    public problem: ResourceReference[];
-    public investigation: InvestigationComponent[];
-    public protocol: string[];
-    public summary: string;
-    public finding: FindingComponent[];
-    public prognosisCodeableConcept: CodeableConcept[];
-    public prognosisReference: ResourceReference[];
-    public action: ResourceReference[];
-    public note: Annotation[];
-
+    public context?: ResourceReference;
+    public effective?: Element;
+    public date?: Date;
+    public assessor?: ResourceReference;
+    public previous?: ResourceReference;
+    public problem?: ResourceReference[];
+    public investigation?: InvestigationComponent[];
+    public protocol?: string[];
+    public summary?: string;
+    public finding?: FindingComponent[];
+    public prognosisCodeableConcept?: CodeableConcept[];
+    public prognosisReference?: ResourceReference[];
+    public action?: ResourceReference[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -5393,15 +5020,11 @@ export class ClinicalImpression extends DomainResource {
             }
             if (obj.problem) {
                 this.problem = [];
-                for (let o of obj.problem || []) {
-                    this.problem.push(new ResourceReference(o));
-                }
+                for (let o of obj.problem || []) { this.problem.push(new ResourceReference(o)); }
             }
             if (obj.investigation) {
                 this.investigation = [];
-                for (let o of obj.investigation || []) {
-                    this.investigation.push(new InvestigationComponent(o));
-                }
+                for (let o of obj.investigation || []) { this.investigation.push(new InvestigationComponent(o)); }
             }
             if (obj.protocol) {
                 this.protocol = obj.protocol;
@@ -5411,33 +5034,23 @@ export class ClinicalImpression extends DomainResource {
             }
             if (obj.finding) {
                 this.finding = [];
-                for (let o of obj.finding || []) {
-                    this.finding.push(new FindingComponent(o));
-                }
+                for (let o of obj.finding || []) { this.finding.push(new FindingComponent(o)); }
             }
             if (obj.prognosisCodeableConcept) {
                 this.prognosisCodeableConcept = [];
-                for (let o of obj.prognosisCodeableConcept || []) {
-                    this.prognosisCodeableConcept.push(new CodeableConcept(o));
-                }
+                for (let o of obj.prognosisCodeableConcept || []) { this.prognosisCodeableConcept.push(new CodeableConcept(o)); }
             }
             if (obj.prognosisReference) {
                 this.prognosisReference = [];
-                for (let o of obj.prognosisReference || []) {
-                    this.prognosisReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.prognosisReference || []) { this.prognosisReference.push(new ResourceReference(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new ResourceReference(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -5446,7 +5059,7 @@ export class ClinicalImpression extends DomainResource {
 
 export class PayloadComponent extends BackboneElement {
     public content: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5460,53 +5073,45 @@ export class PayloadComponent extends BackboneElement {
 
 export class Communication extends DomainResource {
     public resourceType = 'Communication';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public partOf?: ResourceReference[];
     public status: string;
-    public notDone: boolean;
-    public notDoneReason: CodeableConcept;
-    public category: CodeableConcept[];
-    public medium: CodeableConcept[];
-    public subject: ResourceReference;
-    public recipient: ResourceReference[];
-    public topic: ResourceReference[];
-    public context: ResourceReference;
-    public sent: Date;
-    public received: Date;
-    public sender: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public payload: PayloadComponent[];
-    public note: Annotation[];
-
+    public notDone?: boolean;
+    public notDoneReason?: CodeableConcept;
+    public category?: CodeableConcept[];
+    public medium?: CodeableConcept[];
+    public subject?: ResourceReference;
+    public recipient?: ResourceReference[];
+    public topic?: ResourceReference[];
+    public context?: ResourceReference;
+    public sent?: Date;
+    public received?: Date;
+    public sender?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public payload?: PayloadComponent[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -5519,30 +5124,22 @@ export class Communication extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.medium) {
                 this.medium = [];
-                for (let o of obj.medium || []) {
-                    this.medium.push(new CodeableConcept(o));
-                }
+                for (let o of obj.medium || []) { this.medium.push(new CodeableConcept(o)); }
             }
             if (obj.subject) {
                 this.subject = new ResourceReference(obj.subject);
             }
             if (obj.recipient) {
                 this.recipient = [];
-                for (let o of obj.recipient || []) {
-                    this.recipient.push(new ResourceReference(o));
-                }
+                for (let o of obj.recipient || []) { this.recipient.push(new ResourceReference(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new ResourceReference(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new ResourceReference(o)); }
             }
             if (obj.context) {
                 this.context = new ResourceReference(obj.context);
@@ -5558,27 +5155,19 @@ export class Communication extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.payload) {
                 this.payload = [];
-                for (let o of obj.payload || []) {
-                    this.payload.push(new PayloadComponent(o));
-                }
+                for (let o of obj.payload || []) { this.payload.push(new PayloadComponent(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -5587,8 +5176,8 @@ export class Communication extends DomainResource {
 
 export class RequesterComponent extends BackboneElement {
     public agent: ResourceReference;
-    public onBehalfOf: ResourceReference;
-
+    public onBehalfOf?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5605,47 +5194,41 @@ export class RequesterComponent extends BackboneElement {
 
 export class CommunicationRequest extends DomainResource {
     public resourceType = 'CommunicationRequest';
-    public identifier: Identifier[];
-    public basedOn: ResourceReference[];
-    public replaces: ResourceReference[];
-    public groupIdentifier: Identifier;
+    public identifier?: Identifier[];
+    public basedOn?: ResourceReference[];
+    public replaces?: ResourceReference[];
+    public groupIdentifier?: Identifier;
     public status: string;
-    public category: CodeableConcept[];
-    public priority: string;
-    public medium: CodeableConcept[];
-    public subject: ResourceReference;
-    public recipient: ResourceReference[];
-    public topic: ResourceReference[];
-    public context: ResourceReference;
-    public payload: PayloadComponent[];
-    public occurrence: Element;
-    public authoredOn: Date;
-    public sender: ResourceReference;
-    public requester: RequesterComponent;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public note: Annotation[];
-
+    public category?: CodeableConcept[];
+    public priority?: string;
+    public medium?: CodeableConcept[];
+    public subject?: ResourceReference;
+    public recipient?: ResourceReference[];
+    public topic?: ResourceReference[];
+    public context?: ResourceReference;
+    public payload?: PayloadComponent[];
+    public occurrence?: Element;
+    public authoredOn?: Date;
+    public sender?: ResourceReference;
+    public requester?: RequesterComponent;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
@@ -5655,42 +5238,32 @@ export class CommunicationRequest extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.priority) {
                 this.priority = obj.priority;
             }
             if (obj.medium) {
                 this.medium = [];
-                for (let o of obj.medium || []) {
-                    this.medium.push(new CodeableConcept(o));
-                }
+                for (let o of obj.medium || []) { this.medium.push(new CodeableConcept(o)); }
             }
             if (obj.subject) {
                 this.subject = new ResourceReference(obj.subject);
             }
             if (obj.recipient) {
                 this.recipient = [];
-                for (let o of obj.recipient || []) {
-                    this.recipient.push(new ResourceReference(o));
-                }
+                for (let o of obj.recipient || []) { this.recipient.push(new ResourceReference(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new ResourceReference(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new ResourceReference(o)); }
             }
             if (obj.context) {
                 this.context = new ResourceReference(obj.context);
             }
             if (obj.payload) {
                 this.payload = [];
-                for (let o of obj.payload || []) {
-                    this.payload.push(new PayloadComponent(o));
-                }
+                for (let o of obj.payload || []) { this.payload.push(new PayloadComponent(o)); }
             }
             if (obj.occurrence) {
                 this.occurrence = new Element(obj.occurrence);
@@ -5706,21 +5279,15 @@ export class CommunicationRequest extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -5731,20 +5298,20 @@ export class CompartmentDefinition extends DomainResource {
     public resourceType = 'CompartmentDefinition';
     public url: string;
     public name: string;
-    public title: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public purpose: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public purpose?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
     public code: string;
     public search: boolean;
-    public resource: ResourceComponent[];
-
+    public resource?: ResourceComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5771,9 +5338,7 @@ export class CompartmentDefinition extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
@@ -5783,15 +5348,11 @@ export class CompartmentDefinition extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.code) {
                 this.code = obj.code;
@@ -5801,9 +5362,7 @@ export class CompartmentDefinition extends DomainResource {
             }
             if (obj.resource) {
                 this.resource = [];
-                for (let o of obj.resource || []) {
-                    this.resource.push(new ResourceComponent(o));
-                }
+                for (let o of obj.resource || []) { this.resource.push(new ResourceComponent(o)); }
             }
         }
     }
@@ -5812,9 +5371,9 @@ export class CompartmentDefinition extends DomainResource {
 
 export class AttesterComponent extends BackboneElement {
     public mode: string[];
-    public time: Date;
-    public party: ResourceReference;
-
+    public time?: Date;
+    public party?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5835,7 +5394,7 @@ export class AttesterComponent extends BackboneElement {
 export class RelatesToComponent extends BackboneElement {
     public code: string;
     public target: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5851,15 +5410,15 @@ export class RelatesToComponent extends BackboneElement {
 }
 
 export class SectionComponent extends BackboneElement {
-    public title: string;
-    public code: CodeableConcept;
-    public text: Narrative;
-    public mode: string;
-    public orderedBy: CodeableConcept;
-    public entry: ResourceReference[];
-    public emptyReason: CodeableConcept;
-    public section: SectionComponent[];
-
+    public title?: string;
+    public code?: CodeableConcept;
+    public text?: Narrative;
+    public mode?: string;
+    public orderedBy?: CodeableConcept;
+    public entry?: ResourceReference[];
+    public emptyReason?: CodeableConcept;
+    public section?: SectionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5880,18 +5439,14 @@ export class SectionComponent extends BackboneElement {
             }
             if (obj.entry) {
                 this.entry = [];
-                for (let o of obj.entry || []) {
-                    this.entry.push(new ResourceReference(o));
-                }
+                for (let o of obj.entry || []) { this.entry.push(new ResourceReference(o)); }
             }
             if (obj.emptyReason) {
                 this.emptyReason = new CodeableConcept(obj.emptyReason);
             }
             if (obj.section) {
                 this.section = [];
-                for (let o of obj.section || []) {
-                    this.section.push(new SectionComponent(o));
-                }
+                for (let o of obj.section || []) { this.section.push(new SectionComponent(o)); }
             }
         }
     }
@@ -5900,22 +5455,22 @@ export class SectionComponent extends BackboneElement {
 
 export class Composition extends DomainResource {
     public resourceType = 'Composition';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public status: string;
     public type: CodeableConcept;
-    public class: CodeableConcept;
+    public class?: CodeableConcept;
     public subject: ResourceReference;
-    public encounter: ResourceReference;
+    public encounter?: ResourceReference;
     public date: Date;
     public author: ResourceReference[];
     public title: string;
-    public confidentiality: string;
-    public attester: AttesterComponent[];
-    public custodian: ResourceReference;
-    public relatesTo: RelatesToComponent[];
-    public event: EventComponent[];
-    public section: SectionComponent[];
-
+    public confidentiality?: string;
+    public attester?: AttesterComponent[];
+    public custodian?: ResourceReference;
+    public relatesTo?: RelatesToComponent[];
+    public event?: EventComponent[];
+    public section?: SectionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5942,9 +5497,7 @@ export class Composition extends DomainResource {
             }
             if (obj.author) {
                 this.author = [];
-                for (let o of obj.author || []) {
-                    this.author.push(new ResourceReference(o));
-                }
+                for (let o of obj.author || []) { this.author.push(new ResourceReference(o)); }
             }
             if (obj.title) {
                 this.title = obj.title;
@@ -5954,30 +5507,22 @@ export class Composition extends DomainResource {
             }
             if (obj.attester) {
                 this.attester = [];
-                for (let o of obj.attester || []) {
-                    this.attester.push(new AttesterComponent(o));
-                }
+                for (let o of obj.attester || []) { this.attester.push(new AttesterComponent(o)); }
             }
             if (obj.custodian) {
                 this.custodian = new ResourceReference(obj.custodian);
             }
             if (obj.relatesTo) {
                 this.relatesTo = [];
-                for (let o of obj.relatesTo || []) {
-                    this.relatesTo.push(new RelatesToComponent(o));
-                }
+                for (let o of obj.relatesTo || []) { this.relatesTo.push(new RelatesToComponent(o)); }
             }
             if (obj.event) {
                 this.event = [];
-                for (let o of obj.event || []) {
-                    this.event.push(new EventComponent(o));
-                }
+                for (let o of obj.event || []) { this.event.push(new EventComponent(o)); }
             }
             if (obj.section) {
                 this.section = [];
-                for (let o of obj.section || []) {
-                    this.section.push(new SectionComponent(o));
-                }
+                for (let o of obj.section || []) { this.section.push(new SectionComponent(o)); }
             }
         }
     }
@@ -5985,9 +5530,9 @@ export class Composition extends DomainResource {
 }
 
 export class StageComponent extends BackboneElement {
-    public summary: CodeableConcept;
-    public assessment: ResourceReference[];
-
+    public summary?: CodeableConcept;
+    public assessment?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -5996,9 +5541,7 @@ export class StageComponent extends BackboneElement {
             }
             if (obj.assessment) {
                 this.assessment = [];
-                for (let o of obj.assessment || []) {
-                    this.assessment.push(new ResourceReference(o));
-                }
+                for (let o of obj.assessment || []) { this.assessment.push(new ResourceReference(o)); }
             }
         }
     }
@@ -6006,23 +5549,19 @@ export class StageComponent extends BackboneElement {
 }
 
 export class EvidenceComponent extends BackboneElement {
-    public code: CodeableConcept[];
-    public detail: ResourceReference[];
-
+    public code?: CodeableConcept[];
+    public detail?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new CodeableConcept(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new CodeableConcept(o)); }
             }
             if (obj.detail) {
                 this.detail = [];
-                for (let o of obj.detail || []) {
-                    this.detail.push(new ResourceReference(o));
-                }
+                for (let o of obj.detail || []) { this.detail.push(new ResourceReference(o)); }
             }
         }
     }
@@ -6031,31 +5570,29 @@ export class EvidenceComponent extends BackboneElement {
 
 export class Condition extends DomainResource {
     public resourceType = 'Condition';
-    public identifier: Identifier[];
-    public clinicalStatus: string;
-    public verificationStatus: string;
-    public category: CodeableConcept[];
-    public severity: CodeableConcept;
-    public code: CodeableConcept;
-    public bodySite: CodeableConcept[];
+    public identifier?: Identifier[];
+    public clinicalStatus?: string;
+    public verificationStatus?: string;
+    public category?: CodeableConcept[];
+    public severity?: CodeableConcept;
+    public code?: CodeableConcept;
+    public bodySite?: CodeableConcept[];
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public onset: Element;
-    public abatement: Element;
-    public assertedDate: Date;
-    public asserter: ResourceReference;
-    public stage: StageComponent;
-    public evidence: EvidenceComponent[];
-    public note: Annotation[];
-
+    public context?: ResourceReference;
+    public onset?: Element;
+    public abatement?: Element;
+    public assertedDate?: Date;
+    public asserter?: ResourceReference;
+    public stage?: StageComponent;
+    public evidence?: EvidenceComponent[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.clinicalStatus) {
                 this.clinicalStatus = obj.clinicalStatus;
@@ -6065,9 +5602,7 @@ export class Condition extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.severity) {
                 this.severity = new CodeableConcept(obj.severity);
@@ -6077,9 +5612,7 @@ export class Condition extends DomainResource {
             }
             if (obj.bodySite) {
                 this.bodySite = [];
-                for (let o of obj.bodySite || []) {
-                    this.bodySite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.bodySite || []) { this.bodySite.push(new CodeableConcept(o)); }
             }
             if (obj.subject) {
                 this.subject = new ResourceReference(obj.subject);
@@ -6104,15 +5637,11 @@ export class Condition extends DomainResource {
             }
             if (obj.evidence) {
                 this.evidence = [];
-                for (let o of obj.evidence || []) {
-                    this.evidence.push(new EvidenceComponent(o));
-                }
+                for (let o of obj.evidence || []) { this.evidence.push(new EvidenceComponent(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -6122,7 +5651,7 @@ export class Condition extends DomainResource {
 export class ActorComponent extends BackboneElement {
     public role: CodeableConcept;
     public reference: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6138,9 +5667,9 @@ export class ActorComponent extends BackboneElement {
 }
 
 export class PolicyComponent extends BackboneElement {
-    public authority: string;
-    public uri: string;
-
+    public authority?: string;
+    public uri?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6158,7 +5687,7 @@ export class PolicyComponent extends BackboneElement {
 export class DataComponent extends BackboneElement {
     public meaning: string;
     public reference: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6176,7 +5705,7 @@ export class DataComponent extends BackboneElement {
 export class ExceptActorComponent extends BackboneElement {
     public role: CodeableConcept;
     public reference: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6194,7 +5723,7 @@ export class ExceptActorComponent extends BackboneElement {
 export class ExceptDataComponent extends BackboneElement {
     public meaning: string;
     public reference: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6211,16 +5740,16 @@ export class ExceptDataComponent extends BackboneElement {
 
 export class ExceptComponent extends BackboneElement {
     public type: string;
-    public period: Period;
-    public actor: ExceptActorComponent[];
-    public action: CodeableConcept[];
-    public securityLabel: Coding[];
-    public purpose: Coding[];
-    public class: Coding[];
-    public code: Coding[];
-    public dataPeriod: Period;
-    public data: ExceptDataComponent[];
-
+    public period?: Period;
+    public actor?: ExceptActorComponent[];
+    public action?: CodeableConcept[];
+    public securityLabel?: Coding[];
+    public purpose?: Coding[];
+    public class?: Coding[];
+    public code?: Coding[];
+    public dataPeriod?: Period;
+    public data?: ExceptDataComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6232,48 +5761,34 @@ export class ExceptComponent extends BackboneElement {
             }
             if (obj.actor) {
                 this.actor = [];
-                for (let o of obj.actor || []) {
-                    this.actor.push(new ExceptActorComponent(o));
-                }
+                for (let o of obj.actor || []) { this.actor.push(new ExceptActorComponent(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new CodeableConcept(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new CodeableConcept(o)); }
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new Coding(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new Coding(o)); }
             }
             if (obj.purpose) {
                 this.purpose = [];
-                for (let o of obj.purpose || []) {
-                    this.purpose.push(new Coding(o));
-                }
+                for (let o of obj.purpose || []) { this.purpose.push(new Coding(o)); }
             }
             if (obj.class) {
                 this.class = [];
-                for (let o of obj.class || []) {
-                    this.class.push(new Coding(o));
-                }
+                for (let o of obj.class || []) { this.class.push(new Coding(o)); }
             }
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new Coding(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new Coding(o)); }
             }
             if (obj.dataPeriod) {
                 this.dataPeriod = new Period(obj.dataPeriod);
             }
             if (obj.data) {
                 this.data = [];
-                for (let o of obj.data || []) {
-                    this.data.push(new ExceptDataComponent(o));
-                }
+                for (let o of obj.data || []) { this.data.push(new ExceptDataComponent(o)); }
             }
         }
     }
@@ -6282,25 +5797,25 @@ export class ExceptComponent extends BackboneElement {
 
 export class Consent extends DomainResource {
     public resourceType = 'Consent';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public status: string;
-    public category: CodeableConcept[];
+    public category?: CodeableConcept[];
     public patient: ResourceReference;
-    public period: Period;
-    public dateTime: Date;
-    public consentingParty: ResourceReference[];
-    public actor: ActorComponent[];
-    public action: CodeableConcept[];
-    public organization: ResourceReference[];
-    public source: Element;
-    public policy: PolicyComponent[];
-    public policyRule: string;
-    public securityLabel: Coding[];
-    public purpose: Coding[];
-    public dataPeriod: Period;
-    public data: DataComponent[];
-    public except: ExceptComponent[];
-
+    public period?: Period;
+    public dateTime?: Date;
+    public consentingParty?: ResourceReference[];
+    public actor?: ActorComponent[];
+    public action?: CodeableConcept[];
+    public organization?: ResourceReference[];
+    public source?: Element;
+    public policy?: PolicyComponent[];
+    public policyRule?: string;
+    public securityLabel?: Coding[];
+    public purpose?: Coding[];
+    public dataPeriod?: Period;
+    public data?: DataComponent[];
+    public except?: ExceptComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6312,9 +5827,7 @@ export class Consent extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
@@ -6327,66 +5840,48 @@ export class Consent extends DomainResource {
             }
             if (obj.consentingParty) {
                 this.consentingParty = [];
-                for (let o of obj.consentingParty || []) {
-                    this.consentingParty.push(new ResourceReference(o));
-                }
+                for (let o of obj.consentingParty || []) { this.consentingParty.push(new ResourceReference(o)); }
             }
             if (obj.actor) {
                 this.actor = [];
-                for (let o of obj.actor || []) {
-                    this.actor.push(new ActorComponent(o));
-                }
+                for (let o of obj.actor || []) { this.actor.push(new ActorComponent(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new CodeableConcept(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new CodeableConcept(o)); }
             }
             if (obj.organization) {
                 this.organization = [];
-                for (let o of obj.organization || []) {
-                    this.organization.push(new ResourceReference(o));
-                }
+                for (let o of obj.organization || []) { this.organization.push(new ResourceReference(o)); }
             }
             if (obj.source) {
                 this.source = new Element(obj.source);
             }
             if (obj.policy) {
                 this.policy = [];
-                for (let o of obj.policy || []) {
-                    this.policy.push(new PolicyComponent(o));
-                }
+                for (let o of obj.policy || []) { this.policy.push(new PolicyComponent(o)); }
             }
             if (obj.policyRule) {
                 this.policyRule = obj.policyRule;
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new Coding(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new Coding(o)); }
             }
             if (obj.purpose) {
                 this.purpose = [];
-                for (let o of obj.purpose || []) {
-                    this.purpose.push(new Coding(o));
-                }
+                for (let o of obj.purpose || []) { this.purpose.push(new Coding(o)); }
             }
             if (obj.dataPeriod) {
                 this.dataPeriod = new Period(obj.dataPeriod);
             }
             if (obj.data) {
                 this.data = [];
-                for (let o of obj.data || []) {
-                    this.data.push(new DataComponent(o));
-                }
+                for (let o of obj.data || []) { this.data.push(new DataComponent(o)); }
             }
             if (obj.except) {
                 this.except = [];
-                for (let o of obj.except || []) {
-                    this.except.push(new ExceptComponent(o));
-                }
+                for (let o of obj.except || []) { this.except.push(new ExceptComponent(o)); }
             }
         }
     }
@@ -6397,7 +5892,7 @@ export class SignatoryComponent extends BackboneElement {
     public type: Coding;
     public party: ResourceReference;
     public signature: Signature[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6409,9 +5904,7 @@ export class SignatoryComponent extends BackboneElement {
             }
             if (obj.signature) {
                 this.signature = [];
-                for (let o of obj.signature || []) {
-                    this.signature.push(new Signature(o));
-                }
+                for (let o of obj.signature || []) { this.signature.push(new Signature(o)); }
             }
         }
     }
@@ -6419,15 +5912,15 @@ export class SignatoryComponent extends BackboneElement {
 }
 
 export class ValuedItemComponent extends BackboneElement {
-    public entity: Element;
-    public identifier: Identifier;
-    public effectiveTime: Date;
-    public quantity: SimpleQuantity;
-    public unitPrice: Money;
-    public factor: number;
-    public points: number;
-    public net: Money;
-
+    public entity?: Element;
+    public identifier?: Identifier;
+    public effectiveTime?: Date;
+    public quantity?: SimpleQuantity;
+    public unitPrice?: Money;
+    public factor?: number;
+    public points?: number;
+    public net?: Money;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6462,8 +5955,8 @@ export class ValuedItemComponent extends BackboneElement {
 
 export class TermAgentComponent extends BackboneElement {
     public actor: ResourceReference;
-    public role: CodeableConcept[];
-
+    public role?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6472,9 +5965,7 @@ export class TermAgentComponent extends BackboneElement {
             }
             if (obj.role) {
                 this.role = [];
-                for (let o of obj.role || []) {
-                    this.role.push(new CodeableConcept(o));
-                }
+                for (let o of obj.role || []) { this.role.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -6482,15 +5973,15 @@ export class TermAgentComponent extends BackboneElement {
 }
 
 export class TermValuedItemComponent extends BackboneElement {
-    public entity: Element;
-    public identifier: Identifier;
-    public effectiveTime: Date;
-    public quantity: SimpleQuantity;
-    public unitPrice: Money;
-    public factor: number;
-    public points: number;
-    public net: Money;
-
+    public entity?: Element;
+    public identifier?: Identifier;
+    public effectiveTime?: Date;
+    public quantity?: SimpleQuantity;
+    public unitPrice?: Money;
+    public factor?: number;
+    public points?: number;
+    public net?: Money;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6524,20 +6015,20 @@ export class TermValuedItemComponent extends BackboneElement {
 }
 
 export class TermComponent extends BackboneElement {
-    public identifier: Identifier;
-    public issued: Date;
-    public applies: Period;
-    public type: CodeableConcept;
-    public subType: CodeableConcept;
-    public topic: ResourceReference[];
-    public action: CodeableConcept[];
-    public actionReason: CodeableConcept[];
-    public securityLabel: Coding[];
-    public agent: TermAgentComponent[];
-    public text: string;
-    public valuedItem: TermValuedItemComponent[];
-    public group: TermComponent[];
-
+    public identifier?: Identifier;
+    public issued?: Date;
+    public applies?: Period;
+    public type?: CodeableConcept;
+    public subType?: CodeableConcept;
+    public topic?: ResourceReference[];
+    public action?: CodeableConcept[];
+    public actionReason?: CodeableConcept[];
+    public securityLabel?: Coding[];
+    public agent?: TermAgentComponent[];
+    public text?: string;
+    public valuedItem?: TermValuedItemComponent[];
+    public group?: TermComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6558,48 +6049,34 @@ export class TermComponent extends BackboneElement {
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new ResourceReference(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new ResourceReference(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new CodeableConcept(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new CodeableConcept(o)); }
             }
             if (obj.actionReason) {
                 this.actionReason = [];
-                for (let o of obj.actionReason || []) {
-                    this.actionReason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.actionReason || []) { this.actionReason.push(new CodeableConcept(o)); }
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new Coding(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new Coding(o)); }
             }
             if (obj.agent) {
                 this.agent = [];
-                for (let o of obj.agent || []) {
-                    this.agent.push(new TermAgentComponent(o));
-                }
+                for (let o of obj.agent || []) { this.agent.push(new TermAgentComponent(o)); }
             }
             if (obj.text) {
                 this.text = obj.text;
             }
             if (obj.valuedItem) {
                 this.valuedItem = [];
-                for (let o of obj.valuedItem || []) {
-                    this.valuedItem.push(new TermValuedItemComponent(o));
-                }
+                for (let o of obj.valuedItem || []) { this.valuedItem.push(new TermValuedItemComponent(o)); }
             }
             if (obj.group) {
                 this.group = [];
-                for (let o of obj.group || []) {
-                    this.group.push(new TermComponent(o));
-                }
+                for (let o of obj.group || []) { this.group.push(new TermComponent(o)); }
             }
         }
     }
@@ -6608,7 +6085,7 @@ export class TermComponent extends BackboneElement {
 
 export class FriendlyLanguageComponent extends BackboneElement {
     public content: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6622,7 +6099,7 @@ export class FriendlyLanguageComponent extends BackboneElement {
 
 export class LegalLanguageComponent extends BackboneElement {
     public content: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6636,7 +6113,7 @@ export class LegalLanguageComponent extends BackboneElement {
 
 export class ComputableLanguageComponent extends BackboneElement {
     public content: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6650,30 +6127,30 @@ export class ComputableLanguageComponent extends BackboneElement {
 
 export class Contract extends DomainResource {
     public resourceType = 'Contract';
-    public identifier: Identifier;
-    public status: string;
-    public issued: Date;
-    public applies: Period;
-    public subject: ResourceReference[];
-    public topic: ResourceReference[];
-    public authority: ResourceReference[];
-    public domain: ResourceReference[];
-    public type: CodeableConcept;
-    public subType: CodeableConcept[];
-    public action: CodeableConcept[];
-    public actionReason: CodeableConcept[];
-    public decisionType: CodeableConcept;
-    public contentDerivative: CodeableConcept;
-    public securityLabel: Coding[];
-    public agent: AgentComponent[];
-    public signer: SignatoryComponent[];
-    public valuedItem: ValuedItemComponent[];
-    public term: TermComponent[];
-    public binding: Element;
-    public friendly: FriendlyLanguageComponent[];
-    public legal: LegalLanguageComponent[];
-    public rule: ComputableLanguageComponent[];
-
+    public identifier?: Identifier;
+    public status?: string;
+    public issued?: Date;
+    public applies?: Period;
+    public subject?: ResourceReference[];
+    public topic?: ResourceReference[];
+    public authority?: ResourceReference[];
+    public domain?: ResourceReference[];
+    public type?: CodeableConcept;
+    public subType?: CodeableConcept[];
+    public action?: CodeableConcept[];
+    public actionReason?: CodeableConcept[];
+    public decisionType?: CodeableConcept;
+    public contentDerivative?: CodeableConcept;
+    public securityLabel?: Coding[];
+    public agent?: AgentComponent[];
+    public signer?: SignatoryComponent[];
+    public valuedItem?: ValuedItemComponent[];
+    public term?: TermComponent[];
+    public binding?: Element;
+    public friendly?: FriendlyLanguageComponent[];
+    public legal?: LegalLanguageComponent[];
+    public rule?: ComputableLanguageComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6691,48 +6168,34 @@ export class Contract extends DomainResource {
             }
             if (obj.subject) {
                 this.subject = [];
-                for (let o of obj.subject || []) {
-                    this.subject.push(new ResourceReference(o));
-                }
+                for (let o of obj.subject || []) { this.subject.push(new ResourceReference(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new ResourceReference(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new ResourceReference(o)); }
             }
             if (obj.authority) {
                 this.authority = [];
-                for (let o of obj.authority || []) {
-                    this.authority.push(new ResourceReference(o));
-                }
+                for (let o of obj.authority || []) { this.authority.push(new ResourceReference(o)); }
             }
             if (obj.domain) {
                 this.domain = [];
-                for (let o of obj.domain || []) {
-                    this.domain.push(new ResourceReference(o));
-                }
+                for (let o of obj.domain || []) { this.domain.push(new ResourceReference(o)); }
             }
             if (obj.type) {
                 this.type = new CodeableConcept(obj.type);
             }
             if (obj.subType) {
                 this.subType = [];
-                for (let o of obj.subType || []) {
-                    this.subType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.subType || []) { this.subType.push(new CodeableConcept(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new CodeableConcept(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new CodeableConcept(o)); }
             }
             if (obj.actionReason) {
                 this.actionReason = [];
-                for (let o of obj.actionReason || []) {
-                    this.actionReason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.actionReason || []) { this.actionReason.push(new CodeableConcept(o)); }
             }
             if (obj.decisionType) {
                 this.decisionType = new CodeableConcept(obj.decisionType);
@@ -6742,54 +6205,38 @@ export class Contract extends DomainResource {
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new Coding(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new Coding(o)); }
             }
             if (obj.agent) {
                 this.agent = [];
-                for (let o of obj.agent || []) {
-                    this.agent.push(new AgentComponent(o));
-                }
+                for (let o of obj.agent || []) { this.agent.push(new AgentComponent(o)); }
             }
             if (obj.signer) {
                 this.signer = [];
-                for (let o of obj.signer || []) {
-                    this.signer.push(new SignatoryComponent(o));
-                }
+                for (let o of obj.signer || []) { this.signer.push(new SignatoryComponent(o)); }
             }
             if (obj.valuedItem) {
                 this.valuedItem = [];
-                for (let o of obj.valuedItem || []) {
-                    this.valuedItem.push(new ValuedItemComponent(o));
-                }
+                for (let o of obj.valuedItem || []) { this.valuedItem.push(new ValuedItemComponent(o)); }
             }
             if (obj.term) {
                 this.term = [];
-                for (let o of obj.term || []) {
-                    this.term.push(new TermComponent(o));
-                }
+                for (let o of obj.term || []) { this.term.push(new TermComponent(o)); }
             }
             if (obj.binding) {
                 this.binding = new Element(obj.binding);
             }
             if (obj.friendly) {
                 this.friendly = [];
-                for (let o of obj.friendly || []) {
-                    this.friendly.push(new FriendlyLanguageComponent(o));
-                }
+                for (let o of obj.friendly || []) { this.friendly.push(new FriendlyLanguageComponent(o)); }
             }
             if (obj.legal) {
                 this.legal = [];
-                for (let o of obj.legal || []) {
-                    this.legal.push(new LegalLanguageComponent(o));
-                }
+                for (let o of obj.legal || []) { this.legal.push(new LegalLanguageComponent(o)); }
             }
             if (obj.rule) {
                 this.rule = [];
-                for (let o of obj.rule || []) {
-                    this.rule.push(new ComputableLanguageComponent(o));
-                }
+                for (let o of obj.rule || []) { this.rule.push(new ComputableLanguageComponent(o)); }
             }
         }
     }
@@ -6797,7 +6244,7 @@ export class Contract extends DomainResource {
 }
 
 export class Count extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6808,31 +6255,29 @@ export class Count extends Quantity {
 
 export class Coverage extends DomainResource {
     public resourceType = 'Coverage';
-    public identifier: Identifier[];
-    public status: string;
-    public type: CodeableConcept;
-    public policyHolder: ResourceReference;
-    public subscriber: ResourceReference;
-    public subscriberId: string;
-    public beneficiary: ResourceReference;
-    public relationship: CodeableConcept;
-    public period: Period;
-    public payor: ResourceReference[];
-    public grouping: GroupComponent;
-    public dependent: string;
-    public sequence: string;
-    public order: number;
-    public network: string;
-    public contract: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public type?: CodeableConcept;
+    public policyHolder?: ResourceReference;
+    public subscriber?: ResourceReference;
+    public subscriberId?: string;
+    public beneficiary?: ResourceReference;
+    public relationship?: CodeableConcept;
+    public period?: Period;
+    public payor?: ResourceReference[];
+    public grouping?: GroupComponent;
+    public dependent?: string;
+    public sequence?: string;
+    public order?: number;
+    public network?: string;
+    public contract?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -6860,9 +6305,7 @@ export class Coverage extends DomainResource {
             }
             if (obj.payor) {
                 this.payor = [];
-                for (let o of obj.payor || []) {
-                    this.payor.push(new ResourceReference(o));
-                }
+                for (let o of obj.payor || []) { this.payor.push(new ResourceReference(o)); }
             }
             if (obj.grouping) {
                 this.grouping = new GroupComponent(obj.grouping);
@@ -6881,9 +6324,7 @@ export class Coverage extends DomainResource {
             }
             if (obj.contract) {
                 this.contract = [];
-                for (let o of obj.contract || []) {
-                    this.contract.push(new ResourceReference(o));
-                }
+                for (let o of obj.contract || []) { this.contract.push(new ResourceReference(o)); }
             }
         }
     }
@@ -6892,23 +6333,23 @@ export class Coverage extends DomainResource {
 
 export class DataElement extends DomainResource {
     public resourceType = 'DataElement';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public name: string;
-    public title: string;
-    public contact: ContactDetail[];
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public copyright: string;
-    public stringency: string;
-    public mapping: MappingComponent[];
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public name?: string;
+    public title?: string;
+    public contact?: ContactDetail[];
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public copyright?: string;
+    public stringency?: string;
+    public mapping?: MappingComponent[];
     public element: ElementDefinition[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -6917,9 +6358,7 @@ export class DataElement extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -6944,21 +6383,15 @@ export class DataElement extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
@@ -6968,15 +6401,11 @@ export class DataElement extends DomainResource {
             }
             if (obj.mapping) {
                 this.mapping = [];
-                for (let o of obj.mapping || []) {
-                    this.mapping.push(new MappingComponent(o));
-                }
+                for (let o of obj.mapping || []) { this.mapping.push(new MappingComponent(o)); }
             }
             if (obj.element) {
                 this.element = [];
-                for (let o of obj.element || []) {
-                    this.element.push(new ElementDefinition(o));
-                }
+                for (let o of obj.element || []) { this.element.push(new ElementDefinition(o)); }
             }
         }
     }
@@ -6985,11 +6414,11 @@ export class DataElement extends DomainResource {
 
 export class CodeFilterComponent extends Element {
     public path: string;
-    public valueSet: Element;
-    public valueCode: string[];
-    public valueCoding: Coding[];
-    public valueCodeableConcept: CodeableConcept[];
-
+    public valueSet?: Element;
+    public valueCode?: string[];
+    public valueCoding?: Coding[];
+    public valueCodeableConcept?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7004,15 +6433,11 @@ export class CodeFilterComponent extends Element {
             }
             if (obj.valueCoding) {
                 this.valueCoding = [];
-                for (let o of obj.valueCoding || []) {
-                    this.valueCoding.push(new Coding(o));
-                }
+                for (let o of obj.valueCoding || []) { this.valueCoding.push(new Coding(o)); }
             }
             if (obj.valueCodeableConcept) {
                 this.valueCodeableConcept = [];
-                for (let o of obj.valueCodeableConcept || []) {
-                    this.valueCodeableConcept.push(new CodeableConcept(o));
-                }
+                for (let o of obj.valueCodeableConcept || []) { this.valueCodeableConcept.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -7021,8 +6446,8 @@ export class CodeFilterComponent extends Element {
 
 export class DateFilterComponent extends Element {
     public path: string;
-    public value: Element;
-
+    public value?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7039,11 +6464,11 @@ export class DateFilterComponent extends Element {
 
 export class DataRequirement extends Element {
     public type: string;
-    public profile: string[];
-    public mustSupport: string[];
-    public codeFilter: CodeFilterComponent[];
-    public dateFilter: DateFilterComponent[];
-
+    public profile?: string[];
+    public mustSupport?: string[];
+    public codeFilter?: CodeFilterComponent[];
+    public dateFilter?: DateFilterComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7058,15 +6483,11 @@ export class DataRequirement extends Element {
             }
             if (obj.codeFilter) {
                 this.codeFilter = [];
-                for (let o of obj.codeFilter || []) {
-                    this.codeFilter.push(new CodeFilterComponent(o));
-                }
+                for (let o of obj.codeFilter || []) { this.codeFilter.push(new CodeFilterComponent(o)); }
             }
             if (obj.dateFilter) {
                 this.dateFilter = [];
-                for (let o of obj.dateFilter || []) {
-                    this.dateFilter.push(new DateFilterComponent(o));
-                }
+                for (let o of obj.dateFilter || []) { this.dateFilter.push(new DateFilterComponent(o)); }
             }
         }
     }
@@ -7075,9 +6496,9 @@ export class DataRequirement extends Element {
 
 export class MitigationComponent extends BackboneElement {
     public action: CodeableConcept;
-    public date: Date;
-    public author: ResourceReference;
-
+    public date?: Date;
+    public author?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7097,18 +6518,18 @@ export class MitigationComponent extends BackboneElement {
 
 export class DetectedIssue extends DomainResource {
     public resourceType = 'DetectedIssue';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public status: string;
-    public category: CodeableConcept;
-    public severity: string;
-    public patient: ResourceReference;
-    public date: Date;
-    public author: ResourceReference;
-    public implicated: ResourceReference[];
-    public detail: string;
-    public reference: string;
-    public mitigation: MitigationComponent[];
-
+    public category?: CodeableConcept;
+    public severity?: string;
+    public patient?: ResourceReference;
+    public date?: Date;
+    public author?: ResourceReference;
+    public implicated?: ResourceReference[];
+    public detail?: string;
+    public reference?: string;
+    public mitigation?: MitigationComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7135,9 +6556,7 @@ export class DetectedIssue extends DomainResource {
             }
             if (obj.implicated) {
                 this.implicated = [];
-                for (let o of obj.implicated || []) {
-                    this.implicated.push(new ResourceReference(o));
-                }
+                for (let o of obj.implicated || []) { this.implicated.push(new ResourceReference(o)); }
             }
             if (obj.detail) {
                 this.detail = obj.detail;
@@ -7147,9 +6566,7 @@ export class DetectedIssue extends DomainResource {
             }
             if (obj.mitigation) {
                 this.mitigation = [];
-                for (let o of obj.mitigation || []) {
-                    this.mitigation.push(new MitigationComponent(o));
-                }
+                for (let o of obj.mitigation || []) { this.mitigation.push(new MitigationComponent(o)); }
             }
         }
     }
@@ -7157,14 +6574,14 @@ export class DetectedIssue extends DomainResource {
 }
 
 export class UdiComponent extends BackboneElement {
-    public deviceIdentifier: string;
-    public name: string;
-    public jurisdiction: string;
-    public carrierHRF: string;
-    public carrierAIDC: string;
-    public issuer: string;
-    public entryType: string;
-
+    public deviceIdentifier?: string;
+    public name?: string;
+    public jurisdiction?: string;
+    public carrierHRF?: string;
+    public carrierAIDC?: string;
+    public issuer?: string;
+    public entryType?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7196,32 +6613,30 @@ export class UdiComponent extends BackboneElement {
 
 export class Device extends DomainResource {
     public resourceType = 'Device';
-    public identifier: Identifier[];
-    public udi: UdiComponent;
-    public status: string;
-    public type: CodeableConcept;
-    public lotNumber: string;
-    public manufacturer: string;
-    public manufactureDate: Date;
-    public expirationDate: Date;
-    public model: string;
-    public version: string;
-    public patient: ResourceReference;
-    public owner: ResourceReference;
-    public contact: ContactPoint[];
-    public location: ResourceReference;
-    public url: string;
-    public note: Annotation[];
-    public safety: CodeableConcept[];
-
+    public identifier?: Identifier[];
+    public udi?: UdiComponent;
+    public status?: string;
+    public type?: CodeableConcept;
+    public lotNumber?: string;
+    public manufacturer?: string;
+    public manufactureDate?: Date;
+    public expirationDate?: Date;
+    public model?: string;
+    public version?: string;
+    public patient?: ResourceReference;
+    public owner?: ResourceReference;
+    public contact?: ContactPoint[];
+    public location?: ResourceReference;
+    public url?: string;
+    public note?: Annotation[];
+    public safety?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.udi) {
                 this.udi = new UdiComponent(obj.udi);
@@ -7258,9 +6673,7 @@ export class Device extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactPoint(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactPoint(o)); }
             }
             if (obj.location) {
                 this.location = new ResourceReference(obj.location);
@@ -7270,15 +6683,11 @@ export class Device extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.safety) {
                 this.safety = [];
-                for (let o of obj.safety || []) {
-                    this.safety.push(new CodeableConcept(o));
-                }
+                for (let o of obj.safety || []) { this.safety.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -7286,10 +6695,10 @@ export class Device extends DomainResource {
 }
 
 export class ProductionSpecificationComponent extends BackboneElement {
-    public specType: CodeableConcept;
-    public componentId: Identifier;
-    public productionSpec: string;
-
+    public specType?: CodeableConcept;
+    public componentId?: Identifier;
+    public productionSpec?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7311,15 +6720,15 @@ export class DeviceComponent extends DomainResource {
     public resourceType = 'DeviceComponent';
     public identifier: Identifier;
     public type: CodeableConcept;
-    public lastSystemChange: Date;
-    public source: ResourceReference;
-    public parent: ResourceReference;
-    public operationalStatus: CodeableConcept[];
-    public parameterGroup: CodeableConcept;
-    public measurementPrinciple: string;
-    public productionSpecification: ProductionSpecificationComponent[];
-    public languageCode: CodeableConcept;
-
+    public lastSystemChange?: Date;
+    public source?: ResourceReference;
+    public parent?: ResourceReference;
+    public operationalStatus?: CodeableConcept[];
+    public parameterGroup?: CodeableConcept;
+    public measurementPrinciple?: string;
+    public productionSpecification?: ProductionSpecificationComponent[];
+    public languageCode?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7340,9 +6749,7 @@ export class DeviceComponent extends DomainResource {
             }
             if (obj.operationalStatus) {
                 this.operationalStatus = [];
-                for (let o of obj.operationalStatus || []) {
-                    this.operationalStatus.push(new CodeableConcept(o));
-                }
+                for (let o of obj.operationalStatus || []) { this.operationalStatus.push(new CodeableConcept(o)); }
             }
             if (obj.parameterGroup) {
                 this.parameterGroup = new CodeableConcept(obj.parameterGroup);
@@ -7352,9 +6759,7 @@ export class DeviceComponent extends DomainResource {
             }
             if (obj.productionSpecification) {
                 this.productionSpecification = [];
-                for (let o of obj.productionSpecification || []) {
-                    this.productionSpecification.push(new ProductionSpecificationComponent(o));
-                }
+                for (let o of obj.productionSpecification || []) { this.productionSpecification.push(new ProductionSpecificationComponent(o)); }
             }
             if (obj.languageCode) {
                 this.languageCode = new CodeableConcept(obj.languageCode);
@@ -7365,10 +6770,10 @@ export class DeviceComponent extends DomainResource {
 }
 
 export class CalibrationComponent extends BackboneElement {
-    public type: string;
-    public state: string;
-    public time: Date;
-
+    public type?: string;
+    public state?: string;
+    public time?: Date;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7390,15 +6795,15 @@ export class DeviceMetric extends DomainResource {
     public resourceType = 'DeviceMetric';
     public identifier: Identifier;
     public type: CodeableConcept;
-    public unit: CodeableConcept;
-    public source: ResourceReference;
-    public parent: ResourceReference;
-    public operationalStatus: string;
-    public color: string;
+    public unit?: CodeableConcept;
+    public source?: ResourceReference;
+    public parent?: ResourceReference;
+    public operationalStatus?: string;
+    public color?: string;
     public category: string;
-    public measurementPeriod: Timing;
-    public calibration: CalibrationComponent[];
-
+    public measurementPeriod?: Timing;
+    public calibration?: CalibrationComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7431,9 +6836,7 @@ export class DeviceMetric extends DomainResource {
             }
             if (obj.calibration) {
                 this.calibration = [];
-                for (let o of obj.calibration || []) {
-                    this.calibration.push(new CalibrationComponent(o));
-                }
+                for (let o of obj.calibration || []) { this.calibration.push(new CalibrationComponent(o)); }
             }
         }
     }
@@ -7442,54 +6845,46 @@ export class DeviceMetric extends DomainResource {
 
 export class DeviceRequest extends DomainResource {
     public resourceType = 'DeviceRequest';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public priorRequest: ResourceReference[];
-    public groupIdentifier: Identifier;
-    public status: string;
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public priorRequest?: ResourceReference[];
+    public groupIdentifier?: Identifier;
+    public status?: string;
     public intent: CodeableConcept;
-    public priority: string;
+    public priority?: string;
     public code: Element;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public authoredOn: Date;
-    public requester: RequesterComponent;
-    public performerType: CodeableConcept;
-    public performer: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public supportingInfo: ResourceReference[];
-    public note: Annotation[];
-    public relevantHistory: ResourceReference[];
-
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public authoredOn?: Date;
+    public requester?: RequesterComponent;
+    public performerType?: CodeableConcept;
+    public performer?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public supportingInfo?: ResourceReference[];
+    public note?: Annotation[];
+    public relevantHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.priorRequest) {
                 this.priorRequest = [];
-                for (let o of obj.priorRequest || []) {
-                    this.priorRequest.push(new ResourceReference(o));
-                }
+                for (let o of obj.priorRequest || []) { this.priorRequest.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
@@ -7529,33 +6924,23 @@ export class DeviceRequest extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.supportingInfo) {
                 this.supportingInfo = [];
-                for (let o of obj.supportingInfo || []) {
-                    this.supportingInfo.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInfo || []) { this.supportingInfo.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.relevantHistory) {
                 this.relevantHistory = [];
-                for (let o of obj.relevantHistory || []) {
-                    this.relevantHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.relevantHistory || []) { this.relevantHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -7564,26 +6949,24 @@ export class DeviceRequest extends DomainResource {
 
 export class DeviceUseStatement extends DomainResource {
     public resourceType = 'DeviceUseStatement';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
     public subject: ResourceReference;
-    public whenUsed: Period;
-    public timing: Element;
-    public recordedOn: Date;
-    public source: ResourceReference;
+    public whenUsed?: Period;
+    public timing?: Element;
+    public recordedOn?: Date;
+    public source?: ResourceReference;
     public device: ResourceReference;
-    public indication: CodeableConcept[];
-    public bodySite: CodeableConcept;
-    public note: Annotation[];
-
+    public indication?: CodeableConcept[];
+    public bodySite?: CodeableConcept;
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -7608,18 +6991,14 @@ export class DeviceUseStatement extends DomainResource {
             }
             if (obj.indication) {
                 this.indication = [];
-                for (let o of obj.indication || []) {
-                    this.indication.push(new CodeableConcept(o));
-                }
+                for (let o of obj.indication || []) { this.indication.push(new CodeableConcept(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = new CodeableConcept(obj.bodySite);
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -7627,9 +7006,9 @@ export class DeviceUseStatement extends DomainResource {
 }
 
 export class PerformerComponent extends BackboneElement {
-    public role: CodeableConcept;
+    public role?: CodeableConcept;
     public actor: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7645,9 +7024,9 @@ export class PerformerComponent extends BackboneElement {
 }
 
 export class ImageComponent extends BackboneElement {
-    public comment: string;
+    public comment?: string;
     public link: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7664,38 +7043,34 @@ export class ImageComponent extends BackboneElement {
 
 export class DiagnosticReport extends DomainResource {
     public resourceType = 'DiagnosticReport';
-    public identifier: Identifier[];
-    public basedOn: ResourceReference[];
+    public identifier?: Identifier[];
+    public basedOn?: ResourceReference[];
     public status: string;
-    public category: CodeableConcept;
+    public category?: CodeableConcept;
     public code: CodeableConcept;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public effective: Element;
-    public issued: Date;
-    public performer: PerformerComponent[];
-    public specimen: ResourceReference[];
-    public result: ResourceReference[];
-    public imagingStudy: ResourceReference[];
-    public image: ImageComponent[];
-    public conclusion: string;
-    public codedDiagnosis: CodeableConcept[];
-    public presentedForm: Attachment[];
-
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public effective?: Element;
+    public issued?: Date;
+    public performer?: PerformerComponent[];
+    public specimen?: ResourceReference[];
+    public result?: ResourceReference[];
+    public imagingStudy?: ResourceReference[];
+    public image?: ImageComponent[];
+    public conclusion?: string;
+    public codedDiagnosis?: CodeableConcept[];
+    public presentedForm?: Attachment[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -7720,48 +7095,34 @@ export class DiagnosticReport extends DomainResource {
             }
             if (obj.performer) {
                 this.performer = [];
-                for (let o of obj.performer || []) {
-                    this.performer.push(new PerformerComponent(o));
-                }
+                for (let o of obj.performer || []) { this.performer.push(new PerformerComponent(o)); }
             }
             if (obj.specimen) {
                 this.specimen = [];
-                for (let o of obj.specimen || []) {
-                    this.specimen.push(new ResourceReference(o));
-                }
+                for (let o of obj.specimen || []) { this.specimen.push(new ResourceReference(o)); }
             }
             if (obj.result) {
                 this.result = [];
-                for (let o of obj.result || []) {
-                    this.result.push(new ResourceReference(o));
-                }
+                for (let o of obj.result || []) { this.result.push(new ResourceReference(o)); }
             }
             if (obj.imagingStudy) {
                 this.imagingStudy = [];
-                for (let o of obj.imagingStudy || []) {
-                    this.imagingStudy.push(new ResourceReference(o));
-                }
+                for (let o of obj.imagingStudy || []) { this.imagingStudy.push(new ResourceReference(o)); }
             }
             if (obj.image) {
                 this.image = [];
-                for (let o of obj.image || []) {
-                    this.image.push(new ImageComponent(o));
-                }
+                for (let o of obj.image || []) { this.image.push(new ImageComponent(o)); }
             }
             if (obj.conclusion) {
                 this.conclusion = obj.conclusion;
             }
             if (obj.codedDiagnosis) {
                 this.codedDiagnosis = [];
-                for (let o of obj.codedDiagnosis || []) {
-                    this.codedDiagnosis.push(new CodeableConcept(o));
-                }
+                for (let o of obj.codedDiagnosis || []) { this.codedDiagnosis.push(new CodeableConcept(o)); }
             }
             if (obj.presentedForm) {
                 this.presentedForm = [];
-                for (let o of obj.presentedForm || []) {
-                    this.presentedForm.push(new Attachment(o));
-                }
+                for (let o of obj.presentedForm || []) { this.presentedForm.push(new Attachment(o)); }
             }
         }
     }
@@ -7769,7 +7130,7 @@ export class DiagnosticReport extends DomainResource {
 }
 
 export class Distance extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7780,7 +7141,7 @@ export class Distance extends Quantity {
 
 export class ContentComponent extends BackboneElement {
     public p: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7794,19 +7155,19 @@ export class ContentComponent extends BackboneElement {
 
 export class DocumentManifest extends DomainResource {
     public resourceType = 'DocumentManifest';
-    public masterIdentifier: Identifier;
-    public identifier: Identifier[];
+    public masterIdentifier?: Identifier;
+    public identifier?: Identifier[];
     public status: string;
-    public type: CodeableConcept;
-    public subject: ResourceReference;
-    public created: Date;
-    public author: ResourceReference[];
-    public recipient: ResourceReference[];
-    public source: string;
-    public description: string;
+    public type?: CodeableConcept;
+    public subject?: ResourceReference;
+    public created?: Date;
+    public author?: ResourceReference[];
+    public recipient?: ResourceReference[];
+    public source?: string;
+    public description?: string;
     public content: ContentComponent[];
-    public related: RelatedComponent[];
-
+    public related?: RelatedComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7815,9 +7176,7 @@ export class DocumentManifest extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -7833,15 +7192,11 @@ export class DocumentManifest extends DomainResource {
             }
             if (obj.author) {
                 this.author = [];
-                for (let o of obj.author || []) {
-                    this.author.push(new ResourceReference(o));
-                }
+                for (let o of obj.author || []) { this.author.push(new ResourceReference(o)); }
             }
             if (obj.recipient) {
                 this.recipient = [];
-                for (let o of obj.recipient || []) {
-                    this.recipient.push(new ResourceReference(o));
-                }
+                for (let o of obj.recipient || []) { this.recipient.push(new ResourceReference(o)); }
             }
             if (obj.source) {
                 this.source = obj.source;
@@ -7851,15 +7206,11 @@ export class DocumentManifest extends DomainResource {
             }
             if (obj.content) {
                 this.content = [];
-                for (let o of obj.content || []) {
-                    this.content.push(new ContentComponent(o));
-                }
+                for (let o of obj.content || []) { this.content.push(new ContentComponent(o)); }
             }
             if (obj.related) {
                 this.related = [];
-                for (let o of obj.related || []) {
-                    this.related.push(new RelatedComponent(o));
-                }
+                for (let o of obj.related || []) { this.related.push(new RelatedComponent(o)); }
             }
         }
     }
@@ -7867,14 +7218,14 @@ export class DocumentManifest extends DomainResource {
 }
 
 export class ContextComponent extends BackboneElement {
-    public encounter: ResourceReference;
-    public event: CodeableConcept[];
-    public period: Period;
-    public facilityType: CodeableConcept;
-    public practiceSetting: CodeableConcept;
-    public sourcePatientInfo: ResourceReference;
-    public related: RelatedComponent[];
-
+    public encounter?: ResourceReference;
+    public event?: CodeableConcept[];
+    public period?: Period;
+    public facilityType?: CodeableConcept;
+    public practiceSetting?: CodeableConcept;
+    public sourcePatientInfo?: ResourceReference;
+    public related?: RelatedComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7883,9 +7234,7 @@ export class ContextComponent extends BackboneElement {
             }
             if (obj.event) {
                 this.event = [];
-                for (let o of obj.event || []) {
-                    this.event.push(new CodeableConcept(o));
-                }
+                for (let o of obj.event || []) { this.event.push(new CodeableConcept(o)); }
             }
             if (obj.period) {
                 this.period = new Period(obj.period);
@@ -7901,9 +7250,7 @@ export class ContextComponent extends BackboneElement {
             }
             if (obj.related) {
                 this.related = [];
-                for (let o of obj.related || []) {
-                    this.related.push(new RelatedComponent(o));
-                }
+                for (let o of obj.related || []) { this.related.push(new RelatedComponent(o)); }
             }
         }
     }
@@ -7912,24 +7259,24 @@ export class ContextComponent extends BackboneElement {
 
 export class DocumentReference extends DomainResource {
     public resourceType = 'DocumentReference';
-    public masterIdentifier: Identifier;
-    public identifier: Identifier[];
+    public masterIdentifier?: Identifier;
+    public identifier?: Identifier[];
     public status: string;
-    public docStatus: string;
+    public docStatus?: string;
     public type: CodeableConcept;
-    public class: CodeableConcept;
-    public subject: ResourceReference;
-    public created: Date;
+    public class?: CodeableConcept;
+    public subject?: ResourceReference;
+    public created?: Date;
     public indexed: Date;
-    public author: ResourceReference[];
-    public authenticator: ResourceReference;
-    public custodian: ResourceReference;
-    public relatesTo: RelatesToComponent[];
-    public description: string;
-    public securityLabel: CodeableConcept[];
+    public author?: ResourceReference[];
+    public authenticator?: ResourceReference;
+    public custodian?: ResourceReference;
+    public relatesTo?: RelatesToComponent[];
+    public description?: string;
+    public securityLabel?: CodeableConcept[];
     public content: ContentComponent[];
-    public context: ContextComponent;
-
+    public context?: ContextComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -7938,9 +7285,7 @@ export class DocumentReference extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -7965,9 +7310,7 @@ export class DocumentReference extends DomainResource {
             }
             if (obj.author) {
                 this.author = [];
-                for (let o of obj.author || []) {
-                    this.author.push(new ResourceReference(o));
-                }
+                for (let o of obj.author || []) { this.author.push(new ResourceReference(o)); }
             }
             if (obj.authenticator) {
                 this.authenticator = new ResourceReference(obj.authenticator);
@@ -7977,24 +7320,18 @@ export class DocumentReference extends DomainResource {
             }
             if (obj.relatesTo) {
                 this.relatesTo = [];
-                for (let o of obj.relatesTo || []) {
-                    this.relatesTo.push(new RelatesToComponent(o));
-                }
+                for (let o of obj.relatesTo || []) { this.relatesTo.push(new RelatesToComponent(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.securityLabel) {
                 this.securityLabel = [];
-                for (let o of obj.securityLabel || []) {
-                    this.securityLabel.push(new CodeableConcept(o));
-                }
+                for (let o of obj.securityLabel || []) { this.securityLabel.push(new CodeableConcept(o)); }
             }
             if (obj.content) {
                 this.content = [];
-                for (let o of obj.content || []) {
-                    this.content.push(new ContentComponent(o));
-                }
+                for (let o of obj.content || []) { this.content.push(new ContentComponent(o)); }
             }
             if (obj.context) {
                 this.context = new ContextComponent(obj.context);
@@ -8005,7 +7342,7 @@ export class DocumentReference extends DomainResource {
 }
 
 export class Duration extends Quantity {
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8016,30 +7353,28 @@ export class Duration extends Quantity {
 
 export class EligibilityRequest extends DomainResource {
     public resourceType = 'EligibilityRequest';
-    public identifier: Identifier[];
-    public status: string;
-    public priority: CodeableConcept;
-    public patient: ResourceReference;
-    public serviced: Element;
-    public created: Date;
-    public enterer: ResourceReference;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public insurer: ResourceReference;
-    public facility: ResourceReference;
-    public coverage: ResourceReference;
-    public businessArrangement: string;
-    public benefitCategory: CodeableConcept;
-    public benefitSubCategory: CodeableConcept;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public priority?: CodeableConcept;
+    public patient?: ResourceReference;
+    public serviced?: Element;
+    public created?: Date;
+    public enterer?: ResourceReference;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public insurer?: ResourceReference;
+    public facility?: ResourceReference;
+    public coverage?: ResourceReference;
+    public businessArrangement?: string;
+    public benefitCategory?: CodeableConcept;
+    public benefitSubCategory?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8090,7 +7425,7 @@ export class EligibilityRequest extends DomainResource {
 
 export class ErrorsComponent extends BackboneElement {
     public code: CodeableConcept;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8104,28 +7439,26 @@ export class ErrorsComponent extends BackboneElement {
 
 export class EligibilityResponse extends DomainResource {
     public resourceType = 'EligibilityResponse';
-    public identifier: Identifier[];
-    public status: string;
-    public created: Date;
-    public requestProvider: ResourceReference;
-    public requestOrganization: ResourceReference;
-    public request: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public insurer: ResourceReference;
-    public inforce: boolean;
-    public insurance: InsuranceComponent[];
-    public form: CodeableConcept;
-    public error: ErrorsComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public created?: Date;
+    public requestProvider?: ResourceReference;
+    public requestOrganization?: ResourceReference;
+    public request?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public insurer?: ResourceReference;
+    public inforce?: boolean;
+    public insurance?: InsuranceComponent[];
+    public form?: CodeableConcept;
+    public error?: ErrorsComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8156,18 +7489,14 @@ export class EligibilityResponse extends DomainResource {
             }
             if (obj.insurance) {
                 this.insurance = [];
-                for (let o of obj.insurance || []) {
-                    this.insurance.push(new InsuranceComponent(o));
-                }
+                for (let o of obj.insurance || []) { this.insurance.push(new InsuranceComponent(o)); }
             }
             if (obj.form) {
                 this.form = new CodeableConcept(obj.form);
             }
             if (obj.error) {
                 this.error = [];
-                for (let o of obj.error || []) {
-                    this.error.push(new ErrorsComponent(o));
-                }
+                for (let o of obj.error || []) { this.error.push(new ErrorsComponent(o)); }
             }
         }
     }
@@ -8177,7 +7506,7 @@ export class EligibilityResponse extends DomainResource {
 export class StatusHistoryComponent extends BackboneElement {
     public status: string;
     public period: Period;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8195,7 +7524,7 @@ export class StatusHistoryComponent extends BackboneElement {
 export class ClassHistoryComponent extends BackboneElement {
     public class: Coding;
     public period: Period;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8211,16 +7540,16 @@ export class ClassHistoryComponent extends BackboneElement {
 }
 
 export class HospitalizationComponent extends BackboneElement {
-    public preAdmissionIdentifier: Identifier;
-    public origin: ResourceReference;
-    public admitSource: CodeableConcept;
-    public reAdmission: CodeableConcept;
-    public dietPreference: CodeableConcept[];
-    public specialCourtesy: CodeableConcept[];
-    public specialArrangement: CodeableConcept[];
-    public destination: ResourceReference;
-    public dischargeDisposition: CodeableConcept;
-
+    public preAdmissionIdentifier?: Identifier;
+    public origin?: ResourceReference;
+    public admitSource?: CodeableConcept;
+    public reAdmission?: CodeableConcept;
+    public dietPreference?: CodeableConcept[];
+    public specialCourtesy?: CodeableConcept[];
+    public specialArrangement?: CodeableConcept[];
+    public destination?: ResourceReference;
+    public dischargeDisposition?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8238,21 +7567,15 @@ export class HospitalizationComponent extends BackboneElement {
             }
             if (obj.dietPreference) {
                 this.dietPreference = [];
-                for (let o of obj.dietPreference || []) {
-                    this.dietPreference.push(new CodeableConcept(o));
-                }
+                for (let o of obj.dietPreference || []) { this.dietPreference.push(new CodeableConcept(o)); }
             }
             if (obj.specialCourtesy) {
                 this.specialCourtesy = [];
-                for (let o of obj.specialCourtesy || []) {
-                    this.specialCourtesy.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialCourtesy || []) { this.specialCourtesy.push(new CodeableConcept(o)); }
             }
             if (obj.specialArrangement) {
                 this.specialArrangement = [];
-                for (let o of obj.specialArrangement || []) {
-                    this.specialArrangement.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialArrangement || []) { this.specialArrangement.push(new CodeableConcept(o)); }
             }
             if (obj.destination) {
                 this.destination = new ResourceReference(obj.destination);
@@ -8267,9 +7590,9 @@ export class HospitalizationComponent extends BackboneElement {
 
 export class LocationComponent extends BackboneElement {
     public location: ResourceReference;
-    public status: string;
-    public period: Period;
-
+    public status?: string;
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8289,60 +7612,52 @@ export class LocationComponent extends BackboneElement {
 
 export class Encounter extends DomainResource {
     public resourceType = 'Encounter';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public statusHistory: StatusHistoryComponent[];
-    public class: Coding;
-    public classHistory: ClassHistoryComponent[];
-    public type: CodeableConcept[];
-    public priority: CodeableConcept;
-    public subject: ResourceReference;
-    public episodeOfCare: ResourceReference[];
-    public incomingReferral: ResourceReference[];
-    public participant: ParticipantComponent[];
-    public appointment: ResourceReference;
-    public period: Period;
-    public length: Duration;
-    public reason: CodeableConcept[];
-    public diagnosis: DiagnosisComponent[];
-    public account: ResourceReference[];
-    public hospitalization: HospitalizationComponent;
-    public location: LocationComponent[];
-    public serviceProvider: ResourceReference;
-    public partOf: ResourceReference;
-
+    public statusHistory?: StatusHistoryComponent[];
+    public class?: Coding;
+    public classHistory?: ClassHistoryComponent[];
+    public type?: CodeableConcept[];
+    public priority?: CodeableConcept;
+    public subject?: ResourceReference;
+    public episodeOfCare?: ResourceReference[];
+    public incomingReferral?: ResourceReference[];
+    public participant?: ParticipantComponent[];
+    public appointment?: ResourceReference;
+    public period?: Period;
+    public length?: Duration;
+    public reason?: CodeableConcept[];
+    public diagnosis?: DiagnosisComponent[];
+    public account?: ResourceReference[];
+    public hospitalization?: HospitalizationComponent;
+    public location?: LocationComponent[];
+    public serviceProvider?: ResourceReference;
+    public partOf?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.statusHistory) {
                 this.statusHistory = [];
-                for (let o of obj.statusHistory || []) {
-                    this.statusHistory.push(new StatusHistoryComponent(o));
-                }
+                for (let o of obj.statusHistory || []) { this.statusHistory.push(new StatusHistoryComponent(o)); }
             }
             if (obj.class) {
                 this.class = new Coding(obj.class);
             }
             if (obj.classHistory) {
                 this.classHistory = [];
-                for (let o of obj.classHistory || []) {
-                    this.classHistory.push(new ClassHistoryComponent(o));
-                }
+                for (let o of obj.classHistory || []) { this.classHistory.push(new ClassHistoryComponent(o)); }
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.priority) {
                 this.priority = new CodeableConcept(obj.priority);
@@ -8352,21 +7667,15 @@ export class Encounter extends DomainResource {
             }
             if (obj.episodeOfCare) {
                 this.episodeOfCare = [];
-                for (let o of obj.episodeOfCare || []) {
-                    this.episodeOfCare.push(new ResourceReference(o));
-                }
+                for (let o of obj.episodeOfCare || []) { this.episodeOfCare.push(new ResourceReference(o)); }
             }
             if (obj.incomingReferral) {
                 this.incomingReferral = [];
-                for (let o of obj.incomingReferral || []) {
-                    this.incomingReferral.push(new ResourceReference(o));
-                }
+                for (let o of obj.incomingReferral || []) { this.incomingReferral.push(new ResourceReference(o)); }
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.appointment) {
                 this.appointment = new ResourceReference(obj.appointment);
@@ -8379,30 +7688,22 @@ export class Encounter extends DomainResource {
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.diagnosis) {
                 this.diagnosis = [];
-                for (let o of obj.diagnosis || []) {
-                    this.diagnosis.push(new DiagnosisComponent(o));
-                }
+                for (let o of obj.diagnosis || []) { this.diagnosis.push(new DiagnosisComponent(o)); }
             }
             if (obj.account) {
                 this.account = [];
-                for (let o of obj.account || []) {
-                    this.account.push(new ResourceReference(o));
-                }
+                for (let o of obj.account || []) { this.account.push(new ResourceReference(o)); }
             }
             if (obj.hospitalization) {
                 this.hospitalization = new HospitalizationComponent(obj.hospitalization);
             }
             if (obj.location) {
                 this.location = [];
-                for (let o of obj.location || []) {
-                    this.location.push(new LocationComponent(o));
-                }
+                for (let o of obj.location || []) { this.location.push(new LocationComponent(o)); }
             }
             if (obj.serviceProvider) {
                 this.serviceProvider = new ResourceReference(obj.serviceProvider);
@@ -8417,26 +7718,24 @@ export class Encounter extends DomainResource {
 
 export class Endpoint extends DomainResource {
     public resourceType = 'Endpoint';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
     public connectionType: Coding;
-    public name: string;
-    public managingOrganization: ResourceReference;
-    public contact: ContactPoint[];
-    public period: Period;
+    public name?: string;
+    public managingOrganization?: ResourceReference;
+    public contact?: ContactPoint[];
+    public period?: Period;
     public payloadType: CodeableConcept[];
-    public payloadMimeType: string[];
+    public payloadMimeType?: string[];
     public address: string;
-    public header: string[];
-
+    public header?: string[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8452,18 +7751,14 @@ export class Endpoint extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactPoint(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactPoint(o)); }
             }
             if (obj.period) {
                 this.period = new Period(obj.period);
             }
             if (obj.payloadType) {
                 this.payloadType = [];
-                for (let o of obj.payloadType || []) {
-                    this.payloadType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.payloadType || []) { this.payloadType.push(new CodeableConcept(o)); }
             }
             if (obj.payloadMimeType) {
                 this.payloadMimeType = obj.payloadMimeType;
@@ -8481,23 +7776,21 @@ export class Endpoint extends DomainResource {
 
 export class EnrollmentRequest extends DomainResource {
     public resourceType = 'EnrollmentRequest';
-    public identifier: Identifier[];
-    public status: string;
-    public created: Date;
-    public insurer: ResourceReference;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public subject: ResourceReference;
-    public coverage: ResourceReference;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public created?: Date;
+    public insurer?: ResourceReference;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public subject?: ResourceReference;
+    public coverage?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8527,24 +7820,22 @@ export class EnrollmentRequest extends DomainResource {
 
 export class EnrollmentResponse extends DomainResource {
     public resourceType = 'EnrollmentResponse';
-    public identifier: Identifier[];
-    public status: string;
-    public request: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public created: Date;
-    public organization: ResourceReference;
-    public requestProvider: ResourceReference;
-    public requestOrganization: ResourceReference;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public request?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public created?: Date;
+    public organization?: ResourceReference;
+    public requestProvider?: ResourceReference;
+    public requestOrganization?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8577,48 +7868,40 @@ export class EnrollmentResponse extends DomainResource {
 
 export class EpisodeOfCare extends DomainResource {
     public resourceType = 'EpisodeOfCare';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public statusHistory: StatusHistoryComponent[];
-    public type: CodeableConcept[];
-    public diagnosis: DiagnosisComponent[];
+    public statusHistory?: StatusHistoryComponent[];
+    public type?: CodeableConcept[];
+    public diagnosis?: DiagnosisComponent[];
     public patient: ResourceReference;
-    public managingOrganization: ResourceReference;
-    public period: Period;
-    public referralRequest: ResourceReference[];
-    public careManager: ResourceReference;
-    public team: ResourceReference[];
-    public account: ResourceReference[];
-
+    public managingOrganization?: ResourceReference;
+    public period?: Period;
+    public referralRequest?: ResourceReference[];
+    public careManager?: ResourceReference;
+    public team?: ResourceReference[];
+    public account?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.statusHistory) {
                 this.statusHistory = [];
-                for (let o of obj.statusHistory || []) {
-                    this.statusHistory.push(new StatusHistoryComponent(o));
-                }
+                for (let o of obj.statusHistory || []) { this.statusHistory.push(new StatusHistoryComponent(o)); }
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.diagnosis) {
                 this.diagnosis = [];
-                for (let o of obj.diagnosis || []) {
-                    this.diagnosis.push(new DiagnosisComponent(o));
-                }
+                for (let o of obj.diagnosis || []) { this.diagnosis.push(new DiagnosisComponent(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
@@ -8631,24 +7914,18 @@ export class EpisodeOfCare extends DomainResource {
             }
             if (obj.referralRequest) {
                 this.referralRequest = [];
-                for (let o of obj.referralRequest || []) {
-                    this.referralRequest.push(new ResourceReference(o));
-                }
+                for (let o of obj.referralRequest || []) { this.referralRequest.push(new ResourceReference(o)); }
             }
             if (obj.careManager) {
                 this.careManager = new ResourceReference(obj.careManager);
             }
             if (obj.team) {
                 this.team = [];
-                for (let o of obj.team || []) {
-                    this.team.push(new ResourceReference(o));
-                }
+                for (let o of obj.team || []) { this.team.push(new ResourceReference(o)); }
             }
             if (obj.account) {
                 this.account = [];
-                for (let o of obj.account || []) {
-                    this.account.push(new ResourceReference(o));
-                }
+                for (let o of obj.account || []) { this.account.push(new ResourceReference(o)); }
             }
         }
     }
@@ -8659,7 +7936,7 @@ export class FixedVersionComponent extends BackboneElement {
     public system: string;
     public version: string;
     public mode: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8679,8 +7956,8 @@ export class FixedVersionComponent extends BackboneElement {
 
 export class ExcludedSystemComponent extends BackboneElement {
     public system: string;
-    public version: string;
-
+    public version?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8697,30 +7974,30 @@ export class ExcludedSystemComponent extends BackboneElement {
 
 export class ExpansionProfile extends DomainResource {
     public resourceType = 'ExpansionProfile';
-    public url: string;
-    public identifier: Identifier;
-    public version: string;
-    public name: string;
+    public url?: string;
+    public identifier?: Identifier;
+    public version?: string;
+    public name?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public fixedVersion: FixedVersionComponent[];
-    public excludedSystem: ExcludedSystemComponent;
-    public includeDesignations: boolean;
-    public designation: DesignationComponent;
-    public includeDefinition: boolean;
-    public activeOnly: boolean;
-    public excludeNested: boolean;
-    public excludeNotForUI: boolean;
-    public excludePostCoordinated: boolean;
-    public displayLanguage: string;
-    public limitedExpansion: boolean;
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public fixedVersion?: FixedVersionComponent[];
+    public excludedSystem?: ExcludedSystemComponent;
+    public includeDesignations?: boolean;
+    public designation?: DesignationComponent;
+    public includeDefinition?: boolean;
+    public activeOnly?: boolean;
+    public excludeNested?: boolean;
+    public excludeNotForUI?: boolean;
+    public excludePostCoordinated?: boolean;
+    public displayLanguage?: string;
+    public limitedExpansion?: boolean;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8750,30 +8027,22 @@ export class ExpansionProfile extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.fixedVersion) {
                 this.fixedVersion = [];
-                for (let o of obj.fixedVersion || []) {
-                    this.fixedVersion.push(new FixedVersionComponent(o));
-                }
+                for (let o of obj.fixedVersion || []) { this.fixedVersion.push(new FixedVersionComponent(o)); }
             }
             if (obj.excludedSystem) {
                 this.excludedSystem = new ExcludedSystemComponent(obj.excludedSystem);
@@ -8813,11 +8082,11 @@ export class ExpansionProfile extends DomainResource {
 export class SupportingInformationComponent extends BackboneElement {
     public sequence: number;
     public category: CodeableConcept;
-    public code: CodeableConcept;
-    public timing: Element;
-    public value: Element;
-    public reason: Coding;
-
+    public code?: CodeableConcept;
+    public timing?: Element;
+    public value?: Element;
+    public reason?: Coding;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8846,9 +8115,9 @@ export class SupportingInformationComponent extends BackboneElement {
 
 export class BenefitComponent extends BackboneElement {
     public type: CodeableConcept;
-    public allowed: Element;
-    public used: Element;
-
+    public allowed?: Element;
+    public used?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8868,15 +8137,15 @@ export class BenefitComponent extends BackboneElement {
 
 export class BenefitBalanceComponent extends BackboneElement {
     public category: CodeableConcept;
-    public subCategory: CodeableConcept;
-    public excluded: boolean;
-    public name: string;
-    public description: string;
-    public network: CodeableConcept;
-    public unit: CodeableConcept;
-    public term: CodeableConcept;
-    public financial: BenefitComponent[];
-
+    public subCategory?: CodeableConcept;
+    public excluded?: boolean;
+    public name?: string;
+    public description?: string;
+    public network?: CodeableConcept;
+    public unit?: CodeableConcept;
+    public term?: CodeableConcept;
+    public financial?: BenefitComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -8906,9 +8175,7 @@ export class BenefitBalanceComponent extends BackboneElement {
             }
             if (obj.financial) {
                 this.financial = [];
-                for (let o of obj.financial || []) {
-                    this.financial.push(new BenefitComponent(o));
-                }
+                for (let o of obj.financial || []) { this.financial.push(new BenefitComponent(o)); }
             }
         }
     }
@@ -8917,54 +8184,52 @@ export class BenefitBalanceComponent extends BackboneElement {
 
 export class ExplanationOfBenefit extends DomainResource {
     public resourceType = 'ExplanationOfBenefit';
-    public identifier: Identifier[];
-    public status: string;
-    public type: CodeableConcept;
-    public subType: CodeableConcept[];
-    public patient: ResourceReference;
-    public billablePeriod: Period;
-    public created: Date;
-    public enterer: ResourceReference;
-    public insurer: ResourceReference;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public referral: ResourceReference;
-    public facility: ResourceReference;
-    public claim: ResourceReference;
-    public claimResponse: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public related: RelatedClaimComponent[];
-    public prescription: ResourceReference;
-    public originalPrescription: ResourceReference;
-    public payee: PayeeComponent;
-    public information: SupportingInformationComponent[];
-    public careTeam: CareTeamComponent[];
-    public diagnosis: DiagnosisComponent[];
-    public procedure: ProcedureComponent[];
-    public precedence: number;
-    public insurance: InsuranceComponent;
-    public accident: AccidentComponent;
-    public employmentImpacted: Period;
-    public hospitalization: Period;
-    public item: ItemComponent[];
-    public addItem: AddedItemComponent[];
-    public totalCost: Money;
-    public unallocDeductable: Money;
-    public totalBenefit: Money;
-    public payment: PaymentComponent;
-    public form: CodeableConcept;
-    public processNote: NoteComponent[];
-    public benefitBalance: BenefitBalanceComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public type?: CodeableConcept;
+    public subType?: CodeableConcept[];
+    public patient?: ResourceReference;
+    public billablePeriod?: Period;
+    public created?: Date;
+    public enterer?: ResourceReference;
+    public insurer?: ResourceReference;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public referral?: ResourceReference;
+    public facility?: ResourceReference;
+    public claim?: ResourceReference;
+    public claimResponse?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public related?: RelatedClaimComponent[];
+    public prescription?: ResourceReference;
+    public originalPrescription?: ResourceReference;
+    public payee?: PayeeComponent;
+    public information?: SupportingInformationComponent[];
+    public careTeam?: CareTeamComponent[];
+    public diagnosis?: DiagnosisComponent[];
+    public procedure?: ProcedureComponent[];
+    public precedence?: number;
+    public insurance?: InsuranceComponent;
+    public accident?: AccidentComponent;
+    public employmentImpacted?: Period;
+    public hospitalization?: Period;
+    public item?: ItemComponent[];
+    public addItem?: AddedItemComponent[];
+    public totalCost?: Money;
+    public unallocDeductable?: Money;
+    public totalBenefit?: Money;
+    public payment?: PaymentComponent;
+    public form?: CodeableConcept;
+    public processNote?: NoteComponent[];
+    public benefitBalance?: BenefitBalanceComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -8974,9 +8239,7 @@ export class ExplanationOfBenefit extends DomainResource {
             }
             if (obj.subType) {
                 this.subType = [];
-                for (let o of obj.subType || []) {
-                    this.subType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.subType || []) { this.subType.push(new CodeableConcept(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
@@ -9019,9 +8282,7 @@ export class ExplanationOfBenefit extends DomainResource {
             }
             if (obj.related) {
                 this.related = [];
-                for (let o of obj.related || []) {
-                    this.related.push(new RelatedClaimComponent(o));
-                }
+                for (let o of obj.related || []) { this.related.push(new RelatedClaimComponent(o)); }
             }
             if (obj.prescription) {
                 this.prescription = new ResourceReference(obj.prescription);
@@ -9034,27 +8295,19 @@ export class ExplanationOfBenefit extends DomainResource {
             }
             if (obj.information) {
                 this.information = [];
-                for (let o of obj.information || []) {
-                    this.information.push(new SupportingInformationComponent(o));
-                }
+                for (let o of obj.information || []) { this.information.push(new SupportingInformationComponent(o)); }
             }
             if (obj.careTeam) {
                 this.careTeam = [];
-                for (let o of obj.careTeam || []) {
-                    this.careTeam.push(new CareTeamComponent(o));
-                }
+                for (let o of obj.careTeam || []) { this.careTeam.push(new CareTeamComponent(o)); }
             }
             if (obj.diagnosis) {
                 this.diagnosis = [];
-                for (let o of obj.diagnosis || []) {
-                    this.diagnosis.push(new DiagnosisComponent(o));
-                }
+                for (let o of obj.diagnosis || []) { this.diagnosis.push(new DiagnosisComponent(o)); }
             }
             if (obj.procedure) {
                 this.procedure = [];
-                for (let o of obj.procedure || []) {
-                    this.procedure.push(new ProcedureComponent(o));
-                }
+                for (let o of obj.procedure || []) { this.procedure.push(new ProcedureComponent(o)); }
             }
             if (obj.precedence) {
                 this.precedence = obj.precedence;
@@ -9073,15 +8326,11 @@ export class ExplanationOfBenefit extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
             if (obj.addItem) {
                 this.addItem = [];
-                for (let o of obj.addItem || []) {
-                    this.addItem.push(new AddedItemComponent(o));
-                }
+                for (let o of obj.addItem || []) { this.addItem.push(new AddedItemComponent(o)); }
             }
             if (obj.totalCost) {
                 this.totalCost = new Money(obj.totalCost);
@@ -9100,15 +8349,11 @@ export class ExplanationOfBenefit extends DomainResource {
             }
             if (obj.processNote) {
                 this.processNote = [];
-                for (let o of obj.processNote || []) {
-                    this.processNote.push(new NoteComponent(o));
-                }
+                for (let o of obj.processNote || []) { this.processNote.push(new NoteComponent(o)); }
             }
             if (obj.benefitBalance) {
                 this.benefitBalance = [];
-                for (let o of obj.benefitBalance || []) {
-                    this.benefitBalance.push(new BenefitBalanceComponent(o));
-                }
+                for (let o of obj.benefitBalance || []) { this.benefitBalance.push(new BenefitBalanceComponent(o)); }
             }
         }
     }
@@ -9117,10 +8362,10 @@ export class ExplanationOfBenefit extends DomainResource {
 
 export class ConditionComponent extends BackboneElement {
     public code: CodeableConcept;
-    public outcome: CodeableConcept;
-    public onset: Element;
-    public note: Annotation[];
-
+    public outcome?: CodeableConcept;
+    public onset?: Element;
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9135,9 +8380,7 @@ export class ConditionComponent extends BackboneElement {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -9146,39 +8389,35 @@ export class ConditionComponent extends BackboneElement {
 
 export class FamilyMemberHistory extends DomainResource {
     public resourceType = 'FamilyMemberHistory';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
     public status: string;
-    public notDone: boolean;
-    public notDoneReason: CodeableConcept;
+    public notDone?: boolean;
+    public notDoneReason?: CodeableConcept;
     public patient: ResourceReference;
-    public date: Date;
-    public name: string;
+    public date?: Date;
+    public name?: string;
     public relationship: CodeableConcept;
-    public gender: string;
-    public born: Element;
-    public age: Element;
-    public estimatedAge: boolean;
-    public deceased: Element;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public note: Annotation[];
-    public condition: ConditionComponent[];
-
+    public gender?: string;
+    public born?: Element;
+    public age?: Element;
+    public estimatedAge?: boolean;
+    public deceased?: Element;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public note?: Annotation[];
+    public condition?: ConditionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -9218,27 +8457,19 @@ export class FamilyMemberHistory extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.condition) {
                 this.condition = [];
-                for (let o of obj.condition || []) {
-                    this.condition.push(new ConditionComponent(o));
-                }
+                for (let o of obj.condition || []) { this.condition.push(new ConditionComponent(o)); }
             }
         }
     }
@@ -9246,10 +8477,10 @@ export class FamilyMemberHistory extends DomainResource {
 }
 
 export class TargetComponent extends BackboneElement {
-    public measure: CodeableConcept;
-    public detail: Element;
-    public due: Element;
-
+    public measure?: CodeableConcept;
+    public detail?: Element;
+    public due?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9269,39 +8500,35 @@ export class TargetComponent extends BackboneElement {
 
 export class Goal extends DomainResource {
     public resourceType = 'Goal';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
-    public category: CodeableConcept[];
-    public priority: CodeableConcept;
+    public category?: CodeableConcept[];
+    public priority?: CodeableConcept;
     public description: CodeableConcept;
-    public subject: ResourceReference;
-    public start: Element;
-    public target: TargetComponent;
-    public statusDate: Date;
-    public statusReason: string;
-    public expressedBy: ResourceReference;
-    public addresses: ResourceReference[];
-    public note: Annotation[];
-    public outcomeCode: CodeableConcept[];
-    public outcomeReference: ResourceReference[];
-
+    public subject?: ResourceReference;
+    public start?: Element;
+    public target?: TargetComponent;
+    public statusDate?: Date;
+    public statusReason?: string;
+    public expressedBy?: ResourceReference;
+    public addresses?: ResourceReference[];
+    public note?: Annotation[];
+    public outcomeCode?: CodeableConcept[];
+    public outcomeReference?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.priority) {
                 this.priority = new CodeableConcept(obj.priority);
@@ -9329,27 +8556,19 @@ export class Goal extends DomainResource {
             }
             if (obj.addresses) {
                 this.addresses = [];
-                for (let o of obj.addresses || []) {
-                    this.addresses.push(new ResourceReference(o));
-                }
+                for (let o of obj.addresses || []) { this.addresses.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.outcomeCode) {
                 this.outcomeCode = [];
-                for (let o of obj.outcomeCode || []) {
-                    this.outcomeCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.outcomeCode || []) { this.outcomeCode.push(new CodeableConcept(o)); }
             }
             if (obj.outcomeReference) {
                 this.outcomeReference = [];
-                for (let o of obj.outcomeReference || []) {
-                    this.outcomeReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.outcomeReference || []) { this.outcomeReference.push(new ResourceReference(o)); }
             }
         }
     }
@@ -9358,22 +8577,22 @@ export class Goal extends DomainResource {
 
 export class GraphDefinition extends DomainResource {
     public resourceType = 'GraphDefinition';
-    public url: string;
-    public version: string;
+    public url?: string;
+    public version?: string;
     public name: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
     public start: string;
-    public profile: string;
-    public link: LinkComponent[];
-
+    public profile?: string;
+    public link?: LinkComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9400,24 +8619,18 @@ export class GraphDefinition extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -9430,9 +8643,7 @@ export class GraphDefinition extends DomainResource {
             }
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
         }
     }
@@ -9443,8 +8654,8 @@ export class CharacteristicComponent extends BackboneElement {
     public code: CodeableConcept;
     public value: Element;
     public exclude: boolean;
-    public period: Period;
-
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9467,9 +8678,9 @@ export class CharacteristicComponent extends BackboneElement {
 
 export class MemberComponent extends BackboneElement {
     public entity: ResourceReference;
-    public period: Period;
-    public inactive: boolean;
-
+    public period?: Period;
+    public inactive?: boolean;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9489,24 +8700,22 @@ export class MemberComponent extends BackboneElement {
 
 export class Group extends DomainResource {
     public resourceType = 'Group';
-    public identifier: Identifier[];
-    public active: boolean;
+    public identifier?: Identifier[];
+    public active?: boolean;
     public type: string;
     public actual: boolean;
-    public code: CodeableConcept;
-    public name: string;
-    public quantity: number;
-    public characteristic: CharacteristicComponent[];
-    public member: MemberComponent[];
-
+    public code?: CodeableConcept;
+    public name?: string;
+    public quantity?: number;
+    public characteristic?: CharacteristicComponent[];
+    public member?: MemberComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -9528,15 +8737,11 @@ export class Group extends DomainResource {
             }
             if (obj.characteristic) {
                 this.characteristic = [];
-                for (let o of obj.characteristic || []) {
-                    this.characteristic.push(new CharacteristicComponent(o));
-                }
+                for (let o of obj.characteristic || []) { this.characteristic.push(new CharacteristicComponent(o)); }
             }
             if (obj.member) {
                 this.member = [];
-                for (let o of obj.member || []) {
-                    this.member.push(new MemberComponent(o));
-                }
+                for (let o of obj.member || []) { this.member.push(new MemberComponent(o)); }
             }
         }
     }
@@ -9545,21 +8750,21 @@ export class Group extends DomainResource {
 
 export class GuidanceResponse extends DomainResource {
     public resourceType = 'GuidanceResponse';
-    public requestId: string;
-    public identifier: Identifier;
+    public requestId?: string;
+    public identifier?: Identifier;
     public module: ResourceReference;
     public status: string;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrenceDateTime: Date;
-    public performer: ResourceReference;
-    public reason: Element;
-    public note: Annotation[];
-    public evaluationMessage: ResourceReference[];
-    public outputParameters: ResourceReference;
-    public result: ResourceReference;
-    public dataRequirement: DataRequirement[];
-
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public occurrenceDateTime?: Date;
+    public performer?: ResourceReference;
+    public reason?: Element;
+    public note?: Annotation[];
+    public evaluationMessage?: ResourceReference[];
+    public outputParameters?: ResourceReference;
+    public result?: ResourceReference;
+    public dataRequirement?: DataRequirement[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9592,15 +8797,11 @@ export class GuidanceResponse extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.evaluationMessage) {
                 this.evaluationMessage = [];
-                for (let o of obj.evaluationMessage || []) {
-                    this.evaluationMessage.push(new ResourceReference(o));
-                }
+                for (let o of obj.evaluationMessage || []) { this.evaluationMessage.push(new ResourceReference(o)); }
             }
             if (obj.outputParameters) {
                 this.outputParameters = new ResourceReference(obj.outputParameters);
@@ -9610,9 +8811,7 @@ export class GuidanceResponse extends DomainResource {
             }
             if (obj.dataRequirement) {
                 this.dataRequirement = [];
-                for (let o of obj.dataRequirement || []) {
-                    this.dataRequirement.push(new DataRequirement(o));
-                }
+                for (let o of obj.dataRequirement || []) { this.dataRequirement.push(new DataRequirement(o)); }
             }
         }
     }
@@ -9620,11 +8819,11 @@ export class GuidanceResponse extends DomainResource {
 }
 
 export class AvailableTimeComponent extends BackboneElement {
-    public daysOfWeek: string[];
-    public allDay: boolean;
-    public availableStartTime: Date;
-    public availableEndTime: Date;
-
+    public daysOfWeek?: string[];
+    public allDay?: boolean;
+    public availableStartTime?: Date;
+    public availableEndTime?: Date;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9647,8 +8846,8 @@ export class AvailableTimeComponent extends BackboneElement {
 
 export class NotAvailableComponent extends BackboneElement {
     public description: string;
-    public during: Period;
-
+    public during?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9665,39 +8864,37 @@ export class NotAvailableComponent extends BackboneElement {
 
 export class HealthcareService extends DomainResource {
     public resourceType = 'HealthcareService';
-    public identifier: Identifier[];
-    public active: boolean;
-    public providedBy: ResourceReference;
-    public category: CodeableConcept;
-    public type: CodeableConcept[];
-    public specialty: CodeableConcept[];
-    public location: ResourceReference[];
-    public name: string;
-    public comment: string;
-    public extraDetails: string;
-    public photo: Attachment;
-    public telecom: ContactPoint[];
-    public coverageArea: ResourceReference[];
-    public serviceProvisionCode: CodeableConcept[];
-    public eligibility: CodeableConcept;
-    public eligibilityNote: string;
-    public programName: string[];
-    public characteristic: CodeableConcept[];
-    public referralMethod: CodeableConcept[];
-    public appointmentRequired: boolean;
-    public availableTime: AvailableTimeComponent[];
-    public notAvailable: NotAvailableComponent[];
-    public availabilityExceptions: string;
-    public endpoint: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public providedBy?: ResourceReference;
+    public category?: CodeableConcept;
+    public type?: CodeableConcept[];
+    public specialty?: CodeableConcept[];
+    public location?: ResourceReference[];
+    public name?: string;
+    public comment?: string;
+    public extraDetails?: string;
+    public photo?: Attachment;
+    public telecom?: ContactPoint[];
+    public coverageArea?: ResourceReference[];
+    public serviceProvisionCode?: CodeableConcept[];
+    public eligibility?: CodeableConcept;
+    public eligibilityNote?: string;
+    public programName?: string[];
+    public characteristic?: CodeableConcept[];
+    public referralMethod?: CodeableConcept[];
+    public appointmentRequired?: boolean;
+    public availableTime?: AvailableTimeComponent[];
+    public notAvailable?: NotAvailableComponent[];
+    public availabilityExceptions?: string;
+    public endpoint?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -9710,21 +8907,15 @@ export class HealthcareService extends DomainResource {
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.specialty) {
                 this.specialty = [];
-                for (let o of obj.specialty || []) {
-                    this.specialty.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialty || []) { this.specialty.push(new CodeableConcept(o)); }
             }
             if (obj.location) {
                 this.location = [];
-                for (let o of obj.location || []) {
-                    this.location.push(new ResourceReference(o));
-                }
+                for (let o of obj.location || []) { this.location.push(new ResourceReference(o)); }
             }
             if (obj.name) {
                 this.name = obj.name;
@@ -9740,21 +8931,15 @@ export class HealthcareService extends DomainResource {
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.coverageArea) {
                 this.coverageArea = [];
-                for (let o of obj.coverageArea || []) {
-                    this.coverageArea.push(new ResourceReference(o));
-                }
+                for (let o of obj.coverageArea || []) { this.coverageArea.push(new ResourceReference(o)); }
             }
             if (obj.serviceProvisionCode) {
                 this.serviceProvisionCode = [];
-                for (let o of obj.serviceProvisionCode || []) {
-                    this.serviceProvisionCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.serviceProvisionCode || []) { this.serviceProvisionCode.push(new CodeableConcept(o)); }
             }
             if (obj.eligibility) {
                 this.eligibility = new CodeableConcept(obj.eligibility);
@@ -9767,39 +8952,29 @@ export class HealthcareService extends DomainResource {
             }
             if (obj.characteristic) {
                 this.characteristic = [];
-                for (let o of obj.characteristic || []) {
-                    this.characteristic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.characteristic || []) { this.characteristic.push(new CodeableConcept(o)); }
             }
             if (obj.referralMethod) {
                 this.referralMethod = [];
-                for (let o of obj.referralMethod || []) {
-                    this.referralMethod.push(new CodeableConcept(o));
-                }
+                for (let o of obj.referralMethod || []) { this.referralMethod.push(new CodeableConcept(o)); }
             }
             if (obj.appointmentRequired) {
                 this.appointmentRequired = obj.appointmentRequired;
             }
             if (obj.availableTime) {
                 this.availableTime = [];
-                for (let o of obj.availableTime || []) {
-                    this.availableTime.push(new AvailableTimeComponent(o));
-                }
+                for (let o of obj.availableTime || []) { this.availableTime.push(new AvailableTimeComponent(o)); }
             }
             if (obj.notAvailable) {
                 this.notAvailable = [];
-                for (let o of obj.notAvailable || []) {
-                    this.notAvailable.push(new NotAvailableComponent(o));
-                }
+                for (let o of obj.notAvailable || []) { this.notAvailable.push(new NotAvailableComponent(o)); }
             }
             if (obj.availabilityExceptions) {
                 this.availabilityExceptions = obj.availabilityExceptions;
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
         }
     }
@@ -9807,14 +8982,14 @@ export class HealthcareService extends DomainResource {
 }
 
 export class HumanName extends Element {
-    public use: string;
-    public text: string;
-    public family: string;
-    public given: string[];
-    public prefix: string[];
-    public suffix: string[];
-    public period: Period;
-
+    public use?: string;
+    public text?: string;
+    public family?: string;
+    public given?: string[];
+    public prefix?: string[];
+    public suffix?: string[];
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9856,7 +9031,7 @@ export class HumanName extends Element {
 export class InstanceComponent extends BackboneElement {
     public sopClass: string;
     public uid: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9873,9 +9048,9 @@ export class InstanceComponent extends BackboneElement {
 
 export class SeriesComponent extends BackboneElement {
     public uid: string;
-    public endpoint: ResourceReference[];
+    public endpoint?: ResourceReference[];
     public instance: InstanceComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9884,15 +9059,11 @@ export class SeriesComponent extends BackboneElement {
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
             if (obj.instance) {
                 this.instance = [];
-                for (let o of obj.instance || []) {
-                    this.instance.push(new InstanceComponent(o));
-                }
+                for (let o of obj.instance || []) { this.instance.push(new InstanceComponent(o)); }
             }
         }
     }
@@ -9901,10 +9072,10 @@ export class SeriesComponent extends BackboneElement {
 
 export class StudyComponent extends BackboneElement {
     public uid: string;
-    public imagingStudy: ResourceReference;
-    public endpoint: ResourceReference[];
+    public imagingStudy?: ResourceReference;
+    public endpoint?: ResourceReference[];
     public series: SeriesComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9916,15 +9087,11 @@ export class StudyComponent extends BackboneElement {
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
             if (obj.series) {
                 this.series = [];
-                for (let o of obj.series || []) {
-                    this.series.push(new SeriesComponent(o));
-                }
+                for (let o of obj.series || []) { this.series.push(new SeriesComponent(o)); }
             }
         }
     }
@@ -9933,13 +9100,13 @@ export class StudyComponent extends BackboneElement {
 
 export class ImagingManifest extends DomainResource {
     public resourceType = 'ImagingManifest';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public patient: ResourceReference;
-    public authoringTime: Date;
-    public author: ResourceReference;
-    public description: string;
+    public authoringTime?: Date;
+    public author?: ResourceReference;
+    public description?: string;
     public study: StudyComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -9960,9 +9127,7 @@ export class ImagingManifest extends DomainResource {
             }
             if (obj.study) {
                 this.study = [];
-                for (let o of obj.study || []) {
-                    this.study.push(new StudyComponent(o));
-                }
+                for (let o of obj.study || []) { this.study.push(new StudyComponent(o)); }
             }
         }
     }
@@ -9972,25 +9137,25 @@ export class ImagingManifest extends DomainResource {
 export class ImagingStudy extends DomainResource {
     public resourceType = 'ImagingStudy';
     public uid: string;
-    public accession: Identifier;
-    public identifier: Identifier[];
-    public availability: string;
-    public modalityList: Coding[];
+    public accession?: Identifier;
+    public identifier?: Identifier[];
+    public availability?: string;
+    public modalityList?: Coding[];
     public patient: ResourceReference;
-    public context: ResourceReference;
-    public started: Date;
-    public basedOn: ResourceReference[];
-    public referrer: ResourceReference;
-    public interpreter: ResourceReference[];
-    public endpoint: ResourceReference[];
-    public numberOfSeries: number;
-    public numberOfInstances: number;
-    public procedureReference: ResourceReference[];
-    public procedureCode: CodeableConcept[];
-    public reason: CodeableConcept;
-    public description: string;
-    public series: SeriesComponent[];
-
+    public context?: ResourceReference;
+    public started?: Date;
+    public basedOn?: ResourceReference[];
+    public referrer?: ResourceReference;
+    public interpreter?: ResourceReference[];
+    public endpoint?: ResourceReference[];
+    public numberOfSeries?: number;
+    public numberOfInstances?: number;
+    public procedureReference?: ResourceReference[];
+    public procedureCode?: CodeableConcept[];
+    public reason?: CodeableConcept;
+    public description?: string;
+    public series?: SeriesComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10002,18 +9167,14 @@ export class ImagingStudy extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.availability) {
                 this.availability = obj.availability;
             }
             if (obj.modalityList) {
                 this.modalityList = [];
-                for (let o of obj.modalityList || []) {
-                    this.modalityList.push(new Coding(o));
-                }
+                for (let o of obj.modalityList || []) { this.modalityList.push(new Coding(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
@@ -10026,24 +9187,18 @@ export class ImagingStudy extends DomainResource {
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.referrer) {
                 this.referrer = new ResourceReference(obj.referrer);
             }
             if (obj.interpreter) {
                 this.interpreter = [];
-                for (let o of obj.interpreter || []) {
-                    this.interpreter.push(new ResourceReference(o));
-                }
+                for (let o of obj.interpreter || []) { this.interpreter.push(new ResourceReference(o)); }
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
             if (obj.numberOfSeries) {
                 this.numberOfSeries = obj.numberOfSeries;
@@ -10053,15 +9208,11 @@ export class ImagingStudy extends DomainResource {
             }
             if (obj.procedureReference) {
                 this.procedureReference = [];
-                for (let o of obj.procedureReference || []) {
-                    this.procedureReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.procedureReference || []) { this.procedureReference.push(new ResourceReference(o)); }
             }
             if (obj.procedureCode) {
                 this.procedureCode = [];
-                for (let o of obj.procedureCode || []) {
-                    this.procedureCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.procedureCode || []) { this.procedureCode.push(new CodeableConcept(o)); }
             }
             if (obj.reason) {
                 this.reason = new CodeableConcept(obj.reason);
@@ -10071,9 +9222,7 @@ export class ImagingStudy extends DomainResource {
             }
             if (obj.series) {
                 this.series = [];
-                for (let o of obj.series || []) {
-                    this.series.push(new SeriesComponent(o));
-                }
+                for (let o of obj.series || []) { this.series.push(new SeriesComponent(o)); }
             }
         }
     }
@@ -10081,9 +9230,9 @@ export class ImagingStudy extends DomainResource {
 }
 
 export class PractitionerComponent extends BackboneElement {
-    public role: CodeableConcept;
+    public role?: CodeableConcept;
     public actor: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10099,23 +9248,19 @@ export class PractitionerComponent extends BackboneElement {
 }
 
 export class ExplanationComponent extends BackboneElement {
-    public reason: CodeableConcept[];
-    public reasonNotGiven: CodeableConcept[];
-
+    public reason?: CodeableConcept[];
+    public reasonNotGiven?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.reasonNotGiven) {
                 this.reasonNotGiven = [];
-                for (let o of obj.reasonNotGiven || []) {
-                    this.reasonNotGiven.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonNotGiven || []) { this.reasonNotGiven.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -10123,15 +9268,15 @@ export class ExplanationComponent extends BackboneElement {
 }
 
 export class VaccinationProtocolComponent extends BackboneElement {
-    public doseSequence: number;
-    public description: string;
-    public authority: ResourceReference;
-    public series: string;
-    public seriesDoses: number;
+    public doseSequence?: number;
+    public description?: string;
+    public authority?: ResourceReference;
+    public series?: string;
+    public seriesDoses?: number;
     public targetDisease: CodeableConcept[];
     public doseStatus: CodeableConcept;
-    public doseStatusReason: CodeableConcept;
-
+    public doseStatusReason?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10152,9 +9297,7 @@ export class VaccinationProtocolComponent extends BackboneElement {
             }
             if (obj.targetDisease) {
                 this.targetDisease = [];
-                for (let o of obj.targetDisease || []) {
-                    this.targetDisease.push(new CodeableConcept(o));
-                }
+                for (let o of obj.targetDisease || []) { this.targetDisease.push(new CodeableConcept(o)); }
             }
             if (obj.doseStatus) {
                 this.doseStatus = new CodeableConcept(obj.doseStatus);
@@ -10169,36 +9312,34 @@ export class VaccinationProtocolComponent extends BackboneElement {
 
 export class Immunization extends DomainResource {
     public resourceType = 'Immunization';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
     public notGiven: boolean;
     public vaccineCode: CodeableConcept;
     public patient: ResourceReference;
-    public encounter: ResourceReference;
-    public date: Date;
+    public encounter?: ResourceReference;
+    public date?: Date;
     public primarySource: boolean;
-    public reportOrigin: CodeableConcept;
-    public location: ResourceReference;
-    public manufacturer: ResourceReference;
-    public lotNumber: string;
-    public expirationDate: Date;
-    public site: CodeableConcept;
-    public route: CodeableConcept;
-    public doseQuantity: SimpleQuantity;
-    public practitioner: PractitionerComponent[];
-    public note: Annotation[];
-    public explanation: ExplanationComponent;
-    public reaction: ReactionComponent[];
-    public vaccinationProtocol: VaccinationProtocolComponent[];
-
+    public reportOrigin?: CodeableConcept;
+    public location?: ResourceReference;
+    public manufacturer?: ResourceReference;
+    public lotNumber?: string;
+    public expirationDate?: Date;
+    public site?: CodeableConcept;
+    public route?: CodeableConcept;
+    public doseQuantity?: SimpleQuantity;
+    public practitioner?: PractitionerComponent[];
+    public note?: Annotation[];
+    public explanation?: ExplanationComponent;
+    public reaction?: ReactionComponent[];
+    public vaccinationProtocol?: VaccinationProtocolComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -10247,30 +9388,22 @@ export class Immunization extends DomainResource {
             }
             if (obj.practitioner) {
                 this.practitioner = [];
-                for (let o of obj.practitioner || []) {
-                    this.practitioner.push(new PractitionerComponent(o));
-                }
+                for (let o of obj.practitioner || []) { this.practitioner.push(new PractitionerComponent(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.explanation) {
                 this.explanation = new ExplanationComponent(obj.explanation);
             }
             if (obj.reaction) {
                 this.reaction = [];
-                for (let o of obj.reaction || []) {
-                    this.reaction.push(new ReactionComponent(o));
-                }
+                for (let o of obj.reaction || []) { this.reaction.push(new ReactionComponent(o)); }
             }
             if (obj.vaccinationProtocol) {
                 this.vaccinationProtocol = [];
-                for (let o of obj.vaccinationProtocol || []) {
-                    this.vaccinationProtocol.push(new VaccinationProtocolComponent(o));
-                }
+                for (let o of obj.vaccinationProtocol || []) { this.vaccinationProtocol.push(new VaccinationProtocolComponent(o)); }
             }
         }
     }
@@ -10280,7 +9413,7 @@ export class Immunization extends DomainResource {
 export class DateCriterionComponent extends BackboneElement {
     public code: CodeableConcept;
     public value: Date;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10296,11 +9429,11 @@ export class DateCriterionComponent extends BackboneElement {
 }
 
 export class ProtocolComponent extends BackboneElement {
-    public doseSequence: number;
-    public description: string;
-    public authority: ResourceReference;
-    public series: string;
-
+    public doseSequence?: number;
+    public description?: string;
+    public authority?: ResourceReference;
+    public series?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10323,15 +9456,15 @@ export class ProtocolComponent extends BackboneElement {
 
 export class RecommendationComponent extends BackboneElement {
     public date: Date;
-    public vaccineCode: CodeableConcept;
-    public targetDisease: CodeableConcept;
-    public doseNumber: number;
+    public vaccineCode?: CodeableConcept;
+    public targetDisease?: CodeableConcept;
+    public doseNumber?: number;
     public forecastStatus: CodeableConcept;
-    public dateCriterion: DateCriterionComponent[];
-    public protocol: ProtocolComponent;
-    public supportingImmunization: ResourceReference[];
-    public supportingPatientInformation: ResourceReference[];
-
+    public dateCriterion?: DateCriterionComponent[];
+    public protocol?: ProtocolComponent;
+    public supportingImmunization?: ResourceReference[];
+    public supportingPatientInformation?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10352,24 +9485,18 @@ export class RecommendationComponent extends BackboneElement {
             }
             if (obj.dateCriterion) {
                 this.dateCriterion = [];
-                for (let o of obj.dateCriterion || []) {
-                    this.dateCriterion.push(new DateCriterionComponent(o));
-                }
+                for (let o of obj.dateCriterion || []) { this.dateCriterion.push(new DateCriterionComponent(o)); }
             }
             if (obj.protocol) {
                 this.protocol = new ProtocolComponent(obj.protocol);
             }
             if (obj.supportingImmunization) {
                 this.supportingImmunization = [];
-                for (let o of obj.supportingImmunization || []) {
-                    this.supportingImmunization.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingImmunization || []) { this.supportingImmunization.push(new ResourceReference(o)); }
             }
             if (obj.supportingPatientInformation) {
                 this.supportingPatientInformation = [];
-                for (let o of obj.supportingPatientInformation || []) {
-                    this.supportingPatientInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingPatientInformation || []) { this.supportingPatientInformation.push(new ResourceReference(o)); }
             }
         }
     }
@@ -10378,27 +9505,23 @@ export class RecommendationComponent extends BackboneElement {
 
 export class ImmunizationRecommendation extends DomainResource {
     public resourceType = 'ImmunizationRecommendation';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public patient: ResourceReference;
     public recommendation: RecommendationComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.patient) {
                 this.patient = new ResourceReference(obj.patient);
             }
             if (obj.recommendation) {
                 this.recommendation = [];
-                for (let o of obj.recommendation || []) {
-                    this.recommendation.push(new RecommendationComponent(o));
-                }
+                for (let o of obj.recommendation || []) { this.recommendation.push(new RecommendationComponent(o)); }
             }
         }
     }
@@ -10408,7 +9531,7 @@ export class ImmunizationRecommendation extends DomainResource {
 export class DependencyComponent extends BackboneElement {
     public type: string;
     public uri: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10425,9 +9548,9 @@ export class DependencyComponent extends BackboneElement {
 
 export class PackageComponent extends BackboneElement {
     public name: string;
-    public description: string;
+    public description?: string;
     public resource: ResourceComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10439,9 +9562,7 @@ export class PackageComponent extends BackboneElement {
             }
             if (obj.resource) {
                 this.resource = [];
-                for (let o of obj.resource || []) {
-                    this.resource.push(new ResourceComponent(o));
-                }
+                for (let o of obj.resource || []) { this.resource.push(new ResourceComponent(o)); }
             }
         }
     }
@@ -10451,7 +9572,7 @@ export class PackageComponent extends BackboneElement {
 export class GlobalComponent extends BackboneElement {
     public type: string;
     public profile: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10469,12 +9590,12 @@ export class GlobalComponent extends BackboneElement {
 export class PageComponent extends BackboneElement {
     public source: string;
     public title: string;
-    public kind = 'page';
-    public type: string[];
-    public package: string[];
-    public format = 'markdown';
-    public page: PageComponent[];
-
+    public kind: string;
+    public type?: string[];
+    public package?: string[];
+    public format?: string;
+    public page?: PageComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10498,9 +9619,7 @@ export class PageComponent extends BackboneElement {
             }
             if (obj.page) {
                 this.page = [];
-                for (let o of obj.page || []) {
-                    this.page.push(new PageComponent(o));
-                }
+                for (let o of obj.page || []) { this.page.push(new PageComponent(o)); }
             }
         }
     }
@@ -10510,24 +9629,24 @@ export class PageComponent extends BackboneElement {
 export class ImplementationGuide extends DomainResource {
     public resourceType = 'ImplementationGuide';
     public url: string;
-    public version = '1';
+    public version?: string;
     public name: string;
-    public status = 'draft';
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public copyright: string;
-    public fhirVersion: string;
-    public dependency: DependencyComponent[];
-    public package: PackageComponent[];
-    public global: GlobalComponent[];
-    public binary: string[];
-    public page: PageComponent;
-
+    public status: string;
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public copyright?: string;
+    public fhirVersion?: string;
+    public dependency?: DependencyComponent[];
+    public package?: PackageComponent[];
+    public global?: GlobalComponent[];
+    public binary?: string[];
+    public page?: PageComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10554,24 +9673,18 @@ export class ImplementationGuide extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
@@ -10581,21 +9694,15 @@ export class ImplementationGuide extends DomainResource {
             }
             if (obj.dependency) {
                 this.dependency = [];
-                for (let o of obj.dependency || []) {
-                    this.dependency.push(new DependencyComponent(o));
-                }
+                for (let o of obj.dependency || []) { this.dependency.push(new DependencyComponent(o)); }
             }
             if (obj.package) {
                 this.package = [];
-                for (let o of obj.package || []) {
-                    this.package.push(new PackageComponent(o));
-                }
+                for (let o of obj.package || []) { this.package.push(new PackageComponent(o)); }
             }
             if (obj.global) {
                 this.global = [];
-                for (let o of obj.global || []) {
-                    this.global.push(new GlobalComponent(o));
-                }
+                for (let o of obj.global || []) { this.global.push(new GlobalComponent(o)); }
             }
             if (obj.binary) {
                 this.binary = obj.binary;
@@ -10609,14 +9716,14 @@ export class ImplementationGuide extends DomainResource {
 }
 
 export class ParameterDefinition extends Element {
-    public name: string;
+    public name?: string;
     public use: string;
-    public min: number;
-    public max: string;
-    public documentation: string;
+    public min?: number;
+    public max?: string;
+    public documentation?: string;
     public type: string;
-    public profile: ResourceReference;
-
+    public profile?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10648,33 +9755,33 @@ export class ParameterDefinition extends Element {
 
 export class Library extends DomainResource {
     public resourceType = 'Library';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
+    public experimental?: boolean;
     public type: CodeableConcept;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public usage: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public topic: CodeableConcept[];
-    public contributor: Contributor[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public relatedArtifact: RelatedArtifact[];
-    public parameter: ParameterDefinition[];
-    public dataRequirement: DataRequirement[];
-    public content: Attachment[];
-
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public usage?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public topic?: CodeableConcept[];
+    public contributor?: Contributor[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public relatedArtifact?: RelatedArtifact[];
+    public parameter?: ParameterDefinition[];
+    public dataRequirement?: DataRequirement[];
+    public content?: Attachment[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10683,9 +9790,7 @@ export class Library extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -10731,60 +9836,42 @@ export class Library extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new CodeableConcept(o)); }
             }
             if (obj.contributor) {
                 this.contributor = [];
-                for (let o of obj.contributor || []) {
-                    this.contributor.push(new Contributor(o));
-                }
+                for (let o of obj.contributor || []) { this.contributor.push(new Contributor(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.parameter) {
                 this.parameter = [];
-                for (let o of obj.parameter || []) {
-                    this.parameter.push(new ParameterDefinition(o));
-                }
+                for (let o of obj.parameter || []) { this.parameter.push(new ParameterDefinition(o)); }
             }
             if (obj.dataRequirement) {
                 this.dataRequirement = [];
-                for (let o of obj.dataRequirement || []) {
-                    this.dataRequirement.push(new DataRequirement(o));
-                }
+                for (let o of obj.dataRequirement || []) { this.dataRequirement.push(new DataRequirement(o)); }
             }
             if (obj.content) {
                 this.content = [];
-                for (let o of obj.content || []) {
-                    this.content.push(new Attachment(o));
-                }
+                for (let o of obj.content || []) { this.content.push(new Attachment(o)); }
             }
         }
     }
@@ -10793,10 +9880,10 @@ export class Library extends DomainResource {
 
 export class Linkage extends DomainResource {
     public resourceType = 'Linkage';
-    public active: boolean;
-    public author: ResourceReference;
+    public active?: boolean;
+    public author?: ResourceReference;
     public item: ItemComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10808,9 +9895,7 @@ export class Linkage extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
         }
     }
@@ -10819,28 +9904,26 @@ export class Linkage extends DomainResource {
 
 export class List extends DomainResource {
     public resourceType = 'List';
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public status: string;
     public mode: string;
-    public title: string;
-    public code: CodeableConcept;
-    public subject: ResourceReference;
-    public encounter: ResourceReference;
-    public date: Date;
-    public source: ResourceReference;
-    public orderedBy: CodeableConcept;
-    public note: Annotation[];
-    public entry: EntryComponent[];
-    public emptyReason: CodeableConcept;
-
+    public title?: string;
+    public code?: CodeableConcept;
+    public subject?: ResourceReference;
+    public encounter?: ResourceReference;
+    public date?: Date;
+    public source?: ResourceReference;
+    public orderedBy?: CodeableConcept;
+    public note?: Annotation[];
+    public entry?: EntryComponent[];
+    public emptyReason?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -10871,15 +9954,11 @@ export class List extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.entry) {
                 this.entry = [];
-                for (let o of obj.entry || []) {
-                    this.entry.push(new EntryComponent(o));
-                }
+                for (let o of obj.entry || []) { this.entry.push(new EntryComponent(o)); }
             }
             if (obj.emptyReason) {
                 this.emptyReason = new CodeableConcept(obj.emptyReason);
@@ -10892,8 +9971,8 @@ export class List extends DomainResource {
 export class PositionComponent extends BackboneElement {
     public longitude: number;
     public latitude: number;
-    public altitude: number;
-
+    public altitude?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -10913,30 +9992,28 @@ export class PositionComponent extends BackboneElement {
 
 export class Location extends DomainResource {
     public resourceType = 'Location';
-    public identifier: Identifier[];
-    public status: string;
-    public operationalStatus: Coding;
-    public name: string;
-    public alias: string[];
-    public description: string;
-    public mode: string;
-    public type: CodeableConcept;
-    public telecom: ContactPoint[];
-    public address: Address;
-    public physicalType: CodeableConcept;
-    public position: PositionComponent;
-    public managingOrganization: ResourceReference;
-    public partOf: ResourceReference;
-    public endpoint: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public operationalStatus?: Coding;
+    public name?: string;
+    public alias?: string[];
+    public description?: string;
+    public mode?: string;
+    public type?: CodeableConcept;
+    public telecom?: ContactPoint[];
+    public address?: Address;
+    public physicalType?: CodeableConcept;
+    public position?: PositionComponent;
+    public managingOrganization?: ResourceReference;
+    public partOf?: ResourceReference;
+    public endpoint?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -10961,9 +10038,7 @@ export class Location extends DomainResource {
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.address) {
                 this.address = new Address(obj.address);
@@ -10982,9 +10057,7 @@ export class Location extends DomainResource {
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
         }
     }
@@ -10992,11 +10065,11 @@ export class Location extends DomainResource {
 }
 
 export class SupplementalDataComponent extends BackboneElement {
-    public identifier: Identifier;
-    public usage: CodeableConcept[];
-    public criteria: string;
-    public path: string;
-
+    public identifier?: Identifier;
+    public usage?: CodeableConcept[];
+    public criteria?: string;
+    public path?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11005,9 +10078,7 @@ export class SupplementalDataComponent extends BackboneElement {
             }
             if (obj.usage) {
                 this.usage = [];
-                for (let o of obj.usage || []) {
-                    this.usage.push(new CodeableConcept(o));
-                }
+                for (let o of obj.usage || []) { this.usage.push(new CodeableConcept(o)); }
             }
             if (obj.criteria) {
                 this.criteria = obj.criteria;
@@ -11022,44 +10093,44 @@ export class SupplementalDataComponent extends BackboneElement {
 
 export class Measure extends DomainResource {
     public resourceType = 'Measure';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public usage: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public topic: CodeableConcept[];
-    public contributor: Contributor[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public relatedArtifact: RelatedArtifact[];
-    public library: ResourceReference[];
-    public disclaimer: string;
-    public scoring: CodeableConcept;
-    public compositeScoring: CodeableConcept;
-    public type: CodeableConcept[];
-    public riskAdjustment: string;
-    public rateAggregation: string;
-    public rationale: string;
-    public clinicalRecommendationStatement: string;
-    public improvementNotation: string;
-    public definition: string[];
-    public guidance: string;
-    public set: string;
-    public group: GroupComponent[];
-    public supplementalData: SupplementalDataComponent[];
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public usage?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public topic?: CodeableConcept[];
+    public contributor?: Contributor[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public relatedArtifact?: RelatedArtifact[];
+    public library?: ResourceReference[];
+    public disclaimer?: string;
+    public scoring?: CodeableConcept;
+    public compositeScoring?: CodeableConcept;
+    public type?: CodeableConcept[];
+    public riskAdjustment?: string;
+    public rateAggregation?: string;
+    public rationale?: string;
+    public clinicalRecommendationStatement?: string;
+    public improvementNotation?: string;
+    public definition?: string[];
+    public guidance?: string;
+    public set?: string;
+    public group?: GroupComponent[];
+    public supplementalData?: SupplementalDataComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11068,9 +10139,7 @@ export class Measure extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -11113,48 +10182,34 @@ export class Measure extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new CodeableConcept(o)); }
             }
             if (obj.contributor) {
                 this.contributor = [];
-                for (let o of obj.contributor || []) {
-                    this.contributor.push(new Contributor(o));
-                }
+                for (let o of obj.contributor || []) { this.contributor.push(new Contributor(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.library) {
                 this.library = [];
-                for (let o of obj.library || []) {
-                    this.library.push(new ResourceReference(o));
-                }
+                for (let o of obj.library || []) { this.library.push(new ResourceReference(o)); }
             }
             if (obj.disclaimer) {
                 this.disclaimer = obj.disclaimer;
@@ -11167,9 +10222,7 @@ export class Measure extends DomainResource {
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.riskAdjustment) {
                 this.riskAdjustment = obj.riskAdjustment;
@@ -11197,15 +10250,11 @@ export class Measure extends DomainResource {
             }
             if (obj.group) {
                 this.group = [];
-                for (let o of obj.group || []) {
-                    this.group.push(new GroupComponent(o));
-                }
+                for (let o of obj.group || []) { this.group.push(new GroupComponent(o)); }
             }
             if (obj.supplementalData) {
                 this.supplementalData = [];
-                for (let o of obj.supplementalData || []) {
-                    this.supplementalData.push(new SupplementalDataComponent(o));
-                }
+                for (let o of obj.supplementalData || []) { this.supplementalData.push(new SupplementalDataComponent(o)); }
             }
         }
     }
@@ -11214,17 +10263,17 @@ export class Measure extends DomainResource {
 
 export class MeasureReport extends DomainResource {
     public resourceType = 'MeasureReport';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public status: string;
     public type: string;
     public measure: ResourceReference;
-    public patient: ResourceReference;
-    public date: Date;
-    public reportingOrganization: ResourceReference;
+    public patient?: ResourceReference;
+    public date?: Date;
+    public reportingOrganization?: ResourceReference;
     public period: Period;
-    public group: GroupComponent[];
-    public evaluatedResources: ResourceReference;
-
+    public group?: GroupComponent[];
+    public evaluatedResources?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11254,9 +10303,7 @@ export class MeasureReport extends DomainResource {
             }
             if (obj.group) {
                 this.group = [];
-                for (let o of obj.group || []) {
-                    this.group.push(new GroupComponent(o));
-                }
+                for (let o of obj.group || []) { this.group.push(new GroupComponent(o)); }
             }
             if (obj.evaluatedResources) {
                 this.evaluatedResources = new ResourceReference(obj.evaluatedResources);
@@ -11268,39 +10315,35 @@ export class MeasureReport extends DomainResource {
 
 export class Media extends DomainResource {
     public resourceType = 'Media';
-    public identifier: Identifier[];
-    public basedOn: ResourceReference[];
+    public identifier?: Identifier[];
+    public basedOn?: ResourceReference[];
     public type: string;
-    public subtype: CodeableConcept;
-    public view: CodeableConcept;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public operator: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public bodySite: CodeableConcept;
-    public device: ResourceReference;
-    public height: number;
-    public width: number;
-    public frames: number;
-    public duration: number;
+    public subtype?: CodeableConcept;
+    public view?: CodeableConcept;
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public operator?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public bodySite?: CodeableConcept;
+    public device?: ResourceReference;
+    public height?: number;
+    public width?: number;
+    public frames?: number;
+    public duration?: number;
     public content: Attachment;
-    public note: Annotation[];
-
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.type) {
                 this.type = obj.type;
@@ -11325,9 +10368,7 @@ export class Media extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = new CodeableConcept(obj.bodySite);
@@ -11352,9 +10393,7 @@ export class Media extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -11363,9 +10402,9 @@ export class Media extends DomainResource {
 
 export class IngredientComponent extends BackboneElement {
     public item: Element;
-    public isActive: boolean;
-    public amount: Ratio;
-
+    public isActive?: boolean;
+    public amount?: Ratio;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11385,16 +10424,16 @@ export class IngredientComponent extends BackboneElement {
 
 export class Medication extends DomainResource {
     public resourceType = 'Medication';
-    public code: CodeableConcept;
-    public status: string;
-    public isBrand: boolean;
-    public isOverTheCounter: boolean;
-    public manufacturer: ResourceReference;
-    public form: CodeableConcept;
-    public ingredient: IngredientComponent[];
-    public package: PackageComponent;
-    public image: Attachment[];
-
+    public code?: CodeableConcept;
+    public status?: string;
+    public isBrand?: boolean;
+    public isOverTheCounter?: boolean;
+    public manufacturer?: ResourceReference;
+    public form?: CodeableConcept;
+    public ingredient?: IngredientComponent[];
+    public package?: PackageComponent;
+    public image?: Attachment[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11418,18 +10457,14 @@ export class Medication extends DomainResource {
             }
             if (obj.ingredient) {
                 this.ingredient = [];
-                for (let o of obj.ingredient || []) {
-                    this.ingredient.push(new IngredientComponent(o));
-                }
+                for (let o of obj.ingredient || []) { this.ingredient.push(new IngredientComponent(o)); }
             }
             if (obj.package) {
                 this.package = new PackageComponent(obj.package);
             }
             if (obj.image) {
                 this.image = [];
-                for (let o of obj.image || []) {
-                    this.image.push(new Attachment(o));
-                }
+                for (let o of obj.image || []) { this.image.push(new Attachment(o)); }
             }
         }
     }
@@ -11437,13 +10472,13 @@ export class Medication extends DomainResource {
 }
 
 export class DosageComponent extends BackboneElement {
-    public text: string;
-    public site: CodeableConcept;
-    public route: CodeableConcept;
-    public method: CodeableConcept;
-    public dose: SimpleQuantity;
-    public rate: Element;
-
+    public text?: string;
+    public site?: CodeableConcept;
+    public route?: CodeableConcept;
+    public method?: CodeableConcept;
+    public dose?: SimpleQuantity;
+    public rate?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11472,47 +10507,41 @@ export class DosageComponent extends BackboneElement {
 
 export class MedicationAdministration extends DomainResource {
     public resourceType = 'MedicationAdministration';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public partOf?: ResourceReference[];
     public status: string;
-    public category: CodeableConcept;
+    public category?: CodeableConcept;
     public medication: Element;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public supportingInformation: ResourceReference[];
+    public context?: ResourceReference;
+    public supportingInformation?: ResourceReference[];
     public effective: Element;
-    public performer: PerformerComponent[];
-    public notGiven: boolean;
-    public reasonNotGiven: CodeableConcept[];
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public prescription: ResourceReference;
-    public device: ResourceReference[];
-    public note: Annotation[];
-    public dosage: DosageComponent;
-    public eventHistory: ResourceReference[];
-
+    public performer?: PerformerComponent[];
+    public notGiven?: boolean;
+    public reasonNotGiven?: CodeableConcept[];
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public prescription?: ResourceReference;
+    public device?: ResourceReference[];
+    public note?: Annotation[];
+    public dosage?: DosageComponent;
+    public eventHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -11531,63 +10560,47 @@ export class MedicationAdministration extends DomainResource {
             }
             if (obj.supportingInformation) {
                 this.supportingInformation = [];
-                for (let o of obj.supportingInformation || []) {
-                    this.supportingInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInformation || []) { this.supportingInformation.push(new ResourceReference(o)); }
             }
             if (obj.effective) {
                 this.effective = new Element(obj.effective);
             }
             if (obj.performer) {
                 this.performer = [];
-                for (let o of obj.performer || []) {
-                    this.performer.push(new PerformerComponent(o));
-                }
+                for (let o of obj.performer || []) { this.performer.push(new PerformerComponent(o)); }
             }
             if (obj.notGiven) {
                 this.notGiven = obj.notGiven;
             }
             if (obj.reasonNotGiven) {
                 this.reasonNotGiven = [];
-                for (let o of obj.reasonNotGiven || []) {
-                    this.reasonNotGiven.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonNotGiven || []) { this.reasonNotGiven.push(new CodeableConcept(o)); }
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.prescription) {
                 this.prescription = new ResourceReference(obj.prescription);
             }
             if (obj.device) {
                 this.device = [];
-                for (let o of obj.device || []) {
-                    this.device.push(new ResourceReference(o));
-                }
+                for (let o of obj.device || []) { this.device.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.dosage) {
                 this.dosage = new DosageComponent(obj.dosage);
             }
             if (obj.eventHistory) {
                 this.eventHistory = [];
-                for (let o of obj.eventHistory || []) {
-                    this.eventHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.eventHistory || []) { this.eventHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -11596,10 +10609,10 @@ export class MedicationAdministration extends DomainResource {
 
 export class SubstitutionComponent extends BackboneElement {
     public wasSubstituted: boolean;
-    public type: CodeableConcept;
-    public reason: CodeableConcept[];
-    public responsibleParty: ResourceReference[];
-
+    public type?: CodeableConcept;
+    public reason?: CodeableConcept[];
+    public responsibleParty?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11611,15 +10624,11 @@ export class SubstitutionComponent extends BackboneElement {
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.responsibleParty) {
                 this.responsibleParty = [];
-                for (let o of obj.responsibleParty || []) {
-                    this.responsibleParty.push(new ResourceReference(o));
-                }
+                for (let o of obj.responsibleParty || []) { this.responsibleParty.push(new ResourceReference(o)); }
             }
         }
     }
@@ -11628,45 +10637,41 @@ export class SubstitutionComponent extends BackboneElement {
 
 export class MedicationDispense extends DomainResource {
     public resourceType = 'MedicationDispense';
-    public identifier: Identifier[];
-    public partOf: ResourceReference[];
-    public status: string;
-    public category: CodeableConcept;
+    public identifier?: Identifier[];
+    public partOf?: ResourceReference[];
+    public status?: string;
+    public category?: CodeableConcept;
     public medication: Element;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public supportingInformation: ResourceReference[];
-    public performer: PerformerComponent[];
-    public authorizingPrescription: ResourceReference[];
-    public type: CodeableConcept;
-    public quantity: SimpleQuantity;
-    public daysSupply: SimpleQuantity;
-    public whenPrepared: Date;
-    public whenHandedOver: Date;
-    public destination: ResourceReference;
-    public receiver: ResourceReference[];
-    public note: Annotation[];
-    public dosageInstruction: Dosage[];
-    public substitution: SubstitutionComponent;
-    public detectedIssue: ResourceReference[];
-    public notDone: boolean;
-    public notDoneReason: Element;
-    public eventHistory: ResourceReference[];
-
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public supportingInformation?: ResourceReference[];
+    public performer?: PerformerComponent[];
+    public authorizingPrescription?: ResourceReference[];
+    public type?: CodeableConcept;
+    public quantity?: SimpleQuantity;
+    public daysSupply?: SimpleQuantity;
+    public whenPrepared?: Date;
+    public whenHandedOver?: Date;
+    public destination?: ResourceReference;
+    public receiver?: ResourceReference[];
+    public note?: Annotation[];
+    public dosageInstruction?: Dosage[];
+    public substitution?: SubstitutionComponent;
+    public detectedIssue?: ResourceReference[];
+    public notDone?: boolean;
+    public notDoneReason?: Element;
+    public eventHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -11685,21 +10690,15 @@ export class MedicationDispense extends DomainResource {
             }
             if (obj.supportingInformation) {
                 this.supportingInformation = [];
-                for (let o of obj.supportingInformation || []) {
-                    this.supportingInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInformation || []) { this.supportingInformation.push(new ResourceReference(o)); }
             }
             if (obj.performer) {
                 this.performer = [];
-                for (let o of obj.performer || []) {
-                    this.performer.push(new PerformerComponent(o));
-                }
+                for (let o of obj.performer || []) { this.performer.push(new PerformerComponent(o)); }
             }
             if (obj.authorizingPrescription) {
                 this.authorizingPrescription = [];
-                for (let o of obj.authorizingPrescription || []) {
-                    this.authorizingPrescription.push(new ResourceReference(o));
-                }
+                for (let o of obj.authorizingPrescription || []) { this.authorizingPrescription.push(new ResourceReference(o)); }
             }
             if (obj.type) {
                 this.type = new CodeableConcept(obj.type);
@@ -11721,30 +10720,22 @@ export class MedicationDispense extends DomainResource {
             }
             if (obj.receiver) {
                 this.receiver = [];
-                for (let o of obj.receiver || []) {
-                    this.receiver.push(new ResourceReference(o));
-                }
+                for (let o of obj.receiver || []) { this.receiver.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.dosageInstruction) {
                 this.dosageInstruction = [];
-                for (let o of obj.dosageInstruction || []) {
-                    this.dosageInstruction.push(new Dosage(o));
-                }
+                for (let o of obj.dosageInstruction || []) { this.dosageInstruction.push(new Dosage(o)); }
             }
             if (obj.substitution) {
                 this.substitution = new SubstitutionComponent(obj.substitution);
             }
             if (obj.detectedIssue) {
                 this.detectedIssue = [];
-                for (let o of obj.detectedIssue || []) {
-                    this.detectedIssue.push(new ResourceReference(o));
-                }
+                for (let o of obj.detectedIssue || []) { this.detectedIssue.push(new ResourceReference(o)); }
             }
             if (obj.notDone) {
                 this.notDone = obj.notDone;
@@ -11754,9 +10745,7 @@ export class MedicationDispense extends DomainResource {
             }
             if (obj.eventHistory) {
                 this.eventHistory = [];
-                for (let o of obj.eventHistory || []) {
-                    this.eventHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.eventHistory || []) { this.eventHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -11764,12 +10753,12 @@ export class MedicationDispense extends DomainResource {
 }
 
 export class DispenseRequestComponent extends BackboneElement {
-    public validityPeriod: Period;
-    public numberOfRepeatsAllowed: number;
-    public quantity: SimpleQuantity;
-    public expectedSupplyDuration: Duration;
-    public performer: ResourceReference;
-
+    public validityPeriod?: Period;
+    public numberOfRepeatsAllowed?: number;
+    public quantity?: SimpleQuantity;
+    public expectedSupplyDuration?: Duration;
+    public performer?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -11795,51 +10784,45 @@ export class DispenseRequestComponent extends BackboneElement {
 
 export class MedicationRequest extends DomainResource {
     public resourceType = 'MedicationRequest';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public groupIdentifier: Identifier;
-    public status: string;
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public groupIdentifier?: Identifier;
+    public status?: string;
     public intent: string;
-    public category: CodeableConcept;
-    public priority: string;
+    public category?: CodeableConcept;
+    public priority?: string;
     public medication: Element;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public supportingInformation: ResourceReference[];
-    public authoredOn: Date;
-    public requester: RequesterComponent;
-    public recorder: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public note: Annotation[];
-    public dosageInstruction: Dosage[];
-    public dispenseRequest: DispenseRequestComponent;
-    public substitution: SubstitutionComponent;
-    public priorPrescription: ResourceReference;
-    public detectedIssue: ResourceReference[];
-    public eventHistory: ResourceReference[];
-
+    public context?: ResourceReference;
+    public supportingInformation?: ResourceReference[];
+    public authoredOn?: Date;
+    public requester?: RequesterComponent;
+    public recorder?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public note?: Annotation[];
+    public dosageInstruction?: Dosage[];
+    public dispenseRequest?: DispenseRequestComponent;
+    public substitution?: SubstitutionComponent;
+    public priorPrescription?: ResourceReference;
+    public detectedIssue?: ResourceReference[];
+    public eventHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
@@ -11867,9 +10850,7 @@ export class MedicationRequest extends DomainResource {
             }
             if (obj.supportingInformation) {
                 this.supportingInformation = [];
-                for (let o of obj.supportingInformation || []) {
-                    this.supportingInformation.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInformation || []) { this.supportingInformation.push(new ResourceReference(o)); }
             }
             if (obj.authoredOn) {
                 this.authoredOn = new Date(obj.authoredOn);
@@ -11882,27 +10863,19 @@ export class MedicationRequest extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.dosageInstruction) {
                 this.dosageInstruction = [];
-                for (let o of obj.dosageInstruction || []) {
-                    this.dosageInstruction.push(new Dosage(o));
-                }
+                for (let o of obj.dosageInstruction || []) { this.dosageInstruction.push(new Dosage(o)); }
             }
             if (obj.dispenseRequest) {
                 this.dispenseRequest = new DispenseRequestComponent(obj.dispenseRequest);
@@ -11915,15 +10888,11 @@ export class MedicationRequest extends DomainResource {
             }
             if (obj.detectedIssue) {
                 this.detectedIssue = [];
-                for (let o of obj.detectedIssue || []) {
-                    this.detectedIssue.push(new ResourceReference(o));
-                }
+                for (let o of obj.detectedIssue || []) { this.detectedIssue.push(new ResourceReference(o)); }
             }
             if (obj.eventHistory) {
                 this.eventHistory = [];
-                for (let o of obj.eventHistory || []) {
-                    this.eventHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.eventHistory || []) { this.eventHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -11932,45 +10901,39 @@ export class MedicationRequest extends DomainResource {
 
 export class MedicationStatement extends DomainResource {
     public resourceType = 'MedicationStatement';
-    public identifier: Identifier[];
-    public basedOn: ResourceReference[];
-    public partOf: ResourceReference[];
-    public context: ResourceReference;
+    public identifier?: Identifier[];
+    public basedOn?: ResourceReference[];
+    public partOf?: ResourceReference[];
+    public context?: ResourceReference;
     public status: string;
-    public category: CodeableConcept;
+    public category?: CodeableConcept;
     public medication: Element;
-    public effective: Element;
-    public dateAsserted: Date;
-    public informationSource: ResourceReference;
+    public effective?: Element;
+    public dateAsserted?: Date;
+    public informationSource?: ResourceReference;
     public subject: ResourceReference;
-    public derivedFrom: ResourceReference[];
+    public derivedFrom?: ResourceReference[];
     public taken: string;
-    public reasonNotTaken: CodeableConcept[];
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public note: Annotation[];
-    public dosage: Dosage[];
-
+    public reasonNotTaken?: CodeableConcept[];
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public note?: Annotation[];
+    public dosage?: Dosage[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.context) {
                 this.context = new ResourceReference(obj.context);
@@ -11998,42 +10961,30 @@ export class MedicationStatement extends DomainResource {
             }
             if (obj.derivedFrom) {
                 this.derivedFrom = [];
-                for (let o of obj.derivedFrom || []) {
-                    this.derivedFrom.push(new ResourceReference(o));
-                }
+                for (let o of obj.derivedFrom || []) { this.derivedFrom.push(new ResourceReference(o)); }
             }
             if (obj.taken) {
                 this.taken = obj.taken;
             }
             if (obj.reasonNotTaken) {
                 this.reasonNotTaken = [];
-                for (let o of obj.reasonNotTaken || []) {
-                    this.reasonNotTaken.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonNotTaken || []) { this.reasonNotTaken.push(new CodeableConcept(o)); }
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.dosage) {
                 this.dosage = [];
-                for (let o of obj.dosage || []) {
-                    this.dosage.push(new Dosage(o));
-                }
+                for (let o of obj.dosage || []) { this.dosage.push(new Dosage(o)); }
             }
         }
     }
@@ -12042,10 +10993,10 @@ export class MedicationStatement extends DomainResource {
 
 export class FocusComponent extends BackboneElement {
     public code: string;
-    public profile: ResourceReference;
-    public min: number;
-    public max: string;
-
+    public profile?: ResourceReference;
+    public min?: number;
+    public max?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12068,8 +11019,8 @@ export class FocusComponent extends BackboneElement {
 
 export class AllowedResponseComponent extends BackboneElement {
     public message: ResourceReference;
-    public situation: string;
-
+    public situation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12086,30 +11037,30 @@ export class AllowedResponseComponent extends BackboneElement {
 
 export class MessageDefinition extends DomainResource {
     public resourceType = 'MessageDefinition';
-    public url: string;
-    public identifier: Identifier;
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier;
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
+    public experimental?: boolean;
     public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public base: ResourceReference;
-    public parent: ResourceReference[];
-    public replaces: ResourceReference[];
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public base?: ResourceReference;
+    public parent?: ResourceReference[];
+    public replaces?: ResourceReference[];
     public event: Coding;
-    public category: string;
-    public focus: FocusComponent[];
-    public responseRequired: boolean;
-    public allowedResponse: AllowedResponseComponent[];
-
+    public category?: string;
+    public focus?: FocusComponent[];
+    public responseRequired?: boolean;
+    public allowedResponse?: AllowedResponseComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12142,24 +11093,18 @@ export class MessageDefinition extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -12172,15 +11117,11 @@ export class MessageDefinition extends DomainResource {
             }
             if (obj.parent) {
                 this.parent = [];
-                for (let o of obj.parent || []) {
-                    this.parent.push(new ResourceReference(o));
-                }
+                for (let o of obj.parent || []) { this.parent.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.event) {
                 this.event = new Coding(obj.event);
@@ -12190,18 +11131,14 @@ export class MessageDefinition extends DomainResource {
             }
             if (obj.focus) {
                 this.focus = [];
-                for (let o of obj.focus || []) {
-                    this.focus.push(new FocusComponent(o));
-                }
+                for (let o of obj.focus || []) { this.focus.push(new FocusComponent(o)); }
             }
             if (obj.responseRequired) {
                 this.responseRequired = obj.responseRequired;
             }
             if (obj.allowedResponse) {
                 this.allowedResponse = [];
-                for (let o of obj.allowedResponse || []) {
-                    this.allowedResponse.push(new AllowedResponseComponent(o));
-                }
+                for (let o of obj.allowedResponse || []) { this.allowedResponse.push(new AllowedResponseComponent(o)); }
             }
         }
     }
@@ -12209,10 +11146,10 @@ export class MessageDefinition extends DomainResource {
 }
 
 export class MessageDestinationComponent extends BackboneElement {
-    public name: string;
-    public target: ResourceReference;
+    public name?: string;
+    public target?: ResourceReference;
     public endpoint: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12231,12 +11168,12 @@ export class MessageDestinationComponent extends BackboneElement {
 }
 
 export class MessageSourceComponent extends BackboneElement {
-    public name: string;
-    public software: string;
-    public version: string;
-    public contact: ContactPoint;
+    public name?: string;
+    public software?: string;
+    public version?: string;
+    public contact?: ContactPoint;
     public endpoint: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12263,18 +11200,18 @@ export class MessageSourceComponent extends BackboneElement {
 export class MessageHeader extends DomainResource {
     public resourceType = 'MessageHeader';
     public event: Coding;
-    public destination: MessageDestinationComponent[];
-    public receiver: ResourceReference;
-    public sender: ResourceReference;
+    public destination?: MessageDestinationComponent[];
+    public receiver?: ResourceReference;
+    public sender?: ResourceReference;
     public timestamp: Date;
-    public enterer: ResourceReference;
-    public author: ResourceReference;
+    public enterer?: ResourceReference;
+    public author?: ResourceReference;
     public source: MessageSourceComponent;
-    public responsible: ResourceReference;
-    public reason: CodeableConcept;
-    public response: ResponseComponent;
-    public focus: ResourceReference[];
-
+    public responsible?: ResourceReference;
+    public reason?: CodeableConcept;
+    public response?: ResponseComponent;
+    public focus?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12283,9 +11220,7 @@ export class MessageHeader extends DomainResource {
             }
             if (obj.destination) {
                 this.destination = [];
-                for (let o of obj.destination || []) {
-                    this.destination.push(new MessageDestinationComponent(o));
-                }
+                for (let o of obj.destination || []) { this.destination.push(new MessageDestinationComponent(o)); }
             }
             if (obj.receiver) {
                 this.receiver = new ResourceReference(obj.receiver);
@@ -12316,9 +11251,7 @@ export class MessageHeader extends DomainResource {
             }
             if (obj.focus) {
                 this.focus = [];
-                for (let o of obj.focus || []) {
-                    this.focus.push(new ResourceReference(o));
-                }
+                for (let o of obj.focus || []) { this.focus.push(new ResourceReference(o)); }
             }
         }
     }
@@ -12328,10 +11261,10 @@ export class MessageHeader extends DomainResource {
 export class UniqueIdComponent extends BackboneElement {
     public type: string;
     public value: string;
-    public preferred: boolean;
-    public comment: string;
-    public period: Period;
-
+    public preferred?: boolean;
+    public comment?: string;
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12361,17 +11294,17 @@ export class NamingSystem extends DomainResource {
     public status: string;
     public kind: string;
     public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public responsible: string;
-    public type: CodeableConcept;
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public usage: string;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public responsible?: string;
+    public type?: CodeableConcept;
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public usage?: string;
     public uniqueId: UniqueIdComponent[];
-    public replacedBy: ResourceReference;
-
+    public replacedBy?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12392,9 +11325,7 @@ export class NamingSystem extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.responsible) {
                 this.responsible = obj.responsible;
@@ -12407,24 +11338,18 @@ export class NamingSystem extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.usage) {
                 this.usage = obj.usage;
             }
             if (obj.uniqueId) {
                 this.uniqueId = [];
-                for (let o of obj.uniqueId || []) {
-                    this.uniqueId.push(new UniqueIdComponent(o));
-                }
+                for (let o of obj.uniqueId || []) { this.uniqueId.push(new UniqueIdComponent(o)); }
             }
             if (obj.replacedBy) {
                 this.replacedBy = new ResourceReference(obj.replacedBy);
@@ -12435,9 +11360,9 @@ export class NamingSystem extends DomainResource {
 }
 
 export class NutrientComponent extends BackboneElement {
-    public modifier: CodeableConcept;
-    public amount: SimpleQuantity;
-
+    public modifier?: CodeableConcept;
+    public amount?: SimpleQuantity;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12453,9 +11378,9 @@ export class NutrientComponent extends BackboneElement {
 }
 
 export class TextureComponent extends BackboneElement {
-    public modifier: CodeableConcept;
-    public foodType: CodeableConcept;
-
+    public modifier?: CodeableConcept;
+    public foodType?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12471,45 +11396,35 @@ export class TextureComponent extends BackboneElement {
 }
 
 export class OralDietComponent extends BackboneElement {
-    public type: CodeableConcept[];
-    public schedule: Timing[];
-    public nutrient: NutrientComponent[];
-    public texture: TextureComponent[];
-    public fluidConsistencyType: CodeableConcept[];
-    public instruction: string;
-
+    public type?: CodeableConcept[];
+    public schedule?: Timing[];
+    public nutrient?: NutrientComponent[];
+    public texture?: TextureComponent[];
+    public fluidConsistencyType?: CodeableConcept[];
+    public instruction?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.schedule) {
                 this.schedule = [];
-                for (let o of obj.schedule || []) {
-                    this.schedule.push(new Timing(o));
-                }
+                for (let o of obj.schedule || []) { this.schedule.push(new Timing(o)); }
             }
             if (obj.nutrient) {
                 this.nutrient = [];
-                for (let o of obj.nutrient || []) {
-                    this.nutrient.push(new NutrientComponent(o));
-                }
+                for (let o of obj.nutrient || []) { this.nutrient.push(new NutrientComponent(o)); }
             }
             if (obj.texture) {
                 this.texture = [];
-                for (let o of obj.texture || []) {
-                    this.texture.push(new TextureComponent(o));
-                }
+                for (let o of obj.texture || []) { this.texture.push(new TextureComponent(o)); }
             }
             if (obj.fluidConsistencyType) {
                 this.fluidConsistencyType = [];
-                for (let o of obj.fluidConsistencyType || []) {
-                    this.fluidConsistencyType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.fluidConsistencyType || []) { this.fluidConsistencyType.push(new CodeableConcept(o)); }
             }
             if (obj.instruction) {
                 this.instruction = obj.instruction;
@@ -12520,12 +11435,12 @@ export class OralDietComponent extends BackboneElement {
 }
 
 export class SupplementComponent extends BackboneElement {
-    public type: CodeableConcept;
-    public productName: string;
-    public schedule: Timing[];
-    public quantity: SimpleQuantity;
-    public instruction: string;
-
+    public type?: CodeableConcept;
+    public productName?: string;
+    public schedule?: Timing[];
+    public quantity?: SimpleQuantity;
+    public instruction?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12537,9 +11452,7 @@ export class SupplementComponent extends BackboneElement {
             }
             if (obj.schedule) {
                 this.schedule = [];
-                for (let o of obj.schedule || []) {
-                    this.schedule.push(new Timing(o));
-                }
+                for (let o of obj.schedule || []) { this.schedule.push(new Timing(o)); }
             }
             if (obj.quantity) {
                 this.quantity = new SimpleQuantity(obj.quantity);
@@ -12553,10 +11466,10 @@ export class SupplementComponent extends BackboneElement {
 }
 
 export class AdministrationComponent extends BackboneElement {
-    public schedule: Timing;
-    public quantity: SimpleQuantity;
-    public rate: Element;
-
+    public schedule?: Timing;
+    public quantity?: SimpleQuantity;
+    public rate?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12575,16 +11488,16 @@ export class AdministrationComponent extends BackboneElement {
 }
 
 export class EnteralFormulaComponent extends BackboneElement {
-    public baseFormulaType: CodeableConcept;
-    public baseFormulaProductName: string;
-    public additiveType: CodeableConcept;
-    public additiveProductName: string;
-    public caloricDensity: SimpleQuantity;
-    public routeofAdministration: CodeableConcept;
-    public administration: AdministrationComponent[];
-    public maxVolumeToDeliver: SimpleQuantity;
-    public administrationInstruction: string;
-
+    public baseFormulaType?: CodeableConcept;
+    public baseFormulaProductName?: string;
+    public additiveType?: CodeableConcept;
+    public additiveProductName?: string;
+    public caloricDensity?: SimpleQuantity;
+    public routeofAdministration?: CodeableConcept;
+    public administration?: AdministrationComponent[];
+    public maxVolumeToDeliver?: SimpleQuantity;
+    public administrationInstruction?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12608,9 +11521,7 @@ export class EnteralFormulaComponent extends BackboneElement {
             }
             if (obj.administration) {
                 this.administration = [];
-                for (let o of obj.administration || []) {
-                    this.administration.push(new AdministrationComponent(o));
-                }
+                for (let o of obj.administration || []) { this.administration.push(new AdministrationComponent(o)); }
             }
             if (obj.maxVolumeToDeliver) {
                 this.maxVolumeToDeliver = new SimpleQuantity(obj.maxVolumeToDeliver);
@@ -12625,27 +11536,25 @@ export class EnteralFormulaComponent extends BackboneElement {
 
 export class NutritionOrder extends DomainResource {
     public resourceType = 'NutritionOrder';
-    public identifier: Identifier[];
-    public status: string;
+    public identifier?: Identifier[];
+    public status?: string;
     public patient: ResourceReference;
-    public encounter: ResourceReference;
+    public encounter?: ResourceReference;
     public dateTime: Date;
-    public orderer: ResourceReference;
-    public allergyIntolerance: ResourceReference[];
-    public foodPreferenceModifier: CodeableConcept[];
-    public excludeFoodModifier: CodeableConcept[];
-    public oralDiet: OralDietComponent;
-    public supplement: SupplementComponent[];
-    public enteralFormula: EnteralFormulaComponent;
-
+    public orderer?: ResourceReference;
+    public allergyIntolerance?: ResourceReference[];
+    public foodPreferenceModifier?: CodeableConcept[];
+    public excludeFoodModifier?: CodeableConcept[];
+    public oralDiet?: OralDietComponent;
+    public supplement?: SupplementComponent[];
+    public enteralFormula?: EnteralFormulaComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -12664,30 +11573,22 @@ export class NutritionOrder extends DomainResource {
             }
             if (obj.allergyIntolerance) {
                 this.allergyIntolerance = [];
-                for (let o of obj.allergyIntolerance || []) {
-                    this.allergyIntolerance.push(new ResourceReference(o));
-                }
+                for (let o of obj.allergyIntolerance || []) { this.allergyIntolerance.push(new ResourceReference(o)); }
             }
             if (obj.foodPreferenceModifier) {
                 this.foodPreferenceModifier = [];
-                for (let o of obj.foodPreferenceModifier || []) {
-                    this.foodPreferenceModifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.foodPreferenceModifier || []) { this.foodPreferenceModifier.push(new CodeableConcept(o)); }
             }
             if (obj.excludeFoodModifier) {
                 this.excludeFoodModifier = [];
-                for (let o of obj.excludeFoodModifier || []) {
-                    this.excludeFoodModifier.push(new CodeableConcept(o));
-                }
+                for (let o of obj.excludeFoodModifier || []) { this.excludeFoodModifier.push(new CodeableConcept(o)); }
             }
             if (obj.oralDiet) {
                 this.oralDiet = new OralDietComponent(obj.oralDiet);
             }
             if (obj.supplement) {
                 this.supplement = [];
-                for (let o of obj.supplement || []) {
-                    this.supplement.push(new SupplementComponent(o));
-                }
+                for (let o of obj.supplement || []) { this.supplement.push(new SupplementComponent(o)); }
             }
             if (obj.enteralFormula) {
                 this.enteralFormula = new EnteralFormulaComponent(obj.enteralFormula);
@@ -12698,9 +11599,9 @@ export class NutritionOrder extends DomainResource {
 }
 
 export class OverloadComponent extends BackboneElement {
-    public parameterName: string[];
-    public comment: string;
-
+    public parameterName?: string[];
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12717,30 +11618,30 @@ export class OverloadComponent extends BackboneElement {
 
 export class OperationDefinition extends DomainResource {
     public resourceType = 'OperationDefinition';
-    public url: string;
-    public version: string;
+    public url?: string;
+    public version?: string;
     public name: string;
     public status: string;
     public kind: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public idempotent: boolean;
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public idempotent?: boolean;
     public code: string;
-    public comment: string;
-    public base: ResourceReference;
-    public resource: string[];
+    public comment?: string;
+    public base?: ResourceReference;
+    public resource?: string[];
     public system: boolean;
     public type: boolean;
     public instance: boolean;
-    public parameter: ParameterComponent[];
-    public overload: OverloadComponent[];
-
+    public parameter?: ParameterComponent[];
+    public overload?: OverloadComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12770,24 +11671,18 @@ export class OperationDefinition extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -12818,15 +11713,11 @@ export class OperationDefinition extends DomainResource {
             }
             if (obj.parameter) {
                 this.parameter = [];
-                for (let o of obj.parameter || []) {
-                    this.parameter.push(new ParameterComponent(o));
-                }
+                for (let o of obj.parameter || []) { this.parameter.push(new ParameterComponent(o)); }
             }
             if (obj.overload) {
                 this.overload = [];
-                for (let o of obj.overload || []) {
-                    this.overload.push(new OverloadComponent(o));
-                }
+                for (let o of obj.overload || []) { this.overload.push(new OverloadComponent(o)); }
             }
         }
     }
@@ -12836,11 +11727,11 @@ export class OperationDefinition extends DomainResource {
 export class IssueComponent extends BackboneElement {
     public severity: string;
     public code: string;
-    public details: CodeableConcept;
-    public diagnostics: string;
-    public location: string[];
-    public expression: string[];
-
+    public details?: CodeableConcept;
+    public diagnostics?: string;
+    public location?: string[];
+    public expression?: string[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12870,15 +11761,13 @@ export class IssueComponent extends BackboneElement {
 export class OperationOutcome extends DomainResource {
     public resourceType = 'OperationOutcome';
     public issue: IssueComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.issue) {
                 this.issue = [];
-                for (let o of obj.issue || []) {
-                    this.issue.push(new IssueComponent(o));
-                }
+                for (let o of obj.issue || []) { this.issue.push(new IssueComponent(o)); }
             }
         }
     }
@@ -12886,11 +11775,11 @@ export class OperationOutcome extends DomainResource {
 }
 
 export class ContactComponent extends BackboneElement {
-    public purpose: CodeableConcept;
-    public name: HumanName;
-    public telecom: ContactPoint[];
-    public address: Address;
-
+    public purpose?: CodeableConcept;
+    public name?: HumanName;
+    public telecom?: ContactPoint[];
+    public address?: Address;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -12902,9 +11791,7 @@ export class ContactComponent extends BackboneElement {
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.address) {
                 this.address = new Address(obj.address);
@@ -12916,34 +11803,30 @@ export class ContactComponent extends BackboneElement {
 
 export class Organization extends DomainResource {
     public resourceType = 'Organization';
-    public identifier: Identifier[];
-    public active: boolean;
-    public type: CodeableConcept[];
-    public name: string;
-    public alias: string[];
-    public telecom: ContactPoint[];
-    public address: Address[];
-    public partOf: ResourceReference;
-    public contact: ContactComponent[];
-    public endpoint: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public type?: CodeableConcept[];
+    public name?: string;
+    public alias?: string[];
+    public telecom?: ContactPoint[];
+    public address?: Address[];
+    public partOf?: ResourceReference;
+    public contact?: ContactComponent[];
+    public endpoint?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
             }
             if (obj.type) {
                 this.type = [];
-                for (let o of obj.type || []) {
-                    this.type.push(new CodeableConcept(o));
-                }
+                for (let o of obj.type || []) { this.type.push(new CodeableConcept(o)); }
             }
             if (obj.name) {
                 this.name = obj.name;
@@ -12953,30 +11836,22 @@ export class Organization extends DomainResource {
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.address) {
                 this.address = [];
-                for (let o of obj.address || []) {
-                    this.address.push(new Address(o));
-                }
+                for (let o of obj.address || []) { this.address.push(new Address(o)); }
             }
             if (obj.partOf) {
                 this.partOf = new ResourceReference(obj.partOf);
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactComponent(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactComponent(o)); }
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
         }
     }
@@ -12985,9 +11860,9 @@ export class Organization extends DomainResource {
 
 export class AnimalComponent extends BackboneElement {
     public species: CodeableConcept;
-    public breed: CodeableConcept;
-    public genderStatus: CodeableConcept;
-
+    public breed?: CodeableConcept;
+    public genderStatus?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13007,8 +11882,8 @@ export class AnimalComponent extends BackboneElement {
 
 export class CommunicationComponent extends BackboneElement {
     public language: CodeableConcept;
-    public preferred: boolean;
-
+    public preferred?: boolean;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13025,47 +11900,41 @@ export class CommunicationComponent extends BackboneElement {
 
 export class Patient extends DomainResource {
     public resourceType = 'Patient';
-    public identifier: Identifier[];
-    public active: boolean;
-    public name: HumanName[];
-    public telecom: ContactPoint[];
-    public gender: string;
-    public birthDate: Date;
-    public deceased: Element;
-    public address: Address[];
-    public maritalStatus: CodeableConcept;
-    public multipleBirth: Element;
-    public photo: Attachment[];
-    public contact: ContactComponent[];
-    public animal: AnimalComponent;
-    public communication: CommunicationComponent[];
-    public generalPractitioner: ResourceReference[];
-    public managingOrganization: ResourceReference;
-    public link: LinkComponent[];
-
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public name?: HumanName[];
+    public telecom?: ContactPoint[];
+    public gender?: string;
+    public birthDate?: Date;
+    public deceased?: Element;
+    public address?: Address[];
+    public maritalStatus?: CodeableConcept;
+    public multipleBirth?: Element;
+    public photo?: Attachment[];
+    public contact?: ContactComponent[];
+    public animal?: AnimalComponent;
+    public communication?: CommunicationComponent[];
+    public generalPractitioner?: ResourceReference[];
+    public managingOrganization?: ResourceReference;
+    public link?: LinkComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
             }
             if (obj.name) {
                 this.name = [];
-                for (let o of obj.name || []) {
-                    this.name.push(new HumanName(o));
-                }
+                for (let o of obj.name || []) { this.name.push(new HumanName(o)); }
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.gender) {
                 this.gender = obj.gender;
@@ -13078,9 +11947,7 @@ export class Patient extends DomainResource {
             }
             if (obj.address) {
                 this.address = [];
-                for (let o of obj.address || []) {
-                    this.address.push(new Address(o));
-                }
+                for (let o of obj.address || []) { this.address.push(new Address(o)); }
             }
             if (obj.maritalStatus) {
                 this.maritalStatus = new CodeableConcept(obj.maritalStatus);
@@ -13090,39 +11957,29 @@ export class Patient extends DomainResource {
             }
             if (obj.photo) {
                 this.photo = [];
-                for (let o of obj.photo || []) {
-                    this.photo.push(new Attachment(o));
-                }
+                for (let o of obj.photo || []) { this.photo.push(new Attachment(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactComponent(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactComponent(o)); }
             }
             if (obj.animal) {
                 this.animal = new AnimalComponent(obj.animal);
             }
             if (obj.communication) {
                 this.communication = [];
-                for (let o of obj.communication || []) {
-                    this.communication.push(new CommunicationComponent(o));
-                }
+                for (let o of obj.communication || []) { this.communication.push(new CommunicationComponent(o)); }
             }
             if (obj.generalPractitioner) {
                 this.generalPractitioner = [];
-                for (let o of obj.generalPractitioner || []) {
-                    this.generalPractitioner.push(new ResourceReference(o));
-                }
+                for (let o of obj.generalPractitioner || []) { this.generalPractitioner.push(new ResourceReference(o)); }
             }
             if (obj.managingOrganization) {
                 this.managingOrganization = new ResourceReference(obj.managingOrganization);
             }
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
         }
     }
@@ -13131,25 +11988,23 @@ export class Patient extends DomainResource {
 
 export class PaymentNotice extends DomainResource {
     public resourceType = 'PaymentNotice';
-    public identifier: Identifier[];
-    public status: string;
-    public request: ResourceReference;
-    public response: ResourceReference;
-    public statusDate: Date;
-    public created: Date;
-    public target: ResourceReference;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public paymentStatus: CodeableConcept;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public request?: ResourceReference;
+    public response?: ResourceReference;
+    public statusDate?: Date;
+    public created?: Date;
+    public target?: ResourceReference;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public paymentStatus?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -13185,13 +12040,13 @@ export class PaymentNotice extends DomainResource {
 
 export class DetailsComponent extends BackboneElement {
     public type: CodeableConcept;
-    public request: ResourceReference;
-    public response: ResourceReference;
-    public submitter: ResourceReference;
-    public payee: ResourceReference;
-    public date: Date;
-    public amount: Money;
-
+    public request?: ResourceReference;
+    public response?: ResourceReference;
+    public submitter?: ResourceReference;
+    public payee?: ResourceReference;
+    public date?: Date;
+    public amount?: Money;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13222,9 +12077,9 @@ export class DetailsComponent extends BackboneElement {
 }
 
 export class NotesComponent extends BackboneElement {
-    public type: CodeableConcept;
-    public text: string;
-
+    public type?: CodeableConcept;
+    public text?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13241,29 +12096,27 @@ export class NotesComponent extends BackboneElement {
 
 export class PaymentReconciliation extends DomainResource {
     public resourceType = 'PaymentReconciliation';
-    public identifier: Identifier[];
-    public status: string;
-    public period: Period;
-    public created: Date;
-    public organization: ResourceReference;
-    public request: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public requestProvider: ResourceReference;
-    public requestOrganization: ResourceReference;
-    public detail: DetailsComponent[];
-    public form: CodeableConcept;
-    public total: Money;
-    public processNote: NotesComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public period?: Period;
+    public created?: Date;
+    public organization?: ResourceReference;
+    public request?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public requestProvider?: ResourceReference;
+    public requestOrganization?: ResourceReference;
+    public detail?: DetailsComponent[];
+    public form?: CodeableConcept;
+    public total?: Money;
+    public processNote?: NotesComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -13294,9 +12147,7 @@ export class PaymentReconciliation extends DomainResource {
             }
             if (obj.detail) {
                 this.detail = [];
-                for (let o of obj.detail || []) {
-                    this.detail.push(new DetailsComponent(o));
-                }
+                for (let o of obj.detail || []) { this.detail.push(new DetailsComponent(o)); }
             }
             if (obj.form) {
                 this.form = new CodeableConcept(obj.form);
@@ -13306,9 +12157,7 @@ export class PaymentReconciliation extends DomainResource {
             }
             if (obj.processNote) {
                 this.processNote = [];
-                for (let o of obj.processNote || []) {
-                    this.processNote.push(new NotesComponent(o));
-                }
+                for (let o of obj.processNote || []) { this.processNote.push(new NotesComponent(o)); }
             }
         }
     }
@@ -13317,37 +12166,31 @@ export class PaymentReconciliation extends DomainResource {
 
 export class Person extends DomainResource {
     public resourceType = 'Person';
-    public identifier: Identifier[];
-    public name: HumanName[];
-    public telecom: ContactPoint[];
-    public gender: string;
-    public birthDate: Date;
-    public address: Address[];
-    public photo: Attachment;
-    public managingOrganization: ResourceReference;
-    public active: boolean;
-    public link: LinkComponent[];
-
+    public identifier?: Identifier[];
+    public name?: HumanName[];
+    public telecom?: ContactPoint[];
+    public gender?: string;
+    public birthDate?: Date;
+    public address?: Address[];
+    public photo?: Attachment;
+    public managingOrganization?: ResourceReference;
+    public active?: boolean;
+    public link?: LinkComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.name) {
                 this.name = [];
-                for (let o of obj.name || []) {
-                    this.name.push(new HumanName(o));
-                }
+                for (let o of obj.name || []) { this.name.push(new HumanName(o)); }
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.gender) {
                 this.gender = obj.gender;
@@ -13357,9 +12200,7 @@ export class Person extends DomainResource {
             }
             if (obj.address) {
                 this.address = [];
-                for (let o of obj.address || []) {
-                    this.address.push(new Address(o));
-                }
+                for (let o of obj.address || []) { this.address.push(new Address(o)); }
             }
             if (obj.photo) {
                 this.photo = new Attachment(obj.photo);
@@ -13372,9 +12213,7 @@ export class Person extends DomainResource {
             }
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
         }
     }
@@ -13387,14 +12226,14 @@ export class Person extends DomainResource {
 }
 
 export class GoalComponent extends BackboneElement {
-    public category: CodeableConcept;
+    public category?: CodeableConcept;
     public description: CodeableConcept;
-    public priority: CodeableConcept;
-    public start: CodeableConcept;
-    public addresses: CodeableConcept[];
-    public documentation: RelatedArtifact[];
-    public target: TargetComponent[];
-
+    public priority?: CodeableConcept;
+    public start?: CodeableConcept;
+    public addresses?: CodeableConcept[];
+    public documentation?: RelatedArtifact[];
+    public target?: TargetComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13412,21 +12251,15 @@ export class GoalComponent extends BackboneElement {
             }
             if (obj.addresses) {
                 this.addresses = [];
-                for (let o of obj.addresses || []) {
-                    this.addresses.push(new CodeableConcept(o));
-                }
+                for (let o of obj.addresses || []) { this.addresses.push(new CodeableConcept(o)); }
             }
             if (obj.documentation) {
                 this.documentation = [];
-                for (let o of obj.documentation || []) {
-                    this.documentation.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.documentation || []) { this.documentation.push(new RelatedArtifact(o)); }
             }
             if (obj.target) {
                 this.target = [];
-                for (let o of obj.target || []) {
-                    this.target.push(new TargetComponent(o));
-                }
+                for (let o of obj.target || []) { this.target.push(new TargetComponent(o)); }
             }
         }
     }
@@ -13435,10 +12268,10 @@ export class GoalComponent extends BackboneElement {
 
 export class TriggerDefinition extends Element {
     public type: string;
-    public eventName: string;
-    public eventTiming: Element;
-    public eventData: DataRequirement;
-
+    public eventName?: string;
+    public eventTiming?: Element;
+    public eventData?: DataRequirement;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13462,8 +12295,8 @@ export class TriggerDefinition extends Element {
 export class RelatedActionComponent extends BackboneElement {
     public actionId: string;
     public relationship: string;
-    public offset: Element;
-
+    public offset?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13482,32 +12315,32 @@ export class RelatedActionComponent extends BackboneElement {
 }
 
 export class ActionComponent extends BackboneElement {
-    public label: string;
-    public title: string;
-    public description: string;
-    public textEquivalent: string;
-    public code: CodeableConcept[];
-    public reason: CodeableConcept[];
-    public documentation: RelatedArtifact[];
-    public goalId: string[];
-    public triggerDefinition: TriggerDefinition[];
-    public condition: ConditionComponent[];
-    public input: DataRequirement[];
-    public output: DataRequirement[];
-    public relatedAction: RelatedActionComponent[];
-    public timing: Element;
-    public participant: ParticipantComponent[];
-    public type: Coding;
-    public groupingBehavior: string;
-    public selectionBehavior: string;
-    public requiredBehavior: string;
-    public precheckBehavior: string;
-    public cardinalityBehavior: string;
-    public definition: ResourceReference;
-    public transform: ResourceReference;
-    public dynamicValue: DynamicValueComponent[];
-    public action: ActionComponent[];
-
+    public label?: string;
+    public title?: string;
+    public description?: string;
+    public textEquivalent?: string;
+    public code?: CodeableConcept[];
+    public reason?: CodeableConcept[];
+    public documentation?: RelatedArtifact[];
+    public goalId?: string[];
+    public triggerDefinition?: TriggerDefinition[];
+    public condition?: ConditionComponent[];
+    public input?: DataRequirement[];
+    public output?: DataRequirement[];
+    public relatedAction?: RelatedActionComponent[];
+    public timing?: Element;
+    public participant?: ParticipantComponent[];
+    public type?: Coding;
+    public groupingBehavior?: string;
+    public selectionBehavior?: string;
+    public requiredBehavior?: string;
+    public precheckBehavior?: string;
+    public cardinalityBehavior?: string;
+    public definition?: ResourceReference;
+    public transform?: ResourceReference;
+    public dynamicValue?: DynamicValueComponent[];
+    public action?: ActionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13525,63 +12358,45 @@ export class ActionComponent extends BackboneElement {
             }
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new CodeableConcept(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new CodeableConcept(o)); }
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new CodeableConcept(o)); }
             }
             if (obj.documentation) {
                 this.documentation = [];
-                for (let o of obj.documentation || []) {
-                    this.documentation.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.documentation || []) { this.documentation.push(new RelatedArtifact(o)); }
             }
             if (obj.goalId) {
                 this.goalId = obj.goalId;
             }
             if (obj.triggerDefinition) {
                 this.triggerDefinition = [];
-                for (let o of obj.triggerDefinition || []) {
-                    this.triggerDefinition.push(new TriggerDefinition(o));
-                }
+                for (let o of obj.triggerDefinition || []) { this.triggerDefinition.push(new TriggerDefinition(o)); }
             }
             if (obj.condition) {
                 this.condition = [];
-                for (let o of obj.condition || []) {
-                    this.condition.push(new ConditionComponent(o));
-                }
+                for (let o of obj.condition || []) { this.condition.push(new ConditionComponent(o)); }
             }
             if (obj.input) {
                 this.input = [];
-                for (let o of obj.input || []) {
-                    this.input.push(new DataRequirement(o));
-                }
+                for (let o of obj.input || []) { this.input.push(new DataRequirement(o)); }
             }
             if (obj.output) {
                 this.output = [];
-                for (let o of obj.output || []) {
-                    this.output.push(new DataRequirement(o));
-                }
+                for (let o of obj.output || []) { this.output.push(new DataRequirement(o)); }
             }
             if (obj.relatedAction) {
                 this.relatedAction = [];
-                for (let o of obj.relatedAction || []) {
-                    this.relatedAction.push(new RelatedActionComponent(o));
-                }
+                for (let o of obj.relatedAction || []) { this.relatedAction.push(new RelatedActionComponent(o)); }
             }
             if (obj.timing) {
                 this.timing = new Element(obj.timing);
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.type) {
                 this.type = new Coding(obj.type);
@@ -13609,15 +12424,11 @@ export class ActionComponent extends BackboneElement {
             }
             if (obj.dynamicValue) {
                 this.dynamicValue = [];
-                for (let o of obj.dynamicValue || []) {
-                    this.dynamicValue.push(new DynamicValueComponent(o));
-                }
+                for (let o of obj.dynamicValue || []) { this.dynamicValue.push(new DynamicValueComponent(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new ActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new ActionComponent(o)); }
             }
         }
     }
@@ -13626,33 +12437,33 @@ export class ActionComponent extends BackboneElement {
 
 export class PlanDefinition extends DomainResource {
     public resourceType = 'PlanDefinition';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
-    public type: CodeableConcept;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
+    public type?: CodeableConcept;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public usage: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public topic: CodeableConcept[];
-    public contributor: Contributor[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public relatedArtifact: RelatedArtifact[];
-    public library: ResourceReference[];
-    public goal: GoalComponent[];
-    public action: ActionComponent[];
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public usage?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public topic?: CodeableConcept[];
+    public contributor?: Contributor[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public relatedArtifact?: RelatedArtifact[];
+    public library?: ResourceReference[];
+    public goal?: GoalComponent[];
+    public action?: ActionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13661,9 +12472,7 @@ export class PlanDefinition extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -13709,60 +12518,42 @@ export class PlanDefinition extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new CodeableConcept(o)); }
             }
             if (obj.contributor) {
                 this.contributor = [];
-                for (let o of obj.contributor || []) {
-                    this.contributor.push(new Contributor(o));
-                }
+                for (let o of obj.contributor || []) { this.contributor.push(new Contributor(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.library) {
                 this.library = [];
-                for (let o of obj.library || []) {
-                    this.library.push(new ResourceReference(o));
-                }
+                for (let o of obj.library || []) { this.library.push(new ResourceReference(o)); }
             }
             if (obj.goal) {
                 this.goal = [];
-                for (let o of obj.goal || []) {
-                    this.goal.push(new GoalComponent(o));
-                }
+                for (let o of obj.goal || []) { this.goal.push(new GoalComponent(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new ActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new ActionComponent(o)); }
             }
         }
     }
@@ -13770,19 +12561,17 @@ export class PlanDefinition extends DomainResource {
 }
 
 export class QualificationComponent extends BackboneElement {
-    public identifier: Identifier[];
+    public identifier?: Identifier[];
     public code: CodeableConcept;
-    public period: Period;
-    public issuer: ResourceReference;
-
+    public period?: Period;
+    public issuer?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -13800,46 +12589,38 @@ export class QualificationComponent extends BackboneElement {
 
 export class Practitioner extends DomainResource {
     public resourceType = 'Practitioner';
-    public identifier: Identifier[];
-    public active: boolean;
-    public name: HumanName[];
-    public telecom: ContactPoint[];
-    public address: Address[];
-    public gender: string;
-    public birthDate: Date;
-    public photo: Attachment[];
-    public qualification: QualificationComponent[];
-    public communication: CodeableConcept[];
-
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public name?: HumanName[];
+    public telecom?: ContactPoint[];
+    public address?: Address[];
+    public gender?: string;
+    public birthDate?: Date;
+    public photo?: Attachment[];
+    public qualification?: QualificationComponent[];
+    public communication?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
             }
             if (obj.name) {
                 this.name = [];
-                for (let o of obj.name || []) {
-                    this.name.push(new HumanName(o));
-                }
+                for (let o of obj.name || []) { this.name.push(new HumanName(o)); }
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.address) {
                 this.address = [];
-                for (let o of obj.address || []) {
-                    this.address.push(new Address(o));
-                }
+                for (let o of obj.address || []) { this.address.push(new Address(o)); }
             }
             if (obj.gender) {
                 this.gender = obj.gender;
@@ -13849,21 +12630,15 @@ export class Practitioner extends DomainResource {
             }
             if (obj.photo) {
                 this.photo = [];
-                for (let o of obj.photo || []) {
-                    this.photo.push(new Attachment(o));
-                }
+                for (let o of obj.photo || []) { this.photo.push(new Attachment(o)); }
             }
             if (obj.qualification) {
                 this.qualification = [];
-                for (let o of obj.qualification || []) {
-                    this.qualification.push(new QualificationComponent(o));
-                }
+                for (let o of obj.qualification || []) { this.qualification.push(new QualificationComponent(o)); }
             }
             if (obj.communication) {
                 this.communication = [];
-                for (let o of obj.communication || []) {
-                    this.communication.push(new CodeableConcept(o));
-                }
+                for (let o of obj.communication || []) { this.communication.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -13872,29 +12647,27 @@ export class Practitioner extends DomainResource {
 
 export class PractitionerRole extends DomainResource {
     public resourceType = 'PractitionerRole';
-    public identifier: Identifier[];
-    public active: boolean;
-    public period: Period;
-    public practitioner: ResourceReference;
-    public organization: ResourceReference;
-    public code: CodeableConcept[];
-    public specialty: CodeableConcept[];
-    public location: ResourceReference[];
-    public healthcareService: ResourceReference[];
-    public telecom: ContactPoint[];
-    public availableTime: AvailableTimeComponent[];
-    public notAvailable: NotAvailableComponent[];
-    public availabilityExceptions: string;
-    public endpoint: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public period?: Period;
+    public practitioner?: ResourceReference;
+    public organization?: ResourceReference;
+    public code?: CodeableConcept[];
+    public specialty?: CodeableConcept[];
+    public location?: ResourceReference[];
+    public healthcareService?: ResourceReference[];
+    public telecom?: ContactPoint[];
+    public availableTime?: AvailableTimeComponent[];
+    public notAvailable?: NotAvailableComponent[];
+    public availabilityExceptions?: string;
+    public endpoint?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -13910,54 +12683,38 @@ export class PractitionerRole extends DomainResource {
             }
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new CodeableConcept(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new CodeableConcept(o)); }
             }
             if (obj.specialty) {
                 this.specialty = [];
-                for (let o of obj.specialty || []) {
-                    this.specialty.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialty || []) { this.specialty.push(new CodeableConcept(o)); }
             }
             if (obj.location) {
                 this.location = [];
-                for (let o of obj.location || []) {
-                    this.location.push(new ResourceReference(o));
-                }
+                for (let o of obj.location || []) { this.location.push(new ResourceReference(o)); }
             }
             if (obj.healthcareService) {
                 this.healthcareService = [];
-                for (let o of obj.healthcareService || []) {
-                    this.healthcareService.push(new ResourceReference(o));
-                }
+                for (let o of obj.healthcareService || []) { this.healthcareService.push(new ResourceReference(o)); }
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.availableTime) {
                 this.availableTime = [];
-                for (let o of obj.availableTime || []) {
-                    this.availableTime.push(new AvailableTimeComponent(o));
-                }
+                for (let o of obj.availableTime || []) { this.availableTime.push(new AvailableTimeComponent(o)); }
             }
             if (obj.notAvailable) {
                 this.notAvailable = [];
-                for (let o of obj.notAvailable || []) {
-                    this.notAvailable.push(new NotAvailableComponent(o));
-                }
+                for (let o of obj.notAvailable || []) { this.notAvailable.push(new NotAvailableComponent(o)); }
             }
             if (obj.availabilityExceptions) {
                 this.availabilityExceptions = obj.availabilityExceptions;
             }
             if (obj.endpoint) {
                 this.endpoint = [];
-                for (let o of obj.endpoint || []) {
-                    this.endpoint.push(new ResourceReference(o));
-                }
+                for (let o of obj.endpoint || []) { this.endpoint.push(new ResourceReference(o)); }
             }
         }
     }
@@ -13965,9 +12722,9 @@ export class PractitionerRole extends DomainResource {
 }
 
 export class FocalDeviceComponent extends BackboneElement {
-    public action: CodeableConcept;
+    public action?: CodeableConcept;
     public manipulated: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -13984,59 +12741,51 @@ export class FocalDeviceComponent extends BackboneElement {
 
 export class Procedure extends DomainResource {
     public resourceType = 'Procedure';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public partOf?: ResourceReference[];
     public status: string;
-    public notDone: boolean;
-    public notDoneReason: CodeableConcept;
-    public category: CodeableConcept;
-    public code: CodeableConcept;
+    public notDone?: boolean;
+    public notDoneReason?: CodeableConcept;
+    public category?: CodeableConcept;
+    public code?: CodeableConcept;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public performed: Element;
-    public performer: PerformerComponent[];
-    public location: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public bodySite: CodeableConcept[];
-    public outcome: CodeableConcept;
-    public report: ResourceReference[];
-    public complication: CodeableConcept[];
-    public complicationDetail: ResourceReference[];
-    public followUp: CodeableConcept[];
-    public note: Annotation[];
-    public focalDevice: FocalDeviceComponent[];
-    public usedReference: ResourceReference[];
-    public usedCode: CodeableConcept[];
-
+    public context?: ResourceReference;
+    public performed?: Element;
+    public performer?: PerformerComponent[];
+    public location?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public bodySite?: CodeableConcept[];
+    public outcome?: CodeableConcept;
+    public report?: ResourceReference[];
+    public complication?: CodeableConcept[];
+    public complicationDetail?: ResourceReference[];
+    public followUp?: CodeableConcept[];
+    public note?: Annotation[];
+    public focalDevice?: FocalDeviceComponent[];
+    public usedReference?: ResourceReference[];
+    public usedCode?: CodeableConcept[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -14064,81 +12813,57 @@ export class Procedure extends DomainResource {
             }
             if (obj.performer) {
                 this.performer = [];
-                for (let o of obj.performer || []) {
-                    this.performer.push(new PerformerComponent(o));
-                }
+                for (let o of obj.performer || []) { this.performer.push(new PerformerComponent(o)); }
             }
             if (obj.location) {
                 this.location = new ResourceReference(obj.location);
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = [];
-                for (let o of obj.bodySite || []) {
-                    this.bodySite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.bodySite || []) { this.bodySite.push(new CodeableConcept(o)); }
             }
             if (obj.outcome) {
                 this.outcome = new CodeableConcept(obj.outcome);
             }
             if (obj.report) {
                 this.report = [];
-                for (let o of obj.report || []) {
-                    this.report.push(new ResourceReference(o));
-                }
+                for (let o of obj.report || []) { this.report.push(new ResourceReference(o)); }
             }
             if (obj.complication) {
                 this.complication = [];
-                for (let o of obj.complication || []) {
-                    this.complication.push(new CodeableConcept(o));
-                }
+                for (let o of obj.complication || []) { this.complication.push(new CodeableConcept(o)); }
             }
             if (obj.complicationDetail) {
                 this.complicationDetail = [];
-                for (let o of obj.complicationDetail || []) {
-                    this.complicationDetail.push(new ResourceReference(o));
-                }
+                for (let o of obj.complicationDetail || []) { this.complicationDetail.push(new ResourceReference(o)); }
             }
             if (obj.followUp) {
                 this.followUp = [];
-                for (let o of obj.followUp || []) {
-                    this.followUp.push(new CodeableConcept(o));
-                }
+                for (let o of obj.followUp || []) { this.followUp.push(new CodeableConcept(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.focalDevice) {
                 this.focalDevice = [];
-                for (let o of obj.focalDevice || []) {
-                    this.focalDevice.push(new FocalDeviceComponent(o));
-                }
+                for (let o of obj.focalDevice || []) { this.focalDevice.push(new FocalDeviceComponent(o)); }
             }
             if (obj.usedReference) {
                 this.usedReference = [];
-                for (let o of obj.usedReference || []) {
-                    this.usedReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.usedReference || []) { this.usedReference.push(new ResourceReference(o)); }
             }
             if (obj.usedCode) {
                 this.usedCode = [];
-                for (let o of obj.usedCode || []) {
-                    this.usedCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.usedCode || []) { this.usedCode.push(new CodeableConcept(o)); }
             }
         }
     }
@@ -14147,59 +12872,51 @@ export class Procedure extends DomainResource {
 
 export class ProcedureRequest extends DomainResource {
     public resourceType = 'ProcedureRequest';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public replaces: ResourceReference[];
-    public requisition: Identifier;
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public replaces?: ResourceReference[];
+    public requisition?: Identifier;
     public status: string;
     public intent: string;
-    public priority: string;
-    public doNotPerform: boolean;
-    public category: CodeableConcept[];
+    public priority?: string;
+    public doNotPerform?: boolean;
+    public category?: CodeableConcept[];
     public code: CodeableConcept;
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public asNeeded: Element;
-    public authoredOn: Date;
-    public requester: RequesterComponent;
-    public performerType: CodeableConcept;
-    public performer: ResourceReference;
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public supportingInfo: ResourceReference[];
-    public specimen: ResourceReference[];
-    public bodySite: CodeableConcept[];
-    public note: Annotation[];
-    public relevantHistory: ResourceReference[];
-
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public asNeeded?: Element;
+    public authoredOn?: Date;
+    public requester?: RequesterComponent;
+    public performerType?: CodeableConcept;
+    public performer?: ResourceReference;
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public supportingInfo?: ResourceReference[];
+    public specimen?: ResourceReference[];
+    public bodySite?: CodeableConcept[];
+    public note?: Annotation[];
+    public relevantHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.requisition) {
                 this.requisition = new Identifier(obj.requisition);
@@ -14218,9 +12935,7 @@ export class ProcedureRequest extends DomainResource {
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -14251,45 +12966,31 @@ export class ProcedureRequest extends DomainResource {
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.supportingInfo) {
                 this.supportingInfo = [];
-                for (let o of obj.supportingInfo || []) {
-                    this.supportingInfo.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInfo || []) { this.supportingInfo.push(new ResourceReference(o)); }
             }
             if (obj.specimen) {
                 this.specimen = [];
-                for (let o of obj.specimen || []) {
-                    this.specimen.push(new ResourceReference(o));
-                }
+                for (let o of obj.specimen || []) { this.specimen.push(new ResourceReference(o)); }
             }
             if (obj.bodySite) {
                 this.bodySite = [];
-                for (let o of obj.bodySite || []) {
-                    this.bodySite.push(new CodeableConcept(o));
-                }
+                for (let o of obj.bodySite || []) { this.bodySite.push(new CodeableConcept(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.relevantHistory) {
                 this.relevantHistory = [];
-                for (let o of obj.relevantHistory || []) {
-                    this.relevantHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.relevantHistory || []) { this.relevantHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -14298,7 +12999,7 @@ export class ProcedureRequest extends DomainResource {
 
 export class ItemsComponent extends BackboneElement {
     public sequenceLinkId: number;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -14312,30 +13013,28 @@ export class ItemsComponent extends BackboneElement {
 
 export class ProcessRequest extends DomainResource {
     public resourceType = 'ProcessRequest';
-    public identifier: Identifier[];
-    public status: string;
-    public action: string;
-    public target: ResourceReference;
-    public created: Date;
-    public provider: ResourceReference;
-    public organization: ResourceReference;
-    public request: ResourceReference;
-    public response: ResourceReference;
-    public nullify: boolean;
-    public reference: string;
-    public item: ItemsComponent[];
-    public include: string[];
-    public exclude: string[];
-    public period: Period;
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public action?: string;
+    public target?: ResourceReference;
+    public created?: Date;
+    public provider?: ResourceReference;
+    public organization?: ResourceReference;
+    public request?: ResourceReference;
+    public response?: ResourceReference;
+    public nullify?: boolean;
+    public reference?: string;
+    public item?: ItemsComponent[];
+    public include?: string[];
+    public exclude?: string[];
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -14369,9 +13068,7 @@ export class ProcessRequest extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemsComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemsComponent(o)); }
             }
             if (obj.include) {
                 this.include = obj.include;
@@ -14388,9 +13085,9 @@ export class ProcessRequest extends DomainResource {
 }
 
 export class ProcessNoteComponent extends BackboneElement {
-    public type: CodeableConcept;
-    public text: string;
-
+    public type?: CodeableConcept;
+    public text?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -14407,28 +13104,26 @@ export class ProcessNoteComponent extends BackboneElement {
 
 export class ProcessResponse extends DomainResource {
     public resourceType = 'ProcessResponse';
-    public identifier: Identifier[];
-    public status: string;
-    public created: Date;
-    public organization: ResourceReference;
-    public request: ResourceReference;
-    public outcome: CodeableConcept;
-    public disposition: string;
-    public requestProvider: ResourceReference;
-    public requestOrganization: ResourceReference;
-    public form: CodeableConcept;
-    public processNote: ProcessNoteComponent[];
-    public error: CodeableConcept[];
-    public communicationRequest: ResourceReference[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public created?: Date;
+    public organization?: ResourceReference;
+    public request?: ResourceReference;
+    public outcome?: CodeableConcept;
+    public disposition?: string;
+    public requestProvider?: ResourceReference;
+    public requestOrganization?: ResourceReference;
+    public form?: CodeableConcept;
+    public processNote?: ProcessNoteComponent[];
+    public error?: CodeableConcept[];
+    public communicationRequest?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -14459,21 +13154,15 @@ export class ProcessResponse extends DomainResource {
             }
             if (obj.processNote) {
                 this.processNote = [];
-                for (let o of obj.processNote || []) {
-                    this.processNote.push(new ProcessNoteComponent(o));
-                }
+                for (let o of obj.processNote || []) { this.processNote.push(new ProcessNoteComponent(o)); }
             }
             if (obj.error) {
                 this.error = [];
-                for (let o of obj.error || []) {
-                    this.error.push(new CodeableConcept(o));
-                }
+                for (let o of obj.error || []) { this.error.push(new CodeableConcept(o)); }
             }
             if (obj.communicationRequest) {
                 this.communicationRequest = [];
-                for (let o of obj.communicationRequest || []) {
-                    this.communicationRequest.push(new ResourceReference(o));
-                }
+                for (let o of obj.communicationRequest || []) { this.communicationRequest.push(new ResourceReference(o)); }
             }
         }
     }
@@ -14483,24 +13172,22 @@ export class ProcessResponse extends DomainResource {
 export class Provenance extends DomainResource {
     public resourceType = 'Provenance';
     public target: ResourceReference[];
-    public period: Period;
+    public period?: Period;
     public recorded: Date;
-    public policy: string[];
-    public location: ResourceReference;
-    public reason: Coding[];
-    public activity: Coding;
+    public policy?: string[];
+    public location?: ResourceReference;
+    public reason?: Coding[];
+    public activity?: Coding;
     public agent: AgentComponent[];
-    public entity: EntityComponent[];
-    public signature: Signature[];
-
+    public entity?: EntityComponent[];
+    public signature?: Signature[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.target) {
                 this.target = [];
-                for (let o of obj.target || []) {
-                    this.target.push(new ResourceReference(o));
-                }
+                for (let o of obj.target || []) { this.target.push(new ResourceReference(o)); }
             }
             if (obj.period) {
                 this.period = new Period(obj.period);
@@ -14516,30 +13203,22 @@ export class Provenance extends DomainResource {
             }
             if (obj.reason) {
                 this.reason = [];
-                for (let o of obj.reason || []) {
-                    this.reason.push(new Coding(o));
-                }
+                for (let o of obj.reason || []) { this.reason.push(new Coding(o)); }
             }
             if (obj.activity) {
                 this.activity = new Coding(obj.activity);
             }
             if (obj.agent) {
                 this.agent = [];
-                for (let o of obj.agent || []) {
-                    this.agent.push(new AgentComponent(o));
-                }
+                for (let o of obj.agent || []) { this.agent.push(new AgentComponent(o)); }
             }
             if (obj.entity) {
                 this.entity = [];
-                for (let o of obj.entity || []) {
-                    this.entity.push(new EntityComponent(o));
-                }
+                for (let o of obj.entity || []) { this.entity.push(new EntityComponent(o)); }
             }
             if (obj.signature) {
                 this.signature = [];
-                for (let o of obj.signature || []) {
-                    this.signature.push(new Signature(o));
-                }
+                for (let o of obj.signature || []) { this.signature.push(new Signature(o)); }
             }
         }
     }
@@ -14548,28 +13227,28 @@ export class Provenance extends DomainResource {
 
 export class Questionnaire extends DomainResource {
     public resourceType = 'Questionnaire';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public code: Coding[];
-    public subjectType: string[];
-    public item: ItemComponent[];
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public code?: Coding[];
+    public subjectType?: string[];
+    public item?: ItemComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -14578,9 +13257,7 @@ export class Questionnaire extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -14620,39 +13297,29 @@ export class Questionnaire extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.code) {
                 this.code = [];
-                for (let o of obj.code || []) {
-                    this.code.push(new Coding(o));
-                }
+                for (let o of obj.code || []) { this.code.push(new Coding(o)); }
             }
             if (obj.subjectType) {
                 this.subjectType = obj.subjectType;
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
         }
     }
@@ -14661,18 +13328,18 @@ export class Questionnaire extends DomainResource {
 
 export class QuestionnaireResponse extends DomainResource {
     public resourceType = 'QuestionnaireResponse';
-    public identifier: Identifier;
-    public basedOn: ResourceReference[];
-    public parent: ResourceReference[];
-    public questionnaire: ResourceReference;
+    public identifier?: Identifier;
+    public basedOn?: ResourceReference[];
+    public parent?: ResourceReference[];
+    public questionnaire?: ResourceReference;
     public status: string;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public authored: Date;
-    public author: ResourceReference;
-    public source: ResourceReference;
-    public item: ItemComponent[];
-
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public authored?: Date;
+    public author?: ResourceReference;
+    public source?: ResourceReference;
+    public item?: ItemComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -14681,15 +13348,11 @@ export class QuestionnaireResponse extends DomainResource {
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.parent) {
                 this.parent = [];
-                for (let o of obj.parent || []) {
-                    this.parent.push(new ResourceReference(o));
-                }
+                for (let o of obj.parent || []) { this.parent.push(new ResourceReference(o)); }
             }
             if (obj.questionnaire) {
                 this.questionnaire = new ResourceReference(obj.questionnaire);
@@ -14714,9 +13377,7 @@ export class QuestionnaireResponse extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) {
-                    this.item.push(new ItemComponent(o));
-                }
+                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
             }
         }
     }
@@ -14725,56 +13386,48 @@ export class QuestionnaireResponse extends DomainResource {
 
 export class ReferralRequest extends DomainResource {
     public resourceType = 'ReferralRequest';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public replaces: ResourceReference[];
-    public groupIdentifier: Identifier;
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public replaces?: ResourceReference[];
+    public groupIdentifier?: Identifier;
     public status: string;
     public intent: string;
-    public type: CodeableConcept;
-    public priority: string;
-    public serviceRequested: CodeableConcept[];
+    public type?: CodeableConcept;
+    public priority?: string;
+    public serviceRequested?: CodeableConcept[];
     public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public authoredOn: Date;
-    public requester: RequesterComponent;
-    public specialty: CodeableConcept;
-    public recipient: ResourceReference[];
-    public reasonCode: CodeableConcept[];
-    public reasonReference: ResourceReference[];
-    public description: string;
-    public supportingInfo: ResourceReference[];
-    public note: Annotation[];
-    public relevantHistory: ResourceReference[];
-
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public authoredOn?: Date;
+    public requester?: RequesterComponent;
+    public specialty?: CodeableConcept;
+    public recipient?: ResourceReference[];
+    public reasonCode?: CodeableConcept[];
+    public reasonReference?: ResourceReference[];
+    public description?: string;
+    public supportingInfo?: ResourceReference[];
+    public note?: Annotation[];
+    public relevantHistory?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
@@ -14793,9 +13446,7 @@ export class ReferralRequest extends DomainResource {
             }
             if (obj.serviceRequested) {
                 this.serviceRequested = [];
-                for (let o of obj.serviceRequested || []) {
-                    this.serviceRequested.push(new CodeableConcept(o));
-                }
+                for (let o of obj.serviceRequested || []) { this.serviceRequested.push(new CodeableConcept(o)); }
             }
             if (obj.subject) {
                 this.subject = new ResourceReference(obj.subject);
@@ -14817,42 +13468,30 @@ export class ReferralRequest extends DomainResource {
             }
             if (obj.recipient) {
                 this.recipient = [];
-                for (let o of obj.recipient || []) {
-                    this.recipient.push(new ResourceReference(o));
-                }
+                for (let o of obj.recipient || []) { this.recipient.push(new ResourceReference(o)); }
             }
             if (obj.reasonCode) {
                 this.reasonCode = [];
-                for (let o of obj.reasonCode || []) {
-                    this.reasonCode.push(new CodeableConcept(o));
-                }
+                for (let o of obj.reasonCode || []) { this.reasonCode.push(new CodeableConcept(o)); }
             }
             if (obj.reasonReference) {
                 this.reasonReference = [];
-                for (let o of obj.reasonReference || []) {
-                    this.reasonReference.push(new ResourceReference(o));
-                }
+                for (let o of obj.reasonReference || []) { this.reasonReference.push(new ResourceReference(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.supportingInfo) {
                 this.supportingInfo = [];
-                for (let o of obj.supportingInfo || []) {
-                    this.supportingInfo.push(new ResourceReference(o));
-                }
+                for (let o of obj.supportingInfo || []) { this.supportingInfo.push(new ResourceReference(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.relevantHistory) {
                 this.relevantHistory = [];
-                for (let o of obj.relevantHistory || []) {
-                    this.relevantHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.relevantHistory || []) { this.relevantHistory.push(new ResourceReference(o)); }
             }
         }
     }
@@ -14861,26 +13500,24 @@ export class ReferralRequest extends DomainResource {
 
 export class RelatedPerson extends DomainResource {
     public resourceType = 'RelatedPerson';
-    public identifier: Identifier[];
-    public active: boolean;
+    public identifier?: Identifier[];
+    public active?: boolean;
     public patient: ResourceReference;
-    public relationship: CodeableConcept;
-    public name: HumanName[];
-    public telecom: ContactPoint[];
-    public gender: string;
-    public birthDate: Date;
-    public address: Address[];
-    public photo: Attachment[];
-    public period: Period;
-
+    public relationship?: CodeableConcept;
+    public name?: HumanName[];
+    public telecom?: ContactPoint[];
+    public gender?: string;
+    public birthDate?: Date;
+    public address?: Address[];
+    public photo?: Attachment[];
+    public period?: Period;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -14893,15 +13530,11 @@ export class RelatedPerson extends DomainResource {
             }
             if (obj.name) {
                 this.name = [];
-                for (let o of obj.name || []) {
-                    this.name.push(new HumanName(o));
-                }
+                for (let o of obj.name || []) { this.name.push(new HumanName(o)); }
             }
             if (obj.telecom) {
                 this.telecom = [];
-                for (let o of obj.telecom || []) {
-                    this.telecom.push(new ContactPoint(o));
-                }
+                for (let o of obj.telecom || []) { this.telecom.push(new ContactPoint(o)); }
             }
             if (obj.gender) {
                 this.gender = obj.gender;
@@ -14911,15 +13544,11 @@ export class RelatedPerson extends DomainResource {
             }
             if (obj.address) {
                 this.address = [];
-                for (let o of obj.address || []) {
-                    this.address.push(new Address(o));
-                }
+                for (let o of obj.address || []) { this.address.push(new Address(o)); }
             }
             if (obj.photo) {
                 this.photo = [];
-                for (let o of obj.photo || []) {
-                    this.photo.push(new Attachment(o));
-                }
+                for (let o of obj.photo || []) { this.photo.push(new Attachment(o)); }
             }
             if (obj.period) {
                 this.period = new Period(obj.period);
@@ -14931,48 +13560,40 @@ export class RelatedPerson extends DomainResource {
 
 export class RequestGroup extends DomainResource {
     public resourceType = 'RequestGroup';
-    public identifier: Identifier[];
-    public definition: ResourceReference[];
-    public basedOn: ResourceReference[];
-    public replaces: ResourceReference[];
-    public groupIdentifier: Identifier;
+    public identifier?: Identifier[];
+    public definition?: ResourceReference[];
+    public basedOn?: ResourceReference[];
+    public replaces?: ResourceReference[];
+    public groupIdentifier?: Identifier;
     public status: string;
     public intent: string;
-    public priority: string;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public authoredOn: Date;
-    public author: ResourceReference;
-    public reason: Element;
-    public note: Annotation[];
-    public action: ActionComponent[];
-
+    public priority?: string;
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public authoredOn?: Date;
+    public author?: ResourceReference;
+    public reason?: Element;
+    public note?: Annotation[];
+    public action?: ActionComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = [];
-                for (let o of obj.definition || []) {
-                    this.definition.push(new ResourceReference(o));
-                }
+                for (let o of obj.definition || []) { this.definition.push(new ResourceReference(o)); }
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.replaces) {
                 this.replaces = [];
-                for (let o of obj.replaces || []) {
-                    this.replaces.push(new ResourceReference(o));
-                }
+                for (let o of obj.replaces || []) { this.replaces.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
@@ -15003,15 +13624,11 @@ export class RequestGroup extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new ActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new ActionComponent(o)); }
             }
         }
     }
@@ -15020,9 +13637,9 @@ export class RequestGroup extends DomainResource {
 
 export class ArmComponent extends BackboneElement {
     public name: string;
-    public code: CodeableConcept;
-    public description: string;
-
+    public code?: CodeableConcept;
+    public description?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15042,98 +13659,78 @@ export class ArmComponent extends BackboneElement {
 
 export class ResearchStudy extends DomainResource {
     public resourceType = 'ResearchStudy';
-    public identifier: Identifier[];
-    public title: string;
-    public protocol: ResourceReference[];
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public title?: string;
+    public protocol?: ResourceReference[];
+    public partOf?: ResourceReference[];
     public status: string;
-    public category: CodeableConcept[];
-    public focus: CodeableConcept[];
-    public contact: ContactDetail[];
-    public relatedArtifact: RelatedArtifact[];
-    public keyword: CodeableConcept[];
-    public jurisdiction: CodeableConcept[];
-    public description: string;
-    public enrollment: ResourceReference[];
-    public period: Period;
-    public sponsor: ResourceReference;
-    public principalInvestigator: ResourceReference;
-    public site: ResourceReference[];
-    public reasonStopped: CodeableConcept;
-    public note: Annotation[];
-    public arm: ArmComponent[];
-
+    public category?: CodeableConcept[];
+    public focus?: CodeableConcept[];
+    public contact?: ContactDetail[];
+    public relatedArtifact?: RelatedArtifact[];
+    public keyword?: CodeableConcept[];
+    public jurisdiction?: CodeableConcept[];
+    public description?: string;
+    public enrollment?: ResourceReference[];
+    public period?: Period;
+    public sponsor?: ResourceReference;
+    public principalInvestigator?: ResourceReference;
+    public site?: ResourceReference[];
+    public reasonStopped?: CodeableConcept;
+    public note?: Annotation[];
+    public arm?: ArmComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.title) {
                 this.title = obj.title;
             }
             if (obj.protocol) {
                 this.protocol = [];
-                for (let o of obj.protocol || []) {
-                    this.protocol.push(new ResourceReference(o));
-                }
+                for (let o of obj.protocol || []) { this.protocol.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.focus) {
                 this.focus = [];
-                for (let o of obj.focus || []) {
-                    this.focus.push(new CodeableConcept(o));
-                }
+                for (let o of obj.focus || []) { this.focus.push(new CodeableConcept(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.keyword) {
                 this.keyword = [];
-                for (let o of obj.keyword || []) {
-                    this.keyword.push(new CodeableConcept(o));
-                }
+                for (let o of obj.keyword || []) { this.keyword.push(new CodeableConcept(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.enrollment) {
                 this.enrollment = [];
-                for (let o of obj.enrollment || []) {
-                    this.enrollment.push(new ResourceReference(o));
-                }
+                for (let o of obj.enrollment || []) { this.enrollment.push(new ResourceReference(o)); }
             }
             if (obj.period) {
                 this.period = new Period(obj.period);
@@ -15146,24 +13743,18 @@ export class ResearchStudy extends DomainResource {
             }
             if (obj.site) {
                 this.site = [];
-                for (let o of obj.site || []) {
-                    this.site.push(new ResourceReference(o));
-                }
+                for (let o of obj.site || []) { this.site.push(new ResourceReference(o)); }
             }
             if (obj.reasonStopped) {
                 this.reasonStopped = new CodeableConcept(obj.reasonStopped);
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.arm) {
                 this.arm = [];
-                for (let o of obj.arm || []) {
-                    this.arm.push(new ArmComponent(o));
-                }
+                for (let o of obj.arm || []) { this.arm.push(new ArmComponent(o)); }
             }
         }
     }
@@ -15172,15 +13763,15 @@ export class ResearchStudy extends DomainResource {
 
 export class ResearchSubject extends DomainResource {
     public resourceType = 'ResearchSubject';
-    public identifier: Identifier;
+    public identifier?: Identifier;
     public status: string;
-    public period: Period;
+    public period?: Period;
     public study: ResourceReference;
     public individual: ResourceReference;
-    public assignedArm: string;
-    public actualArm: string;
-    public consent: ResourceReference;
-
+    public assignedArm?: string;
+    public actualArm?: string;
+    public consent?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15215,12 +13806,12 @@ export class ResearchSubject extends DomainResource {
 
 export class PredictionComponent extends BackboneElement {
     public outcome: CodeableConcept;
-    public probability: Element;
-    public qualitativeRisk: CodeableConcept;
-    public relativeRisk: number;
-    public when: Element;
-    public rationale: string;
-
+    public probability?: Element;
+    public qualitativeRisk?: CodeableConcept;
+    public relativeRisk?: number;
+    public when?: Element;
+    public rationale?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15249,23 +13840,23 @@ export class PredictionComponent extends BackboneElement {
 
 export class RiskAssessment extends DomainResource {
     public resourceType = 'RiskAssessment';
-    public identifier: Identifier;
-    public basedOn: ResourceReference;
-    public parent: ResourceReference;
+    public identifier?: Identifier;
+    public basedOn?: ResourceReference;
+    public parent?: ResourceReference;
     public status: string;
-    public method: CodeableConcept;
-    public code: CodeableConcept;
-    public subject: ResourceReference;
-    public context: ResourceReference;
-    public occurrence: Element;
-    public condition: ResourceReference;
-    public performer: ResourceReference;
-    public reason: Element;
-    public basis: ResourceReference[];
-    public prediction: PredictionComponent[];
-    public mitigation: string;
-    public comment: string;
-
+    public method?: CodeableConcept;
+    public code?: CodeableConcept;
+    public subject?: ResourceReference;
+    public context?: ResourceReference;
+    public occurrence?: Element;
+    public condition?: ResourceReference;
+    public performer?: ResourceReference;
+    public reason?: Element;
+    public basis?: ResourceReference[];
+    public prediction?: PredictionComponent[];
+    public mitigation?: string;
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15307,15 +13898,11 @@ export class RiskAssessment extends DomainResource {
             }
             if (obj.basis) {
                 this.basis = [];
-                for (let o of obj.basis || []) {
-                    this.basis.push(new ResourceReference(o));
-                }
+                for (let o of obj.basis || []) { this.basis.push(new ResourceReference(o)); }
             }
             if (obj.prediction) {
                 this.prediction = [];
-                for (let o of obj.prediction || []) {
-                    this.prediction.push(new PredictionComponent(o));
-                }
+                for (let o of obj.prediction || []) { this.prediction.push(new PredictionComponent(o)); }
             }
             if (obj.mitigation) {
                 this.mitigation = obj.mitigation;
@@ -15331,12 +13918,12 @@ export class RiskAssessment extends DomainResource {
 export class SampledData extends Element {
     public origin: Quantity;
     public period: number;
-    public factor: number;
-    public lowerLimit: number;
-    public upperLimit: number;
+    public factor?: number;
+    public lowerLimit?: number;
+    public upperLimit?: number;
     public dimensions: number;
     public data: string;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15368,23 +13955,21 @@ export class SampledData extends Element {
 
 export class Schedule extends DomainResource {
     public resourceType = 'Schedule';
-    public identifier: Identifier[];
-    public active: boolean;
-    public serviceCategory: CodeableConcept;
-    public serviceType: CodeableConcept[];
-    public specialty: CodeableConcept[];
+    public identifier?: Identifier[];
+    public active?: boolean;
+    public serviceCategory?: CodeableConcept;
+    public serviceType?: CodeableConcept[];
+    public specialty?: CodeableConcept[];
     public actor: ResourceReference[];
-    public planningHorizon: Period;
-    public comment: string;
-
+    public planningHorizon?: Period;
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.active) {
                 this.active = obj.active;
@@ -15394,21 +13979,15 @@ export class Schedule extends DomainResource {
             }
             if (obj.serviceType) {
                 this.serviceType = [];
-                for (let o of obj.serviceType || []) {
-                    this.serviceType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.serviceType || []) { this.serviceType.push(new CodeableConcept(o)); }
             }
             if (obj.specialty) {
                 this.specialty = [];
-                for (let o of obj.specialty || []) {
-                    this.specialty.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialty || []) { this.specialty.push(new CodeableConcept(o)); }
             }
             if (obj.actor) {
                 this.actor = [];
-                for (let o of obj.actor || []) {
-                    this.actor.push(new ResourceReference(o));
-                }
+                for (let o of obj.actor || []) { this.actor.push(new ResourceReference(o)); }
             }
             if (obj.planningHorizon) {
                 this.planningHorizon = new Period(obj.planningHorizon);
@@ -15424,30 +14003,30 @@ export class Schedule extends DomainResource {
 export class SearchParameter extends DomainResource {
     public resourceType = 'SearchParameter';
     public url: string;
-    public version: string;
+    public version?: string;
     public name: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
     public code: string;
     public base: string[];
     public type: string;
-    public derivedFrom: string;
+    public derivedFrom?: string;
     public description: string;
-    public expression: string;
-    public xpath: string;
-    public xpathUsage: string;
-    public target: string[];
-    public comparator: string[];
-    public modifier: string[];
-    public chain: string[];
-    public component: ComponentComponent[];
-
+    public expression?: string;
+    public xpath?: string;
+    public xpathUsage?: string;
+    public target?: string[];
+    public comparator?: string[];
+    public modifier?: string[];
+    public chain?: string[];
+    public component?: ComponentComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15474,21 +14053,15 @@ export class SearchParameter extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -15531,9 +14104,7 @@ export class SearchParameter extends DomainResource {
             }
             if (obj.component) {
                 this.component = [];
-                for (let o of obj.component || []) {
-                    this.component.push(new ComponentComponent(o));
-                }
+                for (let o of obj.component || []) { this.component.push(new ComponentComponent(o)); }
             }
         }
     }
@@ -15541,15 +14112,15 @@ export class SearchParameter extends DomainResource {
 }
 
 export class ReferenceSeqComponent extends BackboneElement {
-    public chromosome: CodeableConcept;
-    public genomeBuild: string;
-    public referenceSeqId: CodeableConcept;
-    public referenceSeqPointer: ResourceReference;
-    public referenceSeqString: string;
-    public strand: number;
+    public chromosome?: CodeableConcept;
+    public genomeBuild?: string;
+    public referenceSeqId?: CodeableConcept;
+    public referenceSeqPointer?: ResourceReference;
+    public referenceSeqString?: string;
+    public strand?: number;
     public windowStart: number;
     public windowEnd: number;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15583,13 +14154,13 @@ export class ReferenceSeqComponent extends BackboneElement {
 }
 
 export class VariantComponent extends BackboneElement {
-    public start: number;
-    public end: number;
-    public observedAllele: string;
-    public referenceAllele: string;
-    public cigar: string;
-    public variantPointer: ResourceReference;
-
+    public start?: number;
+    public end?: number;
+    public observedAllele?: string;
+    public referenceAllele?: string;
+    public cigar?: string;
+    public variantPointer?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15618,20 +14189,20 @@ export class VariantComponent extends BackboneElement {
 
 export class QualityComponent extends BackboneElement {
     public type: string;
-    public standardSequence: CodeableConcept;
-    public start: number;
-    public end: number;
-    public score: Quantity;
-    public method: CodeableConcept;
-    public truthTP: number;
-    public queryTP: number;
-    public truthFN: number;
-    public queryFP: number;
-    public gtFP: number;
-    public precision: number;
-    public recall: number;
-    public fScore: number;
-
+    public standardSequence?: CodeableConcept;
+    public start?: number;
+    public end?: number;
+    public score?: Quantity;
+    public method?: CodeableConcept;
+    public truthTP?: number;
+    public queryTP?: number;
+    public truthFN?: number;
+    public queryFP?: number;
+    public gtFP?: number;
+    public precision?: number;
+    public recall?: number;
+    public fScore?: number;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15684,12 +14255,12 @@ export class QualityComponent extends BackboneElement {
 
 export class RepositoryComponent extends BackboneElement {
     public type: string;
-    public url: string;
-    public name: string;
-    public datasetId: string;
-    public variantsetId: string;
-    public readsetId: string;
-
+    public url?: string;
+    public name?: string;
+    public datasetId?: string;
+    public variantsetId?: string;
+    public readsetId?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15718,30 +14289,28 @@ export class RepositoryComponent extends BackboneElement {
 
 export class Sequence extends DomainResource {
     public resourceType = 'Sequence';
-    public identifier: Identifier[];
-    public type: string;
+    public identifier?: Identifier[];
+    public type?: string;
     public coordinateSystem: number;
-    public patient: ResourceReference;
-    public specimen: ResourceReference;
-    public device: ResourceReference;
-    public performer: ResourceReference;
-    public quantity: Quantity;
-    public referenceSeq: ReferenceSeqComponent;
-    public variant: VariantComponent[];
-    public observedSeq: string;
-    public quality: QualityComponent[];
-    public readCoverage: number;
-    public repository: RepositoryComponent[];
-    public pointer: ResourceReference[];
-
+    public patient?: ResourceReference;
+    public specimen?: ResourceReference;
+    public device?: ResourceReference;
+    public performer?: ResourceReference;
+    public quantity?: Quantity;
+    public referenceSeq?: ReferenceSeqComponent;
+    public variant?: VariantComponent[];
+    public observedSeq?: string;
+    public quality?: QualityComponent[];
+    public readCoverage?: number;
+    public repository?: RepositoryComponent[];
+    public pointer?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.type) {
                 this.type = obj.type;
@@ -15769,33 +14338,25 @@ export class Sequence extends DomainResource {
             }
             if (obj.variant) {
                 this.variant = [];
-                for (let o of obj.variant || []) {
-                    this.variant.push(new VariantComponent(o));
-                }
+                for (let o of obj.variant || []) { this.variant.push(new VariantComponent(o)); }
             }
             if (obj.observedSeq) {
                 this.observedSeq = obj.observedSeq;
             }
             if (obj.quality) {
                 this.quality = [];
-                for (let o of obj.quality || []) {
-                    this.quality.push(new QualityComponent(o));
-                }
+                for (let o of obj.quality || []) { this.quality.push(new QualityComponent(o)); }
             }
             if (obj.readCoverage) {
                 this.readCoverage = obj.readCoverage;
             }
             if (obj.repository) {
                 this.repository = [];
-                for (let o of obj.repository || []) {
-                    this.repository.push(new RepositoryComponent(o));
-                }
+                for (let o of obj.repository || []) { this.repository.push(new RepositoryComponent(o)); }
             }
             if (obj.pointer) {
                 this.pointer = [];
-                for (let o of obj.pointer || []) {
-                    this.pointer.push(new ResourceReference(o));
-                }
+                for (let o of obj.pointer || []) { this.pointer.push(new ResourceReference(o)); }
             }
         }
     }
@@ -15804,32 +14365,32 @@ export class Sequence extends DomainResource {
 
 export class ServiceDefinition extends DomainResource {
     public resourceType = 'ServiceDefinition';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public description: string;
-    public purpose: string;
-    public usage: string;
-    public approvalDate: Date;
-    public lastReviewDate: Date;
-    public effectivePeriod: Period;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public topic: CodeableConcept[];
-    public contributor: Contributor[];
-    public contact: ContactDetail[];
-    public copyright: string;
-    public relatedArtifact: RelatedArtifact[];
-    public trigger: TriggerDefinition[];
-    public dataRequirement: DataRequirement[];
-    public operationDefinition: ResourceReference;
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public description?: string;
+    public purpose?: string;
+    public usage?: string;
+    public approvalDate?: Date;
+    public lastReviewDate?: Date;
+    public effectivePeriod?: Period;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public topic?: CodeableConcept[];
+    public contributor?: Contributor[];
+    public contact?: ContactDetail[];
+    public copyright?: string;
+    public relatedArtifact?: RelatedArtifact[];
+    public trigger?: TriggerDefinition[];
+    public dataRequirement?: DataRequirement[];
+    public operationDefinition?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -15838,9 +14399,7 @@ export class ServiceDefinition extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -15883,54 +14442,38 @@ export class ServiceDefinition extends DomainResource {
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.topic) {
                 this.topic = [];
-                for (let o of obj.topic || []) {
-                    this.topic.push(new CodeableConcept(o));
-                }
+                for (let o of obj.topic || []) { this.topic.push(new CodeableConcept(o)); }
             }
             if (obj.contributor) {
                 this.contributor = [];
-                for (let o of obj.contributor || []) {
-                    this.contributor.push(new Contributor(o));
-                }
+                for (let o of obj.contributor || []) { this.contributor.push(new Contributor(o)); }
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.copyright) {
                 this.copyright = obj.copyright;
             }
             if (obj.relatedArtifact) {
                 this.relatedArtifact = [];
-                for (let o of obj.relatedArtifact || []) {
-                    this.relatedArtifact.push(new RelatedArtifact(o));
-                }
+                for (let o of obj.relatedArtifact || []) { this.relatedArtifact.push(new RelatedArtifact(o)); }
             }
             if (obj.trigger) {
                 this.trigger = [];
-                for (let o of obj.trigger || []) {
-                    this.trigger.push(new TriggerDefinition(o));
-                }
+                for (let o of obj.trigger || []) { this.trigger.push(new TriggerDefinition(o)); }
             }
             if (obj.dataRequirement) {
                 this.dataRequirement = [];
-                for (let o of obj.dataRequirement || []) {
-                    this.dataRequirement.push(new DataRequirement(o));
-                }
+                for (let o of obj.dataRequirement || []) { this.dataRequirement.push(new DataRequirement(o)); }
             }
             if (obj.operationDefinition) {
                 this.operationDefinition = new ResourceReference(obj.operationDefinition);
@@ -15942,41 +14485,35 @@ export class ServiceDefinition extends DomainResource {
 
 export class Slot extends DomainResource {
     public resourceType = 'Slot';
-    public identifier: Identifier[];
-    public serviceCategory: CodeableConcept;
-    public serviceType: CodeableConcept[];
-    public specialty: CodeableConcept[];
-    public appointmentType: CodeableConcept;
+    public identifier?: Identifier[];
+    public serviceCategory?: CodeableConcept;
+    public serviceType?: CodeableConcept[];
+    public specialty?: CodeableConcept[];
+    public appointmentType?: CodeableConcept;
     public schedule: ResourceReference;
     public status: string;
     public start: Date;
     public end: Date;
-    public overbooked: boolean;
-    public comment: string;
-
+    public overbooked?: boolean;
+    public comment?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.serviceCategory) {
                 this.serviceCategory = new CodeableConcept(obj.serviceCategory);
             }
             if (obj.serviceType) {
                 this.serviceType = [];
-                for (let o of obj.serviceType || []) {
-                    this.serviceType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.serviceType || []) { this.serviceType.push(new CodeableConcept(o)); }
             }
             if (obj.specialty) {
                 this.specialty = [];
-                for (let o of obj.specialty || []) {
-                    this.specialty.push(new CodeableConcept(o));
-                }
+                for (let o of obj.specialty || []) { this.specialty.push(new CodeableConcept(o)); }
             }
             if (obj.appointmentType) {
                 this.appointmentType = new CodeableConcept(obj.appointmentType);
@@ -16005,12 +14542,12 @@ export class Slot extends DomainResource {
 }
 
 export class CollectionComponent extends BackboneElement {
-    public collector: ResourceReference;
-    public collected: Element;
-    public quantity: SimpleQuantity;
-    public method: CodeableConcept;
-    public bodySite: CodeableConcept;
-
+    public collector?: ResourceReference;
+    public collected?: Element;
+    public quantity?: SimpleQuantity;
+    public method?: CodeableConcept;
+    public bodySite?: CodeableConcept;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16035,11 +14572,11 @@ export class CollectionComponent extends BackboneElement {
 }
 
 export class ProcessingComponent extends BackboneElement {
-    public description: string;
-    public procedure: CodeableConcept;
-    public additive: ResourceReference[];
-    public time: Element;
-
+    public description?: string;
+    public procedure?: CodeableConcept;
+    public additive?: ResourceReference[];
+    public time?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16051,9 +14588,7 @@ export class ProcessingComponent extends BackboneElement {
             }
             if (obj.additive) {
                 this.additive = [];
-                for (let o of obj.additive || []) {
-                    this.additive.push(new ResourceReference(o));
-                }
+                for (let o of obj.additive || []) { this.additive.push(new ResourceReference(o)); }
             }
             if (obj.time) {
                 this.time = new Element(obj.time);
@@ -16064,21 +14599,19 @@ export class ProcessingComponent extends BackboneElement {
 }
 
 export class ContainerComponent extends BackboneElement {
-    public identifier: Identifier[];
-    public description: string;
-    public type: CodeableConcept;
-    public capacity: SimpleQuantity;
-    public specimenQuantity: SimpleQuantity;
-    public additive: Element;
-
+    public identifier?: Identifier[];
+    public description?: string;
+    public type?: CodeableConcept;
+    public capacity?: SimpleQuantity;
+    public specimenQuantity?: SimpleQuantity;
+    public additive?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
@@ -16102,27 +14635,25 @@ export class ContainerComponent extends BackboneElement {
 
 export class Specimen extends DomainResource {
     public resourceType = 'Specimen';
-    public identifier: Identifier[];
-    public accessionIdentifier: Identifier;
-    public status: string;
-    public type: CodeableConcept;
+    public identifier?: Identifier[];
+    public accessionIdentifier?: Identifier;
+    public status?: string;
+    public type?: CodeableConcept;
     public subject: ResourceReference;
-    public receivedTime: Date;
-    public parent: ResourceReference[];
-    public request: ResourceReference[];
-    public collection: CollectionComponent;
-    public processing: ProcessingComponent[];
-    public container: ContainerComponent[];
-    public note: Annotation[];
-
+    public receivedTime?: Date;
+    public parent?: ResourceReference[];
+    public request?: ResourceReference[];
+    public collection?: CollectionComponent;
+    public processing?: ProcessingComponent[];
+    public container?: ContainerComponent[];
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.accessionIdentifier) {
                 this.accessionIdentifier = new Identifier(obj.accessionIdentifier);
@@ -16141,36 +14672,26 @@ export class Specimen extends DomainResource {
             }
             if (obj.parent) {
                 this.parent = [];
-                for (let o of obj.parent || []) {
-                    this.parent.push(new ResourceReference(o));
-                }
+                for (let o of obj.parent || []) { this.parent.push(new ResourceReference(o)); }
             }
             if (obj.request) {
                 this.request = [];
-                for (let o of obj.request || []) {
-                    this.request.push(new ResourceReference(o));
-                }
+                for (let o of obj.request || []) { this.request.push(new ResourceReference(o)); }
             }
             if (obj.collection) {
                 this.collection = new CollectionComponent(obj.collection);
             }
             if (obj.processing) {
                 this.processing = [];
-                for (let o of obj.processing || []) {
-                    this.processing.push(new ProcessingComponent(o));
-                }
+                for (let o of obj.processing || []) { this.processing.push(new ProcessingComponent(o)); }
             }
             if (obj.container) {
                 this.container = [];
-                for (let o of obj.container || []) {
-                    this.container.push(new ContainerComponent(o));
-                }
+                for (let o of obj.container || []) { this.container.push(new ContainerComponent(o)); }
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -16180,9 +14701,9 @@ export class Specimen extends DomainResource {
 export class StructureComponent extends BackboneElement {
     public url: string;
     public mode: string;
-    public alias: string;
-    public documentation: string;
-
+    public alias?: string;
+    public documentation?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16206,24 +14727,24 @@ export class StructureComponent extends BackboneElement {
 export class StructureMap extends DomainResource {
     public resourceType = 'StructureMap';
     public url: string;
-    public identifier: Identifier[];
-    public version: string;
+    public identifier?: Identifier[];
+    public version?: string;
     public name: string;
-    public title: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public structure: StructureComponent[];
-    public import: string[];
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public structure?: StructureComponent[];
+    public import?: string[];
     public group: GroupComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16232,9 +14753,7 @@ export class StructureMap extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -16259,24 +14778,18 @@ export class StructureMap extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -16286,18 +14799,14 @@ export class StructureMap extends DomainResource {
             }
             if (obj.structure) {
                 this.structure = [];
-                for (let o of obj.structure || []) {
-                    this.structure.push(new StructureComponent(o));
-                }
+                for (let o of obj.structure || []) { this.structure.push(new StructureComponent(o)); }
             }
             if (obj.import) {
                 this.import = obj.import;
             }
             if (obj.group) {
                 this.group = [];
-                for (let o of obj.group || []) {
-                    this.group.push(new GroupComponent(o));
-                }
+                for (let o of obj.group || []) { this.group.push(new GroupComponent(o)); }
             }
         }
     }
@@ -16306,10 +14815,10 @@ export class StructureMap extends DomainResource {
 
 export class ChannelComponent extends BackboneElement {
     public type: string;
-    public endpoint: string;
-    public payload: string;
-    public header: string[];
-
+    public endpoint?: string;
+    public payload?: string;
+    public header?: string[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16333,14 +14842,14 @@ export class ChannelComponent extends BackboneElement {
 export class Subscription extends DomainResource {
     public resourceType = 'Subscription';
     public status: string;
-    public contact: ContactPoint[];
-    public end: Date;
+    public contact?: ContactPoint[];
+    public end?: Date;
     public reason: string;
     public criteria: string;
-    public error: string;
+    public error?: string;
     public channel: ChannelComponent;
-    public tag: Coding[];
-
+    public tag?: Coding[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16349,9 +14858,7 @@ export class Subscription extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactPoint(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactPoint(o)); }
             }
             if (obj.end) {
                 this.end = new Date(obj.end);
@@ -16370,9 +14877,7 @@ export class Subscription extends DomainResource {
             }
             if (obj.tag) {
                 this.tag = [];
-                for (let o of obj.tag || []) {
-                    this.tag.push(new Coding(o));
-                }
+                for (let o of obj.tag || []) { this.tag.push(new Coding(o)); }
             }
         }
     }
@@ -16381,31 +14886,27 @@ export class Subscription extends DomainResource {
 
 export class Substance extends DomainResource {
     public resourceType = 'Substance';
-    public identifier: Identifier[];
-    public status: string;
-    public category: CodeableConcept[];
+    public identifier?: Identifier[];
+    public status?: string;
+    public category?: CodeableConcept[];
     public code: CodeableConcept;
-    public description: string;
-    public instance: InstanceComponent[];
-    public ingredient: IngredientComponent[];
-
+    public description?: string;
+    public instance?: InstanceComponent[];
+    public ingredient?: IngredientComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
             }
             if (obj.category) {
                 this.category = [];
-                for (let o of obj.category || []) {
-                    this.category.push(new CodeableConcept(o));
-                }
+                for (let o of obj.category || []) { this.category.push(new CodeableConcept(o)); }
             }
             if (obj.code) {
                 this.code = new CodeableConcept(obj.code);
@@ -16415,15 +14916,11 @@ export class Substance extends DomainResource {
             }
             if (obj.instance) {
                 this.instance = [];
-                for (let o of obj.instance || []) {
-                    this.instance.push(new InstanceComponent(o));
-                }
+                for (let o of obj.instance || []) { this.instance.push(new InstanceComponent(o)); }
             }
             if (obj.ingredient) {
                 this.ingredient = [];
-                for (let o of obj.ingredient || []) {
-                    this.ingredient.push(new IngredientComponent(o));
-                }
+                for (let o of obj.ingredient || []) { this.ingredient.push(new IngredientComponent(o)); }
             }
         }
     }
@@ -16431,9 +14928,9 @@ export class Substance extends DomainResource {
 }
 
 export class SuppliedItemComponent extends BackboneElement {
-    public quantity: SimpleQuantity;
-    public item: Element;
-
+    public quantity?: SimpleQuantity;
+    public item?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16450,18 +14947,18 @@ export class SuppliedItemComponent extends BackboneElement {
 
 export class SupplyDelivery extends DomainResource {
     public resourceType = 'SupplyDelivery';
-    public identifier: Identifier;
-    public basedOn: ResourceReference[];
-    public partOf: ResourceReference[];
-    public status: string;
-    public patient: ResourceReference;
-    public type: CodeableConcept;
-    public suppliedItem: SuppliedItemComponent;
-    public occurrence: Element;
-    public supplier: ResourceReference;
-    public destination: ResourceReference;
-    public receiver: ResourceReference[];
-
+    public identifier?: Identifier;
+    public basedOn?: ResourceReference[];
+    public partOf?: ResourceReference[];
+    public status?: string;
+    public patient?: ResourceReference;
+    public type?: CodeableConcept;
+    public suppliedItem?: SuppliedItemComponent;
+    public occurrence?: Element;
+    public supplier?: ResourceReference;
+    public destination?: ResourceReference;
+    public receiver?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16470,15 +14967,11 @@ export class SupplyDelivery extends DomainResource {
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -16503,9 +14996,7 @@ export class SupplyDelivery extends DomainResource {
             }
             if (obj.receiver) {
                 this.receiver = [];
-                for (let o of obj.receiver || []) {
-                    this.receiver.push(new ResourceReference(o));
-                }
+                for (let o of obj.receiver || []) { this.receiver.push(new ResourceReference(o)); }
             }
         }
     }
@@ -16514,8 +15005,8 @@ export class SupplyDelivery extends DomainResource {
 
 export class OrderedItemComponent extends BackboneElement {
     public quantity: Quantity;
-    public item: Element;
-
+    public item?: Element;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16532,19 +15023,19 @@ export class OrderedItemComponent extends BackboneElement {
 
 export class SupplyRequest extends DomainResource {
     public resourceType = 'SupplyRequest';
-    public identifier: Identifier;
-    public status: string;
-    public category: CodeableConcept;
-    public priority: string;
-    public orderedItem: OrderedItemComponent;
-    public occurrence: Element;
-    public authoredOn: Date;
-    public requester: RequesterComponent;
-    public supplier: ResourceReference[];
-    public reason: Element;
-    public deliverFrom: ResourceReference;
-    public deliverTo: ResourceReference;
-
+    public identifier?: Identifier;
+    public status?: string;
+    public category?: CodeableConcept;
+    public priority?: string;
+    public orderedItem?: OrderedItemComponent;
+    public occurrence?: Element;
+    public authoredOn?: Date;
+    public requester?: RequesterComponent;
+    public supplier?: ResourceReference[];
+    public reason?: Element;
+    public deliverFrom?: ResourceReference;
+    public deliverTo?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16574,9 +15065,7 @@ export class SupplyRequest extends DomainResource {
             }
             if (obj.supplier) {
                 this.supplier = [];
-                for (let o of obj.supplier || []) {
-                    this.supplier.push(new ResourceReference(o));
-                }
+                for (let o of obj.supplier || []) { this.supplier.push(new ResourceReference(o)); }
             }
             if (obj.reason) {
                 this.reason = new Element(obj.reason);
@@ -16593,10 +15082,10 @@ export class SupplyRequest extends DomainResource {
 }
 
 export class RestrictionComponent extends BackboneElement {
-    public repetitions: number;
-    public period: Period;
-    public recipient: ResourceReference[];
-
+    public repetitions?: number;
+    public period?: Period;
+    public recipient?: ResourceReference[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16608,9 +15097,7 @@ export class RestrictionComponent extends BackboneElement {
             }
             if (obj.recipient) {
                 this.recipient = [];
-                for (let o of obj.recipient || []) {
-                    this.recipient.push(new ResourceReference(o));
-                }
+                for (let o of obj.recipient || []) { this.recipient.push(new ResourceReference(o)); }
             }
         }
     }
@@ -16620,7 +15107,7 @@ export class RestrictionComponent extends BackboneElement {
 export class OutputComponent extends BackboneElement {
     public type: CodeableConcept;
     public value: Element;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16637,60 +15124,54 @@ export class OutputComponent extends BackboneElement {
 
 export class Task extends DomainResource {
     public resourceType = 'Task';
-    public identifier: Identifier[];
-    public definition: Element;
-    public basedOn: ResourceReference[];
-    public groupIdentifier: Identifier;
-    public partOf: ResourceReference[];
+    public identifier?: Identifier[];
+    public definition?: Element;
+    public basedOn?: ResourceReference[];
+    public groupIdentifier?: Identifier;
+    public partOf?: ResourceReference[];
     public status: string;
-    public statusReason: CodeableConcept;
-    public businessStatus: CodeableConcept;
+    public statusReason?: CodeableConcept;
+    public businessStatus?: CodeableConcept;
     public intent: string;
-    public priority: string;
-    public code: CodeableConcept;
-    public description: string;
-    public focus: ResourceReference;
-    public for: ResourceReference;
-    public context: ResourceReference;
-    public executionPeriod: Period;
-    public authoredOn: Date;
-    public lastModified: Date;
-    public requester: RequesterComponent;
-    public performerType: CodeableConcept[];
-    public owner: ResourceReference;
-    public reason: CodeableConcept;
-    public note: Annotation[];
-    public relevantHistory: ResourceReference[];
-    public restriction: RestrictionComponent;
-    public input: ParameterComponent[];
-    public output: OutputComponent[];
-
+    public priority?: string;
+    public code?: CodeableConcept;
+    public description?: string;
+    public focus?: ResourceReference;
+    public for?: ResourceReference;
+    public context?: ResourceReference;
+    public executionPeriod?: Period;
+    public authoredOn?: Date;
+    public lastModified?: Date;
+    public requester?: RequesterComponent;
+    public performerType?: CodeableConcept[];
+    public owner?: ResourceReference;
+    public reason?: CodeableConcept;
+    public note?: Annotation[];
+    public relevantHistory?: ResourceReference[];
+    public restriction?: RestrictionComponent;
+    public input?: ParameterComponent[];
+    public output?: OutputComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.definition) {
                 this.definition = new Element(obj.definition);
             }
             if (obj.basedOn) {
                 this.basedOn = [];
-                for (let o of obj.basedOn || []) {
-                    this.basedOn.push(new ResourceReference(o));
-                }
+                for (let o of obj.basedOn || []) { this.basedOn.push(new ResourceReference(o)); }
             }
             if (obj.groupIdentifier) {
                 this.groupIdentifier = new Identifier(obj.groupIdentifier);
             }
             if (obj.partOf) {
                 this.partOf = [];
-                for (let o of obj.partOf || []) {
-                    this.partOf.push(new ResourceReference(o));
-                }
+                for (let o of obj.partOf || []) { this.partOf.push(new ResourceReference(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -16736,9 +15217,7 @@ export class Task extends DomainResource {
             }
             if (obj.performerType) {
                 this.performerType = [];
-                for (let o of obj.performerType || []) {
-                    this.performerType.push(new CodeableConcept(o));
-                }
+                for (let o of obj.performerType || []) { this.performerType.push(new CodeableConcept(o)); }
             }
             if (obj.owner) {
                 this.owner = new ResourceReference(obj.owner);
@@ -16748,30 +15227,22 @@ export class Task extends DomainResource {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
             if (obj.relevantHistory) {
                 this.relevantHistory = [];
-                for (let o of obj.relevantHistory || []) {
-                    this.relevantHistory.push(new ResourceReference(o));
-                }
+                for (let o of obj.relevantHistory || []) { this.relevantHistory.push(new ResourceReference(o)); }
             }
             if (obj.restriction) {
                 this.restriction = new RestrictionComponent(obj.restriction);
             }
             if (obj.input) {
                 this.input = [];
-                for (let o of obj.input || []) {
-                    this.input.push(new ParameterComponent(o));
-                }
+                for (let o of obj.input || []) { this.input.push(new ParameterComponent(o)); }
             }
             if (obj.output) {
                 this.output = [];
-                for (let o of obj.output || []) {
-                    this.output.push(new OutputComponent(o));
-                }
+                for (let o of obj.output || []) { this.output.push(new OutputComponent(o)); }
             }
         }
     }
@@ -16779,7 +15250,7 @@ export class Task extends DomainResource {
 }
 
 export class ModelInfo {
-
+    
     constructor(obj?: any) {
         if (obj) {
         }
@@ -16789,9 +15260,9 @@ export class ModelInfo {
 
 export class AssertComponent extends BackboneElement {
     public result: string;
-    public message: string;
-    public detail: string;
-
+    public message?: string;
+    public detail?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16810,9 +15281,9 @@ export class AssertComponent extends BackboneElement {
 }
 
 export class SetupActionComponent extends BackboneElement {
-    public operation: OperationComponent;
-    public assert: AssertComponent;
-
+    public operation?: OperationComponent;
+    public assert?: AssertComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16829,15 +15300,13 @@ export class SetupActionComponent extends BackboneElement {
 
 export class SetupComponent extends BackboneElement {
     public action: SetupActionComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new SetupActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new SetupActionComponent(o)); }
             }
         }
     }
@@ -16845,9 +15314,9 @@ export class SetupComponent extends BackboneElement {
 }
 
 export class TestActionComponent extends BackboneElement {
-    public operation: OperationComponent;
-    public assert: AssertComponent;
-
+    public operation?: OperationComponent;
+    public assert?: AssertComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16863,10 +15332,10 @@ export class TestActionComponent extends BackboneElement {
 }
 
 export class TestComponent extends BackboneElement {
-    public name: string;
-    public description: string;
+    public name?: string;
+    public description?: string;
     public action: TestActionComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16878,9 +15347,7 @@ export class TestComponent extends BackboneElement {
             }
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new TestActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new TestActionComponent(o)); }
             }
         }
     }
@@ -16889,7 +15356,7 @@ export class TestComponent extends BackboneElement {
 
 export class TeardownActionComponent extends BackboneElement {
     public operation: OperationComponent;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16903,15 +15370,13 @@ export class TeardownActionComponent extends BackboneElement {
 
 export class TeardownComponent extends BackboneElement {
     public action: TeardownActionComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.action) {
                 this.action = [];
-                for (let o of obj.action || []) {
-                    this.action.push(new TeardownActionComponent(o));
-                }
+                for (let o of obj.action || []) { this.action.push(new TeardownActionComponent(o)); }
             }
         }
     }
@@ -16920,19 +15385,19 @@ export class TeardownComponent extends BackboneElement {
 
 export class TestReport extends DomainResource {
     public resourceType = 'TestReport';
-    public identifier: Identifier;
-    public name: string;
+    public identifier?: Identifier;
+    public name?: string;
     public status: string;
     public testScript: ResourceReference;
     public result: string;
-    public score: number;
-    public tester: string;
-    public issued: Date;
-    public participant: ParticipantComponent[];
-    public setup: SetupComponent;
-    public test: TestComponent[];
-    public teardown: TeardownComponent;
-
+    public score?: number;
+    public tester?: string;
+    public issued?: Date;
+    public participant?: ParticipantComponent[];
+    public setup?: SetupComponent;
+    public test?: TestComponent[];
+    public teardown?: TeardownComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -16962,18 +15427,14 @@ export class TestReport extends DomainResource {
             }
             if (obj.participant) {
                 this.participant = [];
-                for (let o of obj.participant || []) {
-                    this.participant.push(new ParticipantComponent(o));
-                }
+                for (let o of obj.participant || []) { this.participant.push(new ParticipantComponent(o)); }
             }
             if (obj.setup) {
                 this.setup = new SetupComponent(obj.setup);
             }
             if (obj.test) {
                 this.test = [];
-                for (let o of obj.test || []) {
-                    this.test.push(new TestComponent(o));
-                }
+                for (let o of obj.test || []) { this.test.push(new TestComponent(o)); }
             }
             if (obj.teardown) {
                 this.teardown = new TeardownComponent(obj.teardown);
@@ -16986,7 +15447,7 @@ export class TestReport extends DomainResource {
 export class OriginComponent extends BackboneElement {
     public index: number;
     public profile: Coding;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17004,7 +15465,7 @@ export class OriginComponent extends BackboneElement {
 export class DestinationComponent extends BackboneElement {
     public index: number;
     public profile: Coding;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17020,14 +15481,14 @@ export class DestinationComponent extends BackboneElement {
 }
 
 export class CapabilityComponent extends BackboneElement {
-    public required: boolean;
-    public validated: boolean;
-    public description: string;
-    public origin: number[];
-    public destination: number;
-    public link: string[];
+    public required?: boolean;
+    public validated?: boolean;
+    public description?: string;
+    public origin?: number[];
+    public destination?: number;
+    public link?: string[];
     public capabilities: ResourceReference;
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17058,23 +15519,19 @@ export class CapabilityComponent extends BackboneElement {
 }
 
 export class MetadataComponent extends BackboneElement {
-    public link: LinkComponent[];
+    public link?: LinkComponent[];
     public capability: CapabilityComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.link) {
                 this.link = [];
-                for (let o of obj.link || []) {
-                    this.link.push(new LinkComponent(o));
-                }
+                for (let o of obj.link || []) { this.link.push(new LinkComponent(o)); }
             }
             if (obj.capability) {
                 this.capability = [];
-                for (let o of obj.capability || []) {
-                    this.capability.push(new CapabilityComponent(o));
-                }
+                for (let o of obj.capability || []) { this.capability.push(new CapabilityComponent(o)); }
             }
         }
     }
@@ -17082,10 +15539,10 @@ export class MetadataComponent extends BackboneElement {
 }
 
 export class FixtureComponent extends BackboneElement {
-    public autocreate: boolean;
-    public autodelete: boolean;
-    public resource: ResourceReference;
-
+    public autocreate?: boolean;
+    public autodelete?: boolean;
+    public resource?: ResourceReference;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17105,14 +15562,14 @@ export class FixtureComponent extends BackboneElement {
 
 export class VariableComponent extends BackboneElement {
     public name: string;
-    public defaultValue: string;
-    public description: string;
-    public expression: string;
-    public headerField: string;
-    public hint: string;
-    public path: string;
-    public sourceId: string;
-
+    public defaultValue?: string;
+    public description?: string;
+    public expression?: string;
+    public headerField?: string;
+    public hint?: string;
+    public path?: string;
+    public sourceId?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17147,8 +15604,8 @@ export class VariableComponent extends BackboneElement {
 
 export class RuleParamComponent extends BackboneElement {
     public name: string;
-    public value: string;
-
+    public value?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17165,8 +15622,8 @@ export class RuleParamComponent extends BackboneElement {
 
 export class RuleComponent extends BackboneElement {
     public resource: ResourceReference;
-    public param: RuleParamComponent[];
-
+    public param?: RuleParamComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17175,9 +15632,7 @@ export class RuleComponent extends BackboneElement {
             }
             if (obj.param) {
                 this.param = [];
-                for (let o of obj.param || []) {
-                    this.param.push(new RuleParamComponent(o));
-                }
+                for (let o of obj.param || []) { this.param.push(new RuleParamComponent(o)); }
             }
         }
     }
@@ -17186,8 +15641,8 @@ export class RuleComponent extends BackboneElement {
 
 export class RulesetRuleParamComponent extends BackboneElement {
     public name: string;
-    public value: string;
-
+    public value?: string;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17204,8 +15659,8 @@ export class RulesetRuleParamComponent extends BackboneElement {
 
 export class RulesetRuleComponent extends BackboneElement {
     public ruleId: string;
-    public param: RulesetRuleParamComponent[];
-
+    public param?: RulesetRuleParamComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17214,9 +15669,7 @@ export class RulesetRuleComponent extends BackboneElement {
             }
             if (obj.param) {
                 this.param = [];
-                for (let o of obj.param || []) {
-                    this.param.push(new RulesetRuleParamComponent(o));
-                }
+                for (let o of obj.param || []) { this.param.push(new RulesetRuleParamComponent(o)); }
             }
         }
     }
@@ -17226,7 +15679,7 @@ export class RulesetRuleComponent extends BackboneElement {
 export class RulesetComponent extends BackboneElement {
     public resource: ResourceReference;
     public rule: RulesetRuleComponent[];
-
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17235,9 +15688,7 @@ export class RulesetComponent extends BackboneElement {
             }
             if (obj.rule) {
                 this.rule = [];
-                for (let o of obj.rule || []) {
-                    this.rule.push(new RulesetRuleComponent(o));
-                }
+                for (let o of obj.rule || []) { this.rule.push(new RulesetRuleComponent(o)); }
             }
         }
     }
@@ -17247,32 +15698,32 @@ export class RulesetComponent extends BackboneElement {
 export class TestScript extends DomainResource {
     public resourceType = 'TestScript';
     public url: string;
-    public identifier: Identifier;
-    public version: string;
+    public identifier?: Identifier;
+    public version?: string;
     public name: string;
-    public title: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public purpose: string;
-    public copyright: string;
-    public origin: OriginComponent[];
-    public destination: DestinationComponent[];
-    public metadata: MetadataComponent;
-    public fixture: FixtureComponent[];
-    public profile: ResourceReference[];
-    public variable: VariableComponent[];
-    public rule: RuleComponent[];
-    public ruleset: RulesetComponent[];
-    public setup: SetupComponent;
-    public test: TestComponent[];
-    public teardown: TeardownComponent;
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public purpose?: string;
+    public copyright?: string;
+    public origin?: OriginComponent[];
+    public destination?: DestinationComponent[];
+    public metadata?: MetadataComponent;
+    public fixture?: FixtureComponent[];
+    public profile?: ResourceReference[];
+    public variable?: VariableComponent[];
+    public rule?: RuleComponent[];
+    public ruleset?: RulesetComponent[];
+    public setup?: SetupComponent;
+    public test?: TestComponent[];
+    public teardown?: TeardownComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17305,24 +15756,18 @@ export class TestScript extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.purpose) {
                 this.purpose = obj.purpose;
@@ -17332,57 +15777,41 @@ export class TestScript extends DomainResource {
             }
             if (obj.origin) {
                 this.origin = [];
-                for (let o of obj.origin || []) {
-                    this.origin.push(new OriginComponent(o));
-                }
+                for (let o of obj.origin || []) { this.origin.push(new OriginComponent(o)); }
             }
             if (obj.destination) {
                 this.destination = [];
-                for (let o of obj.destination || []) {
-                    this.destination.push(new DestinationComponent(o));
-                }
+                for (let o of obj.destination || []) { this.destination.push(new DestinationComponent(o)); }
             }
             if (obj.metadata) {
                 this.metadata = new MetadataComponent(obj.metadata);
             }
             if (obj.fixture) {
                 this.fixture = [];
-                for (let o of obj.fixture || []) {
-                    this.fixture.push(new FixtureComponent(o));
-                }
+                for (let o of obj.fixture || []) { this.fixture.push(new FixtureComponent(o)); }
             }
             if (obj.profile) {
                 this.profile = [];
-                for (let o of obj.profile || []) {
-                    this.profile.push(new ResourceReference(o));
-                }
+                for (let o of obj.profile || []) { this.profile.push(new ResourceReference(o)); }
             }
             if (obj.variable) {
                 this.variable = [];
-                for (let o of obj.variable || []) {
-                    this.variable.push(new VariableComponent(o));
-                }
+                for (let o of obj.variable || []) { this.variable.push(new VariableComponent(o)); }
             }
             if (obj.rule) {
                 this.rule = [];
-                for (let o of obj.rule || []) {
-                    this.rule.push(new RuleComponent(o));
-                }
+                for (let o of obj.rule || []) { this.rule.push(new RuleComponent(o)); }
             }
             if (obj.ruleset) {
                 this.ruleset = [];
-                for (let o of obj.ruleset || []) {
-                    this.ruleset.push(new RulesetComponent(o));
-                }
+                for (let o of obj.ruleset || []) { this.ruleset.push(new RulesetComponent(o)); }
             }
             if (obj.setup) {
                 this.setup = new SetupComponent(obj.setup);
             }
             if (obj.test) {
                 this.test = [];
-                for (let o of obj.test || []) {
-                    this.test.push(new TestComponent(o));
-                }
+                for (let o of obj.test || []) { this.test.push(new TestComponent(o)); }
             }
             if (obj.teardown) {
                 this.teardown = new TeardownComponent(obj.teardown);
@@ -17394,9 +15823,9 @@ export class TestScript extends DomainResource {
 
 export class ConceptReferenceComponent extends BackboneElement {
     public code: string;
-    public display: string;
-    public designation: DesignationComponent[];
-
+    public display?: string;
+    public designation?: DesignationComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17408,9 +15837,7 @@ export class ConceptReferenceComponent extends BackboneElement {
             }
             if (obj.designation) {
                 this.designation = [];
-                for (let o of obj.designation || []) {
-                    this.designation.push(new DesignationComponent(o));
-                }
+                for (let o of obj.designation || []) { this.designation.push(new DesignationComponent(o)); }
             }
         }
     }
@@ -17418,12 +15845,12 @@ export class ConceptReferenceComponent extends BackboneElement {
 }
 
 export class ConceptSetComponent extends BackboneElement {
-    public system: string;
-    public version: string;
-    public concept: ConceptReferenceComponent[];
-    public filter: FilterComponent[];
-    public valueSet: string[];
-
+    public system?: string;
+    public version?: string;
+    public concept?: ConceptReferenceComponent[];
+    public filter?: FilterComponent[];
+    public valueSet?: string[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17435,15 +15862,11 @@ export class ConceptSetComponent extends BackboneElement {
             }
             if (obj.concept) {
                 this.concept = [];
-                for (let o of obj.concept || []) {
-                    this.concept.push(new ConceptReferenceComponent(o));
-                }
+                for (let o of obj.concept || []) { this.concept.push(new ConceptReferenceComponent(o)); }
             }
             if (obj.filter) {
                 this.filter = [];
-                for (let o of obj.filter || []) {
-                    this.filter.push(new FilterComponent(o));
-                }
+                for (let o of obj.filter || []) { this.filter.push(new FilterComponent(o)); }
             }
             if (obj.valueSet) {
                 this.valueSet = obj.valueSet;
@@ -17454,11 +15877,11 @@ export class ConceptSetComponent extends BackboneElement {
 }
 
 export class ComposeComponent extends BackboneElement {
-    public lockedDate: Date;
-    public inactive: boolean;
+    public lockedDate?: Date;
+    public inactive?: boolean;
     public include: ConceptSetComponent[];
-    public exclude: ConceptSetComponent[];
-
+    public exclude?: ConceptSetComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17470,15 +15893,11 @@ export class ComposeComponent extends BackboneElement {
             }
             if (obj.include) {
                 this.include = [];
-                for (let o of obj.include || []) {
-                    this.include.push(new ConceptSetComponent(o));
-                }
+                for (let o of obj.include || []) { this.include.push(new ConceptSetComponent(o)); }
             }
             if (obj.exclude) {
                 this.exclude = [];
-                for (let o of obj.exclude || []) {
-                    this.exclude.push(new ConceptSetComponent(o));
-                }
+                for (let o of obj.exclude || []) { this.exclude.push(new ConceptSetComponent(o)); }
             }
         }
     }
@@ -17486,15 +15905,15 @@ export class ComposeComponent extends BackboneElement {
 }
 
 export class ContainsComponent extends BackboneElement {
-    public system: string;
-    public abstract: boolean;
-    public inactive: boolean;
-    public version: string;
-    public code: string;
-    public display: string;
-    public designation: DesignationComponent[];
-    public contains: ContainsComponent[];
-
+    public system?: string;
+    public abstract?: boolean;
+    public inactive?: boolean;
+    public version?: string;
+    public code?: string;
+    public display?: string;
+    public designation?: DesignationComponent[];
+    public contains?: ContainsComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17518,15 +15937,11 @@ export class ContainsComponent extends BackboneElement {
             }
             if (obj.designation) {
                 this.designation = [];
-                for (let o of obj.designation || []) {
-                    this.designation.push(new DesignationComponent(o));
-                }
+                for (let o of obj.designation || []) { this.designation.push(new DesignationComponent(o)); }
             }
             if (obj.contains) {
                 this.contains = [];
-                for (let o of obj.contains || []) {
-                    this.contains.push(new ContainsComponent(o));
-                }
+                for (let o of obj.contains || []) { this.contains.push(new ContainsComponent(o)); }
             }
         }
     }
@@ -17536,11 +15951,11 @@ export class ContainsComponent extends BackboneElement {
 export class ExpansionComponent extends BackboneElement {
     public identifier: string;
     public timestamp: Date;
-    public total: number;
-    public offset: number;
-    public parameter: ParameterComponent[];
-    public contains: ContainsComponent[];
-
+    public total?: number;
+    public offset?: number;
+    public parameter?: ParameterComponent[];
+    public contains?: ContainsComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17558,15 +15973,11 @@ export class ExpansionComponent extends BackboneElement {
             }
             if (obj.parameter) {
                 this.parameter = [];
-                for (let o of obj.parameter || []) {
-                    this.parameter.push(new ParameterComponent(o));
-                }
+                for (let o of obj.parameter || []) { this.parameter.push(new ParameterComponent(o)); }
             }
             if (obj.contains) {
                 this.contains = [];
-                for (let o of obj.contains || []) {
-                    this.contains.push(new ContainsComponent(o));
-                }
+                for (let o of obj.contains || []) { this.contains.push(new ContainsComponent(o)); }
             }
         }
     }
@@ -17575,26 +15986,26 @@ export class ExpansionComponent extends BackboneElement {
 
 export class ValueSet extends DomainResource {
     public resourceType = 'ValueSet';
-    public url: string;
-    public identifier: Identifier[];
-    public version: string;
-    public name: string;
-    public title: string;
+    public url?: string;
+    public identifier?: Identifier[];
+    public version?: string;
+    public name?: string;
+    public title?: string;
     public status: string;
-    public experimental: boolean;
-    public date: Date;
-    public publisher: string;
-    public contact: ContactDetail[];
-    public description: string;
-    public useContext: UsageContext[];
-    public jurisdiction: CodeableConcept[];
-    public immutable: boolean;
-    public purpose: string;
-    public copyright: string;
-    public extensible: boolean;
-    public compose: ComposeComponent;
-    public expansion: ExpansionComponent;
-
+    public experimental?: boolean;
+    public date?: Date;
+    public publisher?: string;
+    public contact?: ContactDetail[];
+    public description?: string;
+    public useContext?: UsageContext[];
+    public jurisdiction?: CodeableConcept[];
+    public immutable?: boolean;
+    public purpose?: string;
+    public copyright?: string;
+    public extensible?: boolean;
+    public compose?: ComposeComponent;
+    public expansion?: ExpansionComponent;
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17603,9 +16014,7 @@ export class ValueSet extends DomainResource {
             }
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.version) {
                 this.version = obj.version;
@@ -17630,24 +16039,18 @@ export class ValueSet extends DomainResource {
             }
             if (obj.contact) {
                 this.contact = [];
-                for (let o of obj.contact || []) {
-                    this.contact.push(new ContactDetail(o));
-                }
+                for (let o of obj.contact || []) { this.contact.push(new ContactDetail(o)); }
             }
             if (obj.description) {
                 this.description = obj.description;
             }
             if (obj.useContext) {
                 this.useContext = [];
-                for (let o of obj.useContext || []) {
-                    this.useContext.push(new UsageContext(o));
-                }
+                for (let o of obj.useContext || []) { this.useContext.push(new UsageContext(o)); }
             }
             if (obj.jurisdiction) {
                 this.jurisdiction = [];
-                for (let o of obj.jurisdiction || []) {
-                    this.jurisdiction.push(new CodeableConcept(o));
-                }
+                for (let o of obj.jurisdiction || []) { this.jurisdiction.push(new CodeableConcept(o)); }
             }
             if (obj.immutable) {
                 this.immutable = obj.immutable;
@@ -17673,22 +16076,22 @@ export class ValueSet extends DomainResource {
 }
 
 export class DispenseComponent extends BackboneElement {
-    public product: CodeableConcept;
-    public eye: string;
-    public sphere: number;
-    public cylinder: number;
-    public axis: number;
-    public prism: number;
-    public base: string;
-    public add: number;
-    public power: number;
-    public backCurve: number;
-    public diameter: number;
-    public duration: SimpleQuantity;
-    public color: string;
-    public brand: string;
-    public note: Annotation[];
-
+    public product?: CodeableConcept;
+    public eye?: string;
+    public sphere?: number;
+    public cylinder?: number;
+    public axis?: number;
+    public prism?: number;
+    public base?: string;
+    public add?: number;
+    public power?: number;
+    public backCurve?: number;
+    public diameter?: number;
+    public duration?: SimpleQuantity;
+    public color?: string;
+    public brand?: string;
+    public note?: Annotation[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
@@ -17736,9 +16139,7 @@ export class DispenseComponent extends BackboneElement {
             }
             if (obj.note) {
                 this.note = [];
-                for (let o of obj.note || []) {
-                    this.note.push(new Annotation(o));
-                }
+                for (let o of obj.note || []) { this.note.push(new Annotation(o)); }
             }
         }
     }
@@ -17747,23 +16148,21 @@ export class DispenseComponent extends BackboneElement {
 
 export class VisionPrescription extends DomainResource {
     public resourceType = 'VisionPrescription';
-    public identifier: Identifier[];
-    public status: string;
-    public patient: ResourceReference;
-    public encounter: ResourceReference;
-    public dateWritten: Date;
-    public prescriber: ResourceReference;
-    public reason: Element;
-    public dispense: DispenseComponent[];
-
+    public identifier?: Identifier[];
+    public status?: string;
+    public patient?: ResourceReference;
+    public encounter?: ResourceReference;
+    public dateWritten?: Date;
+    public prescriber?: ResourceReference;
+    public reason?: Element;
+    public dispense?: DispenseComponent[];
+    
     constructor(obj?: any) {
         super(obj);
         if (obj) {
             if (obj.identifier) {
                 this.identifier = [];
-                for (let o of obj.identifier || []) {
-                    this.identifier.push(new Identifier(o));
-                }
+                for (let o of obj.identifier || []) { this.identifier.push(new Identifier(o)); }
             }
             if (obj.status) {
                 this.status = obj.status;
@@ -17785,9 +16184,7 @@ export class VisionPrescription extends DomainResource {
             }
             if (obj.dispense) {
                 this.dispense = [];
-                for (let o of obj.dispense || []) {
-                    this.dispense.push(new DispenseComponent(o));
-                }
+                for (let o of obj.dispense || []) { this.dispense.push(new DispenseComponent(o)); }
             }
         }
     }

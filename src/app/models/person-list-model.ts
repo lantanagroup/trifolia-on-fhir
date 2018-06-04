@@ -1,7 +1,7 @@
 import { HumanName } from './fhir';
 
 export class PersonListModel {
-    public name: HumanName[] = [];
+    public name?: HumanName[] = [];
 
     constructor(obj?: any) {
         if (obj) {
