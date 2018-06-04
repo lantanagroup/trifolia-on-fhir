@@ -27,19 +27,15 @@ module.exports = ".sub-nav-link {\r\n  color: rgba(255,255,255,.5);\r\n  text-de
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar navbar-expand-md navbar-dark fixed-top bg-dark\">\r\n  <a class=\"navbar-brand\" href=\"#\">Trifolia</a>\r\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarCollapse\" aria-controls=\"navbarCollapse\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\r\n    <span class=\"navbar-toggler-icon\"></span>\r\n  </button>\r\n  <div class=\"collapse navbar-collapse\" id=\"navbarCollapse\">\r\n    <ul class=\"navbar-nav mr-auto\">\r\n      <li class=\"nav-item\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/home\">Home <span class=\"sr-only\">(current)</span></a>\r\n      </li>\r\n      <li class=\"nav-item dropdown\" *ngIf=\"authService.isAuthenticated()\">\r\n        <a class=\"nav-link dropdown-toggle\" [routerLinkActive]=\"['active']\" href=\"#\" id=\"igMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          <a class=\"sub-nav-link\">Implementation Guides</a>\r\n        </a>\r\n        <div class=\"dropdown-menu\" aria-labelledby=\"igMenu\">\r\n          <a class=\"dropdown-item\" routerLink=\"/implementation-guide\">Browse</a>\r\n          <a class=\"dropdown-item\" href=\"#\">Recent...</a>\r\n        </div>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/structure-definition\">Structure Definitions</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/valuesets\">Value Sets</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/codesystems\">Code Systems</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/export\">Export</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/import\">Import</a>\r\n      </li>\r\n    </ul>\r\n    <ul class=\"nav navbar-nav navbar-right\">\r\n      <li class=\"nav-item\" *ngIf=\"configService.config\">\r\n        <select class=\"form-control\" [ngModel]=\"configService.fhirServer\" (ngModelChange)=\"configService.changeFhirServer($event)\">\r\n          <option *ngFor=\"let fs of configService.config.fhirServers\" value=\"{{fs.id}}\">{{fs.name}}</option>\r\n        </select>\r\n      </li>\r\n      <li class=\"nav-item dropdown\">\r\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"helpMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          Help\r\n        </a>\r\n        <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"helpMenu\">\r\n          <a class=\"dropdown-item\" href=\"/help\" target=\"_new\">Documentation</a>\r\n          <a class=\"dropdown-item\" href=\"#\">Request Support</a>\r\n          <a class=\"dropdown-item\" href=\"#\">:Version:</a>\r\n        </div>\r\n      </li>\r\n      <li class=\"nav-item dropdown\">\r\n        <a class=\"nav-link dropdown-toggle\" *ngIf=\"authService.isAuthenticated()\" href=\"#\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          <img class=\"profile-picture\" *ngIf=\"userProfile && userProfile.picture\" src=\"{{userProfile.picture}}\" />\r\n          {{getDisplayName()}}\r\n        </a>\r\n        <a class=\"nav-link dropdown-toggle\" *ngIf=\"!authService.isAuthenticated()\" href=\"#\" id=\"profileMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Not Logged In</a>\r\n        <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"profileMenu\">\r\n          <a class=\"dropdown-item\" *ngIf=\"authService.isAuthenticated()\" routerLink=\"/users/me\">Profile</a>\r\n          <a class=\"dropdown-item\" *ngIf=\"!authService.isAuthenticated()\" (click)=\"authService.login()\">Login</a>\r\n          <a class=\"dropdown-item\" *ngIf=\"authService.isAuthenticated()\" (click)=\"authService.logout()\">Logout</a>\r\n        </div>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</nav>\r\n\r\n<div class=\"container\" [class.container-large]=\"isBigContainer\">\r\n  <div class=\"jumbotron\">\r\n    <div class=\"alert alert-warning\" *ngIf=\"configService.statusMessage\">{{configService.statusMessage}}</div>\r\n    <router-outlet></router-outlet>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<nav class=\"navbar navbar-expand-md navbar-dark fixed-top bg-dark\">\r\n  <a class=\"navbar-brand\" href=\"#\">Trifolia</a>\r\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarCollapse\" aria-controls=\"navbarCollapse\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\r\n    <span class=\"navbar-toggler-icon\"></span>\r\n  </button>\r\n  <div class=\"collapse navbar-collapse\" id=\"navbarCollapse\">\r\n    <ul class=\"navbar-nav mr-auto\">\r\n      <li class=\"nav-item\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/home\">Home <span class=\"sr-only\">(current)</span></a>\r\n      </li>\r\n      <li class=\"nav-item dropdown\" *ngIf=\"authService.isAuthenticated()\">\r\n        <a class=\"nav-link dropdown-toggle\" [routerLinkActive]=\"['active']\" href=\"#\" id=\"igMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          <a class=\"sub-nav-link\">Implementation Guides</a>\r\n        </a>\r\n        <div class=\"dropdown-menu\" aria-labelledby=\"igMenu\">\r\n          <a class=\"dropdown-item\" routerLink=\"/implementation-guide\">Browse</a>\r\n          <div class=\"dropdown-divider\" *ngIf=\"auditEventService.recentImplementationGuides.length > 0\"></div>\r\n          <a class=\"dropdown-item\" routerLink=\"/implementation-guide/{{i}}\" *ngFor=\"let i of auditEventService.recentImplementationGuides\">{{i}}</a>\r\n        </div>\r\n      </li>\r\n      <li class=\"nav-item dropdown\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link dropdown-toggle\" [routerLinkActive]=\"['active']\" href=\"#\" id=\"sdMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          <a class=\"sub-nav-link\">Structure Definitions</a>\r\n        </a>\r\n        <div class=\"dropdown-menu\" aria-labelledby=\"sdMenu\">\r\n          <a class=\"dropdown-item\" routerLink=\"/structure-definition\">Browse</a>\r\n          <div class=\"dropdown-divider\" *ngIf=\"auditEventService.recentStructureDefinitions.length > 0\"></div>\r\n          <a class=\"dropdown-item\" routerLink=\"/structure-definition/{{i}}\" *ngFor=\"let i of auditEventService.recentStructureDefinitions\">{{i}}</a>\r\n        </div>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/valuesets\">Value Sets</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/codesystems\">Code Systems</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/capabilityStatements\">Capability Statements</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/operationDefinitions\">Operation Definitions</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/export\">Export</a>\r\n      </li>\r\n      <li class=\"nav-item\" *ngIf=\"authService.isAuthenticated()\" [routerLinkActive]=\"['active']\">\r\n        <a class=\"nav-link\" routerLink=\"/import\">Import</a>\r\n      </li>\r\n    </ul>\r\n    <ul class=\"nav navbar-nav navbar-right\">\r\n      <li class=\"nav-item\" *ngIf=\"configService.config\">\r\n        <select class=\"form-control\" [ngModel]=\"configService.fhirServer\" (ngModelChange)=\"configService.changeFhirServer($event)\">\r\n          <option *ngFor=\"let fs of configService.config.fhirServers\" value=\"{{fs.id}}\">{{fs.name}}</option>\r\n        </select>\r\n      </li>\r\n      <li class=\"nav-item dropdown\">\r\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"helpMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          Help\r\n        </a>\r\n        <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"helpMenu\">\r\n          <a class=\"dropdown-item\" href=\"/help\" target=\"_new\">Documentation</a>\r\n          <a class=\"dropdown-item\" href=\"#\">Request Support</a>\r\n          <a class=\"dropdown-item\" href=\"#\">:Version:</a>\r\n        </div>\r\n      </li>\r\n      <li class=\"nav-item dropdown\">\r\n        <a class=\"nav-link dropdown-toggle\" *ngIf=\"authService.isAuthenticated()\" href=\"#\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\r\n          <img class=\"profile-picture\" *ngIf=\"userProfile && userProfile.picture\" src=\"{{userProfile.picture}}\" />\r\n          {{getDisplayName()}}\r\n        </a>\r\n        <a class=\"nav-link dropdown-toggle\" *ngIf=\"!authService.isAuthenticated()\" href=\"#\" id=\"profileMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Not Logged In</a>\r\n        <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"profileMenu\">\r\n          <a class=\"dropdown-item\" *ngIf=\"authService.isAuthenticated()\" routerLink=\"/users/me\">Profile</a>\r\n          <a class=\"dropdown-item\" *ngIf=\"!authService.isAuthenticated()\" (click)=\"authService.login()\">Login</a>\r\n          <a class=\"dropdown-item\" *ngIf=\"authService.isAuthenticated()\" (click)=\"authService.logout()\">Logout</a>\r\n        </div>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</nav>\r\n\r\n<div class=\"container\" [class.container-large]=\"isBigContainer\">\r\n  <div class=\"jumbotron\">\r\n    <div class=\"alert alert-warning status-message\" *ngIf=\"configService.statusMessage\">{{configService.statusMessage}}</div>\r\n    <router-outlet></router-outlet>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
 /***/ "./src/app/app.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_auth_service__ = __webpack_require__("./src/app/services/auth.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_config_service__ = __webpack_require__("./src/app/services/config.service.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -49,16 +45,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+var auth_service_1 = __webpack_require__("./src/app/services/auth.service.ts");
+var config_service_1 = __webpack_require__("./src/app/services/config.service.ts");
+var audit_event_service_1 = __webpack_require__("./src/app/services/audit-event.service.ts");
 var AppComponent = (function () {
-    function AppComponent(authService, configService, router) {
+    function AppComponent(authService, configService, router, auditEventService) {
         var _this = this;
         this.authService = authService;
         this.configService = configService;
         this.router = router;
+        this.auditEventService = auditEventService;
         this.isBigContainer = false;
         this.authService.authChanged.subscribe(function () {
             _this.userProfile = _this.authService.userProfile;
@@ -80,7 +79,7 @@ var AppComponent = (function () {
             this.authService.getProfile(function (err, profile, person) { });
         }
         this.router.events.subscribe(function (event) {
-            if (event instanceof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* NavigationEnd */]) {
+            if (event instanceof router_1.NavigationEnd) {
                 _this.isBigContainer =
                     event.url.startsWith('/structure-definition/');
             }
@@ -89,112 +88,79 @@ var AppComponent = (function () {
     return AppComponent;
 }());
 AppComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-root',
         template: __webpack_require__("./src/app/app.component.html"),
         styles: [__webpack_require__("./src/app/app.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_3__services_config_service__["a" /* ConfigService */]]
+        providers: [config_service_1.ConfigService]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__services_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_config_service__["a" /* ConfigService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" && _a || Object, typeof (_b = typeof config_service_1.ConfigService !== "undefined" && config_service_1.ConfigService) === "function" && _b || Object, typeof (_c = typeof router_1.Router !== "undefined" && router_1.Router) === "function" && _c || Object, typeof (_d = typeof audit_event_service_1.AuditEventService !== "undefined" && audit_event_service_1.AuditEventService) === "function" && _d || Object])
 ], AppComponent);
-
-var _a, _b, _c;
+exports.AppComponent = AppComponent;
+var _a, _b, _c, _d;
 //# sourceMappingURL=app.component.js.map
 
 /***/ }),
 
 /***/ "./src/app/app.module.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* unused harmony export authHttpServiceFactory */
-/* unused harmony export AddHeaderInterceptor */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_component__ = __webpack_require__("./src/app/app.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_forms__ = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_http__ = __webpack_require__("./node_modules/@angular/http/@angular/http.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ng_bootstrap_ng_bootstrap__ = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_guides_implementation_guides_component__ = __webpack_require__("./src/app/implementation-guides/implementation-guides.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__home_home_component__ = __webpack_require__("./src/app/home/home.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__implementation_guide_implementation_guide_component__ = __webpack_require__("./src/app/implementation-guide/implementation-guide.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__export_export_component__ = __webpack_require__("./src/app/export/export.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__import_import_component__ = __webpack_require__("./src/app/import/import.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__structure_definition_structure_definition_component__ = __webpack_require__("./src/app/structure-definition/structure-definition.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__valuesets_valuesets_component__ = __webpack_require__("./src/app/valuesets/valuesets.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__valueset_valueset_component__ = __webpack_require__("./src/app/valueset/valueset.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__codesystems_codesystems_component__ = __webpack_require__("./src/app/codesystems/codesystems.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__codesystem_codesystem_component__ = __webpack_require__("./src/app/codesystem/codesystem.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__login_login_component__ = __webpack_require__("./src/app/login/login.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18_angular2_jwt__ = __webpack_require__("./node_modules/angular2-jwt/angular2-jwt.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18_angular2_jwt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18_angular2_jwt__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__structure_definitions_structure_definitions_component__ = __webpack_require__("./src/app/structure-definitions/structure-definitions.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__users_users_component__ = __webpack_require__("./src/app/users/users.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__user_user_component__ = __webpack_require__("./src/app/user/user.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__services_auth_service__ = __webpack_require__("./src/app/services/auth.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__services_person_service__ = __webpack_require__("./src/app/services/person.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__fhir_edit_human_name_human_name_component__ = __webpack_require__("./src/app/fhir-edit/human-name/human-name.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__fhir_edit_human_names_human_names_component__ = __webpack_require__("./src/app/fhir-edit/human-names/human-names.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__new_profile_new_profile_component__ = __webpack_require__("./src/app/new-profile/new-profile.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27_angular2_cookie_core__ = __webpack_require__("./node_modules/angular2-cookie/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27_angular2_cookie_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_27_angular2_cookie_core__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__angular_common_http__ = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__fhir_edit_string_string_component__ = __webpack_require__("./src/app/fhir-edit/string/string.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__select_choice_modal_select_choice_modal_component__ = __webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__element_definition_panel_element_definition_panel_component__ = __webpack_require__("./src/app/element-definition-panel/element-definition-panel.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__fhir_edit_element_definition_type_modal_element_definition_type_modal_component__ = __webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__globals__ = __webpack_require__("./src/app/globals.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__markdown_markdown_component__ = __webpack_require__("./src/app/markdown/markdown.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35_t_json_viewer__ = __webpack_require__("./node_modules/t-json-viewer/index.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var platform_browser_1 = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var app_component_1 = __webpack_require__("./src/app/app.component.ts");
+var forms_1 = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
+var http_1 = __webpack_require__("./node_modules/@angular/http/@angular/http.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var implementation_guides_component_1 = __webpack_require__("./src/app/implementation-guides/implementation-guides.component.ts");
+var home_component_1 = __webpack_require__("./src/app/home/home.component.ts");
+var implementation_guide_component_1 = __webpack_require__("./src/app/implementation-guide/implementation-guide.component.ts");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+var export_component_1 = __webpack_require__("./src/app/export/export.component.ts");
+var import_component_1 = __webpack_require__("./src/app/import/import.component.ts");
+var structure_definition_component_1 = __webpack_require__("./src/app/structure-definition/structure-definition.component.ts");
+var valuesets_component_1 = __webpack_require__("./src/app/valuesets/valuesets.component.ts");
+var valueset_component_1 = __webpack_require__("./src/app/valueset/valueset.component.ts");
+var codesystems_component_1 = __webpack_require__("./src/app/codesystems/codesystems.component.ts");
+var codesystem_component_1 = __webpack_require__("./src/app/codesystem/codesystem.component.ts");
+var login_component_1 = __webpack_require__("./src/app/login/login.component.ts");
+var angular2_jwt_1 = __webpack_require__("./node_modules/angular2-jwt/angular2-jwt.js");
+var structure_definitions_component_1 = __webpack_require__("./src/app/structure-definitions/structure-definitions.component.ts");
+var users_component_1 = __webpack_require__("./src/app/users/users.component.ts");
+var user_component_1 = __webpack_require__("./src/app/user/user.component.ts");
+var auth_service_1 = __webpack_require__("./src/app/services/auth.service.ts");
+var person_service_1 = __webpack_require__("./src/app/services/person.service.ts");
+var human_name_component_1 = __webpack_require__("./src/app/fhir-edit/human-name/human-name.component.ts");
+var human_names_component_1 = __webpack_require__("./src/app/fhir-edit/human-names/human-names.component.ts");
+var new_profile_component_1 = __webpack_require__("./src/app/new-profile/new-profile.component.ts");
+var core_2 = __webpack_require__("./node_modules/angular2-cookie/core.js");
+var http_2 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+var string_component_1 = __webpack_require__("./src/app/fhir-edit/string/string.component.ts");
+var select_choice_modal_component_1 = __webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.ts");
+var element_definition_panel_component_1 = __webpack_require__("./src/app/element-definition-panel/element-definition-panel.component.ts");
+var element_definition_type_modal_component_1 = __webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.ts");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var markdown_component_1 = __webpack_require__("./src/app/markdown/markdown.component.ts");
+var t_json_viewer_1 = __webpack_require__("./node_modules/t-json-viewer/index.ts");
+var audit_event_service_1 = __webpack_require__("./src/app/services/audit-event.service.ts");
+var keys_pipe_1 = __webpack_require__("./src/app/pipes/keys-pipe.ts");
+var reference_component_1 = __webpack_require__("./src/app/fhir-edit/reference/reference.component.ts");
+var fhir_display_pipe_1 = __webpack_require__("./src/app/pipes/fhir-display-pipe.ts");
+var page_component_modal_component_1 = __webpack_require__("./src/app/fhir-edit/page-component-modal/page-component-modal.component.ts");
 function authHttpServiceFactory(http, options) {
-    return new __WEBPACK_IMPORTED_MODULE_18_angular2_jwt__["AuthHttp"](new __WEBPACK_IMPORTED_MODULE_18_angular2_jwt__["AuthConfig"]({
+    return new angular2_jwt_1.AuthHttp(new angular2_jwt_1.AuthConfig({
         noClientCheck: true
     }), http, options);
 }
+exports.authHttpServiceFactory = authHttpServiceFactory;
 var AddHeaderInterceptor = (function () {
     function AddHeaderInterceptor() {
     }
@@ -215,24 +181,25 @@ var AddHeaderInterceptor = (function () {
     };
     return AddHeaderInterceptor;
 }());
-
+exports.AddHeaderInterceptor = AddHeaderInterceptor;
 var appRoutes = [
-    { path: 'home', component: __WEBPACK_IMPORTED_MODULE_7__home_home_component__["a" /* HomeComponent */] },
-    { path: 'implementation-guide', component: __WEBPACK_IMPORTED_MODULE_6__implementation_guides_implementation_guides_component__["a" /* ImplementationGuidesComponent */] },
-    { path: 'implementation-guide/:id', component: __WEBPACK_IMPORTED_MODULE_8__implementation_guide_implementation_guide_component__["a" /* ImplementationGuideComponent */] },
-    { path: 'structure-definition', component: __WEBPACK_IMPORTED_MODULE_19__structure_definitions_structure_definitions_component__["a" /* StructureDefinitionsComponent */] },
-    { path: 'structure-definition/new', component: __WEBPACK_IMPORTED_MODULE_26__new_profile_new_profile_component__["a" /* NewProfileComponent */] },
-    { path: 'structure-definition/:id', component: __WEBPACK_IMPORTED_MODULE_12__structure_definition_structure_definition_component__["a" /* StructureDefinitionComponent */] },
-    { path: 'valuesets', component: __WEBPACK_IMPORTED_MODULE_13__valuesets_valuesets_component__["a" /* ValuesetsComponent */] },
-    { path: 'valuesets/:id', component: __WEBPACK_IMPORTED_MODULE_14__valueset_valueset_component__["a" /* ValuesetComponent */] },
-    { path: 'codesystems', component: __WEBPACK_IMPORTED_MODULE_15__codesystems_codesystems_component__["a" /* CodesystemsComponent */] },
-    { path: 'codesystems/:id', component: __WEBPACK_IMPORTED_MODULE_16__codesystem_codesystem_component__["a" /* CodesystemComponent */] },
-    { path: 'export', component: __WEBPACK_IMPORTED_MODULE_10__export_export_component__["a" /* ExportComponent */] },
-    { path: 'import', component: __WEBPACK_IMPORTED_MODULE_11__import_import_component__["a" /* ImportComponent */] },
-    { path: 'users', component: __WEBPACK_IMPORTED_MODULE_20__users_users_component__["a" /* UsersComponent */] },
-    { path: 'users/me', component: __WEBPACK_IMPORTED_MODULE_21__user_user_component__["a" /* UserComponent */] },
-    { path: 'users/:id', component: __WEBPACK_IMPORTED_MODULE_21__user_user_component__["a" /* UserComponent */] },
-    { path: 'login', component: __WEBPACK_IMPORTED_MODULE_17__login_login_component__["a" /* LoginComponent */] },
+    { path: 'home', component: home_component_1.HomeComponent },
+    { path: 'implementation-guide', component: implementation_guides_component_1.ImplementationGuidesComponent },
+    { path: 'implementation-guide/new', component: implementation_guide_component_1.ImplementationGuideComponent },
+    { path: 'implementation-guide/:id', component: implementation_guide_component_1.ImplementationGuideComponent },
+    { path: 'structure-definition', component: structure_definitions_component_1.StructureDefinitionsComponent },
+    { path: 'structure-definition/new', component: new_profile_component_1.NewProfileComponent },
+    { path: 'structure-definition/:id', component: structure_definition_component_1.StructureDefinitionComponent },
+    { path: 'valuesets', component: valuesets_component_1.ValuesetsComponent },
+    { path: 'valuesets/:id', component: valueset_component_1.ValuesetComponent },
+    { path: 'codesystems', component: codesystems_component_1.CodesystemsComponent },
+    { path: 'codesystems/:id', component: codesystem_component_1.CodesystemComponent },
+    { path: 'export', component: export_component_1.ExportComponent },
+    { path: 'import', component: import_component_1.ImportComponent },
+    { path: 'users', component: users_component_1.UsersComponent },
+    { path: 'users/me', component: user_component_1.UserComponent },
+    { path: 'users/:id', component: user_component_1.UserComponent },
+    { path: 'login', component: login_component_1.LoginComponent },
     {
         path: '',
         redirectTo: '/home',
@@ -245,65 +212,71 @@ var AppModule = (function () {
     return AppModule;
 }());
 AppModule = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
+    core_1.NgModule({
         entryComponents: [
-            __WEBPACK_IMPORTED_MODULE_30__select_choice_modal_select_choice_modal_component__["a" /* SelectChoiceModalComponent */],
-            __WEBPACK_IMPORTED_MODULE_32__fhir_edit_element_definition_type_modal_element_definition_type_modal_component__["a" /* ElementDefinitionTypeModalComponent */]
+            select_choice_modal_component_1.SelectChoiceModalComponent,
+            element_definition_type_modal_component_1.ElementDefinitionTypeModalComponent,
+            page_component_modal_component_1.PageComponentModalComponent
         ],
         declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__app_component__["a" /* AppComponent */],
-            __WEBPACK_IMPORTED_MODULE_6__implementation_guides_implementation_guides_component__["a" /* ImplementationGuidesComponent */],
-            __WEBPACK_IMPORTED_MODULE_7__home_home_component__["a" /* HomeComponent */],
-            __WEBPACK_IMPORTED_MODULE_8__implementation_guide_implementation_guide_component__["a" /* ImplementationGuideComponent */],
-            __WEBPACK_IMPORTED_MODULE_10__export_export_component__["a" /* ExportComponent */],
-            __WEBPACK_IMPORTED_MODULE_11__import_import_component__["a" /* ImportComponent */],
-            __WEBPACK_IMPORTED_MODULE_12__structure_definition_structure_definition_component__["a" /* StructureDefinitionComponent */],
-            __WEBPACK_IMPORTED_MODULE_13__valuesets_valuesets_component__["a" /* ValuesetsComponent */],
-            __WEBPACK_IMPORTED_MODULE_14__valueset_valueset_component__["a" /* ValuesetComponent */],
-            __WEBPACK_IMPORTED_MODULE_15__codesystems_codesystems_component__["a" /* CodesystemsComponent */],
-            __WEBPACK_IMPORTED_MODULE_16__codesystem_codesystem_component__["a" /* CodesystemComponent */],
-            __WEBPACK_IMPORTED_MODULE_17__login_login_component__["a" /* LoginComponent */],
-            __WEBPACK_IMPORTED_MODULE_19__structure_definitions_structure_definitions_component__["a" /* StructureDefinitionsComponent */],
-            __WEBPACK_IMPORTED_MODULE_20__users_users_component__["a" /* UsersComponent */],
-            __WEBPACK_IMPORTED_MODULE_21__user_user_component__["a" /* UserComponent */],
-            __WEBPACK_IMPORTED_MODULE_24__fhir_edit_human_name_human_name_component__["a" /* HumanNameComponent */],
-            __WEBPACK_IMPORTED_MODULE_25__fhir_edit_human_names_human_names_component__["a" /* HumanNamesComponent */],
-            __WEBPACK_IMPORTED_MODULE_26__new_profile_new_profile_component__["a" /* NewProfileComponent */],
-            __WEBPACK_IMPORTED_MODULE_29__fhir_edit_string_string_component__["a" /* StringComponent */],
-            __WEBPACK_IMPORTED_MODULE_30__select_choice_modal_select_choice_modal_component__["a" /* SelectChoiceModalComponent */],
-            __WEBPACK_IMPORTED_MODULE_31__element_definition_panel_element_definition_panel_component__["a" /* ElementDefinitionPanelComponent */],
-            __WEBPACK_IMPORTED_MODULE_32__fhir_edit_element_definition_type_modal_element_definition_type_modal_component__["a" /* ElementDefinitionTypeModalComponent */],
-            __WEBPACK_IMPORTED_MODULE_34__markdown_markdown_component__["a" /* MarkdownComponent */]
+            app_component_1.AppComponent,
+            implementation_guides_component_1.ImplementationGuidesComponent,
+            home_component_1.HomeComponent,
+            implementation_guide_component_1.ImplementationGuideComponent,
+            export_component_1.ExportComponent,
+            import_component_1.ImportComponent,
+            structure_definition_component_1.StructureDefinitionComponent,
+            valuesets_component_1.ValuesetsComponent,
+            valueset_component_1.ValuesetComponent,
+            codesystems_component_1.CodesystemsComponent,
+            codesystem_component_1.CodesystemComponent,
+            login_component_1.LoginComponent,
+            structure_definitions_component_1.StructureDefinitionsComponent,
+            users_component_1.UsersComponent,
+            user_component_1.UserComponent,
+            human_name_component_1.HumanNameComponent,
+            human_names_component_1.HumanNamesComponent,
+            new_profile_component_1.NewProfileComponent,
+            string_component_1.StringComponent,
+            select_choice_modal_component_1.SelectChoiceModalComponent,
+            element_definition_panel_component_1.ElementDefinitionPanelComponent,
+            element_definition_type_modal_component_1.ElementDefinitionTypeModalComponent,
+            markdown_component_1.MarkdownComponent,
+            keys_pipe_1.KeysPipe,
+            fhir_display_pipe_1.FhirDisplayPipe,
+            reference_component_1.ReferenceComponent,
+            page_component_modal_component_1.PageComponentModalComponent
         ],
         imports: [
-            __WEBPACK_IMPORTED_MODULE_9__angular_router__["d" /* RouterModule */].forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
+            router_1.RouterModule.forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
             ),
-            __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-            __WEBPACK_IMPORTED_MODULE_3__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_28__angular_common_http__["c" /* HttpClientModule */],
-            __WEBPACK_IMPORTED_MODULE_4__angular_http__["HttpModule"],
-            __WEBPACK_IMPORTED_MODULE_5__ng_bootstrap_ng_bootstrap__["c" /* NgbModule */].forRoot(),
-            __WEBPACK_IMPORTED_MODULE_35_t_json_viewer__["a" /* TJsonViewerModule */]
+            platform_browser_1.BrowserModule,
+            forms_1.FormsModule,
+            http_2.HttpClientModule,
+            http_1.HttpModule,
+            ng_bootstrap_1.NgbModule.forRoot(),
+            t_json_viewer_1.TJsonViewerModule
         ],
         providers: [
             {
-                provide: __WEBPACK_IMPORTED_MODULE_18_angular2_jwt__["AuthHttp"],
+                provide: angular2_jwt_1.AuthHttp,
                 useFactory: authHttpServiceFactory,
-                deps: [__WEBPACK_IMPORTED_MODULE_4__angular_http__["Http"], __WEBPACK_IMPORTED_MODULE_4__angular_http__["RequestOptions"]]
+                deps: [http_1.Http, http_1.RequestOptions]
             }, {
-                provide: __WEBPACK_IMPORTED_MODULE_28__angular_common_http__["a" /* HTTP_INTERCEPTORS */],
+                provide: http_2.HTTP_INTERCEPTORS,
                 useClass: AddHeaderInterceptor,
                 multi: true
             },
-            __WEBPACK_IMPORTED_MODULE_22__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_23__services_person_service__["a" /* PersonService */],
-            __WEBPACK_IMPORTED_MODULE_27_angular2_cookie_core__["CookieService"],
-            __WEBPACK_IMPORTED_MODULE_33__globals__["a" /* Globals */]
+            auth_service_1.AuthService,
+            person_service_1.PersonService,
+            core_2.CookieService,
+            audit_event_service_1.AuditEventService,
+            globals_1.Globals
         ],
-        bootstrap: [__WEBPACK_IMPORTED_MODULE_2__app_component__["a" /* AppComponent */]]
+        bootstrap: [app_component_1.AppComponent]
     })
 ], AppModule);
-
+exports.AppModule = AppModule;
 //# sourceMappingURL=app.module.js.map
 
 /***/ }),
@@ -323,11 +296,10 @@ module.exports = "<p>\n  codesystem works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/codesystem/codesystem.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CodesystemComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -337,7 +309,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var CodesystemComponent = (function () {
     function CodesystemComponent() {
     }
@@ -346,14 +319,14 @@ var CodesystemComponent = (function () {
     return CodesystemComponent;
 }());
 CodesystemComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-codesystem',
         template: __webpack_require__("./src/app/codesystem/codesystem.component.html"),
         styles: [__webpack_require__("./src/app/codesystem/codesystem.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], CodesystemComponent);
-
+exports.CodesystemComponent = CodesystemComponent;
 //# sourceMappingURL=codesystem.component.js.map
 
 /***/ }),
@@ -373,11 +346,10 @@ module.exports = "<p>\n  codesystems works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/codesystems/codesystems.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CodesystemsComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -387,7 +359,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var CodesystemsComponent = (function () {
     function CodesystemsComponent() {
     }
@@ -396,14 +369,14 @@ var CodesystemsComponent = (function () {
     return CodesystemsComponent;
 }());
 CodesystemsComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-codesystems',
         template: __webpack_require__("./src/app/codesystems/codesystems.component.html"),
         styles: [__webpack_require__("./src/app/codesystems/codesystems.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], CodesystemsComponent);
-
+exports.CodesystemsComponent = CodesystemsComponent;
 //# sourceMappingURL=codesystems.component.js.map
 
 /***/ }),
@@ -418,20 +391,15 @@ module.exports = ""
 /***/ "./src/app/element-definition-panel/element-definition-panel.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<fieldset [disabled]=\"disabled\">\n  <ngb-tabset justify=\"fill\">\n    <ngb-tab title=\"General\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>ID/Path</label>\n          <div class=\"input-group\">\n            <input type=\"text\" class=\"form-control\" readonly=\"readonly\" [(ngModel)]=\"element.id\" />\n            <input type=\"text\" class=\"form-control\" readonly=\"readonly\" [(ngModel)]=\"element.path\" />\n          </div>\n        </div>\n\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('representation')\" (ngModelChange)=\"globals.toggleProperty(element, 'representation', 'xmlAttr')\" />\n            Representation\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.representation']}}\" placement=\"top\"></i>\n          </label>\n          <select class=\"form-control\" [(ngModel)]=\"element.representation\" [disabled]=\"!element.hasOwnProperty('representation')\">\n            <option>xmlAttr</option>\n            <option>xmlText</option>\n            <option>typeAttr</option>\n            <option>cdaText</option>\n            <option>xhtml</option>\n          </select>\n        </div>\n\n        <!-- Code -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('code')\" (ngModelChange)=\"globals.toggleProperty(element, 'code', [])\" />\n            Code\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.code']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"pull-right\" *ngIf=\"element.hasOwnProperty('code')\">\n            <i class=\"fa fa-plus\" title=\"Add a code\" (click)=\"element.code.push({})\"></i>\n          </div>\n          <div class=\"input-group\" *ngFor=\"let c of element.code; let i = index\" [attr.data-index]=\"i\">\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('system')\" (ngModelChange)=\"globals.toggleProperty(c, 'system', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"system\" [disabled]=\"!c.hasOwnProperty('system')\" [(ngModel)]=\"c.system\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('code')\" (ngModelChange)=\"globals.toggleProperty(c, 'code', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"code\" [disabled]=\"!c.hasOwnProperty('code')\" [(ngModel)]=\"c.code\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('display')\" (ngModelChange)=\"globals.toggleProperty(c, 'display', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"display\" [disabled]=\"!c.hasOwnProperty('display')\" [(ngModel)]=\"c.display\" />\n            <div class=\"input-group-btn\">\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"element.code.splice(i, 1)\" title=\"Remove this code\"><i class=\"fa fa-remove\"></i></button>\n            </div>\n          </div>\n          <div *ngIf=\"element.code && element.code.length == 0\">No codes</div>\n        </div>\n\n        <!-- Min -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('min')\" (ngModelChange)=\"globals.toggleProperty(element, 'min', elementTreeModel.min)\" />\n            Min\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.min']}}\" placement=\"top\"></i>\n          </label>\n          <input type=\"number\" class=\"form-control\" [disabled]=\"!element.hasOwnProperty('min')\" [(ngModel)]=\"element.min\" />\n        </div>\n\n        <!-- Max -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('max')\" (ngModelChange)=\"globals.toggleProperty(element, 'max', elementTreeModel.max)\" />\n            Max\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.max']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"input-group\">\n            <input type=\"number\" class=\"form-control\" [disabled]=\"!element.hasOwnProperty('max') || element.max === '*'\" [ngModel]=\"element.max\" (ngModelChange)=\"element.max=$event.toString()\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"element.max === '*'\" (ngModelChange)=\"toggleMaxUnlimited()\" [disabled]=\"elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'\" /> Unlimited\n            </div>\n          </div>\n        </div>\n\n        <!-- Type -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('type')\" (ngModelChange)=\"globals.toggleProperty(element, 'type', [])\" />\n            Type\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.type']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"pull-right\" *ngIf=\"element.hasOwnProperty('type')\">\n            <i class=\"fa fa-plus clickable\" title=\"Add a type\" (click)=\"element.type.push({ code: 'Address' })\"></i>\n          </div>\n          <div class=\"input-group\" *ngFor=\"let t of element.type; let i = index\" [attr.data-index]=\"i\">\n            <select class=\"form-control\" [(ngModel)]=\"t.code\">\n              <option *ngFor=\"let o of globals.fhirDefinedTypes\">{{o}}</option>\n            </select>\n            <input type=\"text\" class=\"form-control\" readonly value=\"{{globals.getShortString(t.profile, false, 30) || globals.getShortString(t.targetProfile, false, 30)}}\" title=\"{{t.profile || t.targetProfile}}\" />\n            <div class=\"input-group-btn\">\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"openTypeModel(element, t)\"><i class=\"fa fa-edit\"></i></button>\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"element.type.splice(i, 1)\"><i class=\"fa fa-remove\"></i></button>\n            </div>\n          </div>\n          <div *ngIf=\"element.type && element.type.length == 0\">No types</div>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Default Value</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Max Length</label>\n          <input type=\"number\" class=\"form-control\" />\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Slicing\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Slice Name</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Slicing</label>\n          ...\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Narrative\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Short</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Label</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Definition</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Comment</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Requirements</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Alias</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Meaning when missing</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Order meaning</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Binding\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Binding</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Fixed</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Pattern</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Example</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Min Value</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Max Value</label>\n          ...\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Extra\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Content Reference</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Condition</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Constraint</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Must Support</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Modifier?</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Modifier Reason</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Summary?</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Mapping</label>\n          ...\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"JSON\">\n      <ng-template ngbTabContent>\n        <pre>{{element | json}}</pre>\n      </ng-template>\n    </ngb-tab>\n  </ngb-tabset>\n</fieldset>"
+module.exports = "<fieldset [disabled]=\"disabled\">\n  <ngb-tabset justify=\"fill\">\n    <ngb-tab title=\"General\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>ID/Path</label>\n          <div class=\"input-group\">\n            <input type=\"text\" class=\"form-control\" readonly=\"readonly\" [(ngModel)]=\"element.id\" />\n            <input type=\"text\" class=\"form-control\" readonly=\"readonly\" [(ngModel)]=\"element.path\" />\n          </div>\n        </div>\n\n        <div class=\"form-control\" *ngIf=\"elementTreeModel.isSliceRoot\">\n          <label>Slice Name</label>\n          <div class=\"input-group\" *ngIf=\"!editingSliceName\">\n            <input type=\"text\" class=\"form-control\" [ngModel]=\"element.sliceName\" readonly=\"readonly\" *ngIf=\"!editingSliceName\" />\n            <div class=\"input-grp-btn\">\n              <button type=\"button\" class=\"btn btn-default\" (click)=\"toggleEditSliceName()\">\n                <i class=\"fa fa-edit\"></i>\n              </button>\n            </div>\n          </div>\n          <div class=\"input-group\" *ngIf=\"editingSliceName\">\n            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"editedSliceName\" />\n            <div class=\"input-group-btn\">\n              <button type=\"button\" class=\"btn btn-default\" (click)=\"toggleEditSliceName()\">\n                <i class=\"fa fa-check\"></i>\n              </button>\n            </div>\n          </div>\n        </div>\n\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('representation')\" (ngModelChange)=\"globals.toggleProperty(element, 'representation', 'xmlAttr')\" />\n            Representation\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.representation']}}\" placement=\"top\"></i>\n          </label>\n          <select class=\"form-control\" [(ngModel)]=\"element.representation\" [disabled]=\"!element.hasOwnProperty('representation')\">\n            <option>xmlAttr</option>\n            <option>xmlText</option>\n            <option>typeAttr</option>\n            <option>cdaText</option>\n            <option>xhtml</option>\n          </select>\n        </div>\n\n        <!-- Code -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('code')\" (ngModelChange)=\"globals.toggleProperty(element, 'code', [])\" />\n            Code\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.code']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"pull-right\" *ngIf=\"element.hasOwnProperty('code')\">\n            <i class=\"fa fa-plus\" title=\"Add a code\" (click)=\"element.code.push({})\"></i>\n          </div>\n          <div class=\"input-group\" *ngFor=\"let c of element.code; let i = index\" [attr.data-index]=\"i\">\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('system')\" (ngModelChange)=\"globals.toggleProperty(c, 'system', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"system\" [disabled]=\"!c.hasOwnProperty('system')\" [(ngModel)]=\"c.system\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('code')\" (ngModelChange)=\"globals.toggleProperty(c, 'code', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"code\" [disabled]=\"!c.hasOwnProperty('code')\" [(ngModel)]=\"c.code\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"c.hasOwnProperty('display')\" (ngModelChange)=\"globals.toggleProperty(c, 'display', '')\" />\n            </div>\n            <input type=\"text\" class=\"form-control\" placeholder=\"display\" [disabled]=\"!c.hasOwnProperty('display')\" [(ngModel)]=\"c.display\" />\n            <div class=\"input-group-btn\">\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"element.code.splice(i, 1)\" title=\"Remove this code\"><i class=\"fa fa-remove\"></i></button>\n            </div>\n          </div>\n          <div *ngIf=\"element.code && element.code.length == 0\">No codes</div>\n        </div>\n\n        <!-- Min -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('min')\" (ngModelChange)=\"globals.toggleProperty(element, 'min', elementTreeModel.min)\" />\n            Min\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.min']}}\" placement=\"top\"></i>\n          </label>\n          <input type=\"number\" class=\"form-control\" [disabled]=\"!element.hasOwnProperty('min')\" [(ngModel)]=\"element.min\" />\n        </div>\n\n        <!-- Max -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('max')\" (ngModelChange)=\"globals.toggleProperty(element, 'max', elementTreeModel.max)\" />\n            Max\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.max']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"input-group\">\n            <input type=\"number\" class=\"form-control\" [disabled]=\"!element.hasOwnProperty('max') || element.max === '*'\" [ngModel]=\"element.max\" (ngModelChange)=\"element.max=$event.toString()\" />\n            <div class=\"input-group-addon\">\n              <input type=\"checkbox\" [ngModel]=\"element.max === '*'\" (ngModelChange)=\"toggleMaxUnlimited()\" [disabled]=\"elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'\" /> Unlimited\n            </div>\n          </div>\n        </div>\n\n        <!-- Type -->\n        <div class=\"form-control\">\n          <label>\n            <input type=\"checkbox\" [ngModel]=\"element.hasOwnProperty('type')\" (ngModelChange)=\"globals.toggleProperty(element, 'type', [])\" />\n            Type\n            <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['ed.type']}}\" placement=\"top\"></i>\n          </label>\n          <div class=\"pull-right\" *ngIf=\"element.hasOwnProperty('type')\">\n            <i class=\"fa fa-plus clickable\" title=\"Add a type\" (click)=\"element.type.push({ code: 'Address' })\"></i>\n          </div>\n          <div class=\"input-group\" *ngFor=\"let t of element.type; let i = index\" [attr.data-index]=\"i\">\n            <select class=\"form-control\" [(ngModel)]=\"t.code\">\n              <option *ngFor=\"let o of globals.fhirDefinedTypes\">{{o}}</option>\n            </select>\n            <input type=\"text\" class=\"form-control\" readonly value=\"{{globals.getShortString(t.profile, false, 30) || globals.getShortString(t.targetProfile, false, 30)}}\" title=\"{{t.profile || t.targetProfile}}\" />\n            <div class=\"input-group-btn\">\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"openTypeModel(element, t)\"><i class=\"fa fa-edit\"></i></button>\n              <button type=\"button\" class=\"btn btn-default clickable\" (click)=\"element.type.splice(i, 1)\"><i class=\"fa fa-remove\"></i></button>\n            </div>\n          </div>\n          <div *ngIf=\"element.type && element.type.length == 0\">No types</div>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Default Value</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Max Length</label>\n          <input type=\"number\" class=\"form-control\" />\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Narrative\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Short</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Label</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Definition</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Comment</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Requirements</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Alias</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Meaning when missing</label>\n          <textarea class=\"form-control\"></textarea>\n        </div>\n\n        <div class=\"form-control\">\n          <label>Order meaning</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Binding\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Binding</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Fixed</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Pattern</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Example</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Min Value</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Max Value</label>\n          ...\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Extra\">\n      <ng-template ngbTabContent>\n        <div class=\"form-control\">\n          <label>Content Reference</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Condition</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Constraint</label>\n          ...\n        </div>\n\n        <div class=\"form-control\">\n          <label>Must Support</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Modifier?</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Modifier Reason</label>\n          <input type=\"text\" class=\"form-control\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Is Summary?</label>\n          <input type=\"checkbox\" />\n        </div>\n\n        <div class=\"form-control\">\n          <label>Mapping</label>\n          ...\n        </div>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"JSON\">\n      <ng-template ngbTabContent>\n        <pre>{{element | json}}</pre>\n      </ng-template>\n    </ngb-tab>\n    <ngb-tab title=\"Info\">\n      <ng-template ngbTabContent>\n        <pre>{{elementTreeModel | json}}</pre>\n      </ng-template>\n    </ngb-tab>\n  </ngb-tabset>\n</fieldset>"
 
 /***/ }),
 
 /***/ "./src/app/element-definition-panel/element-definition-panel.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ElementDefinitionPanelComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__ = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fhir_edit_element_definition_type_modal_element_definition_type_modal_component__ = __webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__globals__ = __webpack_require__("./src/app/globals.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_element_tree_model__ = __webpack_require__("./src/app/models/element-tree-model.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -441,11 +409,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var element_definition_type_modal_component_1 = __webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.ts");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var element_tree_model_1 = __webpack_require__("./src/app/models/element-tree-model.ts");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
 var ElementDefinitionPanelComponent = (function () {
     function ElementDefinitionPanelComponent(modalService, globals) {
         this.modalService = modalService;
@@ -471,32 +441,51 @@ var ElementDefinitionPanelComponent = (function () {
         }
     };
     ElementDefinitionPanelComponent.prototype.openTypeModel = function (element, type) {
-        var modalRef = this.modalService.open(__WEBPACK_IMPORTED_MODULE_2__fhir_edit_element_definition_type_modal_element_definition_type_modal_component__["a" /* ElementDefinitionTypeModalComponent */]);
+        var modalRef = this.modalService.open(element_definition_type_modal_component_1.ElementDefinitionTypeModalComponent);
         modalRef.componentInstance.element = element;
         modalRef.componentInstance.type = type;
+    };
+    ElementDefinitionPanelComponent.prototype.toggleEditSliceName = function () {
+        if (this.editingSliceName) {
+            this.element.sliceName = this.editedSliceName;
+            this.elementTreeModel.setId(this.editedSliceName);
+            this.editingSliceName = false;
+        }
+        else {
+            this.editingSliceName = true;
+            this.editedSliceName = this.element.sliceName;
+        }
     };
     ElementDefinitionPanelComponent.prototype.ngOnInit = function () {
     };
     return ElementDefinitionPanelComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
-    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__models_element_tree_model__["a" /* ElementTreeModel */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__models_element_tree_model__["a" /* ElementTreeModel */]) === "function" && _a || Object)
+    core_1.Input(),
+    __metadata("design:type", typeof (_a = typeof element_tree_model_1.ElementTreeModel !== "undefined" && element_tree_model_1.ElementTreeModel) === "function" && _a || Object)
 ], ElementDefinitionPanelComponent.prototype, "elementTreeModel", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
+    __metadata("design:type", Array)
+], ElementDefinitionPanelComponent.prototype, "elements", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", typeof (_b = typeof fhir_1.StructureDefinition !== "undefined" && fhir_1.StructureDefinition) === "function" && _b || Object)
+], ElementDefinitionPanelComponent.prototype, "structureDefinition", void 0);
+__decorate([
+    core_1.Input(),
     __metadata("design:type", Object)
 ], ElementDefinitionPanelComponent.prototype, "disabled", void 0);
 ElementDefinitionPanelComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-element-definition-panel',
         template: __webpack_require__("./src/app/element-definition-panel/element-definition-panel.component.html"),
         styles: [__webpack_require__("./src/app/element-definition-panel/element-definition-panel.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["b" /* NgbModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["b" /* NgbModal */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__globals__["a" /* Globals */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_c = typeof ng_bootstrap_1.NgbModal !== "undefined" && ng_bootstrap_1.NgbModal) === "function" && _c || Object, typeof (_d = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _d || Object])
 ], ElementDefinitionPanelComponent);
-
-var _a, _b, _c;
+exports.ElementDefinitionPanelComponent = ElementDefinitionPanelComponent;
+var _a, _b, _c, _d;
 //# sourceMappingURL=element-definition-panel.component.js.map
 
 /***/ }),
@@ -511,16 +500,15 @@ module.exports = ""
 /***/ "./src/app/export/export.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Export</h1>\r\n\r\n<div class=\"alert alert-info\" *ngIf=\"message\">{{message}}</div>\r\n\r\n<select class=\"form-control\">\r\n  <option>Implementation Guide</option>\r\n</select>\r\n\r\n<footer class=\"footer\">\r\n  <button type=\"button\" class=\"btn btn-default\">Export</button>\r\n</footer>\r\n"
+module.exports = "<h1>Export</h1>\r\n\r\n<div class=\"alert alert-info\" *ngIf=\"message\">{{message}}</div>\r\n\r\n<div class=\"form-group\">\r\n    <label>Implementation Guide</label>\r\n    <select class=\"form-control\" [(ngModel)]=\"implementationGuideId\">\r\n        <option></option>\r\n        <option *ngFor=\"let ig of implementationGuides\" [ngValue]=\"ig.id\">{{ig.name}}</option>\r\n    </select>\r\n</div>\r\n\r\n<div class=\"form-group\">\r\n    <label>Export Format</label>\r\n    <select class=\"form-control\" [(ngModel)]=\"exportFormat\">\r\n        <option [ngValue]=\"1\">Bundle</option>\r\n        <option [ngValue]=\"2\">HTML (IG Publisher)</option>\r\n    </select>\r\n</div>\r\n\r\n<div class=\"form-group\">\r\n    <label>Response Format</label>\r\n    <select class=\"form-control\" [(ngModel)]=\"responseFormat\">\r\n        <option value=\"application/json\">JSON</option>\r\n        <option value=\"application/xml\">XML</option>\r\n    </select>\r\n</div>\r\n\r\n<div class=\"card\" *ngIf=\"socketOutput\">\r\n    <div class=\"card-body\">\r\n        <pre>{{socketOutput}}</pre>\r\n    </div>\r\n</div>\r\n\r\n<footer class=\"footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" (click)=\"export()\">Export</button>\r\n    <span class=\"message\">{{message}}</span>\r\n</footer>\r\n"
 
 /***/ }),
 
 /***/ "./src/app/export/export.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExportComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -530,23 +518,86 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var implementation_guide_service_1 = __webpack_require__("./src/app/services/implementation-guide.service.ts");
+var file_saver_1 = __webpack_require__("./node_modules/file-saver/FileSaver.js");
+var export_service_1 = __webpack_require__("./src/app/services/export.service.ts");
+var export_formats_enum_1 = __webpack_require__("./src/app/models/export-formats.enum.ts");
+var _ = __webpack_require__("./node_modules/underscore/underscore.js");
+var io = __webpack_require__("./node_modules/socket.io-client/lib/index.js");
 var ExportComponent = (function () {
-    function ExportComponent() {
+    function ExportComponent(implementationGuideService, exportService) {
+        this.implementationGuideService = implementationGuideService;
+        this.exportService = exportService;
+        this.exportFormat = export_formats_enum_1.ExportFormats.Bundle;
+        this.responseFormat = 'application/json';
+        this.socketOutput = '';
     }
+    ExportComponent.prototype.export = function () {
+        var _this = this;
+        this.socketOutput = '';
+        this.exportService.export(this.implementationGuideId, this.exportFormat, this.responseFormat)
+            .subscribe(function (results) {
+            if (_this.exportFormat === export_formats_enum_1.ExportFormats.Bundle) {
+                var ig = _.find(_this.implementationGuides, function (next) { return next.id === _this.implementationGuideId; });
+                var igName = ig.name.replace(/\s/g, '_');
+                var extension = (_this.responseFormat === 'application/xml' ? '.xml' : '.json');
+                file_saver_1.saveAs(results.body, igName + extension);
+            }
+            else if (_this.exportFormat === export_formats_enum_1.ExportFormats.HTML) {
+                var reader = new FileReader();
+                reader.addEventListener('loadend', function (e) {
+                    _this.packageId = e.srcElement.result;
+                });
+                reader.readAsText(results.body);
+            }
+        }, function (err) {
+            _this.message = err;
+        });
+    };
     ExportComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.implementationGuideService.getImplementationGuides()
+            .subscribe(function (results) {
+            _this.implementationGuides = results;
+        }, function (err) {
+            _this.message = err;
+        });
+        this.socket = io(location.origin);
+        this.socket.on('message', function (data) {
+            if (data.packageId === _this.packageId) {
+                _this.socketOutput += data.message;
+                if (!data.message.endsWith('\n')) {
+                    _this.socketOutput += '\r\n';
+                }
+            }
+            if (data.status === 'complete') {
+                var ig = _.find(_this.implementationGuides, function (next) { return next.id === _this.implementationGuideId; });
+                var igName_1 = ig.name.replace(/\s/g, '_');
+                _this.exportService.getPackage(_this.packageId)
+                    .subscribe(function (results) {
+                    file_saver_1.saveAs(results.body, igName_1 + '.zip');
+                });
+            }
+        });
+    };
+    ExportComponent.prototype.ngOnDestroy = function () {
+        this.socket.disconnect();
     };
     return ExportComponent;
 }());
 ExportComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-export',
         template: __webpack_require__("./src/app/export/export.component.html"),
-        styles: [__webpack_require__("./src/app/export/export.component.css")]
+        styles: [__webpack_require__("./src/app/export/export.component.css")],
+        providers: [implementation_guide_service_1.ImplementationGuideService, export_service_1.ExportService]
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_a = typeof implementation_guide_service_1.ImplementationGuideService !== "undefined" && implementation_guide_service_1.ImplementationGuideService) === "function" && _a || Object, typeof (_b = typeof export_service_1.ExportService !== "undefined" && export_service_1.ExportService) === "function" && _b || Object])
 ], ExportComponent);
-
+exports.ExportComponent = ExportComponent;
+var _a, _b;
 //# sourceMappingURL=export.component.js.map
 
 /***/ }),
@@ -566,13 +617,10 @@ module.exports = "<div class=\"modal-header\">\n  <h4 class=\"modal-title\">{{el
 /***/ }),
 
 /***/ "./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ElementDefinitionTypeModalComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__ = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__globals__ = __webpack_require__("./src/app/globals.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -582,9 +630,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
 var ElementDefinitionTypeModalComponent = (function () {
     function ElementDefinitionTypeModalComponent(activeModal, globals) {
         this.activeModal = activeModal;
@@ -595,22 +644,22 @@ var ElementDefinitionTypeModalComponent = (function () {
     return ElementDefinitionTypeModalComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], ElementDefinitionTypeModalComponent.prototype, "element", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], ElementDefinitionTypeModalComponent.prototype, "type", void 0);
 ElementDefinitionTypeModalComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-element-definition-type-modal',
         template: __webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.html"),
         styles: [__webpack_require__("./src/app/fhir-edit/element-definition-type-modal/element-definition-type-modal.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["a" /* NgbActiveModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["a" /* NgbActiveModal */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof ng_bootstrap_1.NgbActiveModal !== "undefined" && ng_bootstrap_1.NgbActiveModal) === "function" && _a || Object, typeof (_b = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _b || Object])
 ], ElementDefinitionTypeModalComponent);
-
+exports.ElementDefinitionTypeModalComponent = ElementDefinitionTypeModalComponent;
 var _a, _b;
 //# sourceMappingURL=element-definition-type-modal.component.js.map
 
@@ -631,12 +680,10 @@ module.exports = "<p>\n  human-name works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/fhir-edit/human-name/human-name.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HumanNameComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_fhir__ = __webpack_require__("./src/app/models/fhir.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -646,8 +693,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
 var HumanNameComponent = (function () {
     function HumanNameComponent() {
     }
@@ -656,7 +704,7 @@ var HumanNameComponent = (function () {
             return;
         }
         if (shouldInit && !this.parent[this.property]) {
-            this.parent[this.property] = new __WEBPACK_IMPORTED_MODULE_1__models_fhir__["a" /* HumanName */]();
+            this.parent[this.property] = new fhir_1.HumanName();
         }
         else if (!shouldInit && this.parent[this.property]) {
             delete this.parent[this.property];
@@ -665,22 +713,22 @@ var HumanNameComponent = (function () {
     return HumanNameComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], HumanNameComponent.prototype, "parent", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", String)
 ], HumanNameComponent.prototype, "property", void 0);
 HumanNameComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'fhir-edit-human-name',
         template: __webpack_require__("./src/app/fhir-edit/human-name/human-name.component.html"),
         styles: [__webpack_require__("./src/app/fhir-edit/human-name/human-name.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], HumanNameComponent);
-
+exports.HumanNameComponent = HumanNameComponent;
 //# sourceMappingURL=human-name.component.js.map
 
 /***/ }),
@@ -700,12 +748,10 @@ module.exports = "<div class=\"form-group\">\r\n  <label>{{title}}</label>\r\n  
 /***/ }),
 
 /***/ "./src/app/fhir-edit/human-names/human-names.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HumanNamesComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_fhir__ = __webpack_require__("./src/app/models/fhir.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -715,8 +761,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
 var HumanNamesComponent = (function () {
     function HumanNamesComponent() {
         this.title = 'Name';
@@ -737,7 +784,7 @@ var HumanNamesComponent = (function () {
         if (!this.humanNames) {
             return;
         }
-        this.humanNames.push(new __WEBPACK_IMPORTED_MODULE_1__models_fhir__["a" /* HumanName */]());
+        this.humanNames.push(new fhir_1.HumanName());
     };
     HumanNamesComponent.prototype.updateHumanNames = function () {
         if (this.parent) {
@@ -765,27 +812,226 @@ var HumanNamesComponent = (function () {
     return HumanNamesComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], HumanNamesComponent.prototype, "title", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], HumanNamesComponent.prototype, "parent", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", String)
 ], HumanNamesComponent.prototype, "property", void 0);
 HumanNamesComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'fhir-edit-human-names',
         template: __webpack_require__("./src/app/fhir-edit/human-names/human-names.component.html"),
         styles: [__webpack_require__("./src/app/fhir-edit/human-names/human-names.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], HumanNamesComponent);
-
+exports.HumanNamesComponent = HumanNamesComponent;
 //# sourceMappingURL=human-names.component.js.map
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/page-component-modal/page-component-modal.component.css":
+/***/ (function(module, exports) {
+
+module.exports = ""
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/page-component-modal/page-component-modal.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"modal-header\">\n    <h4 class=\"modal-title\">Hi there!</h4>\n    <button type=\"button\" class=\"close\" aria-label=\"Close\" (click)=\"activeModal.dismiss('Cross click')\">\n        <span aria-hidden=\"true\">&times;</span>\n    </button>\n</div>\n<div class=\"modal-body\">\n    <div class=\"form-group\">\n        <label>Title</label>\n        <input type=\"text\" class=\"form-control\" [(ngModel)]=\"page.title\" [class.is-invalid]=\"!page.hasOwnProperty('title')\" />\n    </div>\n\n    <div class=\"form-group\">\n        <label>\n            <input type=\"checkbox\" [ngModel]=\"page.hasOwnProperty('format')\" (ngModelChange)=\"globals.toggleProperty(page, 'format', 'markdown')\" />\n            Format\n        </label>\n        <input type=\"text\" class=\"form-control\" [disabled]=\"!page.hasOwnProperty('format')\" [(ngModel)]=\"page.format\" />\n    </div>\n\n    <div class=\"form-group\" *ngIf=\"!pageBinary\">\n        <label>Source</label>\n        <input type=\"text\" class=\"form-control\" [(ngModel)]=\"page.source\" [class.is-invalid]=\"!page.source\" />\n        <div class=\"help-block\" *ngIf=\"!pageBinary\">A contained Binary resource could not be found for this source</div>\n    </div>\n\n    <app-markdown [(ngModel)]=\"pageContent\" *ngIf=\"pageBinary\"></app-markdown>\n\n    <p>Type...</p>\n\n    <p>Package...</p>\n</div>\n<div class=\"modal-footer\">\n    <button type=\"button\" class=\"btn btn-outline-dark\" (click)=\"activeModal.close('Close click')\">Close</button>\n</div>"
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/page-component-modal/page-component-modal.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
+var _ = __webpack_require__("./node_modules/underscore/underscore.js");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var PageComponentModalComponent = (function () {
+    function PageComponentModalComponent(activeModal, globals) {
+        this.activeModal = activeModal;
+        this.globals = globals;
+    }
+    Object.defineProperty(PageComponentModalComponent.prototype, "pageContent", {
+        get: function () {
+            if (!this.pageBinary || !this.pageBinary.content) {
+                return '';
+            }
+            return atob(this.pageBinary.content);
+        },
+        set: function (value) {
+            if (!this.pageBinary) {
+                return;
+            }
+            this.pageBinary.content = btoa(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    PageComponentModalComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.page.source && this.page.source.startsWith('#')) {
+            // If the page does have a source and it starts with a #
+            // Find the Binary in the contained resources
+            this.pageBinary = _.find(this.implementationGuide.contained, function (extension) { return extension.id === _this.page.source.substring(1); });
+        }
+    };
+    return PageComponentModalComponent;
+}());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", typeof (_a = typeof fhir_1.PageComponent !== "undefined" && fhir_1.PageComponent) === "function" && _a || Object)
+], PageComponentModalComponent.prototype, "page", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", typeof (_b = typeof fhir_1.ImplementationGuide !== "undefined" && fhir_1.ImplementationGuide) === "function" && _b || Object)
+], PageComponentModalComponent.prototype, "implementationGuide", void 0);
+PageComponentModalComponent = __decorate([
+    core_1.Component({
+        selector: 'app-page-component-modal',
+        template: __webpack_require__("./src/app/fhir-edit/page-component-modal/page-component-modal.component.html"),
+        styles: [__webpack_require__("./src/app/fhir-edit/page-component-modal/page-component-modal.component.css")]
+    }),
+    __metadata("design:paramtypes", [typeof (_c = typeof ng_bootstrap_1.NgbActiveModal !== "undefined" && ng_bootstrap_1.NgbActiveModal) === "function" && _c || Object, typeof (_d = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _d || Object])
+], PageComponentModalComponent);
+exports.PageComponentModalComponent = PageComponentModalComponent;
+var _a, _b, _c, _d;
+//# sourceMappingURL=page-component-modal.component.js.map
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/reference/reference.component.css":
+/***/ (function(module, exports) {
+
+module.exports = ""
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/reference/reference.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"input-group\" *ngIf=\"reference\">\n  <input type=\"text\" class=\"form-control\" [disabled]=\"disabled\" [(ngModel)]=\"reference.reference\" placeholder=\"Reference\" />\n  <input type=\"text\" class=\"form-control\" [disabled]=\"disabled\" [(ngModel)]=\"reference.display\" placeholder=\"Display\" />\n  <div class=\"input-group-btn\">\n    <button type=\"button\" class=\"btn btn-default\" title=\"Select a resource for the reference\" (click)=\"open(selectReferenceModal)\" [disabled]=\"disabled\">\n      <i class=\"fa fa-edit\"></i>\n    </button>\n  </div>\n</div>\n<div class=\"input-group\" *ngIf=\"!reference\">\n  <input type=\"text\" class=\"form-control\" [disabled]=\"true\" placeholder=\"Reference\" />\n  <input type=\"text\" class=\"form-control\" [disabled]=\"true\" placeholder=\"Display\" />\n  <div class=\"input-group-btn\">\n    <button type=\"button\" class=\"btn btn-default\" title=\"Select a resource for the reference\" [disabled]=\"true\">\n      <i class=\"fa fa-edit\"></i>\n    </button>\n  </div>\n</div>\n\n<ng-template #selectReferenceModal let-c=\"close\" let-d=\"dismiss\">\n  <div class=\"modal-header\">\n    <h4 class=\"modal-title\">Select a resource</h4>\n    <button type=\"button\" class=\"close\" aria-label=\"Close\" (click)=\"d('Cross click')\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n  </div>\n  <div class=\"modal-body\">\n    <div class=\"input-group\" *ngIf=\"!resourceType || !hideResourceType\">\n      <div class=\"input-group-addon\">Type</div>\n      <select class=\"form-control\" [(ngModel)]=\"resourceType\" (change)=\"criteriaChanged()\">\n        <option *ngFor=\"let o of globals.ResourceTypes | keys\" [ngValue]=\"o.value.code\">{{o.value.display}}</option>\n      </select>\n    </div>\n\n    <div class=\"input-group\">\n      <div class=\"input-group-addon\">Search</div>\n      <input class=\"form-control\" [(ngModel)]=\"contentSearch\" (ngModelChange)=\"contentSearchChanged.next($event)\"/>\n    </div>\n\n    <table class=\"table\" *ngIf=\"results\">\n      <thead>\n      <tr>\n        <th>Resources</th>\n        <th>&nbsp;</th>\n      </tr>\n      </thead>\n      <tbody>\n      <tr *ngFor=\"let e of results.entry\">\n        <td>\n          {{e.resource | fhirDisplay}}\n          <sub>{{e.resource.resourceType}}/{{e.resource.id}}</sub>\n        </td>\n        <td>\n          <div class=\"pull-right\">\n            <button type=\"button\" class=\"btn btn-default\" (click)=\"select(e, c)\">Select</button>\n          </div>\n        </td>\n      </tr>\n      </tbody>\n      <tfoot>\n      <tr>\n        <th colspan=\"2\">Total results: {{results.total}}</th>\n      </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"modal-footer\">\n    <button type=\"button\" class=\"btn btn-outline-dark\" (click)=\"c('Close click')\">Close</button>\n  </div>\n</ng-template>"
+
+/***/ }),
+
+/***/ "./src/app/fhir-edit/reference/reference.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+var Subject_1 = __webpack_require__("./node_modules/rxjs/_esm5/Subject.js");
+__webpack_require__("./node_modules/rxjs/_esm5/add/operator/debounceTime.js");
+__webpack_require__("./node_modules/rxjs/_esm5/add/operator/distinctUntilChanged.js");
+var fhir_display_pipe_1 = __webpack_require__("./src/app/pipes/fhir-display-pipe.ts");
+var ReferenceComponent = (function () {
+    function ReferenceComponent(http, modalService, globals) {
+        var _this = this;
+        this.http = http;
+        this.modalService = modalService;
+        this.globals = globals;
+        this.contentSearchChanged = new Subject_1.Subject();
+        this.contentSearchChanged
+            .debounceTime(500)
+            .distinctUntilChanged()
+            .subscribe(function () { return _this.criteriaChanged(); });
+    }
+    ReferenceComponent.prototype.open = function (content) {
+        this.modalService.open(content).result.then(function (result) {
+        }, function (reason) {
+        });
+    };
+    ReferenceComponent.prototype.select = function (resourceEntry, closeCb) {
+        this.reference.reference = resourceEntry.resource.resourceType + '/' + resourceEntry.resource.id;
+        this.reference.display = new fhir_display_pipe_1.FhirDisplayPipe().transform(resourceEntry.resource, []);
+        closeCb();
+    };
+    ReferenceComponent.prototype.criteriaChanged = function () {
+        var _this = this;
+        if (!this.resourceType) {
+            this.results = null;
+            return;
+        }
+        var url = '/api/fhir/' + this.resourceType + '?_summary=true&';
+        if (this.contentSearch) {
+            url += '_content=' + encodeURIComponent(this.contentSearch) + '&';
+        }
+        this.http.get(url)
+            .subscribe(function (results) {
+            _this.results = results;
+        }, function (err) {
+            // TODO
+        });
+    };
+    ReferenceComponent.prototype.ngOnInit = function () {
+        this.criteriaChanged();
+    };
+    return ReferenceComponent;
+}());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String)
+], ReferenceComponent.prototype, "resourceType", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", typeof (_a = typeof fhir_1.ResourceReference !== "undefined" && fhir_1.ResourceReference) === "function" && _a || Object)
+], ReferenceComponent.prototype, "reference", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Boolean)
+], ReferenceComponent.prototype, "hideResourceType", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Boolean)
+], ReferenceComponent.prototype, "disabled", void 0);
+ReferenceComponent = __decorate([
+    core_1.Component({
+        selector: 'fhir-reference',
+        template: __webpack_require__("./src/app/fhir-edit/reference/reference.component.html"),
+        styles: [__webpack_require__("./src/app/fhir-edit/reference/reference.component.css")]
+    }),
+    __metadata("design:paramtypes", [typeof (_b = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _b || Object, typeof (_c = typeof ng_bootstrap_1.NgbModal !== "undefined" && ng_bootstrap_1.NgbModal) === "function" && _c || Object, typeof (_d = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _d || Object])
+], ReferenceComponent);
+exports.ReferenceComponent = ReferenceComponent;
+var _a, _b, _c, _d;
+//# sourceMappingURL=reference.component.js.map
 
 /***/ }),
 
@@ -804,11 +1050,10 @@ module.exports = "<div [class.input-group]=\"!!title\">\r\n    <div class=\"inpu
 /***/ }),
 
 /***/ "./src/app/fhir-edit/string/string.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StringComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -818,7 +1063,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var StringComponent = (function () {
     function StringComponent() {
     }
@@ -827,45 +1073,170 @@ var StringComponent = (function () {
     return StringComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], StringComponent.prototype, "parent", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", String)
 ], StringComponent.prototype, "property", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", String)
 ], StringComponent.prototype, "title", void 0);
 StringComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'fhir-edit-string',
         template: __webpack_require__("./src/app/fhir-edit/string/string.component.html"),
         styles: [__webpack_require__("./src/app/fhir-edit/string/string.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], StringComponent);
-
+exports.StringComponent = StringComponent;
 //# sourceMappingURL=string.component.js.map
 
 /***/ }),
 
 /***/ "./src/app/globals.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Globals; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var Globals = (function () {
     function Globals() {
+        this.FHIRUrls = {
+            ImplementationGuide: 'http://hl7.org/fhir/StructureDefinition/ImplementationGuide',
+            StructureDefinition: 'http://hl7.org/fhir/StructureDefinition/StructureDefinition'
+        };
+        this.ResourceTypes = {
+            'Account': { code: 'Account', display: 'Account' },
+            'ActivityDefinition': { code: 'ActivityDefinition', display: 'ActivityDefinition' },
+            'AdverseEvent': { code: 'AdverseEvent', display: 'AdverseEvent' },
+            'AllergyIntolerance': { code: 'AllergyIntolerance', display: 'AllergyIntolerance' },
+            'Appointment': { code: 'Appointment', display: 'Appointment' },
+            'AppointmentResponse': { code: 'AppointmentResponse', display: 'AppointmentResponse' },
+            'AuditEvent': { code: 'AuditEvent', display: 'AuditEvent' },
+            'Basic': { code: 'Basic', display: 'Basic' },
+            'Binary': { code: 'Binary', display: 'Binary' },
+            'BodySite': { code: 'BodySite', display: 'BodySite' },
+            'Bundle': { code: 'Bundle', display: 'Bundle' },
+            'CapabilityStatement': { code: 'CapabilityStatement', display: 'CapabilityStatement' },
+            'CarePlan': { code: 'CarePlan', display: 'CarePlan' },
+            'CareTeam': { code: 'CareTeam', display: 'CareTeam' },
+            'ChargeItem': { code: 'ChargeItem', display: 'ChargeItem' },
+            'Claim': { code: 'Claim', display: 'Claim' },
+            'ClaimResponse': { code: 'ClaimResponse', display: 'ClaimResponse' },
+            'ClinicalImpression': { code: 'ClinicalImpression', display: 'ClinicalImpression' },
+            'CodeSystem': { code: 'CodeSystem', display: 'CodeSystem' },
+            'Communication': { code: 'Communication', display: 'Communication' },
+            'CommunicationRequest': { code: 'CommunicationRequest', display: 'CommunicationRequest' },
+            'CompartmentDefinition': { code: 'CompartmentDefinition', display: 'CompartmentDefinition' },
+            'Composition': { code: 'Composition', display: 'Composition' },
+            'ConceptMap': { code: 'ConceptMap', display: 'ConceptMap' },
+            'Condition': { code: 'Condition', display: 'Condition' },
+            'Consent': { code: 'Consent', display: 'Consent' },
+            'Contract': { code: 'Contract', display: 'Contract' },
+            'Coverage': { code: 'Coverage', display: 'Coverage' },
+            'DataElement': { code: 'DataElement', display: 'DataElement' },
+            'DetectedIssue': { code: 'DetectedIssue', display: 'DetectedIssue' },
+            'Device': { code: 'Device', display: 'Device' },
+            'DeviceComponent': { code: 'DeviceComponent', display: 'DeviceComponent' },
+            'DeviceMetric': { code: 'DeviceMetric', display: 'DeviceMetric' },
+            'DeviceRequest': { code: 'DeviceRequest', display: 'DeviceRequest' },
+            'DeviceUseStatement': { code: 'DeviceUseStatement', display: 'DeviceUseStatement' },
+            'DiagnosticReport': { code: 'DiagnosticReport', display: 'DiagnosticReport' },
+            'DocumentManifest': { code: 'DocumentManifest', display: 'DocumentManifest' },
+            'DocumentReference': { code: 'DocumentReference', display: 'DocumentReference' },
+            'DomainResource': { code: 'DomainResource', display: 'DomainResource' },
+            'EligibilityRequest': { code: 'EligibilityRequest', display: 'EligibilityRequest' },
+            'EligibilityResponse': { code: 'EligibilityResponse', display: 'EligibilityResponse' },
+            'Encounter': { code: 'Encounter', display: 'Encounter' },
+            'Endpoint': { code: 'Endpoint', display: 'Endpoint' },
+            'EnrollmentRequest': { code: 'EnrollmentRequest', display: 'EnrollmentRequest' },
+            'EnrollmentResponse': { code: 'EnrollmentResponse', display: 'EnrollmentResponse' },
+            'EpisodeOfCare': { code: 'EpisodeOfCare', display: 'EpisodeOfCare' },
+            'ExpansionProfile': { code: 'ExpansionProfile', display: 'ExpansionProfile' },
+            'ExplanationOfBenefit': { code: 'ExplanationOfBenefit', display: 'ExplanationOfBenefit' },
+            'FamilyMemberHistory': { code: 'FamilyMemberHistory', display: 'FamilyMemberHistory' },
+            'Flag': { code: 'Flag', display: 'Flag' },
+            'Goal': { code: 'Goal', display: 'Goal' },
+            'GraphDefinition': { code: 'GraphDefinition', display: 'GraphDefinition' },
+            'Group': { code: 'Group', display: 'Group' },
+            'GuidanceResponse': { code: 'GuidanceResponse', display: 'GuidanceResponse' },
+            'HealthcareService': { code: 'HealthcareService', display: 'HealthcareService' },
+            'ImagingManifest': { code: 'ImagingManifest', display: 'ImagingManifest' },
+            'ImagingStudy': { code: 'ImagingStudy', display: 'ImagingStudy' },
+            'Immunization': { code: 'Immunization', display: 'Immunization' },
+            'ImmunizationRecommendation': { code: 'ImmunizationRecommendation', display: 'ImmunizationRecommendation' },
+            'ImplementationGuide': { code: 'ImplementationGuide', display: 'ImplementationGuide' },
+            'Library': { code: 'Library', display: 'Library' },
+            'Linkage': { code: 'Linkage', display: 'Linkage' },
+            'List': { code: 'List', display: 'List' },
+            'Location': { code: 'Location', display: 'Location' },
+            'Measure': { code: 'Measure', display: 'Measure' },
+            'MeasureReport': { code: 'MeasureReport', display: 'MeasureReport' },
+            'Media': { code: 'Media', display: 'Media' },
+            'Medication': { code: 'Medication', display: 'Medication' },
+            'MedicationAdministration': { code: 'MedicationAdministration', display: 'MedicationAdministration' },
+            'MedicationDispense': { code: 'MedicationDispense', display: 'MedicationDispense' },
+            'MedicationRequest': { code: 'MedicationRequest', display: 'MedicationRequest' },
+            'MedicationStatement': { code: 'MedicationStatement', display: 'MedicationStatement' },
+            'MessageDefinition': { code: 'MessageDefinition', display: 'MessageDefinition' },
+            'MessageHeader': { code: 'MessageHeader', display: 'MessageHeader' },
+            'NamingSystem': { code: 'NamingSystem', display: 'NamingSystem' },
+            'NutritionOrder': { code: 'NutritionOrder', display: 'NutritionOrder' },
+            'Observation': { code: 'Observation', display: 'Observation' },
+            'OperationDefinition': { code: 'OperationDefinition', display: 'OperationDefinition' },
+            'OperationOutcome': { code: 'OperationOutcome', display: 'OperationOutcome' },
+            'Organization': { code: 'Organization', display: 'Organization' },
+            'Parameters': { code: 'Parameters', display: 'Parameters' },
+            'Patient': { code: 'Patient', display: 'Patient' },
+            'PaymentNotice': { code: 'PaymentNotice', display: 'PaymentNotice' },
+            'PaymentReconciliation': { code: 'PaymentReconciliation', display: 'PaymentReconciliation' },
+            'Person': { code: 'Person', display: 'Person' },
+            'PlanDefinition': { code: 'PlanDefinition', display: 'PlanDefinition' },
+            'Practitioner': { code: 'Practitioner', display: 'Practitioner' },
+            'PractitionerRole': { code: 'PractitionerRole', display: 'PractitionerRole' },
+            'Procedure': { code: 'Procedure', display: 'Procedure' },
+            'ProcedureRequest': { code: 'ProcedureRequest', display: 'ProcedureRequest' },
+            'ProcessRequest': { code: 'ProcessRequest', display: 'ProcessRequest' },
+            'ProcessResponse': { code: 'ProcessResponse', display: 'ProcessResponse' },
+            'Provenance': { code: 'Provenance', display: 'Provenance' },
+            'Questionnaire': { code: 'Questionnaire', display: 'Questionnaire' },
+            'QuestionnaireResponse': { code: 'QuestionnaireResponse', display: 'QuestionnaireResponse' },
+            'ReferralRequest': { code: 'ReferralRequest', display: 'ReferralRequest' },
+            'RelatedPerson': { code: 'RelatedPerson', display: 'RelatedPerson' },
+            'RequestGroup': { code: 'RequestGroup', display: 'RequestGroup' },
+            'ResearchStudy': { code: 'ResearchStudy', display: 'ResearchStudy' },
+            'ResearchSubject': { code: 'ResearchSubject', display: 'ResearchSubject' },
+            'Resource': { code: 'Resource', display: 'Resource' },
+            'RiskAssessment': { code: 'RiskAssessment', display: 'RiskAssessment' },
+            'Schedule': { code: 'Schedule', display: 'Schedule' },
+            'SearchParameter': { code: 'SearchParameter', display: 'SearchParameter' },
+            'Sequence': { code: 'Sequence', display: 'Sequence' },
+            'ServiceDefinition': { code: 'ServiceDefinition', display: 'ServiceDefinition' },
+            'Slot': { code: 'Slot', display: 'Slot' },
+            'Specimen': { code: 'Specimen', display: 'Specimen' },
+            'StructureDefinition': { code: 'StructureDefinition', display: 'StructureDefinition' },
+            'StructureMap': { code: 'StructureMap', display: 'StructureMap' },
+            'Subscription': { code: 'Subscription', display: 'Subscription' },
+            'Substance': { code: 'Substance', display: 'Substance' },
+            'SupplyDelivery': { code: 'SupplyDelivery', display: 'SupplyDelivery' },
+            'SupplyRequest': { code: 'SupplyRequest', display: 'SupplyRequest' },
+            'Task': { code: 'Task', display: 'Task' },
+            'TestReport': { code: 'TestReport', display: 'TestReport' },
+            'TestScript': { code: 'TestScript', display: 'TestScript' },
+            'ValueSet': { code: 'ValueSet', display: 'ValueSet' },
+            'VisionPrescription': { code: 'VisionPrescription', display: 'VisionPrescription' }
+        };
         this.fhirDefinedTypes = [
             'Address',
             'Age',
@@ -1094,6 +1465,9 @@ var Globals = (function () {
             'ed.type.versioning': 'Whether this reference needs to be version specific or version independent, or whether either can be used.'
         };
     }
+    Globals.prototype.generateRandomNumber = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
     Globals.prototype.toggleProperty = function (parent, propertyName, defaultValue) {
         if (parent.hasOwnProperty(propertyName)) {
             delete parent[propertyName];
@@ -1115,12 +1489,18 @@ var Globals = (function () {
         }
         return theString;
     };
+    Globals.prototype.promptForRemove = function (array, index, message) {
+        if (message === void 0) { message = 'Are you sure you want to remove this item?'; }
+        if (confirm(message)) {
+            array.splice(index, 1);
+        }
+    };
     return Globals;
 }());
 Globals = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
+    core_1.Injectable()
 ], Globals);
-
+exports.Globals = Globals;
 //# sourceMappingURL=globals.js.map
 
 /***/ }),
@@ -1140,11 +1520,10 @@ module.exports = "<h1>Welcome to Trifolia on FHIR!</h1>\r\n\r\n<p>Trifolia on FH
 /***/ }),
 
 /***/ "./src/app/home/home.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1154,7 +1533,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var HomeComponent = (function () {
     function HomeComponent() {
     }
@@ -1163,14 +1543,14 @@ var HomeComponent = (function () {
     return HomeComponent;
 }());
 HomeComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-home',
         template: __webpack_require__("./src/app/home/home.component.html"),
         styles: [__webpack_require__("./src/app/home/home.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], HomeComponent);
-
+exports.HomeComponent = HomeComponent;
 //# sourceMappingURL=home.component.js.map
 
 /***/ }),
@@ -1178,23 +1558,22 @@ HomeComponent = __decorate([
 /***/ "./src/app/implementation-guide/implementation-guide.component.css":
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "tr.page-prefix-1 td:first-child {\r\n    padding-left: 25px;\r\n}\r\ntr.page-prefix-2 td:first-child {\r\n    padding-left: 35px;\r\n}\r\ntr.page-prefix-3 td:first-child {\r\n    padding-left: 45px;\r\n}\r\ntr.page-prefix-4 td:first-child {\r\n    padding-left: 55px;\r\n}\r\ntr.page-prefix-5 td:first-child {\r\n    padding-left: 65px;\r\n}\r\ntr.page-prefix-6 td:first-child {\r\n    padding-left: 75px;\r\n}"
 
 /***/ }),
 
 /***/ "./src/app/implementation-guide/implementation-guide.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  implementation-guide works!\n</p>\n"
+module.exports = "<h1>Implementation Guide</h1>\n\n<div class=\"ig-main\" *ngIf=\"implementationGuide\">\n    <h2>{{implementationGuide.name || 'No Name'}}</h2>\n\n    <ngb-tabset>\n        <ngb-tab id=\"general\" title=\"General\">\n            <ng-template ngbTabContent>\n                <fieldset>\n                    <div class=\"row\">\n                        <div class=\"col-md-8\">\n                            <div class=\"form-group\">\n                                <label>URL</label>\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"implementationGuide.url\"\n                                       [class.is-invalid]=\"!implementationGuide.url\"/>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>Name</label>\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"implementationGuide.name\"\n                                       [class.is-invalid]=\"!implementationGuide.name\"/>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>\n                                    <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('publisher')\"\n                                           (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'publisher', '')\"/>\n                                    Publisher\n                                </label>\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"implementationGuide.publisher\"\n                                       [disabled]=\"!implementationGuide.hasOwnProperty('publisher')\"/>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>Description</label>\n                                <app-markdown [(ngModel)]=\"implementationGuide.description\"></app-markdown>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>\n                                    <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('copyright')\"\n                                           (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'copyright', '')\"/>\n                                    Copyright\n                                </label>\n                                <app-markdown [(ngModel)]=\"implementationGuide.description\"\n                                              [disabled]=\"!implementationGuide.hasOwnProperty('copyright')\"></app-markdown>\n                            </div>\n                        </div>\n                        <div class=\"col-md-4\">\n\n                            <div class=\"form-group\">\n                                <label>Version</label>\n                                <input type=\"text\" class=\"form-control\"\n                                       [class.is-invalid]=\"!implementationGuide.version\"\n                                       [(ngModel)]=\"implementationGuide.version\"/>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>Status</label>\n                                <select class=\"form-control\" [(ngModel)]=\"implementationGuide.status\">\n                                    <option [ngValue]=\"'draft'\">Draft</option>\n                                    <option [ngValue]=\"'active'\">Active</option>\n                                    <option [ngValue]=\"'retired'\">Retired</option>\n                                    <option [ngValue]=\"'unknown'\">Unknown</option>\n                                </select>\n                            </div>\n\n                            <div class=\"form-group\">\n                                <label>\n                                    <input type=\"checkbox\"\n                                           [ngModel]=\"implementationGuide.hasOwnProperty('experimental')\"\n                                           (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'experimental', false)\"/>\n                                    Experimental\n                                </label>\n                                <select class=\"form-control\" [(ngModel)]=\"implementationGuide.experimental\"\n                                        [disabled]=\"!implementationGuide.hasOwnProperty('experimental')\">\n                                    <option [ngValue]=\"false\">No</option>\n                                    <option [ngValue]=\"true\">Yes</option>\n                                </select>\n                            </div>\n                        </div>\n                    </div>\n                </fieldset>\n            </ng-template>\n        </ngb-tab>\n\n        <!-- Globals -->\n        <ngb-tab id=\"globals\" title=\"Globals\">\n            <ng-template ngbTabContent>\n                <p>\n                    <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('global')\"\n                           (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'global', [])\"/> Allow globals\n                </p>\n\n                <table class=\"table\" *ngIf=\"implementationGuide.hasOwnProperty('global')\">\n                    <thead>\n                    <tr>\n                        <th>Type</th>\n                        <th>Profile</th>\n                        <th>\n                            <div class=\"pull-right\">\n                                <button type=\"button\" class=\"btn btn-primary\" title=\"Add global\"\n                                        (click)=\"implementationGuide.global.push({type: '', profile: { reference: '' }})\">\n                                    <i class=\"fa fa-plus\"></i>\n                                </button>\n                            </div>\n                        </th>\n                    </tr>\n                    </thead>\n                    <tbody>\n                    <tr *ngFor=\"let g of implementationGuide.global; let i = index\" [attr.data-index]=\"i\">\n                        <td>\n                            <select class=\"form-control\" [(ngModel)]=\"g.type\">\n                                <option *ngFor=\"let o of globals.ResourceTypes | keys\" [ngValue]=\"o.value.code\">\n                                    {{o.value.display}}\n                                </option>\n                            </select>\n                        </td>\n                        <td>\n                            <fhir-reference [reference]=\"g.profile\"></fhir-reference>\n                        </td>\n                        <td>\n                            <div class=\"pull-right\">\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Remove global\"\n                                        (click)=\"implementationGuide.global.splice(i, 1)\"><i class=\"fa fa-remove\"></i>\n                                </button>\n                            </div>\n                        </td>\n                    </tr>\n                    </tbody>\n                </table>\n            </ng-template>\n        </ngb-tab>\n\n        <!-- Binary -->\n        <ngb-tab id=\"binary\" title=\"Binary\">\n            <ng-template ngbTabContent>\n                <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('binary')\" (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'binary', [])\" />\n                Implementation guide has binary URIs\n\n                <table class=\"table\" *ngIf=\"implementationGuide.hasOwnProperty('binary')\">\n                    <thead>\n                    <th>URI</th>\n                    <th>\n                        <div class=\"pull-right\">\n                            <button type=\"button\" class=\"btn btn-default\" title=\"Add a new binary URI\" (click)=\"implementationGuide.binary.push('')\">\n                                <i class=\"fa fa-plus\"></i>\n                            </button>\n                        </div>\n                    </th>\n                    </thead>\n                    <tbody>\n                    <tr *ngFor=\"let b of implementationGuide.binary; let i = index\">\n                        <td>\n                            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"implementationGuide.binary[i]\"/>\n                        </td>\n                        <td>\n                            <div class=\"btn-group pull-right\">\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Remove this binary URI\" (click)=\"implementationGuide.binary.splice(i, 1)\">\n                                    <i class=\"fa fa-remove\"></i>\n                                </button>\n                            </div>\n                        </td>\n                    </tr>\n                    </tbody>\n                </table>\n            </ng-template>\n        </ngb-tab>\n\n        <!-- Packages -->\n        <ngb-tab id=\"packages\" title=\"Packages\">\n            <ng-template ngbTabContent>\n                <p>\n                    <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('package')\"\n                           (ngModelChange)=\"globals.toggleProperty(implementationGuide, 'package', [])\"/> Define\n                    packages\n                </p>\n\n                <div class=\"card\" *ngFor=\"let p of implementationGuide.package; let pi = index\" [attr.data-index]=\"pi\">\n                    <div class=\"card-header\">\n                        Package {{pi+1}}\n                        <div class=\"pull-right\">\n                            <button type=\"button\" class=\"btn btn-default\"\n                                    (click)=\"globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?')\">\n                                Remove Package\n                            </button>\n                        </div>\n                    </div>\n                    <div class=\"card-body\">\n                        <div class=\"form-group\">\n                            <label>Name</label>\n                            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"p.name\"/>\n                        </div>\n\n                        <div class=\"form-group\">\n                            <label>\n                                <input type=\"checkbox\" [ngModel]=\"p.hasOwnProperty('description')\"\n                                       (ngModelChange)=\"globals.toggleProperty(p, 'description', '')\"/>\n                                Description\n                            </label>\n                            <app-markdown [(ngModel)]=\"p.description\"\n                                          [disabled]=\"!p.hasOwnProperty('description')\"></app-markdown>\n                        </div>\n\n                        <h4>Resources</h4>\n                        <table class=\"table\">\n                            <thead>\n                            <tr>\n                                <th>Name</th>\n                                <th>Source Type</th>\n                                <th>Source</th>\n                                <th>\n                                    <div class=\"pull-right\">\n                                        <button type=\"button\" class=\"btn btn-primary\" title=\"Add resource\"\n                                                (click)=\"p.resource.push({ name: '', sourceUri: '', example: false})\">\n                                            <i class=\"fa fa-plus\"></i>\n                                        </button>\n                                    </div>\n                                </th>\n                            </tr>\n                            </thead>\n                            <tbody>\n                            <tr *ngFor=\"let r of p.resource; let ri = index\" [attr.data-index]=\"ri\">\n                                <td>\n                                    <div class=\"input-group\">\n                                        <div class=\"input-group-addon\">\n                                            <input type=\"checkbox\" [ngModel]=\"r.hasOwnProperty('name')\"\n                                                   (ngModelChange)=\"globals.toggleProperty(r, 'name', '')\"/>\n                                        </div>\n                                        <input type=\"text\" class=\"form-control\" [(ngModel)]=\"r.name\"\n                                               [disabled]=\"!r.hasOwnProperty('name')\"/>\n                                    </div>\n                                </td>\n                                <td>\n                                    <div class=\"input-group\">\n                                        <select class=\"form-control\" [ngModel]=\"getResourceSourceType(r)\"\n                                                (ngModelChange)=\"setResourceSourceType(r, $event)\">\n                                            <option value=\"uri\">URI</option>\n                                            <option value=\"reference\">Reference</option>\n                                        </select>\n                                    </div>\n                                </td>\n                                <td>\n                                    <input type=\"text\" class=\"form-control\" *ngIf=\"r.hasOwnProperty('sourceUri')\"\n                                           [(ngModel)]=\"r.sourceUri\" placeholder=\"URI\"/>\n                                    <fhir-reference *ngIf=\"r.hasOwnProperty('sourceReference')\"\n                                                    [reference]=\"r.sourceReference\"></fhir-reference>\n                                </td>\n                                <td>\n                                    <div class=\"pull-right\">\n                                        <button type=\"button\" class=\"btn btn-default\"\n                                                title=\"Edit additional properties for this package resource\"\n                                                (click)=\"openPackageResourceModal(r, packageResourceModal)\">\n                                            <i class=\"fa fa-edit\"></i>\n                                        </button>\n                                        <button type=\"button\" class=\"btn btn-default\" title=\"Remove resource\"\n                                                [disabled]=\"p.resource.length === 1\"\n                                                (click)=\"globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')\">\n                                            <i class=\"fa fa-remove\"></i>\n                                        </button>\n                                    </div>\n                                </td>\n                            </tr>\n                            </tbody>\n                        </table>\n                    </div>\n                </div>\n\n                <p>\n                    <button type=\"button\" class=\"btn btn-primary\"\n                            (click)=\"implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false}]})\">\n                        Add Package\n                    </button>\n                </p>\n            </ng-template>\n        </ngb-tab>\n\n        <!-- Pages -->\n        <ngb-tab id=\"pages\" title=\"Pages\">\n            <ng-template ngbTabContent>\n                <input type=\"checkbox\" [ngModel]=\"implementationGuide.hasOwnProperty('page')\"\n                       (ngModelChange)=\"toggleRootPage($event)\"/> Implementation guide has pages\n\n                <table class=\"table\">\n                    <thead>\n                    <tr>\n                        <th>Title</th>\n                        <th>Kind</th>\n                        <th>&nbsp;</th>\n                    </tr>\n                    </thead>\n                    <tbody>\n                    <tr *ngFor=\"let p of pages\" class=\"page-prefix-{{p.level}}\">\n                        <td>\n                            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"p.page.title\"\n                                   [class.is-invalid]=\"!p.page.title\"/>\n                        </td>\n                        <td>\n                            <select class=\"form-control\" [(ngModel)]=\"p.page.kind\" [class.is-invalid]=\"!p.page.kind\">\n                                <option value=\"page\">Page</option>\n                                <option value=\"example\">Example</option>\n                                <option value=\"list\">List</option>\n                                <option value=\"include\">Include</option>\n                                <option value=\"directory\">Directory</option>\n                                <option value=\"dictionary\">Dictionary</option>\n                                <option value=\"toc\">Table of Contents</option>\n                                <option value=\"resource\">Resource</option>\n                            </select>\n                        </td>\n                        <td>\n                            <div class=\"btn-group pull-right\">\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Edit this page\"\n                                        (click)=\"editPage(p)\">\n                                    <i class=\"fa fa-edit\"></i>\n                                </button>\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Remove this page and all children\"\n                                        (click)=\"removePage(p)\">\n                                    <i class=\"fa fa-remove\"></i>\n                                </button>\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Add child page\"\n                                        (click)=\"addChildPage(p)\">\n                                    <i class=\"fa fa-plus\"></i>\n                                </button>\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Move up\"\n                                        [disabled]=\"isMovePageUpDisabled(p)\" (click)=\"movePageUp(p)\">\n                                    <i class=\"fa fa-arrow-up\"></i>\n                                </button>\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Move up\"\n                                        [disabled]=\"isMovePageDownDisabled(p)\" (click)=\"movePageDown(p)\">\n                                    <i class=\"fa fa-arrow-down\"></i>\n                                </button>\n                            </div>\n                        </td>\n                    </tr>\n                    </tbody>\n                </table>\n            </ng-template>\n        </ngb-tab>\n\n        <!-- Validation -->\n        <ngb-tab id=\"validation\" title=\"Validation\">\n            <ng-template ngbTabContent>\n                <div class=\"badge badge-warning\" *ngIf=\"!validation.valid\">Invalid</div>\n                <div class=\"badge badge-success\" *ngIf=\"validation.valid\">Valid!</div>\n\n                <table class=\"table\" *ngIf=\"validation.messages.length > 0\">\n                    <thead>\n                    <tr>\n                        <th>Severity</th>\n                        <th>Location</th>\n                        <th>Message</th>\n                    </tr>\n                    </thead>\n                    <tbody>\n                    <tr *ngFor=\"let m of validation.messages\">\n                        <td>{{m.severity}}</td>\n                        <td>{{m.location}}</td>\n                        <td>{{m.message}}</td>\n                    </tr>\n                    </tbody>\n                </table>\n            </ng-template>\n        </ngb-tab>\n        <ngb-tab id=\"json\" title=\"JSON\">\n            <ng-template ngbTabContent>\n                <t-json-viewer [json]=\"implementationGuide\"></t-json-viewer>\n            </ng-template>\n        </ngb-tab>\n    </ngb-tabset>\n</div>\n\n<ng-template #packageResourceModal let-c=\"close\" let-d=\"dismiss\">\n    <div class=\"modal-header\">\n        <h4 class=\"modal-title\">Edit package resource</h4>\n        <button type=\"button\" class=\"close\" aria-label=\"Close\" (click)=\"closePackageResourceModal(d)\">\n            <span aria-hidden=\"true\">&times;</span>\n        </button>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"form-group\">\n            <label>\n                <input type=\"checkbox\" [ngModel]=\"currentResource.hasOwnProperty('description')\"\n                       (ngModelChange)=\"globals.toggleProperty(currentResource, 'description', '')\"/>\n                Description\n            </label>\n            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"currentResource.description\"\n                   [disabled]=\"!currentResource.hasOwnProperty('description')\"/>\n        </div>\n\n        <div class=\"form-group\">\n            <label>\n                <input type=\"checkbox\" [ngModel]=\"currentResource.hasOwnProperty('acronym')\"\n                       (ngModelChange)=\"globals.toggleProperty(currentResource, 'acronym', '')\"/>\n                Acronym\n            </label>\n            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"currentResource.acronym\"\n                   [disabled]=\"!currentResource.hasOwnProperty('acronym')\"/>\n        </div>\n\n        <div class=\"form-group\">\n            <label>Example?</label>\n            <select class=\"form-control\" [(ngModel)]=\"currentResource.example\">\n                <option [ngValue]=\"false\">No</option>\n                <option [ngValue]=\"true\">Yes</option>\n            </select>\n        </div>\n\n        <div class=\"form-group\" *ngIf=\"currentResource.example || currentResource.exampleFor\">\n            <label>\n                <input type=\"checkbox\" [ngModel]=\"currentResource.hasOwnProperty('exampleFor')\"\n                       (ngModelChange)=\"globals.toggleProperty(currentResource, 'exampleFor', {reference: '', display: ''})\"/>\n                Example For\n            </label>\n            <fhir-reference [disabled]=\"!currentResource.hasOwnProperty('exampleFor')\"\n                            [reference]=\"currentResource.exampleFor\" resourceType=\"StructureDefinition\"\n                            [hideResourceType]=\"true\"></fhir-reference>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-outline-dark\" (click)=\"closePackageResourceModal(c)\">Close</button>\n    </div>\n</ng-template>\n\n<footer class=\"footer\">\n    <button type=\"button\" class=\"btn btn-default\" (click)=\"save()\">Save</button>\n    <span class=\"message\">{{message}}</span>\n</footer>"
 
 /***/ }),
 
 /***/ "./src/app/implementation-guide/implementation-guide.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ImplementationGuideComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1204,23 +1583,258 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-var ImplementationGuideComponent = (function () {
-    function ImplementationGuideComponent() {
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var audit_event_service_1 = __webpack_require__("./src/app/services/audit-event.service.ts");
+var auth_service_1 = __webpack_require__("./src/app/services/auth.service.ts");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+var implementation_guide_service_1 = __webpack_require__("./src/app/services/implementation-guide.service.ts");
+var Observable_1 = __webpack_require__("./node_modules/rxjs/_esm5/Observable.js");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var Fhir = __webpack_require__("./node_modules/fhir/fhir.js");
+var _ = __webpack_require__("./node_modules/underscore/underscore.js");
+var page_component_modal_component_1 = __webpack_require__("./src/app/fhir-edit/page-component-modal/page-component-modal.component.ts");
+var PageDefinition = (function () {
+    function PageDefinition() {
     }
+    return PageDefinition;
+}());
+var ImplementationGuideComponent = (function () {
+    function ImplementationGuideComponent(modal, route, router, implementationGuideService, auditEventService, authService, globals) {
+        this.modal = modal;
+        this.route = route;
+        this.router = router;
+        this.implementationGuideService = implementationGuideService;
+        this.auditEventService = auditEventService;
+        this.authService = authService;
+        this.globals = globals;
+        this.fhir = new Fhir();
+    }
+    ImplementationGuideComponent.prototype.getImplementationGuide = function () {
+        var _this = this;
+        var implementationGuideId = this.route.snapshot.paramMap.get('id');
+        return new Observable_1.Observable(function (observer) {
+            if (implementationGuideId) {
+                _this.implementationGuideService.getImplementationGuide(implementationGuideId)
+                    .subscribe(function (results) {
+                    _this.implementationGuide = results;
+                    _this.initPages();
+                    observer.next();
+                }, function (err) {
+                    observer.error(err);
+                });
+            }
+            else {
+                _this.implementationGuide = new fhir_1.ImplementationGuide();
+                observer.next();
+            }
+        });
+    };
+    ImplementationGuideComponent.prototype.getResourceSourceType = function (resource) {
+        if (resource.hasOwnProperty('sourceUri')) {
+            return 'uri';
+        }
+        else if (resource.hasOwnProperty('sourceReference')) {
+            return 'reference';
+        }
+    };
+    ImplementationGuideComponent.prototype.openPackageResourceModal = function (resource, content) {
+        this.currentResource = resource;
+        this.modal.open(content);
+    };
+    ImplementationGuideComponent.prototype.closePackageResourceModal = function (cb) {
+        cb();
+    };
+    ImplementationGuideComponent.prototype.setResourceSourceType = function (resource, type) {
+        delete resource['sourceUri'];
+        delete resource['sourceReference'];
+        if (type === 'uri') {
+            resource['sourceUri'] = '';
+        }
+        else if (type === 'reference') {
+            resource['sourceReference'] = {
+                reference: '',
+                display: ''
+            };
+        }
+    };
+    ImplementationGuideComponent.prototype.toggleRootPage = function (value) {
+        var _this = this;
+        if (value && !this.implementationGuide.page) {
+            this.implementationGuide.page = new fhir_1.PageComponent();
+            var newPage = new fhir_1.PageComponent();
+            var newBinary = new fhir_1.Binary();
+            newBinary.contentType = 'text/plain';
+            newBinary.content = btoa('No page content yet');
+            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+            if (!this.implementationGuide.contained) {
+                this.implementationGuide.contained = [];
+            }
+            this.implementationGuide.contained.push(newBinary);
+            this.implementationGuide.page.source = '#' + newBinary.id;
+        }
+        else if (!value && this.implementationGuide.page) {
+            var foundPageDef = _.find(this.pages, function (pageDef) { return pageDef.page === _this.implementationGuide.page; });
+            this.removePage(foundPageDef);
+        }
+        this.initPages();
+    };
+    ImplementationGuideComponent.prototype.editPage = function (pageDef) {
+        var modalRef = this.modal.open(page_component_modal_component_1.PageComponentModalComponent, { size: 'lg' });
+        modalRef.componentInstance.implementationGuide = this.implementationGuide;
+        modalRef.componentInstance.page = pageDef.page;
+    };
+    ImplementationGuideComponent.prototype.addChildPage = function (pageDef) {
+        if (!pageDef.page.page) {
+            pageDef.page.page = [];
+        }
+        var newPage = new fhir_1.PageComponent();
+        var newBinary = new fhir_1.Binary();
+        newBinary.contentType = 'text/plain';
+        newBinary.content = btoa('No page content yet');
+        newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+        if (!this.implementationGuide.contained) {
+            this.implementationGuide.contained = [];
+        }
+        this.implementationGuide.contained.push(newBinary);
+        newPage.source = '#' + newBinary.id;
+        pageDef.page.page.push(newPage);
+        this.initPages();
+    };
+    ImplementationGuideComponent.prototype.removePage = function (pageDef) {
+        if (!pageDef) {
+            return;
+        }
+        if (pageDef.page.page) {
+            var _loop_1 = function (i) {
+                var childPage = pageDef.page.page[i];
+                var foundChildPageDef = _.find(this_1.pages, function (nextPageDef) { return nextPageDef.page === childPage; });
+                this_1.removePage(foundChildPageDef);
+            };
+            var this_1 = this;
+            for (var i = pageDef.page.page.length - 1; i >= 0; i--) {
+                _loop_1(i);
+            }
+        }
+        // If a contained Binary resource is associated with the page, remove it
+        if (pageDef.page.source && pageDef.page.source.startsWith('#')) {
+            var foundBinary = _.find(this.implementationGuide.contained, function (contained) {
+                return contained.id === pageDef.page.source.substring(1);
+            });
+            if (foundBinary) {
+                var binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
+                this.implementationGuide.contained.splice(binaryIndex, 1);
+            }
+        }
+        // Remove the page
+        if (pageDef.parent) {
+            var pageIndex = pageDef.parent.page.indexOf(pageDef.page);
+            pageDef.parent.page.splice(pageIndex, 1);
+        }
+        else {
+            delete this.implementationGuide.page;
+        }
+        var pageDefIndex = this.pages.indexOf(pageDef);
+        this.pages.splice(pageDefIndex, 1);
+    };
+    ImplementationGuideComponent.prototype.isMovePageUpDisabled = function (pageDef) {
+        if (!pageDef.parent) {
+            return true;
+        }
+        var index = pageDef.parent.page.indexOf(pageDef.page);
+        return index === 0;
+    };
+    ImplementationGuideComponent.prototype.movePageUp = function (pageDef) {
+        var index = pageDef.parent.page.indexOf(pageDef.page);
+        pageDef.parent.page.splice(index, 1);
+        pageDef.parent.page.splice(index - 1, 0, pageDef.page);
+        this.initPages();
+    };
+    ImplementationGuideComponent.prototype.isMovePageDownDisabled = function (pageDef) {
+        if (!pageDef.parent) {
+            return true;
+        }
+        var index = pageDef.parent.page.indexOf(pageDef.page);
+        return index === pageDef.parent.page.length - 1;
+    };
+    ImplementationGuideComponent.prototype.movePageDown = function (pageDef) {
+        var index = pageDef.parent.page.indexOf(pageDef.page);
+        pageDef.parent.page.splice(index, 1);
+        pageDef.parent.page.splice(index + 1, 0, pageDef.page);
+        this.initPages();
+    };
+    ImplementationGuideComponent.prototype.save = function () {
+        var _this = this;
+        if (!this.validation.valid && !confirm('This implementatoin guide is not valid, are you sure you want to save?')) {
+            return;
+        }
+        this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
+            .subscribe(function (results) {
+            if (!_this.implementationGuide.id) {
+                _this.router.navigate(['/implementation-guide/' + results.id]);
+            }
+            else {
+                _this.message = 'Successfully saved implementation guide!';
+                setTimeout(function () { _this.message = ''; }, 3000);
+            }
+        }, function (err) {
+            _this.message = 'An error occured while saving the implementation guide';
+        });
+    };
+    ImplementationGuideComponent.prototype.initPage = function (page, level, parent) {
+        if (level === void 0) { level = 0; }
+        if (!page) {
+            return;
+        }
+        this.pages.push({
+            page: page,
+            level: level,
+            parent: parent
+        });
+        if (page.page) {
+            for (var i = 0; i < page.page.length; i++) {
+                this.initPage(page.page[i], level + 1, page);
+            }
+        }
+    };
+    ImplementationGuideComponent.prototype.initPages = function () {
+        this.pages = [];
+        this.initPage(this.implementationGuide.page);
+    };
     ImplementationGuideComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.getImplementationGuide()
+            .subscribe(function () {
+            var entityIdentifier = {
+                system: _this.globals.FHIRUrls.ImplementationGuide,
+                value: _this.route.snapshot.paramMap.get('id')
+            };
+            var auditEvent = _this.auditEventService.getModel('110100', entityIdentifier);
+            _this.auditEventService.create(auditEvent);
+        });
+    };
+    ImplementationGuideComponent.prototype.ngDoCheck = function () {
+        this.validation = this.fhir.validate(this.implementationGuide);
     };
     return ImplementationGuideComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", typeof (_a = typeof fhir_1.ImplementationGuide !== "undefined" && fhir_1.ImplementationGuide) === "function" && _a || Object)
+], ImplementationGuideComponent.prototype, "implementationGuide", void 0);
 ImplementationGuideComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-implementation-guide',
         template: __webpack_require__("./src/app/implementation-guide/implementation-guide.component.html"),
-        styles: [__webpack_require__("./src/app/implementation-guide/implementation-guide.component.css")]
+        styles: [__webpack_require__("./src/app/implementation-guide/implementation-guide.component.css")],
+        providers: [implementation_guide_service_1.ImplementationGuideService]
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_b = typeof ng_bootstrap_1.NgbModal !== "undefined" && ng_bootstrap_1.NgbModal) === "function" && _b || Object, typeof (_c = typeof router_1.ActivatedRoute !== "undefined" && router_1.ActivatedRoute) === "function" && _c || Object, typeof (_d = typeof router_1.Router !== "undefined" && router_1.Router) === "function" && _d || Object, typeof (_e = typeof implementation_guide_service_1.ImplementationGuideService !== "undefined" && implementation_guide_service_1.ImplementationGuideService) === "function" && _e || Object, typeof (_f = typeof audit_event_service_1.AuditEventService !== "undefined" && audit_event_service_1.AuditEventService) === "function" && _f || Object, typeof (_g = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" && _g || Object, typeof (_h = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _h || Object])
 ], ImplementationGuideComponent);
-
+exports.ImplementationGuideComponent = ImplementationGuideComponent;
+var _a, _b, _c, _d, _e, _f, _g, _h;
 //# sourceMappingURL=implementation-guide.component.js.map
 
 /***/ }),
@@ -1235,18 +1849,15 @@ module.exports = ""
 /***/ "./src/app/implementation-guides/implementation-guides.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Implementation Guides</h1>\r\n\r\n<table class=\"table table-striped\">\r\n  <thead>\r\n    <tr>\r\n      <th>Name</th>\r\n      <th>Type</th>\r\n      <th>\r\n        <div class=\"pull-right\">\r\n          <button type=\"button\" class=\"btn btn-default\">Add</button>\r\n        </div>\r\n      </th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr *ngFor=\"let ig of implementationGuides\">\r\n      <td>{{ig.name}}</td>\r\n      <td>{{ig.type}}</td>\r\n      <td>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" routerLink=\"/implementation-guide/{{ig.id}}\">Edit</a>\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n  <tfoot>\r\n    <tr>\r\n      <td colspan=\"3\">{{implementationGuides.length}} total implementation guides</td>\r\n    </tr>\r\n  </tfoot>\r\n</table>\r\n"
+module.exports = "<h1>Implementation Guides</h1>\r\n\r\n<table class=\"table table-striped\">\r\n  <thead>\r\n    <tr>\r\n      <th>Name</th>\r\n      <th>Type</th>\r\n      <th>\r\n        <div class=\"pull-right\">\r\n          <button type=\"button\" class=\"btn btn-default\" routerLink=\"/implementation-guide/new\">New</button>\r\n        </div>\r\n      </th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr *ngFor=\"let ig of implementationGuides\">\r\n      <td>{{ig.name}} <span class=\"badge\">{{ig.id}}</span></td>\r\n      <td>{{ig.type}}</td>\r\n      <td>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" routerLink=\"/implementation-guide/{{ig.id}}\">Edit</a>\r\n          <button type=\"button\" class=\"btn btn-default\" (click)=\"remove(ig)\">Remove</button>\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n  <tfoot>\r\n    <tr>\r\n      <td colspan=\"3\">{{implementationGuides.length}} total implementation guides</td>\r\n    </tr>\r\n  </tfoot>\r\n</table>\r\n"
 
 /***/ }),
 
 /***/ "./src/app/implementation-guides/implementation-guides.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ImplementationGuidesComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_implementation_guide_service__ = __webpack_require__("./src/app/services/implementation-guide.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_config_service__ = __webpack_require__("./src/app/services/config.service.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1256,9 +1867,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var implementation_guide_service_1 = __webpack_require__("./src/app/services/implementation-guide.service.ts");
+var config_service_1 = __webpack_require__("./src/app/services/config.service.ts");
 var ImplementationGuidesComponent = (function () {
     function ImplementationGuidesComponent(igService, configService) {
         this.igService = igService;
@@ -1274,7 +1886,17 @@ var ImplementationGuidesComponent = (function () {
             _this.implementationGuides = res;
             _this.configService.setStatusMessage('');
         }, function (err) {
-            _this.configService.setStatusMessage('Error loading implementation guides: ' + err);
+            _this.configService.handleError('Error loading implementation guides.', err);
+        });
+    };
+    ImplementationGuidesComponent.prototype.remove = function (implementationGuide) {
+        var _this = this;
+        this.igService.removeImplementationGuide(implementationGuide.id)
+            .subscribe(function () {
+            var igIndex = _this.implementationGuides.indexOf(implementationGuide);
+            _this.implementationGuides.splice(igIndex, 1);
+        }, function (err) {
+            // TODO
         });
     };
     ImplementationGuidesComponent.prototype.ngOnInit = function () {
@@ -1285,15 +1907,15 @@ var ImplementationGuidesComponent = (function () {
     return ImplementationGuidesComponent;
 }());
 ImplementationGuidesComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-implementation-guides',
         template: __webpack_require__("./src/app/implementation-guides/implementation-guides.component.html"),
         styles: [__webpack_require__("./src/app/implementation-guides/implementation-guides.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_1__services_implementation_guide_service__["a" /* ImplementationGuideService */]]
+        providers: [implementation_guide_service_1.ImplementationGuideService]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_implementation_guide_service__["a" /* ImplementationGuideService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_implementation_guide_service__["a" /* ImplementationGuideService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_config_service__["a" /* ConfigService */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof implementation_guide_service_1.ImplementationGuideService !== "undefined" && implementation_guide_service_1.ImplementationGuideService) === "function" && _a || Object, typeof (_b = typeof config_service_1.ConfigService !== "undefined" && config_service_1.ConfigService) === "function" && _b || Object])
 ], ImplementationGuidesComponent);
-
+exports.ImplementationGuidesComponent = ImplementationGuidesComponent;
 var _a, _b;
 //# sourceMappingURL=implementation-guides.component.js.map
 
@@ -1314,11 +1936,10 @@ module.exports = "<p>\n  import works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/import/import.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ImportComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1328,7 +1949,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var ImportComponent = (function () {
     function ImportComponent() {
     }
@@ -1337,14 +1959,14 @@ var ImportComponent = (function () {
     return ImportComponent;
 }());
 ImportComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-import',
         template: __webpack_require__("./src/app/import/import.component.html"),
         styles: [__webpack_require__("./src/app/import/import.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], ImportComponent);
-
+exports.ImportComponent = ImportComponent;
 //# sourceMappingURL=import.component.js.map
 
 /***/ }),
@@ -1364,13 +1986,10 @@ module.exports = "<p>\n  login works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/login/login.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LoginComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_auth_service__ = __webpack_require__("./src/app/services/auth.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1380,9 +1999,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var auth_service_1 = __webpack_require__("./src/app/services/auth.service.ts");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
 var LoginComponent = (function () {
     function LoginComponent(authService, router) {
         this.authService = authService;
@@ -1395,14 +2015,14 @@ var LoginComponent = (function () {
     return LoginComponent;
 }());
 LoginComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-login',
         template: __webpack_require__("./src/app/login/login.component.html"),
         styles: [__webpack_require__("./src/app/login/login.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["c" /* Router */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" && _a || Object, typeof (_b = typeof router_1.Router !== "undefined" && router_1.Router) === "function" && _b || Object])
 ], LoginComponent);
-
+exports.LoginComponent = LoginComponent;
 var _a, _b;
 //# sourceMappingURL=login.component.js.map
 
@@ -1423,15 +2043,10 @@ module.exports = "<textarea #simplemde></textarea>"
 /***/ }),
 
 /***/ "./src/app/markdown/markdown.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* unused harmony export NgModelBase */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MarkdownComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_simplemde__ = __webpack_require__("./node_modules/simplemde/src/js/simplemde.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_simplemde___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_simplemde__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -1451,12 +2066,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var SimpleMDE = __webpack_require__("./node_modules/simplemde/src/js/simplemde.js");
+var forms_1 = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
 var MARKDOWN_CONTROL_VALUE_ACCESSOR = {
-    provide: __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* NG_VALUE_ACCESSOR */],
-    useExisting: Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["forwardRef"])(function () { return MarkdownComponent; }),
+    provide: forms_1.NG_VALUE_ACCESSOR,
+    useExisting: core_1.forwardRef(function () { return MarkdownComponent; }),
     multi: true
 };
 var NgModelBase = (function () {
@@ -1488,7 +2104,7 @@ var NgModelBase = (function () {
     };
     return NgModelBase;
 }());
-
+exports.NgModelBase = NgModelBase;
 var MarkdownComponent = (function (_super) {
     __extends(MarkdownComponent, _super);
     function MarkdownComponent() {
@@ -1512,7 +2128,7 @@ var MarkdownComponent = (function (_super) {
         var config = {
             element: this.textarea.nativeElement
         };
-        this.simplemde = new __WEBPACK_IMPORTED_MODULE_1_simplemde__(config);
+        this.simplemde = new SimpleMDE(config);
         if (this.tmpValue) {
             this.simplemde.value(this.tmpValue);
             this.tmpValue = null;
@@ -1527,11 +2143,11 @@ var MarkdownComponent = (function (_super) {
     return MarkdownComponent;
 }(NgModelBase));
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewChild"])('simplemde'),
-    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ElementRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ElementRef"]) === "function" && _a || Object)
+    core_1.ViewChild('simplemde'),
+    __metadata("design:type", typeof (_a = typeof core_1.ElementRef !== "undefined" && core_1.ElementRef) === "function" && _a || Object)
 ], MarkdownComponent.prototype, "textarea", void 0);
 MarkdownComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-markdown',
         template: __webpack_require__("./src/app/markdown/markdown.component.html"),
         styles: [__webpack_require__("./src/app/markdown/markdown.component.css")],
@@ -1539,31 +2155,63 @@ MarkdownComponent = __decorate([
     }),
     __metadata("design:paramtypes", [])
 ], MarkdownComponent);
-
+exports.MarkdownComponent = MarkdownComponent;
 var _a;
 //# sourceMappingURL=markdown.component.js.map
 
 /***/ }),
 
 /***/ "./src/app/models/element-tree-model.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ElementTreeModel; });
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var ElementTreeModel = (function () {
     function ElementTreeModel(id) {
-        this.tabs = '';
         this.id = id;
     }
-    ElementTreeModel.prototype.setFields = function (baseElement, depth, hasChildren, constrainedElement) {
-        this.id = baseElement.path.substring(baseElement.path.lastIndexOf('.') + 1);
+    ElementTreeModel.prototype.setId = function (sliceName) {
+        this.id = this.baseElement.path.substring(this.baseElement.path.lastIndexOf('.') + 1);
+        if (sliceName) {
+            this.id += ':' + sliceName;
+        }
+        if (this.constrainedElement) {
+            this.constrainedElement.id = this.baseElement.path + ':' + sliceName;
+        }
+    };
+    ElementTreeModel.prototype.setFields = function (baseElement, depth, hasChildren, position, constrainedElement) {
         this.baseElement = baseElement;
         this.depth = depth;
         this.hasChildren = hasChildren;
-        for (var x = 1; x < this.depth; x++) {
-            this.tabs += '    ';
+        this.position = position;
+        if (constrainedElement) {
+            this.constrainedElement = constrainedElement;
         }
     };
+    Object.defineProperty(ElementTreeModel.prototype, "isSlice", {
+        get: function () {
+            if (!this.constrainedElement) {
+                return false;
+            }
+            var idHasSliceName = this.constrainedElement.id && this.constrainedElement.id.indexOf(':') > 0;
+            var hasSliceNameProp = !!this.constrainedElement.sliceName;
+            return idHasSliceName || hasSliceNameProp;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ElementTreeModel.prototype, "tabs", {
+        get: function () {
+            var tabs = '';
+            for (var x = 1; x < this.depth; x++) {
+                tabs += '    ';
+            }
+            return tabs;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ElementTreeModel.prototype, "min", {
         get: function () {
             if (this.constrainedElement && this.constrainedElement.hasOwnProperty('min')) {
@@ -1607,382 +2255,31 @@ var ElementTreeModel = (function () {
     });
     return ElementTreeModel;
 }());
-
+exports.ElementTreeModel = ElementTreeModel;
 //# sourceMappingURL=element-tree-model.js.map
 
 /***/ }),
 
-/***/ "./src/app/models/fhir.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/app/models/export-formats.enum.ts":
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* unused harmony export Base */
-/* unused harmony export Element */
-/* unused harmony export Extension */
-/* unused harmony export Coding */
-/* unused harmony export Meta */
-/* unused harmony export Resource */
-/* unused harmony export Narrative */
-/* unused harmony export DomainResource */
-/* unused harmony export CodeableConcept */
-/* unused harmony export Period */
-/* unused harmony export ResourceReference */
-/* unused harmony export Identifier */
-/* unused harmony export ContactPoint */
-/* unused harmony export ContactDetail */
-/* unused harmony export UsageContext */
-/* unused harmony export BackboneElement */
-/* unused harmony export MappingComponent */
-/* unused harmony export DiscriminatorComponent */
-/* unused harmony export SlicingComponent */
-/* unused harmony export BaseComponent */
-/* unused harmony export TypeRefComponent */
-/* unused harmony export ExampleComponent */
-/* unused harmony export ConstraintComponent */
-/* unused harmony export ElementDefinitionBindingComponent */
-/* unused harmony export ElementDefinition */
-/* unused harmony export SnapshotComponent */
-/* unused harmony export DifferentialComponent */
-/* unused harmony export StructureDefinition */
-/* unused harmony export ParameterComponent */
-/* unused harmony export Parameters */
-/* unused harmony export Query */
-/* unused harmony export LinkComponent */
-/* unused harmony export SearchComponent */
-/* unused harmony export RequestComponent */
-/* unused harmony export ResponseComponent */
-/* unused harmony export EntryComponent */
-/* unused harmony export ResourceEntry */
-/* unused harmony export Flag */
-/* unused harmony export Alert */
-/* unused harmony export Quantity */
-/* unused harmony export SimpleQuantity */
-/* unused harmony export Range */
-/* unused harmony export ReferenceRangeComponent */
-/* unused harmony export RelatedComponent */
-/* unused harmony export ComponentComponent */
-/* unused harmony export Observation */
-/* unused harmony export Binary */
-/* unused harmony export Signature */
-/* unused harmony export Bundle */
-/* unused harmony export BundleExtensions */
-/* unused harmony export FilterComponent */
-/* unused harmony export PropertyComponent */
-/* unused harmony export DesignationComponent */
-/* unused harmony export ConceptPropertyComponent */
-/* unused harmony export ConceptDefinitionComponent */
-/* unused harmony export CodeSystem */
-/* unused harmony export CodeSystemExtensions */
-/* unused harmony export OtherElementComponent */
-/* unused harmony export TargetElementComponent */
-/* unused harmony export SourceElementComponent */
-/* unused harmony export UnmappedComponent */
-/* unused harmony export GroupComponent */
-/* unused harmony export ConceptMap */
-/* unused harmony export ElementDefinitionExtensions */
-/* unused harmony export Money */
-/* unused harmony export CoverageComponent */
-/* unused harmony export GuarantorComponent */
-/* unused harmony export Account */
-/* unused harmony export Contributor */
-/* unused harmony export Attachment */
-/* unused harmony export RelatedArtifact */
-/* unused harmony export ParticipantComponent */
-/* unused harmony export RepeatComponent */
-/* unused harmony export Timing */
-/* unused harmony export Ratio */
-/* unused harmony export Dosage */
-/* unused harmony export DynamicValueComponent */
-/* unused harmony export ActivityDefinition */
-/* unused harmony export Address */
-/* unused harmony export SuspectEntityComponent */
-/* unused harmony export AdverseEvent */
-/* unused harmony export Age */
-/* unused harmony export Annotation */
-/* unused harmony export ReactionComponent */
-/* unused harmony export AllergyIntolerance */
-/* unused harmony export Appointment */
-/* unused harmony export AppointmentResponse */
-/* unused harmony export NetworkComponent */
-/* unused harmony export AgentComponent */
-/* unused harmony export SourceComponent */
-/* unused harmony export DetailComponent */
-/* unused harmony export EntityComponent */
-/* unused harmony export AuditEvent */
-/* unused harmony export Basic */
-/* unused harmony export BodySite */
-/* unused harmony export SoftwareComponent */
-/* unused harmony export ImplementationComponent */
-/* unused harmony export CertificateComponent */
-/* unused harmony export SecurityComponent */
-/* unused harmony export ResourceInteractionComponent */
-/* unused harmony export SearchParamComponent */
-/* unused harmony export ResourceComponent */
-/* unused harmony export SystemInteractionComponent */
-/* unused harmony export OperationComponent */
-/* unused harmony export RestComponent */
-/* unused harmony export EndpointComponent */
-/* unused harmony export SupportedMessageComponent */
-/* unused harmony export EventComponent */
-/* unused harmony export MessagingComponent */
-/* unused harmony export DocumentComponent */
-/* unused harmony export CapabilityStatement */
-/* unused harmony export ActivityComponent */
-/* unused harmony export CarePlan */
-/* unused harmony export CareTeam */
-/* unused harmony export ChargeItem */
-/* unused harmony export RelatedClaimComponent */
-/* unused harmony export PayeeComponent */
-/* unused harmony export CareTeamComponent */
-/* unused harmony export SpecialConditionComponent */
-/* unused harmony export DiagnosisComponent */
-/* unused harmony export ProcedureComponent */
-/* unused harmony export InsuranceComponent */
-/* unused harmony export AccidentComponent */
-/* unused harmony export ItemComponent */
-/* unused harmony export Claim */
-/* unused harmony export AdjudicationComponent */
-/* unused harmony export AddedItemsDetailComponent */
-/* unused harmony export AddedItemComponent */
-/* unused harmony export ErrorComponent */
-/* unused harmony export PaymentComponent */
-/* unused harmony export NoteComponent */
-/* unused harmony export ClaimResponse */
-/* unused harmony export InvestigationComponent */
-/* unused harmony export FindingComponent */
-/* unused harmony export ClinicalImpression */
-/* unused harmony export PayloadComponent */
-/* unused harmony export Communication */
-/* unused harmony export RequesterComponent */
-/* unused harmony export CommunicationRequest */
-/* unused harmony export CompartmentDefinition */
-/* unused harmony export AttesterComponent */
-/* unused harmony export RelatesToComponent */
-/* unused harmony export SectionComponent */
-/* unused harmony export Composition */
-/* unused harmony export StageComponent */
-/* unused harmony export EvidenceComponent */
-/* unused harmony export Condition */
-/* unused harmony export ActorComponent */
-/* unused harmony export PolicyComponent */
-/* unused harmony export DataComponent */
-/* unused harmony export ExceptActorComponent */
-/* unused harmony export ExceptDataComponent */
-/* unused harmony export ExceptComponent */
-/* unused harmony export Consent */
-/* unused harmony export SignatoryComponent */
-/* unused harmony export ValuedItemComponent */
-/* unused harmony export TermAgentComponent */
-/* unused harmony export TermValuedItemComponent */
-/* unused harmony export TermComponent */
-/* unused harmony export FriendlyLanguageComponent */
-/* unused harmony export LegalLanguageComponent */
-/* unused harmony export ComputableLanguageComponent */
-/* unused harmony export Contract */
-/* unused harmony export Count */
-/* unused harmony export Coverage */
-/* unused harmony export DataElement */
-/* unused harmony export CodeFilterComponent */
-/* unused harmony export DateFilterComponent */
-/* unused harmony export DataRequirement */
-/* unused harmony export MitigationComponent */
-/* unused harmony export DetectedIssue */
-/* unused harmony export UdiComponent */
-/* unused harmony export Device */
-/* unused harmony export ProductionSpecificationComponent */
-/* unused harmony export DeviceComponent */
-/* unused harmony export CalibrationComponent */
-/* unused harmony export DeviceMetric */
-/* unused harmony export DeviceRequest */
-/* unused harmony export DeviceUseStatement */
-/* unused harmony export PerformerComponent */
-/* unused harmony export ImageComponent */
-/* unused harmony export DiagnosticReport */
-/* unused harmony export Distance */
-/* unused harmony export ContentComponent */
-/* unused harmony export DocumentManifest */
-/* unused harmony export ContextComponent */
-/* unused harmony export DocumentReference */
-/* unused harmony export Duration */
-/* unused harmony export EligibilityRequest */
-/* unused harmony export ErrorsComponent */
-/* unused harmony export EligibilityResponse */
-/* unused harmony export StatusHistoryComponent */
-/* unused harmony export ClassHistoryComponent */
-/* unused harmony export HospitalizationComponent */
-/* unused harmony export LocationComponent */
-/* unused harmony export Encounter */
-/* unused harmony export Endpoint */
-/* unused harmony export EnrollmentRequest */
-/* unused harmony export EnrollmentResponse */
-/* unused harmony export EpisodeOfCare */
-/* unused harmony export FixedVersionComponent */
-/* unused harmony export ExcludedSystemComponent */
-/* unused harmony export ExpansionProfile */
-/* unused harmony export SupportingInformationComponent */
-/* unused harmony export BenefitComponent */
-/* unused harmony export BenefitBalanceComponent */
-/* unused harmony export ExplanationOfBenefit */
-/* unused harmony export ConditionComponent */
-/* unused harmony export FamilyMemberHistory */
-/* unused harmony export TargetComponent */
-/* unused harmony export Goal */
-/* unused harmony export GraphDefinition */
-/* unused harmony export CharacteristicComponent */
-/* unused harmony export MemberComponent */
-/* unused harmony export Group */
-/* unused harmony export GuidanceResponse */
-/* unused harmony export AvailableTimeComponent */
-/* unused harmony export NotAvailableComponent */
-/* unused harmony export HealthcareService */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HumanName; });
-/* unused harmony export InstanceComponent */
-/* unused harmony export SeriesComponent */
-/* unused harmony export StudyComponent */
-/* unused harmony export ImagingManifest */
-/* unused harmony export ImagingStudy */
-/* unused harmony export PractitionerComponent */
-/* unused harmony export ExplanationComponent */
-/* unused harmony export VaccinationProtocolComponent */
-/* unused harmony export Immunization */
-/* unused harmony export DateCriterionComponent */
-/* unused harmony export ProtocolComponent */
-/* unused harmony export RecommendationComponent */
-/* unused harmony export ImmunizationRecommendation */
-/* unused harmony export DependencyComponent */
-/* unused harmony export PackageComponent */
-/* unused harmony export GlobalComponent */
-/* unused harmony export PageComponent */
-/* unused harmony export ImplementationGuide */
-/* unused harmony export ParameterDefinition */
-/* unused harmony export Library */
-/* unused harmony export Linkage */
-/* unused harmony export List */
-/* unused harmony export PositionComponent */
-/* unused harmony export Location */
-/* unused harmony export SupplementalDataComponent */
-/* unused harmony export Measure */
-/* unused harmony export MeasureReport */
-/* unused harmony export Media */
-/* unused harmony export IngredientComponent */
-/* unused harmony export Medication */
-/* unused harmony export DosageComponent */
-/* unused harmony export MedicationAdministration */
-/* unused harmony export SubstitutionComponent */
-/* unused harmony export MedicationDispense */
-/* unused harmony export DispenseRequestComponent */
-/* unused harmony export MedicationRequest */
-/* unused harmony export MedicationStatement */
-/* unused harmony export FocusComponent */
-/* unused harmony export AllowedResponseComponent */
-/* unused harmony export MessageDefinition */
-/* unused harmony export MessageDestinationComponent */
-/* unused harmony export MessageSourceComponent */
-/* unused harmony export MessageHeader */
-/* unused harmony export UniqueIdComponent */
-/* unused harmony export NamingSystem */
-/* unused harmony export NutrientComponent */
-/* unused harmony export TextureComponent */
-/* unused harmony export OralDietComponent */
-/* unused harmony export SupplementComponent */
-/* unused harmony export AdministrationComponent */
-/* unused harmony export EnteralFormulaComponent */
-/* unused harmony export NutritionOrder */
-/* unused harmony export OverloadComponent */
-/* unused harmony export OperationDefinition */
-/* unused harmony export IssueComponent */
-/* unused harmony export OperationOutcome */
-/* unused harmony export ContactComponent */
-/* unused harmony export Organization */
-/* unused harmony export AnimalComponent */
-/* unused harmony export CommunicationComponent */
-/* unused harmony export Patient */
-/* unused harmony export PaymentNotice */
-/* unused harmony export DetailsComponent */
-/* unused harmony export NotesComponent */
-/* unused harmony export PaymentReconciliation */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Person; });
-/* unused harmony export GoalComponent */
-/* unused harmony export TriggerDefinition */
-/* unused harmony export RelatedActionComponent */
-/* unused harmony export ActionComponent */
-/* unused harmony export PlanDefinition */
-/* unused harmony export QualificationComponent */
-/* unused harmony export Practitioner */
-/* unused harmony export PractitionerRole */
-/* unused harmony export FocalDeviceComponent */
-/* unused harmony export Procedure */
-/* unused harmony export ProcedureRequest */
-/* unused harmony export ItemsComponent */
-/* unused harmony export ProcessRequest */
-/* unused harmony export ProcessNoteComponent */
-/* unused harmony export ProcessResponse */
-/* unused harmony export Provenance */
-/* unused harmony export Questionnaire */
-/* unused harmony export QuestionnaireResponse */
-/* unused harmony export ReferralRequest */
-/* unused harmony export RelatedPerson */
-/* unused harmony export RequestGroup */
-/* unused harmony export ArmComponent */
-/* unused harmony export ResearchStudy */
-/* unused harmony export ResearchSubject */
-/* unused harmony export PredictionComponent */
-/* unused harmony export RiskAssessment */
-/* unused harmony export SampledData */
-/* unused harmony export Schedule */
-/* unused harmony export SearchParameter */
-/* unused harmony export ReferenceSeqComponent */
-/* unused harmony export VariantComponent */
-/* unused harmony export QualityComponent */
-/* unused harmony export RepositoryComponent */
-/* unused harmony export Sequence */
-/* unused harmony export ServiceDefinition */
-/* unused harmony export Slot */
-/* unused harmony export CollectionComponent */
-/* unused harmony export ProcessingComponent */
-/* unused harmony export ContainerComponent */
-/* unused harmony export Specimen */
-/* unused harmony export StructureComponent */
-/* unused harmony export StructureMap */
-/* unused harmony export ChannelComponent */
-/* unused harmony export Subscription */
-/* unused harmony export Substance */
-/* unused harmony export SuppliedItemComponent */
-/* unused harmony export SupplyDelivery */
-/* unused harmony export OrderedItemComponent */
-/* unused harmony export SupplyRequest */
-/* unused harmony export RestrictionComponent */
-/* unused harmony export OutputComponent */
-/* unused harmony export Task */
-/* unused harmony export ModelInfo */
-/* unused harmony export AssertComponent */
-/* unused harmony export SetupActionComponent */
-/* unused harmony export SetupComponent */
-/* unused harmony export TestActionComponent */
-/* unused harmony export TestComponent */
-/* unused harmony export TeardownActionComponent */
-/* unused harmony export TeardownComponent */
-/* unused harmony export TestReport */
-/* unused harmony export OriginComponent */
-/* unused harmony export DestinationComponent */
-/* unused harmony export CapabilityComponent */
-/* unused harmony export MetadataComponent */
-/* unused harmony export FixtureComponent */
-/* unused harmony export VariableComponent */
-/* unused harmony export RuleParamComponent */
-/* unused harmony export RuleComponent */
-/* unused harmony export RulesetRuleParamComponent */
-/* unused harmony export RulesetRuleComponent */
-/* unused harmony export RulesetComponent */
-/* unused harmony export TestScript */
-/* unused harmony export ConceptReferenceComponent */
-/* unused harmony export ConceptSetComponent */
-/* unused harmony export ComposeComponent */
-/* unused harmony export ContainsComponent */
-/* unused harmony export ExpansionComponent */
-/* unused harmony export ValueSet */
-/* unused harmony export DispenseComponent */
-/* unused harmony export VisionPrescription */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ExportFormats;
+(function (ExportFormats) {
+    ExportFormats[ExportFormats["Bundle"] = 1] = "Bundle";
+    ExportFormats[ExportFormats["HTML"] = 2] = "HTML";
+})(ExportFormats = exports.ExportFormats || (exports.ExportFormats = {}));
+//# sourceMappingURL=export-formats.enum.js.map
+
+/***/ }),
+
+/***/ "./src/app/models/fhir.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -1993,6 +2290,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+Object.defineProperty(exports, "__esModule", { value: true });
 var Base = (function () {
     function Base(obj) {
         if (obj) {
@@ -2003,7 +2301,7 @@ var Base = (function () {
     }
     return Base;
 }());
-
+exports.Base = Base;
 var Element = (function (_super) {
     __extends(Element, _super);
     function Element(obj) {
@@ -2024,7 +2322,7 @@ var Element = (function (_super) {
     }
     return Element;
 }(Base));
-
+exports.Element = Element;
 var Extension = (function (_super) {
     __extends(Extension, _super);
     function Extension(obj) {
@@ -2041,7 +2339,7 @@ var Extension = (function (_super) {
     }
     return Extension;
 }(Element));
-
+exports.Extension = Extension;
 var Coding = (function (_super) {
     __extends(Coding, _super);
     function Coding(obj) {
@@ -2067,7 +2365,7 @@ var Coding = (function (_super) {
     }
     return Coding;
 }(Element));
-
+exports.Coding = Coding;
 var Meta = (function (_super) {
     __extends(Meta, _super);
     function Meta(obj) {
@@ -2101,7 +2399,7 @@ var Meta = (function (_super) {
     }
     return Meta;
 }(Element));
-
+exports.Meta = Meta;
 var Resource = (function (_super) {
     __extends(Resource, _super);
     function Resource(obj) {
@@ -2124,7 +2422,7 @@ var Resource = (function (_super) {
     }
     return Resource;
 }(Base));
-
+exports.Resource = Resource;
 var Narrative = (function (_super) {
     __extends(Narrative, _super);
     function Narrative(obj) {
@@ -2141,7 +2439,7 @@ var Narrative = (function (_super) {
     }
     return Narrative;
 }(Element));
-
+exports.Narrative = Narrative;
 var DomainResource = (function (_super) {
     __extends(DomainResource, _super);
     function DomainResource(obj) {
@@ -2177,7 +2475,7 @@ var DomainResource = (function (_super) {
     }
     return DomainResource;
 }(Resource));
-
+exports.DomainResource = DomainResource;
 var CodeableConcept = (function (_super) {
     __extends(CodeableConcept, _super);
     function CodeableConcept(obj) {
@@ -2198,7 +2496,7 @@ var CodeableConcept = (function (_super) {
     }
     return CodeableConcept;
 }(Element));
-
+exports.CodeableConcept = CodeableConcept;
 var Period = (function (_super) {
     __extends(Period, _super);
     function Period(obj) {
@@ -2215,7 +2513,7 @@ var Period = (function (_super) {
     }
     return Period;
 }(Element));
-
+exports.Period = Period;
 var ResourceReference = (function (_super) {
     __extends(ResourceReference, _super);
     function ResourceReference(obj) {
@@ -2235,7 +2533,7 @@ var ResourceReference = (function (_super) {
     }
     return ResourceReference;
 }(Element));
-
+exports.ResourceReference = ResourceReference;
 var Identifier = (function (_super) {
     __extends(Identifier, _super);
     function Identifier(obj) {
@@ -2264,7 +2562,7 @@ var Identifier = (function (_super) {
     }
     return Identifier;
 }(Element));
-
+exports.Identifier = Identifier;
 var ContactPoint = (function (_super) {
     __extends(ContactPoint, _super);
     function ContactPoint(obj) {
@@ -2290,7 +2588,7 @@ var ContactPoint = (function (_super) {
     }
     return ContactPoint;
 }(Element));
-
+exports.ContactPoint = ContactPoint;
 var ContactDetail = (function (_super) {
     __extends(ContactDetail, _super);
     function ContactDetail(obj) {
@@ -2311,7 +2609,7 @@ var ContactDetail = (function (_super) {
     }
     return ContactDetail;
 }(Element));
-
+exports.ContactDetail = ContactDetail;
 var UsageContext = (function (_super) {
     __extends(UsageContext, _super);
     function UsageContext(obj) {
@@ -2328,7 +2626,7 @@ var UsageContext = (function (_super) {
     }
     return UsageContext;
 }(Element));
-
+exports.UsageContext = UsageContext;
 var BackboneElement = (function (_super) {
     __extends(BackboneElement, _super);
     function BackboneElement(obj) {
@@ -2346,7 +2644,7 @@ var BackboneElement = (function (_super) {
     }
     return BackboneElement;
 }(Element));
-
+exports.BackboneElement = BackboneElement;
 var MappingComponent = (function (_super) {
     __extends(MappingComponent, _super);
     function MappingComponent(obj) {
@@ -2369,7 +2667,7 @@ var MappingComponent = (function (_super) {
     }
     return MappingComponent;
 }(BackboneElement));
-
+exports.MappingComponent = MappingComponent;
 var DiscriminatorComponent = (function (_super) {
     __extends(DiscriminatorComponent, _super);
     function DiscriminatorComponent(obj) {
@@ -2386,7 +2684,7 @@ var DiscriminatorComponent = (function (_super) {
     }
     return DiscriminatorComponent;
 }(Element));
-
+exports.DiscriminatorComponent = DiscriminatorComponent;
 var SlicingComponent = (function (_super) {
     __extends(SlicingComponent, _super);
     function SlicingComponent(obj) {
@@ -2413,7 +2711,7 @@ var SlicingComponent = (function (_super) {
     }
     return SlicingComponent;
 }(Element));
-
+exports.SlicingComponent = SlicingComponent;
 var BaseComponent = (function (_super) {
     __extends(BaseComponent, _super);
     function BaseComponent(obj) {
@@ -2433,7 +2731,7 @@ var BaseComponent = (function (_super) {
     }
     return BaseComponent;
 }(Element));
-
+exports.BaseComponent = BaseComponent;
 var TypeRefComponent = (function (_super) {
     __extends(TypeRefComponent, _super);
     function TypeRefComponent(obj) {
@@ -2459,7 +2757,7 @@ var TypeRefComponent = (function (_super) {
     }
     return TypeRefComponent;
 }(Element));
-
+exports.TypeRefComponent = TypeRefComponent;
 var ExampleComponent = (function (_super) {
     __extends(ExampleComponent, _super);
     function ExampleComponent(obj) {
@@ -2476,7 +2774,7 @@ var ExampleComponent = (function (_super) {
     }
     return ExampleComponent;
 }(Element));
-
+exports.ExampleComponent = ExampleComponent;
 var ConstraintComponent = (function (_super) {
     __extends(ConstraintComponent, _super);
     function ConstraintComponent(obj) {
@@ -2508,7 +2806,7 @@ var ConstraintComponent = (function (_super) {
     }
     return ConstraintComponent;
 }(Element));
-
+exports.ConstraintComponent = ConstraintComponent;
 var ElementDefinitionBindingComponent = (function (_super) {
     __extends(ElementDefinitionBindingComponent, _super);
     function ElementDefinitionBindingComponent(obj) {
@@ -2528,7 +2826,7 @@ var ElementDefinitionBindingComponent = (function (_super) {
     }
     return ElementDefinitionBindingComponent;
 }(Element));
-
+exports.ElementDefinitionBindingComponent = ElementDefinitionBindingComponent;
 var ElementDefinition = (function (_super) {
     __extends(ElementDefinition, _super);
     function ElementDefinition(obj) {
@@ -2655,7 +2953,7 @@ var ElementDefinition = (function (_super) {
     }
     return ElementDefinition;
 }(Element));
-
+exports.ElementDefinition = ElementDefinition;
 var SnapshotComponent = (function (_super) {
     __extends(SnapshotComponent, _super);
     function SnapshotComponent(obj) {
@@ -2673,7 +2971,7 @@ var SnapshotComponent = (function (_super) {
     }
     return SnapshotComponent;
 }(BackboneElement));
-
+exports.SnapshotComponent = SnapshotComponent;
 var DifferentialComponent = (function (_super) {
     __extends(DifferentialComponent, _super);
     function DifferentialComponent(obj) {
@@ -2691,7 +2989,7 @@ var DifferentialComponent = (function (_super) {
     }
     return DifferentialComponent;
 }(BackboneElement));
-
+exports.DifferentialComponent = DifferentialComponent;
 var StructureDefinition = (function (_super) {
     __extends(StructureDefinition, _super);
     function StructureDefinition(obj) {
@@ -2811,7 +3109,7 @@ var StructureDefinition = (function (_super) {
     }
     return StructureDefinition;
 }(DomainResource));
-
+exports.StructureDefinition = StructureDefinition;
 var ParameterComponent = (function (_super) {
     __extends(ParameterComponent, _super);
     function ParameterComponent(obj) {
@@ -2838,7 +3136,7 @@ var ParameterComponent = (function (_super) {
     }
     return ParameterComponent;
 }(BackboneElement));
-
+exports.ParameterComponent = ParameterComponent;
 var Parameters = (function (_super) {
     __extends(Parameters, _super);
     function Parameters(obj) {
@@ -2857,7 +3155,7 @@ var Parameters = (function (_super) {
     }
     return Parameters;
 }(Resource));
-
+exports.Parameters = Parameters;
 var Query = (function (_super) {
     __extends(Query, _super);
     function Query(obj) {
@@ -2869,7 +3167,7 @@ var Query = (function (_super) {
     }
     return Query;
 }(Parameters));
-
+exports.Query = Query;
 var LinkComponent = (function (_super) {
     __extends(LinkComponent, _super);
     function LinkComponent(obj) {
@@ -2886,7 +3184,7 @@ var LinkComponent = (function (_super) {
     }
     return LinkComponent;
 }(BackboneElement));
-
+exports.LinkComponent = LinkComponent;
 var SearchComponent = (function (_super) {
     __extends(SearchComponent, _super);
     function SearchComponent(obj) {
@@ -2903,7 +3201,7 @@ var SearchComponent = (function (_super) {
     }
     return SearchComponent;
 }(BackboneElement));
-
+exports.SearchComponent = SearchComponent;
 var RequestComponent = (function (_super) {
     __extends(RequestComponent, _super);
     function RequestComponent(obj) {
@@ -2932,7 +3230,7 @@ var RequestComponent = (function (_super) {
     }
     return RequestComponent;
 }(BackboneElement));
-
+exports.RequestComponent = RequestComponent;
 var ResponseComponent = (function (_super) {
     __extends(ResponseComponent, _super);
     function ResponseComponent(obj) {
@@ -2958,7 +3256,7 @@ var ResponseComponent = (function (_super) {
     }
     return ResponseComponent;
 }(BackboneElement));
-
+exports.ResponseComponent = ResponseComponent;
 var EntryComponent = (function (_super) {
     __extends(EntryComponent, _super);
     function EntryComponent(obj) {
@@ -2991,7 +3289,7 @@ var EntryComponent = (function (_super) {
     }
     return EntryComponent;
 }(BackboneElement));
-
+exports.EntryComponent = EntryComponent;
 var ResourceEntry = (function (_super) {
     __extends(ResourceEntry, _super);
     function ResourceEntry(obj) {
@@ -3002,7 +3300,7 @@ var ResourceEntry = (function (_super) {
     }
     return ResourceEntry;
 }(EntryComponent));
-
+exports.ResourceEntry = ResourceEntry;
 var Flag = (function (_super) {
     __extends(Flag, _super);
     function Flag(obj) {
@@ -3042,7 +3340,7 @@ var Flag = (function (_super) {
     }
     return Flag;
 }(DomainResource));
-
+exports.Flag = Flag;
 var Alert = (function (_super) {
     __extends(Alert, _super);
     function Alert(obj) {
@@ -3054,7 +3352,7 @@ var Alert = (function (_super) {
     }
     return Alert;
 }(Flag));
-
+exports.Alert = Alert;
 var Quantity = (function (_super) {
     __extends(Quantity, _super);
     function Quantity(obj) {
@@ -3080,7 +3378,7 @@ var Quantity = (function (_super) {
     }
     return Quantity;
 }(Element));
-
+exports.Quantity = Quantity;
 var SimpleQuantity = (function (_super) {
     __extends(SimpleQuantity, _super);
     function SimpleQuantity(obj) {
@@ -3091,7 +3389,7 @@ var SimpleQuantity = (function (_super) {
     }
     return SimpleQuantity;
 }(Quantity));
-
+exports.SimpleQuantity = SimpleQuantity;
 var Range = (function (_super) {
     __extends(Range, _super);
     function Range(obj) {
@@ -3108,7 +3406,7 @@ var Range = (function (_super) {
     }
     return Range;
 }(Element));
-
+exports.Range = Range;
 var ReferenceRangeComponent = (function (_super) {
     __extends(ReferenceRangeComponent, _super);
     function ReferenceRangeComponent(obj) {
@@ -3141,7 +3439,7 @@ var ReferenceRangeComponent = (function (_super) {
     }
     return ReferenceRangeComponent;
 }(BackboneElement));
-
+exports.ReferenceRangeComponent = ReferenceRangeComponent;
 var RelatedComponent = (function (_super) {
     __extends(RelatedComponent, _super);
     function RelatedComponent(obj) {
@@ -3158,7 +3456,7 @@ var RelatedComponent = (function (_super) {
     }
     return RelatedComponent;
 }(BackboneElement));
-
+exports.RelatedComponent = RelatedComponent;
 var ComponentComponent = (function (_super) {
     __extends(ComponentComponent, _super);
     function ComponentComponent(obj) {
@@ -3188,7 +3486,7 @@ var ComponentComponent = (function (_super) {
     }
     return ComponentComponent;
 }(BackboneElement));
-
+exports.ComponentComponent = ComponentComponent;
 var Observation = (function (_super) {
     __extends(Observation, _super);
     function Observation(obj) {
@@ -3291,7 +3589,7 @@ var Observation = (function (_super) {
     }
     return Observation;
 }(DomainResource));
-
+exports.Observation = Observation;
 var Binary = (function (_super) {
     __extends(Binary, _super);
     function Binary(obj) {
@@ -3312,7 +3610,7 @@ var Binary = (function (_super) {
     }
     return Binary;
 }(Resource));
-
+exports.Binary = Binary;
 var Signature = (function (_super) {
     __extends(Signature, _super);
     function Signature(obj) {
@@ -3345,7 +3643,7 @@ var Signature = (function (_super) {
     }
     return Signature;
 }(Element));
-
+exports.Signature = Signature;
 var Bundle = (function (_super) {
     __extends(Bundle, _super);
     function Bundle(obj) {
@@ -3383,7 +3681,7 @@ var Bundle = (function (_super) {
     }
     return Bundle;
 }(Resource));
-
+exports.Bundle = Bundle;
 var BundleExtensions = (function () {
     function BundleExtensions(obj) {
         if (obj) {
@@ -3391,7 +3689,7 @@ var BundleExtensions = (function () {
     }
     return BundleExtensions;
 }());
-
+exports.BundleExtensions = BundleExtensions;
 var FilterComponent = (function (_super) {
     __extends(FilterComponent, _super);
     function FilterComponent(obj) {
@@ -3414,7 +3712,7 @@ var FilterComponent = (function (_super) {
     }
     return FilterComponent;
 }(BackboneElement));
-
+exports.FilterComponent = FilterComponent;
 var PropertyComponent = (function (_super) {
     __extends(PropertyComponent, _super);
     function PropertyComponent(obj) {
@@ -3437,7 +3735,7 @@ var PropertyComponent = (function (_super) {
     }
     return PropertyComponent;
 }(BackboneElement));
-
+exports.PropertyComponent = PropertyComponent;
 var DesignationComponent = (function (_super) {
     __extends(DesignationComponent, _super);
     function DesignationComponent(obj) {
@@ -3457,7 +3755,7 @@ var DesignationComponent = (function (_super) {
     }
     return DesignationComponent;
 }(BackboneElement));
-
+exports.DesignationComponent = DesignationComponent;
 var ConceptPropertyComponent = (function (_super) {
     __extends(ConceptPropertyComponent, _super);
     function ConceptPropertyComponent(obj) {
@@ -3474,7 +3772,7 @@ var ConceptPropertyComponent = (function (_super) {
     }
     return ConceptPropertyComponent;
 }(BackboneElement));
-
+exports.ConceptPropertyComponent = ConceptPropertyComponent;
 var ConceptDefinitionComponent = (function (_super) {
     __extends(ConceptDefinitionComponent, _super);
     function ConceptDefinitionComponent(obj) {
@@ -3515,7 +3813,7 @@ var ConceptDefinitionComponent = (function (_super) {
     }
     return ConceptDefinitionComponent;
 }(BackboneElement));
-
+exports.ConceptDefinitionComponent = ConceptDefinitionComponent;
 var CodeSystem = (function (_super) {
     __extends(CodeSystem, _super);
     function CodeSystem(obj) {
@@ -3626,7 +3924,7 @@ var CodeSystem = (function (_super) {
     }
     return CodeSystem;
 }(DomainResource));
-
+exports.CodeSystem = CodeSystem;
 var CodeSystemExtensions = (function () {
     function CodeSystemExtensions(obj) {
         if (obj) {
@@ -3634,7 +3932,7 @@ var CodeSystemExtensions = (function () {
     }
     return CodeSystemExtensions;
 }());
-
+exports.CodeSystemExtensions = CodeSystemExtensions;
 var OtherElementComponent = (function (_super) {
     __extends(OtherElementComponent, _super);
     function OtherElementComponent(obj) {
@@ -3657,7 +3955,7 @@ var OtherElementComponent = (function (_super) {
     }
     return OtherElementComponent;
 }(BackboneElement));
-
+exports.OtherElementComponent = OtherElementComponent;
 var TargetElementComponent = (function (_super) {
     __extends(TargetElementComponent, _super);
     function TargetElementComponent(obj) {
@@ -3694,7 +3992,7 @@ var TargetElementComponent = (function (_super) {
     }
     return TargetElementComponent;
 }(BackboneElement));
-
+exports.TargetElementComponent = TargetElementComponent;
 var SourceElementComponent = (function (_super) {
     __extends(SourceElementComponent, _super);
     function SourceElementComponent(obj) {
@@ -3718,7 +4016,7 @@ var SourceElementComponent = (function (_super) {
     }
     return SourceElementComponent;
 }(BackboneElement));
-
+exports.SourceElementComponent = SourceElementComponent;
 var UnmappedComponent = (function (_super) {
     __extends(UnmappedComponent, _super);
     function UnmappedComponent(obj) {
@@ -3741,7 +4039,7 @@ var UnmappedComponent = (function (_super) {
     }
     return UnmappedComponent;
 }(BackboneElement));
-
+exports.UnmappedComponent = UnmappedComponent;
 var GroupComponent = (function (_super) {
     __extends(GroupComponent, _super);
     function GroupComponent(obj) {
@@ -3774,7 +4072,7 @@ var GroupComponent = (function (_super) {
     }
     return GroupComponent;
 }(BackboneElement));
-
+exports.GroupComponent = GroupComponent;
 var ConceptMap = (function (_super) {
     __extends(ConceptMap, _super);
     function ConceptMap(obj) {
@@ -3856,7 +4154,7 @@ var ConceptMap = (function (_super) {
     }
     return ConceptMap;
 }(DomainResource));
-
+exports.ConceptMap = ConceptMap;
 var ElementDefinitionExtensions = (function () {
     function ElementDefinitionExtensions(obj) {
         if (obj) {
@@ -3864,7 +4162,7 @@ var ElementDefinitionExtensions = (function () {
     }
     return ElementDefinitionExtensions;
 }());
-
+exports.ElementDefinitionExtensions = ElementDefinitionExtensions;
 var Money = (function (_super) {
     __extends(Money, _super);
     function Money(obj) {
@@ -3875,7 +4173,7 @@ var Money = (function (_super) {
     }
     return Money;
 }(Quantity));
-
+exports.Money = Money;
 var CoverageComponent = (function (_super) {
     __extends(CoverageComponent, _super);
     function CoverageComponent(obj) {
@@ -3892,7 +4190,7 @@ var CoverageComponent = (function (_super) {
     }
     return CoverageComponent;
 }(BackboneElement));
-
+exports.CoverageComponent = CoverageComponent;
 var GuarantorComponent = (function (_super) {
     __extends(GuarantorComponent, _super);
     function GuarantorComponent(obj) {
@@ -3912,7 +4210,7 @@ var GuarantorComponent = (function (_super) {
     }
     return GuarantorComponent;
 }(BackboneElement));
-
+exports.GuarantorComponent = GuarantorComponent;
 var Account = (function (_super) {
     __extends(Account, _super);
     function Account(obj) {
@@ -3972,7 +4270,7 @@ var Account = (function (_super) {
     }
     return Account;
 }(DomainResource));
-
+exports.Account = Account;
 var Contributor = (function (_super) {
     __extends(Contributor, _super);
     function Contributor(obj) {
@@ -3996,7 +4294,7 @@ var Contributor = (function (_super) {
     }
     return Contributor;
 }(Element));
-
+exports.Contributor = Contributor;
 var Attachment = (function (_super) {
     __extends(Attachment, _super);
     function Attachment(obj) {
@@ -4031,7 +4329,7 @@ var Attachment = (function (_super) {
     }
     return Attachment;
 }(Element));
-
+exports.Attachment = Attachment;
 var RelatedArtifact = (function (_super) {
     __extends(RelatedArtifact, _super);
     function RelatedArtifact(obj) {
@@ -4060,7 +4358,7 @@ var RelatedArtifact = (function (_super) {
     }
     return RelatedArtifact;
 }(Element));
-
+exports.RelatedArtifact = RelatedArtifact;
 var ParticipantComponent = (function (_super) {
     __extends(ParticipantComponent, _super);
     function ParticipantComponent(obj) {
@@ -4077,7 +4375,7 @@ var ParticipantComponent = (function (_super) {
     }
     return ParticipantComponent;
 }(BackboneElement));
-
+exports.ParticipantComponent = ParticipantComponent;
 var RepeatComponent = (function (_super) {
     __extends(RepeatComponent, _super);
     function RepeatComponent(obj) {
@@ -4133,7 +4431,7 @@ var RepeatComponent = (function (_super) {
     }
     return RepeatComponent;
 }(Element));
-
+exports.RepeatComponent = RepeatComponent;
 var Timing = (function (_super) {
     __extends(Timing, _super);
     function Timing(obj) {
@@ -4153,7 +4451,7 @@ var Timing = (function (_super) {
     }
     return Timing;
 }(Element));
-
+exports.Timing = Timing;
 var Ratio = (function (_super) {
     __extends(Ratio, _super);
     function Ratio(obj) {
@@ -4170,7 +4468,7 @@ var Ratio = (function (_super) {
     }
     return Ratio;
 }(Element));
-
+exports.Ratio = Ratio;
 var Dosage = (function (_super) {
     __extends(Dosage, _super);
     function Dosage(obj) {
@@ -4227,7 +4525,7 @@ var Dosage = (function (_super) {
     }
     return Dosage;
 }(Element));
-
+exports.Dosage = Dosage;
 var DynamicValueComponent = (function (_super) {
     __extends(DynamicValueComponent, _super);
     function DynamicValueComponent(obj) {
@@ -4250,7 +4548,7 @@ var DynamicValueComponent = (function (_super) {
     }
     return DynamicValueComponent;
 }(BackboneElement));
-
+exports.DynamicValueComponent = DynamicValueComponent;
 var ActivityDefinition = (function (_super) {
     __extends(ActivityDefinition, _super);
     function ActivityDefinition(obj) {
@@ -4412,7 +4710,7 @@ var ActivityDefinition = (function (_super) {
     }
     return ActivityDefinition;
 }(DomainResource));
-
+exports.ActivityDefinition = ActivityDefinition;
 var Address = (function (_super) {
     __extends(Address, _super);
     function Address(obj) {
@@ -4453,7 +4751,7 @@ var Address = (function (_super) {
     }
     return Address;
 }(Element));
-
+exports.Address = Address;
 var SuspectEntityComponent = (function (_super) {
     __extends(SuspectEntityComponent, _super);
     function SuspectEntityComponent(obj) {
@@ -4485,7 +4783,7 @@ var SuspectEntityComponent = (function (_super) {
     }
     return SuspectEntityComponent;
 }(BackboneElement));
-
+exports.SuspectEntityComponent = SuspectEntityComponent;
 var AdverseEvent = (function (_super) {
     __extends(AdverseEvent, _super);
     function AdverseEvent(obj) {
@@ -4565,7 +4863,7 @@ var AdverseEvent = (function (_super) {
     }
     return AdverseEvent;
 }(DomainResource));
-
+exports.AdverseEvent = AdverseEvent;
 var Age = (function (_super) {
     __extends(Age, _super);
     function Age(obj) {
@@ -4576,7 +4874,7 @@ var Age = (function (_super) {
     }
     return Age;
 }(Quantity));
-
+exports.Age = Age;
 var Annotation = (function (_super) {
     __extends(Annotation, _super);
     function Annotation(obj) {
@@ -4596,7 +4894,7 @@ var Annotation = (function (_super) {
     }
     return Annotation;
 }(Element));
-
+exports.Annotation = Annotation;
 var ReactionComponent = (function (_super) {
     __extends(ReactionComponent, _super);
     function ReactionComponent(obj) {
@@ -4636,7 +4934,7 @@ var ReactionComponent = (function (_super) {
     }
     return ReactionComponent;
 }(BackboneElement));
-
+exports.ReactionComponent = ReactionComponent;
 var AllergyIntolerance = (function (_super) {
     __extends(AllergyIntolerance, _super);
     function AllergyIntolerance(obj) {
@@ -4705,7 +5003,7 @@ var AllergyIntolerance = (function (_super) {
     }
     return AllergyIntolerance;
 }(DomainResource));
-
+exports.AllergyIntolerance = AllergyIntolerance;
 var Appointment = (function (_super) {
     __extends(Appointment, _super);
     function Appointment(obj) {
@@ -4817,7 +5115,7 @@ var Appointment = (function (_super) {
     }
     return Appointment;
 }(DomainResource));
-
+exports.Appointment = Appointment;
 var AppointmentResponse = (function (_super) {
     __extends(AppointmentResponse, _super);
     function AppointmentResponse(obj) {
@@ -4861,7 +5159,7 @@ var AppointmentResponse = (function (_super) {
     }
     return AppointmentResponse;
 }(DomainResource));
-
+exports.AppointmentResponse = AppointmentResponse;
 var NetworkComponent = (function (_super) {
     __extends(NetworkComponent, _super);
     function NetworkComponent(obj) {
@@ -4878,7 +5176,7 @@ var NetworkComponent = (function (_super) {
     }
     return NetworkComponent;
 }(BackboneElement));
-
+exports.NetworkComponent = NetworkComponent;
 var AgentComponent = (function (_super) {
     __extends(AgentComponent, _super);
     function AgentComponent(obj) {
@@ -4930,7 +5228,7 @@ var AgentComponent = (function (_super) {
     }
     return AgentComponent;
 }(BackboneElement));
-
+exports.AgentComponent = AgentComponent;
 var SourceComponent = (function (_super) {
     __extends(SourceComponent, _super);
     function SourceComponent(obj) {
@@ -4954,7 +5252,7 @@ var SourceComponent = (function (_super) {
     }
     return SourceComponent;
 }(BackboneElement));
-
+exports.SourceComponent = SourceComponent;
 var DetailComponent = (function (_super) {
     __extends(DetailComponent, _super);
     function DetailComponent(obj) {
@@ -4971,7 +5269,7 @@ var DetailComponent = (function (_super) {
     }
     return DetailComponent;
 }(BackboneElement));
-
+exports.DetailComponent = DetailComponent;
 var EntityComponent = (function (_super) {
     __extends(EntityComponent, _super);
     function EntityComponent(obj) {
@@ -5020,7 +5318,7 @@ var EntityComponent = (function (_super) {
     }
     return EntityComponent;
 }(BackboneElement));
-
+exports.EntityComponent = EntityComponent;
 var AuditEvent = (function (_super) {
     __extends(AuditEvent, _super);
     function AuditEvent(obj) {
@@ -5078,7 +5376,7 @@ var AuditEvent = (function (_super) {
     }
     return AuditEvent;
 }(DomainResource));
-
+exports.AuditEvent = AuditEvent;
 var Basic = (function (_super) {
     __extends(Basic, _super);
     function Basic(obj) {
@@ -5109,7 +5407,7 @@ var Basic = (function (_super) {
     }
     return Basic;
 }(DomainResource));
-
+exports.Basic = Basic;
 var BodySite = (function (_super) {
     __extends(BodySite, _super);
     function BodySite(obj) {
@@ -5154,7 +5452,7 @@ var BodySite = (function (_super) {
     }
     return BodySite;
 }(DomainResource));
-
+exports.BodySite = BodySite;
 var SoftwareComponent = (function (_super) {
     __extends(SoftwareComponent, _super);
     function SoftwareComponent(obj) {
@@ -5174,7 +5472,7 @@ var SoftwareComponent = (function (_super) {
     }
     return SoftwareComponent;
 }(BackboneElement));
-
+exports.SoftwareComponent = SoftwareComponent;
 var ImplementationComponent = (function (_super) {
     __extends(ImplementationComponent, _super);
     function ImplementationComponent(obj) {
@@ -5191,7 +5489,7 @@ var ImplementationComponent = (function (_super) {
     }
     return ImplementationComponent;
 }(BackboneElement));
-
+exports.ImplementationComponent = ImplementationComponent;
 var CertificateComponent = (function (_super) {
     __extends(CertificateComponent, _super);
     function CertificateComponent(obj) {
@@ -5208,7 +5506,7 @@ var CertificateComponent = (function (_super) {
     }
     return CertificateComponent;
 }(BackboneElement));
-
+exports.CertificateComponent = CertificateComponent;
 var SecurityComponent = (function (_super) {
     __extends(SecurityComponent, _super);
     function SecurityComponent(obj) {
@@ -5239,7 +5537,7 @@ var SecurityComponent = (function (_super) {
     }
     return SecurityComponent;
 }(BackboneElement));
-
+exports.SecurityComponent = SecurityComponent;
 var ResourceInteractionComponent = (function (_super) {
     __extends(ResourceInteractionComponent, _super);
     function ResourceInteractionComponent(obj) {
@@ -5256,7 +5554,7 @@ var ResourceInteractionComponent = (function (_super) {
     }
     return ResourceInteractionComponent;
 }(BackboneElement));
-
+exports.ResourceInteractionComponent = ResourceInteractionComponent;
 var SearchParamComponent = (function (_super) {
     __extends(SearchParamComponent, _super);
     function SearchParamComponent(obj) {
@@ -5279,7 +5577,7 @@ var SearchParamComponent = (function (_super) {
     }
     return SearchParamComponent;
 }(BackboneElement));
-
+exports.SearchParamComponent = SearchParamComponent;
 var ResourceComponent = (function (_super) {
     __extends(ResourceComponent, _super);
     function ResourceComponent(obj) {
@@ -5343,7 +5641,7 @@ var ResourceComponent = (function (_super) {
     }
     return ResourceComponent;
 }(BackboneElement));
-
+exports.ResourceComponent = ResourceComponent;
 var SystemInteractionComponent = (function (_super) {
     __extends(SystemInteractionComponent, _super);
     function SystemInteractionComponent(obj) {
@@ -5360,7 +5658,7 @@ var SystemInteractionComponent = (function (_super) {
     }
     return SystemInteractionComponent;
 }(BackboneElement));
-
+exports.SystemInteractionComponent = SystemInteractionComponent;
 var OperationComponent = (function (_super) {
     __extends(OperationComponent, _super);
     function OperationComponent(obj) {
@@ -5377,7 +5675,7 @@ var OperationComponent = (function (_super) {
     }
     return OperationComponent;
 }(BackboneElement));
-
+exports.OperationComponent = OperationComponent;
 var RestComponent = (function (_super) {
     __extends(RestComponent, _super);
     function RestComponent(obj) {
@@ -5428,7 +5726,7 @@ var RestComponent = (function (_super) {
     }
     return RestComponent;
 }(BackboneElement));
-
+exports.RestComponent = RestComponent;
 var EndpointComponent = (function (_super) {
     __extends(EndpointComponent, _super);
     function EndpointComponent(obj) {
@@ -5445,7 +5743,7 @@ var EndpointComponent = (function (_super) {
     }
     return EndpointComponent;
 }(BackboneElement));
-
+exports.EndpointComponent = EndpointComponent;
 var SupportedMessageComponent = (function (_super) {
     __extends(SupportedMessageComponent, _super);
     function SupportedMessageComponent(obj) {
@@ -5462,7 +5760,7 @@ var SupportedMessageComponent = (function (_super) {
     }
     return SupportedMessageComponent;
 }(BackboneElement));
-
+exports.SupportedMessageComponent = SupportedMessageComponent;
 var EventComponent = (function (_super) {
     __extends(EventComponent, _super);
     function EventComponent(obj) {
@@ -5494,7 +5792,7 @@ var EventComponent = (function (_super) {
     }
     return EventComponent;
 }(BackboneElement));
-
+exports.EventComponent = EventComponent;
 var MessagingComponent = (function (_super) {
     __extends(MessagingComponent, _super);
     function MessagingComponent(obj) {
@@ -5532,7 +5830,7 @@ var MessagingComponent = (function (_super) {
     }
     return MessagingComponent;
 }(BackboneElement));
-
+exports.MessagingComponent = MessagingComponent;
 var DocumentComponent = (function (_super) {
     __extends(DocumentComponent, _super);
     function DocumentComponent(obj) {
@@ -5552,7 +5850,7 @@ var DocumentComponent = (function (_super) {
     }
     return DocumentComponent;
 }(BackboneElement));
-
+exports.DocumentComponent = DocumentComponent;
 var CapabilityStatement = (function (_super) {
     __extends(CapabilityStatement, _super);
     function CapabilityStatement(obj) {
@@ -5673,7 +5971,7 @@ var CapabilityStatement = (function (_super) {
     }
     return CapabilityStatement;
 }(DomainResource));
-
+exports.CapabilityStatement = CapabilityStatement;
 var ActivityComponent = (function (_super) {
     __extends(ActivityComponent, _super);
     function ActivityComponent(obj) {
@@ -5711,7 +6009,7 @@ var ActivityComponent = (function (_super) {
     }
     return ActivityComponent;
 }(BackboneElement));
-
+exports.ActivityComponent = ActivityComponent;
 var CarePlan = (function (_super) {
     __extends(CarePlan, _super);
     function CarePlan(obj) {
@@ -5835,7 +6133,7 @@ var CarePlan = (function (_super) {
     }
     return CarePlan;
 }(DomainResource));
-
+exports.CarePlan = CarePlan;
 var CareTeam = (function (_super) {
     __extends(CareTeam, _super);
     function CareTeam(obj) {
@@ -5911,7 +6209,7 @@ var CareTeam = (function (_super) {
     }
     return CareTeam;
 }(DomainResource));
-
+exports.CareTeam = CareTeam;
 var ChargeItem = (function (_super) {
     __extends(ChargeItem, _super);
     function ChargeItem(obj) {
@@ -6024,7 +6322,7 @@ var ChargeItem = (function (_super) {
     }
     return ChargeItem;
 }(DomainResource));
-
+exports.ChargeItem = ChargeItem;
 var RelatedClaimComponent = (function (_super) {
     __extends(RelatedClaimComponent, _super);
     function RelatedClaimComponent(obj) {
@@ -6044,7 +6342,7 @@ var RelatedClaimComponent = (function (_super) {
     }
     return RelatedClaimComponent;
 }(BackboneElement));
-
+exports.RelatedClaimComponent = RelatedClaimComponent;
 var PayeeComponent = (function (_super) {
     __extends(PayeeComponent, _super);
     function PayeeComponent(obj) {
@@ -6064,7 +6362,7 @@ var PayeeComponent = (function (_super) {
     }
     return PayeeComponent;
 }(BackboneElement));
-
+exports.PayeeComponent = PayeeComponent;
 var CareTeamComponent = (function (_super) {
     __extends(CareTeamComponent, _super);
     function CareTeamComponent(obj) {
@@ -6090,7 +6388,7 @@ var CareTeamComponent = (function (_super) {
     }
     return CareTeamComponent;
 }(BackboneElement));
-
+exports.CareTeamComponent = CareTeamComponent;
 var SpecialConditionComponent = (function (_super) {
     __extends(SpecialConditionComponent, _super);
     function SpecialConditionComponent(obj) {
@@ -6119,7 +6417,7 @@ var SpecialConditionComponent = (function (_super) {
     }
     return SpecialConditionComponent;
 }(BackboneElement));
-
+exports.SpecialConditionComponent = SpecialConditionComponent;
 var DiagnosisComponent = (function (_super) {
     __extends(DiagnosisComponent, _super);
     function DiagnosisComponent(obj) {
@@ -6146,7 +6444,7 @@ var DiagnosisComponent = (function (_super) {
     }
     return DiagnosisComponent;
 }(BackboneElement));
-
+exports.DiagnosisComponent = DiagnosisComponent;
 var ProcedureComponent = (function (_super) {
     __extends(ProcedureComponent, _super);
     function ProcedureComponent(obj) {
@@ -6166,7 +6464,7 @@ var ProcedureComponent = (function (_super) {
     }
     return ProcedureComponent;
 }(BackboneElement));
-
+exports.ProcedureComponent = ProcedureComponent;
 var InsuranceComponent = (function (_super) {
     __extends(InsuranceComponent, _super);
     function InsuranceComponent(obj) {
@@ -6195,7 +6493,7 @@ var InsuranceComponent = (function (_super) {
     }
     return InsuranceComponent;
 }(BackboneElement));
-
+exports.InsuranceComponent = InsuranceComponent;
 var AccidentComponent = (function (_super) {
     __extends(AccidentComponent, _super);
     function AccidentComponent(obj) {
@@ -6215,7 +6513,7 @@ var AccidentComponent = (function (_super) {
     }
     return AccidentComponent;
 }(BackboneElement));
-
+exports.AccidentComponent = AccidentComponent;
 var ItemComponent = (function (_super) {
     __extends(ItemComponent, _super);
     function ItemComponent(obj) {
@@ -6313,7 +6611,7 @@ var ItemComponent = (function (_super) {
     }
     return ItemComponent;
 }(BackboneElement));
-
+exports.ItemComponent = ItemComponent;
 var Claim = (function (_super) {
     __extends(Claim, _super);
     function Claim(obj) {
@@ -6451,7 +6749,7 @@ var Claim = (function (_super) {
     }
     return Claim;
 }(DomainResource));
-
+exports.Claim = Claim;
 var AdjudicationComponent = (function (_super) {
     __extends(AdjudicationComponent, _super);
     function AdjudicationComponent(obj) {
@@ -6474,7 +6772,7 @@ var AdjudicationComponent = (function (_super) {
     }
     return AdjudicationComponent;
 }(BackboneElement));
-
+exports.AdjudicationComponent = AdjudicationComponent;
 var AddedItemsDetailComponent = (function (_super) {
     __extends(AddedItemsDetailComponent, _super);
     function AddedItemsDetailComponent(obj) {
@@ -6514,7 +6812,7 @@ var AddedItemsDetailComponent = (function (_super) {
     }
     return AddedItemsDetailComponent;
 }(BackboneElement));
-
+exports.AddedItemsDetailComponent = AddedItemsDetailComponent;
 var AddedItemComponent = (function (_super) {
     __extends(AddedItemComponent, _super);
     function AddedItemComponent(obj) {
@@ -6564,7 +6862,7 @@ var AddedItemComponent = (function (_super) {
     }
     return AddedItemComponent;
 }(BackboneElement));
-
+exports.AddedItemComponent = AddedItemComponent;
 var ErrorComponent = (function (_super) {
     __extends(ErrorComponent, _super);
     function ErrorComponent(obj) {
@@ -6587,7 +6885,7 @@ var ErrorComponent = (function (_super) {
     }
     return ErrorComponent;
 }(BackboneElement));
-
+exports.ErrorComponent = ErrorComponent;
 var PaymentComponent = (function (_super) {
     __extends(PaymentComponent, _super);
     function PaymentComponent(obj) {
@@ -6616,7 +6914,7 @@ var PaymentComponent = (function (_super) {
     }
     return PaymentComponent;
 }(BackboneElement));
-
+exports.PaymentComponent = PaymentComponent;
 var NoteComponent = (function (_super) {
     __extends(NoteComponent, _super);
     function NoteComponent(obj) {
@@ -6639,7 +6937,7 @@ var NoteComponent = (function (_super) {
     }
     return NoteComponent;
 }(BackboneElement));
-
+exports.NoteComponent = NoteComponent;
 var ClaimResponse = (function (_super) {
     __extends(ClaimResponse, _super);
     function ClaimResponse(obj) {
@@ -6748,7 +7046,7 @@ var ClaimResponse = (function (_super) {
     }
     return ClaimResponse;
 }(DomainResource));
-
+exports.ClaimResponse = ClaimResponse;
 var InvestigationComponent = (function (_super) {
     __extends(InvestigationComponent, _super);
     function InvestigationComponent(obj) {
@@ -6769,7 +7067,7 @@ var InvestigationComponent = (function (_super) {
     }
     return InvestigationComponent;
 }(BackboneElement));
-
+exports.InvestigationComponent = InvestigationComponent;
 var FindingComponent = (function (_super) {
     __extends(FindingComponent, _super);
     function FindingComponent(obj) {
@@ -6786,7 +7084,7 @@ var FindingComponent = (function (_super) {
     }
     return FindingComponent;
 }(BackboneElement));
-
+exports.FindingComponent = FindingComponent;
 var ClinicalImpression = (function (_super) {
     __extends(ClinicalImpression, _super);
     function ClinicalImpression(obj) {
@@ -6887,7 +7185,7 @@ var ClinicalImpression = (function (_super) {
     }
     return ClinicalImpression;
 }(DomainResource));
-
+exports.ClinicalImpression = ClinicalImpression;
 var PayloadComponent = (function (_super) {
     __extends(PayloadComponent, _super);
     function PayloadComponent(obj) {
@@ -6901,7 +7199,7 @@ var PayloadComponent = (function (_super) {
     }
     return PayloadComponent;
 }(BackboneElement));
-
+exports.PayloadComponent = PayloadComponent;
 var Communication = (function (_super) {
     __extends(Communication, _super);
     function Communication(obj) {
@@ -7021,7 +7319,7 @@ var Communication = (function (_super) {
     }
     return Communication;
 }(DomainResource));
-
+exports.Communication = Communication;
 var RequesterComponent = (function (_super) {
     __extends(RequesterComponent, _super);
     function RequesterComponent(obj) {
@@ -7038,7 +7336,7 @@ var RequesterComponent = (function (_super) {
     }
     return RequesterComponent;
 }(BackboneElement));
-
+exports.RequesterComponent = RequesterComponent;
 var CommunicationRequest = (function (_super) {
     __extends(CommunicationRequest, _super);
     function CommunicationRequest(obj) {
@@ -7154,7 +7452,7 @@ var CommunicationRequest = (function (_super) {
     }
     return CommunicationRequest;
 }(DomainResource));
-
+exports.CommunicationRequest = CommunicationRequest;
 var CompartmentDefinition = (function (_super) {
     __extends(CompartmentDefinition, _super);
     function CompartmentDefinition(obj) {
@@ -7227,7 +7525,7 @@ var CompartmentDefinition = (function (_super) {
     }
     return CompartmentDefinition;
 }(DomainResource));
-
+exports.CompartmentDefinition = CompartmentDefinition;
 var AttesterComponent = (function (_super) {
     __extends(AttesterComponent, _super);
     function AttesterComponent(obj) {
@@ -7247,7 +7545,7 @@ var AttesterComponent = (function (_super) {
     }
     return AttesterComponent;
 }(BackboneElement));
-
+exports.AttesterComponent = AttesterComponent;
 var RelatesToComponent = (function (_super) {
     __extends(RelatesToComponent, _super);
     function RelatesToComponent(obj) {
@@ -7264,7 +7562,7 @@ var RelatesToComponent = (function (_super) {
     }
     return RelatesToComponent;
 }(BackboneElement));
-
+exports.RelatesToComponent = RelatesToComponent;
 var SectionComponent = (function (_super) {
     __extends(SectionComponent, _super);
     function SectionComponent(obj) {
@@ -7307,7 +7605,7 @@ var SectionComponent = (function (_super) {
     }
     return SectionComponent;
 }(BackboneElement));
-
+exports.SectionComponent = SectionComponent;
 var Composition = (function (_super) {
     __extends(Composition, _super);
     function Composition(obj) {
@@ -7384,7 +7682,7 @@ var Composition = (function (_super) {
     }
     return Composition;
 }(DomainResource));
-
+exports.Composition = Composition;
 var StageComponent = (function (_super) {
     __extends(StageComponent, _super);
     function StageComponent(obj) {
@@ -7405,7 +7703,7 @@ var StageComponent = (function (_super) {
     }
     return StageComponent;
 }(BackboneElement));
-
+exports.StageComponent = StageComponent;
 var EvidenceComponent = (function (_super) {
     __extends(EvidenceComponent, _super);
     function EvidenceComponent(obj) {
@@ -7430,7 +7728,7 @@ var EvidenceComponent = (function (_super) {
     }
     return EvidenceComponent;
 }(BackboneElement));
-
+exports.EvidenceComponent = EvidenceComponent;
 var Condition = (function (_super) {
     __extends(Condition, _super);
     function Condition(obj) {
@@ -7510,7 +7808,7 @@ var Condition = (function (_super) {
     }
     return Condition;
 }(DomainResource));
-
+exports.Condition = Condition;
 var ActorComponent = (function (_super) {
     __extends(ActorComponent, _super);
     function ActorComponent(obj) {
@@ -7527,7 +7825,7 @@ var ActorComponent = (function (_super) {
     }
     return ActorComponent;
 }(BackboneElement));
-
+exports.ActorComponent = ActorComponent;
 var PolicyComponent = (function (_super) {
     __extends(PolicyComponent, _super);
     function PolicyComponent(obj) {
@@ -7544,7 +7842,7 @@ var PolicyComponent = (function (_super) {
     }
     return PolicyComponent;
 }(BackboneElement));
-
+exports.PolicyComponent = PolicyComponent;
 var DataComponent = (function (_super) {
     __extends(DataComponent, _super);
     function DataComponent(obj) {
@@ -7561,7 +7859,7 @@ var DataComponent = (function (_super) {
     }
     return DataComponent;
 }(BackboneElement));
-
+exports.DataComponent = DataComponent;
 var ExceptActorComponent = (function (_super) {
     __extends(ExceptActorComponent, _super);
     function ExceptActorComponent(obj) {
@@ -7578,7 +7876,7 @@ var ExceptActorComponent = (function (_super) {
     }
     return ExceptActorComponent;
 }(BackboneElement));
-
+exports.ExceptActorComponent = ExceptActorComponent;
 var ExceptDataComponent = (function (_super) {
     __extends(ExceptDataComponent, _super);
     function ExceptDataComponent(obj) {
@@ -7595,7 +7893,7 @@ var ExceptDataComponent = (function (_super) {
     }
     return ExceptDataComponent;
 }(BackboneElement));
-
+exports.ExceptDataComponent = ExceptDataComponent;
 var ExceptComponent = (function (_super) {
     __extends(ExceptComponent, _super);
     function ExceptComponent(obj) {
@@ -7664,7 +7962,7 @@ var ExceptComponent = (function (_super) {
     }
     return ExceptComponent;
 }(BackboneElement));
-
+exports.ExceptComponent = ExceptComponent;
 var Consent = (function (_super) {
     __extends(Consent, _super);
     function Consent(obj) {
@@ -7770,7 +8068,7 @@ var Consent = (function (_super) {
     }
     return Consent;
 }(DomainResource));
-
+exports.Consent = Consent;
 var SignatoryComponent = (function (_super) {
     __extends(SignatoryComponent, _super);
     function SignatoryComponent(obj) {
@@ -7794,7 +8092,7 @@ var SignatoryComponent = (function (_super) {
     }
     return SignatoryComponent;
 }(BackboneElement));
-
+exports.SignatoryComponent = SignatoryComponent;
 var ValuedItemComponent = (function (_super) {
     __extends(ValuedItemComponent, _super);
     function ValuedItemComponent(obj) {
@@ -7829,7 +8127,7 @@ var ValuedItemComponent = (function (_super) {
     }
     return ValuedItemComponent;
 }(BackboneElement));
-
+exports.ValuedItemComponent = ValuedItemComponent;
 var TermAgentComponent = (function (_super) {
     __extends(TermAgentComponent, _super);
     function TermAgentComponent(obj) {
@@ -7850,7 +8148,7 @@ var TermAgentComponent = (function (_super) {
     }
     return TermAgentComponent;
 }(BackboneElement));
-
+exports.TermAgentComponent = TermAgentComponent;
 var TermValuedItemComponent = (function (_super) {
     __extends(TermValuedItemComponent, _super);
     function TermValuedItemComponent(obj) {
@@ -7885,7 +8183,7 @@ var TermValuedItemComponent = (function (_super) {
     }
     return TermValuedItemComponent;
 }(BackboneElement));
-
+exports.TermValuedItemComponent = TermValuedItemComponent;
 var TermComponent = (function (_super) {
     __extends(TermComponent, _super);
     function TermComponent(obj) {
@@ -7963,7 +8261,7 @@ var TermComponent = (function (_super) {
     }
     return TermComponent;
 }(BackboneElement));
-
+exports.TermComponent = TermComponent;
 var FriendlyLanguageComponent = (function (_super) {
     __extends(FriendlyLanguageComponent, _super);
     function FriendlyLanguageComponent(obj) {
@@ -7977,7 +8275,7 @@ var FriendlyLanguageComponent = (function (_super) {
     }
     return FriendlyLanguageComponent;
 }(BackboneElement));
-
+exports.FriendlyLanguageComponent = FriendlyLanguageComponent;
 var LegalLanguageComponent = (function (_super) {
     __extends(LegalLanguageComponent, _super);
     function LegalLanguageComponent(obj) {
@@ -7991,7 +8289,7 @@ var LegalLanguageComponent = (function (_super) {
     }
     return LegalLanguageComponent;
 }(BackboneElement));
-
+exports.LegalLanguageComponent = LegalLanguageComponent;
 var ComputableLanguageComponent = (function (_super) {
     __extends(ComputableLanguageComponent, _super);
     function ComputableLanguageComponent(obj) {
@@ -8005,7 +8303,7 @@ var ComputableLanguageComponent = (function (_super) {
     }
     return ComputableLanguageComponent;
 }(BackboneElement));
-
+exports.ComputableLanguageComponent = ComputableLanguageComponent;
 var Contract = (function (_super) {
     __extends(Contract, _super);
     function Contract(obj) {
@@ -8146,7 +8444,7 @@ var Contract = (function (_super) {
     }
     return Contract;
 }(DomainResource));
-
+exports.Contract = Contract;
 var Count = (function (_super) {
     __extends(Count, _super);
     function Count(obj) {
@@ -8157,7 +8455,7 @@ var Count = (function (_super) {
     }
     return Count;
 }(Quantity));
-
+exports.Count = Count;
 var Coverage = (function (_super) {
     __extends(Coverage, _super);
     function Coverage(obj) {
@@ -8229,7 +8527,7 @@ var Coverage = (function (_super) {
     }
     return Coverage;
 }(DomainResource));
-
+exports.Coverage = Coverage;
 var DataElement = (function (_super) {
     __extends(DataElement, _super);
     function DataElement(obj) {
@@ -8313,7 +8611,7 @@ var DataElement = (function (_super) {
     }
     return DataElement;
 }(DomainResource));
-
+exports.DataElement = DataElement;
 var CodeFilterComponent = (function (_super) {
     __extends(CodeFilterComponent, _super);
     function CodeFilterComponent(obj) {
@@ -8347,7 +8645,7 @@ var CodeFilterComponent = (function (_super) {
     }
     return CodeFilterComponent;
 }(Element));
-
+exports.CodeFilterComponent = CodeFilterComponent;
 var DateFilterComponent = (function (_super) {
     __extends(DateFilterComponent, _super);
     function DateFilterComponent(obj) {
@@ -8364,7 +8662,7 @@ var DateFilterComponent = (function (_super) {
     }
     return DateFilterComponent;
 }(Element));
-
+exports.DateFilterComponent = DateFilterComponent;
 var DataRequirement = (function (_super) {
     __extends(DataRequirement, _super);
     function DataRequirement(obj) {
@@ -8398,7 +8696,7 @@ var DataRequirement = (function (_super) {
     }
     return DataRequirement;
 }(Element));
-
+exports.DataRequirement = DataRequirement;
 var MitigationComponent = (function (_super) {
     __extends(MitigationComponent, _super);
     function MitigationComponent(obj) {
@@ -8418,7 +8716,7 @@ var MitigationComponent = (function (_super) {
     }
     return MitigationComponent;
 }(BackboneElement));
-
+exports.MitigationComponent = MitigationComponent;
 var DetectedIssue = (function (_super) {
     __extends(DetectedIssue, _super);
     function DetectedIssue(obj) {
@@ -8471,7 +8769,7 @@ var DetectedIssue = (function (_super) {
     }
     return DetectedIssue;
 }(DomainResource));
-
+exports.DetectedIssue = DetectedIssue;
 var UdiComponent = (function (_super) {
     __extends(UdiComponent, _super);
     function UdiComponent(obj) {
@@ -8503,7 +8801,7 @@ var UdiComponent = (function (_super) {
     }
     return UdiComponent;
 }(BackboneElement));
-
+exports.UdiComponent = UdiComponent;
 var Device = (function (_super) {
     __extends(Device, _super);
     function Device(obj) {
@@ -8582,7 +8880,7 @@ var Device = (function (_super) {
     }
     return Device;
 }(DomainResource));
-
+exports.Device = Device;
 var ProductionSpecificationComponent = (function (_super) {
     __extends(ProductionSpecificationComponent, _super);
     function ProductionSpecificationComponent(obj) {
@@ -8602,7 +8900,7 @@ var ProductionSpecificationComponent = (function (_super) {
     }
     return ProductionSpecificationComponent;
 }(BackboneElement));
-
+exports.ProductionSpecificationComponent = ProductionSpecificationComponent;
 var DeviceComponent = (function (_super) {
     __extends(DeviceComponent, _super);
     function DeviceComponent(obj) {
@@ -8652,7 +8950,7 @@ var DeviceComponent = (function (_super) {
     }
     return DeviceComponent;
 }(DomainResource));
-
+exports.DeviceComponent = DeviceComponent;
 var CalibrationComponent = (function (_super) {
     __extends(CalibrationComponent, _super);
     function CalibrationComponent(obj) {
@@ -8672,7 +8970,7 @@ var CalibrationComponent = (function (_super) {
     }
     return CalibrationComponent;
 }(BackboneElement));
-
+exports.CalibrationComponent = CalibrationComponent;
 var DeviceMetric = (function (_super) {
     __extends(DeviceMetric, _super);
     function DeviceMetric(obj) {
@@ -8718,7 +9016,7 @@ var DeviceMetric = (function (_super) {
     }
     return DeviceMetric;
 }(DomainResource));
-
+exports.DeviceMetric = DeviceMetric;
 var DeviceRequest = (function (_super) {
     __extends(DeviceRequest, _super);
     function DeviceRequest(obj) {
@@ -8829,7 +9127,7 @@ var DeviceRequest = (function (_super) {
     }
     return DeviceRequest;
 }(DomainResource));
-
+exports.DeviceRequest = DeviceRequest;
 var DeviceUseStatement = (function (_super) {
     __extends(DeviceUseStatement, _super);
     function DeviceUseStatement(obj) {
@@ -8886,7 +9184,7 @@ var DeviceUseStatement = (function (_super) {
     }
     return DeviceUseStatement;
 }(DomainResource));
-
+exports.DeviceUseStatement = DeviceUseStatement;
 var PerformerComponent = (function (_super) {
     __extends(PerformerComponent, _super);
     function PerformerComponent(obj) {
@@ -8903,7 +9201,7 @@ var PerformerComponent = (function (_super) {
     }
     return PerformerComponent;
 }(BackboneElement));
-
+exports.PerformerComponent = PerformerComponent;
 var ImageComponent = (function (_super) {
     __extends(ImageComponent, _super);
     function ImageComponent(obj) {
@@ -8920,7 +9218,7 @@ var ImageComponent = (function (_super) {
     }
     return ImageComponent;
 }(BackboneElement));
-
+exports.ImageComponent = ImageComponent;
 var DiagnosticReport = (function (_super) {
     __extends(DiagnosticReport, _super);
     function DiagnosticReport(obj) {
@@ -9019,7 +9317,7 @@ var DiagnosticReport = (function (_super) {
     }
     return DiagnosticReport;
 }(DomainResource));
-
+exports.DiagnosticReport = DiagnosticReport;
 var Distance = (function (_super) {
     __extends(Distance, _super);
     function Distance(obj) {
@@ -9030,7 +9328,7 @@ var Distance = (function (_super) {
     }
     return Distance;
 }(Quantity));
-
+exports.Distance = Distance;
 var ContentComponent = (function (_super) {
     __extends(ContentComponent, _super);
     function ContentComponent(obj) {
@@ -9044,7 +9342,7 @@ var ContentComponent = (function (_super) {
     }
     return ContentComponent;
 }(BackboneElement));
-
+exports.ContentComponent = ContentComponent;
 var DocumentManifest = (function (_super) {
     __extends(DocumentManifest, _super);
     function DocumentManifest(obj) {
@@ -9112,7 +9410,7 @@ var DocumentManifest = (function (_super) {
     }
     return DocumentManifest;
 }(DomainResource));
-
+exports.DocumentManifest = DocumentManifest;
 var ContextComponent = (function (_super) {
     __extends(ContextComponent, _super);
     function ContextComponent(obj) {
@@ -9152,7 +9450,7 @@ var ContextComponent = (function (_super) {
     }
     return ContextComponent;
 }(BackboneElement));
-
+exports.ContextComponent = ContextComponent;
 var DocumentReference = (function (_super) {
     __extends(DocumentReference, _super);
     function DocumentReference(obj) {
@@ -9235,7 +9533,7 @@ var DocumentReference = (function (_super) {
     }
     return DocumentReference;
 }(DomainResource));
-
+exports.DocumentReference = DocumentReference;
 var Duration = (function (_super) {
     __extends(Duration, _super);
     function Duration(obj) {
@@ -9246,7 +9544,7 @@ var Duration = (function (_super) {
     }
     return Duration;
 }(Quantity));
-
+exports.Duration = Duration;
 var EligibilityRequest = (function (_super) {
     __extends(EligibilityRequest, _super);
     function EligibilityRequest(obj) {
@@ -9307,7 +9605,7 @@ var EligibilityRequest = (function (_super) {
     }
     return EligibilityRequest;
 }(DomainResource));
-
+exports.EligibilityRequest = EligibilityRequest;
 var ErrorsComponent = (function (_super) {
     __extends(ErrorsComponent, _super);
     function ErrorsComponent(obj) {
@@ -9321,7 +9619,7 @@ var ErrorsComponent = (function (_super) {
     }
     return ErrorsComponent;
 }(BackboneElement));
-
+exports.ErrorsComponent = ErrorsComponent;
 var EligibilityResponse = (function (_super) {
     __extends(EligibilityResponse, _super);
     function EligibilityResponse(obj) {
@@ -9384,7 +9682,7 @@ var EligibilityResponse = (function (_super) {
     }
     return EligibilityResponse;
 }(DomainResource));
-
+exports.EligibilityResponse = EligibilityResponse;
 var StatusHistoryComponent = (function (_super) {
     __extends(StatusHistoryComponent, _super);
     function StatusHistoryComponent(obj) {
@@ -9401,7 +9699,7 @@ var StatusHistoryComponent = (function (_super) {
     }
     return StatusHistoryComponent;
 }(BackboneElement));
-
+exports.StatusHistoryComponent = StatusHistoryComponent;
 var ClassHistoryComponent = (function (_super) {
     __extends(ClassHistoryComponent, _super);
     function ClassHistoryComponent(obj) {
@@ -9418,7 +9716,7 @@ var ClassHistoryComponent = (function (_super) {
     }
     return ClassHistoryComponent;
 }(BackboneElement));
-
+exports.ClassHistoryComponent = ClassHistoryComponent;
 var HospitalizationComponent = (function (_super) {
     __extends(HospitalizationComponent, _super);
     function HospitalizationComponent(obj) {
@@ -9468,7 +9766,7 @@ var HospitalizationComponent = (function (_super) {
     }
     return HospitalizationComponent;
 }(BackboneElement));
-
+exports.HospitalizationComponent = HospitalizationComponent;
 var LocationComponent = (function (_super) {
     __extends(LocationComponent, _super);
     function LocationComponent(obj) {
@@ -9488,7 +9786,7 @@ var LocationComponent = (function (_super) {
     }
     return LocationComponent;
 }(BackboneElement));
-
+exports.LocationComponent = LocationComponent;
 var Encounter = (function (_super) {
     __extends(Encounter, _super);
     function Encounter(obj) {
@@ -9607,7 +9905,7 @@ var Encounter = (function (_super) {
     }
     return Encounter;
 }(DomainResource));
-
+exports.Encounter = Encounter;
 var Endpoint = (function (_super) {
     __extends(Endpoint, _super);
     function Endpoint(obj) {
@@ -9664,7 +9962,7 @@ var Endpoint = (function (_super) {
     }
     return Endpoint;
 }(DomainResource));
-
+exports.Endpoint = Endpoint;
 var EnrollmentRequest = (function (_super) {
     __extends(EnrollmentRequest, _super);
     function EnrollmentRequest(obj) {
@@ -9704,7 +10002,7 @@ var EnrollmentRequest = (function (_super) {
     }
     return EnrollmentRequest;
 }(DomainResource));
-
+exports.EnrollmentRequest = EnrollmentRequest;
 var EnrollmentResponse = (function (_super) {
     __extends(EnrollmentResponse, _super);
     function EnrollmentResponse(obj) {
@@ -9747,7 +10045,7 @@ var EnrollmentResponse = (function (_super) {
     }
     return EnrollmentResponse;
 }(DomainResource));
-
+exports.EnrollmentResponse = EnrollmentResponse;
 var EpisodeOfCare = (function (_super) {
     __extends(EpisodeOfCare, _super);
     function EpisodeOfCare(obj) {
@@ -9823,7 +10121,7 @@ var EpisodeOfCare = (function (_super) {
     }
     return EpisodeOfCare;
 }(DomainResource));
-
+exports.EpisodeOfCare = EpisodeOfCare;
 var FixedVersionComponent = (function (_super) {
     __extends(FixedVersionComponent, _super);
     function FixedVersionComponent(obj) {
@@ -9843,7 +10141,7 @@ var FixedVersionComponent = (function (_super) {
     }
     return FixedVersionComponent;
 }(BackboneElement));
-
+exports.FixedVersionComponent = FixedVersionComponent;
 var ExcludedSystemComponent = (function (_super) {
     __extends(ExcludedSystemComponent, _super);
     function ExcludedSystemComponent(obj) {
@@ -9860,7 +10158,7 @@ var ExcludedSystemComponent = (function (_super) {
     }
     return ExcludedSystemComponent;
 }(BackboneElement));
-
+exports.ExcludedSystemComponent = ExcludedSystemComponent;
 var ExpansionProfile = (function (_super) {
     __extends(ExpansionProfile, _super);
     function ExpansionProfile(obj) {
@@ -9957,7 +10255,7 @@ var ExpansionProfile = (function (_super) {
     }
     return ExpansionProfile;
 }(DomainResource));
-
+exports.ExpansionProfile = ExpansionProfile;
 var SupportingInformationComponent = (function (_super) {
     __extends(SupportingInformationComponent, _super);
     function SupportingInformationComponent(obj) {
@@ -9986,7 +10284,7 @@ var SupportingInformationComponent = (function (_super) {
     }
     return SupportingInformationComponent;
 }(BackboneElement));
-
+exports.SupportingInformationComponent = SupportingInformationComponent;
 var BenefitComponent = (function (_super) {
     __extends(BenefitComponent, _super);
     function BenefitComponent(obj) {
@@ -10006,7 +10304,7 @@ var BenefitComponent = (function (_super) {
     }
     return BenefitComponent;
 }(BackboneElement));
-
+exports.BenefitComponent = BenefitComponent;
 var BenefitBalanceComponent = (function (_super) {
     __extends(BenefitBalanceComponent, _super);
     function BenefitBalanceComponent(obj) {
@@ -10048,7 +10346,7 @@ var BenefitBalanceComponent = (function (_super) {
     }
     return BenefitBalanceComponent;
 }(BackboneElement));
-
+exports.BenefitBalanceComponent = BenefitBalanceComponent;
 var ExplanationOfBenefit = (function (_super) {
     __extends(ExplanationOfBenefit, _super);
     function ExplanationOfBenefit(obj) {
@@ -10221,7 +10519,7 @@ var ExplanationOfBenefit = (function (_super) {
     }
     return ExplanationOfBenefit;
 }(DomainResource));
-
+exports.ExplanationOfBenefit = ExplanationOfBenefit;
 var ConditionComponent = (function (_super) {
     __extends(ConditionComponent, _super);
     function ConditionComponent(obj) {
@@ -10248,7 +10546,7 @@ var ConditionComponent = (function (_super) {
     }
     return ConditionComponent;
 }(BackboneElement));
-
+exports.ConditionComponent = ConditionComponent;
 var FamilyMemberHistory = (function (_super) {
     __extends(FamilyMemberHistory, _super);
     function FamilyMemberHistory(obj) {
@@ -10338,7 +10636,7 @@ var FamilyMemberHistory = (function (_super) {
     }
     return FamilyMemberHistory;
 }(DomainResource));
-
+exports.FamilyMemberHistory = FamilyMemberHistory;
 var TargetComponent = (function (_super) {
     __extends(TargetComponent, _super);
     function TargetComponent(obj) {
@@ -10358,7 +10656,7 @@ var TargetComponent = (function (_super) {
     }
     return TargetComponent;
 }(BackboneElement));
-
+exports.TargetComponent = TargetComponent;
 var Goal = (function (_super) {
     __extends(Goal, _super);
     function Goal(obj) {
@@ -10439,7 +10737,7 @@ var Goal = (function (_super) {
     }
     return Goal;
 }(DomainResource));
-
+exports.Goal = Goal;
 var GraphDefinition = (function (_super) {
     __extends(GraphDefinition, _super);
     function GraphDefinition(obj) {
@@ -10512,7 +10810,7 @@ var GraphDefinition = (function (_super) {
     }
     return GraphDefinition;
 }(DomainResource));
-
+exports.GraphDefinition = GraphDefinition;
 var CharacteristicComponent = (function (_super) {
     __extends(CharacteristicComponent, _super);
     function CharacteristicComponent(obj) {
@@ -10535,7 +10833,7 @@ var CharacteristicComponent = (function (_super) {
     }
     return CharacteristicComponent;
 }(BackboneElement));
-
+exports.CharacteristicComponent = CharacteristicComponent;
 var MemberComponent = (function (_super) {
     __extends(MemberComponent, _super);
     function MemberComponent(obj) {
@@ -10555,7 +10853,7 @@ var MemberComponent = (function (_super) {
     }
     return MemberComponent;
 }(BackboneElement));
-
+exports.MemberComponent = MemberComponent;
 var Group = (function (_super) {
     __extends(Group, _super);
     function Group(obj) {
@@ -10606,7 +10904,7 @@ var Group = (function (_super) {
     }
     return Group;
 }(DomainResource));
-
+exports.Group = Group;
 var GuidanceResponse = (function (_super) {
     __extends(GuidanceResponse, _super);
     function GuidanceResponse(obj) {
@@ -10672,7 +10970,7 @@ var GuidanceResponse = (function (_super) {
     }
     return GuidanceResponse;
 }(DomainResource));
-
+exports.GuidanceResponse = GuidanceResponse;
 var AvailableTimeComponent = (function (_super) {
     __extends(AvailableTimeComponent, _super);
     function AvailableTimeComponent(obj) {
@@ -10695,7 +10993,7 @@ var AvailableTimeComponent = (function (_super) {
     }
     return AvailableTimeComponent;
 }(BackboneElement));
-
+exports.AvailableTimeComponent = AvailableTimeComponent;
 var NotAvailableComponent = (function (_super) {
     __extends(NotAvailableComponent, _super);
     function NotAvailableComponent(obj) {
@@ -10712,7 +11010,7 @@ var NotAvailableComponent = (function (_super) {
     }
     return NotAvailableComponent;
 }(BackboneElement));
-
+exports.NotAvailableComponent = NotAvailableComponent;
 var HealthcareService = (function (_super) {
     __extends(HealthcareService, _super);
     function HealthcareService(obj) {
@@ -10844,7 +11142,7 @@ var HealthcareService = (function (_super) {
     }
     return HealthcareService;
 }(DomainResource));
-
+exports.HealthcareService = HealthcareService;
 var HumanName = (function (_super) {
     __extends(HumanName, _super);
     function HumanName(obj) {
@@ -10887,7 +11185,7 @@ var HumanName = (function (_super) {
     };
     return HumanName;
 }(Element));
-
+exports.HumanName = HumanName;
 var InstanceComponent = (function (_super) {
     __extends(InstanceComponent, _super);
     function InstanceComponent(obj) {
@@ -10904,7 +11202,7 @@ var InstanceComponent = (function (_super) {
     }
     return InstanceComponent;
 }(BackboneElement));
-
+exports.InstanceComponent = InstanceComponent;
 var SeriesComponent = (function (_super) {
     __extends(SeriesComponent, _super);
     function SeriesComponent(obj) {
@@ -10932,7 +11230,7 @@ var SeriesComponent = (function (_super) {
     }
     return SeriesComponent;
 }(BackboneElement));
-
+exports.SeriesComponent = SeriesComponent;
 var StudyComponent = (function (_super) {
     __extends(StudyComponent, _super);
     function StudyComponent(obj) {
@@ -10963,7 +11261,7 @@ var StudyComponent = (function (_super) {
     }
     return StudyComponent;
 }(BackboneElement));
-
+exports.StudyComponent = StudyComponent;
 var ImagingManifest = (function (_super) {
     __extends(ImagingManifest, _super);
     function ImagingManifest(obj) {
@@ -10997,7 +11295,7 @@ var ImagingManifest = (function (_super) {
     }
     return ImagingManifest;
 }(DomainResource));
-
+exports.ImagingManifest = ImagingManifest;
 var ImagingStudy = (function (_super) {
     __extends(ImagingStudy, _super);
     function ImagingStudy(obj) {
@@ -11098,7 +11396,7 @@ var ImagingStudy = (function (_super) {
     }
     return ImagingStudy;
 }(DomainResource));
-
+exports.ImagingStudy = ImagingStudy;
 var PractitionerComponent = (function (_super) {
     __extends(PractitionerComponent, _super);
     function PractitionerComponent(obj) {
@@ -11115,7 +11413,7 @@ var PractitionerComponent = (function (_super) {
     }
     return PractitionerComponent;
 }(BackboneElement));
-
+exports.PractitionerComponent = PractitionerComponent;
 var ExplanationComponent = (function (_super) {
     __extends(ExplanationComponent, _super);
     function ExplanationComponent(obj) {
@@ -11140,7 +11438,7 @@ var ExplanationComponent = (function (_super) {
     }
     return ExplanationComponent;
 }(BackboneElement));
-
+exports.ExplanationComponent = ExplanationComponent;
 var VaccinationProtocolComponent = (function (_super) {
     __extends(VaccinationProtocolComponent, _super);
     function VaccinationProtocolComponent(obj) {
@@ -11179,7 +11477,7 @@ var VaccinationProtocolComponent = (function (_super) {
     }
     return VaccinationProtocolComponent;
 }(BackboneElement));
-
+exports.VaccinationProtocolComponent = VaccinationProtocolComponent;
 var Immunization = (function (_super) {
     __extends(Immunization, _super);
     function Immunization(obj) {
@@ -11274,7 +11572,7 @@ var Immunization = (function (_super) {
     }
     return Immunization;
 }(DomainResource));
-
+exports.Immunization = Immunization;
 var DateCriterionComponent = (function (_super) {
     __extends(DateCriterionComponent, _super);
     function DateCriterionComponent(obj) {
@@ -11291,7 +11589,7 @@ var DateCriterionComponent = (function (_super) {
     }
     return DateCriterionComponent;
 }(BackboneElement));
-
+exports.DateCriterionComponent = DateCriterionComponent;
 var ProtocolComponent = (function (_super) {
     __extends(ProtocolComponent, _super);
     function ProtocolComponent(obj) {
@@ -11314,7 +11612,7 @@ var ProtocolComponent = (function (_super) {
     }
     return ProtocolComponent;
 }(BackboneElement));
-
+exports.ProtocolComponent = ProtocolComponent;
 var RecommendationComponent = (function (_super) {
     __extends(RecommendationComponent, _super);
     function RecommendationComponent(obj) {
@@ -11364,7 +11662,7 @@ var RecommendationComponent = (function (_super) {
     }
     return RecommendationComponent;
 }(BackboneElement));
-
+exports.RecommendationComponent = RecommendationComponent;
 var ImmunizationRecommendation = (function (_super) {
     __extends(ImmunizationRecommendation, _super);
     function ImmunizationRecommendation(obj) {
@@ -11393,7 +11691,7 @@ var ImmunizationRecommendation = (function (_super) {
     }
     return ImmunizationRecommendation;
 }(DomainResource));
-
+exports.ImmunizationRecommendation = ImmunizationRecommendation;
 var DependencyComponent = (function (_super) {
     __extends(DependencyComponent, _super);
     function DependencyComponent(obj) {
@@ -11410,7 +11708,7 @@ var DependencyComponent = (function (_super) {
     }
     return DependencyComponent;
 }(BackboneElement));
-
+exports.DependencyComponent = DependencyComponent;
 var PackageComponent = (function (_super) {
     __extends(PackageComponent, _super);
     function PackageComponent(obj) {
@@ -11434,7 +11732,7 @@ var PackageComponent = (function (_super) {
     }
     return PackageComponent;
 }(BackboneElement));
-
+exports.PackageComponent = PackageComponent;
 var GlobalComponent = (function (_super) {
     __extends(GlobalComponent, _super);
     function GlobalComponent(obj) {
@@ -11451,11 +11749,13 @@ var GlobalComponent = (function (_super) {
     }
     return GlobalComponent;
 }(BackboneElement));
-
+exports.GlobalComponent = GlobalComponent;
 var PageComponent = (function (_super) {
     __extends(PageComponent, _super);
     function PageComponent(obj) {
         var _this = _super.call(this, obj) || this;
+        _this.kind = 'page';
+        _this.format = 'markdown';
         if (obj) {
             if (obj.source) {
                 _this.source = obj.source;
@@ -11487,12 +11787,14 @@ var PageComponent = (function (_super) {
     }
     return PageComponent;
 }(BackboneElement));
-
+exports.PageComponent = PageComponent;
 var ImplementationGuide = (function (_super) {
     __extends(ImplementationGuide, _super);
     function ImplementationGuide(obj) {
         var _this = _super.call(this, obj) || this;
         _this.resourceType = 'ImplementationGuide';
+        _this.version = '1';
+        _this.status = 'draft';
         if (obj) {
             if (obj.url) {
                 _this.url = obj.url;
@@ -11577,7 +11879,7 @@ var ImplementationGuide = (function (_super) {
     }
     return ImplementationGuide;
 }(DomainResource));
-
+exports.ImplementationGuide = ImplementationGuide;
 var ParameterDefinition = (function (_super) {
     __extends(ParameterDefinition, _super);
     function ParameterDefinition(obj) {
@@ -11609,7 +11911,7 @@ var ParameterDefinition = (function (_super) {
     }
     return ParameterDefinition;
 }(Element));
-
+exports.ParameterDefinition = ParameterDefinition;
 var Library = (function (_super) {
     __extends(Library, _super);
     function Library(obj) {
@@ -11739,7 +12041,7 @@ var Library = (function (_super) {
     }
     return Library;
 }(DomainResource));
-
+exports.Library = Library;
 var Linkage = (function (_super) {
     __extends(Linkage, _super);
     function Linkage(obj) {
@@ -11764,7 +12066,7 @@ var Linkage = (function (_super) {
     }
     return Linkage;
 }(DomainResource));
-
+exports.Linkage = Linkage;
 var List = (function (_super) {
     __extends(List, _super);
     function List(obj) {
@@ -11827,7 +12129,7 @@ var List = (function (_super) {
     }
     return List;
 }(DomainResource));
-
+exports.List = List;
 var PositionComponent = (function (_super) {
     __extends(PositionComponent, _super);
     function PositionComponent(obj) {
@@ -11847,7 +12149,7 @@ var PositionComponent = (function (_super) {
     }
     return PositionComponent;
 }(BackboneElement));
-
+exports.PositionComponent = PositionComponent;
 var Location = (function (_super) {
     __extends(Location, _super);
     function Location(obj) {
@@ -11916,7 +12218,7 @@ var Location = (function (_super) {
     }
     return Location;
 }(DomainResource));
-
+exports.Location = Location;
 var SupplementalDataComponent = (function (_super) {
     __extends(SupplementalDataComponent, _super);
     function SupplementalDataComponent(obj) {
@@ -11943,7 +12245,7 @@ var SupplementalDataComponent = (function (_super) {
     }
     return SupplementalDataComponent;
 }(BackboneElement));
-
+exports.SupplementalDataComponent = SupplementalDataComponent;
 var Measure = (function (_super) {
     __extends(Measure, _super);
     function Measure(obj) {
@@ -12110,7 +12412,7 @@ var Measure = (function (_super) {
     }
     return Measure;
 }(DomainResource));
-
+exports.Measure = Measure;
 var MeasureReport = (function (_super) {
     __extends(MeasureReport, _super);
     function MeasureReport(obj) {
@@ -12156,7 +12458,7 @@ var MeasureReport = (function (_super) {
     }
     return MeasureReport;
 }(DomainResource));
-
+exports.MeasureReport = MeasureReport;
 var Media = (function (_super) {
     __extends(Media, _super);
     function Media(obj) {
@@ -12238,7 +12540,7 @@ var Media = (function (_super) {
     }
     return Media;
 }(DomainResource));
-
+exports.Media = Media;
 var IngredientComponent = (function (_super) {
     __extends(IngredientComponent, _super);
     function IngredientComponent(obj) {
@@ -12258,7 +12560,7 @@ var IngredientComponent = (function (_super) {
     }
     return IngredientComponent;
 }(BackboneElement));
-
+exports.IngredientComponent = IngredientComponent;
 var Medication = (function (_super) {
     __extends(Medication, _super);
     function Medication(obj) {
@@ -12305,7 +12607,7 @@ var Medication = (function (_super) {
     }
     return Medication;
 }(DomainResource));
-
+exports.Medication = Medication;
 var DosageComponent = (function (_super) {
     __extends(DosageComponent, _super);
     function DosageComponent(obj) {
@@ -12334,7 +12636,7 @@ var DosageComponent = (function (_super) {
     }
     return DosageComponent;
 }(BackboneElement));
-
+exports.DosageComponent = DosageComponent;
 var MedicationAdministration = (function (_super) {
     __extends(MedicationAdministration, _super);
     function MedicationAdministration(obj) {
@@ -12450,7 +12752,7 @@ var MedicationAdministration = (function (_super) {
     }
     return MedicationAdministration;
 }(DomainResource));
-
+exports.MedicationAdministration = MedicationAdministration;
 var SubstitutionComponent = (function (_super) {
     __extends(SubstitutionComponent, _super);
     function SubstitutionComponent(obj) {
@@ -12481,7 +12783,7 @@ var SubstitutionComponent = (function (_super) {
     }
     return SubstitutionComponent;
 }(BackboneElement));
-
+exports.SubstitutionComponent = SubstitutionComponent;
 var MedicationDispense = (function (_super) {
     __extends(MedicationDispense, _super);
     function MedicationDispense(obj) {
@@ -12605,7 +12907,7 @@ var MedicationDispense = (function (_super) {
     }
     return MedicationDispense;
 }(DomainResource));
-
+exports.MedicationDispense = MedicationDispense;
 var DispenseRequestComponent = (function (_super) {
     __extends(DispenseRequestComponent, _super);
     function DispenseRequestComponent(obj) {
@@ -12631,7 +12933,7 @@ var DispenseRequestComponent = (function (_super) {
     }
     return DispenseRequestComponent;
 }(BackboneElement));
-
+exports.DispenseRequestComponent = DispenseRequestComponent;
 var MedicationRequest = (function (_super) {
     __extends(MedicationRequest, _super);
     function MedicationRequest(obj) {
@@ -12755,7 +13057,7 @@ var MedicationRequest = (function (_super) {
     }
     return MedicationRequest;
 }(DomainResource));
-
+exports.MedicationRequest = MedicationRequest;
 var MedicationStatement = (function (_super) {
     __extends(MedicationStatement, _super);
     function MedicationStatement(obj) {
@@ -12857,7 +13159,7 @@ var MedicationStatement = (function (_super) {
     }
     return MedicationStatement;
 }(DomainResource));
-
+exports.MedicationStatement = MedicationStatement;
 var FocusComponent = (function (_super) {
     __extends(FocusComponent, _super);
     function FocusComponent(obj) {
@@ -12880,7 +13182,7 @@ var FocusComponent = (function (_super) {
     }
     return FocusComponent;
 }(BackboneElement));
-
+exports.FocusComponent = FocusComponent;
 var AllowedResponseComponent = (function (_super) {
     __extends(AllowedResponseComponent, _super);
     function AllowedResponseComponent(obj) {
@@ -12897,7 +13199,7 @@ var AllowedResponseComponent = (function (_super) {
     }
     return AllowedResponseComponent;
 }(BackboneElement));
-
+exports.AllowedResponseComponent = AllowedResponseComponent;
 var MessageDefinition = (function (_super) {
     __extends(MessageDefinition, _super);
     function MessageDefinition(obj) {
@@ -13006,7 +13308,7 @@ var MessageDefinition = (function (_super) {
     }
     return MessageDefinition;
 }(DomainResource));
-
+exports.MessageDefinition = MessageDefinition;
 var MessageDestinationComponent = (function (_super) {
     __extends(MessageDestinationComponent, _super);
     function MessageDestinationComponent(obj) {
@@ -13026,7 +13328,7 @@ var MessageDestinationComponent = (function (_super) {
     }
     return MessageDestinationComponent;
 }(BackboneElement));
-
+exports.MessageDestinationComponent = MessageDestinationComponent;
 var MessageSourceComponent = (function (_super) {
     __extends(MessageSourceComponent, _super);
     function MessageSourceComponent(obj) {
@@ -13052,7 +13354,7 @@ var MessageSourceComponent = (function (_super) {
     }
     return MessageSourceComponent;
 }(BackboneElement));
-
+exports.MessageSourceComponent = MessageSourceComponent;
 var MessageHeader = (function (_super) {
     __extends(MessageHeader, _super);
     function MessageHeader(obj) {
@@ -13108,7 +13410,7 @@ var MessageHeader = (function (_super) {
     }
     return MessageHeader;
 }(DomainResource));
-
+exports.MessageHeader = MessageHeader;
 var UniqueIdComponent = (function (_super) {
     __extends(UniqueIdComponent, _super);
     function UniqueIdComponent(obj) {
@@ -13134,7 +13436,7 @@ var UniqueIdComponent = (function (_super) {
     }
     return UniqueIdComponent;
 }(BackboneElement));
-
+exports.UniqueIdComponent = UniqueIdComponent;
 var NamingSystem = (function (_super) {
     __extends(NamingSystem, _super);
     function NamingSystem(obj) {
@@ -13204,7 +13506,7 @@ var NamingSystem = (function (_super) {
     }
     return NamingSystem;
 }(DomainResource));
-
+exports.NamingSystem = NamingSystem;
 var NutrientComponent = (function (_super) {
     __extends(NutrientComponent, _super);
     function NutrientComponent(obj) {
@@ -13221,7 +13523,7 @@ var NutrientComponent = (function (_super) {
     }
     return NutrientComponent;
 }(BackboneElement));
-
+exports.NutrientComponent = NutrientComponent;
 var TextureComponent = (function (_super) {
     __extends(TextureComponent, _super);
     function TextureComponent(obj) {
@@ -13238,7 +13540,7 @@ var TextureComponent = (function (_super) {
     }
     return TextureComponent;
 }(BackboneElement));
-
+exports.TextureComponent = TextureComponent;
 var OralDietComponent = (function (_super) {
     __extends(OralDietComponent, _super);
     function OralDietComponent(obj) {
@@ -13287,7 +13589,7 @@ var OralDietComponent = (function (_super) {
     }
     return OralDietComponent;
 }(BackboneElement));
-
+exports.OralDietComponent = OralDietComponent;
 var SupplementComponent = (function (_super) {
     __extends(SupplementComponent, _super);
     function SupplementComponent(obj) {
@@ -13317,7 +13619,7 @@ var SupplementComponent = (function (_super) {
     }
     return SupplementComponent;
 }(BackboneElement));
-
+exports.SupplementComponent = SupplementComponent;
 var AdministrationComponent = (function (_super) {
     __extends(AdministrationComponent, _super);
     function AdministrationComponent(obj) {
@@ -13337,7 +13639,7 @@ var AdministrationComponent = (function (_super) {
     }
     return AdministrationComponent;
 }(BackboneElement));
-
+exports.AdministrationComponent = AdministrationComponent;
 var EnteralFormulaComponent = (function (_super) {
     __extends(EnteralFormulaComponent, _super);
     function EnteralFormulaComponent(obj) {
@@ -13379,7 +13681,7 @@ var EnteralFormulaComponent = (function (_super) {
     }
     return EnteralFormulaComponent;
 }(BackboneElement));
-
+exports.EnteralFormulaComponent = EnteralFormulaComponent;
 var NutritionOrder = (function (_super) {
     __extends(NutritionOrder, _super);
     function NutritionOrder(obj) {
@@ -13447,7 +13749,7 @@ var NutritionOrder = (function (_super) {
     }
     return NutritionOrder;
 }(DomainResource));
-
+exports.NutritionOrder = NutritionOrder;
 var OverloadComponent = (function (_super) {
     __extends(OverloadComponent, _super);
     function OverloadComponent(obj) {
@@ -13464,7 +13766,7 @@ var OverloadComponent = (function (_super) {
     }
     return OverloadComponent;
 }(BackboneElement));
-
+exports.OverloadComponent = OverloadComponent;
 var OperationDefinition = (function (_super) {
     __extends(OperationDefinition, _super);
     function OperationDefinition(obj) {
@@ -13565,7 +13867,7 @@ var OperationDefinition = (function (_super) {
     }
     return OperationDefinition;
 }(DomainResource));
-
+exports.OperationDefinition = OperationDefinition;
 var IssueComponent = (function (_super) {
     __extends(IssueComponent, _super);
     function IssueComponent(obj) {
@@ -13594,7 +13896,7 @@ var IssueComponent = (function (_super) {
     }
     return IssueComponent;
 }(BackboneElement));
-
+exports.IssueComponent = IssueComponent;
 var OperationOutcome = (function (_super) {
     __extends(OperationOutcome, _super);
     function OperationOutcome(obj) {
@@ -13613,7 +13915,7 @@ var OperationOutcome = (function (_super) {
     }
     return OperationOutcome;
 }(DomainResource));
-
+exports.OperationOutcome = OperationOutcome;
 var ContactComponent = (function (_super) {
     __extends(ContactComponent, _super);
     function ContactComponent(obj) {
@@ -13640,7 +13942,7 @@ var ContactComponent = (function (_super) {
     }
     return ContactComponent;
 }(BackboneElement));
-
+exports.ContactComponent = ContactComponent;
 var Organization = (function (_super) {
     __extends(Organization, _super);
     function Organization(obj) {
@@ -13706,7 +14008,7 @@ var Organization = (function (_super) {
     }
     return Organization;
 }(DomainResource));
-
+exports.Organization = Organization;
 var AnimalComponent = (function (_super) {
     __extends(AnimalComponent, _super);
     function AnimalComponent(obj) {
@@ -13726,7 +14028,7 @@ var AnimalComponent = (function (_super) {
     }
     return AnimalComponent;
 }(BackboneElement));
-
+exports.AnimalComponent = AnimalComponent;
 var CommunicationComponent = (function (_super) {
     __extends(CommunicationComponent, _super);
     function CommunicationComponent(obj) {
@@ -13743,7 +14045,7 @@ var CommunicationComponent = (function (_super) {
     }
     return CommunicationComponent;
 }(BackboneElement));
-
+exports.CommunicationComponent = CommunicationComponent;
 var Patient = (function (_super) {
     __extends(Patient, _super);
     function Patient(obj) {
@@ -13842,7 +14144,7 @@ var Patient = (function (_super) {
     }
     return Patient;
 }(DomainResource));
-
+exports.Patient = Patient;
 var PaymentNotice = (function (_super) {
     __extends(PaymentNotice, _super);
     function PaymentNotice(obj) {
@@ -13888,7 +14190,7 @@ var PaymentNotice = (function (_super) {
     }
     return PaymentNotice;
 }(DomainResource));
-
+exports.PaymentNotice = PaymentNotice;
 var DetailsComponent = (function (_super) {
     __extends(DetailsComponent, _super);
     function DetailsComponent(obj) {
@@ -13920,7 +14222,7 @@ var DetailsComponent = (function (_super) {
     }
     return DetailsComponent;
 }(BackboneElement));
-
+exports.DetailsComponent = DetailsComponent;
 var NotesComponent = (function (_super) {
     __extends(NotesComponent, _super);
     function NotesComponent(obj) {
@@ -13937,7 +14239,7 @@ var NotesComponent = (function (_super) {
     }
     return NotesComponent;
 }(BackboneElement));
-
+exports.NotesComponent = NotesComponent;
 var PaymentReconciliation = (function (_super) {
     __extends(PaymentReconciliation, _super);
     function PaymentReconciliation(obj) {
@@ -14003,7 +14305,7 @@ var PaymentReconciliation = (function (_super) {
     }
     return PaymentReconciliation;
 }(DomainResource));
-
+exports.PaymentReconciliation = PaymentReconciliation;
 var Person = (function (_super) {
     __extends(Person, _super);
     function Person(obj) {
@@ -14070,7 +14372,7 @@ var Person = (function (_super) {
     };
     return Person;
 }(DomainResource));
-
+exports.Person = Person;
 var GoalComponent = (function (_super) {
     __extends(GoalComponent, _super);
     function GoalComponent(obj) {
@@ -14114,7 +14416,7 @@ var GoalComponent = (function (_super) {
     }
     return GoalComponent;
 }(BackboneElement));
-
+exports.GoalComponent = GoalComponent;
 var TriggerDefinition = (function (_super) {
     __extends(TriggerDefinition, _super);
     function TriggerDefinition(obj) {
@@ -14137,7 +14439,7 @@ var TriggerDefinition = (function (_super) {
     }
     return TriggerDefinition;
 }(Element));
-
+exports.TriggerDefinition = TriggerDefinition;
 var RelatedActionComponent = (function (_super) {
     __extends(RelatedActionComponent, _super);
     function RelatedActionComponent(obj) {
@@ -14157,7 +14459,7 @@ var RelatedActionComponent = (function (_super) {
     }
     return RelatedActionComponent;
 }(BackboneElement));
-
+exports.RelatedActionComponent = RelatedActionComponent;
 var ActionComponent = (function (_super) {
     __extends(ActionComponent, _super);
     function ActionComponent(obj) {
@@ -14287,7 +14589,7 @@ var ActionComponent = (function (_super) {
     }
     return ActionComponent;
 }(BackboneElement));
-
+exports.ActionComponent = ActionComponent;
 var PlanDefinition = (function (_super) {
     __extends(PlanDefinition, _super);
     function PlanDefinition(obj) {
@@ -14417,7 +14719,7 @@ var PlanDefinition = (function (_super) {
     }
     return PlanDefinition;
 }(DomainResource));
-
+exports.PlanDefinition = PlanDefinition;
 var QualificationComponent = (function (_super) {
     __extends(QualificationComponent, _super);
     function QualificationComponent(obj) {
@@ -14444,7 +14746,7 @@ var QualificationComponent = (function (_super) {
     }
     return QualificationComponent;
 }(BackboneElement));
-
+exports.QualificationComponent = QualificationComponent;
 var Practitioner = (function (_super) {
     __extends(Practitioner, _super);
     function Practitioner(obj) {
@@ -14514,7 +14816,7 @@ var Practitioner = (function (_super) {
     }
     return Practitioner;
 }(DomainResource));
-
+exports.Practitioner = Practitioner;
 var PractitionerRole = (function (_super) {
     __extends(PractitionerRole, _super);
     function PractitionerRole(obj) {
@@ -14604,7 +14906,7 @@ var PractitionerRole = (function (_super) {
     }
     return PractitionerRole;
 }(DomainResource));
-
+exports.PractitionerRole = PractitionerRole;
 var FocalDeviceComponent = (function (_super) {
     __extends(FocalDeviceComponent, _super);
     function FocalDeviceComponent(obj) {
@@ -14621,7 +14923,7 @@ var FocalDeviceComponent = (function (_super) {
     }
     return FocalDeviceComponent;
 }(BackboneElement));
-
+exports.FocalDeviceComponent = FocalDeviceComponent;
 var Procedure = (function (_super) {
     __extends(Procedure, _super);
     function Procedure(obj) {
@@ -14775,7 +15077,7 @@ var Procedure = (function (_super) {
     }
     return Procedure;
 }(DomainResource));
-
+exports.Procedure = Procedure;
 var ProcedureRequest = (function (_super) {
     __extends(ProcedureRequest, _super);
     function ProcedureRequest(obj) {
@@ -14913,7 +15215,7 @@ var ProcedureRequest = (function (_super) {
     }
     return ProcedureRequest;
 }(DomainResource));
-
+exports.ProcedureRequest = ProcedureRequest;
 var ItemsComponent = (function (_super) {
     __extends(ItemsComponent, _super);
     function ItemsComponent(obj) {
@@ -14927,7 +15229,7 @@ var ItemsComponent = (function (_super) {
     }
     return ItemsComponent;
 }(BackboneElement));
-
+exports.ItemsComponent = ItemsComponent;
 var ProcessRequest = (function (_super) {
     __extends(ProcessRequest, _super);
     function ProcessRequest(obj) {
@@ -14992,7 +15294,7 @@ var ProcessRequest = (function (_super) {
     }
     return ProcessRequest;
 }(DomainResource));
-
+exports.ProcessRequest = ProcessRequest;
 var ProcessNoteComponent = (function (_super) {
     __extends(ProcessNoteComponent, _super);
     function ProcessNoteComponent(obj) {
@@ -15009,7 +15311,7 @@ var ProcessNoteComponent = (function (_super) {
     }
     return ProcessNoteComponent;
 }(BackboneElement));
-
+exports.ProcessNoteComponent = ProcessNoteComponent;
 var ProcessResponse = (function (_super) {
     __extends(ProcessResponse, _super);
     function ProcessResponse(obj) {
@@ -15076,7 +15378,7 @@ var ProcessResponse = (function (_super) {
     }
     return ProcessResponse;
 }(DomainResource));
-
+exports.ProcessResponse = ProcessResponse;
 var Provenance = (function (_super) {
     __extends(Provenance, _super);
     function Provenance(obj) {
@@ -15138,7 +15440,7 @@ var Provenance = (function (_super) {
     }
     return Provenance;
 }(DomainResource));
-
+exports.Provenance = Provenance;
 var Questionnaire = (function (_super) {
     __extends(Questionnaire, _super);
     function Questionnaire(obj) {
@@ -15237,7 +15539,7 @@ var Questionnaire = (function (_super) {
     }
     return Questionnaire;
 }(DomainResource));
-
+exports.Questionnaire = Questionnaire;
 var QuestionnaireResponse = (function (_super) {
     __extends(QuestionnaireResponse, _super);
     function QuestionnaireResponse(obj) {
@@ -15294,7 +15596,7 @@ var QuestionnaireResponse = (function (_super) {
     }
     return QuestionnaireResponse;
 }(DomainResource));
-
+exports.QuestionnaireResponse = QuestionnaireResponse;
 var ReferralRequest = (function (_super) {
     __extends(ReferralRequest, _super);
     function ReferralRequest(obj) {
@@ -15419,7 +15721,7 @@ var ReferralRequest = (function (_super) {
     }
     return ReferralRequest;
 }(DomainResource));
-
+exports.ReferralRequest = ReferralRequest;
 var RelatedPerson = (function (_super) {
     __extends(RelatedPerson, _super);
     function RelatedPerson(obj) {
@@ -15484,7 +15786,7 @@ var RelatedPerson = (function (_super) {
     }
     return RelatedPerson;
 }(DomainResource));
-
+exports.RelatedPerson = RelatedPerson;
 var RequestGroup = (function (_super) {
     __extends(RequestGroup, _super);
     function RequestGroup(obj) {
@@ -15565,7 +15867,7 @@ var RequestGroup = (function (_super) {
     }
     return RequestGroup;
 }(DomainResource));
-
+exports.RequestGroup = RequestGroup;
 var ArmComponent = (function (_super) {
     __extends(ArmComponent, _super);
     function ArmComponent(obj) {
@@ -15585,7 +15887,7 @@ var ArmComponent = (function (_super) {
     }
     return ArmComponent;
 }(BackboneElement));
-
+exports.ArmComponent = ArmComponent;
 var ResearchStudy = (function (_super) {
     __extends(ResearchStudy, _super);
     function ResearchStudy(obj) {
@@ -15709,7 +16011,7 @@ var ResearchStudy = (function (_super) {
     }
     return ResearchStudy;
 }(DomainResource));
-
+exports.ResearchStudy = ResearchStudy;
 var ResearchSubject = (function (_super) {
     __extends(ResearchSubject, _super);
     function ResearchSubject(obj) {
@@ -15745,7 +16047,7 @@ var ResearchSubject = (function (_super) {
     }
     return ResearchSubject;
 }(DomainResource));
-
+exports.ResearchSubject = ResearchSubject;
 var PredictionComponent = (function (_super) {
     __extends(PredictionComponent, _super);
     function PredictionComponent(obj) {
@@ -15774,7 +16076,7 @@ var PredictionComponent = (function (_super) {
     }
     return PredictionComponent;
 }(BackboneElement));
-
+exports.PredictionComponent = PredictionComponent;
 var RiskAssessment = (function (_super) {
     __extends(RiskAssessment, _super);
     function RiskAssessment(obj) {
@@ -15842,7 +16144,7 @@ var RiskAssessment = (function (_super) {
     }
     return RiskAssessment;
 }(DomainResource));
-
+exports.RiskAssessment = RiskAssessment;
 var SampledData = (function (_super) {
     __extends(SampledData, _super);
     function SampledData(obj) {
@@ -15874,7 +16176,7 @@ var SampledData = (function (_super) {
     }
     return SampledData;
 }(Element));
-
+exports.SampledData = SampledData;
 var Schedule = (function (_super) {
     __extends(Schedule, _super);
     function Schedule(obj) {
@@ -15926,7 +16228,7 @@ var Schedule = (function (_super) {
     }
     return Schedule;
 }(DomainResource));
-
+exports.Schedule = Schedule;
 var SearchParameter = (function (_super) {
     __extends(SearchParameter, _super);
     function SearchParameter(obj) {
@@ -16026,7 +16328,7 @@ var SearchParameter = (function (_super) {
     }
     return SearchParameter;
 }(DomainResource));
-
+exports.SearchParameter = SearchParameter;
 var ReferenceSeqComponent = (function (_super) {
     __extends(ReferenceSeqComponent, _super);
     function ReferenceSeqComponent(obj) {
@@ -16061,7 +16363,7 @@ var ReferenceSeqComponent = (function (_super) {
     }
     return ReferenceSeqComponent;
 }(BackboneElement));
-
+exports.ReferenceSeqComponent = ReferenceSeqComponent;
 var VariantComponent = (function (_super) {
     __extends(VariantComponent, _super);
     function VariantComponent(obj) {
@@ -16090,7 +16392,7 @@ var VariantComponent = (function (_super) {
     }
     return VariantComponent;
 }(BackboneElement));
-
+exports.VariantComponent = VariantComponent;
 var QualityComponent = (function (_super) {
     __extends(QualityComponent, _super);
     function QualityComponent(obj) {
@@ -16143,7 +16445,7 @@ var QualityComponent = (function (_super) {
     }
     return QualityComponent;
 }(BackboneElement));
-
+exports.QualityComponent = QualityComponent;
 var RepositoryComponent = (function (_super) {
     __extends(RepositoryComponent, _super);
     function RepositoryComponent(obj) {
@@ -16172,7 +16474,7 @@ var RepositoryComponent = (function (_super) {
     }
     return RepositoryComponent;
 }(BackboneElement));
-
+exports.RepositoryComponent = RepositoryComponent;
 var Sequence = (function (_super) {
     __extends(Sequence, _super);
     function Sequence(obj) {
@@ -16249,7 +16551,7 @@ var Sequence = (function (_super) {
     }
     return Sequence;
 }(DomainResource));
-
+exports.Sequence = Sequence;
 var ServiceDefinition = (function (_super) {
     __extends(ServiceDefinition, _super);
     function ServiceDefinition(obj) {
@@ -16372,7 +16674,7 @@ var ServiceDefinition = (function (_super) {
     }
     return ServiceDefinition;
 }(DomainResource));
-
+exports.ServiceDefinition = ServiceDefinition;
 var Slot = (function (_super) {
     __extends(Slot, _super);
     function Slot(obj) {
@@ -16429,7 +16731,7 @@ var Slot = (function (_super) {
     }
     return Slot;
 }(DomainResource));
-
+exports.Slot = Slot;
 var CollectionComponent = (function (_super) {
     __extends(CollectionComponent, _super);
     function CollectionComponent(obj) {
@@ -16455,7 +16757,7 @@ var CollectionComponent = (function (_super) {
     }
     return CollectionComponent;
 }(BackboneElement));
-
+exports.CollectionComponent = CollectionComponent;
 var ProcessingComponent = (function (_super) {
     __extends(ProcessingComponent, _super);
     function ProcessingComponent(obj) {
@@ -16482,7 +16784,7 @@ var ProcessingComponent = (function (_super) {
     }
     return ProcessingComponent;
 }(BackboneElement));
-
+exports.ProcessingComponent = ProcessingComponent;
 var ContainerComponent = (function (_super) {
     __extends(ContainerComponent, _super);
     function ContainerComponent(obj) {
@@ -16515,7 +16817,7 @@ var ContainerComponent = (function (_super) {
     }
     return ContainerComponent;
 }(BackboneElement));
-
+exports.ContainerComponent = ContainerComponent;
 var Specimen = (function (_super) {
     __extends(Specimen, _super);
     function Specimen(obj) {
@@ -16587,7 +16889,7 @@ var Specimen = (function (_super) {
     }
     return Specimen;
 }(DomainResource));
-
+exports.Specimen = Specimen;
 var StructureComponent = (function (_super) {
     __extends(StructureComponent, _super);
     function StructureComponent(obj) {
@@ -16610,7 +16912,7 @@ var StructureComponent = (function (_super) {
     }
     return StructureComponent;
 }(BackboneElement));
-
+exports.StructureComponent = StructureComponent;
 var StructureMap = (function (_super) {
     __extends(StructureMap, _super);
     function StructureMap(obj) {
@@ -16700,7 +17002,7 @@ var StructureMap = (function (_super) {
     }
     return StructureMap;
 }(DomainResource));
-
+exports.StructureMap = StructureMap;
 var ChannelComponent = (function (_super) {
     __extends(ChannelComponent, _super);
     function ChannelComponent(obj) {
@@ -16723,7 +17025,7 @@ var ChannelComponent = (function (_super) {
     }
     return ChannelComponent;
 }(BackboneElement));
-
+exports.ChannelComponent = ChannelComponent;
 var Subscription = (function (_super) {
     __extends(Subscription, _super);
     function Subscription(obj) {
@@ -16767,7 +17069,7 @@ var Subscription = (function (_super) {
     }
     return Subscription;
 }(DomainResource));
-
+exports.Subscription = Subscription;
 var Substance = (function (_super) {
     __extends(Substance, _super);
     function Substance(obj) {
@@ -16816,7 +17118,7 @@ var Substance = (function (_super) {
     }
     return Substance;
 }(DomainResource));
-
+exports.Substance = Substance;
 var SuppliedItemComponent = (function (_super) {
     __extends(SuppliedItemComponent, _super);
     function SuppliedItemComponent(obj) {
@@ -16833,7 +17135,7 @@ var SuppliedItemComponent = (function (_super) {
     }
     return SuppliedItemComponent;
 }(BackboneElement));
-
+exports.SuppliedItemComponent = SuppliedItemComponent;
 var SupplyDelivery = (function (_super) {
     __extends(SupplyDelivery, _super);
     function SupplyDelivery(obj) {
@@ -16890,7 +17192,7 @@ var SupplyDelivery = (function (_super) {
     }
     return SupplyDelivery;
 }(DomainResource));
-
+exports.SupplyDelivery = SupplyDelivery;
 var OrderedItemComponent = (function (_super) {
     __extends(OrderedItemComponent, _super);
     function OrderedItemComponent(obj) {
@@ -16907,7 +17209,7 @@ var OrderedItemComponent = (function (_super) {
     }
     return OrderedItemComponent;
 }(BackboneElement));
-
+exports.OrderedItemComponent = OrderedItemComponent;
 var SupplyRequest = (function (_super) {
     __extends(SupplyRequest, _super);
     function SupplyRequest(obj) {
@@ -16959,7 +17261,7 @@ var SupplyRequest = (function (_super) {
     }
     return SupplyRequest;
 }(DomainResource));
-
+exports.SupplyRequest = SupplyRequest;
 var RestrictionComponent = (function (_super) {
     __extends(RestrictionComponent, _super);
     function RestrictionComponent(obj) {
@@ -16983,7 +17285,7 @@ var RestrictionComponent = (function (_super) {
     }
     return RestrictionComponent;
 }(BackboneElement));
-
+exports.RestrictionComponent = RestrictionComponent;
 var OutputComponent = (function (_super) {
     __extends(OutputComponent, _super);
     function OutputComponent(obj) {
@@ -17000,7 +17302,7 @@ var OutputComponent = (function (_super) {
     }
     return OutputComponent;
 }(BackboneElement));
-
+exports.OutputComponent = OutputComponent;
 var Task = (function (_super) {
     __extends(Task, _super);
     function Task(obj) {
@@ -17125,7 +17427,7 @@ var Task = (function (_super) {
     }
     return Task;
 }(DomainResource));
-
+exports.Task = Task;
 var ModelInfo = (function () {
     function ModelInfo(obj) {
         if (obj) {
@@ -17133,7 +17435,7 @@ var ModelInfo = (function () {
     }
     return ModelInfo;
 }());
-
+exports.ModelInfo = ModelInfo;
 var AssertComponent = (function (_super) {
     __extends(AssertComponent, _super);
     function AssertComponent(obj) {
@@ -17153,7 +17455,7 @@ var AssertComponent = (function (_super) {
     }
     return AssertComponent;
 }(BackboneElement));
-
+exports.AssertComponent = AssertComponent;
 var SetupActionComponent = (function (_super) {
     __extends(SetupActionComponent, _super);
     function SetupActionComponent(obj) {
@@ -17170,7 +17472,7 @@ var SetupActionComponent = (function (_super) {
     }
     return SetupActionComponent;
 }(BackboneElement));
-
+exports.SetupActionComponent = SetupActionComponent;
 var SetupComponent = (function (_super) {
     __extends(SetupComponent, _super);
     function SetupComponent(obj) {
@@ -17188,7 +17490,7 @@ var SetupComponent = (function (_super) {
     }
     return SetupComponent;
 }(BackboneElement));
-
+exports.SetupComponent = SetupComponent;
 var TestActionComponent = (function (_super) {
     __extends(TestActionComponent, _super);
     function TestActionComponent(obj) {
@@ -17205,7 +17507,7 @@ var TestActionComponent = (function (_super) {
     }
     return TestActionComponent;
 }(BackboneElement));
-
+exports.TestActionComponent = TestActionComponent;
 var TestComponent = (function (_super) {
     __extends(TestComponent, _super);
     function TestComponent(obj) {
@@ -17229,7 +17531,7 @@ var TestComponent = (function (_super) {
     }
     return TestComponent;
 }(BackboneElement));
-
+exports.TestComponent = TestComponent;
 var TeardownActionComponent = (function (_super) {
     __extends(TeardownActionComponent, _super);
     function TeardownActionComponent(obj) {
@@ -17243,7 +17545,7 @@ var TeardownActionComponent = (function (_super) {
     }
     return TeardownActionComponent;
 }(BackboneElement));
-
+exports.TeardownActionComponent = TeardownActionComponent;
 var TeardownComponent = (function (_super) {
     __extends(TeardownComponent, _super);
     function TeardownComponent(obj) {
@@ -17261,7 +17563,7 @@ var TeardownComponent = (function (_super) {
     }
     return TeardownComponent;
 }(BackboneElement));
-
+exports.TeardownComponent = TeardownComponent;
 var TestReport = (function (_super) {
     __extends(TestReport, _super);
     function TestReport(obj) {
@@ -17317,7 +17619,7 @@ var TestReport = (function (_super) {
     }
     return TestReport;
 }(DomainResource));
-
+exports.TestReport = TestReport;
 var OriginComponent = (function (_super) {
     __extends(OriginComponent, _super);
     function OriginComponent(obj) {
@@ -17334,7 +17636,7 @@ var OriginComponent = (function (_super) {
     }
     return OriginComponent;
 }(BackboneElement));
-
+exports.OriginComponent = OriginComponent;
 var DestinationComponent = (function (_super) {
     __extends(DestinationComponent, _super);
     function DestinationComponent(obj) {
@@ -17351,7 +17653,7 @@ var DestinationComponent = (function (_super) {
     }
     return DestinationComponent;
 }(BackboneElement));
-
+exports.DestinationComponent = DestinationComponent;
 var CapabilityComponent = (function (_super) {
     __extends(CapabilityComponent, _super);
     function CapabilityComponent(obj) {
@@ -17383,7 +17685,7 @@ var CapabilityComponent = (function (_super) {
     }
     return CapabilityComponent;
 }(BackboneElement));
-
+exports.CapabilityComponent = CapabilityComponent;
 var MetadataComponent = (function (_super) {
     __extends(MetadataComponent, _super);
     function MetadataComponent(obj) {
@@ -17408,7 +17710,7 @@ var MetadataComponent = (function (_super) {
     }
     return MetadataComponent;
 }(BackboneElement));
-
+exports.MetadataComponent = MetadataComponent;
 var FixtureComponent = (function (_super) {
     __extends(FixtureComponent, _super);
     function FixtureComponent(obj) {
@@ -17428,7 +17730,7 @@ var FixtureComponent = (function (_super) {
     }
     return FixtureComponent;
 }(BackboneElement));
-
+exports.FixtureComponent = FixtureComponent;
 var VariableComponent = (function (_super) {
     __extends(VariableComponent, _super);
     function VariableComponent(obj) {
@@ -17463,7 +17765,7 @@ var VariableComponent = (function (_super) {
     }
     return VariableComponent;
 }(BackboneElement));
-
+exports.VariableComponent = VariableComponent;
 var RuleParamComponent = (function (_super) {
     __extends(RuleParamComponent, _super);
     function RuleParamComponent(obj) {
@@ -17480,7 +17782,7 @@ var RuleParamComponent = (function (_super) {
     }
     return RuleParamComponent;
 }(BackboneElement));
-
+exports.RuleParamComponent = RuleParamComponent;
 var RuleComponent = (function (_super) {
     __extends(RuleComponent, _super);
     function RuleComponent(obj) {
@@ -17501,7 +17803,7 @@ var RuleComponent = (function (_super) {
     }
     return RuleComponent;
 }(BackboneElement));
-
+exports.RuleComponent = RuleComponent;
 var RulesetRuleParamComponent = (function (_super) {
     __extends(RulesetRuleParamComponent, _super);
     function RulesetRuleParamComponent(obj) {
@@ -17518,7 +17820,7 @@ var RulesetRuleParamComponent = (function (_super) {
     }
     return RulesetRuleParamComponent;
 }(BackboneElement));
-
+exports.RulesetRuleParamComponent = RulesetRuleParamComponent;
 var RulesetRuleComponent = (function (_super) {
     __extends(RulesetRuleComponent, _super);
     function RulesetRuleComponent(obj) {
@@ -17539,7 +17841,7 @@ var RulesetRuleComponent = (function (_super) {
     }
     return RulesetRuleComponent;
 }(BackboneElement));
-
+exports.RulesetRuleComponent = RulesetRuleComponent;
 var RulesetComponent = (function (_super) {
     __extends(RulesetComponent, _super);
     function RulesetComponent(obj) {
@@ -17560,7 +17862,7 @@ var RulesetComponent = (function (_super) {
     }
     return RulesetComponent;
 }(BackboneElement));
-
+exports.RulesetComponent = RulesetComponent;
 var TestScript = (function (_super) {
     __extends(TestScript, _super);
     function TestScript(obj) {
@@ -17694,7 +17996,7 @@ var TestScript = (function (_super) {
     }
     return TestScript;
 }(DomainResource));
-
+exports.TestScript = TestScript;
 var ConceptReferenceComponent = (function (_super) {
     __extends(ConceptReferenceComponent, _super);
     function ConceptReferenceComponent(obj) {
@@ -17718,7 +18020,7 @@ var ConceptReferenceComponent = (function (_super) {
     }
     return ConceptReferenceComponent;
 }(BackboneElement));
-
+exports.ConceptReferenceComponent = ConceptReferenceComponent;
 var ConceptSetComponent = (function (_super) {
     __extends(ConceptSetComponent, _super);
     function ConceptSetComponent(obj) {
@@ -17752,7 +18054,7 @@ var ConceptSetComponent = (function (_super) {
     }
     return ConceptSetComponent;
 }(BackboneElement));
-
+exports.ConceptSetComponent = ConceptSetComponent;
 var ComposeComponent = (function (_super) {
     __extends(ComposeComponent, _super);
     function ComposeComponent(obj) {
@@ -17783,7 +18085,7 @@ var ComposeComponent = (function (_super) {
     }
     return ComposeComponent;
 }(BackboneElement));
-
+exports.ComposeComponent = ComposeComponent;
 var ContainsComponent = (function (_super) {
     __extends(ContainsComponent, _super);
     function ContainsComponent(obj) {
@@ -17826,7 +18128,7 @@ var ContainsComponent = (function (_super) {
     }
     return ContainsComponent;
 }(BackboneElement));
-
+exports.ContainsComponent = ContainsComponent;
 var ExpansionComponent = (function (_super) {
     __extends(ExpansionComponent, _super);
     function ExpansionComponent(obj) {
@@ -17863,7 +18165,7 @@ var ExpansionComponent = (function (_super) {
     }
     return ExpansionComponent;
 }(BackboneElement));
-
+exports.ExpansionComponent = ExpansionComponent;
 var ValueSet = (function (_super) {
     __extends(ValueSet, _super);
     function ValueSet(obj) {
@@ -17948,7 +18250,7 @@ var ValueSet = (function (_super) {
     }
     return ValueSet;
 }(DomainResource));
-
+exports.ValueSet = ValueSet;
 var DispenseComponent = (function (_super) {
     __extends(DispenseComponent, _super);
     function DispenseComponent(obj) {
@@ -18008,7 +18310,7 @@ var DispenseComponent = (function (_super) {
     }
     return DispenseComponent;
 }(BackboneElement));
-
+exports.DispenseComponent = DispenseComponent;
 var VisionPrescription = (function (_super) {
     __extends(VisionPrescription, _super);
     function VisionPrescription(obj) {
@@ -18052,7 +18354,7 @@ var VisionPrescription = (function (_super) {
     }
     return VisionPrescription;
 }(DomainResource));
-
+exports.VisionPrescription = VisionPrescription;
 //# sourceMappingURL=fhir.js.map
 
 /***/ }),
@@ -18072,11 +18374,10 @@ module.exports = "<p>\n  new-profile works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/new-profile/new-profile.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NewProfileComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18086,7 +18387,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var NewProfileComponent = (function () {
     function NewProfileComponent() {
     }
@@ -18095,15 +18397,109 @@ var NewProfileComponent = (function () {
     return NewProfileComponent;
 }());
 NewProfileComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-new-profile',
         template: __webpack_require__("./src/app/new-profile/new-profile.component.html"),
         styles: [__webpack_require__("./src/app/new-profile/new-profile.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], NewProfileComponent);
-
+exports.NewProfileComponent = NewProfileComponent;
 //# sourceMappingURL=new-profile.component.js.map
+
+/***/ }),
+
+/***/ "./src/app/pipes/fhir-display-pipe.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var FhirDisplayPipe = (function () {
+    function FhirDisplayPipe() {
+    }
+    FhirDisplayPipe.prototype.transform = function (value, args) {
+        var typeDisplay = '';
+        switch (value.resourceType) {
+            case 'AuditEvent':
+                typeDisplay = 'Audit Event';
+                break;
+            case 'ImplementationGuide':
+                typeDisplay = 'Implementation Guide';
+                break;
+            case 'StructureDefinition':
+                typeDisplay = 'Structure Definition';
+                break;
+            default:
+                typeDisplay = value.resourceType;
+                break;
+        }
+        switch (value.resourceType) {
+            case 'Patient':
+                var name = '';
+                if (value.name.length > 0) {
+                    if (value.name[0].family && value.name[0].given && value.name[0].given.length > 0) {
+                        name = value.name[0].given.join(' ') + ' ' + value.name[0].family;
+                    }
+                    else if (value.name[0].family) {
+                        name = value.name[0].family;
+                    }
+                    else if (value.name[0].given) {
+                        name = value.name[0].given.join(' ');
+                    }
+                }
+                return typeDisplay + ' ' + (name ? name : value.id);
+            default:
+                return (value.name || value.title || value.id);
+        }
+    };
+    return FhirDisplayPipe;
+}());
+FhirDisplayPipe = __decorate([
+    core_1.Pipe({ name: 'fhirDisplay' })
+], FhirDisplayPipe);
+exports.FhirDisplayPipe = FhirDisplayPipe;
+//# sourceMappingURL=fhir-display-pipe.js.map
+
+/***/ }),
+
+/***/ "./src/app/pipes/keys-pipe.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var KeysPipe = (function () {
+    function KeysPipe() {
+    }
+    KeysPipe.prototype.transform = function (value, args) {
+        var keys = [];
+        for (var key in value) {
+            keys.push({ key: key, value: value[key] });
+        }
+        return keys;
+    };
+    return KeysPipe;
+}());
+KeysPipe = __decorate([
+    core_1.Pipe({ name: 'keys' })
+], KeysPipe);
+exports.KeysPipe = KeysPipe;
+//# sourceMappingURL=keys-pipe.js.map
 
 /***/ }),
 
@@ -18122,12 +18518,10 @@ module.exports = "<div class=\"modal-header\">\n    <h4 class=\"modal-title\">Se
 /***/ }),
 
 /***/ "./src/app/select-choice-modal/select-choice-modal.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SelectChoiceModalComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__ = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18137,8 +18531,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
 var SelectChoiceModalComponent = (function () {
     function SelectChoiceModalComponent(activeModal) {
         this.activeModal = activeModal;
@@ -18148,37 +18543,32 @@ var SelectChoiceModalComponent = (function () {
     return SelectChoiceModalComponent;
 }());
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], SelectChoiceModalComponent.prototype, "element", void 0);
 __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    core_1.Input(),
     __metadata("design:type", Object)
 ], SelectChoiceModalComponent.prototype, "structureDefinition", void 0);
 SelectChoiceModalComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-select-choice-modal',
         template: __webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.html"),
         styles: [__webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["a" /* NgbActiveModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ng_bootstrap_ng_bootstrap__["a" /* NgbActiveModal */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof ng_bootstrap_1.NgbActiveModal !== "undefined" && ng_bootstrap_1.NgbActiveModal) === "function" && _a || Object])
 ], SelectChoiceModalComponent);
-
+exports.SelectChoiceModalComponent = SelectChoiceModalComponent;
 var _a;
 //# sourceMappingURL=select-choice-modal.component.js.map
 
 /***/ }),
 
-/***/ "./src/app/services/auth.service.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/app/services/audit-event.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_js__ = __webpack_require__("./node_modules/auth0-js/src/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__person_service__ = __webpack_require__("./src/app/services/person.service.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18188,15 +18578,191 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+var auth_service_1 = __webpack_require__("./src/app/services/auth.service.ts");
+var _ = __webpack_require__("./node_modules/underscore/underscore.js");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var AuditEventService = (function () {
+    function AuditEventService(http, authService, globals) {
+        var _this = this;
+        this.http = http;
+        this.authService = authService;
+        this.globals = globals;
+        this.recentImplementationGuides = [];
+        this.recentStructureDefinitions = [];
+        // Wait for authentication to initialize
+        this.authService.authChanged
+            .subscribe(function () {
+            // If a user is authenticated, search for AuditEvent resources associated with
+            // the logged-in user to determine if they have any recent IGs or SDs
+            if (_this.authService.userProfile) {
+                _this.search(_this.authService.userProfile.sub)
+                    .subscribe(function (res) {
+                    // Find recent ImplementationGuides in the results
+                    _this.recentImplementationGuides = _.chain(res.entry)
+                        .filter(function (entry) {
+                        return _.find(entry.resource.entity, function (entity) {
+                            return entity.identifier &&
+                                entity.identifier.system === _this.globals.FHIRUrls.ImplementationGuide;
+                        });
+                    })
+                        .uniq(function (entry) { return entry.resource.entity[0].identifier.value; })
+                        .first(5)
+                        .map(function (entry) { return entry.resource.entity[0].identifier.value; })
+                        .value();
+                    // Find recent StructureDefinitions in the results
+                    _this.recentStructureDefinitions = _.chain(res.entry)
+                        .filter(function (entry) {
+                        return _.find(entry.resource.entity, function (entity) {
+                            return entity.identifier &&
+                                entity.identifier.system === _this.globals.FHIRUrls.StructureDefinition;
+                        });
+                    })
+                        .uniq(function (entry) { return entry.resource.entity[0].identifier.value; })
+                        .first(5)
+                        .map(function (entry) { return entry.resource.entity[0].identifier.value; })
+                        .value();
+                });
+            }
+        });
+    }
+    AuditEventService.prototype.getTypeCoding = function (typeCode) {
+        var coding = {
+            system: 'http://hl7.org/fhir/ValueSet/audit-event-type',
+            code: typeCode
+        };
+        switch (typeCode) {
+            case '110100':
+                coding.display = 'Audit event: Application Activity has taken place';
+                break;
+        }
+        return coding;
+    };
+    /**
+     * Creates an AuditEvent resource model based on the criteria specified,
+     * defaulting some values to Trifolia-on-FHIR specific details (such as agent,
+     * who is the logged-in user, and the source, which is always trifolia-on-fhir)
+     * @param {string} typeCode The type of event
+     * @param {Identifier} entityIdentifier The identifier of the entity being audited
+     * @returns {AuditEvent} An AuditEvent model
+     */
+    AuditEventService.prototype.getModel = function (typeCode, entityIdentifier) {
+        var userId = null;
+        if (this.authService.userProfile && this.authService.userProfile.sub) {
+            var subSplit = this.authService.userProfile.sub.split('|');
+            if (subSplit.length === 1) {
+                userId = {
+                    value: this.authService.userProfile.sub
+                };
+            }
+            else if (subSplit.length === 2) {
+                userId = {
+                    system: subSplit[0],
+                    value: subSplit[1]
+                };
+            }
+            else if (subSplit.length > 2) {
+                userId = {
+                    value: this.authService.userProfile.sub.replace('|', '%7F')
+                };
+            }
+        }
+        var auditEvent = {
+            resourceType: 'AuditEvent',
+            type: this.getTypeCoding(typeCode),
+            recorded: new Date(),
+            agent: [{
+                    requestor: false,
+                    userId: userId
+                }],
+            source: {
+                identifier: {
+                    value: 'trifolia-on-fhir'
+                }
+            }
+        };
+        if (entityIdentifier) {
+            auditEvent.entity = [{
+                    identifier: entityIdentifier
+                }];
+        }
+        return auditEvent;
+    };
+    AuditEventService.prototype.search = function (user) {
+        var url = '/api/auditEvent?';
+        if (user) {
+            url += 'user=' + encodeURIComponent(user) + '&';
+        }
+        return this.http.get(url);
+    };
+    /**
+     * Persists the AuditEvent resource as a new resource on the server
+     * @param {AuditEvent} auditEvent The AuditEvent resource to save to the server
+     * @returns {Observable<Object>} An observable that can be subscribed to, which will complete when the server has saved the AuditEvent
+     */
+    AuditEventService.prototype.create = function (auditEvent) {
+        var _this = this;
+        var results = this.http.post('/api/auditEvent', auditEvent);
+        results.subscribe(function (res) {
+            // If an entity has been specified on the AuditEvent, it may be an ImplementationGuide
+            // or an StructureDefinition, and we would want to add that to the list of recent IGs and SDs
+            if (auditEvent.entity && auditEvent.entity.length > 0) {
+                if (auditEvent.entity[0].identifier.system === _this.globals.FHIRUrls.ImplementationGuide) {
+                    var igId = auditEvent.entity[0].identifier.value;
+                    if (_this.recentImplementationGuides.indexOf(igId) < 0) {
+                        _this.recentImplementationGuides.push(igId);
+                    }
+                }
+                if (auditEvent.entity[0].identifier.system === _this.globals.FHIRUrls.StructureDefinition) {
+                    var sdId = auditEvent.entity[0].identifier.value;
+                    if (_this.recentStructureDefinitions.indexOf(sdId) < 0) {
+                        _this.recentStructureDefinitions.push(sdId);
+                    }
+                }
+            }
+        }, function (err) {
+            console.error('Error saving audit entry to server: ' + err);
+        });
+        return results;
+    };
+    return AuditEventService;
+}());
+AuditEventService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" && _b || Object, typeof (_c = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _c || Object])
+], AuditEventService);
+exports.AuditEventService = AuditEventService;
+var _a, _b, _c;
+//# sourceMappingURL=audit-event.service.js.map
 
+/***/ }),
 
+/***/ "./src/app/services/auth.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+var auth0 = __webpack_require__("./node_modules/auth0-js/src/index.js");
+var person_service_1 = __webpack_require__("./src/app/services/person.service.ts");
 var AuthService = (function () {
     function AuthService(router, personService) {
         this.router = router;
         this.personService = personService;
-        this.auth0 = new __WEBPACK_IMPORTED_MODULE_2_auth0_js__["WebAuth"]({
+        this.auth0 = new auth0.WebAuth({
             clientID: 'mpXWwpAOBTt5aUM1SE2q5KuUtr4YvUE9',
             domain: 'trifolia.auth0.com',
             responseType: 'token id_token',
@@ -18206,7 +18772,7 @@ var AuthService = (function () {
         });
         this.instanceNum = Math.random();
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
-        this.authChanged = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.authChanged = new core_1.EventEmitter();
     }
     AuthService.prototype.login = function () {
         this.auth0.authorize();
@@ -18279,22 +18845,20 @@ var AuthService = (function () {
     return AuthService;
 }());
 AuthService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__person_service__["a" /* PersonService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__person_service__["a" /* PersonService */]) === "function" && _b || Object])
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof router_1.Router !== "undefined" && router_1.Router) === "function" && _a || Object, typeof (_b = typeof person_service_1.PersonService !== "undefined" && person_service_1.PersonService) === "function" && _b || Object])
 ], AuthService);
-
+exports.AuthService = AuthService;
 var _a, _b;
 //# sourceMappingURL=auth.service.js.map
 
 /***/ }),
 
 /***/ "./src/app/services/config.service.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18304,13 +18868,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
 var ConfigService = (function () {
     function ConfigService(http) {
         var _this = this;
         this.http = http;
-        this.fhirServerChanged = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.fhirServerChanged = new core_1.EventEmitter();
         this.fhirServer = localStorage.getItem('fhirServer');
         this.http.get('/api/config')
             .map(function (res) { return res; })
@@ -18339,25 +18904,41 @@ var ConfigService = (function () {
             setTimeout(function () { _this.statusMessage = ''; }, timeout);
         }
     };
+    ConfigService.prototype.handleError = function (messageFormat, error) {
+        var errorMessage;
+        if (error.message) {
+            errorMessage = error.message;
+        }
+        else if (error.data && typeof error.data === 'string') {
+            errorMessage = error.data;
+        }
+        else if (typeof error === 'string') {
+            errorMessage = error;
+        }
+        if (errorMessage) {
+            this.setStatusMessage(messageFormat + "\r\n" + errorMessage);
+        }
+        else {
+            this.setStatusMessage(messageFormat);
+        }
+    };
     return ConfigService;
 }());
 ConfigService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */]) === "function" && _a || Object])
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object])
 ], ConfigService);
-
+exports.ConfigService = ConfigService;
 var _a;
 //# sourceMappingURL=config.service.js.map
 
 /***/ }),
 
-/***/ "./src/app/services/implementation-guide.service.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/app/services/export.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ImplementationGuideService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18367,8 +18948,53 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+var ExportService = (function () {
+    function ExportService(http) {
+        this.http = http;
+    }
+    ExportService.prototype.export = function (implementationGuideId, exportFormat, responseFormat) {
+        var url = '/api/export/' + implementationGuideId + '?exportFormat=' + exportFormat + '&';
+        if (responseFormat) {
+            url += '_format=' + encodeURIComponent(responseFormat);
+        }
+        return this.http.post(url, null, { observe: 'response', responseType: 'blob' });
+    };
+    ExportService.prototype.getPackage = function (packageId) {
+        var url = '/api/export/' + packageId;
+        return this.http.get(url, { observe: 'response', responseType: 'blob' });
+    };
+    return ExportService;
+}());
+ExportService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object])
+], ExportService);
+exports.ExportService = ExportService;
+var _a;
+//# sourceMappingURL=export.service.js.map
 
+/***/ }),
 
+/***/ "./src/app/services/implementation-guide.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
 var ImplementationGuideService = (function () {
     function ImplementationGuideService(http) {
         this.http = http;
@@ -18389,27 +19015,37 @@ var ImplementationGuideService = (function () {
         return this.http.get('/api/implementationGuide');
         //.catch(this._serverError);
     };
+    ImplementationGuideService.prototype.getImplementationGuide = function (id) {
+        return this.http.get('/api/implementationGuide/' + id);
+    };
+    ImplementationGuideService.prototype.saveImplementationGuide = function (implementationGuide) {
+        if (implementationGuide.id) {
+            return this.http.put('/api/implementationGuide/' + implementationGuide.id, implementationGuide);
+        }
+        else {
+            return this.http.post('/api/implementationGuide', implementationGuide);
+        }
+    };
+    ImplementationGuideService.prototype.removeImplementationGuide = function (id) {
+        return this.http.delete('/api/implementationGuide/' + id);
+    };
     return ImplementationGuideService;
 }());
 ImplementationGuideService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */]) === "function" && _a || Object])
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object])
 ], ImplementationGuideService);
-
+exports.ImplementationGuideService = ImplementationGuideService;
 var _a;
 //# sourceMappingURL=implementation-guide.service.js.map
 
 /***/ }),
 
 /***/ "./src/app/services/person.service.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PersonService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_fhir__ = __webpack_require__("./src/app/models/fhir.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__("./node_modules/rxjs/_esm5/add/operator/map.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18419,10 +19055,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
+__webpack_require__("./node_modules/rxjs/_esm5/add/operator/map.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
 var PersonService = (function () {
     function PersonService(http) {
         this.http = http;
@@ -18430,7 +19067,7 @@ var PersonService = (function () {
     PersonService.prototype.getMe = function (shouldCreate) {
         if (shouldCreate === void 0) { shouldCreate = false; }
         return this.http.get('/api/person/me?shouldCreate=' + shouldCreate)
-            .map(function (personObj) { return new __WEBPACK_IMPORTED_MODULE_1__models_fhir__["b" /* Person */](personObj); });
+            .map(function (personObj) { return new fhir_1.Person(personObj); });
     };
     PersonService.prototype.updateMe = function (person) {
         return this.http.put('/api/person/me', person);
@@ -18438,23 +19075,20 @@ var PersonService = (function () {
     return PersonService;
 }());
 PersonService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["b" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["b" /* HttpClient */]) === "function" && _a || Object])
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object])
 ], PersonService);
-
+exports.PersonService = PersonService;
 var _a;
 //# sourceMappingURL=person.service.js.map
 
 /***/ }),
 
 /***/ "./src/app/services/structure-definition.service.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StructureDefinitionService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__ = __webpack_require__("./node_modules/rxjs/_esm5/add/operator/map.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_common_http__ = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18464,9 +19098,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+__webpack_require__("./node_modules/rxjs/_esm5/add/operator/map.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/@angular/common/http.es5.js");
 var StructureDefinitionService = (function () {
     function StructureDefinitionService(http) {
         this.http = http;
@@ -18486,10 +19121,10 @@ var StructureDefinitionService = (function () {
     return StructureDefinitionService;
 }());
 StructureDefinitionService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__angular_common_http__["b" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_common_http__["b" /* HttpClient */]) === "function" && _a || Object])
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" && _a || Object])
 ], StructureDefinitionService);
-
+exports.StructureDefinitionService = StructureDefinitionService;
 var _a;
 //# sourceMappingURL=structure-definition.service.js.map
 
@@ -18498,32 +19133,22 @@ var _a;
 /***/ "./src/app/structure-definition/structure-definition.component.css":
 /***/ (function(module, exports) {
 
-module.exports = "tr.selected > td {\r\n    border-top: 2px solid black;\r\n    border-bottom: 2px solid black;\r\n}\r\n\r\ntr.selected > td:first-child {\r\n    border-left: 2px solid black;\r\n}\r\n\r\ntr.selected > td:last-child {\r\n    border-right: 2px solid black;\r\n}\r\n\r\n.element-definition .card-body {\r\n    padding: 0px;\r\n    margin-top: -1px;\r\n}\r\n\r\ntr.constrained {\r\n    font-weight: bold;\r\n}\r\n\r\n.sd-main:not(.small) {\r\n    width: 100%;\r\n}\r\n\r\n.sd-main.small {\r\n    width: 75%;\r\n    display: inline-table;\r\n    padding-right: 10px;\r\n}\r\n\r\n.selected-element {\r\n    width: 25%;\r\n    position: fixed;\r\n    right: 29px;\r\n    top: 88px;\r\n}\r\n\r\n.selected-element {\r\n    overflow-y: auto;\r\n    max-height: 85%;\r\n}"
+module.exports = "tr.selected > td {\r\n    border-top: 2px solid black;\r\n    border-bottom: 2px solid black;\r\n}\r\n\r\ntr.selected > td:first-child {\r\n    border-left: 2px solid black;\r\n}\r\n\r\ntr.selected > td:last-child {\r\n    border-right: 2px solid black;\r\n}\r\n\r\n.element-definition .card-body {\r\n    padding: 0px;\r\n    margin-top: -1px;\r\n}\r\n\r\ntr.constrained {\r\n    font-weight: bold;\r\n}\r\n\r\n.sd-main:not(.small) {\r\n    width: 100%;\r\n}\r\n\r\n.sd-main.small {\r\n    width: 75%;\r\n    display: inline-table;\r\n    padding-right: 10px;\r\n}\r\n\r\n.selected-element {\r\n    width: 25%;\r\n    position: fixed;\r\n    right: 29px;\r\n    top: 88px;\r\n}\r\n\r\n.selected-element {\r\n    overflow-y: auto;\r\n    max-height: 85%;\r\n}\r\n\r\ntable {\r\n    overflow-y: auto;\r\n    height: 97%;\r\n    display: inline-block;\r\n    width: 75%;\r\n    float: left;\r\n}\r\n\r\ntable > thead,\r\ntable > tbody {\r\n    display: inline-table;\r\n    width: 100%;\r\n}\r\n\r\ntable > thead > tr > th:nth-child(1),\r\ntable > tbody > tr > td:nth-child(1) {\r\n    width: 30%;\r\n}\r\n\r\ntable > thead > tr > th:nth-child(2),\r\ntable > tbody > tr > td:nth-child(2) {\r\n    width: 25%;\r\n}\r\n\r\ntable > thead > tr > th:nth-child(3),\r\ntable > tbody > tr > td:nth-child(3) {\r\n    width: 10%;\r\n}\r\n\r\ntable > thead > tr > th:nth-child(4),\r\ntable > tbody > tr > td:nth-child(4) {\r\n    width: 25%;\r\n}\r\n\r\ntable > thead > tr > th:nth-child(5),\r\ntable > tbody > tr > td:nth-child(5) {\r\n    width: 10%;\r\n}\r\n\r\ndiv.element-definition {\r\n    height: 100%;\r\n    width: 25%;\r\n    float: left;\r\n}\r\n\r\ndiv.element-definition > div.card-body {\r\n    height: 100%;\r\n    overflow-y: auto;\r\n}"
 
 /***/ }),
 
 /***/ "./src/app/structure-definition/structure-definition.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Structure Definition</h1>\r\n<div class=\"sd-main\" *ngIf=\"structureDefinition\" [class.small]=\"!!selectedElement\">\r\n    <h2>{{structureDefinition.name || 'No name'}}</h2>\r\n\r\n    <ngb-tabset (tabChange)=\"beforeTabChange($event)\">\r\n        <ngb-tab id=\"general\" title=\"General\">\r\n            <ng-template ngbTabContent>\r\n                <fieldset>\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-6\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    URL\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.url']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.url\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    Name\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.name']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.name\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('title')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'title', '')\" />\r\n                                    Title\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.title']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('title')\" [(ngModel)]=\"structureDefinition.title\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('description')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'description', '')\" />\r\n                                    Description\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.description']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <app-markdown [(ngModel)]=\"structureDefinition.description\"></app-markdown>\r\n                            </div>\r\n                        </div>\r\n\r\n                        <div class=\"col-md-3\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    ID\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['resource.id']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.id\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('version')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'version', '')\" />\r\n                                    Version\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.version']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('version')\" [(ngModel)]=\"structureDefinition.version\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('publisher')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'publisher', '')\" />\r\n                                    Publisher\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.publisher']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('publisher')\" [(ngModel)]=\"structureDefinition.publisher\" />\r\n                            </div>\r\n                        </div>\r\n\r\n                        <div class=\"col-md-3\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    Status\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.status']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <select class=\"form-control\" [(ngModel)]=\"structureDefinition.status\">\r\n                                    <option>draft</option>\r\n                                    <option>active</option>\r\n                                    <option>retired</option>\r\n                                    <option>unknown</option>\r\n                                </select>\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('experimental')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'experimental', false)\" />\r\n                                    Experimental\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.experimental']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <select class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('experimental')\" [(ngModel)]=\"structureDefinition.experimental\">\r\n                                    <option [ngValue]=\"false\">No</option>\r\n                                    <option [ngValue]=\"true\">Yes</option>\r\n                                </select>\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('date')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'date', false)\" />\r\n                                    Date\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.date']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"date\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('date')\" [(ngModel)]=\"structureDefinition.date\" />\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </fieldset>\r\n            </ng-template>\r\n        </ngb-tab>\r\n        <ngb-tab id=\"elements\" title=\"Elements\">\r\n            <ng-template ngbTabContent>\r\n                <table class=\"table table-striped\">\r\n                    <thead>\r\n                    <tr>\r\n                        <th>Element/Attribute</th>\r\n                        <th>Type</th>\r\n                        <th>Cardinality</th>\r\n                        <th>Binding</th>\r\n                        <th></th>\r\n                    </tr>\r\n                    </thead>\r\n                    <tbody>\r\n                    <tr class=\"clickable\" *ngFor=\"let e of elements\" (click)=\"toggleSelectedElement(e)\" [class.selected]=\"selectedElement === e\" [class.constrained]=\"!!e.constrainedElement\">\r\n                        <td>\r\n                            <span style=\"white-space: pre;\">{{e.tabs}}</span>\r\n                            <i class=\"fa\" [class.fa-plus]=\"!e.expanded\" [class.fa-minus]=\"e.expanded\" *ngIf=\"e.hasChildren\" (click)=\"toggleElementExpand(e)\"></i>\r\n                            <span>{{e.id}}</span>\r\n                            <i class=\"fa fa-edit\" *ngIf=\"e.id.endsWith('[x]')\" (click)=\"selectChoice(e)\" title=\"Select choice type\"></i>\r\n                        </td>\r\n                        <td>{{getTypeDisplay(e)}}</td>\r\n                        <td>{{e.min}}..{{e.max}}</td>\r\n                        <td>{{e.binding}}</td>\r\n                        <td>\r\n                            <div class=\"pull-right\">\r\n                                <i class=\"fa fa-remove\"></i>\r\n                            </div>\r\n                        </td>\r\n                    </tr>\r\n                    </tbody>\r\n                </table>\r\n            </ng-template>\r\n        </ngb-tab>\r\n        <ngb-tab id=\"json\" title=\"JSON\">\r\n            <ng-template ngbTabContent>\r\n                <t-json-viewer [json]=\"structureDefinition\"></t-json-viewer>\r\n            </ng-template>\r\n        </ngb-tab>\r\n    </ngb-tabset>\r\n</div>\r\n\r\n<div class=\"selected-element\" *ngIf=\"selectedElement\">\r\n    <div class=\"element-definition card\">\r\n        <div class=\"card-header\">\r\n            Element Definition\r\n\r\n            <div class=\"btn-group pull-right\">\r\n                <button type=\"button\" class=\"btn btn-default\" title=\"Constrain this element\" (click)=\"constrainElement(selectedElement)\" [disabled]=\"selectedElement.constrainedElement\"><i class=\"fa fa-edit\"></i></button>\r\n                <button type=\"button\" class=\"btn btn-default\" title=\"Slice this element\" (click)=\"sliceElement(selectedElement)\" [disabled]=\"!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)\"><i class=\"fa fa-copy\"></i></button>\r\n                <button type=\"button\" class=\"btn btn-default\" title=\"Remove this element\" (click)=\"removeElement(selectedElement)\" [disabled]=\"!selectedElement.constrainedElement\"><i class=\"fa fa-remove\"></i></button>\r\n            </div>\r\n        </div>\r\n        <div class=\"card-body\">\r\n            <app-element-definition-panel *ngIf=\"selectedElement.constrainedElement\" [elementTreeModel]=\"selectedElement\" [disabled]=\"false\"></app-element-definition-panel>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<footer class=\"footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" (click)=\"save()\">Save</button>\r\n    <span class=\"message\">{{message}}</span>\r\n</footer>"
+module.exports = "<h1>Structure Definition</h1>\r\n<div class=\"sd-main\" *ngIf=\"structureDefinition\">\r\n    <h2>{{structureDefinition.name || 'No name'}}</h2>\r\n\r\n    <ngb-tabset (tabChange)=\"beforeTabChange($event)\">\r\n        <ngb-tab id=\"general\" title=\"General\">\r\n            <ng-template ngbTabContent>\r\n                <fieldset>\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-6\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    URL\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.url']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.url\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    Name\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.name']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.name\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('title')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'title', '')\" />\r\n                                    Title\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.title']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('title')\" [(ngModel)]=\"structureDefinition.title\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('description')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'description', '')\" />\r\n                                    Description\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.description']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <app-markdown [(ngModel)]=\"structureDefinition.description\"></app-markdown>\r\n                            </div>\r\n                        </div>\r\n\r\n                        <div class=\"col-md-3\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    ID\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['resource.id']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"structureDefinition.id\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('version')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'version', '')\" />\r\n                                    Version\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.version']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('version')\" [(ngModel)]=\"structureDefinition.version\" />\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('publisher')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'publisher', '')\" />\r\n                                    Publisher\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.publisher']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"text\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('publisher')\" [(ngModel)]=\"structureDefinition.publisher\" />\r\n                            </div>\r\n                        </div>\r\n\r\n                        <div class=\"col-md-3\">\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    Status\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.status']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <select class=\"form-control\" [(ngModel)]=\"structureDefinition.status\">\r\n                                    <option>draft</option>\r\n                                    <option>active</option>\r\n                                    <option>retired</option>\r\n                                    <option>unknown</option>\r\n                                </select>\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('experimental')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'experimental', false)\" />\r\n                                    Experimental\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.experimental']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <select class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('experimental')\" [(ngModel)]=\"structureDefinition.experimental\">\r\n                                    <option [ngValue]=\"false\">No</option>\r\n                                    <option [ngValue]=\"true\">Yes</option>\r\n                                </select>\r\n                            </div>\r\n\r\n                            <div class=\"form-group\">\r\n                                <label>\r\n                                    <input type=\"checkbox\" [ngModel]=\"structureDefinition.hasOwnProperty('date')\" (ngModelChange)=\"globals.toggleProperty(structureDefinition, 'date', false)\" />\r\n                                    Date\r\n                                    <i class=\"fa fa-question\" ngbTooltip=\"{{globals.tooltips['sd.date']}}\" placement=\"top\"></i>\r\n                                </label>\r\n                                <input type=\"date\" class=\"form-control\" [disabled]=\"!structureDefinition.hasOwnProperty('date')\" [(ngModel)]=\"structureDefinition.date\" />\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </fieldset>\r\n            </ng-template>\r\n        </ngb-tab>\r\n        <ngb-tab id=\"elements\" title=\"Elements\">\r\n            <ng-template ngbTabContent>\r\n                <table class=\"table table-striped\">\r\n                    <thead>\r\n                    <tr>\r\n                        <th>Element/Attribute</th>\r\n                        <th>Type</th>\r\n                        <th>Cardinality</th>\r\n                        <th>Binding</th>\r\n                        <th></th>\r\n                    </tr>\r\n                    </thead>\r\n                    <tbody>\r\n                    <tr class=\"clickable\" *ngFor=\"let e of elements\" (click)=\"toggleSelectedElement(e)\" [class.selected]=\"selectedElement === e\" [class.constrained]=\"!!e.constrainedElement\">\r\n                        <td>\r\n                            <span style=\"white-space: pre;\">{{e.tabs}}</span>\r\n                            <i class=\"fa\" [class.fa-plus]=\"!e.expanded\" [class.fa-minus]=\"e.expanded\" *ngIf=\"e.hasChildren\" (click)=\"toggleElementExpand(e)\"></i>\r\n                            <span>{{e.id}}</span>\r\n                            <i class=\"fa fa-edit\" *ngIf=\"e.id.endsWith('[x]')\" (click)=\"selectChoice(e)\" title=\"Select choice type\"></i>\r\n                        </td>\r\n                        <td>{{getTypeDisplay(e)}} {{e.position}}</td>\r\n                        <td>{{e.min}}..{{e.max}}</td>\r\n                        <td>{{e.binding}}</td>\r\n                        <td>\r\n                            <div class=\"btn-group pull-right\">\r\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Constrain this element\" (click)=\"constrainElement(e)\" [disabled]=\"e.constrainedElement\"><i class=\"fa fa-edit\"></i></button>\r\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Slice this element\" (click)=\"sliceElement(e)\" [disabled]=\"!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot\"><i class=\"fa fa-cut\"></i></button>\r\n                                <button type=\"button\" class=\"btn btn-default\" title=\"Remove this element\" (click)=\"removeElementDefinition(e.constrainedElement)\" [disabled]=\"!e.constrainedElement || e.depth === 1\"><i class=\"fa fa-remove\"></i></button>\r\n                            </div>\r\n                        </td>\r\n                    </tr>\r\n                    </tbody>\r\n                </table>\r\n\r\n                <div class=\"element-definition card\">\r\n                    <div class=\"card-header\">\r\n                        Element Definition\r\n\r\n                        <!--div class=\"btn-group pull-right\">\r\n                            <button type=\"button\" class=\"btn btn-default\" title=\"Constrain this element\" (click)=\"constrainElement(selectedElement)\" [disabled]=\"selectedElement.constrainedElement\"><i class=\"fa fa-edit\"></i></button>\r\n                            <button type=\"button\" class=\"btn btn-default\" title=\"Slice this element\" (click)=\"sliceElement(selectedElement)\" [disabled]=\"!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)\"><i class=\"fa fa-copy\"></i></button>\r\n                            <button type=\"button\" class=\"btn btn-default\" title=\"Remove this element\" (click)=\"removeElementDefinition(selectedElement.constrainedElement)\" [disabled]=\"!selectedElement.constrainedElement\"><i class=\"fa fa-remove\"></i></button>\r\n                        </div-->\r\n                    </div>\r\n                    <div class=\"card-body\">\r\n                        <app-element-definition-panel *ngIf=\"selectedElement && selectedElement.constrainedElement\" [elementTreeModel]=\"selectedElement\" [disabled]=\"false\" [elements]=\"elements\" [structureDefinition]=\"structureDefinition\"></app-element-definition-panel>\r\n                    </div>\r\n                </div>\r\n            </ng-template>\r\n        </ngb-tab>\r\n        <ngb-tab id=\"json\" title=\"JSON\">\r\n            <ng-template ngbTabContent>\r\n                <t-json-viewer [json]=\"structureDefinition\"></t-json-viewer>\r\n            </ng-template>\r\n        </ngb-tab>\r\n    </ngb-tabset>\r\n</div>\r\n\r\n<footer class=\"footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" (click)=\"save()\">Save</button>\r\n    <span class=\"message\">{{message}}</span>\r\n</footer>"
 
 /***/ }),
 
 /***/ "./src/app/structure-definition/structure-definition.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StructureDefinitionComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_structure_definition_service__ = __webpack_require__("./src/app/services/structure-definition.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_config_service__ = __webpack_require__("./src/app/services/config.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_underscore__ = __webpack_require__("./node_modules/underscore/underscore.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_underscore___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_underscore__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ng_bootstrap_ng_bootstrap__ = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__select_choice_modal_select_choice_modal_component__ = __webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__globals__ = __webpack_require__("./src/app/globals.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__models_element_tree_model__ = __webpack_require__("./src/app/models/element-tree-model.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18533,24 +19158,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
-
-
-
-
-
-
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var router_1 = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+var structure_definition_service_1 = __webpack_require__("./src/app/services/structure-definition.service.ts");
+var config_service_1 = __webpack_require__("./src/app/services/config.service.ts");
+var _ = __webpack_require__("./node_modules/underscore/underscore.js");
+var ng_bootstrap_1 = __webpack_require__("./node_modules/@ng-bootstrap/ng-bootstrap/index.js");
+var select_choice_modal_component_1 = __webpack_require__("./src/app/select-choice-modal/select-choice-modal.component.ts");
+var globals_1 = __webpack_require__("./src/app/globals.ts");
+var element_tree_model_1 = __webpack_require__("./src/app/models/element-tree-model.ts");
+var fhir_1 = __webpack_require__("./src/app/models/fhir.ts");
+var common_1 = __webpack_require__("./node_modules/@angular/common/@angular/common.es5.js");
+var Observable_1 = __webpack_require__("./node_modules/rxjs/_esm5/Observable.js");
+var audit_event_service_1 = __webpack_require__("./src/app/services/audit-event.service.ts");
 var StructureDefinitionComponent = (function () {
-    function StructureDefinitionComponent(route, strucDefService, configService, modalService, globals) {
+    function StructureDefinitionComponent(route, strucDefService, configService, modalService, globals, auditEventService, document) {
         this.route = route;
         this.strucDefService = strucDefService;
         this.configService = configService;
         this.modalService = modalService;
         this.globals = globals;
+        this.auditEventService = auditEventService;
+        this.document = document;
         this.elements = [];
+        this.document.body.classList.add('structure-definition');
     }
+    StructureDefinitionComponent.prototype.ngOnDestroy = function () {
+        this.document.body.classList.remove('structure-definition');
+    };
     StructureDefinitionComponent.prototype.toggleSelectedElement = function (element) {
         if (!element || this.selectedElement === element) {
             this.selectedElement = null;
@@ -18567,7 +19206,7 @@ var StructureDefinitionComponent = (function () {
     StructureDefinitionComponent.prototype.toggleElementExpand = function (target) {
         if (target.expanded) {
             // TODO: Account for expanding/collapsing slices
-            var filtered = __WEBPACK_IMPORTED_MODULE_4_underscore__["filter"](this.elements, function (element) {
+            var filtered = _.filter(this.elements, function (element) {
                 return element.baseElement.path.startsWith(target.baseElement.path + '.');
             });
             for (var i = filtered.length - 1; i >= 0; i--) {
@@ -18582,7 +19221,7 @@ var StructureDefinitionComponent = (function () {
         }
     };
     StructureDefinitionComponent.prototype.selectChoice = function (element) {
-        var modalRef = this.modalService.open(__WEBPACK_IMPORTED_MODULE_6__select_choice_modal_select_choice_modal_component__["a" /* SelectChoiceModalComponent */]);
+        var modalRef = this.modalService.open(select_choice_modal_component_1.SelectChoiceModalComponent);
         modalRef.componentInstance.structureDefinition = this.baseStructureDefinition;
         modalRef.componentInstance.element = element;
         modalRef.result.then(function (selectedType) {
@@ -18594,13 +19233,13 @@ var StructureDefinitionComponent = (function () {
     StructureDefinitionComponent.prototype.populateConstrainedElements = function (elementTreeModels) {
         var _loop_1 = function (i) {
             var elementTreeModel = elementTreeModels[i];
-            var constrainedElements = __WEBPACK_IMPORTED_MODULE_4_underscore__["filter"](this_1.structureDefinition.differential.element, function (diffElement) {
+            var constrainedElements = _.filter(this_1.structureDefinition.differential.element, function (diffElement) {
                 return diffElement.path === elementTreeModel.baseElement.path;
             });
             for (var x = 0; x < constrainedElements.length; x++) {
                 var newElementTreeModel = elementTreeModel;
                 if (x > 0) {
-                    newElementTreeModel = new __WEBPACK_IMPORTED_MODULE_8__models_element_tree_model__["a" /* ElementTreeModel */]();
+                    newElementTreeModel = new element_tree_model_1.ElementTreeModel();
                     Object.assign(newElementTreeModel, elementTreeModel);
                     elementTreeModels.splice(i + x, 0, newElementTreeModel);
                 }
@@ -18624,7 +19263,7 @@ var StructureDefinitionComponent = (function () {
         var filtered;
         if (parent && parent.baseElement.path.endsWith('[x]')) {
             // this is a choice element, the child elements are the types of the choice
-            filtered = __WEBPACK_IMPORTED_MODULE_4_underscore__["map"](parent.baseElement.type, function (type) {
+            filtered = _.map(parent.baseElement.type, function (type) {
                 return {
                     path: parent.baseElement.path.substring(0, parent.baseElement.path.lastIndexOf('[x]')) + type.code
                 };
@@ -18632,7 +19271,7 @@ var StructureDefinitionComponent = (function () {
         }
         else {
             // this is not a choice element, just need to find the children of the parent
-            filtered = __WEBPACK_IMPORTED_MODULE_4_underscore__["filter"](this.baseStructureDefinition.snapshot.element, function (baseElement) {
+            filtered = _.filter(this.baseStructureDefinition.snapshot.element, function (baseElement) {
                 if (parentPath) {
                     return baseElement.path.startsWith(parentPath + '.') &&
                         baseElement.path.split('.').length === (parentPath.split('.').length + 1);
@@ -18643,13 +19282,16 @@ var StructureDefinitionComponent = (function () {
             });
         }
         var _loop_2 = function (i) {
+            var position = this_2.baseStructureDefinition.snapshot.element.indexOf(filtered[i]);
             var depth = parent ? parent.depth + 1 : 1;
-            var hasChildren = __WEBPACK_IMPORTED_MODULE_4_underscore__["filter"](this_2.baseStructureDefinition.snapshot.element, function (element) {
+            var hasChildren = _.filter(this_2.baseStructureDefinition.snapshot.element, function (element) {
                 return element.path.startsWith(filtered[i].path + '.') &&
                     element.path.split('.').length === (filtered[i].path.split('.').length + 1);
             }).length > 0;
-            var newElement = new __WEBPACK_IMPORTED_MODULE_8__models_element_tree_model__["a" /* ElementTreeModel */]();
-            newElement.setFields(filtered[i], parent ? parent.depth + 1 : 1, hasChildren);
+            var newElement = new element_tree_model_1.ElementTreeModel();
+            newElement.parent = parent;
+            newElement.setFields(filtered[i], parent ? parent.depth + 1 : 1, hasChildren, position);
+            newElement.setId();
             var newElements = this_2.populateElement(newElement);
             this_2.populateConstrainedElements(newElements);
             for (var x = 0; x < newElements.length; x++) {
@@ -18669,7 +19311,7 @@ var StructureDefinitionComponent = (function () {
         if (!element.baseElement.type) {
             return '';
         }
-        return __WEBPACK_IMPORTED_MODULE_4_underscore__["map"](element.baseElement.type, function (type) {
+        return _.map(element.baseElement.type, function (type) {
             return type.code;
         }).join(', ');
     };
@@ -18679,32 +19321,131 @@ var StructureDefinitionComponent = (function () {
         this.configService.setStatusMessage('Loading structure definition');
         this.structureDefinition = null;
         this.elements = [];
-        this.strucDefService.getStructureDefinition(strucDefId)
-            .mergeMap(function (structureDefinition) {
-            _this.structureDefinition = structureDefinition;
-            _this.configService.setStatusMessage('Loading base structure definition');
-            return _this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
-        })
-            .subscribe(function (baseStructureDefinition) {
-            _this.baseStructureDefinition = baseStructureDefinition;
-            _this.populateBaseElements();
-            _this.configService.setStatusMessage('');
-        }, function (error) {
-            _this.configService.setStatusMessage('Error loading structure definitions: ' + error);
+        return new Observable_1.Observable(function (observer) {
+            _this.strucDefService.getStructureDefinition(strucDefId)
+                .mergeMap(function (structureDefinition) {
+                _this.structureDefinition = structureDefinition;
+                _this.configService.setStatusMessage('Loading base structure definition');
+                return _this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
+            })
+                .subscribe(function (baseStructureDefinition) {
+                _this.baseStructureDefinition = baseStructureDefinition;
+                _this.populateBaseElements();
+                _this.configService.setStatusMessage('');
+                observer.next();
+            }, function (error) {
+                _this.configService.handleError('Error loading structure definitions.', error);
+                observer.error(error);
+            });
         });
     };
-    StructureDefinitionComponent.prototype.constrainElement = function (element) {
+    StructureDefinitionComponent.prototype.constrainElement = function (elementTreeModel) {
+        var _this = this;
+        var parentSliceName = elementTreeModel.parent.constrainedElement.sliceName;
+        var constrainedElement = new fhir_1.ElementDefinition();
+        constrainedElement.id = elementTreeModel.baseElement.path;
+        constrainedElement.path = elementTreeModel.baseElement.path;
+        if (parentSliceName) {
+            constrainedElement.id += ':' + parentSliceName;
+        }
+        // Set the constrainedElement on the treeModel
+        elementTreeModel.constrainedElement = constrainedElement;
+        // Add the element to the SD's differential elements, and sort the list so that it matches the base model's order
+        this.structureDefinition.differential.element.push(constrainedElement);
+        this.structureDefinition.differential.element = _.sortBy(this.structureDefinition.differential.element, function (element) {
+            var foundElementTreeModel = _.find(_this.elements, function (nextElementTreeModel) {
+                return nextElementTreeModel.constrainedElement === element;
+            });
+            return foundElementTreeModel.position;
+        });
     };
-    StructureDefinitionComponent.prototype.sliceElement = function (element) {
+    StructureDefinitionComponent.prototype.isChildOfElement = function (target, parent) {
+        var current = target.parent;
+        while (current) {
+            if (current === parent) {
+                return true;
+            }
+            current = current.parent;
+        }
+        return false;
     };
-    StructureDefinitionComponent.prototype.removeElement = function (element) {
+    StructureDefinitionComponent.prototype.sliceElement = function (elementTreeModel) {
+        var newSliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+        var newElement = new fhir_1.ElementDefinition();
+        newElement.id = elementTreeModel.constrainedElement.id + ':' + newSliceName;
+        newElement.path = elementTreeModel.constrainedElement.path;
+        newElement.sliceName = newSliceName;
+        var elementIndex = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
+        this.structureDefinition.differential.element.splice(elementIndex + 1, 0, newElement);
+        var newElementTreeModel = new element_tree_model_1.ElementTreeModel();
+        newElementTreeModel.setFields(elementTreeModel.baseElement, elementTreeModel.depth, elementTreeModel.hasChildren, elementTreeModel.position, newElement);
+        newElementTreeModel.setId(newSliceName);
+        newElementTreeModel.expanded = false;
+        newElementTreeModel.isSliceRoot = true;
+        var elementTreeModelIndex = this.elements.indexOf(elementTreeModel);
+        // Include any children of the current elementTreeModel in the index
+        while (true) {
+            var nextElementTreeModel = this.elements[elementTreeModelIndex + 1];
+            if (!this.isChildOfElement(newElementTreeModel, elementTreeModel)) {
+                break;
+            }
+            elementTreeModelIndex++;
+        }
+        this.elements.splice(elementTreeModelIndex + 1, 0, newElementTreeModel);
+    };
+    StructureDefinitionComponent.prototype.removeElementDefinition = function (element) {
+        var _this = this;
+        var childElementDefinitions = this.getChildElementDefinitions(element);
+        _.each(childElementDefinitions, function (childElementDefinition) { return _this.removeElementDefinition(childElementDefinition); });
+        var elementIndex = this.structureDefinition.differential.element.indexOf(element);
+        this.structureDefinition.differential.element.splice(elementIndex, 1);
+        var foundElementTreeModel = _.find(this.elements, function (elementTreeModel) {
+            return elementTreeModel.constrainedElement === element;
+        });
+        if (foundElementTreeModel) {
+            foundElementTreeModel.constrainedElement = null;
+        }
+        // Collapse the element tree model now that it is removed
+        if (foundElementTreeModel.expanded) {
+            this.toggleElementExpand(foundElementTreeModel);
+        }
+        // If it is a slice root, remove the element tree model entirely
+        if (foundElementTreeModel.isSliceRoot) {
+            var foundElementTreeModelIndex = this.elements.indexOf(foundElementTreeModel);
+            this.elements.splice(foundElementTreeModelIndex, 1);
+        }
+    };
+    StructureDefinitionComponent.prototype.getChildElementDefinitions = function (element) {
+        var elementId = element.id;
+        var sliceName = elementId.indexOf(':') >= 0 ? elementId.substring(elementId.indexOf(':') + 1) : '';
+        var filtered = _.filter(this.structureDefinition.differential.element, function (nextElement) {
+            var isBase = nextElement.id.startsWith(elementId + '.');
+            var isLeaf = nextElement.id.split('.').length === elementId.split('.').length + 1;
+            var isSlice = nextElement.id.endsWith(':' + sliceName);
+            if (!isBase || !isLeaf) {
+                return false;
+            }
+            if (sliceName && !isSlice) {
+                return false;
+            }
+            return true;
+        });
+        return filtered;
     };
     StructureDefinitionComponent.prototype.cardinalityAllowsMultiple = function (max) {
         return max !== '0' && max !== '1';
     };
     StructureDefinitionComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.getStructureDefinition();
+        this.getStructureDefinition()
+            .subscribe(function () {
+            var entityIdentifier = {
+                system: _this.globals.FHIRUrls.StructureDefinition,
+                value: _this.route.snapshot.paramMap.get('id')
+            };
+            var auditEvent = _this.auditEventService.getModel('110100', entityIdentifier);
+            _this.auditEventService.create(auditEvent);
+        });
         this.configService.fhirServerChanged.subscribe(function (fhirServer) { return _this.getStructureDefinition(); });
     };
     StructureDefinitionComponent.prototype.save = function () {
@@ -18712,16 +19453,17 @@ var StructureDefinitionComponent = (function () {
     return StructureDefinitionComponent;
 }());
 StructureDefinitionComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-profile',
         template: __webpack_require__("./src/app/structure-definition/structure-definition.component.html"),
         styles: [__webpack_require__("./src/app/structure-definition/structure-definition.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_2__services_structure_definition_service__["a" /* StructureDefinitionService */]]
+        providers: [structure_definition_service_1.StructureDefinitionService]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_structure_definition_service__["a" /* StructureDefinitionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_structure_definition_service__["a" /* StructureDefinitionService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_config_service__["a" /* ConfigService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_5__ng_bootstrap_ng_bootstrap__["b" /* NgbModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__ng_bootstrap_ng_bootstrap__["b" /* NgbModal */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_7__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__globals__["a" /* Globals */]) === "function" && _e || Object])
+    __param(6, core_1.Inject(common_1.DOCUMENT)),
+    __metadata("design:paramtypes", [typeof (_a = typeof router_1.ActivatedRoute !== "undefined" && router_1.ActivatedRoute) === "function" && _a || Object, typeof (_b = typeof structure_definition_service_1.StructureDefinitionService !== "undefined" && structure_definition_service_1.StructureDefinitionService) === "function" && _b || Object, typeof (_c = typeof config_service_1.ConfigService !== "undefined" && config_service_1.ConfigService) === "function" && _c || Object, typeof (_d = typeof ng_bootstrap_1.NgbModal !== "undefined" && ng_bootstrap_1.NgbModal) === "function" && _d || Object, typeof (_e = typeof globals_1.Globals !== "undefined" && globals_1.Globals) === "function" && _e || Object, typeof (_f = typeof audit_event_service_1.AuditEventService !== "undefined" && audit_event_service_1.AuditEventService) === "function" && _f || Object, Object])
 ], StructureDefinitionComponent);
-
-var _a, _b, _c, _d, _e;
+exports.StructureDefinitionComponent = StructureDefinitionComponent;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=structure-definition.component.js.map
 
 /***/ }),
@@ -18736,18 +19478,15 @@ module.exports = ""
 /***/ "./src/app/structure-definitions/structure-definitions.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Structure Definitions</h1>\r\n\r\n<table class=\"table table-striped\">\r\n  <thead>\r\n    <tr>\r\n      <th>Name</th>\r\n      <th>Experimental</th>\r\n      <th>Description</th>\r\n      <th>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" routerLink=\"/structure-definition/new\">Add</a>\r\n        </div>\r\n      </th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr *ngFor=\"let p of structureDefinitions\">\r\n      <td>{{p.name}} <span class=\"badge\">{{p.id}}</span></td>\r\n      <td>{{p.experimental ? \"Yes\" : \"No\"}}</td>\r\n      <td>{{p.description}}</td>\r\n      <td>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" [routerLink]=\"['/structure-definition', p.id]\">Edit</a>\r\n          <button type=\"button\" class=\"btn btn-default\" (click)=\"delete(p.id)\">Delete</button>\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n"
+module.exports = "<h1>Structure Definitions</h1>\r\n\r\n<table class=\"table table-striped\">\r\n  <thead>\r\n    <tr>\r\n      <th>Name</th>\r\n      <th>Experimental</th>\r\n      <th>Description</th>\r\n      <th>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" routerLink=\"/structure-definition/new\">New</a>\r\n        </div>\r\n      </th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr *ngFor=\"let p of structureDefinitions\">\r\n      <td>{{p.name}} <span class=\"badge\">{{p.id}}</span></td>\r\n      <td>{{p.experimental ? \"Yes\" : \"No\"}}</td>\r\n      <td>{{p.description}}</td>\r\n      <td>\r\n        <div class=\"pull-right\">\r\n          <a class=\"btn btn-default\" [routerLink]=\"['/structure-definition', p.id]\">Edit</a>\r\n          <button type=\"button\" class=\"btn btn-default\" (click)=\"delete(p.id)\">Delete</button>\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n"
 
 /***/ }),
 
 /***/ "./src/app/structure-definitions/structure-definitions.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StructureDefinitionsComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_structure_definition_service__ = __webpack_require__("./src/app/services/structure-definition.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_config_service__ = __webpack_require__("./src/app/services/config.service.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18757,9 +19496,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var structure_definition_service_1 = __webpack_require__("./src/app/services/structure-definition.service.ts");
+var config_service_1 = __webpack_require__("./src/app/services/config.service.ts");
 var StructureDefinitionsComponent = (function () {
     function StructureDefinitionsComponent(structureDefinitionService, configService) {
         this.structureDefinitionService = structureDefinitionService;
@@ -18776,7 +19516,7 @@ var StructureDefinitionsComponent = (function () {
             _this.structureDefinitions = structureDefinitions;
             _this.configService.setStatusMessage('');
         }, function (error) {
-            _this.configService.setStatusMessage('Error loading structure definitions: ' + error);
+            _this.configService.handleError('Error loading structure definitions.', error);
         });
     };
     StructureDefinitionsComponent.prototype.ngOnInit = function () {
@@ -18787,15 +19527,15 @@ var StructureDefinitionsComponent = (function () {
     return StructureDefinitionsComponent;
 }());
 StructureDefinitionsComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-profiles',
         template: __webpack_require__("./src/app/structure-definitions/structure-definitions.component.html"),
         styles: [__webpack_require__("./src/app/structure-definitions/structure-definitions.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_1__services_structure_definition_service__["a" /* StructureDefinitionService */]]
+        providers: [structure_definition_service_1.StructureDefinitionService]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_structure_definition_service__["a" /* StructureDefinitionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_structure_definition_service__["a" /* StructureDefinitionService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_config_service__["a" /* ConfigService */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof structure_definition_service_1.StructureDefinitionService !== "undefined" && structure_definition_service_1.StructureDefinitionService) === "function" && _a || Object, typeof (_b = typeof config_service_1.ConfigService !== "undefined" && config_service_1.ConfigService) === "function" && _b || Object])
 ], StructureDefinitionsComponent);
-
+exports.StructureDefinitionsComponent = StructureDefinitionsComponent;
 var _a, _b;
 //# sourceMappingURL=structure-definitions.component.js.map
 
@@ -18816,12 +19556,10 @@ module.exports = "<h1>Edit User/Person</h1>\r\n\r\n<fhir-edit-human-names *ngIf=
 /***/ }),
 
 /***/ "./src/app/user/user.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UserComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_person_service__ = __webpack_require__("./src/app/services/person.service.ts");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18831,8 +19569,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var person_service_1 = __webpack_require__("./src/app/services/person.service.ts");
 var UserComponent = (function () {
     function UserComponent(personService) {
         this.personService = personService;
@@ -18860,15 +19599,15 @@ var UserComponent = (function () {
     return UserComponent;
 }());
 UserComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-user',
         template: __webpack_require__("./src/app/user/user.component.html"),
         styles: [__webpack_require__("./src/app/user/user.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_1__services_person_service__["a" /* PersonService */]]
+        providers: [person_service_1.PersonService]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_person_service__["a" /* PersonService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_person_service__["a" /* PersonService */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof person_service_1.PersonService !== "undefined" && person_service_1.PersonService) === "function" && _a || Object])
 ], UserComponent);
-
+exports.UserComponent = UserComponent;
 var _a;
 //# sourceMappingURL=user.component.js.map
 
@@ -18889,11 +19628,10 @@ module.exports = "<p>\n  users works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/users/users.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UsersComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18903,7 +19641,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var UsersComponent = (function () {
     function UsersComponent() {
     }
@@ -18912,14 +19651,14 @@ var UsersComponent = (function () {
     return UsersComponent;
 }());
 UsersComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-users',
         template: __webpack_require__("./src/app/users/users.component.html"),
         styles: [__webpack_require__("./src/app/users/users.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], UsersComponent);
-
+exports.UsersComponent = UsersComponent;
 //# sourceMappingURL=users.component.js.map
 
 /***/ }),
@@ -18939,11 +19678,10 @@ module.exports = "<p>\n  valueset works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/valueset/valueset.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ValuesetComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18953,7 +19691,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var ValuesetComponent = (function () {
     function ValuesetComponent() {
     }
@@ -18962,14 +19701,14 @@ var ValuesetComponent = (function () {
     return ValuesetComponent;
 }());
 ValuesetComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-valueset',
         template: __webpack_require__("./src/app/valueset/valueset.component.html"),
         styles: [__webpack_require__("./src/app/valueset/valueset.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], ValuesetComponent);
-
+exports.ValuesetComponent = ValuesetComponent;
 //# sourceMappingURL=valueset.component.js.map
 
 /***/ }),
@@ -18989,11 +19728,10 @@ module.exports = "<p>\n  valuesets works!\n</p>\n"
 /***/ }),
 
 /***/ "./src/app/valuesets/valuesets.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ValuesetsComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19003,7 +19741,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 var ValuesetsComponent = (function () {
     function ValuesetsComponent() {
     }
@@ -19012,29 +19751,29 @@ var ValuesetsComponent = (function () {
     return ValuesetsComponent;
 }());
 ValuesetsComponent = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+    core_1.Component({
         selector: 'app-valuesets',
         template: __webpack_require__("./src/app/valuesets/valuesets.component.html"),
         styles: [__webpack_require__("./src/app/valuesets/valuesets.component.css")]
     }),
     __metadata("design:paramtypes", [])
 ], ValuesetsComponent);
-
+exports.ValuesetsComponent = ValuesetsComponent;
 //# sourceMappingURL=valuesets.component.js.map
 
 /***/ }),
 
 /***/ "./src/environments/environment.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return environment; });
+
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
-// The file contents for the current environment will overwrite these during build.
-var environment = {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.environment = {
     production: false
 };
 //# sourceMappingURL=environment.js.map
@@ -19042,22 +19781,19 @@ var environment = {
 /***/ }),
 
 /***/ "./src/main.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__("./node_modules/@angular/platform-browser-dynamic/@angular/platform-browser-dynamic.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__("./src/app/app.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__("./src/environments/environment.ts");
 
-
-
-
-if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].production) {
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["enableProdMode"])();
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+var platform_browser_dynamic_1 = __webpack_require__("./node_modules/@angular/platform-browser-dynamic/@angular/platform-browser-dynamic.es5.js");
+var app_module_1 = __webpack_require__("./src/app/app.module.ts");
+var environment_1 = __webpack_require__("./src/environments/environment.ts");
+if (environment_1.environment.production) {
+    core_1.enableProdMode();
 }
-Object(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_2__app_app_module__["a" /* AppModule */])
+platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
     .catch(function (err) { return console.log(err); });
 //# sourceMappingURL=main.js.map
 
@@ -19072,6 +19808,27 @@ module.exports = __webpack_require__("./src/main.ts");
 /***/ }),
 
 /***/ 1:
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 2:
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 4:
 /***/ (function(module, exports) {
 
 /* (ignored) */

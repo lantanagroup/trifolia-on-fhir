@@ -14,17 +14,31 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="igMenu">
           <a class="dropdown-item" routerLink="/implementation-guide">Browse</a>
-          <a class="dropdown-item" href="#">Recent...</a>
+          <div class="dropdown-divider" *ngIf="auditEventService.recentImplementationGuides.length > 0"></div>
+          <a class="dropdown-item" routerLink="/implementation-guide/{{i}}" *ngFor="let i of auditEventService.recentImplementationGuides">{{i}}</a>
         </div>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link" routerLink="/structure-definition">Structure Definitions</a>
+      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="sdMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="sub-nav-link">Structure Definitions</a>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="sdMenu">
+          <a class="dropdown-item" routerLink="/structure-definition">Browse</a>
+          <div class="dropdown-divider" *ngIf="auditEventService.recentStructureDefinitions.length > 0"></div>
+          <a class="dropdown-item" routerLink="/structure-definition/{{i}}" *ngFor="let i of auditEventService.recentStructureDefinitions">{{i}}</a>
+        </div>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/valuesets">Value Sets</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/codesystems">Code Systems</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/capabilityStatements">Capability Statements</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/operationDefinitions">Operation Definitions</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/export">Export</a>
@@ -67,7 +81,7 @@
 
 <div class="container" [class.container-large]="isBigContainer">
   <div class="jumbotron">
-    <div class="alert alert-warning" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
+    <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
     <router-outlet></router-outlet>
   </div>
 </div>

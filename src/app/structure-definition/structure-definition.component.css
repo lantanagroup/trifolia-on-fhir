@@ -41,3 +41,53 @@ tr.constrained {
     overflow-y: auto;
     max-height: 85%;
 }
+
+table {
+    overflow-y: auto;
+    height: 97%;
+    display: inline-block;
+    width: 75%;
+    float: left;
+}
+
+table > thead,
+table > tbody {
+    display: inline-table;
+    width: 100%;
+}
+
+table > thead > tr > th:nth-child(1),
+table > tbody > tr > td:nth-child(1) {
+    width: 30%;
+}
+
+table > thead > tr > th:nth-child(2),
+table > tbody > tr > td:nth-child(2) {
+    width: 25%;
+}
+
+table > thead > tr > th:nth-child(3),
+table > tbody > tr > td:nth-child(3) {
+    width: 10%;
+}
+
+table > thead > tr > th:nth-child(4),
+table > tbody > tr > td:nth-child(4) {
+    width: 25%;
+}
+
+table > thead > tr > th:nth-child(5),
+table > tbody > tr > td:nth-child(5) {
+    width: 10%;
+}
+
+div.element-definition {
+    height: 100%;
+    width: 25%;
+    float: left;
+}
+
+div.element-definition > div.card-body {
+    height: 100%;
+    overflow-y: auto;
+}

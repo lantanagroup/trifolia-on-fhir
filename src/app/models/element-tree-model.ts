@@ -7,20 +7,53 @@ export class ElementTreeModel {
     public baseElement: ElementDefinition;
     public depth: number;
     public expanded: boolean;
-    public tabs = '';
     public hasChildren: boolean;
+    public position: number;
+    public parent: ElementTreeModel;
+    public isSliceRoot: boolean;
 
     constructor(id?: string) {
         this.id = id;
     }
 
-    setFields(baseElement: ElementDefinition, depth: number, hasChildren: boolean, constrainedElement?: ElementDefinition) {
-        this.id = baseElement.path.substring(baseElement.path.lastIndexOf('.') + 1);
+    setId(sliceName?: string) {
+        this.id = this.baseElement.path.substring(this.baseElement.path.lastIndexOf('.') + 1);
+
+        if (sliceName) {
+            this.id += ':' + sliceName;
+        }
+
+        if (this.constrainedElement) {
+            this.constrainedElement.id = this.baseElement.path + ':' + sliceName;
+        }
+    }
+
+    setFields(baseElement: ElementDefinition, depth: number, hasChildren: boolean, position: number, constrainedElement?: ElementDefinition) {
         this.baseElement = baseElement;
         this.depth = depth;
         this.hasChildren = hasChildren;
+        this.position = position;
 
-        for (let x = 1; x < this.depth; x++) { this.tabs += '    '; }
+        if (constrainedElement) {
+            this.constrainedElement = constrainedElement;
+        }
+    }
+
+    get isSlice(): boolean {
+        if (!this.constrainedElement) {
+            return false;
+        }
+
+        const idHasSliceName = this.constrainedElement.id && this.constrainedElement.id.indexOf(':') > 0;
+        const hasSliceNameProp = !!this.constrainedElement.sliceName;
+
+        return idHasSliceName || hasSliceNameProp;
+    }
+
+    get tabs(): string {
+        let tabs = '';
+        for (let x = 1; x < this.depth; x++) { tabs += '    '; }
+        return tabs;
     }
 
     get min(): number {

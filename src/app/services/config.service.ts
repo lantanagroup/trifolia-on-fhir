@@ -1,5 +1,6 @@
 import {Injectable, EventEmitter} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {ConfigModel} from '../models/config-model';
 
 @Injectable()
 export class ConfigService {
@@ -41,6 +42,24 @@ export class ConfigService {
 
         if (timeout) {
             setTimeout(() => { this.statusMessage = ''; }, timeout);
+        }
+    }
+
+    public handleError(messageFormat: string, error: any) {
+        let errorMessage: string;
+
+        if (error.message) {
+            errorMessage = error.message;
+        } else if (error.data && typeof error.data === 'string') {
+            errorMessage = error.data;
+        } else if (typeof error === 'string') {
+            errorMessage = error;
+        }
+
+        if (errorMessage) {
+            this.setStatusMessage(`${messageFormat}\r\n${errorMessage}`);
+        } else {
+            this.setStatusMessage(messageFormat);
         }
     }
 }

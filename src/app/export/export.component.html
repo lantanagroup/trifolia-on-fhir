@@ -2,10 +2,37 @@
 
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<select class="form-control">
-  <option>Implementation Guide</option>
-</select>
+<div class="form-group">
+    <label>Implementation Guide</label>
+    <select class="form-control" [(ngModel)]="implementationGuideId">
+        <option></option>
+        <option *ngFor="let ig of implementationGuides" [ngValue]="ig.id">{{ig.name}}</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Export Format</label>
+    <select class="form-control" [(ngModel)]="exportFormat">
+        <option [ngValue]="1">Bundle</option>
+        <option [ngValue]="2">HTML (IG Publisher)</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Response Format</label>
+    <select class="form-control" [(ngModel)]="responseFormat">
+        <option value="application/json">JSON</option>
+        <option value="application/xml">XML</option>
+    </select>
+</div>
+
+<div class="card" *ngIf="socketOutput">
+    <div class="card-body">
+        <pre>{{socketOutput}}</pre>
+    </div>
+</div>
 
 <footer class="footer">
-  <button type="button" class="btn btn-default">Export</button>
+    <button type="button" class="btn btn-default" (click)="export()">Export</button>
+    <span class="message">{{message}}</span>
 </footer>

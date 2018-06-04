@@ -41,3 +41,34 @@ div.t-json-viewer {
 .clickable {
   pointer: cursor;
 }
+
+body.structure-definition {
+  overflow: hidden;
+}
+
+body.structure-definition > app-root > div.container {
+  position: absolute;
+  top: 69px;
+  bottom: 58px;
+}
+
+body.structure-definition > app-root > div.container > div.jumbotron {
+  height: 100%;
+  overflow-y: auto;
+}
+
+body.structure-definition div.sd-main {
+  height: 94%;
+}
+
+body.structure-definition div.sd-main div.tab-content {
+  height: 97%;
+}
+
+body.structure-definition div.sd-main .tab-content > div.tab-pane {
+  height: 99%;
+}
+
+.status-message {
+  white-space: pre;
+}

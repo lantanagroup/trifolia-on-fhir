@@ -27,7 +27,75 @@ router.get('/', checkJwt, (req, res) => {
 });
 
 router.get('/:id', checkJwt, (req, res) => {
-    res.send({});
+    const url = req.getFhirServerUrl('ImplementationGuide', req.params.id);
+
+    request(url, { json: true }, (error, results, body) => {
+        if (error) {
+            console.log('Error retrieving implementatoin guide from FHIR server: ' + error);
+            return res.status(500).send('Error retrieving implementation guide from FHIR server');
+        }
+
+        res.send(body);
+    });
+});
+
+router.post('/', checkJwt, (req, res) => {
+    const options = {
+        url: req.getFhirServerUrl('ImplementationGuide'),
+        method: 'POST',
+        json: true,
+        body: req.body
+    };
+
+    request(options, (error, results, body) => {
+        if (error) {
+            console.log('Error from FHIR server while creating implementation guide: ' + error);
+            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+        }
+
+        request(results.headers.location, (error, results, body) => {
+            if (error) {
+                console.log('Error from FHIR server while retrieving created implementation guide: ' + error);
+                return res.send(500).send('Error from FHIR server while retrieving created implementation guide: ' + error);
+            }
+
+            res.send(body);
+        });
+    });
+});
+
+router.delete('/:id', checkJwt, (req, res) => {
+    const options = {
+        url: req.getFhirServerUrl('ImplementationGuide', req.params.id),
+        method: 'DELETE'
+    };
+
+    request(options, (error, results, body) => {
+        if (error) {
+            console.log('Error from FHIR server while creating implementation guide: ' + error);
+            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+        }
+
+        res.status(204).send();
+    });
+});
+
+router.put('/:id', checkJwt, (req, res) => {
+    const options = {
+        url: req.getFhirServerUrl('ImplementationGuide', req.params.id),
+        method: 'PUT',
+        json: true,
+        body: req.body
+    };
+
+    request(options, (error, results, body) => {
+        if (error) {
+            console.log('Error from FHIR server while creating implementation guide: ' + error);
+            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+        }
+
+        res.send(req.body);
+    });
 });
 
 module.exports = router;

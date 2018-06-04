@@ -7,6 +7,10 @@ const implementationGuideController = require('./controllers/implementationGuide
 const configController = require('./controllers/config');
 const personController = require('./controllers/person');
 const structureDefinitionController = require('./controllers/structureDefinition');
+const auditEventController = require('./controllers/auditEvent');
+const fhirController = require('./controllers/fhir');
+const exportController = require('./controllers/export');
+const socketIO = require('socket.io');
 const {resolve} = require('url');
 var _ = require('underscore');
 
@@ -68,20 +72,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Point static path to dist
-app.use(express.static(path.join(__dirname, 'wwwroot')));
-
-// Routes
-app.use('/api/implementationGuide', implementationGuideController);
-app.use('/api/config', configController);
-app.use('/api/person', personController);
-app.use('/api/structureDefinition', structureDefinitionController);
-
-// Catch all other routes and return the index file
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
-});
-
 /**
  * Get port from environment and store in Express.
  */
@@ -97,3 +87,34 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 server.listen(port, () => console.log(`API running on localhost:${port}`));
+
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+    console.log('User connected to socket');
+    socket.on('disconnect', () => {
+        console.log('User disconnected from socket');
+    });
+});
+
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
+// Point static path to dist
+app.use(express.static(path.join(__dirname, 'wwwroot')));
+
+// Routes
+app.use('/api/implementationGuide', implementationGuideController);
+app.use('/api/config', configController);
+app.use('/api/person', personController);
+app.use('/api/structureDefinition', structureDefinitionController);
+app.use('/api/auditEvent', auditEventController);
+app.use('/api/fhir', fhirController);
+app.use('/api/export', exportController);
+
+// Catch all other routes and return the index file
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
+});

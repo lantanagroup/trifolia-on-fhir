@@ -20,7 +20,9 @@ export class AuthService {
     public authChanged: EventEmitter<any>;
     public instanceNum = Math.random();
 
-    constructor(public router: Router, private personService: PersonService) {
+    constructor(
+        public router: Router,
+        private personService: PersonService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
         this.authChanged = new EventEmitter();
     }

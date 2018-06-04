@@ -1,5 +1,5 @@
 <h1>Structure Definition</h1>
-<div class="sd-main" *ngIf="structureDefinition" [class.small]="!!selectedElement">
+<div class="sd-main" *ngIf="structureDefinition">
     <h2>{{structureDefinition.name || 'No name'}}</h2>
 
     <ngb-tabset (tabChange)="beforeTabChange($event)">
@@ -130,17 +130,34 @@
                             <span>{{e.id}}</span>
                             <i class="fa fa-edit" *ngIf="e.id.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i>
                         </td>
-                        <td>{{getTypeDisplay(e)}}</td>
+                        <td>{{getTypeDisplay(e)}} {{e.position}}</td>
                         <td>{{e.min}}..{{e.max}}</td>
                         <td>{{e.binding}}</td>
                         <td>
-                            <div class="pull-right">
-                                <i class="fa fa-remove"></i>
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(e)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
+                                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1"><i class="fa fa-remove"></i></button>
                             </div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+
+                <div class="element-definition card">
+                    <div class="card-header">
+                        Element Definition
+
+                        <!--div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
+                            <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
+                            <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(selectedElement.constrainedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fa fa-remove"></i></button>
+                        </div-->
+                    </div>
+                    <div class="card-body">
+                        <app-element-definition-panel *ngIf="selectedElement && selectedElement.constrainedElement" [elementTreeModel]="selectedElement" [disabled]="false" [elements]="elements" [structureDefinition]="structureDefinition"></app-element-definition-panel>
+                    </div>
+                </div>
             </ng-template>
         </ngb-tab>
         <ngb-tab id="json" title="JSON">
@@ -149,23 +166,6 @@
             </ng-template>
         </ngb-tab>
     </ngb-tabset>
-</div>
-
-<div class="selected-element" *ngIf="selectedElement">
-    <div class="element-definition card">
-        <div class="card-header">
-            Element Definition
-
-            <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
-                <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
-                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElement(selectedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fa fa-remove"></i></button>
-            </div>
-        </div>
-        <div class="card-body">
-            <app-element-definition-panel *ngIf="selectedElement.constrainedElement" [elementTreeModel]="selectedElement" [disabled]="false"></app-element-definition-panel>
-        </div>
-    </div>
 </div>
 
 <footer class="footer">

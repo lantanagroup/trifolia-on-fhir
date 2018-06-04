@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ImplementationGuideListItemModel } from '../models/implementation-guide-list-item-model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import {ImplementationGuide} from '../models/fhir';
 
 @Injectable()
 export class ImplementationGuideService {
@@ -21,9 +22,25 @@ export class ImplementationGuideService {
     }
     */
 
-    public getImplementationGuides(query: string): Observable<ImplementationGuideListItemModel[]> {
+    public getImplementationGuides(query?: string): Observable<ImplementationGuideListItemModel[]> {
         return this.http.get('/api/implementationGuide');
             //.catch(this._serverError);
 
+    }
+
+    public getImplementationGuide(id: string) {
+        return this.http.get('/api/implementationGuide/' + id);
+    }
+
+    public saveImplementationGuide(implementationGuide: ImplementationGuide) {
+        if (implementationGuide.id) {
+            return this.http.put('/api/implementationGuide/' + implementationGuide.id, implementationGuide);
+        } else {
+            return this.http.post('/api/implementationGuide', implementationGuide);
+        }
+    }
+
+    public removeImplementationGuide(id: string) {
+        return this.http.delete('/api/implementationGuide/' + id);
     }
 }

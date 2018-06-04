@@ -1,0 +1,18 @@
+{
+  "hai-report-questionnaire": {
+    "examples": [
+      {
+        "type": "Questionnaire",
+        "id": "hai-questionnaire-los-event"
+      }
+    ]
+  },
+  "hai-report-questionnaire-response": {
+    "examples": [
+      {
+        "type": "QuestionnaireResponse",
+        "id": "hai-questionnaireResponse-los-event"
+      }
+    ]
+  }
+}

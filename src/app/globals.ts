@@ -2,6 +2,133 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class Globals {
+    public readonly FHIRUrls = {
+        ImplementationGuide: 'http://hl7.org/fhir/StructureDefinition/ImplementationGuide',
+        StructureDefinition: 'http://hl7.org/fhir/StructureDefinition/StructureDefinition'
+    };
+
+    public readonly ResourceTypes = {
+        'Account': { code: 'Account', display: 'Account' },
+        'ActivityDefinition': { code: 'ActivityDefinition', display: 'ActivityDefinition' },
+        'AdverseEvent': { code: 'AdverseEvent', display: 'AdverseEvent' },
+        'AllergyIntolerance': { code: 'AllergyIntolerance', display: 'AllergyIntolerance' },
+        'Appointment': { code: 'Appointment', display: 'Appointment' },
+        'AppointmentResponse': { code: 'AppointmentResponse', display: 'AppointmentResponse' },
+        'AuditEvent': { code: 'AuditEvent', display: 'AuditEvent' },
+        'Basic': { code: 'Basic', display: 'Basic' },
+        'Binary': { code: 'Binary', display: 'Binary' },
+        'BodySite': { code: 'BodySite', display: 'BodySite' },
+        'Bundle': { code: 'Bundle', display: 'Bundle' },
+        'CapabilityStatement': { code: 'CapabilityStatement', display: 'CapabilityStatement' },
+        'CarePlan': { code: 'CarePlan', display: 'CarePlan' },
+        'CareTeam': { code: 'CareTeam', display: 'CareTeam' },
+        'ChargeItem': { code: 'ChargeItem', display: 'ChargeItem' },
+        'Claim': { code: 'Claim', display: 'Claim' },
+        'ClaimResponse': { code: 'ClaimResponse', display: 'ClaimResponse' },
+        'ClinicalImpression': { code: 'ClinicalImpression', display: 'ClinicalImpression' },
+        'CodeSystem': { code: 'CodeSystem', display: 'CodeSystem' },
+        'Communication': { code: 'Communication', display: 'Communication' },
+        'CommunicationRequest': { code: 'CommunicationRequest', display: 'CommunicationRequest' },
+        'CompartmentDefinition': { code: 'CompartmentDefinition', display: 'CompartmentDefinition' },
+        'Composition': { code: 'Composition', display: 'Composition' },
+        'ConceptMap': { code: 'ConceptMap', display: 'ConceptMap' },
+        'Condition': { code: 'Condition', display: 'Condition' },
+        'Consent': { code: 'Consent', display: 'Consent' },
+        'Contract': { code: 'Contract', display: 'Contract' },
+        'Coverage': { code: 'Coverage', display: 'Coverage' },
+        'DataElement': { code: 'DataElement', display: 'DataElement' },
+        'DetectedIssue': { code: 'DetectedIssue', display: 'DetectedIssue' },
+        'Device': { code: 'Device', display: 'Device' },
+        'DeviceComponent': { code: 'DeviceComponent', display: 'DeviceComponent' },
+        'DeviceMetric': { code: 'DeviceMetric', display: 'DeviceMetric' },
+        'DeviceRequest': { code: 'DeviceRequest', display: 'DeviceRequest' },
+        'DeviceUseStatement': { code: 'DeviceUseStatement', display: 'DeviceUseStatement' },
+        'DiagnosticReport': { code: 'DiagnosticReport', display: 'DiagnosticReport' },
+        'DocumentManifest': { code: 'DocumentManifest', display: 'DocumentManifest' },
+        'DocumentReference': { code: 'DocumentReference', display: 'DocumentReference' },
+        'DomainResource': { code: 'DomainResource', display: 'DomainResource' },
+        'EligibilityRequest': { code: 'EligibilityRequest', display: 'EligibilityRequest' },
+        'EligibilityResponse': { code: 'EligibilityResponse', display: 'EligibilityResponse' },
+        'Encounter': { code: 'Encounter', display: 'Encounter' },
+        'Endpoint': { code: 'Endpoint', display: 'Endpoint' },
+        'EnrollmentRequest': { code: 'EnrollmentRequest', display: 'EnrollmentRequest' },
+        'EnrollmentResponse': { code: 'EnrollmentResponse', display: 'EnrollmentResponse' },
+        'EpisodeOfCare': { code: 'EpisodeOfCare', display: 'EpisodeOfCare' },
+        'ExpansionProfile': { code: 'ExpansionProfile', display: 'ExpansionProfile' },
+        'ExplanationOfBenefit': { code: 'ExplanationOfBenefit', display: 'ExplanationOfBenefit' },
+        'FamilyMemberHistory': { code: 'FamilyMemberHistory', display: 'FamilyMemberHistory' },
+        'Flag': { code: 'Flag', display: 'Flag' },
+        'Goal': { code: 'Goal', display: 'Goal' },
+        'GraphDefinition': { code: 'GraphDefinition', display: 'GraphDefinition' },
+        'Group': { code: 'Group', display: 'Group' },
+        'GuidanceResponse': { code: 'GuidanceResponse', display: 'GuidanceResponse' },
+        'HealthcareService': { code: 'HealthcareService', display: 'HealthcareService' },
+        'ImagingManifest': { code: 'ImagingManifest', display: 'ImagingManifest' },
+        'ImagingStudy': { code: 'ImagingStudy', display: 'ImagingStudy' },
+        'Immunization': { code: 'Immunization', display: 'Immunization' },
+        'ImmunizationRecommendation': { code: 'ImmunizationRecommendation', display: 'ImmunizationRecommendation' },
+        'ImplementationGuide': { code: 'ImplementationGuide', display: 'ImplementationGuide' },
+        'Library': { code: 'Library', display: 'Library' },
+        'Linkage': { code: 'Linkage', display: 'Linkage' },
+        'List': { code: 'List', display: 'List' },
+        'Location': { code: 'Location', display: 'Location' },
+        'Measure': { code: 'Measure', display: 'Measure' },
+        'MeasureReport': { code: 'MeasureReport', display: 'MeasureReport' },
+        'Media': { code: 'Media', display: 'Media' },
+        'Medication': { code: 'Medication', display: 'Medication' },
+        'MedicationAdministration': { code: 'MedicationAdministration', display: 'MedicationAdministration' },
+        'MedicationDispense': { code: 'MedicationDispense', display: 'MedicationDispense' },
+        'MedicationRequest': { code: 'MedicationRequest', display: 'MedicationRequest' },
+        'MedicationStatement': { code: 'MedicationStatement', display: 'MedicationStatement' },
+        'MessageDefinition': { code: 'MessageDefinition', display: 'MessageDefinition' },
+        'MessageHeader': { code: 'MessageHeader', display: 'MessageHeader' },
+        'NamingSystem': { code: 'NamingSystem', display: 'NamingSystem' },
+        'NutritionOrder': { code: 'NutritionOrder', display: 'NutritionOrder' },
+        'Observation': { code: 'Observation', display: 'Observation' },
+        'OperationDefinition': { code: 'OperationDefinition', display: 'OperationDefinition' },
+        'OperationOutcome': { code: 'OperationOutcome', display: 'OperationOutcome' },
+        'Organization': { code: 'Organization', display: 'Organization' },
+        'Parameters': { code: 'Parameters', display: 'Parameters' },
+        'Patient': { code: 'Patient', display: 'Patient' },
+        'PaymentNotice': { code: 'PaymentNotice', display: 'PaymentNotice' },
+        'PaymentReconciliation': { code: 'PaymentReconciliation', display: 'PaymentReconciliation' },
+        'Person': { code: 'Person', display: 'Person' },
+        'PlanDefinition': { code: 'PlanDefinition', display: 'PlanDefinition' },
+        'Practitioner': { code: 'Practitioner', display: 'Practitioner' },
+        'PractitionerRole': { code: 'PractitionerRole', display: 'PractitionerRole' },
+        'Procedure': { code: 'Procedure', display: 'Procedure' },
+        'ProcedureRequest': { code: 'ProcedureRequest', display: 'ProcedureRequest' },
+        'ProcessRequest': { code: 'ProcessRequest', display: 'ProcessRequest' },
+        'ProcessResponse': { code: 'ProcessResponse', display: 'ProcessResponse' },
+        'Provenance': { code: 'Provenance', display: 'Provenance' },
+        'Questionnaire': { code: 'Questionnaire', display: 'Questionnaire' },
+        'QuestionnaireResponse': { code: 'QuestionnaireResponse', display: 'QuestionnaireResponse' },
+        'ReferralRequest': { code: 'ReferralRequest', display: 'ReferralRequest' },
+        'RelatedPerson': { code: 'RelatedPerson', display: 'RelatedPerson' },
+        'RequestGroup': { code: 'RequestGroup', display: 'RequestGroup' },
+        'ResearchStudy': { code: 'ResearchStudy', display: 'ResearchStudy' },
+        'ResearchSubject': { code: 'ResearchSubject', display: 'ResearchSubject' },
+        'Resource': { code: 'Resource', display: 'Resource' },
+        'RiskAssessment': { code: 'RiskAssessment', display: 'RiskAssessment' },
+        'Schedule': { code: 'Schedule', display: 'Schedule' },
+        'SearchParameter': { code: 'SearchParameter', display: 'SearchParameter' },
+        'Sequence': { code: 'Sequence', display: 'Sequence' },
+        'ServiceDefinition': { code: 'ServiceDefinition', display: 'ServiceDefinition' },
+        'Slot': { code: 'Slot', display: 'Slot' },
+        'Specimen': { code: 'Specimen', display: 'Specimen' },
+        'StructureDefinition': { code: 'StructureDefinition', display: 'StructureDefinition' },
+        'StructureMap': { code: 'StructureMap', display: 'StructureMap' },
+        'Subscription': { code: 'Subscription', display: 'Subscription' },
+        'Substance': { code: 'Substance', display: 'Substance' },
+        'SupplyDelivery': { code: 'SupplyDelivery', display: 'SupplyDelivery' },
+        'SupplyRequest': { code: 'SupplyRequest', display: 'SupplyRequest' },
+        'Task': { code: 'Task', display: 'Task' },
+        'TestReport': { code: 'TestReport', display: 'TestReport' },
+        'TestScript': { code: 'TestScript', display: 'TestScript' },
+        'ValueSet': { code: 'ValueSet', display: 'ValueSet' },
+        'VisionPrescription': { code: 'VisionPrescription', display: 'VisionPrescription' }
+    };
+
     public fhirDefinedTypes = [
         'Address',
         'Age',
@@ -206,6 +333,7 @@ export class Globals {
         'VerificationResult',
         'VisionPrescription'
     ];
+
     public tooltips = {
         'resource.id': 'The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes.',
         'sd.name': 'A natural language name identifying the structure definition. This name should be usable as an identifier for the module by machine processing applications such as code generation.',
@@ -230,6 +358,10 @@ export class Globals {
         'ed.type.versioning': 'Whether this reference needs to be version specific or version independent, or whether either can be used.'
     };
 
+    public generateRandomNumber(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     public toggleProperty(parent, propertyName, defaultValue) {
         if (parent.hasOwnProperty(propertyName)) {
             delete parent[propertyName];
@@ -248,5 +380,11 @@ export class Globals {
         }
 
         return theString;
+    }
+
+    public promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?') {
+        if (confirm(message)) {
+            array.splice(index, 1);
+        }
     }
 }

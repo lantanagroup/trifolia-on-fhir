@@ -27,7 +27,7 @@ export class StructureDefinitionsComponent implements OnInit {
                 this.structureDefinitions = structureDefinitions;
                 this.configService.setStatusMessage('');
             }, error => {
-                this.configService.setStatusMessage('Error loading structure definitions: ' + error);
+                this.configService.handleError('Error loading structure definitions.', error);
             });
     }
 

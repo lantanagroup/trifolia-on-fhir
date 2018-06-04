@@ -1,0 +1,18 @@
+tr.page-prefix-1 td:first-child {
+    padding-left: 25px;
+}
+tr.page-prefix-2 td:first-child {
+    padding-left: 35px;
+}
+tr.page-prefix-3 td:first-child {
+    padding-left: 45px;
+}
+tr.page-prefix-4 td:first-child {
+    padding-left: 55px;
+}
+tr.page-prefix-5 td:first-child {
+    padding-left: 65px;
+}
+tr.page-prefix-6 td:first-child {
+    padding-left: 75px;
+}

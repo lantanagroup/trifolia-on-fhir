@@ -37,6 +37,11 @@ import {ElementDefinitionTypeModalComponent} from './fhir-edit/element-definitio
 import {Globals} from './globals';
 import {MarkdownComponent} from './markdown/markdown.component';
 import {TJsonViewerModule} from 't-json-viewer';
+import {AuditEventService} from './services/audit-event.service';
+import {KeysPipe} from './pipes/keys-pipe';
+import { ReferenceComponent } from './fhir-edit/reference/reference.component';
+import {FhirDisplayPipe} from './pipes/fhir-display-pipe';
+import { PageComponentModalComponent } from './fhir-edit/page-component-modal/page-component-modal.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -73,6 +78,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 const appRoutes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'implementation-guide', component: ImplementationGuidesComponent},
+    {path: 'implementation-guide/new', component: ImplementationGuideComponent},
     {path: 'implementation-guide/:id', component: ImplementationGuideComponent},
     {path: 'structure-definition', component: StructureDefinitionsComponent},
     {path: 'structure-definition/new', component: NewProfileComponent},
@@ -97,7 +103,8 @@ const appRoutes: Routes = [
 @NgModule({
     entryComponents: [
         SelectChoiceModalComponent,
-        ElementDefinitionTypeModalComponent
+        ElementDefinitionTypeModalComponent,
+        PageComponentModalComponent
     ],
     declarations: [
         AppComponent,
@@ -122,7 +129,11 @@ const appRoutes: Routes = [
         SelectChoiceModalComponent,
         ElementDefinitionPanelComponent,
         ElementDefinitionTypeModalComponent,
-        MarkdownComponent
+        MarkdownComponent,
+        KeysPipe,
+        FhirDisplayPipe,
+        ReferenceComponent,
+        PageComponentModalComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -149,6 +160,7 @@ const appRoutes: Routes = [
         AuthService,
         PersonService,
         CookieService,
+        AuditEventService,
         Globals
     ],
     bootstrap: [AppComponent]

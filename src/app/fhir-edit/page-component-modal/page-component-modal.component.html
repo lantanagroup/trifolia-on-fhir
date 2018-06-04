@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <h4 class="modal-title">Hi there!</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" [(ngModel)]="page.title" [class.is-invalid]="!page.hasOwnProperty('title')" />
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('format')" (ngModelChange)="globals.toggleProperty(page, 'format', 'markdown')" />
+            Format
+        </label>
+        <input type="text" class="form-control" [disabled]="!page.hasOwnProperty('format')" [(ngModel)]="page.format" />
+    </div>
+
+    <div class="form-group" *ngIf="!pageBinary">
+        <label>Source</label>
+        <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source" />
+        <div class="help-block" *ngIf="!pageBinary">A contained Binary resource could not be found for this source</div>
+    </div>
+
+    <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary"></app-markdown>
+
+    <p>Type...</p>
+
+    <p>Package...</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>

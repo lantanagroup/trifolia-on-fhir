@@ -1,0 +1,70 @@
+<div class="input-group" *ngIf="reference">
+  <input type="text" class="form-control" [disabled]="disabled" [(ngModel)]="reference.reference" placeholder="Reference" />
+  <input type="text" class="form-control" [disabled]="disabled" [(ngModel)]="reference.display" placeholder="Display" />
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default" title="Select a resource for the reference" (click)="open(selectReferenceModal)" [disabled]="disabled">
+      <i class="fa fa-edit"></i>
+    </button>
+  </div>
+</div>
+<div class="input-group" *ngIf="!reference">
+  <input type="text" class="form-control" [disabled]="true" placeholder="Reference" />
+  <input type="text" class="form-control" [disabled]="true" placeholder="Display" />
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default" title="Select a resource for the reference" [disabled]="true">
+      <i class="fa fa-edit"></i>
+    </button>
+  </div>
+</div>
+
+<ng-template #selectReferenceModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Select a resource</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="input-group" *ngIf="!resourceType || !hideResourceType">
+      <div class="input-group-addon">Type</div>
+      <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
+        <option *ngFor="let o of globals.ResourceTypes | keys" [ngValue]="o.value.code">{{o.value.display}}</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-addon">Search</div>
+      <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="contentSearchChanged.next($event)"/>
+    </div>
+
+    <table class="table" *ngIf="results">
+      <thead>
+      <tr>
+        <th>Resources</th>
+        <th>&nbsp;</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of results.entry">
+        <td>
+          {{e.resource | fhirDisplay}}
+          <sub>{{e.resource.resourceType}}/{{e.resource.id}}</sub>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default" (click)="select(e, c)">Select</button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+      <tfoot>
+      <tr>
+        <th colspan="2">Total results: {{results.total}}</th>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>

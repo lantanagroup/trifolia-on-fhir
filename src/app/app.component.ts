@@ -3,6 +3,7 @@ import {Event, NavigationEnd, Router} from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { PersonListModel } from './models/person-list-model';
 import { ConfigService } from './services/config.service';
+import {AuditEventService} from './services/audit-event.service';
 
 
 @Component({
@@ -16,7 +17,11 @@ export class AppComponent implements OnInit {
     public person: PersonListModel;
     public isBigContainer = false;
 
-    constructor(public authService: AuthService, public configService: ConfigService, private router: Router) {
+    constructor(
+        public authService: AuthService,
+        public configService: ConfigService,
+        private router: Router,
+        public auditEventService: AuditEventService) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.person;

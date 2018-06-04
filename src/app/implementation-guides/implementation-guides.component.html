@@ -7,18 +7,19 @@
       <th>Type</th>
       <th>
         <div class="pull-right">
-          <button type="button" class="btn btn-default">Add</button>
+          <button type="button" class="btn btn-default" routerLink="/implementation-guide/new">New</button>
         </div>
       </th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let ig of implementationGuides">
-      <td>{{ig.name}}</td>
+      <td>{{ig.name}} <span class="badge">{{ig.id}}</span></td>
       <td>{{ig.type}}</td>
       <td>
         <div class="pull-right">
           <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}">Edit</a>
+          <button type="button" class="btn btn-default" (click)="remove(ig)">Remove</button>
         </div>
       </td>
     </tr>

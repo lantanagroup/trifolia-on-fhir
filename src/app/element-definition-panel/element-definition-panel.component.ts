@@ -3,7 +3,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ElementDefinitionTypeModalComponent} from '../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition} from '../models/fhir';
+import {ElementDefinition, StructureDefinition} from '../models/fhir';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -12,7 +12,12 @@ import {ElementDefinition} from '../models/fhir';
 })
 export class ElementDefinitionPanelComponent implements OnInit {
   @Input() elementTreeModel: ElementTreeModel;
+  @Input() elements: ElementTreeModel[];
+  @Input() structureDefinition: StructureDefinition;
   @Input() disabled = false;
+
+  public editingSliceName: boolean;
+  public editedSliceName: string;
 
   constructor(private modalService: NgbModal, public globals: Globals) {
 
@@ -38,6 +43,17 @@ export class ElementDefinitionPanelComponent implements OnInit {
       const modalRef = this.modalService.open(ElementDefinitionTypeModalComponent);
       modalRef.componentInstance.element = element;
       modalRef.componentInstance.type = type;
+  }
+
+  toggleEditSliceName() {
+      if (this.editingSliceName) {
+          this.element.sliceName = this.editedSliceName;
+          this.elementTreeModel.setId(this.editedSliceName);
+          this.editingSliceName = false;
+      } else {
+          this.editingSliceName = true;
+          this.editedSliceName = this.element.sliceName;
+      }
   }
 
   ngOnInit() {

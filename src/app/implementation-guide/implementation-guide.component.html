@@ -1,3 +1,427 @@
-<p>
-  implementation-guide works!
-</p>
+<h1>Implementation Guide</h1>
+
+<div class="ig-main" *ngIf="implementationGuide">
+    <h2>{{implementationGuide.name || 'No Name'}}</h2>
+
+    <ngb-tabset>
+        <ngb-tab id="general" title="General">
+            <ng-template ngbTabContent>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>URL</label>
+                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.url"
+                                       [class.is-invalid]="!implementationGuide.url"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.name"
+                                       [class.is-invalid]="!implementationGuide.name"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('publisher')"
+                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'publisher', '')"/>
+                                    Publisher
+                                </label>
+                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.publisher"
+                                       [disabled]="!implementationGuide.hasOwnProperty('publisher')"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <app-markdown [(ngModel)]="implementationGuide.description"></app-markdown>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('copyright')"
+                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'copyright', '')"/>
+                                    Copyright
+                                </label>
+                                <app-markdown [(ngModel)]="implementationGuide.description"
+                                              [disabled]="!implementationGuide.hasOwnProperty('copyright')"></app-markdown>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+                                <label>Version</label>
+                                <input type="text" class="form-control"
+                                       [class.is-invalid]="!implementationGuide.version"
+                                       [(ngModel)]="implementationGuide.version"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-control" [(ngModel)]="implementationGuide.status">
+                                    <option [ngValue]="'draft'">Draft</option>
+                                    <option [ngValue]="'active'">Active</option>
+                                    <option [ngValue]="'retired'">Retired</option>
+                                    <option [ngValue]="'unknown'">Unknown</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox"
+                                           [ngModel]="implementationGuide.hasOwnProperty('experimental')"
+                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'experimental', false)"/>
+                                    Experimental
+                                </label>
+                                <select class="form-control" [(ngModel)]="implementationGuide.experimental"
+                                        [disabled]="!implementationGuide.hasOwnProperty('experimental')">
+                                    <option [ngValue]="false">No</option>
+                                    <option [ngValue]="true">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Globals -->
+        <ngb-tab id="globals" title="Globals">
+            <ng-template ngbTabContent>
+                <p>
+                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
+                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [])"/> Allow globals
+                </p>
+
+                <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
+                    <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Profile</th>
+                        <th>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-primary" title="Add global"
+                                        (click)="implementationGuide.global.push({type: '', profile: { reference: '' }})">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
+                        <td>
+                            <select class="form-control" [(ngModel)]="g.type">
+                                <option *ngFor="let o of globals.ResourceTypes | keys" [ngValue]="o.value.code">
+                                    {{o.value.display}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <fhir-reference [reference]="g.profile"></fhir-reference>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Remove global"
+                                        (click)="implementationGuide.global.splice(i, 1)"><i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Binary -->
+        <ngb-tab id="binary" title="Binary">
+            <ng-template ngbTabContent>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [])" />
+                Implementation guide has binary URIs
+
+                <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
+                    <thead>
+                    <th>URI</th>
+                    <th>
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let b of implementationGuide.binary; let i = index">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
+                        </td>
+                        <td>
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Packages -->
+        <ngb-tab id="packages" title="Packages">
+            <ng-template ngbTabContent>
+                <p>
+                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
+                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'package', [])"/> Define
+                    packages
+                </p>
+
+                <div class="card" *ngFor="let p of implementationGuide.package; let pi = index" [attr.data-index]="pi">
+                    <div class="card-header">
+                        Package {{pi+1}}
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default"
+                                    (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?')">
+                                Remove Package
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="p.name"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
+                                       (ngModelChange)="globals.toggleProperty(p, 'description', '')"/>
+                                Description
+                            </label>
+                            <app-markdown [(ngModel)]="p.description"
+                                          [disabled]="!p.hasOwnProperty('description')"></app-markdown>
+                        </div>
+
+                        <h4>Resources</h4>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Source Type</th>
+                                <th>Source</th>
+                                <th>
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-primary" title="Add resource"
+                                                (click)="p.resource.push({ name: '', sourceUri: '', example: false})">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let r of p.resource; let ri = index" [attr.data-index]="ri">
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" [ngModel]="r.hasOwnProperty('name')"
+                                                   (ngModelChange)="globals.toggleProperty(r, 'name', '')"/>
+                                        </div>
+                                        <input type="text" class="form-control" [(ngModel)]="r.name"
+                                               [disabled]="!r.hasOwnProperty('name')"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <select class="form-control" [ngModel]="getResourceSourceType(r)"
+                                                (ngModelChange)="setResourceSourceType(r, $event)">
+                                            <option value="uri">URI</option>
+                                            <option value="reference">Reference</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')"
+                                           [(ngModel)]="r.sourceUri" placeholder="URI"/>
+                                    <fhir-reference *ngIf="r.hasOwnProperty('sourceReference')"
+                                                    [reference]="r.sourceReference"></fhir-reference>
+                                </td>
+                                <td>
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-default"
+                                                title="Edit additional properties for this package resource"
+                                                (click)="openPackageResourceModal(r, packageResourceModal)">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default" title="Remove resource"
+                                                [disabled]="p.resource.length === 1"
+                                                (click)="globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')">
+                                            <i class="fa fa-remove"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <p>
+                    <button type="button" class="btn btn-primary"
+                            (click)="implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false}]})">
+                        Add Package
+                    </button>
+                </p>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Pages -->
+        <ngb-tab id="pages" title="Pages">
+            <ng-template ngbTabContent>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('page')"
+                       (ngModelChange)="toggleRootPage($event)"/> Implementation guide has pages
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Kind</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="p.page.title"
+                                   [class.is-invalid]="!p.page.title"/>
+                        </td>
+                        <td>
+                            <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
+                                <option value="page">Page</option>
+                                <option value="example">Example</option>
+                                <option value="list">List</option>
+                                <option value="include">Include</option>
+                                <option value="directory">Directory</option>
+                                <option value="dictionary">Dictionary</option>
+                                <option value="toc">Table of Contents</option>
+                                <option value="resource">Resource</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default" title="Edit this page"
+                                        (click)="editPage(p)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-default" title="Remove this page and all children"
+                                        (click)="removePage(p)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                                <button type="button" class="btn btn-default" title="Add child page"
+                                        (click)="addChildPage(p)">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-default" title="Move up"
+                                        [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)">
+                                    <i class="fa fa-arrow-up"></i>
+                                </button>
+                                <button type="button" class="btn btn-default" title="Move up"
+                                        [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)">
+                                    <i class="fa fa-arrow-down"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Validation -->
+        <ngb-tab id="validation" title="Validation">
+            <ng-template ngbTabContent>
+                <div class="badge badge-warning" *ngIf="!validation.valid">Invalid</div>
+                <div class="badge badge-success" *ngIf="validation.valid">Valid!</div>
+
+                <table class="table" *ngIf="validation.messages.length > 0">
+                    <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Location</th>
+                        <th>Message</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let m of validation.messages">
+                        <td>{{m.severity}}</td>
+                        <td>{{m.location}}</td>
+                        <td>{{m.message}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab id="json" title="JSON">
+            <ng-template ngbTabContent>
+                <t-json-viewer [json]="implementationGuide"></t-json-viewer>
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
+</div>
+
+<ng-template #packageResourceModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Edit package resource</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closePackageResourceModal(d)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>
+                <input type="checkbox" [ngModel]="currentResource.hasOwnProperty('description')"
+                       (ngModelChange)="globals.toggleProperty(currentResource, 'description', '')"/>
+                Description
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="currentResource.description"
+                   [disabled]="!currentResource.hasOwnProperty('description')"/>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" [ngModel]="currentResource.hasOwnProperty('acronym')"
+                       (ngModelChange)="globals.toggleProperty(currentResource, 'acronym', '')"/>
+                Acronym
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="currentResource.acronym"
+                   [disabled]="!currentResource.hasOwnProperty('acronym')"/>
+        </div>
+
+        <div class="form-group">
+            <label>Example?</label>
+            <select class="form-control" [(ngModel)]="currentResource.example">
+                <option [ngValue]="false">No</option>
+                <option [ngValue]="true">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group" *ngIf="currentResource.example || currentResource.exampleFor">
+            <label>
+                <input type="checkbox" [ngModel]="currentResource.hasOwnProperty('exampleFor')"
+                       (ngModelChange)="globals.toggleProperty(currentResource, 'exampleFor', {reference: '', display: ''})"/>
+                Example For
+            </label>
+            <fhir-reference [disabled]="!currentResource.hasOwnProperty('exampleFor')"
+                            [reference]="currentResource.exampleFor" resourceType="StructureDefinition"
+                            [hideResourceType]="true"></fhir-reference>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="closePackageResourceModal(c)">Close</button>
+    </div>
+</ng-template>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <span class="message">{{message}}</span>
+</footer>
