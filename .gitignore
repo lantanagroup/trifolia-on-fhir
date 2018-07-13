@@ -43,3 +43,4 @@ Thumbs.db
 TrifoliaFhir/obj/
 TrifoliaFhir/bin/
 .vs/
+wwwroot/
