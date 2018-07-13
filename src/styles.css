@@ -72,3 +72,11 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
 .status-message {
   white-space: pre;
 }
+
+.disable-markdown .CodeMirror {
+  background-color: #e9ecef;
+}
+
+.disable-markdown .editor-toolbar {
+  display: none;
+}

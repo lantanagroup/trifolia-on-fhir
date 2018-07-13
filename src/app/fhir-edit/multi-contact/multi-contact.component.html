@@ -1,0 +1,41 @@
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])" />
+        {{title || 'Contacts'}}
+    </div>
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Telecom(s)</th>
+            <th>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({})">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
+            <td>
+                <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                {{getTelecomDisplay(c)}}
+            </td>
+            <td>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'contact'}}" (click)="editContact(c)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'contact'}}" (click)="parentObject[propertyName].splice(ci, 1)">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

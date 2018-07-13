@@ -1,5 +1,9 @@
 /* SystemJS module definition */
-import {PageComponent} from './app/models/fhir';
+
+declare module '*.json' {
+    const value: any;
+    export default value;
+}
 
 declare var module: NodeModule;
 interface NodeModule {

@@ -1,5 +1,5 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {Component, DoCheck, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {StructureDefinitionService} from '../services/structure-definition.service';
 import {ConfigService} from '../services/config.service';
 import * as _ from 'underscore';
@@ -7,30 +7,37 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition} from '../models/fhir';
+import {ElementDefinition, StructureDefinition, ValueSet} from '../models/fhir';
 import {ElementDef} from '@angular/core/src/view';
 import {DOCUMENT} from '@angular/common';
 import {Observable} from 'rxjs/Observable';
-import {AuditEventService} from '../services/audit-event.service';
+import {RecentItemModel} from '../models/recent-item-model';
+import {CookieService} from 'angular2-cookie/core';
+import {RecentItemService} from '../services/recent-item.service';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-profile',
     templateUrl: './structure-definition.component.html',
     styleUrls: ['./structure-definition.component.css'],
-    providers: [StructureDefinitionService]
+    providers: [StructureDefinitionService, FhirService]
 })
-export class StructureDefinitionComponent implements OnInit, OnDestroy {
-    public structureDefinition;
+export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck {
+    @Input() public structureDefinition: StructureDefinition;
     public baseStructureDefinition;
     public elements = [];
     public selectedElement: any;
+    public validation: any;
+    public message: string;
 
     constructor(private route: ActivatedRoute,
+                private router: Router,
                 private strucDefService: StructureDefinitionService,
                 public configService: ConfigService,
                 private modalService: NgbModal,
                 public globals: Globals,
-                private auditEventService: AuditEventService,
+                private recentItemService: RecentItemService,
+                private fhirService: FhirService,
                 @Inject(DOCUMENT) private document: Document) {
         this.document.body.classList.add('structure-definition');
     }
@@ -53,18 +60,26 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
         }
     }
 
+    private removeElementTreeChildren(target: ElementTreeModel) {
+        const filtered = _.filter(this.elements, (element: ElementTreeModel) => {
+            return element.parent === target;
+        });
+
+        for (let i = filtered.length - 1; i >= 0; i--) {
+            this.removeElementTreeChildren(filtered[i]);
+
+            const index = this.elements.indexOf(filtered[i]);
+            this.elements.splice(index, 1);
+        }
+    }
+
     public toggleElementExpand(target: ElementTreeModel) {
+        if (!target.hasChildren) {
+            return;
+        }
+
         if (target.expanded) {
-            // TODO: Account for expanding/collapsing slices
-            const filtered = _.filter(this.elements, (element: ElementTreeModel) => {
-                return element.baseElement.path.startsWith(target.baseElement.path + '.');
-            });
-
-            for (let i = filtered.length - 1; i >= 0; i--) {
-                const index = this.elements.indexOf(filtered[i]);
-                this.elements.splice(index, 1);
-            }
-
+            this.removeElementTreeChildren(target);
             target.expanded = false;
         } else {
             this.populateBaseElements(target);
@@ -86,11 +101,20 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
         return [element];
     }
 
-    public populateConstrainedElements(elementTreeModels: ElementTreeModel[]) {
+    public populateConstrainedElements(elementTreeModels: ElementTreeModel[], sliceName: string) {
         for (let i = 0; i < elementTreeModels.length; i++) {
             const elementTreeModel = elementTreeModels[i];
-            const constrainedElements = _.filter(this.structureDefinition.differential.element, (diffElement) =>
-                diffElement.path === elementTreeModel.baseElement.path);
+            const constrainedElements = _.filter(this.structureDefinition.differential.element, (diffElement) => {
+                const diffElementSliceName = diffElement.id.indexOf(':') > 0 ?
+                        diffElement.id.substring(diffElement.id.indexOf(':') + 1) :
+                        null;
+
+                if (sliceName !== diffElementSliceName) {
+                    return false;
+                }
+
+                return diffElement.path === elementTreeModel.baseElement.path;
+            });
 
             for (let x = 0; x < constrainedElements.length; x++) {
                 let newElementTreeModel = elementTreeModel;
@@ -115,6 +139,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
 
         let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
         const parentPath = parent ? parent.baseElement.path : '';
+        const parentSliceName = parent && parent.id.indexOf(':') > 0 ? parent.id.substring(parent.id.indexOf(':') + 1) : null;
         let filtered;
 
         if (parent && parent.baseElement.path.endsWith('[x]')) {
@@ -150,7 +175,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
             newElement.setId();
 
             const newElements = this.populateElement(newElement);
-            this.populateConstrainedElements(newElements);
+            this.populateConstrainedElements(newElements, parentSliceName);
 
             for (let x = 0; x < newElements.length; x++) {
                 this.elements.splice(nextIndex, 0, newElements[x]);
@@ -219,6 +244,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
                 nextElementTreeModel.constrainedElement === element);
             return foundElementTreeModel.position;
         });
+
+        this.toggleSelectedElement(elementTreeModel);
     }
 
     private isChildOfElement(target: ElementTreeModel, parent: ElementTreeModel): boolean {
@@ -236,6 +263,15 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
     }
 
     public sliceElement(elementTreeModel: ElementTreeModel) {
+        // Collapse the element so the tree doesn't look screwed up when we mess with it
+        if (elementTreeModel.expanded) {
+            this.toggleElementExpand(elementTreeModel);
+        }
+
+        elementTreeModel.constrainedElement.slicing = {
+            rules: 'open'
+        };
+
         const newSliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
         const newElement = new ElementDefinition();
         newElement.id = elementTreeModel.constrainedElement.id + ':' + newSliceName;
@@ -256,15 +292,17 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
         newElementTreeModel.expanded = false;
         newElementTreeModel.isSliceRoot = true;
 
-        let elementTreeModelIndex = this.elements.indexOf(elementTreeModel);
+        const elementTreeModelIndex = this.elements.indexOf(elementTreeModel);
 
         // Include any children of the current elementTreeModel in the index
-        while (true) {
-            const nextElementTreeModel = this.elements[elementTreeModelIndex + 1];
-            if (!this.isChildOfElement(newElementTreeModel, elementTreeModel)) {
+        for (let i = elementTreeModelIndex + 1; i < this.elements.length; i++) {
+            const nextElementTreeModel = this.elements[i];
+            if (this.isChildOfElement(nextElementTreeModel, elementTreeModel)) {
+                nextElementTreeModel.parent = newElementTreeModel;
+                nextElementTreeModel.id = nextElementTreeModel.id + ':' + newSliceName;
+                nextElementTreeModel.constrainedElement.id = nextElementTreeModel.constrainedElement.id + ':' + newSliceName;
                 break;
             }
-            elementTreeModelIndex++;
         }
 
         this.elements.splice(elementTreeModelIndex + 1, 0, newElementTreeModel);
@@ -327,17 +365,36 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.getStructureDefinition()
             .subscribe(() => {
-                const entityIdentifier = {
-                    system: this.globals.FHIRUrls.StructureDefinition,
-                    value: this.route.snapshot.paramMap.get('id')
-                };
-                const auditEvent = this.auditEventService.getModel('110100', entityIdentifier);
-                this.auditEventService.create(auditEvent);
+                this.recentItemService.ensureRecentItem(
+                    this.globals.cookieKeys.recentStructureDefinitions,
+                    this.structureDefinition.id,
+                    this.structureDefinition.name);
             });
         this.configService.fhirServerChanged.subscribe((fhirServer) => this.getStructureDefinition());
     }
 
     save() {
+        if (!this.validation.valid && !confirm('This structure definition is not valid, are you sure you want to save?')) {
+            return;
+        }
 
+        this.strucDefService.save(this.structureDefinition)
+            .subscribe((results: StructureDefinition) => {
+                if (!this.structureDefinition.id) {
+                    this.router.navigate(['/structure-definition/' + results.id]);
+                } else {
+                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
+                    this.message = 'Successfully saved structure definition!';
+                    setTimeout(() => { this.message = ''; }, 3000);
+                }
+            }, (err) => {
+                this.message = 'An error occured while saving the structure definition';
+            });
+    }
+
+    ngDoCheck() {
+        if (this.structureDefinition) {
+            this.validation = this.fhirService.validate(this.structureDefinition);
+        }
     }
 }

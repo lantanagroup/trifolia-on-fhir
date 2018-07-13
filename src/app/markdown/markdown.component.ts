@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, forwardRef} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    forwardRef,
+    Input,
+    OnChanges, SimpleChanges
+} from '@angular/core';
 import * as SimpleMDE from 'simplemde';
 import {ControlValueAccessor} from '@angular/forms';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -41,52 +51,71 @@ export class NgModelBase implements ControlValueAccessor {
 }
 
 @Component({
-  selector: 'app-markdown',
-  templateUrl: './markdown.component.html',
-  styleUrls: ['./markdown.component.css'],
-  providers: [MARKDOWN_CONTROL_VALUE_ACCESSOR]
+    selector: 'app-markdown',
+    templateUrl: './markdown.component.html',
+    styleUrls: ['./markdown.component.css'],
+    providers: [MARKDOWN_CONTROL_VALUE_ACCESSOR]
 })
-export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnDestroy {
-  @ViewChild('simplemde') textarea: ElementRef;
+export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnDestroy, OnChanges {
+    @ViewChild('simplemde') textarea: ElementRef;
+    @Input() disabled = false;
 
-  private simplemde: SimpleMDE;
-  private tmpValue = null;
+    private simplemde: SimpleMDE;
+    private tmpValue = null;
 
-  constructor() {
-    super();
-  }
-
-  writeValue(v: any) {
-    if (v !== this._innerValue) {
-      this._innerValue = v;
-
-      if (this.simplemde && this.value != null) {
-        this.simplemde.value(this.value);
-      }
-
-      if (!this.simplemde) {
-        this.tmpValue = this.value;
-      }
-    }
-  }
-
-  ngAfterViewInit() {
-    const config = {
-      element: this.textarea.nativeElement
-    };
-    this.simplemde = new SimpleMDE(config);
-
-    if (this.tmpValue) {
-      this.simplemde.value(this.tmpValue);
-      this.tmpValue = null;
+    constructor() {
+        super();
     }
 
-    this.simplemde.codemirror.on('change', () => {
-      this.value = this.simplemde.value();
-    });
-  }
+    writeValue(v: any) {
+        if (v !== this._innerValue) {
+            this._innerValue = v;
 
-  ngOnDestroy() {
-    this.simplemde = null;
-  }
+            if (this.simplemde) {
+                if (this.value === undefined) {
+                    this.simplemde.value('');
+                } else {
+                    this.simplemde.value(this.value);
+                }
+            }
+
+            if (!this.simplemde) {
+                this.tmpValue = this.value;
+            }
+        }
+    }
+
+    ngAfterViewInit() {
+        const config = {
+            element: this.textarea.nativeElement
+        };
+        this.simplemde = new SimpleMDE(config);
+
+        if (this.tmpValue) {
+            this.simplemde.value(this.tmpValue);
+            this.tmpValue = null;
+        }
+
+        this.simplemde.codemirror.on('change', () => {
+            if (this.value === undefined && !this.simplemde.value()) {
+                return;
+            }
+
+            this.value = this.simplemde.value();
+        });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (!this.simplemde) {
+            return;
+        }
+
+        if (changes['disabled'].previousValue !== changes['disabled'].currentValue) {
+            this.simplemde.codemirror.setOption('disableInput', changes['disabled'].currentValue);
+        }
+    }
+
+    ngOnDestroy() {
+        this.simplemde = null;
+    }
 }

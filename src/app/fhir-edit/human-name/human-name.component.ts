@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { HumanName } from '../../models/fhir';
 
 @Component({
-    selector: 'fhir-edit-human-name',
+    selector: 'app-fhir-edit-human-name',
     templateUrl: './human-name.component.html',
     styleUrls: ['./human-name.component.css']
 })

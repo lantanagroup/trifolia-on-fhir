@@ -1,0 +1,7 @@
+.card {
+    margin-bottom: 15px;
+}
+
+tr > td:last-child {
+    width: 50px;
+}

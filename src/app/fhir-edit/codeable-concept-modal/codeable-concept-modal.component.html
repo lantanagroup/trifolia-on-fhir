@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Codeable Concept</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <app-fhir-string [parentObject]="codeableConcept" propertyName="title" title="Title"></app-fhir-string>
+
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="codeableConcept.hasOwnProperty('coding')" (ngModelChange)="globals.toggleProperty(codeableConcept, 'coding', [{ }])" />
+            Coding
+        </div>
+        <table class="table table-striped" *ngIf="codeableConcept.hasOwnProperty('coding')">
+            <thead>
+            <tr>
+                <th>System</th>
+                <th>Code</th>
+                <th>Display</th>
+                <th>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Add a coding" (click)="codeableConcept.coding.push({ })">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of codeableConcept.coding; let ci = index">
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="system" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="display" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <div class="pull-right btn-group">
+                        <button type="button" class="btn btn-default btn-sm" title="Edit this coding" (click)="editCoding(c)">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" title="Remove this coding" (click)="codeableConcept.coding.splice(ci, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>

@@ -1,0 +1,214 @@
+<h1>Operation Definition</h1>
+
+<ngb-tabset>
+    <!-- General -->
+    <ngb-tab title="General">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-8">
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher"></app-fhir-string>
+
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description"></app-fhir-markdown>
+
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment"></app-fhir-markdown>
+
+                    <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact"></app-fhir-multi-contact>
+                </div>
+                <div class="col-md-4">
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')">
+                            <option value="draft">Draft</option>
+                            <option value="active">Active</option>
+                            <option value="retired">Retired</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kind</label>
+                        <select class="form-control" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')">
+                            <option value="operation">Operation</option>
+                            <option value="query">Query</option>
+                        </select>
+                    </div>
+
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version"></app-fhir-string>
+
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent"></app-fhir-boolean>
+
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true"></app-fhir-boolean>
+
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true"></app-fhir-boolean>
+
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true"></app-fhir-boolean>
+
+                    <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date"></app-fhir-date>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Additional -->
+    <ngb-tab title="Additional">
+        <ng-template ngbTabContent>
+            <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext"></app-fhir-multi-use-context>
+
+            <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction"></app-fhir-multi-jurisdiction>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Parameters -->
+    <ngb-tab title="Parameters">
+        <ng-template ngbTabContent>
+            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'parameter', [])" />
+            Operation definition has parameters
+
+            <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('parameter')">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Use</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary" title="Add a parameter" (click)="operationDefinitions.parameter.push({ name: '', use: 'in', min: 0, max: '*' })">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let p of operationDefinition.parameter; let pi = index">
+                    <td>
+                        <input type="text" class="form-control" [(ngModel)]="p.name" />
+                    </td>
+                    <td>
+                        <select class="form-control" [(ngModel)]="p.use">
+                            <option value="in">In</option>
+                            <option value="out">Out</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" [(ngModel)]="p.min" />
+                    </td>
+                    <td>
+                        <app-fhir-max-cardinality [parentObject]="p" property="max"></app-fhir-max-cardinality>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default" title="Edit this parameter" (click)="editParameter(p)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-default" title="Remove this parameter" (click)="operationDefinition.parameter.splice(pi, 1)">
+                                <i class="fa fa-remove"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Overload -->
+    <ngb-tab title="Overload">
+        <ng-template ngbTabContent>
+            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'overload', [])" />
+            Operation definition has overload
+
+            <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('overload')">
+                <thead>
+                <tr>
+                    <th>Parameter Name(s)</th>
+                    <th>Comment</th>
+                    <th>
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary" title="Add a overload" (click)="operationDefinitions.overload.push({ })">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let o of operationDefinition.overload; let oi = index">
+                    <td>
+                        <a href="javascript:void(0)" *ngIf="!o.hasOwnProperty('parameterName')" (click)="o.parameterName = ['']">Add a name</a>
+                        <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: globals.trackByFn">
+                            <input type="text" class="form-control" [(ngModel)]="o.parameterName[pni]" />
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default" title="Remove this name" (click)="o.parameterName.splice(pni, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p *ngIf="o.hasOwnProperty('parameterName')">
+                            <a href="javascript:void(0)" (click)="o.parameterName.push('')">Add a name</a>
+                            <br/>
+                            <a href="javascript:void(0)" (click)="globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
+                        </p>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="globals.toggleProperty(o, 'comment', '')" />
+                            </div>
+                            <input type="text" class="form-control" [disabled]="!o.hasOwnProperty('comment')" [(ngModel)]="o.comment" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default" title="Remove this overload" (click)="operationDefinition.overload.splice(oi, 1)">
+                                <i class="fa fa-remove"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation" title="Validation">
+        <ng-template ngbTabContent>
+            <app-validation-results [results]="validation"></app-validation-results>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- JSON -->
+    <ngb-tab title="JSON">
+        <ng-template ngbTabContent>
+            <ngb-tabset [justify]="'fill'">
+                <ngb-tab title="Pretty">
+                    <ng-template ngbTabContent>
+                        <t-json-viewer [json]="operationDefinition"></t-json-viewer>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Plain">
+                    <ng-template ngbTabContent>
+                        <pre>{{operationDefinition | json}}</pre>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <span class="message">{{message}}</span>
+</footer>

@@ -1,0 +1,67 @@
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(property)" (ngModelChange)="globals.toggleProperty(parentObject, property, [])"/>
+        Jurisdiction
+    </div>
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(property)">
+        <thead>
+        <tr>
+            <th>Text</th>
+            <th>Codes</th>
+            <th>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="parentObject[property].push({ })">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let j of parentObject[property]; let ji = index">
+            <td>
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="j.hasOwnProperty('text')" (ngModelChange)="globals.toggleProperty(j, 'text', '')" />
+                    </div>
+                    <input type="text" class="form-control" [(ngModel)]="j.text" [disabled]="!j.hasOwnProperty('text')" />
+                </div>
+            </td>
+            <td>
+                <div class="input-group" *ngFor="let c of j.coding; let ci = index">
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="globals.toggleProperty(c, 'code', '')" />
+                    </div>
+                    <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" [disabled]="!c.hasOwnProperty('code')" />
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="globals.toggleProperty(c, 'display', '')" />
+                    </div>
+                    <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" [disabled]="!c.hasOwnProperty('display')" />
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(c, 'system', '')" />
+                    </div>
+                    <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" title="Remove this code" (click)="j.coding.splice(ci, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </div>
+                <div *ngIf="j.hasOwnProperty('coding')">
+                    <a href="javascript:void(0)" (click)="j.coding.push({ code: '', display: '', system: '' })">Add a code</a>
+                    <br />
+                    <a href="javascript:void(0)" (click)="globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Remove all codes</a>
+                </div>
+                <a href="javascript:void(0)" *ngIf="!j.hasOwnProperty('coding')" (click)="globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Add a code</a>
+            </td>
+            <td>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" title="Remove this jurisdiction" (click)="parentObject[property].splice(ji, 1)">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

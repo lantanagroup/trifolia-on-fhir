@@ -1,3 +1,5 @@
+import '../../date-extensions';
+
 export class Base {
     public fhir_comments?: string[];
     
@@ -328,7 +330,9 @@ export class ContactDetail extends Element {
 
 export class UsageContext extends Element {
     public code: Coding;
-    public value: Element;
+    public valueCodeableConcept?: CodeableConcept;
+    public valueQuantity?: Quantity;
+    public valueRange?: Range;
     
     constructor(obj?: any) {
         super(obj);
@@ -336,8 +340,14 @@ export class UsageContext extends Element {
             if (obj.code) {
                 this.code = new Coding(obj.code);
             }
-            if (obj.value) {
-                this.value = new Element(obj.value);
+            if (obj.valueCodeableConcept) {
+                this.valueCodeableConcept = new CodeableConcept(obj.valueQuantity);
+            }
+            if (obj.valueQuantity) {
+                this.valueQuantity = new Quantity(obj.valueQuantity);
+            }
+            if (obj.valueRange) {
+                this.valueRange = new Range(obj.valueRange);
             }
         }
     }
@@ -864,8 +874,14 @@ export class StructureDefinition extends DomainResource {
 
 export class ParameterComponent extends BackboneElement {
     public name: string;
-    public value?: Element;
-    public resource?: Resource;
+    public use: string;
+    public min: number;
+    public max: string;
+    public documentation: string;
+    public type?: string;
+    public searchType?: string;
+    public profile?: ResourceReference;
+    public binding?: ParameterBindingComponent;
     public part?: ParameterComponent[];
     
     constructor(obj?: any) {
@@ -874,11 +890,29 @@ export class ParameterComponent extends BackboneElement {
             if (obj.name) {
                 this.name = obj.name;
             }
-            if (obj.value) {
-                this.value = new Element(obj.value);
+            if (obj.use) {
+                this.use = obj.use;
             }
-            if (obj.resource) {
-                this.resource = new Resource(obj.resource);
+            if (obj.min) {
+                this.min = obj.min;
+            }
+            if (obj.max) {
+                this.max = obj.max;
+            }
+            if (obj.documentation) {
+                this.documentation = obj.documentation;
+            }
+            if (obj.type) {
+                this.type = obj.type;
+            }
+            if (obj.searchType) {
+                this.searchType = obj.searchType;
+            }
+            if (obj.profile) {
+                this.profile = new ResourceReference(obj.profile);
+            }
+            if (obj.binding) {
+                this.binding = new ParameterBindingComponent(obj.binding);
             }
             if (obj.part) {
                 this.part = [];
@@ -886,7 +920,45 @@ export class ParameterComponent extends BackboneElement {
             }
         }
     }
+}
 
+export class ParameterBindingComponent extends BackboneElement {
+    public strength: string;
+    public valueSetUri?: string;
+    public valueSetReference?: ResourceReference;
+
+    constructor(obj?: any) {
+        super(obj);
+        if (obj) {
+            if (obj.strength) {
+                this.strength = obj.strength;
+            }
+            if (obj.valueSetUri) {
+                this.valueSetUri = obj.valueSetUri;
+            }
+            if (obj.valueSetReference) {
+                this.valueSetReference = new ResourceReference(obj.valueSetReference);
+            }
+        }
+    }
+
+    public get valueSet(): string | ResourceReference {
+        if (this.hasOwnProperty('valueSetUri')) {
+            return this.valueSetUri;
+        } else if (this.hasOwnProperty('valueSetReference')) {
+            return this.valueSetReference;
+        }
+    }
+
+    public set valueSet(value: string | ResourceReference) {
+        if (typeof value === 'string') {
+            this.valueSetUri = value;
+            delete this.valueSetReference;
+        } else if (value instanceof ResourceReference) {
+            this.valueSetReference = value;
+            delete this.valueSetUri;
+        }
+    }
 }
 
 export class Parameters extends Resource {
@@ -3727,9 +3799,9 @@ export class CapabilityStatement extends DomainResource {
     public version?: string;
     public name?: string;
     public title?: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
-    public date: Date;
+    public date: string = new Date().formatFhir();
     public publisher?: string;
     public contact?: ContactDetail[];
     public description?: string;
@@ -3737,13 +3809,13 @@ export class CapabilityStatement extends DomainResource {
     public jurisdiction?: CodeableConcept[];
     public purpose?: string;
     public copyright?: string;
-    public kind: string;
+    public kind = 'instance';
     public instantiates?: string[];
     public software?: SoftwareComponent;
     public implementation?: ImplementationComponent;
-    public fhirVersion: string;
-    public acceptUnknown: string;
-    public format: string[];
+    public fhirVersion = '3.0.1';
+    public acceptUnknown = 'no';
+    public format: string[] = ['application/json'];
     public patchFormat?: string[];
     public implementationGuide?: string[];
     public profile?: ResourceReference[];
@@ -3773,7 +3845,7 @@ export class CapabilityStatement extends DomainResource {
                 this.experimental = obj.experimental;
             }
             if (obj.date) {
-                this.date = new Date(obj.date);
+                this.date = obj.date;
             }
             if (obj.publisher) {
                 this.publisher = obj.publisher;
@@ -11624,7 +11696,7 @@ export class OperationDefinition extends DomainResource {
     public status: string;
     public kind: string;
     public experimental?: boolean;
-    public date?: Date;
+    public date?: string;
     public publisher?: string;
     public contact?: ContactDetail[];
     public description?: string;
@@ -11664,7 +11736,7 @@ export class OperationDefinition extends DomainResource {
                 this.experimental = obj.experimental;
             }
             if (obj.date) {
-                this.date = new Date(obj.date);
+                this.date = obj.date;
             }
             if (obj.publisher) {
                 this.publisher = obj.publisher;

@@ -18,6 +18,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   public editingSliceName: boolean;
   public editedSliceName: string;
+  public valueSetChoices = ['Uri', 'Reference'];
 
   constructor(private modalService: NgbModal, public globals: Globals) {
 
@@ -53,6 +54,26 @@ export class ElementDefinitionPanelComponent implements OnInit {
       } else {
           this.editingSliceName = true;
           this.editedSliceName = this.element.sliceName;
+      }
+  }
+
+  setValueSetChoice(elementBinding: any, choice: string) {
+      const foundChoice = this.globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
+
+      if (foundChoice !== choice) {
+          delete elementBinding['valueSet' + foundChoice];
+      }
+
+      switch (choice) {
+          case 'Uri':
+              elementBinding['valueSetUri'] = '';
+              break;
+          case 'Reference':
+              elementBinding['valueSetReference'] = {
+                  reference: '',
+                  display: ''
+              };
+              break;
       }
   }
 

@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Parameter</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label>
+            Documentation
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('documentation')" (ngModelChange)="globals.toggleProperty(parameter, 'type', 'documentation')" />
+        </label>
+        <input type="text" class="form-control" [disabled]="!parameter.hasOwnProperty('documentation')" [(ngModel)]="parameter.documentation"/>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Type
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(parameter, 'type', '')" />
+        </label>
+        <select class="form-control" [disabled]="!parameter.hasOwnProperty('type')" [(ngModel)]="parameter.type">
+            <option *ngFor="let o of globals.allTypes" [ngValue]="o.code">{{o.display}}</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Search Type
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('searchType')" (ngModelChange)="globals.toggleProperty(parameter, 'searchType', 'number')" />
+        </label>
+        <select class="form-control" [disabled]="!parameter.hasOwnProperty('searchType')" [(ngModel)]="parameter.searchType">
+            <option value="number">Number</option>
+            <option value="date">Date</option>
+            <option value="string">String</option>
+            <option value="token">Token</option>
+            <option value="reference">Reference</option>
+            <option value="composite">Composite</option>
+            <option value="quantity">Quantity</option>
+            <option value="uri">URI</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Profile
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(parameter, 'profile', { reference: '', display: '' })" />
+        </label>
+        <app-fhir-reference [disabled]="!parameter.hasOwnProperty('profile')" [reference]="parameter.profile" resourceType="StructureDefinition"></app-fhir-reference>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Binding
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('binding')" (ngModelChange)="globals.toggleProperty(parameter, 'binding', { strength: 'required', valueSetUri: '' })" />
+        </div>
+        <div class="card-body" *ngIf="parameter.hasOwnProperty('binding')">
+            <div class="form-group">
+                <label>Strength</label>
+                <select class="form-control" [(ngModel)]="parameter.binding.strength" [class.is-invalid]="!parameter.binding.strength">
+                    <option value="required">Required</option>
+                    <option value="extensible">Extensible</option>
+                    <option value="preferred">Preferred</option>
+                    <option value="example">Example</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Value Set Choice</label>
+                <select class="form-control" [(ngModel)]="valueSetChoice">
+                    <option value="Uri">URI</option>
+                    <option value="Reference">Reference</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="parameter.binding.hasOwnProperty('valueSetUri')">
+                <label>Value Set URI</label>
+                <input type="text" class="form-control" [(ngModel)]="parameter.binding.valueSetUri" />
+            </div>
+
+            <div class="form-group" *ngIf="parameter.binding.hasOwnProperty('valueSetReference')">
+                <label>Value Set Reference</label>
+                <app-fhir-reference [reference]="parameter.binding.valueSetReference" resourceType="ValueSet"></app-fhir-reference>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

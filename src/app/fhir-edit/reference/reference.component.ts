@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
 
 @Component({
-    selector: 'fhir-reference',
+    selector: 'app-fhir-reference',
     templateUrl: './reference.component.html',
     styleUrls: ['./reference.component.css']
 })

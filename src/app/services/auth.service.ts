@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import { PersonService } from './person.service';
 import { PersonListModel } from '../models/person-list-model';
@@ -11,7 +11,7 @@ export class AuthService {
         domain: 'trifolia.auth0.com',
         responseType: 'token id_token',
         audience: 'https://trifolia.lantanagroup.com/api',
-        redirectUri: 'http://localhost:49366/login',
+        redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
         scope: 'openid profile name nickname email'
     });
     public userProfile: any;
@@ -22,6 +22,7 @@ export class AuthService {
 
     constructor(
         public router: Router,
+        private activatedRoute: ActivatedRoute,
         private personService: PersonService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
         this.authChanged = new EventEmitter();
@@ -33,11 +34,12 @@ export class AuthService {
 
     public handleAuthentication(): void {
         this.auth0.parseHash((err, authResult) => {
+            const path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
             if (authResult && authResult.accessToken && authResult.idToken) {
                 window.location.hash = '';
                 this.setSession(authResult);
                 this.getProfile(() => {
-                    this.router.navigate(['/home']);
+                    this.router.navigate([path]);
                     this.authChanged.emit();
                 });
             } else if (err) {

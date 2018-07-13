@@ -28,7 +28,7 @@
     <div class="input-group" *ngIf="!resourceType || !hideResourceType">
       <div class="input-group-addon">Type</div>
       <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
-        <option *ngFor="let o of globals.ResourceTypes | keys" [ngValue]="o.value.code">{{o.value.display}}</option>
+        <option *ngFor="let o of globals.resourceTypes | keys" [ngValue]="o.value.code">{{o.value.display}}</option>
       </select>
     </div>
 

@@ -4,8 +4,10 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
 
+const thisResourceType = 'ImplementationGuide';
+
 router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl('ImplementationGuide');
+    const url = req.getFhirServerUrl(thisResourceType);
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
@@ -27,7 +29,7 @@ router.get('/', checkJwt, (req, res) => {
 });
 
 router.get('/:id', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl('ImplementationGuide', req.params.id);
+    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
@@ -41,7 +43,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
 router.post('/', checkJwt, (req, res) => {
     const options = {
-        url: req.getFhirServerUrl('ImplementationGuide'),
+        url: req.getFhirServerUrl(thisResourceType),
         method: 'POST',
         json: true,
         body: req.body
@@ -53,20 +55,26 @@ router.post('/', checkJwt, (req, res) => {
             return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
         }
 
-        request(results.headers.location, (error, results, body) => {
-            if (error) {
-                console.log('Error from FHIR server while retrieving created implementation guide: ' + error);
-                return res.send(500).send('Error from FHIR server while retrieving created implementation guide: ' + error);
-            }
+        const location = results.headers.location || results.headers['content-location'];
 
-            res.send(body);
-        });
+        if (location) {
+            request(location, (error, results, body) => {
+                if (error) {
+                    console.log('Error from FHIR server while retrieving created implementation guide: ' + error);
+                    return res.send(500).send('Error from FHIR server while retrieving created implementation guide: ' + error);
+                }
+
+                res.send(body);
+            });
+        } else {
+            res.status(500).send('FHIR server did not respond with a location to the newly created implementation guide');
+        }
     });
 });
 
 router.delete('/:id', checkJwt, (req, res) => {
     const options = {
-        url: req.getFhirServerUrl('ImplementationGuide', req.params.id),
+        url: req.getFhirServerUrl(thisResourceType, req.params.id),
         method: 'DELETE'
     };
 
@@ -80,21 +88,37 @@ router.delete('/:id', checkJwt, (req, res) => {
     });
 });
 
+
 router.put('/:id', checkJwt, (req, res) => {
+    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
+
     const options = {
-        url: req.getFhirServerUrl('ImplementationGuide', req.params.id),
+        url: url,
         method: 'PUT',
         json: true,
         body: req.body
     };
 
-    request(options, (error, results, body) => {
-        if (error) {
-            console.log('Error from FHIR server while creating implementation guide: ' + error);
-            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+    request(options, (err, results, updateBody) => {
+        if (err) {
+            console.log('Error from FHIR server while updating implementation guide: ' + err);
+            return res.status(500).send('Error from FHIR server while updating implementation guide');
         }
 
-        res.send(req.body);
+        const location = results.headers.location || results.headers['content-location'];
+
+        if (location) {
+            request(location, (err, results, retrieveBody) => {
+                if (err) {
+                    console.log('Error from FHIR server while retrieving recently updated implementation guide: ' + err);
+                    return res.status(500).send('Error from FHIR server while retrieving recently updated implementation guide');
+                }
+
+                res.send(retrieveBody);
+            })
+        } else {
+            res.status(500).send('FHIR server did not respond with a location to the recently updated implementation guide');
+        }
     });
 });
 

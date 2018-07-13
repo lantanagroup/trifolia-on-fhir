@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "target": "es5",
     "typeRoots": [
+      "src/typings.d.ts",
       "node_modules/@types"
     ],
     "lib": [

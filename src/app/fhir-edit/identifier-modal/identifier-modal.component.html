@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Identifier</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" *ngIf="identifier">
+    <app-fhir-select-single-code [parentObject]="identifier" propertyName="use" title="Use" [codes]="globals.identifierUseCodes"></app-fhir-select-single-code>
+
+    <app-fhir-string [parentObject]="identifier" propertyName="system" title="System"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="identifier" propertyName="value" title="Value"></app-fhir-string>
+
+    <app-fhir-select-single-code [parentObject]="identifier" propertyName="type" title="Type" [codes]="globals.identifierTypeCodes"></app-fhir-select-single-code>
+
+    <div class="form-group">
+        <label>Period</label>
+        TODO
+    </div>
+
+    <div class="form-group">
+        <label>Assigner</label>
+        TODO
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

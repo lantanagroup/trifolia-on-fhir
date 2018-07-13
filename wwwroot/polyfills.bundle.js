@@ -9077,10 +9077,46 @@ Zone.__load_patch('PromiseRejectionEvent', function (global, Zone) {
 /***/ }),
 
 /***/ "./src/polyfills.ts":
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_core_js_es6_symbol__ = __webpack_require__("./node_modules/core-js/es6/symbol.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_core_js_es6_symbol___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_core_js_es6_symbol__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_core_js_es6_object__ = __webpack_require__("./node_modules/core-js/es6/object.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_core_js_es6_object___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_core_js_es6_object__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_core_js_es6_function__ = __webpack_require__("./node_modules/core-js/es6/function.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_core_js_es6_function___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_core_js_es6_function__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_core_js_es6_parse_int__ = __webpack_require__("./node_modules/core-js/es6/parse-int.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_core_js_es6_parse_int___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_core_js_es6_parse_int__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_core_js_es6_parse_float__ = __webpack_require__("./node_modules/core-js/es6/parse-float.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_core_js_es6_parse_float___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_core_js_es6_parse_float__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_core_js_es6_number__ = __webpack_require__("./node_modules/core-js/es6/number.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_core_js_es6_number___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_core_js_es6_number__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_core_js_es6_math__ = __webpack_require__("./node_modules/core-js/es6/math.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_core_js_es6_math___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_core_js_es6_math__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_core_js_es6_string__ = __webpack_require__("./node_modules/core-js/es6/string.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_core_js_es6_string___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_core_js_es6_string__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_core_js_es6_date__ = __webpack_require__("./node_modules/core-js/es6/date.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_core_js_es6_date___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_core_js_es6_date__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_core_js_es6_array__ = __webpack_require__("./node_modules/core-js/es6/array.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_core_js_es6_array___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_core_js_es6_array__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_core_js_es6_regexp__ = __webpack_require__("./node_modules/core-js/es6/regexp.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_core_js_es6_regexp___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10_core_js_es6_regexp__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11_core_js_es6_map__ = __webpack_require__("./node_modules/core-js/es6/map.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11_core_js_es6_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11_core_js_es6_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_core_js_es6_weak_map__ = __webpack_require__("./node_modules/core-js/es6/weak-map.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_core_js_es6_weak_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12_core_js_es6_weak_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_core_js_es6_set__ = __webpack_require__("./node_modules/core-js/es6/set.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_core_js_es6_set___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13_core_js_es6_set__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_classlist_js__ = __webpack_require__("./node_modules/classlist.js/classList.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_classlist_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14_classlist_js__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_core_js_es6_reflect__ = __webpack_require__("./node_modules/core-js/es6/reflect.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_core_js_es6_reflect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_core_js_es6_reflect__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_core_js_es7_reflect__ = __webpack_require__("./node_modules/core-js/es7/reflect.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_core_js_es7_reflect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16_core_js_es7_reflect__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_zone_js_dist_zone__ = __webpack_require__("./node_modules/zone.js/dist/zone.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_zone_js_dist_zone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17_zone_js_dist_zone__);
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
@@ -9096,30 +9132,29 @@ Zone.__load_patch('PromiseRejectionEvent', function (global, Zone) {
  *
  * Learn more in https://angular.io/docs/ts/latest/guide/browser-support.html
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
 /** IE9, IE10 and IE11 requires all of the following polyfills. **/
-__webpack_require__("./node_modules/core-js/es6/symbol.js");
-__webpack_require__("./node_modules/core-js/es6/object.js");
-__webpack_require__("./node_modules/core-js/es6/function.js");
-__webpack_require__("./node_modules/core-js/es6/parse-int.js");
-__webpack_require__("./node_modules/core-js/es6/parse-float.js");
-__webpack_require__("./node_modules/core-js/es6/number.js");
-__webpack_require__("./node_modules/core-js/es6/math.js");
-__webpack_require__("./node_modules/core-js/es6/string.js");
-__webpack_require__("./node_modules/core-js/es6/date.js");
-__webpack_require__("./node_modules/core-js/es6/array.js");
-__webpack_require__("./node_modules/core-js/es6/regexp.js");
-__webpack_require__("./node_modules/core-js/es6/map.js");
-__webpack_require__("./node_modules/core-js/es6/weak-map.js");
-__webpack_require__("./node_modules/core-js/es6/set.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** IE10 and IE11 requires the following for NgClass support on SVG elements */
-__webpack_require__("./node_modules/classlist.js/classList.js"); // Run `npm install --save classlist.js`.
+ // Run `npm install --save classlist.js`.
 /** Evergreen browsers require these. **/
-__webpack_require__("./node_modules/core-js/es6/reflect.js");
-__webpack_require__("./node_modules/core-js/es7/reflect.js");
+
+
 /**
  * Required to support Web Animations `@angular/animation`.
  * Needed for: All but Chrome, Firefox and Opera. http://caniuse.com/#feat=web-animation
@@ -9128,7 +9163,7 @@ __webpack_require__("./node_modules/core-js/es7/reflect.js");
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
-__webpack_require__("./node_modules/zone.js/dist/zone.js"); // Included with Angular CLI.
+ // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */

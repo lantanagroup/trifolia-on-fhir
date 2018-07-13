@@ -1,3 +1,63 @@
-<p>
-  codesystem works!
-</p>
+<h1>Code System</h1>
+
+<ngb-tabset>
+  <ngb-tab title="General">
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div class="col-md-8">
+          <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
+
+          <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description"></app-fhir-markdown>
+
+          <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+
+          <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version"></app-fhir-string>
+
+          <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed"></app-fhir-boolean>
+
+          <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date"></app-fhir-date>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- Validation -->
+  <ngb-tab id="validation" title="Validation">
+    <ng-template ngbTabContent>
+      <app-validation-results [results]="validation"></app-validation-results>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- JSON -->
+  <ngb-tab title="JSON">
+    <ng-template ngbTabContent>
+      <ngb-tabset [justify]="'fill'">
+        <ngb-tab title="Pretty">
+          <ng-template ngbTabContent>
+            <t-json-viewer [json]="codeSystem"></t-json-viewer>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Plain">
+          <ng-template ngbTabContent>
+            <pre>{{codeSystem | json}}</pre>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>

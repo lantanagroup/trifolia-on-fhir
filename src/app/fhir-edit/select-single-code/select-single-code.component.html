@@ -1,0 +1,20 @@
+<div class="form-group" *ngIf="isFormGroup">
+  <label>
+    <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, getDefaultCode())" />
+    {{title || propertyName}}
+    <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+  </label>
+  <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
+    <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
+  </select>
+  <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" />
+</div>
+<div *ngIf="!isFormGroup" [class.input-group]="!required">
+  <div class="input-group-addon" *ngIf="!required">
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, getDefaultCode())" />
+  </div>
+  <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
+    <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
+  </select>
+  <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" />
+</div>

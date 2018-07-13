@@ -1,0 +1,11 @@
+<div class="form-group">
+  <label>
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, '', openModal, this)"/>
+    {{title || propertyName}}
+    <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+  </label>
+  <app-markdown *ngIf="!displayOnly" [(ngModel)]="parentObject[propertyName]" [disabled]="isOptional && !parentObject.hasOwnProperty(propertyName)"></app-markdown>
+  <div *ngIf="displayOnly && parentObject.hasOwnProperty(propertyName)">
+    <p>{{parentObject[propertyName]}} [<a href="javascript:void(0)" (click)="openModal()">Edit</a>]</p>
+  </div>
+</div>

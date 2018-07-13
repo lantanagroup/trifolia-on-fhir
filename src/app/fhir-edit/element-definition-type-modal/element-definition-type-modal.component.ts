@@ -3,7 +3,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 
 @Component({
-  selector: 'app-element-definition-type-modal',
+  selector: 'app-fhir-element-definition-type-modal',
   templateUrl: './element-definition-type-modal.component.html',
   styleUrls: ['./element-definition-type-modal.component.css']
 })

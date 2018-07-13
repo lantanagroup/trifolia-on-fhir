@@ -1,0 +1,15 @@
+.card {
+    margin-bottom: 15px;
+}
+
+tr > td:first-child {
+    width: 200px;
+}
+
+tr > td:nth-child(2) {
+    width: 125px;
+}
+
+tr > td:last-child {
+    width: 50px;
+}

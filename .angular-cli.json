@@ -9,6 +9,7 @@
       "outDir": "wwwroot",
       "assets": [
         "assets",
+        "help",
         "favicon.ico"
       ],
       "index": "index.html",

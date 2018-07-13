@@ -1,0 +1,45 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit Attachment</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label>From File</label>
+    <input type="file" class="form-control" (change)="attachmentUpload($event)" />
+    <span class="help-block">Select a file to override this attachment data.</span>
+  </div>
+
+  <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" title="Content Type" [isTypeahead]="true" [codes]="globals.mimeTypeCodes"></app-fhir-select-single-code>
+
+  <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" title="Language" [isTypeahead]="true" [codes]="globals.commonLanguageCodes" defaultCode="en-US"></app-fhir-select-single-code>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox" [ngModel]="attachment.hasOwnProperty('data')" (ngModelChange)="globals.toggleProperty(attachment, 'data', '')" />
+      Data
+    </label>
+    <textarea class="form-control" *ngIf="!attachment.data || attachment.data.length < 10000" [disabled]="!attachment.hasOwnProperty('data')" [(ngModel)]="attachment.data"></textarea>
+    <p *ngIf="attachment.data && attachment.data.length >= 10000">Too much data to display in text box</p>
+  </div>
+
+  <app-fhir-string [parentObject]="attachment" propertyName="url" title="Url"></app-fhir-string>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox" [ngModel]="attachment.hasOwnProperty('size')" (ngModelChange)="globals.toggleProperty(attachment, 'size', '')" />
+      Size
+    </label>
+    <input type="number" class="form-control" [disabled]="!attachment.hasOwnProperty('size')" [(ngModel)]="attachment.size" />
+  </div>
+
+  <app-fhir-string [parentObject]="attachment" propertyName="hash" title="Hash"></app-fhir-string>
+
+  <app-fhir-string [parentObject]="attachment" propertyName="title" title="Title"></app-fhir-string>
+
+  <app-fhir-date [parentObject]="attachment" propertyName="creation" title="Creation"></app-fhir-date>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>

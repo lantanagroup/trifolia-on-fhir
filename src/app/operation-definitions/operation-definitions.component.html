@@ -1,0 +1,30 @@
+<h1>Operation Definitions</h1>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>
+      <div class="pull-right">
+        <button type="button" class="btn btn-default" routerLink="/operation-definition/new">New</button>
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let cs of operationDefinitions">
+    <td>{{cs.name}} <span class="badge">{{cs.id}}</span></td>
+    <td>
+      <div class="pull-right">
+        <a class="btn btn-default" routerLink="/operation-definition/{{cs.id}}">Edit</a>
+        <button type="button" class="btn btn-default" (click)="remove(ig)">Remove</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="3">{{operationDefinitions.length}} total capability statements</td>
+  </tr>
+  </tfoot>
+</table>

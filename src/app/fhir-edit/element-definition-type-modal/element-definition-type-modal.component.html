@@ -11,7 +11,7 @@
       <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.code']}}" placement="top"></i>
     </label>
     <select class="form-control" [(ngModel)]="type.code">
-      <option *ngFor="let o of globals.fhirDefinedTypes">{{o}}</option>
+      <option *ngFor="let o of globals.definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
     </select>
   </div>
 

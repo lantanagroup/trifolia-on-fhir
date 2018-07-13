@@ -42,52 +42,61 @@ tr.constrained {
     max-height: 85%;
 }
 
-table {
+table.elements {
     overflow-y: auto;
     height: 97%;
     display: inline-block;
-    width: 75%;
+    width: 65%;
     float: left;
 }
 
-table > thead,
-table > tbody {
+table.elements > thead,
+table.elements > tbody {
     display: inline-table;
     width: 100%;
 }
 
-table > thead > tr > th:nth-child(1),
-table > tbody > tr > td:nth-child(1) {
+table.elements > thead > tr > th:nth-child(1),
+table.elements > tbody > tr > td:nth-child(1) {
     width: 30%;
 }
 
-table > thead > tr > th:nth-child(2),
-table > tbody > tr > td:nth-child(2) {
+table.elements > thead > tr > th:nth-child(2),
+table.elements > tbody > tr > td:nth-child(2) {
     width: 25%;
 }
 
-table > thead > tr > th:nth-child(3),
-table > tbody > tr > td:nth-child(3) {
+table.elements > thead > tr > th:nth-child(3),
+table.elements > tbody > tr > td:nth-child(3) {
     width: 10%;
 }
 
-table > thead > tr > th:nth-child(4),
-table > tbody > tr > td:nth-child(4) {
+table.elements > thead > tr > th:nth-child(4),
+table.elements > tbody > tr > td:nth-child(4) {
     width: 25%;
 }
 
-table > thead > tr > th:nth-child(5),
-table > tbody > tr > td:nth-child(5) {
+table.elements > thead > tr > th:nth-child(5),
+table.elements > tbody > tr > td:nth-child(5) {
     width: 10%;
 }
 
 div.element-definition {
     height: 100%;
-    width: 25%;
+    width: 35%;
     float: left;
 }
 
 div.element-definition > div.card-body {
     height: 100%;
     overflow-y: auto;
+}
+
+.card.context {
+    margin-bottom: 15px;
+}
+
+div.expand-collapse {
+    display: inline-block;
+    width: 15px;
 }

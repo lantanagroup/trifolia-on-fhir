@@ -1,6 +1,9 @@
 const jwt = require('express-jwt');
 const jwtAuthz = require('express-jwt-authz');
 const jwksRsa = require('jwks-rsa');
+const config = require('config');
+
+const authConfig = config.get('auth');
 
 module.exports = {
     checkJwt: jwt({
@@ -11,12 +14,12 @@ module.exports = {
             cache: true,
             rateLimit: true,
             jwksRequestsPerMinute: 5,
-            jwksUri: `https://trifolia.auth0.com/.well-known/jwks.json`
+            jwksUri: authConfig.jwksUri
         }),
 
         // Validate the audience and the issuer.
-        audience: 'https://trifolia.lantanagroup.com/api',
-        issuer: `https://trifolia.auth0.com/`,
-        algorithms: ['RS256']
+        audience: authConfig.audience,
+        issuer: authConfig.issuer,
+        algorithms: authConfig.algorithms
     })
 }

@@ -1,15 +1,16 @@
-import {Component, DoCheck, Input, OnInit, SimpleChange} from '@angular/core';
-import {AuditEventService} from '../services/audit-event.service';
+import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {AuditEvent, Binary, ImplementationGuide, PageComponent} from '../models/fhir';
+import {Binary, ImplementationGuide, PageComponent} from '../models/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs/Observable';
 import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import * as Fhir from 'fhir';
 import * as _ from 'underscore';
 import {PageComponentModalComponent} from '../fhir-edit/page-component-modal/page-component-modal.component';
+import {RecentItemService} from '../services/recent-item.service';
+import {BinaryService} from '../services/binary.service';
+import {FhirService} from '../services/fhir.service';
 
 class PageDefinition {
     public page: PageComponent;
@@ -21,27 +22,29 @@ class PageDefinition {
     selector: 'app-implementation-guide',
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css'],
-    providers: [ImplementationGuideService]
+    providers: [ImplementationGuideService, FhirService]
 })
-export class ImplementationGuideComponent implements OnInit, DoCheck {
+export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy {
     @Input() public implementationGuide?: ImplementationGuide;
     public message: string;
     public currentResource: any;
     public validation: any;
     public pages: PageDefinition[];
-    private fhir = new Fhir();
+    private unsavedBinaryAssociations: string[] = [];
 
     constructor(
         private modal: NgbModal,
         private route: ActivatedRoute,
         private router: Router,
         private implementationGuideService: ImplementationGuideService,
-        private auditEventService: AuditEventService,
         private authService: AuthService,
-        public globals: Globals) {
+        private recentItemService: RecentItemService,
+        private binaryService: BinaryService,
+        public globals: Globals,
+        private fhirService: FhirService) {
     }
 
-    private getImplementationGuide(): Observable<null> {
+    private getImplementationGuide(): Observable<ImplementationGuide> {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
         return new Observable((observer) => {
@@ -50,13 +53,13 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
                     .subscribe((results: ImplementationGuide) => {
                         this.implementationGuide = results;
                         this.initPages();
-                        observer.next();
+                        observer.next(results);
                     }, (err) => {
                         observer.error(err);
                     });
             } else {
                 this.implementationGuide = new ImplementationGuide();
-                observer.next();
+                observer.next(this.implementationGuide);
             }
         });
     }
@@ -130,20 +133,33 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
 
         const newPage = new PageComponent();
         const newBinary = new Binary();
-        newBinary.contentType = 'text/plain';
+        newBinary.contentType = 'text/markdown';
         newBinary.content = btoa('No page content yet');
-        newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
 
         if (!this.implementationGuide.contained) {
             this.implementationGuide.contained = [];
         }
 
-        this.implementationGuide.contained.push(newBinary);
-        newPage.source = '#' + newBinary.id;
+        if (this.globals.pageAsContainedBinary) {
+            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+            this.implementationGuide.contained.push(newBinary);
 
-        pageDef.page.page.push(newPage);
+            newPage.source = '#' + newBinary.id;
+            pageDef.page.page.push(newPage);
 
-        this.initPages();
+            this.initPages();
+        } else {
+            this.binaryService.save(newBinary)
+                .subscribe((results) => {
+                    newPage.source = 'Binary/' + results.id;
+                    pageDef.page.page.push(newPage);
+
+                    this.unsavedBinaryAssociations.push(results.id);
+                    this.initPages();
+                }, (err) => {
+
+                });
+        }
     }
 
     public removePage(pageDef: PageDefinition) {
@@ -160,13 +176,29 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
         }
 
         // If a contained Binary resource is associated with the page, remove it
-        if (pageDef.page.source && pageDef.page.source.startsWith('#')) {
-            const foundBinary = _.find(this.implementationGuide.contained, (contained) =>
-                contained.id === pageDef.page.source.substring(1));
+        if (pageDef.page.source) {
+            const parsedSourceUrl = this.globals.parseFhirUrl(pageDef.page.source);
 
-            if (foundBinary) {
-                const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
-                this.implementationGuide.contained.splice(binaryIndex, 1);
+            if (pageDef.page.source.startsWith('#')) {
+                const foundBinary = _.find(this.implementationGuide.contained, (contained) =>
+                    contained.id === pageDef.page.source.substring(1));
+
+                if (foundBinary) {
+                    const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
+                    this.implementationGuide.contained.splice(binaryIndex, 1);
+                }
+            } else if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
+                this.binaryService.delete(parsedSourceUrl.id)      // Async call that we don't have to wait on
+                    .subscribe(() => {
+                        // Remove the id from the list of unsaved binary associations
+                        const unsavedIndex = this.unsavedBinaryAssociations.indexOf(parsedSourceUrl.id);
+                        if (unsavedIndex >= 0) {
+                            this.unsavedBinaryAssociations.splice(unsavedIndex, 1);
+                        }
+                    }, (err) => {
+                        alert('Error deleting Binary resource associated with page');
+                        console.log('Error deleting Binary resource associated with page: ' + err);
+                    });
             }
         }
 
@@ -213,7 +245,7 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     }
 
     public save() {
-        if (!this.validation.valid && !confirm('This implementatoin guide is not valid, are you sure you want to save?')) {
+        if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
             return;
         }
 
@@ -222,6 +254,7 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
                 if (!this.implementationGuide.id) {
                     this.router.navigate(['/implementation-guide/' + results.id]);
                 } else {
+                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentImplementationGuides, results.id, results.name);
                     this.message = 'Successfully saved implementation guide!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -255,17 +288,20 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
 
     ngOnInit() {
         this.getImplementationGuide()
-            .subscribe(() => {
-                const entityIdentifier = {
-                    system: this.globals.FHIRUrls.ImplementationGuide,
-                    value: this.route.snapshot.paramMap.get('id')
-                };
-                const auditEvent = this.auditEventService.getModel('110100', entityIdentifier);
-                this.auditEventService.create(auditEvent);
+            .subscribe((ig) => {
+                this.recentItemService.ensureRecentItem(
+                    this.globals.cookieKeys.recentImplementationGuides,
+                    this.implementationGuide.id,
+                    this.implementationGuide.name);
             });
     }
 
     ngDoCheck() {
-        this.validation = this.fhir.validate(this.implementationGuide);
+        this.validation = this.fhirService.validate(this.implementationGuide);
+    }
+
+    ngOnDestroy() {
+        // Remove any Binary resources that were created for pages, but whose page was not saved in the IG
+        _.each(this.unsavedBinaryAssociations, (id) => this.binaryService.delete(id));
     }
 }

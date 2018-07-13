@@ -1,0 +1,45 @@
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
+        {{title || 'Identifiers'}}
+    </div>
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
+        <thead>
+        <tr>
+            <th>Use</th>
+            <th>System</th>
+            <th>Value</th>
+            <th>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'identifier'}}" (click)="parentObject[propertyName].push({})">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let id of parentObject[propertyName]; let idi = index">
+            <td>
+                <app-fhir-select-single-code [parentObject]="id" propertyName="use" [isFormGroup]="false" [codes]="globals.identifierUseCodes"></app-fhir-select-single-code>
+            </td>
+            <td>
+                <app-fhir-string [parentObject]="id" propertyName="system" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                <app-fhir-string [parentObject]="id" propertyName="value" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'identifier'}}" (click)="editIdentifier(id)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'identifier'}}" (click)="parentObject[propertyName].splice(idi, 1)">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

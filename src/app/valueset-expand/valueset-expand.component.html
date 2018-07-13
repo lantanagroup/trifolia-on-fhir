@@ -1,0 +1,75 @@
+<h1>Expand Value Set</h1>
+<p class="badge badge-info" *ngIf="valueSet">{{valueSet.url}}</p>
+
+<ngb-tabset #t="ngbTabset">
+  <ngb-tab id="options" title="Options">
+    <ng-template ngbTabContent>
+      <div class="row" *ngIf="valueSet">
+        <div class="col-md-6">
+          <app-fhir-string [parentObject]="criteria" propertyName="filter" title="Filter"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="criteria" propertyName="profile" title="Profile"></app-fhir-string>
+
+          <app-fhir-date [parentObject]="criteria" propertyName="date" title="Date"></app-fhir-date>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="includeDesignations" title="Include Designations"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="includeDefinition" title="Include Definition"></app-fhir-boolean>
+
+          <div class="form-group">
+            <label>Display Language</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('displayLanguage')" (ngModelChange)="globals.toggleProperty(criteria, 'displayLanguage', false)" />
+              </div>
+              <input type="text" class="form-control" [disabled]="!criteria.hasOwnProperty('displayLanguage')" [(ngModel)]="criteria.displayLanguage" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Offset</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('offset')" (ngModelChange)="globals.toggleProperty(criteria, 'offset', 0)" />
+              </div>
+              <input type="number" class="form-control" [disabled]="!criteria.hasOwnProperty('offset')" [(ngModel)]="criteria.offset" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Count</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('count')" (ngModelChange)="globals.toggleProperty(criteria, 'count', 0)" />
+              </div>
+              <input type="number" class="form-control" [disabled]="!criteria.hasOwnProperty('count')" [(ngModel)]="criteria.count" />
+            </div>
+          </div>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNested" title="Exclude Nested"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNotForUI" title="Exlude Not For UI"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="excludePostCoordinated" title="Exclude Post-coordinated"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="activeOnly" title="Active Only"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="criteria" propertyName="limitedExpansion" title="Limited Expansion"></app-fhir-boolean>
+        </div>
+      </div>
+
+      <p>
+        <button type="button" class="btn btn-default" (click)="expand(t)">Expand</button>
+      </p>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab id="results" title="Results" [disabled]="!results">
+    <ng-template ngbTabContent>
+      <div *ngIf="results.resourceType === 'OperationOutcome'">
+        <div *ngIf="results.text" [innerHTML]="results.text.div"></div>
+      </div>
+      <t-json-viewer *ngIf="results.resourceType !== 'OperationOutcome'" [json]="results"></t-json-viewer>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>

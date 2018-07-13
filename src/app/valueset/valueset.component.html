@@ -1,3 +1,205 @@
-<p>
-  valueset works!
-</p>
+<h1>Value Set</h1>
+
+<ngb-tabset>
+    <ngb-tab title="General">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-8">
+                    <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title"></app-fhir-string>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('identifier')" (ngModelChange)="globals.toggleProperty(valueSet, 'identifier', [{ use: 'official', value: ''}])" />
+                            Identifier(s)
+                        </div>
+                        <table class="table table-striped" *ngIf="valueSet.hasOwnProperty('identifier')">
+                            <thead>
+                            <tr>
+                                <th>Use</th>
+                                <th>System</th>
+                                <th>Value</th>
+                                <th>
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-default btn-sm" title="Add an identifier" (click)="valueSet.identifier.push({ use: 'official', value: '' })">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let identifier of valueSet.identifier; let ii = index">
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" [ngModel]="identifier.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(identifier, 'use', 'official')" />
+                                        </div>
+                                        <select class="form-control" [disabled]="!identifier.hasOwnProperty('use')" [(ngModel)]="identifier.use">
+                                            <option value="usual">Usual</option>
+                                            <option value="official">Official</option>
+                                            <option value="temp">Temporary</option>
+                                            <option value="secondary">Secondary</option>
+                                            <option value="old">Old</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" [ngModel]="identifier.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(identifier, 'system', '')" />
+                                        </div>
+                                        <input type="text" class="form-control" [disabled]="!identifier.hasOwnProperty('system')" [(ngModel)]="identifier.system" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" [ngModel]="identifier.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(identifier, 'value', '')" />
+                                        </div>
+                                        <input type="text" class="form-control" [disabled]="!identifier.hasOwnProperty('value')" [(ngModel)]="identifier.value" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="pull-right btn-group">
+                                        <button type="button" class="btn btn-default btn-sm" title="Edit this identifier">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" title="Remove this identifier" (click)="valueSet.identifier.splice(ii, 1)">
+                                            <i class="fa fa-remove"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext"></app-fhir-multi-use-context>
+
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="description" title="Description" [isFormGroup]="true"></app-fhir-markdown>
+
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="purpose" title="Purpose" [isFormGroup]="true"></app-fhir-markdown>
+
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="copyright" title="Copyright" [isFormGroup]="true"></app-fhir-markdown>
+                </div>
+                <div class="col-md-4">
+                    <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version"></app-fhir-string>
+
+                    <div class="form-group">
+                        <label>Status <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('status')" (ngModelChange)="globals.toggleProperty(valueSet, 'status', 'draft')" /></label>
+                        <select class="form-control" [disabled]="!valueSet.hasOwnProperty('status')" [(ngModel)]="valueSet.status">
+                            <option value="draft">Draft</option>
+                            <option value="active">Active</option>
+                            <option value="retired">Retired</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+
+    <ngb-tab title="Compose">
+        <ng-template ngbTabContent>
+            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { })" /> Value set has a "compose" definition
+
+            <div *ngIf="valueSet.hasOwnProperty('compose')">
+                <app-fhir-date [parentObject]="valueSet.compose" propertyName="lockedDate" title="Locked Date"></app-fhir-date>
+
+                <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive"></app-fhir-boolean>
+
+                <div class="card">
+                    <div class="card-header">
+                        <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [])" />
+                        Include
+                    </div>
+                    <table class="table table-striped" *ngIf="valueSet.compose.hasOwnProperty('include')">
+                        <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Version</th>
+                            <th>Concepts</th>
+                            <th>Filter</th>
+                            <th>
+                                <div class="pull-right">
+                                    <button type="button" class="btn btn-default btn-sm" title="Add an include" (click)="valueSet.compose.include.push({})">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr *ngFor="let include of valueSet.compose.include; let ii = index">
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <input type="checkbox" [ngModel]="include.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(include, 'system', '')" />
+                                    </div>
+                                    <input type="text" class="form-control" [disabled]="!include.hasOwnProperty('system')" [(ngModel)]="include.system" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <input type="checkbox" [ngModel]="include.hasOwnProperty('version')" (ngModelChange)="globals.toggleProperty(include, 'version', '')" />
+                                    </div>
+                                    <input type="text" class="form-control" [disabled]="!include.hasOwnProperty('version')" [(ngModel)]="include.version" />
+                                </div>
+                            </td>
+                            <td>
+                                {{getIncludeCodes(include)}}
+                            </td>
+                            <td>
+                                {{include.hasOwnProperty('filter') ? 'Yes' : 'No'}}
+                            </td>
+                            <td>
+                                <div class="pull-right btn-group">
+                                    <button type="button" class="btn btn-default btn-sm" title="Edit this include" (click)="editInclude(include)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm" title="Remove this include" (click)="valueSet.compose.include.splice(ii, 1)">
+                                        <i class="fa fa-remove"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation" title="Validation">
+        <ng-template ngbTabContent>
+            <app-validation-results [results]="validation"></app-validation-results>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- JSON -->
+    <ngb-tab title="JSON">
+        <ng-template ngbTabContent>
+            <ngb-tabset [justify]="'fill'">
+                <ngb-tab title="Pretty">
+                    <ng-template ngbTabContent>
+                        <t-json-viewer [json]="valueSet"></t-json-viewer>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Plain">
+                    <ng-template ngbTabContent>
+                        <pre>{{valueSet | json}}</pre>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <span class="message">{{message}}</span>
+</footer>

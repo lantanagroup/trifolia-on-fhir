@@ -8,111 +8,192 @@
                 <fieldset>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    URL
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.url']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.url" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipKey="sd.url"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    Name
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.name']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.name" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" tooltipKey="sd.name"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('title')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'title', '')" />
-                                    Title
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.title']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('title')" [(ngModel)]="structureDefinition.title" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipKey="sd.title"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('description')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'description', '')" />
-                                    Description
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.description']}}" placement="top"></i>
-                                </label>
-                                <app-markdown [(ngModel)]="structureDefinition.description"></app-markdown>
-                            </div>
+                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipKey="sd.description"></app-fhir-markdown>
+
+                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+
+                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright"></app-fhir-markdown>
                         </div>
 
                         <div class="col-md-3">
-                            <div class="form-group">
-                                <label>
-                                    ID
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['resource.id']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="id" title="ID" tooltipKey="resource.id"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('version')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'version', '')" />
-                                    Version
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.version']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('version')" [(ngModel)]="structureDefinition.version" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipKey="sd.version"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('publisher')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'publisher', '')" />
-                                    Publisher
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.publisher']}}" placement="top"></i>
-                                </label>
-                                <input type="text" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('publisher')" [(ngModel)]="structureDefinition.publisher" />
-                            </div>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version"></app-fhir-string>
+
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition"></app-fhir-string>
+
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipKey="sd.publisher"></app-fhir-string>
+
+                            <app-fhir-boolean [parentObject]="structureDefinition" propertyName="experimental" title="Experimental"></app-fhir-boolean>
                         </div>
 
                         <div class="col-md-3">
-                            <div class="form-group">
-                                <label>
-                                    Status
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.status']}}" placement="top"></i>
-                                </label>
-                                <select class="form-control" [(ngModel)]="structureDefinition.status">
-                                    <option>draft</option>
-                                    <option>active</option>
-                                    <option>retired</option>
-                                    <option>unknown</option>
-                                </select>
-                            </div>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" [codes]="globals.publicationStatusCodes"></app-fhir-select-single-code>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('experimental')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'experimental', false)" />
-                                    Experimental
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.experimental']}}" placement="top"></i>
-                                </label>
-                                <select class="form-control" [disabled]="!structureDefinition.hasOwnProperty('experimental')" [(ngModel)]="structureDefinition.experimental">
-                                    <option [ngValue]="false">No</option>
-                                    <option [ngValue]="true">Yes</option>
-                                </select>
-                            </div>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" [codes]="globals.structureDefinitionKindCodes" [required]="true"></app-fhir-select-single-code>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('date')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'date', false)" />
-                                    Date
-                                    <i class="fa fa-question" ngbTooltip="{{globals.tooltips['sd.date']}}" placement="top"></i>
-                                </label>
-                                <input type="date" class="form-control" [disabled]="!structureDefinition.hasOwnProperty('date')" [(ngModel)]="structureDefinition.date" />
-                            </div>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type" [codes]="globals.definedTypeCodes" [required]="true"></app-fhir-select-single-code>
+
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" [codes]="globals.extensionContextCodes"></app-fhir-select-single-code>
+
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" [codes]="globals.typeDerivationRuleCodes"></app-fhir-select-single-code>
+
+                            <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true"></app-fhir-boolean>
+
+                            <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipKey="sd.date"></app-fhir-date>
                         </div>
                     </div>
                 </fieldset>
             </ng-template>
         </ngb-tab>
+        <ngb-tab id="additional" title="Additional">
+            <ng-template ngbTabContent>
+                <div class="row">
+                    <div class="col-md-6">
+                        <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier"></app-fhir-multi-identifier>
+
+                        <app-fhir-multi-use-context [parentObject]="structureDefinition" propertyName="useContext"></app-fhir-multi-use-context>
+
+                        <app-fhir-multi-jurisdiction [parentObject]="structureDefinition" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+
+                        <app-fhir-multi-contact [parentObject]="structureDefinition" propertyName="contact"></app-fhir-multi-contact>
+                    </div>
+                    <div class="col-md-6">
+                        <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)"></app-fhir-select-multi-coding>
+
+                        <div class="card context">
+                            <div class="card-header">
+                                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'context', [''])" />
+                                Context
+                            </div>
+                            <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
+                                <thead>
+                                <tr>
+                                    <th>Value</th>
+                                    <th>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push('')">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: globals.trackByFn">
+                                    <td>
+                                        <input type="text" class="form-control" [(ngModel)]="structureDefinition.context[cii]" />
+                                    </td>
+                                    <td>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
+                                                <i class="fa fa-remove"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card context-invariant">
+                            <div class="card-header">
+                                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('contextInvariant')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'contextInvariant', [''])" />
+                                Context Invariant
+                            </div>
+                            <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('contextInvariant')">
+                                <thead>
+                                <tr>
+                                    <th>Value</th>
+                                    <th>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push('')">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let ci of structureDefinition.contextInvariant; let cii = index; trackBy: globals.trackByFn">
+                                    <td>
+                                        <input type="text" class="form-control" [(ngModel)]="structureDefinition.contextInvariant[cii]" />
+                                    </td>
+                                    <td>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
+                                                <i class="fa fa-remove"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab id="mapping" title="Mapping(s)">
+            <ng-template ngbTabContent>
+                <p>
+                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'mapping', [{ identity: '' }])" />
+                    This structure definition includes mappings
+                </p>
+
+                <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('mapping')">
+                    <thead>
+                    <tr>
+                        <th>Identity</th>
+                        <th>URI</th>
+                        <th>Name</th>
+                        <th>Comment</th>
+                        <th>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Add a mapping" (click)="structureDefinition.mapping.push({ identity: '' })">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let m of structureDefinition.mapping; let mi = index">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="m.identity" [class.is-invalid]="!m.identity" />
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="m" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="m" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="m" propertyName="comment" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+        </ngb-tab>
         <ngb-tab id="elements" title="Elements">
             <ng-template ngbTabContent>
-                <table class="table table-striped">
+                <table class="table table-striped elements">
                     <thead>
                     <tr>
                         <th>Element/Attribute</th>
@@ -123,21 +204,23 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="clickable" *ngFor="let e of elements" (click)="toggleSelectedElement(e)" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement">
-                        <td>
-                            <span style="white-space: pre;">{{e.tabs}}</span>
-                            <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren" (click)="toggleElementExpand(e)"></i>
-                            <span>{{e.id}}</span>
+                    <tr *ngFor="let e of elements" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement">
+                        <td [class.has-children]="e.hasChildren">
+                            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
+                                <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
+                            </div>
+                            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
+                            <a href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.id}}</a>
                             <i class="fa fa-edit" *ngIf="e.id.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i>
                         </td>
-                        <td>{{getTypeDisplay(e)}} {{e.position}}</td>
+                        <td>{{getTypeDisplay(e)}}</td>
                         <td>{{e.min}}..{{e.max}}</td>
                         <td>{{e.binding}}</td>
                         <td>
                             <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(e)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
-                                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1"><i class="fa fa-remove"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" title="Constrain this element" (click)="constrainElement(e)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1"><i class="fa fa-remove"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -160,9 +243,29 @@
                 </div>
             </ng-template>
         </ngb-tab>
+
+        <!-- Validation -->
+        <ngb-tab id="validation" title="Validation">
+            <ng-template ngbTabContent>
+                <app-validation-results [results]="validation"></app-validation-results>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- JSON -->
         <ngb-tab id="json" title="JSON">
             <ng-template ngbTabContent>
-                <t-json-viewer [json]="structureDefinition"></t-json-viewer>
+                <ngb-tabset [justify]="'fill'">
+                    <ngb-tab title="Pretty">
+                        <ng-template ngbTabContent>
+                            <t-json-viewer [json]="structureDefinition"></t-json-viewer>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab title="Plain">
+                        <ng-template ngbTabContent>
+                            <pre>{{structureDefinition | json}}</pre>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
             </ng-template>
         </ngb-tab>
     </ngb-tabset>

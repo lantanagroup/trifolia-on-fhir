@@ -2,7 +2,7 @@
   <ngb-tabset justify="fill">
     <ngb-tab title="General">
       <ng-template ngbTabContent>
-        <div class="form-control">
+        <div class="form-group">
           <label>ID/Path</label>
           <div class="input-group">
             <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.id" />
@@ -10,7 +10,7 @@
           </div>
         </div>
 
-        <div class="form-control" *ngIf="elementTreeModel.isSliceRoot">
+        <div class="form-group" *ngIf="elementTreeModel.isSliceRoot">
           <label>Slice Name</label>
           <div class="input-group" *ngIf="!editingSliceName">
             <input type="text" class="form-control" [ngModel]="element.sliceName" readonly="readonly" *ngIf="!editingSliceName" />
@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <div class="form-control">
+        <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')" (ngModelChange)="globals.toggleProperty(element, 'representation', 'xmlAttr')" />
             Representation
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Code -->
-        <div class="form-control">
+        <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('code')" (ngModelChange)="globals.toggleProperty(element, 'code', [])" />
             Code
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Min -->
-        <div class="form-control">
+        <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('min')" (ngModelChange)="globals.toggleProperty(element, 'min', elementTreeModel.min)" />
             Min
@@ -86,7 +86,7 @@
         </div>
 
         <!-- Max -->
-        <div class="form-control">
+        <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('max')" (ngModelChange)="globals.toggleProperty(element, 'max', elementTreeModel.max)" />
             Max
@@ -101,7 +101,7 @@
         </div>
 
         <!-- Type -->
-        <div class="form-control">
+        <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(element, 'type', [])" />
             Type
@@ -112,7 +112,7 @@
           </div>
           <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
             <select class="form-control" [(ngModel)]="t.code">
-              <option *ngFor="let o of globals.fhirDefinedTypes">{{o}}</option>
+              <option *ngFor="let o of globals.definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
             </select>
             <input type="text" class="form-control" readonly value="{{globals.getShortString(t.profile, false, 30) || globals.getShortString(t.targetProfile, false, 30)}}" title="{{t.profile || t.targetProfile}}" />
             <div class="input-group-btn">
@@ -123,134 +123,226 @@
           <div *ngIf="element.type && element.type.length == 0">No types</div>
         </div>
 
-        <div class="form-control">
-          <label>Default Value</label>
-          ...
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('maxLength')" (ngModelChange)="globals.toggleProperty(element, 'maxLength', 0)" />
+            Max Length
+          </label>
+          <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('maxLength')" [(ngModel)]="element.maxLength" />
         </div>
 
-        <div class="form-control">
-          <label>Max Length</label>
-          <input type="number" class="form-control" />
+        <app-fhir-string [parentObject]="element" propertyName="contentReference" title="Content Reference" tooltipKey="ed.contentReference"></app-fhir-string>
+
+        <div class="card">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')" (ngModelChange)="globals.toggleProperty(element, 'condition', [''])" />
+            Condition
+          </div>
+          <table class="table table-striped" *ngIf="element.hasOwnProperty('condition')">
+            <thead>
+            <tr>
+              <td>ID</td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Add a condition" (click)="element.condition.push('')">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of element.condition; let ci = index; trackBy: globals.trackByFn">
+              <td>
+                <input type="text" class="form-control" [(ngModel)]="element.condition[ci]" />
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Remove this condition" (click)="element.condition.splice(ci, 1)">
+                    <i class="fa fa-remove"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </div>
+
+        <div class="form-group">
+          <input type="checkbox" [(ngModel)]="element.mustSupport" />
+          <label>Must support</label>
+        </div>
+
+        <div class="form-group">
+          <input type="checkbox" [(ngModel)]="element.isModifier" />
+          <label>Is modifier</label>
+        </div>
+
+        <div class="form-group">
+          <input type="checkbox" [(ngModel)]="element.isSummary" />
+          <label>Is summary</label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])" />
+            Constraint
+          </label>
+          <p *ngFor="let c of element.constraint">{{c.key}} | {{c.severity}} | {{c.human}} | {{c.expression}}</p>
+          <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('constraint')">Edit</button>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])" />
+            Mapping
+          </label>
+          <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
+          <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')">Edit</button>
+        </div>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Slicing" *ngIf="element.slicing">
+      <ng-template ngbTabContent>
+        <app-fhir-select-single-code [parentObject]="element.slicing" propertyName="rules" title="Rules" [codes]="globals.slicingRulesCodes" [required]="true"></app-fhir-select-single-code>
+
+        <div class="card">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')" (ngModelChange)="globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }])" />
+            Discriminator
+          </div>
+          <table class="table table-striped" *ngIf="element.slicing.hasOwnProperty('discriminator')">
+            <thead>
+            <tr>
+              <th>Type</th>
+              <th>Path</th>
+              <th>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Add a discriminator" (click)="element.slicing.discriminator.push({ type: 'value', path: '' })">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let d of element.slicing.discriminator; let di = index">
+              <td>
+                <app-fhir-select-single-code [parentObject]="d" propertyName="type" [isFormGroup]="false" [codes]="globals.disciminatorTypeCodes" [required]="true"></app-fhir-select-single-code>
+              </td>
+              <td>
+                <input type="text" class="form-control" [(ngModel)]="d.path" />
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Remove this discriminator" (click)="element.slicing.disciminator.splice(di, 1)">
+                    <i class="fa fa-remove"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <app-fhir-string [parentObject]="element.slicing" propertyName="description" title="Description"></app-fhir-string>
+
+        <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered" title="Ordered"></app-fhir-boolean>
       </ng-template>
     </ngb-tab>
     <ngb-tab title="Narrative">
       <ng-template ngbTabContent>
-        <div class="form-control">
-          <label>Short</label>
-          <input type="text" class="form-control" />
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('short')" (ngModelChange)="globals.toggleProperty(element, 'short', [])" />
+            Short
+          </label>
+          <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('short')" [(ngModel)]="element.short" />
         </div>
 
-        <div class="form-control">
-          <label>Label</label>
-          <input type="text" class="form-control" />
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('label')" (ngModelChange)="globals.toggleProperty(element, 'label', [])" />
+            Label
+          </label>
+          <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('label')" [(ngModel)]="element.label" />
         </div>
 
-        <div class="form-control">
-          <label>Definition</label>
-          <textarea class="form-control"></textarea>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')" (ngModelChange)="globals.toggleProperty(element, 'alias', [])" />
+            Alias
+          </label>
+          <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('alias')" [(ngModel)]="element.alias" />
         </div>
 
-        <div class="form-control">
-          <label>Comment</label>
-          <textarea class="form-control"></textarea>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('orderMeaning')" (ngModelChange)="globals.toggleProperty(element, 'orderMeaning', [])" />
+            Order meaning
+          </label>
+          <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('orderMeaning')" [(ngModel)]="element.orderMeaning" />
         </div>
 
-        <div class="form-control">
-          <label>Requirements</label>
-          <textarea class="form-control"></textarea>
-        </div>
+        <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"></app-fhir-markdown>
 
-        <div class="form-control">
-          <label>Alias</label>
-          <input type="text" class="form-control" />
-        </div>
+        <app-fhir-markdown [parentObject]="element" propertyName="comment" title="Comment" [displayOnly]="true"></app-fhir-markdown>
 
-        <div class="form-control">
-          <label>Meaning when missing</label>
-          <textarea class="form-control"></textarea>
-        </div>
+        <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements" [displayOnly]="true"></app-fhir-markdown>
 
-        <div class="form-control">
-          <label>Order meaning</label>
-          <input type="text" class="form-control" />
-        </div>
+        <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing" [displayOnly]="true"></app-fhir-markdown>
       </ng-template>
     </ngb-tab>
     <ngb-tab title="Binding">
       <ng-template ngbTabContent>
-        <div class="form-control">
-          <label>Binding</label>
-          ...
+        <div class="card">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="globals.toggleProperty(element, 'binding', { strength: 'required' })" />
+            Binding
+          </div>
+          <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
+            <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength" [codes]="globals.bindingStrengthCodes" title="Strength"></app-fhir-select-single-code>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [ngModel]="element.binding.hasOwnProperty('description')" (ngModelChange)="globals.toggleProperty(element.binding, 'description', '')" />
+                Description
+              </label>
+              <input type="text" class="form-control" [disabled]="!element.binding.hasOwnProperty('description')" [(ngModel)]="element.binding.description" />
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox"
+                       [ngModel]="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                       (ngModelChange)="globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, '')" />
+                Value Set
+              </label>
+              <div class="input-group">
+                <div class="input-group-addon">
+                  <select class="form-control" [disabled]="!globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)" [ngModel]="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)" (ngModelChange)="setValueSetChoice(element.binding, $event)">
+                    <option value="Uri">URI</option>
+                    <option value="Reference">Reference</option>
+                  </select>
+                  <input type="text" class="form-control" *ngIf="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'" [(ngModel)]="element.binding.valueSetUri" />
+                  <app-fhir-reference *ngIf="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'" [reference]="element.binding.valueSetReference" resourceType="ValueSet"></app-fhir-reference>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="form-control">
-          <label>Fixed</label>
-          ...
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed"></app-fhir-choice>
 
-        <div class="form-control">
-          <label>Pattern</label>
-          ...
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="pattern" title="Pattern"></app-fhir-choice>
 
-        <div class="form-control">
-          <label>Example</label>
-          ...
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value"></app-fhir-choice>
 
-        <div class="form-control">
-          <label>Min Value</label>
-          ...
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="example" title="Example"></app-fhir-choice>
 
-        <div class="form-control">
-          <label>Max Value</label>
-          ...
-        </div>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab title="Extra">
-      <ng-template ngbTabContent>
-        <div class="form-control">
-          <label>Content Reference</label>
-          <input type="text" class="form-control" />
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value" [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"></app-fhir-choice>
 
-        <div class="form-control">
-          <label>Condition</label>
-          ...
-        </div>
-
-        <div class="form-control">
-          <label>Constraint</label>
-          ...
-        </div>
-
-        <div class="form-control">
-          <label>Must Support</label>
-          <input type="checkbox" />
-        </div>
-
-        <div class="form-control">
-          <label>Is Modifier?</label>
-          <input type="checkbox" />
-        </div>
-
-        <div class="form-control">
-          <label>Is Modifier Reason</label>
-          <input type="text" class="form-control" />
-        </div>
-
-        <div class="form-control">
-          <label>Is Summary?</label>
-          <input type="checkbox" />
-        </div>
-
-        <div class="form-control">
-          <label>Mapping</label>
-          ...
-        </div>
+        <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value" [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"></app-fhir-choice>
       </ng-template>
     </ngb-tab>
     <ngb-tab title="JSON">

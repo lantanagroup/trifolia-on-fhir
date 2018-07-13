@@ -1,0 +1,76 @@
+<div [class.form-group]="isFormGroup">
+    <label *ngIf="isFormGroup && !hasChoice()">
+        <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
+        {{title || 'Choice'}}
+    </label>
+    <div class="input-group" *ngIf="hasChoice()">
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
+            {{ title || 'Choice' }}
+        </div>
+        <select class="form-control" *ngIf="hasChoice()" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event)">
+            <option *ngFor="let c of choices" [ngValue]="c">{{c}}</option>
+        </select>
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Address'">
+        <input type="text" class="form-control" [ngModel]="getAddressDisplay()" readonly />
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" title="Edit this address" (click)="editAddress()">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    </div>
+    <div class="input-group" *ngIf="isString()">
+        <input type="text" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]" />
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'date'">
+        <input type="date" class="form-control" [ngModel]="parentObject[getChoicePropertyName()] | date: 'yyyy-MM-dd'" (ngModelChange)="parentObject[getChoicePropertyName()] = $event" />
+    </div>
+    <div class="input-group" *ngIf="isNumber()">
+        <input type="number" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]" />
+    </div>
+    <app-fhir-identifier *ngIf="getChoiceName() === 'Identifier'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-identifier>
+    <app-fhir-attachment *ngIf="getChoiceName() === 'Attachment'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-attachment>
+    <app-fhir-boolean *ngIf="getChoiceName() === 'boolean'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-boolean>
+    <app-fhir-quantity *ngIf="isQuantity()" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-quantity>
+    <div class="input-group" *ngIf="getChoiceName() === 'CodeableConcept'">
+        <input type="text" class="form-control" readonly [ngModel]="getCodeableConceptDisplay()" />
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="editCodeableConcept()" title="Edit this codeable concept">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Coding'">
+        <input type="text" class="form-control" readonly [ngModel]="getCodingDisplay()" />
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="editCoding()" title="Edit this coding">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'ContactPoint'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'HumanName'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Period'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Range'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Ratio'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'SampledData'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Signature'">
+        Not yet supported
+    </div>
+    <div class="input-group" *ngIf="getChoiceName() === 'Timing'">
+        Not yet supported
+    </div>
+</div>

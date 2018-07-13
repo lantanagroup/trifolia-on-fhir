@@ -3,7 +3,8 @@ import {Event, NavigationEnd, Router} from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { PersonListModel } from './models/person-list-model';
 import { ConfigService } from './services/config.service';
-import {AuditEventService} from './services/audit-event.service';
+import {RecentItemService} from './services/recent-item.service';
+import {Globals} from './globals';
 
 
 @Component({
@@ -20,8 +21,9 @@ export class AppComponent implements OnInit {
     constructor(
         public authService: AuthService,
         public configService: ConfigService,
-        private router: Router,
-        public auditEventService: AuditEventService) {
+        public recentItemService: RecentItemService,
+        public globals: Globals,
+        private router: Router) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.person;

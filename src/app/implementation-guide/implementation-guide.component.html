@@ -9,51 +9,18 @@
                 <fieldset>
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="form-group">
-                                <label>URL</label>
-                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.url"
-                                       [class.is-invalid]="!implementationGuide.url"/>
-                            </div>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.name"
-                                       [class.is-invalid]="!implementationGuide.name"/>
-                            </div>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('publisher')"
-                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'publisher', '')"/>
-                                    Publisher
-                                </label>
-                                <input type="text" class="form-control" [(ngModel)]="implementationGuide.publisher"
-                                       [disabled]="!implementationGuide.hasOwnProperty('publisher')"/>
-                            </div>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher"></app-fhir-string>
 
-                            <div class="form-group">
-                                <label>Description</label>
-                                <app-markdown [(ngModel)]="implementationGuide.description"></app-markdown>
-                            </div>
+                            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('copyright')"
-                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'copyright', '')"/>
-                                    Copyright
-                                </label>
-                                <app-markdown [(ngModel)]="implementationGuide.description"
-                                              [disabled]="!implementationGuide.hasOwnProperty('copyright')"></app-markdown>
-                            </div>
+                            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
                         </div>
                         <div class="col-md-4">
-
-                            <div class="form-group">
-                                <label>Version</label>
-                                <input type="text" class="form-control"
-                                       [class.is-invalid]="!implementationGuide.version"
-                                       [(ngModel)]="implementationGuide.version"/>
-                            </div>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" [required]="true"></app-fhir-string>
 
                             <div class="form-group">
                                 <label>Status</label>
@@ -65,19 +32,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox"
-                                           [ngModel]="implementationGuide.hasOwnProperty('experimental')"
-                                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'experimental', false)"/>
-                                    Experimental
-                                </label>
-                                <select class="form-control" [(ngModel)]="implementationGuide.experimental"
-                                        [disabled]="!implementationGuide.hasOwnProperty('experimental')">
-                                    <option [ngValue]="false">No</option>
-                                    <option [ngValue]="true">Yes</option>
-                                </select>
-                            </div>
+                            <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental"></app-fhir-boolean>
                         </div>
                     </div>
                 </fieldset>
@@ -111,13 +66,13 @@
                     <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
                         <td>
                             <select class="form-control" [(ngModel)]="g.type">
-                                <option *ngFor="let o of globals.ResourceTypes | keys" [ngValue]="o.value.code">
+                                <option *ngFor="let o of globals.resourceTypes | keys" [ngValue]="o.value.code">
                                     {{o.value.display}}
                                 </option>
                             </select>
                         </td>
                         <td>
-                            <fhir-reference [reference]="g.profile"></fhir-reference>
+                            <app-fhir-reference [reference]="g.profile"></app-fhir-reference>
                         </td>
                         <td>
                             <div class="pull-right">
@@ -150,7 +105,7 @@
                     </th>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let b of implementationGuide.binary; let i = index">
+                    <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: globals.trackByFn">
                         <td>
                             <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
                         </td>
@@ -243,8 +198,7 @@
                                 <td>
                                     <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')"
                                            [(ngModel)]="r.sourceUri" placeholder="URI"/>
-                                    <fhir-reference *ngIf="r.hasOwnProperty('sourceReference')"
-                                                    [reference]="r.sourceReference"></fhir-reference>
+                                    <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [reference]="r.sourceReference"></app-fhir-reference>
                                 </td>
                                 <td>
                                     <div class="pull-right">
@@ -340,30 +294,25 @@
         <!-- Validation -->
         <ngb-tab id="validation" title="Validation">
             <ng-template ngbTabContent>
-                <div class="badge badge-warning" *ngIf="!validation.valid">Invalid</div>
-                <div class="badge badge-success" *ngIf="validation.valid">Valid!</div>
-
-                <table class="table" *ngIf="validation.messages.length > 0">
-                    <thead>
-                    <tr>
-                        <th>Severity</th>
-                        <th>Location</th>
-                        <th>Message</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let m of validation.messages">
-                        <td>{{m.severity}}</td>
-                        <td>{{m.location}}</td>
-                        <td>{{m.message}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <app-validation-results [results]="validation"></app-validation-results>
             </ng-template>
         </ngb-tab>
+
+        <!-- JSON -->
         <ngb-tab id="json" title="JSON">
             <ng-template ngbTabContent>
-                <t-json-viewer [json]="implementationGuide"></t-json-viewer>
+                <ngb-tabset [justify]="'fill'">
+                    <ngb-tab title="Pretty">
+                        <ng-template ngbTabContent>
+                            <t-json-viewer [json]="implementationGuide"></t-json-viewer>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab title="Plain">
+                        <ng-template ngbTabContent>
+                            <pre>{{implementationGuide | json}}</pre>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
             </ng-template>
         </ngb-tab>
     </ngb-tabset>
@@ -411,9 +360,9 @@
                        (ngModelChange)="globals.toggleProperty(currentResource, 'exampleFor', {reference: '', display: ''})"/>
                 Example For
             </label>
-            <fhir-reference [disabled]="!currentResource.hasOwnProperty('exampleFor')"
+            <app-fhir-reference [disabled]="!currentResource.hasOwnProperty('exampleFor')"
                             [reference]="currentResource.exampleFor" resourceType="StructureDefinition"
-                            [hideResourceType]="true"></fhir-reference>
+                            [hideResourceType]="true"></app-fhir-reference>
         </div>
     </div>
     <div class="modal-footer">

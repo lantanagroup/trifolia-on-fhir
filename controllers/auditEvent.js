@@ -4,8 +4,10 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
 
+const thisResourceType = 'AuditEvent';
+
 router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl('AuditEvent', null, null, req.query);
+    const url = req.getFhirServerUrl(thisResourceType, null, null, req.query);
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
@@ -18,7 +20,7 @@ router.get('/', checkJwt, (req, res) => {
 });
 
 router.post('/', checkJwt, (req, res) => {
-   const url = req.getFhirServerUrl('AuditEvent');
+   const url = req.getFhirServerUrl(thisResourceType);
 
    const options = {
        url: url,
@@ -29,7 +31,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, function(err, results, body) {
        if (err) {
-           console.log('Error from FHRI server while creating audit event: ' + err);
+           console.log('Error from FHIR server while creating audit event: ' + err);
            return res.status(500).send('Error from FHIR server while creating audit event');
        }
 
@@ -38,7 +40,21 @@ router.post('/', checkJwt, (req, res) => {
 });
 
 router.get('/:id', checkJwt, (req, res) => {
-    res.send({});
+    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
+
+    const options = {
+        url: url,
+        method: 'GET'
+    };
+
+    request(options, function(err, results, body) {
+        if (err) {
+            console.log('Error from FHIR server while retrieving binary: ' + err);
+            return res.status(500).send('Error from FHIR server while retrieving binary');
+        }
+
+        res.send(body);
+    });
 });
 
 module.exports = router;

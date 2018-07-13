@@ -3,9 +3,10 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Binary, ImplementationGuide, PageComponent} from '../../models/fhir';
 import * as _ from 'underscore';
 import {Globals} from '../../globals';
+import {BinaryService} from '../../services/binary.service';
 
 @Component({
-    selector: 'app-page-component-modal',
+    selector: 'app-fhir-page-component-modal',
     templateUrl: './page-component-modal.component.html',
     styleUrls: ['./page-component-modal.component.css']
 })
@@ -16,7 +17,8 @@ export class PageComponentModalComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private globals: Globals) {
+        private globals: Globals,
+        private binaryService: BinaryService) {
 
     }
 
@@ -36,11 +38,39 @@ export class PageComponentModalComponent implements OnInit {
         this.pageBinary.content = btoa(value);
     }
 
+    public ok() {
+        const parsedSourceUrl = this.globals.parseFhirUrl(this.page.source);
+
+        if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
+            this.binaryService.save(this.pageBinary)
+                .subscribe((results) => {
+                    this.activeModal.close();
+                }, (err) => {
+
+                });
+        }
+    }
+
+    public cancel() {
+        this.activeModal.dismiss();
+    }
+
     ngOnInit() {
-        if (this.page.source && this.page.source.startsWith('#')) {
-            // If the page does have a source and it starts with a #
-            // Find the Binary in the contained resources
-            this.pageBinary = _.find(this.implementationGuide.contained, (extension) => extension.id === this.page.source.substring(1));
+        if (this.page.source) {
+            const parsedSourceUrl = this.globals.parseFhirUrl(this.page.source);
+
+            if (this.page.source.startsWith('#')) {
+                // If the page does have a source and it starts with a #
+                // Find the Binary in the contained resources
+                this.pageBinary = _.find(this.implementationGuide.contained, (extension) => extension.id === this.page.source.substring(1));
+            } else if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
+                this.binaryService.get(parsedSourceUrl.id)
+                    .subscribe((binary) => {
+                        this.pageBinary = binary;
+                    }, (err) => {
+
+                    });
+            }
         }
     }
 }
