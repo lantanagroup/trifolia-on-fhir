@@ -105,7 +105,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         for (let i = 0; i < elementTreeModels.length; i++) {
             const elementTreeModel = elementTreeModels[i];
             const constrainedElements = _.filter(this.structureDefinition.differential.element, (diffElement) => {
-                const diffElementSliceName = diffElement.id.indexOf(':') > 0 ?
+                const diffElementSliceName = diffElement.id && diffElement.id.indexOf(':') > 0 ?
                         diffElement.id.substring(diffElement.id.indexOf(':') + 1) :
                         null;
 
