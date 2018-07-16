@@ -224,35 +224,6 @@ export class ChoiceComponent implements OnInit {
         modalRef.componentInstance.contactPoint = this.parentObject[this.getChoicePropertyName()];
     }
 
-    get humanNameGiven(): string {
-        const humanName = this.parentObject[this.getChoicePropertyName()];
-
-        if (!humanName.hasOwnProperty('given') || humanName.given.length === 0) {
-            return '';
-        }
-
-        return humanName.given[0];
-    }
-
-    set humanNameGiven(value: string) {
-        const humanName = this.parentObject[this.getChoicePropertyName()];
-
-        if (!humanName.hasOwnProperty('given')) {
-            humanName['given'] = [];
-        }
-
-        if (humanName.length === 0) {
-            humanName.given.push('');
-        }
-
-        humanName.given[0] = value;
-    }
-
-    editHumanName() {
-        const modalRef = this.modalService.open(FhirEditHumanNameModalComponent);
-        modalRef.componentInstance.humanName = this.parentObject[this.getChoicePropertyName()];
-    }
-
     ngOnInit() {
         if (!this.choices) {
             this.choices = this.globals.dataTypes;

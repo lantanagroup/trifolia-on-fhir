@@ -1,3 +1,28 @@
-<p>
-  human-name works!
-</p>
+<div class="form-group" *ngIf="isFormGroup">
+    <label>
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
+        {{title || 'Human Name'}}
+        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+    </label>
+    <div class="input-group">
+        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
+        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" placeholder="Family"/>
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="input-group" *ngIf="!isFormGroup">
+    <div class="input-group-addon" *ngIf="!required">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
+    </div>
+    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
+    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" placeholder="Family"/>
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
+            <i class="fa fa-edit"></i>
+        </button>
+    </div>
+</div>

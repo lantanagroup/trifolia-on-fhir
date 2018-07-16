@@ -66,24 +66,8 @@
             </button>
         </div>
     </div>
-    <div class="input-group" *ngIf="getChoiceName() === 'HumanName'">
-        <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('given')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'given', [''])"/>
-        </div>
-        <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('given')" [(ngModel)]="humanNameGiven" placeholder="Given" />
-        <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('family')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'family', '')"/>
-        </div>
-        <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('family')" [(ngModel)]="parentObject[getChoicePropertyName()].family" placeholder="Family" />
-        <div class="input-group-btn">
-            <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
-                <i class="fa fa-edit"></i>
-            </button>
-        </div>
-    </div>
-    <div class="input-group" *ngIf="getChoiceName() === 'Period'">
-        Not yet supported
-    </div>
+    <app-fhir-edit-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-human-name>
+    <app-fhir-edit-period *ngIf="getChoiceName() === 'Period'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-period>
     <div class="input-group" *ngIf="getChoiceName() === 'Range'">
         Not yet supported
     </div>
