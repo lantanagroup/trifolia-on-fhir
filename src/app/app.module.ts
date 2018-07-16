@@ -75,6 +75,8 @@ import { AttachmentComponent } from './fhir-edit/attachment/attachment.component
 import { FhirEditAttachmentModalComponent } from './fhir-edit/attachment-modal/attachment-modal.component';
 import { FhirEditCodeableConceptModalComponent } from './fhir-edit/codeable-concept-modal/codeable-concept-modal.component';
 import { FhirEditCodingModalComponent } from './fhir-edit/coding-modal/coding-modal.component';
+import { FhirEditContactPointModalComponent } from './fhir-edit/contact-point-modal/contact-point-modal.component';
+import { FhirEditHumanNameModalComponent } from './fhir-edit/human-name-modal/human-name-modal.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -153,7 +155,9 @@ const appRoutes: Routes = [
         AddressModalComponent,
         FhirEditAttachmentModalComponent,
         FhirEditCodeableConceptModalComponent,
-        FhirEditCodingModalComponent
+        FhirEditCodingModalComponent,
+        FhirEditContactPointModalComponent,
+        FhirEditHumanNameModalComponent
     ],
     declarations: [
         AppComponent,
@@ -211,7 +215,9 @@ const appRoutes: Routes = [
         AttachmentComponent,
         FhirEditAttachmentModalComponent,
         FhirEditCodeableConceptModalComponent,
-        FhirEditCodingModalComponent
+        FhirEditCodingModalComponent,
+        FhirEditContactPointModalComponent,
+        FhirEditHumanNameModalComponent
     ],
     imports: [
         RouterModule.forRoot(

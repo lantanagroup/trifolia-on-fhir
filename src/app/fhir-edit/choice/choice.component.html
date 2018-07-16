@@ -50,10 +50,36 @@
         </div>
     </div>
     <div class="input-group" *ngIf="getChoiceName() === 'ContactPoint'">
-        Not yet supported
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', '')"/>
+        </div>
+        <select class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')" [(ngModel)]="parentObject[getChoicePropertyName()].system">
+            <option *ngFor="let cpc of globals.contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
+        </select>
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', '')"/>
+        </div>
+        <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('value')" [(ngModel)]="parentObject[getChoicePropertyName()].value" />
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="editContactPoint()" title="Edit this contact point">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
     </div>
     <div class="input-group" *ngIf="getChoiceName() === 'HumanName'">
-        Not yet supported
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('given')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'given', [''])"/>
+        </div>
+        <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('given')" [(ngModel)]="humanNameGiven" placeholder="Given" />
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('family')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'family', '')"/>
+        </div>
+        <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('family')" [(ngModel)]="parentObject[getChoicePropertyName()].family" placeholder="Family" />
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
     </div>
     <div class="input-group" *ngIf="getChoiceName() === 'Period'">
         Not yet supported

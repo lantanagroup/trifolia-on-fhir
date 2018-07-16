@@ -5,6 +5,8 @@ import {AddressModalComponent} from '../../address-modal/address-modal.component
 import {FhirEditCodeableConceptModalComponent} from '../codeable-concept-modal/codeable-concept-modal.component';
 import {CodeableConcept, Coding} from '../../models/fhir';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
+import {FhirEditContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
+import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
 
 @Component({
     selector: 'app-fhir-choice',
@@ -215,6 +217,40 @@ export class ChoiceComponent implements OnInit {
     editCoding() {
         const modalRef = this.modalService.open(FhirEditCodingModalComponent);
         modalRef.componentInstance.coding = this.parentObject[this.getChoicePropertyName()];
+    }
+
+    editContactPoint() {
+        const modalRef = this.modalService.open(FhirEditContactPointModalComponent);
+        modalRef.componentInstance.contactPoint = this.parentObject[this.getChoicePropertyName()];
+    }
+
+    get humanNameGiven(): string {
+        const humanName = this.parentObject[this.getChoicePropertyName()];
+
+        if (!humanName.hasOwnProperty('given') || humanName.given.length === 0) {
+            return '';
+        }
+
+        return humanName.given[0];
+    }
+
+    set humanNameGiven(value: string) {
+        const humanName = this.parentObject[this.getChoicePropertyName()];
+
+        if (!humanName.hasOwnProperty('given')) {
+            humanName['given'] = [];
+        }
+
+        if (humanName.length === 0) {
+            humanName.given.push('');
+        }
+
+        humanName.given[0] = value;
+    }
+
+    editHumanName() {
+        const modalRef = this.modalService.open(FhirEditHumanNameModalComponent);
+        modalRef.componentInstance.humanName = this.parentObject[this.getChoicePropertyName()];
     }
 
     ngOnInit() {

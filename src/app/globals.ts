@@ -20,6 +20,24 @@ export class Globals {
         StructureDefinition: 'http://hl7.org/fhir/StructureDefinition/StructureDefinition'
     };
 
+    public readonly nameUseCodes: Coding[] = [
+        { code: 'usual', display: 'Usual', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'official', display: 'Official', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'temp', display: 'Temp', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'nickname', display: 'Nickname', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'anonymous', display: 'Anonymous', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'old', display: 'Old', system: 'http://hl7.org/fhir/name-use' },
+        { code: 'maiden', display: 'Name changed for Marriage', system: 'http://hl7.org/fhir/name-use' },
+    ];
+
+    public readonly contactPointUseCodes: Coding[] = [
+        { code: 'home', display: 'Home', system: 'http://hl7.org/fhir/contact-point-use' },
+        { code: 'work', display: 'Work', system: 'http://hl7.org/fhir/contact-point-use' },
+        { code: 'temp', display: 'Temp', system: 'http://hl7.org/fhir/contact-point-use' },
+        { code: 'old', display: 'Old', system: 'http://hl7.org/fhir/contact-point-use' },
+        { code: 'mobile', display: 'Mobile', system: 'http://hl7.org/fhir/contact-point-use' }
+    ];
+
     public readonly commonLanguageCodes: Coding[] = [
         { code: 'ar', display: 'Arabic', system: 'urn:ietf:bcp:47' },
         { code: 'bn', display: 'Bengali', system: 'urn:ietf:bcp:47' },
