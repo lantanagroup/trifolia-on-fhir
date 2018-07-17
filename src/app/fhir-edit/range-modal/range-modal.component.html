@@ -1,0 +1,83 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Range</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <!-- low -->
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="range.hasOwnProperty('low')" (ngModelChange)="globals.toggleProperty(range, 'low', {})"/>
+            Low
+        </div>
+        <div class="card-body" *ngIf="range.hasOwnProperty('low')">
+            <app-fhir-string [parentObject]="range.low" propertyName="unit" title="Unit"></app-fhir-string>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(range.low, 'value', 0)"/>
+                    Value
+                </label>
+                <input type="number" class="form-control" [disabled]="!range.low.hasOwnProperty('value')" [(ngModel)]="range.low.value" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(range.low, 'comparator', '<')"/>
+                    Comparator
+                </label>
+                <select class="form-control" [disabled]="!range.low.hasOwnProperty('comparator')" [(ngModel)]="range.low.comparator">
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value=">=">&gt;=</option>
+                    <option value=">">&gt;</option>
+                </select>
+            </div>
+
+            <app-fhir-string [parentObject]="range.low" propertyName="system" title="System"></app-fhir-string>
+
+            <app-fhir-string [parentObject]="range.low" propertyName="code" title="Code"></app-fhir-string>
+        </div>
+    </div>
+
+    <!-- high -->
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="range.hasOwnProperty('high')" (ngModelChange)="globals.toggleProperty(range, 'high', {})"/>
+            High
+        </div>
+        <div class="card-body" *ngIf="range.hasOwnProperty('high')">
+            <app-fhir-string [parentObject]="range.high" propertyName="unit" title="Unit"></app-fhir-string>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(range.high, 'value', 0)"/>
+                    Value
+                </label>
+                <input type="number" class="form-control" [disabled]="!range.high.hasOwnProperty('value')" [(ngModel)]="range.high.value" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(range.high, 'comparator', '<')"/>
+                    Comparator
+                </label>
+                <select class="form-control" [disabled]="!range.high.hasOwnProperty('comparator')" [(ngModel)]="range.high.comparator">
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value=">=">&gt;=</option>
+                    <option value=">">&gt;</option>
+                </select>
+            </div>
+
+            <app-fhir-string [parentObject]="range.high" propertyName="system" title="System"></app-fhir-string>
+
+            <app-fhir-string [parentObject]="range.high" propertyName="code" title="Code"></app-fhir-string>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

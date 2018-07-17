@@ -78,6 +78,8 @@ import { FhirEditCodingModalComponent } from './fhir-edit/coding-modal/coding-mo
 import { FhirEditContactPointModalComponent } from './fhir-edit/contact-point-modal/contact-point-modal.component';
 import { FhirEditHumanNameModalComponent } from './fhir-edit/human-name-modal/human-name-modal.component';
 import { FhirEditPeriodComponent } from './fhir-edit/period/period.component';
+import { FhirEditRangeComponent } from './fhir-edit/range/range.component';
+import { FhirEditRangeModalComponent } from './fhir-edit/range-modal/range-modal.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -159,7 +161,7 @@ const appRoutes: Routes = [
         FhirEditCodingModalComponent,
         FhirEditContactPointModalComponent,
         FhirEditHumanNameModalComponent,
-        FhirEditPeriodComponent
+        FhirEditRangeModalComponent
     ],
     declarations: [
         AppComponent,
@@ -220,7 +222,9 @@ const appRoutes: Routes = [
         FhirEditCodingModalComponent,
         FhirEditContactPointModalComponent,
         FhirEditHumanNameModalComponent,
-        FhirEditPeriodComponent
+        FhirEditPeriodComponent,
+        FhirEditRangeComponent,
+        FhirEditRangeModalComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -68,9 +68,7 @@
     </div>
     <app-fhir-edit-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-human-name>
     <app-fhir-edit-period *ngIf="getChoiceName() === 'Period'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-period>
-    <div class="input-group" *ngIf="getChoiceName() === 'Range'">
-        Not yet supported
-    </div>
+    <app-fhir-edit-range *ngIf="getChoiceName() === 'Range'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-range>
     <div class="input-group" *ngIf="getChoiceName() === 'Ratio'">
         Not yet supported
     </div>
