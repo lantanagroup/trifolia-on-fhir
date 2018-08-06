@@ -19,11 +19,15 @@
       <td>{{p.experimental ? "Yes" : "No"}}</td>
       <td>{{p.description}}</td>
       <td>
-        <div class="pull-right">
+        <div class="pull-right btn-group">
           <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]">Edit</a>
-          <button type="button" class="btn btn-default" (click)="delete(p.id)">Delete</button>
+          <button type="button" class="btn btn-default" (click)="delete(p)">Delete</button>
         </div>
       </td>
     </tr>
   </tbody>
 </table>
+
+<footer class="footer">
+  <span class="message">{{message}}</span>
+</footer>

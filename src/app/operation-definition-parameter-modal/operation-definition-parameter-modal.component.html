@@ -45,7 +45,11 @@
             Profile
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(parameter, 'profile', { reference: '', display: '' })" />
         </label>
-        <app-fhir-reference [disabled]="!parameter.hasOwnProperty('profile')" [reference]="parameter.profile" resourceType="StructureDefinition"></app-fhir-reference>
+        <app-fhir-reference
+                [disabled]="!parameter.hasOwnProperty('profile')"
+                [parentObject]="parameter"
+                propertyName="profile"
+                resourceType="StructureDefinition"></app-fhir-reference>
     </div>
 
     <div class="card">
@@ -79,7 +83,10 @@
 
             <div class="form-group" *ngIf="parameter.binding.hasOwnProperty('valueSetReference')">
                 <label>Value Set Reference</label>
-                <app-fhir-reference [reference]="parameter.binding.valueSetReference" resourceType="ValueSet"></app-fhir-reference>
+                <app-fhir-reference
+                        [parentObject]="parameter.binding"
+                        propertyName="valueSetReference"
+                        resourceType="ValueSet"></app-fhir-reference>
             </div>
         </div>
     </div>

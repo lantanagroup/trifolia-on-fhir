@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Range</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- numerator -->
+            <div class="card">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="ratio.hasOwnProperty('numerator')" (ngModelChange)="globals.toggleProperty(ratio, 'numerator', {})"/>
+                    Numerator
+                </div>
+                <div class="card-body" *ngIf="ratio.hasOwnProperty('numerator')">
+                    <app-fhir-string [parentObject]="ratio.numerator" propertyName="unit" title="Unit"></app-fhir-string>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(ratio.numerator, 'value', 0)"/>
+                            Value
+                        </label>
+                        <input type="number" class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('value')" [(ngModel)]="ratio.numerator.value"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(ratio.numerator, 'comparator', '<')"/>
+                            Comparator
+                        </label>
+                        <select class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('comparator')" [(ngModel)]="ratio.numerator.comparator">
+                            <option value="<">&lt;</option>
+                            <option value="<=">&lt;=</option>
+                            <option value=">=">&gt;=</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+
+                    <app-fhir-string [parentObject]="ratio.numerator" propertyName="system" title="System"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="ratio.numerator" propertyName="code"
+                                     title="Code"></app-fhir-string>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- denominator -->
+            <div class="card">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="ratio.hasOwnProperty('denominator')"
+                           (ngModelChange)="globals.toggleProperty(ratio, 'denominator', {})"/>
+                    Denominator
+                </div>
+                <div class="card-body" *ngIf="ratio.hasOwnProperty('denominator')">
+                    <app-fhir-string [parentObject]="ratio.denominator" propertyName="unit" title="Unit"></app-fhir-string>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(ratio.denominator, 'value', 0)"/>
+                            Value
+                        </label>
+                        <input type="number" class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('value')" [(ngModel)]="ratio.denominator.value"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(ratio.denominator, 'comparator', '<')"/>
+                            Comparator
+                        </label>
+                        <select class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('comparator')" [(ngModel)]="ratio.denominator.comparator">
+                            <option value="<">&lt;</option>
+                            <option value="<=">&lt;=</option>
+                            <option value=">=">&gt;=</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+
+                    <app-fhir-string [parentObject]="ratio.denominator" propertyName="system" title="System"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="ratio.denominator" propertyName="code" title="Code"></app-fhir-string>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

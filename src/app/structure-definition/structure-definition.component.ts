@@ -7,7 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition, StructureDefinition, ValueSet} from '../models/fhir';
+import {ElementDefinition, StructureDefinition, TypeRefComponent, ValueSet} from '../models/fhir';
 import {ElementDef} from '@angular/core/src/view';
 import {DOCUMENT} from '@angular/common';
 import {Observable} from 'rxjs/Observable';
@@ -87,7 +87,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
     }
 
-    public selectChoice(element: any) {
+    public selectChoice(element: ElementTreeModel) {
         const modalRef = this.modalService.open(SelectChoiceModalComponent);
         modalRef.componentInstance.structureDefinition = this.baseStructureDefinition;
         modalRef.componentInstance.element = element;
@@ -104,16 +104,19 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public populateConstrainedElements(elementTreeModels: ElementTreeModel[], sliceName: string) {
         for (let i = 0; i < elementTreeModels.length; i++) {
             const elementTreeModel = elementTreeModels[i];
-            const constrainedElements = _.filter(this.structureDefinition.differential.element, (diffElement) => {
-                const diffElementSliceName = diffElement.id && diffElement.id.indexOf(':') > 0 ?
-                        diffElement.id.substring(diffElement.id.indexOf(':') + 1) :
-                        null;
+            const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
+            const thisId = parentId ? parentId + '.' + elementTreeModel.leafPath : elementTreeModel.leafPath;
 
-                if (sliceName !== diffElementSliceName) {
-                    return false;
+            const constrainedElements = _.filter(this.structureDefinition.differential.element, (element) => {
+                if (element.id.startsWith(thisId)) {
+                    const remaining = element.id.substring(thisId.length);
+                    if (remaining.indexOf('.') >= 0) {
+                        return false;
+                    }
+                    return true;
                 }
 
-                return diffElement.path === elementTreeModel.baseElement.path;
+                return false;
             });
 
             for (let x = 0; x < constrainedElements.length; x++) {
@@ -127,6 +130,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
                 newElementTreeModel.constrainedElement = constrainedElements[x];
             }
+
+            i += constrainedElements.length;
         }
     }
 
@@ -139,7 +144,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
         let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
         const parentPath = parent ? parent.baseElement.path : '';
-        const parentSliceName = parent && parent.id.indexOf(':') > 0 ? parent.id.substring(parent.id.indexOf(':') + 1) : null;
+        const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
         let filtered;
 
         if (parent && parent.baseElement.path.endsWith('[x]')) {
@@ -172,7 +177,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             const newElement = new ElementTreeModel();
             newElement.parent = parent;
             newElement.setFields(filtered[i], parent ? parent.depth + 1 : 1, hasChildren, position);
-            newElement.setId();
 
             const newElements = this.populateElement(newElement);
             this.populateConstrainedElements(newElements, parentSliceName);
@@ -186,16 +190,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         if (parentPath === '' && this.elements.length === 1) {
             this.toggleElementExpand(this.elements[0]);
         }
-    }
-
-    public getTypeDisplay(element: ElementTreeModel) {
-        if (!element.baseElement.type) {
-            return '';
-        }
-
-        return _.map(element.baseElement.type, (type) => {
-            return type.code;
-        }).join(', ');
     }
 
     private getStructureDefinition(): Observable<null> {
@@ -248,6 +242,18 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.toggleSelectedElement(elementTreeModel);
     }
 
+    public hasSlices(elementTreeModel: ElementTreeModel) {
+        if (!elementTreeModel.constrainedElement || !elementTreeModel.constrainedElement.slicing) {
+            return;
+        }
+
+        const found = _.filter(this.structureDefinition.differential.element, (element) => {
+            return element.id.indexOf(elementTreeModel.id + ':') === 0;
+        });
+
+        return found.length > 0;
+    }
+
     private isChildOfElement(target: ElementTreeModel, parent: ElementTreeModel): boolean {
         let current = target.parent;
 
@@ -288,9 +294,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             elementTreeModel.hasChildren,
             elementTreeModel.position,
             newElement);
-        newElementTreeModel.setId(newSliceName);
         newElementTreeModel.expanded = false;
-        newElementTreeModel.isSliceRoot = true;
 
         const elementTreeModelIndex = this.elements.indexOf(elementTreeModel);
 
@@ -299,7 +303,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             const nextElementTreeModel = this.elements[i];
             if (this.isChildOfElement(nextElementTreeModel, elementTreeModel)) {
                 nextElementTreeModel.parent = newElementTreeModel;
-                nextElementTreeModel.id = nextElementTreeModel.id + ':' + newSliceName;
+                nextElementTreeModel.displayId = nextElementTreeModel.displayId + ':' + newSliceName;
                 nextElementTreeModel.constrainedElement.id = nextElementTreeModel.constrainedElement.id + ':' + newSliceName;
                 break;
             }
@@ -318,6 +322,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
         const foundElementTreeModel = _.find(this.elements, (elementTreeModel: ElementTreeModel) =>
             elementTreeModel.constrainedElement === element);
+        const isSliceRoot = foundElementTreeModel ? foundElementTreeModel.isSliceRoot : false;
 
         if (foundElementTreeModel) {
             foundElementTreeModel.constrainedElement = null;
@@ -329,7 +334,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         // If it is a slice root, remove the element tree model entirely
-        if (foundElementTreeModel.isSliceRoot) {
+        if (isSliceRoot) {
             const foundElementTreeModelIndex = this.elements.indexOf(foundElementTreeModel);
             this.elements.splice(foundElementTreeModelIndex, 1);
         }

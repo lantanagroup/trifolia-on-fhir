@@ -8,7 +8,7 @@
     <div class="form-group">
         <label>Type</label>
         <select class="form-control" [(ngModel)]="selectedType">
-            <option *ngFor="let type of element.element.type" [ngValue]="type.code">{{type.code}}</option>
+            <option *ngFor="let type of types" [ngValue]="type.code">{{type.code}}</option>
         </select>
     </div>
 </div>

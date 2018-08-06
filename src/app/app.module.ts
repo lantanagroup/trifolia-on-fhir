@@ -42,44 +42,51 @@ import {FhirDisplayPipe} from './pipes/fhir-display-pipe';
 import {PageComponentModalComponent} from './fhir-edit/page-component-modal/page-component-modal.component';
 import {RecentItemService} from './services/recent-item.service';
 import {BinaryService} from './services/binary.service';
-import { CapabilityStatementsComponent } from './capability-statements/capability-statements.component';
-import { CapabilityStatementComponent } from './capability-statement/capability-statement.component';
-import { OperationDefinitionsComponent } from './operation-definitions/operation-definitions.component';
-import { OperationDefinitionComponent } from './operation-definition/operation-definition.component';
+import {CapabilityStatementsComponent} from './capability-statements/capability-statements.component';
+import {OperationDefinitionsComponent} from './operation-definitions/operation-definitions.component';
+import {OperationDefinitionComponent} from './operation-definition/operation-definition.component';
 import {CapabilityStatementService} from './services/capability-statement.service';
 import {OperationDefinitionService} from './services/operation-definition.service';
-import { MultiContactComponent } from './fhir-edit/multi-contact/multi-contact.component';
-import { MultiUseContextComponent } from './fhir-edit/multi-use-context/multi-use-context.component';
-import { MultiJurisdictionComponent } from './fhir-edit/multi-jurisdiction/multi-jurisdiction.component';
-import { MaxCardinalityComponent } from './fhir-edit/max-cardinality/max-cardinality.component';
-import { OperationDefinitionParameterModalComponent } from './operation-definition-parameter-modal/operation-definition-parameter-modal.component';
+import {MultiContactComponent} from './fhir-edit/multi-contact/multi-contact.component';
+import {MultiUseContextComponent} from './fhir-edit/multi-use-context/multi-use-context.component';
+import {MultiJurisdictionComponent} from './fhir-edit/multi-jurisdiction/multi-jurisdiction.component';
+import {MaxCardinalityComponent} from './fhir-edit/max-cardinality/max-cardinality.component';
+import {OperationDefinitionParameterModalComponent} from './operation-definition-parameter-modal/operation-definition-parameter-modal.component';
 import {ValueSetService} from './services/value-set.service';
 import {CodeSystemService} from './services/code-system.service';
-import { BooleanComponent } from './fhir-edit/boolean/boolean.component';
+import {BooleanComponent} from './fhir-edit/boolean/boolean.component';
 import {FhirMarkdownComponent} from './fhir-edit/markdown/markdown.component';
-import { FhirDateComponent } from './fhir-edit/date/date.component';
-import { ValuesetIncludeModalComponent } from './valueset-include-modal/valueset-include-modal.component';
-import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.component';
-import { SelectSingleCodeComponent } from './fhir-edit/select-single-code/select-single-code.component';
-import { MultiIdentifierComponent } from './fhir-edit/multi-identifier/multi-identifier.component';
-import { SelectMultiCodingComponent } from './fhir-edit/select-multi-coding/select-multi-coding.component';
-import { ContactModalComponent } from './fhir-edit/contact-modal/contact-modal.component';
-import { IdentifierModalComponent } from './fhir-edit/identifier-modal/identifier-modal.component';
-import { ChoiceComponent } from './fhir-edit/choice/choice.component';
-import { MarkdownModalComponent } from './markdown-modal/markdown-modal.component';
-import { ValidationResultsComponent } from './validation-results/validation-results.component';
-import { AddressModalComponent } from './address-modal/address-modal.component';
-import { QuantityComponent } from './fhir-edit/quantity/quantity.component';
-import { IdentifierComponent } from './fhir-edit/identifier/identifier.component';
-import { AttachmentComponent } from './fhir-edit/attachment/attachment.component';
-import { FhirEditAttachmentModalComponent } from './fhir-edit/attachment-modal/attachment-modal.component';
-import { FhirEditCodeableConceptModalComponent } from './fhir-edit/codeable-concept-modal/codeable-concept-modal.component';
-import { FhirEditCodingModalComponent } from './fhir-edit/coding-modal/coding-modal.component';
-import { FhirEditContactPointModalComponent } from './fhir-edit/contact-point-modal/contact-point-modal.component';
-import { FhirEditHumanNameModalComponent } from './fhir-edit/human-name-modal/human-name-modal.component';
-import { FhirEditPeriodComponent } from './fhir-edit/period/period.component';
-import { FhirEditRangeComponent } from './fhir-edit/range/range.component';
-import { FhirEditRangeModalComponent } from './fhir-edit/range-modal/range-modal.component';
+import {FhirDateComponent} from './fhir-edit/date/date.component';
+import {FhirEditValuesetIncludeModalComponent} from './fhir-edit/valueset-include-modal/valueset-include-modal.component';
+import {ValuesetExpandComponent} from './valueset-expand/valueset-expand.component';
+import {SelectSingleCodeComponent} from './fhir-edit/select-single-code/select-single-code.component';
+import {MultiIdentifierComponent} from './fhir-edit/multi-identifier/multi-identifier.component';
+import {SelectMultiCodingComponent} from './fhir-edit/select-multi-coding/select-multi-coding.component';
+import {ContactModalComponent} from './fhir-edit/contact-modal/contact-modal.component';
+import {IdentifierModalComponent} from './fhir-edit/identifier-modal/identifier-modal.component';
+import {ChoiceComponent} from './fhir-edit/choice/choice.component';
+import {MarkdownModalComponent} from './markdown-modal/markdown-modal.component';
+import {ValidationResultsComponent} from './validation-results/validation-results.component';
+import {FhirEditAddressModalComponent} from './fhir-edit/address-modal/address-modal.component';
+import {QuantityComponent} from './fhir-edit/quantity/quantity.component';
+import {IdentifierComponent} from './fhir-edit/identifier/identifier.component';
+import {AttachmentComponent} from './fhir-edit/attachment/attachment.component';
+import {FhirEditAttachmentModalComponent} from './fhir-edit/attachment-modal/attachment-modal.component';
+import {FhirEditCodeableConceptModalComponent} from './fhir-edit/codeable-concept-modal/codeable-concept-modal.component';
+import {FhirEditCodingModalComponent} from './fhir-edit/coding-modal/coding-modal.component';
+import {FhirEditContactPointModalComponent} from './fhir-edit/contact-point-modal/contact-point-modal.component';
+import {FhirEditHumanNameModalComponent} from './fhir-edit/human-name-modal/human-name-modal.component';
+import {FhirEditPeriodComponent} from './fhir-edit/period/period.component';
+import {FhirEditRangeComponent} from './fhir-edit/range/range.component';
+import {FhirEditRangeModalComponent} from './fhir-edit/range-modal/range-modal.component';
+import {FhirEditRatioComponent} from './fhir-edit/ratio/ratio.component';
+import {FhirEditRatioModalComponent} from './fhir-edit/ratio-modal/ratio-modal.component';
+import {FhirEditCodesystemConceptModalComponent} from './fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
+import {FhirEditCapabilityStatementResourceModalComponent} from './fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import {FhirEditMessagingEventModalComponent} from './fhir-edit/messaging-event-modal/messaging-event-modal.component';
+import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
+import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './stu3/capability-statement/capability-statement.component';
+import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement/capability-statement.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -122,8 +129,8 @@ const appRoutes: Routes = [
     {path: 'structure-definition/new', component: NewProfileComponent},
     {path: 'structure-definition/:id', component: StructureDefinitionComponent},
     {path: 'capability-statement', component: CapabilityStatementsComponent},
-    {path: 'capability-statement/new', component: CapabilityStatementComponent},
-    {path: 'capability-statement/:id', component: CapabilityStatementComponent},
+    {path: 'capability-statement/new', component: CapabilityStatementWrapperComponent},
+    {path: 'capability-statement/:id', component: CapabilityStatementWrapperComponent},
     {path: 'operation-definition', component: OperationDefinitionsComponent},
     {path: 'operation-definition/new', component: OperationDefinitionComponent},
     {path: 'operation-definition/:id', component: OperationDefinitionComponent},
@@ -151,17 +158,23 @@ const appRoutes: Routes = [
         ElementDefinitionTypeModalComponent,
         PageComponentModalComponent,
         OperationDefinitionParameterModalComponent,
-        ValuesetIncludeModalComponent,
+        FhirEditValuesetIncludeModalComponent,
         ContactModalComponent,
         IdentifierModalComponent,
         MarkdownModalComponent,
-        AddressModalComponent,
+        FhirEditAddressModalComponent,
         FhirEditAttachmentModalComponent,
         FhirEditCodeableConceptModalComponent,
         FhirEditCodingModalComponent,
         FhirEditContactPointModalComponent,
         FhirEditHumanNameModalComponent,
-        FhirEditRangeModalComponent
+        FhirEditRangeModalComponent,
+        FhirEditRatioModalComponent,
+        FhirEditCodesystemConceptModalComponent,
+        FhirEditCapabilityStatementResourceModalComponent,
+        FhirEditMessagingEventModalComponent,
+        STU3CapabilityStatementComponent,
+        R4CapabilityStatementComponent
     ],
     declarations: [
         AppComponent,
@@ -193,7 +206,9 @@ const appRoutes: Routes = [
         ReferenceComponent,
         PageComponentModalComponent,
         CapabilityStatementsComponent,
-        CapabilityStatementComponent,
+        CapabilityStatementWrapperComponent,
+        STU3CapabilityStatementComponent,
+        R4CapabilityStatementComponent,
         OperationDefinitionsComponent,
         OperationDefinitionComponent,
         MultiContactComponent,
@@ -203,7 +218,7 @@ const appRoutes: Routes = [
         OperationDefinitionParameterModalComponent,
         BooleanComponent,
         FhirDateComponent,
-        ValuesetIncludeModalComponent,
+        FhirEditValuesetIncludeModalComponent,
         ValuesetExpandComponent,
         SelectSingleCodeComponent,
         MultiIdentifierComponent,
@@ -213,7 +228,7 @@ const appRoutes: Routes = [
         ChoiceComponent,
         MarkdownModalComponent,
         ValidationResultsComponent,
-        AddressModalComponent,
+        FhirEditAddressModalComponent,
         QuantityComponent,
         IdentifierComponent,
         AttachmentComponent,
@@ -224,7 +239,12 @@ const appRoutes: Routes = [
         FhirEditHumanNameModalComponent,
         FhirEditPeriodComponent,
         FhirEditRangeComponent,
-        FhirEditRangeModalComponent
+        FhirEditRangeModalComponent,
+        FhirEditRatioComponent,
+        FhirEditRatioModalComponent,
+        FhirEditCodesystemConceptModalComponent,
+        FhirEditCapabilityStatementResourceModalComponent,
+        FhirEditMessagingEventModalComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -1,0 +1,123 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Concept</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="concept" propertyName="display" title="Display"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="concept" propertyName="definition" title="Definition"></app-fhir-string>
+
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="globals.toggleProperty(concept, 'designation', [{ value: '' }])" />
+            Designation
+        </div>
+        <table class="table table-striped" *ngIf="concept.hasOwnProperty('designation')">
+            <thead>
+            <tr>
+                <th>Language</th>
+                <th>Use</th>
+                <th>Value</th>
+                <th>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="concept.designation.push({ value: '' })">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of concept.designation; let ci = index">
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="language" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <input type="checkbox" [ngModel]="c.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(c, 'use', globals.designationUseCodes[0])" />
+                        </div>
+                        <select class="form-control" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
+                        <select class="form-control" *ngIf="c.hasOwnProperty('use')" [ngModel]="globals.getSelectCoding(c.use, globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
+                            <option *ngFor="let duc of globals.designationUseCodes" [ngValue]="duc">{{duc.display || duc.code}}</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="concept.designation.splice(ci, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('property')" (ngModelChange)="globals.toggleProperty(concept, 'property', [{ code: '' }])" />
+            Property
+        </div>
+        <table class="table table-striped" *ngIf="concept.hasOwnProperty('property')">
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Value Type</th>
+                <th>Value</th>
+                <th>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="concept.property.push({ code: '' })">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of concept.property; let ci = index">
+                <td>
+                    <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                </td>
+                <td>
+                    <select class="form-control" [ngModel]="getPropertyType(c)" (ngModelChange)="setPropertyType(c, $event)">
+                        <option value=""></option>
+                        <option value="Code">Code</option>
+                        <option value="Coding">Coding</option>
+                        <option value="String">String</option>
+                        <option value="Integer">Integer</option>
+                        <option value="Boolean">Boolean</option>
+                        <option value="DateTime">DateTime</option>
+                    </select>
+                </td>
+                <td>
+                    <app-fhir-string *ngIf="c.hasOwnProperty('valueCode')" [parentObject]="c" propertyName="valueCode" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                    <app-fhir-string *ngIf="c.hasOwnProperty('valueString')" [parentObject]="c" propertyName="valueString" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                    <app-fhir-boolean *ngIf="c.hasOwnProperty('valueBoolean')" [parentObject]="c" propertyName="valueBoolean" [isFormGroup]="false" [required]="true"></app-fhir-boolean>
+                    <app-fhir-date *ngIf="c.hasOwnProperty('valueDateTime')" [parentObject]="c" propertyName="valueDateTime" [isFormGroup]="false" [required]="true"></app-fhir-date>
+                    <input type="number" class="form-control" *ngIf="c.hasOwnProperty('valueInteger')" [(ngModel)]="c.valueInteger" />
+                    <span *ngIf="c.hasOwnProperty('valueCoding')">...</span>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="concept.property.splice(ci, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>

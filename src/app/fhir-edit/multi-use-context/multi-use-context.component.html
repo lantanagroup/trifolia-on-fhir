@@ -11,7 +11,7 @@
             <th>Value</th>
             <th>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Add a use context"
+                    <button type="button" class="btn btn-default btn-sm" title="Add a use context"
                             (click)="parentObject[propertyName].push({ code: globals.useContextCodes[0], valueQuantity: { unit: '', value: '' }})">
                         <i class="fa fa-plus"></i>
                     </button>
@@ -59,7 +59,7 @@
                     </div>
                     <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" title="Remove this code" (click)="uc.valueCodeableConcept.coding.splice(ci, 1)">
+                        <button type="button" class="btn btn-default btn-sm" title="Remove this code" (click)="uc.valueCodeableConcept.coding.splice(ci, 1)">
                             <i class="fa fa-remove"></i>
                         </button>
                     </div>
@@ -109,7 +109,7 @@
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Remove this use context" (click)="parentObject[propertyName].splice(uci, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this use context" (click)="parentObject[propertyName].splice(uci, 1)">
                         <i class="fa fa-remove"></i>
                     </button>
                 </div>

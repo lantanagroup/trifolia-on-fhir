@@ -6,6 +6,38 @@ import * as _ from 'underscore';
 export class Globals {
     public pageAsContainedBinary = false;
 
+    static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
+        const keys = Object.keys(obj);
+
+        if (choices) {
+            const foundProperties = _.filter(keys, (key: string) => {
+                const foundChoice = _.find(choices, (choice: Coding) => {
+                    return choice.code === propertyName + key;
+                });
+                return !!foundChoice;
+            });
+
+            if (foundProperties.length > 0) {
+                return foundProperties[0];
+            } else {
+                return;
+            }
+        }
+
+        const foundProperties = _.filter(keys, (key: string) => key.startsWith(propertyName));
+
+        if (foundProperties.length > 0) {
+            return foundProperties[0];
+        } else {
+            return;
+        }
+    }
+
+    static hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]): boolean {
+        const choiceName = Globals.getChoiceSelectionName(obj, propertyName, choices);
+        return !!choiceName;
+    }
+
     public readonly cookieKeys = {
         recentImplementationGuides: 'recentImplementationGuides',
         recentStructureDefinitions: 'recentStructureDefinitions',
@@ -19,6 +51,134 @@ export class Globals {
         ImplementationGuide: 'http://hl7.org/fhir/StructureDefinition/ImplementationGuide',
         StructureDefinition: 'http://hl7.org/fhir/StructureDefinition/StructureDefinition'
     };
+
+    public readonly conditionalReadStatusCodes: Coding[] = [
+        { code: 'not-supported', display: 'Not Supported', system: 'http://hl7.org/fhir/conditional-read-status' },
+        { code: 'modified-since', display: 'If-Modified-Since', system: 'http://hl7.org/fhir/conditional-read-status' },
+        { code: 'not-match', display: 'If-Not-Match', system: 'http://hl7.org/fhir/conditional-read-status' },
+        { code: 'full-support', display: 'Full Support', system: 'http://hl7.org/fhir/conditional-read-status' }
+    ];
+
+    public readonly conditionalDeleteStatusCodes: Coding[] = [
+        { code: 'not-supported', display: 'Not Supported', system: 'http://hl7.org/fhir/conditional-delete-status' },
+        { code: 'single', display: 'Single Deletes Supported', system: 'http://hl7.org/fhir/conditional-delete-status' },
+        { code: 'multiple', display: 'Multiple Deletes Supported', system: 'http://hl7.org/fhir/conditional-delete-status' }
+    ];
+
+    public readonly typeRestfulInteractionCodes: Coding[] = [
+        { code: 'read', display: 'read', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'vread', display: 'vread', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'update', display: 'update', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'patch', display: 'patch', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'delete', display: 'delete', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'history-instance', display: 'history-instance', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'history-type', display: 'history-type', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'create', display: 'create', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'search-type', display: 'search-type', system: 'http://hl7.org/fhir/restful-interaction' }
+    ];
+
+    public readonly messageTransportCodes: Coding[] = [
+        { code: 'http', display: 'HTTP', system: 'http://hl7.org/fhir/message-transport' },
+        { code: 'ftp', display: 'FTP', system: 'http://hl7.org/fhir/message-transport' },
+        { code: 'mllp', display: 'MLLP', system: 'http://hl7.org/fhir/message-transport' }
+    ];
+
+    public readonly messageEventCodes: Coding[] = [
+        { code: 'CodeSystem-expand', display: 'CodeSystem-expand', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'MedicationAdministration-Complete', display: 'MedicationAdministration-Complete', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'MedicationAdministration-Nullification', display: 'MedicationAdministration-Nullification', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'MedicationAdministration-Recording', display: 'MedicationAdministration-Recording', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'MedicationAdministration-Update', display: 'MedicationAdministration-Update', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'admin-notify', display: 'admin-notify', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'communication-request', display: 'communication-request', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'diagnosticreport-provide', display: 'diagnosticreport-provide', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'observation-provide', display: 'observation-provide', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'patient-link', display: 'patient-link', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'patient-unlink', display: 'patient-unlink', system: 'http://hl7.org/fhir/message-events' },
+        { code: 'valueset-expand', display: 'valueset-expand', system: 'http://hl7.org/fhir/message-events' }
+    ];
+
+    public readonly messageSignificanceCategoryCodes: Coding[] = [
+        { code: 'Consequence', display: 'Consequence', system: 'http://hl7.org/fhir/message-significance-category' },
+        { code: 'Currency', display: 'Currency', system: 'http://hl7.org/fhir/message-significance-category' },
+        { code: 'Notification', display: 'Notification', system: 'http://hl7.org/fhir/message-significance-category' }
+    ];
+
+    public readonly eventCapabilityModeCodes: Coding[] = [
+        { code: 'sender', display: 'Sender', system: 'http://hl7.org/fhir/event-capability-mode' },
+        { code: 'receiver', display: 'Receiver', system: 'http://hl7.org/fhir/event-capability-mode' }
+    ];
+
+    public readonly documentModeCodes: Coding[] = [
+        { code: 'producer', display: 'Producer', system: 'http://hl7.org/fhir/document-mode' },
+        { code: 'consumer', display: 'Consumer', system: 'http://hl7.org/fhir/document-mode' }
+    ];
+
+    public readonly systemRestfulInteractionCodes: Coding[] = [
+        { code: 'transaction', display: 'transaction', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'batch', display: 'batch', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'search-system', display: 'search-system', system: 'http://hl7.org/fhir/restful-interaction' },
+        { code: 'history-system', display: 'history-system', system: 'http://hl7.org/fhir/restful-interaction' }
+    ];
+
+    public readonly versioningPolicyCodes: Coding[] = [
+        { code: 'no-version', display: 'No VersionId Support', system: 'http://hl7.org/fhir/versioning-policy' },
+        { code: 'versioned', display: 'Versioned', system: 'http://hl7.org/fhir/versioning-policy' },
+        { code: 'versioned-update', display: 'VersionId tracked fully', system: 'http://hl7.org/fhir/versioning-policy' }
+    ];
+
+    public readonly searchParamTypeCodes: Coding[] = [
+        { code: 'number', display: 'Number', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'date', display: 'Date', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'string', display: 'String', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'token', display: 'Token', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'reference', display: 'Reference', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'composite', display: 'Composite', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'quantity', display: 'Quantity', system: 'http://hl7.org/fhir/search-param-type' },
+        { code: 'uri', display: 'URI', system: 'http://hl7.org/fhir/search-param-type' }
+    ];
+
+    public readonly referenceHandlingPolicyCodes: Coding[] = [
+        { code: 'literal', display: 'Literal References', system: 'http://hl7.org/fhir/reference-handling-policy' },
+        { code: 'logical', display: 'Logical References', system: 'http://hl7.org/fhir/reference-handling-policy' },
+        { code: 'resolves', display: 'Resolves References', system: 'http://hl7.org/fhir/reference-handling-policy' },
+        { code: 'enforced', display: 'Reference Integrity Enforced', system: 'http://hl7.org/fhir/reference-handling-policy' },
+        { code: 'local', display: 'Local References Only', system: 'http://hl7.org/fhir/reference-handling-policy' }
+    ];
+
+    public readonly restfulCapabilityModeCodes: Coding[] = [
+        { code: 'client', display: 'Client', system: 'http://hl7.org/fhir/restful-capability-mode' },
+        { code: 'server', display: 'Server', system: 'http://hl7.org/fhir/restful-capability-mode' }
+    ];
+
+    public readonly designationUseCodes: Coding[] = [
+        { code: '900000000000003001', display: 'Fully specified name', system: 'http://snomed.info/sct' },
+        { code: '900000000000013009', display: 'Synonym', system: 'http://snomed.info/sct' },
+        { code: '900000000000550004', display: 'Definition', system: 'http://snomed.info/sct' }
+    ];
+
+    public readonly filterOperatorCodes: Coding[] = [
+        { code: 'code', display: 'Code (internal reference)', system: 'http://hl7.org/fhir/concept-property-type' },
+        { code: 'Coding', display: 'Coding (external reference)', system: 'http://hl7.org/fhir/concept-property-type' },
+        { code: 'string', display: 'string', system: 'http://hl7.org/fhir/concept-property-type' },
+        { code: 'integer', display: 'integer', system: 'http://hl7.org/fhir/concept-property-type' },
+        { code: 'boolean', display: 'boolean', system: 'http://hl7.org/fhir/concept-property-type' },
+        { code: 'dateTime', display: 'dateTime', system: 'http://hl7.org/fhir/concept-property-type' }
+    ];
+
+    public readonly codeSystemContentModeCodes: Coding[] = [
+        { code: 'not-present', display: 'Not Present', system: 'http://hl7.org/fhir/codesystem-content-mode' },
+        { code: 'example', display: 'Example', system: 'http://hl7.org/fhir/codesystem-content-mode' },
+        { code: 'fragment', display: 'Fragment', system: 'http://hl7.org/fhir/codesystem-content-mode' },
+        { code: 'complete', display: 'Complete', system: 'http://hl7.org/fhir/codesystem-content-mode' }
+    ];
+
+    public readonly codeSystemHierarchyMeaningCodes: Coding[] = [
+        { code: 'grouped-by', display: 'Grouped By', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
+        { code: 'is-a', display: 'Is-A', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
+        { code: 'part-of', display: 'Part Of', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
+        { code: 'classified-with', display: 'Classified With', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' }
+    ];
 
     public readonly nameUseCodes: Coding[] = [
         { code: 'usual', display: 'Usual', system: 'http://hl7.org/fhir/name-use' },
@@ -255,6 +415,128 @@ export class Globals {
         'Signature',
         'Coding',
         'Timing'
+    ];
+
+    public readonly resourceTypeCodes: Coding[] = [
+        { code: 'Account', display: 'Account', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ActivityDefinition', display: 'ActivityDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'AdverseEvent', display: 'AdverseEvent', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'AllergyIntolerance', display: 'AllergyIntolerance', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Appointment', display: 'Appointment', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'AppointmentResponse', display: 'AppointmentResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'AuditEvent', display: 'AuditEvent', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Basic', display: 'Basic', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Binary', display: 'Binary', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'BodySite', display: 'BodySite', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Bundle', display: 'Bundle', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CapabilityStatement', display: 'CapabilityStatement', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CarePlan', display: 'CarePlan', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CareTeam', display: 'CareTeam', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ChargeItem', display: 'ChargeItem', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Claim', display: 'Claim', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ClaimResponse', display: 'ClaimResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ClinicalImpression', display: 'ClinicalImpression', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CodeSystem', display: 'CodeSystem', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Communication', display: 'Communication', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CommunicationRequest', display: 'CommunicationRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'CompartmentDefinition', display: 'CompartmentDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Composition', display: 'Composition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ConceptMap', display: 'ConceptMap', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Condition', display: 'Condition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Consent', display: 'Consent', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Contract', display: 'Contract', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Coverage', display: 'Coverage', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DataElement', display: 'DataElement', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DetectedIssue', display: 'DetectedIssue', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Device', display: 'Device', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DeviceComponent', display: 'DeviceComponent', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DeviceMetric', display: 'DeviceMetric', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DeviceRequest', display: 'DeviceRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DeviceUseStatement', display: 'DeviceUseStatement', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DiagnosticReport', display: 'DiagnosticReport', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DocumentManifest', display: 'DocumentManifest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DocumentReference', display: 'DocumentReference', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'DomainResource', display: 'DomainResource', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'EligibilityRequest', display: 'EligibilityRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'EligibilityResponse', display: 'EligibilityResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Encounter', display: 'Encounter', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Endpoint', display: 'Endpoint', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'EnrollmentRequest', display: 'EnrollmentRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'EnrollmentResponse', display: 'EnrollmentResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'EpisodeOfCare', display: 'EpisodeOfCare', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ExpansionProfile', display: 'ExpansionProfile', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ExplanationOfBenefit', display: 'ExplanationOfBenefit', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'FamilyMemberHistory', display: 'FamilyMemberHistory', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Flag', display: 'Flag', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Goal', display: 'Goal', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'GraphDefinition', display: 'GraphDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Group', display: 'Group', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'GuidanceResponse', display: 'GuidanceResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'HealthcareService', display: 'HealthcareService', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ImagingManifest', display: 'ImagingManifest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ImagingStudy', display: 'ImagingStudy', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Immunization', display: 'Immunization', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ImmunizationRecommendation', display: 'ImmunizationRecommendation', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ImplementationGuide', display: 'ImplementationGuide', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Library', display: 'Library', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Linkage', display: 'Linkage', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'List', display: 'List', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Location', display: 'Location', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Measure', display: 'Measure', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MeasureReport', display: 'MeasureReport', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Media', display: 'Media', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Medication', display: 'Medication', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MedicationAdministration', display: 'MedicationAdministration', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MedicationDispense', display: 'MedicationDispense', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MedicationRequest', display: 'MedicationRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MedicationStatement', display: 'MedicationStatement', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MessageDefinition', display: 'MessageDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'MessageHeader', display: 'MessageHeader', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'NamingSystem', display: 'NamingSystem', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'NutritionOrder', display: 'NutritionOrder', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Observation', display: 'Observation', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'OperationDefinition', display: 'OperationDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'OperationOutcome', display: 'OperationOutcome', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Organization', display: 'Organization', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Parameters', display: 'Parameters', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Patient', display: 'Patient', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'PaymentNotice', display: 'PaymentNotice', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'PaymentReconciliation', display: 'PaymentReconciliation', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Person', display: 'Person', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'PlanDefinition', display: 'PlanDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Practitioner', display: 'Practitioner', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'PractitionerRole', display: 'PractitionerRole', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Procedure', display: 'Procedure', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ProcedureRequest', display: 'ProcedureRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ProcessRequest', display: 'ProcessRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ProcessResponse', display: 'ProcessResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Provenance', display: 'Provenance', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Questionnaire', display: 'Questionnaire', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'QuestionnaireResponse', display: 'QuestionnaireResponse', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ReferralRequest', display: 'ReferralRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'RelatedPerson', display: 'RelatedPerson', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'RequestGroup', display: 'RequestGroup', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ResearchStudy', display: 'ResearchStudy', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ResearchSubject', display: 'ResearchSubject', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Resource', display: 'Resource', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'RiskAssessment', display: 'RiskAssessment', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Schedule', display: 'Schedule', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'SearchParameter', display: 'SearchParameter', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Sequence', display: 'Sequence', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ServiceDefinition', display: 'ServiceDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Slot', display: 'Slot', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Specimen', display: 'Specimen', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'StructureDefinition', display: 'StructureDefinition', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'StructureMap', display: 'StructureMap', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Subscription', display: 'Subscription', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Substance', display: 'Substance', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'SupplyDelivery', display: 'SupplyDelivery', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'SupplyRequest', display: 'SupplyRequest', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'Task', display: 'Task', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'TestReport', display: 'TestReport', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'TestScript', display: 'TestScript', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'ValueSet', display: 'ValueSet', system: 'http://hl7.org/fhir/resource-types' },
+        { code: 'VisionPrescription', display: 'VisionPrescription' }
     ];
 
     public readonly resourceTypes = {
@@ -757,6 +1039,10 @@ export class Globals {
         'ed.type.versioning': 'Whether this reference needs to be version specific or version independent, or whether either can be used.',
         'ed.contentReference': 'Identifies the identity of an element defined elsewhere in the profile whose content rules should be applied to the current element.'
     };
+
+    public hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]) {
+        return Globals.hasChoiceSelection(obj, propertyName, choices);
+    }
 
     public parseFhirUrl(url: string) {
         const regex = /((http|https):\/\/([A-Za-z0-9\\\.\:\%\$]\/)*\/)?(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestReport|TestScript|ValueSet|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;

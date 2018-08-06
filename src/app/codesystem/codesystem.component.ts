@@ -3,14 +3,17 @@ import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CodeSystemService} from '../services/code-system.service';
-import {CapabilityStatement, CodeSystem} from '../models/fhir';
+import {CapabilityStatement, CodeSystem, ConceptDefinitionComponent} from '../models/fhir';
 import {Observable} from 'rxjs/Observable';
 import {FhirService} from '../services/fhir.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FhirEditCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 
 @Component({
     selector: 'app-codesystem',
     templateUrl: './codesystem.component.html',
-    styleUrls: ['./codesystem.component.css']
+    styleUrls: ['./codesystem.component.css'],
+    providers: [FhirService]
 })
 export class CodesystemComponent implements OnInit, DoCheck {
     @Input() public codeSystem = new CodeSystem();
@@ -19,11 +22,17 @@ export class CodesystemComponent implements OnInit, DoCheck {
 
     constructor(
         public globals: Globals,
+        private modalService: NgbModal,
         private codeSystemService: CodeSystemService,
         private route: ActivatedRoute,
         private router: Router,
         private recentItemService: RecentItemService,
         private fhirService: FhirService) {
+    }
+
+    public editConcept(concept: ConceptDefinitionComponent) {
+        const modalRef = this.modalService.open(FhirEditCodesystemConceptModalComponent, { size: 'lg' });
+        modalRef.componentInstance.concept = concept;
     }
 
     public save() {

@@ -1,20 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FhirEditRatioModalComponent } from './ratio-modal.component';
 
-import { AddressModalComponent } from './address-modal.component';
-
-describe('AddressModalComponent', () => {
-  let component: AddressModalComponent;
-  let fixture: ComponentFixture<AddressModalComponent>;
+describe('FhirEditRatioModalComponent', () => {
+  let component: FhirEditRatioModalComponent;
+  let fixture: ComponentFixture<FhirEditRatioModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddressModalComponent ]
+      declarations: [ FhirEditRatioModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddressModalComponent);
+    fixture = TestBed.createComponent(FhirEditRatioModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

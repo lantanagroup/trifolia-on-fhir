@@ -42,45 +42,6 @@ tr.constrained {
     max-height: 85%;
 }
 
-table.elements {
-    overflow-y: auto;
-    height: 97%;
-    display: inline-block;
-    width: 65%;
-    float: left;
-}
-
-table.elements > thead,
-table.elements > tbody {
-    display: inline-table;
-    width: 100%;
-}
-
-table.elements > thead > tr > th:nth-child(1),
-table.elements > tbody > tr > td:nth-child(1) {
-    width: 30%;
-}
-
-table.elements > thead > tr > th:nth-child(2),
-table.elements > tbody > tr > td:nth-child(2) {
-    width: 25%;
-}
-
-table.elements > thead > tr > th:nth-child(3),
-table.elements > tbody > tr > td:nth-child(3) {
-    width: 10%;
-}
-
-table.elements > thead > tr > th:nth-child(4),
-table.elements > tbody > tr > td:nth-child(4) {
-    width: 25%;
-}
-
-table.elements > thead > tr > th:nth-child(5),
-table.elements > tbody > tr > td:nth-child(5) {
-    width: 10%;
-}
-
 div.element-definition {
     height: 100%;
     width: 35%;
@@ -99,4 +60,20 @@ div.element-definition > div.card-body {
 div.expand-collapse {
     display: inline-block;
     width: 15px;
+}
+
+table.elements {
+    overflow-y: auto;
+    height: 97%;
+    width: 65%;
+    float: left;
+    display: inline;
+}
+
+table.elements .element-name {
+    display: flex;
+}
+
+table.elements .element-binding {
+    white-space: pre;
 }

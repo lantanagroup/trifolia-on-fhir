@@ -1,12 +1,24 @@
-<div class="form-group">
+<div class="form-group" *ngIf="isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="isOptional" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
-        Date
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        {{title}}
         <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
     </label>
     <input type="date" class="form-control"
            [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"
            (ngModelChange)="parentObject[propertyName] = $event"
-           [disabled]="isOptional && !parentObject.hasOwnProperty(propertyName)"
-           [class.is-invalid]="!isOptional && !parentObject[propertyName]" />
+           [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
+           [class.is-invalid]="required && !parentObject[propertyName]" />
+</div>
+<div class="input-group" *ngIf="!isFormGroup">
+    <div class="input-group-addon" *ngIf="!required || title">
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        {{title}}
+        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+    </div>
+    <input type="date" class="form-control"
+           [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"
+           (ngModelChange)="parentObject[propertyName] = $event"
+           [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
+           [class.is-invalid]="required && !parentObject[propertyName]" />
 </div>

@@ -1,11 +1,14 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {CapabilityStatementService} from '../services/capability-statement.service';
+import {CapabilityStatementService} from '../../services/capability-statement.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CapabilityStatement, Coding, ImplementationGuide, UsageContext} from '../models/fhir';
-import {Globals} from '../globals';
+import {CapabilityStatement, EventComponent, ResourceComponent, RestComponent} from '../../models/fhir';
+import {Globals} from '../../globals';
 import {Observable} from 'rxjs/Observable';
-import {RecentItemService} from '../services/recent-item.service';
-import {FhirService} from '../services/fhir.service';
+import {RecentItemService} from '../../services/recent-item.service';
+import {FhirService} from '../../services/fhir.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FhirEditCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import {FhirEditMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 
 @Component({
     selector: 'app-capability-statement',
@@ -20,6 +23,7 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
 
     constructor(
         public globals: Globals,
+        private modalService: NgbModal,
         private csService: CapabilityStatementService,
         private route: ActivatedRoute,
         private router: Router,
@@ -45,6 +49,32 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
             }, (err) => {
                 this.message = 'An error occured while saving the capability statement';
             });
+    }
+
+    public editResource(resource: ResourceComponent) {
+        const modalRef = this.modalService.open(FhirEditCapabilityStatementResourceModalComponent, { size: 'lg' });
+        modalRef.componentInstance.resource = resource;
+    }
+
+    public copyResource(rest: RestComponent, resource: ResourceComponent) {
+        const resourceCopy = JSON.parse(JSON.stringify(resource));
+        rest.resource.push(resourceCopy);
+    }
+
+    public getDefaultMessagingEvent(): EventComponent {
+        return {
+            code: this.globals.messageEventCodes[0],
+            mode: 'sender',
+            focus: 'Account',
+            request: { reference: '', display: '' },
+            response: { reference: '', display: '' }
+        };
+    }
+
+    public editEvent(event: EventComponent) {
+        const modalRef = this.modalService.open(FhirEditMessagingEventModalComponent, { size: 'lg' });
+        modalRef.componentInstance.event = event;
+        
     }
 
     private getCapabilityStatement(): Observable<CapabilityStatement> {

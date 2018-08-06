@@ -2,7 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Resource} from '../models/fhir';
 import * as Fhir from 'fhir';
-import * as FhirResources from '../profiles-resources.json';
+import * as FhirTypes from '../data/profiles-types.json';
+import * as FhirResources from '../data/profiles-resources.json';
+import * as FhirValuesets from '../data/valuesets.json';
+import * as CodeSystemIso3166 from '../data/codesystem-iso3166.json';
 
 @Injectable()
 export class FhirService {
@@ -12,6 +15,9 @@ export class FhirService {
         private http: HttpClient) {
 
         const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+        parser.loadCodeSystem(CodeSystemIso3166);
+        parser.parseBundle(FhirValuesets);
+        parser.parseBundle(FhirTypes);
         parser.parseBundle(FhirResources);
 
         this.fhir = new Fhir(parser);

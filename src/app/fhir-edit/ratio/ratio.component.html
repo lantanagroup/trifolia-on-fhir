@@ -1,0 +1,30 @@
+<div class="form-group" *ngIf="isFormGroup">
+  <label>
+    <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})"/>
+    {{ title || 'Ratio' }}
+    <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+  </label>
+  <div class="input-group">
+    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="ratioNumerator" placeholder="Numerator" title="Numerator" />
+    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="ratioDenominator" placeholder="Denominator" title="Denominator" />
+    <div class="input-group-btn">
+      <button class="btn btn-default" [disabled]="!parentObject.hasOwnProperty(propertyName)" (click)="editRatio()" title="Edit this ratio">
+        <i class="fa fa-edit"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="!isFormGroup">
+  <div class="input-group-addon" *ngIf="!required">
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})"/>
+    {{title || 'Ratio'}}
+    <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+  </div>
+  <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="ratioNumerator" placeholder="Numerator" title="Numerator" />
+  <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="ratioDenominator" placeholder="Denominator" title="Denominator" />
+  <div class="input-group-btn">
+    <button class="btn btn-default" [disabled]="!parentObject.hasOwnProperty(propertyName)" (click)="editRatio()" title="Edit this ratio">
+      <i class="fa fa-edit"></i>
+    </button>
+  </div>
+</div>

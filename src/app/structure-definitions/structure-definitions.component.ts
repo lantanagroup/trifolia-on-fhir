@@ -11,11 +11,24 @@ import { ConfigService } from '../services/config.service';
 })
 export class StructureDefinitionsComponent implements OnInit {
     public structureDefinitions: StructureDefinitionListItemModel[];
+    public message: string;
 
     constructor(private structureDefinitionService: StructureDefinitionService, private configService: ConfigService) { }
 
-    delete(profileId: string) {
+    delete(strucDefListItem: StructureDefinitionListItemModel) {
+        if (!confirm(`Are you sure you want to delete the structure definition ${strucDefListItem.name}`)) {
+            return;
+        }
 
+        this.structureDefinitionService.delete(strucDefListItem.id)
+            .subscribe(() => {
+                this.message = `Successfully deleted structure definition ${strucDefListItem.name} (${strucDefListItem.id})`;
+                const index = this.structureDefinitions.indexOf(strucDefListItem);
+                this.structureDefinitions.splice(index, 1);
+                setTimeout(() => this.message = '', 3000);
+            }, (err) => {
+                this.message = err;
+            });
     }
 
     private getStructureDefinitions() {

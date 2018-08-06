@@ -14,8 +14,12 @@ import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
     styleUrls: ['./reference.component.css']
 })
 export class ReferenceComponent implements OnInit {
+    @Input() public parentObject: any;
+    @Input() public propertyName: string;
+    @Input() public isFormGroup = true;
+    @Input() public title: string;
     @Input() public resourceType?: string;
-    @Input() public reference: ResourceReference;
+    @Input() public required: boolean;
     @Input() public hideResourceType?: boolean;
     @Input() public disabled: boolean;
     public contentSearch?: string;
@@ -25,12 +29,42 @@ export class ReferenceComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private modalService: NgbModal,
-        private globals: Globals) {
+        public globals: Globals) {
 
         this.contentSearchChanged
             .debounceTime(500)
             .distinctUntilChanged()
             .subscribe(() => this.criteriaChanged());
+    }
+    
+    get reference(): string {
+        if (this.parentObject[this.propertyName]) {
+            return this.parentObject[this.propertyName].reference;
+        }
+        return '';
+    }
+    
+    set reference(value: string) {
+        if (!this.parentObject[this.propertyName]) {
+            return;
+        }
+        
+        this.parentObject[this.propertyName].reference = value;
+    }
+
+    get display(): string {
+        if (this.parentObject[this.propertyName]) {
+            return this.parentObject[this.propertyName].display;
+        }
+        return '';
+    }
+
+    set display(value: string) {
+        if (!this.parentObject[this.propertyName]) {
+            return;
+        }
+
+        this.parentObject[this.propertyName].display = value;
     }
 
     open(content) {
@@ -42,8 +76,9 @@ export class ReferenceComponent implements OnInit {
     }
 
     select(resourceEntry, closeCb) {
-        this.reference.reference = resourceEntry.resource.resourceType + '/' + resourceEntry.resource.id;
-        this.reference.display = new FhirDisplayPipe().transform(resourceEntry.resource, []);
+        const reference: ResourceReference = this.parentObject[this.propertyName];
+        reference.reference = resourceEntry.resource.resourceType + '/' + resourceEntry.resource.id;
+        reference.display = new FhirDisplayPipe().transform(resourceEntry.resource, []);
         closeCb();
     }
 

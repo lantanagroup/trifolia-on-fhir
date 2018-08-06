@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {AddressModalComponent} from '../../address-modal/address-modal.component';
+import {FhirEditAddressModalComponent} from '../address-modal/address-modal.component';
 import {FhirEditCodeableConceptModalComponent} from '../codeable-concept-modal/codeable-concept-modal.component';
 import {CodeableConcept, Coding} from '../../models/fhir';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
@@ -156,7 +156,7 @@ export class ChoiceComponent implements OnInit {
     }
 
     editAddress() {
-        const modalRef = this.modalService.open(AddressModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirEditAddressModalComponent, { size: 'lg' });
         modalRef.componentInstance.address = this.parentObject[this.getChoicePropertyName()];
     }
 

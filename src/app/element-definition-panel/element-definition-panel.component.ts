@@ -3,80 +3,147 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ElementDefinitionTypeModalComponent} from '../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition, StructureDefinition} from '../models/fhir';
+import {
+    Coding,
+    ElementDefinition,
+    ElementDefinitionBindingComponent,
+    StructureDefinition,
+    TypeRefComponent
+} from '../models/fhir';
+import * as _ from 'underscore';
 
 @Component({
-  selector: 'app-element-definition-panel',
-  templateUrl: './element-definition-panel.component.html',
-  styleUrls: ['./element-definition-panel.component.css']
+    selector: 'app-element-definition-panel',
+    templateUrl: './element-definition-panel.component.html',
+    styleUrls: ['./element-definition-panel.component.css']
 })
 export class ElementDefinitionPanelComponent implements OnInit {
-  @Input() elementTreeModel: ElementTreeModel;
-  @Input() elements: ElementTreeModel[];
-  @Input() structureDefinition: StructureDefinition;
-  @Input() disabled = false;
+    @Input() elementTreeModel: ElementTreeModel;
+    @Input() elementTreeModels: ElementTreeModel[];
+    @Input() structureDefinition: StructureDefinition;
+    @Input() disabled = false;
 
-  public editingSliceName: boolean;
-  public editedSliceName: string;
-  public valueSetChoices = ['Uri', 'Reference'];
+    public editingSliceName: boolean;
+    public editedSliceName: string;
+    public valueSetChoices = ['Uri', 'Reference'];
+    public types: Coding[] = [];
 
-  constructor(private modalService: NgbModal, public globals: Globals) {
+    constructor(private modalService: NgbModal, public globals: Globals) {
 
-  }
+    }
 
-  get element(): ElementDefinition {
-      return this.elementTreeModel.constrainedElement;
-  }
+    get element(): ElementDefinition {
+        return this.elementTreeModel.constrainedElement;
+    }
 
-  toggleMaxUnlimited() {
-      if (!this.element.hasOwnProperty('max')) {
-          return;
-      }
+    toggleMaxUnlimited() {
+        if (!this.element.hasOwnProperty('max')) {
+            return;
+        }
 
-      if (this.element.max === '*') {
-          this.element.max = '1';
-      } else {
-          this.element.max = '*';
-      }
-  }
+        if (this.element.max === '*') {
+            this.element.max = '1';
+        } else {
+            this.element.max = '*';
+        }
+    }
 
-  openTypeModel(element, type) {
-      const modalRef = this.modalService.open(ElementDefinitionTypeModalComponent);
-      modalRef.componentInstance.element = element;
-      modalRef.componentInstance.type = type;
-  }
+    openTypeModel(element, type) {
+        const modalRef = this.modalService.open(ElementDefinitionTypeModalComponent);
+        modalRef.componentInstance.element = element;
+        modalRef.componentInstance.type = type;
+    }
 
-  toggleEditSliceName() {
-      if (this.editingSliceName) {
-          this.element.sliceName = this.editedSliceName;
-          this.elementTreeModel.setId(this.editedSliceName);
-          this.editingSliceName = false;
-      } else {
-          this.editingSliceName = true;
-          this.editedSliceName = this.element.sliceName;
-      }
-  }
+    toggleEditSliceName(commit?: boolean) {
+        if (this.editingSliceName) {
+            let newId = this.element.id.substring(0, this.element.id.lastIndexOf(':'));
+            newId = newId + ':' + this.editedSliceName;
 
-  setValueSetChoice(elementBinding: any, choice: string) {
-      const foundChoice = this.globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
+            _.chain(this.structureDefinition.differential.element)
+                .filter((nextElement) => {
+                    return nextElement.id.startsWith(this.element.id + '.');
+                })
+                .each((childElement) => {
+                    if (childElement.sliceName === this.element.sliceName) {
+                        childElement.sliceName = this.editedSliceName;
+                    }
 
-      if (foundChoice !== choice) {
-          delete elementBinding['valueSet' + foundChoice];
-      }
+                    const newChildElementId = newId + childElement.id.substring(this.element.id.length);
+                    childElement.id = newChildElementId;
+                });
 
-      switch (choice) {
-          case 'Uri':
-              elementBinding['valueSetUri'] = '';
-              break;
-          case 'Reference':
-              elementBinding['valueSetReference'] = {
-                  reference: '',
-                  display: ''
-              };
-              break;
-      }
-  }
+            this.element.sliceName = this.editedSliceName;
+            this.element.id = newId;
+            this.editingSliceName = false;
+        } else {
+            this.editingSliceName = true;
+            this.editedSliceName = this.element.sliceName;
+        }
+    }
 
-  ngOnInit() {
-  }
+    setValueSetChoice(elementBinding: any, choice: string) {
+        const foundChoice = this.globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
+
+        if (foundChoice !== choice) {
+            delete elementBinding['valueSet' + foundChoice];
+        }
+
+        switch (choice) {
+            case 'Uri':
+                elementBinding['valueSetUri'] = '';
+                break;
+            case 'Reference':
+                elementBinding['valueSetReference'] = {
+                    reference: '',
+                    display: ''
+                };
+                break;
+        }
+    }
+
+    private getTypes(): Coding[] {
+        const elementTreeModelTypes = this.element.type ? this.element.type : [];
+
+        return _.filter(this.globals.definedTypeCodes, (definedTypeCode: Coding) => {
+            const foundType = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === definedTypeCode.code);
+            return !foundType;        // Only return definedTypeCodes that are no found in the list of types in the element
+        });
+    }
+
+    private getDefaultType(): string {
+        const types = this.getTypes();
+
+        if (types.length > 0) {
+            return types[0].code;
+        }
+
+        return '';
+    }
+
+    addType() {
+        this.element.type.push({code: this.getDefaultType()});
+        this.typeChanged();
+    }
+
+    typeChanged() {
+        this.types = this.getTypes();
+    }
+
+    getTypeDisplay(code: string) {
+        const foundType = _.find(this.globals.definedTypeCodes, (definedTypeCode: Coding) => definedTypeCode.code === code);
+
+        if (foundType) {
+            return foundType.display;
+        }
+
+        return '';
+    }
+
+    getDefaultBinding(): ElementDefinitionBindingComponent {
+        return new ElementDefinitionBindingComponent({strength: 'required'});
+    }
+
+    ngOnInit() {
+        this.types = this.getTypes();
+    }
 }

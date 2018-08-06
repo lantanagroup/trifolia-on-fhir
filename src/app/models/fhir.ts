@@ -551,7 +551,12 @@ export class ConstraintComponent extends Element {
 export class ElementDefinitionBindingComponent extends Element {
     public strength: string;
     public description?: string;
-    public valueSet?: Element;
+    public valueSetUri?: string;
+    public valueSetReference?: ResourceReference;
+
+    public get valueSet(): string | ResourceReference {
+        return this.valueSetUri || this.valueSetReference;
+    }
     
     constructor(obj?: any) {
         super(obj);
@@ -562,8 +567,11 @@ export class ElementDefinitionBindingComponent extends Element {
             if (obj.description) {
                 this.description = obj.description;
             }
-            if (obj.valueSet) {
-                this.valueSet = new Element(obj.valueSet);
+            if (obj.valueSetUri) {
+                this.valueSetUri = obj.valueSetUri;
+            }
+            if (obj.valueSetReference) {
+                this.valueSetReference = new ResourceReference(obj.valueSetReference);
             }
         }
     }
@@ -1612,7 +1620,35 @@ export class DesignationComponent extends BackboneElement {
 
 export class ConceptPropertyComponent extends BackboneElement {
     public code: string;
-    public value: Element;
+    public valueString: string;
+    public valueCoding: Coding;
+    public valueCode: string;
+    public valueInteger: number;
+    public valueBoolean: boolean;
+    public valueDateTime: string;
+
+    public get value(): string|number|boolean|Coding {
+        if (this.hasOwnProperty('valueCode')) {
+            return this.valueCode;
+        }
+        if (this.hasOwnProperty('valueCoding')) {
+            return this.valueCoding;
+        }
+        if (this.hasOwnProperty('valueString')) {
+            return this.valueString;
+        }
+        if (this.hasOwnProperty('valueInteger')) {
+            return this.valueInteger;
+        }
+        if (this.hasOwnProperty('valueBoolean')) {
+            return this.valueBoolean;
+        }
+        if (this.hasOwnProperty('valueDateTime')) {
+            return this.valueDateTime;
+        }
+
+        return;
+    }
     
     constructor(obj?: any) {
         super(obj);
@@ -1620,8 +1656,23 @@ export class ConceptPropertyComponent extends BackboneElement {
             if (obj.code) {
                 this.code = obj.code;
             }
-            if (obj.value) {
-                this.value = new Element(obj.value);
+            if (obj.valueCode) {
+                this.valueCode = obj.valueCode;
+            }
+            if (obj.valueCoding) {
+                this.valueCoding = new Coding(obj.valueCoding);
+            }
+            if (obj.valueString) {
+                this.valueString = obj.valueString;
+            }
+            if (obj.hasOwnProperty('valueInteger')) {
+                this.valueInteger = obj.valueInteger;
+            }
+            if (obj.hasOwnProperty('valueBoolean')) {
+                this.valueBoolean = obj.valueBoolean;
+            }
+            if (obj.valueDateTime) {
+                this.valueDateTime = obj.valueDateTime;
             }
         }
     }

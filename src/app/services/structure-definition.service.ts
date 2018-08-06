@@ -4,8 +4,8 @@ import 'rxjs/add/operator/map';
 import { StructureDefinitionListItemModel } from '../models/structure-definition-list-item-model';
 import {HttpClient} from '@angular/common/http';
 import {Bundle, StructureDefinition, ValueSet} from '../models/fhir';
-import * as FhirResources from '../profiles-resources.json';
-import * as FhirTypes from '../profiles-types.json';
+import * as FhirResources from '../data/profiles-resources.json';
+import * as FhirTypes from '../data/profiles-types.json';
 import * as _ from 'underscore';
 
 @Injectable()

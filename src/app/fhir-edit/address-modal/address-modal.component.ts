@@ -1,14 +1,14 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {Address} from '../models/fhir';
+import {Address} from '../../models/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../globals';
+import {Globals} from '../../globals';
 
 @Component({
     selector: 'app-address-modal',
     templateUrl: './address-modal.component.html',
     styleUrls: ['./address-modal.component.css']
 })
-export class AddressModalComponent implements OnInit, DoCheck {
+export class FhirEditAddressModalComponent implements OnInit, DoCheck {
     @Input() address: Address;
 
     constructor(

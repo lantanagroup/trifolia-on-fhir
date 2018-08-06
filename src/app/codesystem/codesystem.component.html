@@ -1,63 +1,253 @@
 <h1>Code System</h1>
 
 <ngb-tabset>
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
-      <div class="row">
-        <div class="col-md-8">
-          <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL"></app-fhir-string>
+    <ngb-tab title="General">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-8">
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
+                </div>
+                <div class="col-md-4">
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" [codes]="globals.publicationStatusCodes"></app-fhir-select-single-code>
 
-          <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description"></app-fhir-markdown>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" [codes]="globals.codeSystemContentModeCodes"></app-fhir-select-single-code>
 
-          <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version"></app-fhir-string>
 
-          <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright"></app-fhir-markdown>
-        </div>
-        <div class="col-md-4">
-          <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version"></app-fhir-string>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+                </div>
+                <div class="col-md-6">
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive"></app-fhir-boolean>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+                    <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date"></app-fhir-date>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive"></app-fhir-boolean>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI"></app-fhir-string>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional"></app-fhir-boolean>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="globals.codeSystemHierarchyMeaningCodes"></app-fhir-select-single-code>
+                </div>
+                <div class="col-md-6">
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional"></app-fhir-boolean>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed"></app-fhir-boolean>
 
-          <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date"></app-fhir-date>
-        </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('count')" (ngModelChange)="globals.toggleProperty(codeSystem, 'count', 1)" />
+                            Rank
+                        </label>
+                        <input type="number" class="form-control" [disabled]="!codeSystem.hasOwnProperty('count')" [(ngModel)]="codeSystem.count" />
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
 
-  <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
-      <app-validation-results [results]="validation"></app-validation-results>
-    </ng-template>
-  </ngb-tab>
+    <ngb-tab title="Narrative">
+        <ng-template ngbTabContent>
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description"></app-fhir-markdown>
 
-  <!-- JSON -->
-  <ngb-tab title="JSON">
-    <ng-template ngbTabContent>
-      <ngb-tabset [justify]="'fill'">
-        <ngb-tab title="Pretty">
-          <ng-template ngbTabContent>
-            <t-json-viewer [json]="codeSystem"></t-json-viewer>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Plain">
-          <ng-template ngbTabContent>
-            <pre>{{codeSystem | json}}</pre>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
-    </ng-template>
-  </ngb-tab>
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+        </ng-template>
+    </ngb-tab>
+
+    <ngb-tab title="Additional">
+        <ng-template ngbTabContent>
+            <div class="card filter-property">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(codeSystem, 'filter', [{ code: '', operator: ['='], value: '' }])"/>
+                    Filter
+                </div>
+                <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('filter')">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Operator</th>
+                        <th>Value</th>
+                        <th>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Add a filter" (click)="codeSystem.filter.push({ code: '', operator: ['='], value: '' })">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let uc of codeSystem.filter; let uci = index">
+                        <td>
+                            <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <div class="input-group" *ngFor="let o of uc.operator; let oi = index">
+                                <select class="form-control">
+                                    <option value="=">=</option>
+                                    <option value="is-a">Is A (by subsumption)</option>
+                                    <option value="descendent-of">Descendent Of (by subsumption)</option>
+                                    <option value="is-not-a">Not (Is A) (by subsumption)</option>
+                                    <option value="regex">Regular Expression</option>
+                                    <option value="in">In Set</option>
+                                    <option value="not-in">Not in Set</option>
+                                    <option value="generalizes">Generalizes (by subsumption)</option>
+                                    <option value="exists">Exists</option>
+                                </select>
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" title="Remove this operator" (click)="uc.operator.splice(oi, 1)">
+                                        <i class="fa fa-remove"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p><a href="javascript:void(0)" (click)="uc.operator.push('=')">Add an operator</a></p>
+                        </td>
+                        <td><app-fhir-string [parentObject]="uc" propertyName="value" [required]="true" [isFormGroup]="false"></app-fhir-string></td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this filter" (click)="codeSystem.filter.splice(uci, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card property-property">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('property')" (ngModelChange)="globals.toggleProperty(codeSystem, 'property', [{ code: '', type: 'code' }])"/>
+                    Property
+                </div>
+                <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('property')">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>URI</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Add a property" (click)="codeSystem.property.push({ code: '', type: 'code' })">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let uc of codeSystem.property; let uci = index">
+                        <td>
+                            <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="uc" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+                        </td>
+                        <td>
+                            <app-fhir-select-single-code [parentObject]="uc" propertyName="type" [isFormGroup]="false" [required]="true" [codes]="globals.filterOperatorCodes"></app-fhir-select-single-code>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this property" (click)="codeSystem.property.splice(uci, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <app-fhir-multi-contact [parentObject]="codeSystem" propertyName="contact" title="Contact"></app-fhir-multi-contact>
+
+            <app-fhir-multi-use-context [parentObject]="codeSystem" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
+
+            <app-fhir-multi-jurisdiction [parentObject]="codeSystem" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
+        </ng-template>
+    </ngb-tab>
+
+    <ngb-tab title="Concept(s)">
+        <ng-template ngbTabContent>
+            <p>
+                <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="globals.toggleProperty(codeSystem, 'concept', [{}])" /> Code system has concepts
+            </p>
+
+            <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('concept')">
+                <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Display</th>
+                    <th>Definition</th>
+                    <th>
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="codeSystem.concept.push({})">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let c of codeSystem.concept; let ci = index">
+                    <td>
+                        <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                    </td>
+                    <td>
+                        <app-fhir-string [parentObject]="c" propertyName="display" [isFormGroup]="false"></app-fhir-string>
+                    </td>
+                    <td>
+                        <app-fhir-string [parentObject]="c" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
+                    </td>
+                    <td>
+                        <div class="ntb-group pull-right">
+                            <button type="button" class="btn btn-default btn-sm" title="Edit this concept" (click)="editConcept(c)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="codeSystem.concept.splice(ci, 1)">
+                                <i class="fa fa-remove"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation" title="Validation">
+        <ng-template ngbTabContent>
+            <app-validation-results [results]="validation"></app-validation-results>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- JSON -->
+    <ngb-tab title="JSON">
+        <ng-template ngbTabContent>
+            <ngb-tabset [justify]="'fill'">
+                <ngb-tab title="Pretty">
+                    <ng-template ngbTabContent>
+                        <t-json-viewer [json]="codeSystem"></t-json-viewer>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Plain">
+                    <ng-template ngbTabContent>
+                        <pre>{{codeSystem | json}}</pre>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </ng-template>
+    </ngb-tab>
 </ngb-tabset>

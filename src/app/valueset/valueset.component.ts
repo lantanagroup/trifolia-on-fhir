@@ -7,7 +7,7 @@ import {ValueSetService} from '../services/value-set.service';
 import {Observable} from 'rxjs/Observable';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ValuesetIncludeModalComponent} from '../valueset-include-modal/valueset-include-modal.component';
+import {FhirEditValuesetIncludeModalComponent} from '../fhir-edit/valueset-include-modal/valueset-include-modal.component';
 import {FhirService} from '../services/fhir.service';
 
 @Component({
@@ -62,7 +62,7 @@ export class ValuesetComponent implements OnInit, DoCheck {
     }
 
     public editInclude(include: ConceptSetComponent) {
-        const ref = this.modalService.open(ValuesetIncludeModalComponent, { size: 'lg' });
+        const ref = this.modalService.open(FhirEditValuesetIncludeModalComponent, { size: 'lg' });
         ref.componentInstance.include = include;
     }
 

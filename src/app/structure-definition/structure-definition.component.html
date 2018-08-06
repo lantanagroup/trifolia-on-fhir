@@ -196,31 +196,39 @@
                 <table class="table table-striped elements">
                     <thead>
                     <tr>
-                        <th>Element/Attribute</th>
-                        <th>Type</th>
-                        <th>Cardinality</th>
-                        <th>Binding</th>
-                        <th></th>
+                        <th class="element-name">Element/Attribute</th>
+                        <th class="element-properties">Properties</th>
+                        <th class="element-type">Type</th>
+                        <th class="element-cardinality">Cardinality</th>
+                        <th class="element-binding">Binding</th>
+                        <th class="element-actions"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr *ngFor="let e of elements" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement">
-                        <td [class.has-children]="e.hasChildren">
+                        <td class="element-name" [class.has-children]="e.hasChildren">
                             <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
                                 <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                             </div>
                             <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
-                            <a href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.id}}</a>
-                            <i class="fa fa-edit" *ngIf="e.id.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i>
+                            <a href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
+                            <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
                         </td>
-                        <td>{{getTypeDisplay(e)}}</td>
-                        <td>{{e.min}}..{{e.max}}</td>
-                        <td>{{e.binding}}</td>
-                        <td>
+                        <td class="element-properties">
+                            <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
+                            <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
+                            <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
+                            <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
+                            <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
+                        </td>
+                        <td class="element-type">{{e.type}}</td>
+                        <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
+                        <td class="element-binding">{{e.binding}}</td>
+                        <td class="element-actions">
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Constrain this element" (click)="constrainElement(e)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
                                 <button type="button" class="btn btn-default btn-sm" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1"><i class="fa fa-remove"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fa fa-remove"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -238,7 +246,7 @@
                         </div-->
                     </div>
                     <div class="card-body">
-                        <app-element-definition-panel *ngIf="selectedElement && selectedElement.constrainedElement" [elementTreeModel]="selectedElement" [disabled]="false" [elements]="elements" [structureDefinition]="structureDefinition"></app-element-definition-panel>
+                        <app-element-definition-panel *ngIf="selectedElement && selectedElement.constrainedElement" [elementTreeModel]="selectedElement" [disabled]="false" [elementTreeModels]="elements" [structureDefinition]="structureDefinition"></app-element-definition-panel>
                     </div>
                 </div>
             </ng-template>

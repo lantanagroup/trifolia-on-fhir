@@ -72,7 +72,9 @@
                             </select>
                         </td>
                         <td>
-                            <app-fhir-reference [reference]="g.profile"></app-fhir-reference>
+                            <app-fhir-reference
+                                    [parentObject]="g"
+                                    propertyName="profile"></app-fhir-reference>
                         </td>
                         <td>
                             <div class="pull-right">
@@ -198,7 +200,10 @@
                                 <td>
                                     <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')"
                                            [(ngModel)]="r.sourceUri" placeholder="URI"/>
-                                    <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [reference]="r.sourceReference"></app-fhir-reference>
+                                    <app-fhir-reference
+                                            *ngIf="r.hasOwnProperty('sourceReference')"
+                                            [parentObject]="r"
+                                            propertyName="sourceReference"></app-fhir-reference>
                                 </td>
                                 <td>
                                     <div class="pull-right">
@@ -361,8 +366,10 @@
                 Example For
             </label>
             <app-fhir-reference [disabled]="!currentResource.hasOwnProperty('exampleFor')"
-                            [reference]="currentResource.exampleFor" resourceType="StructureDefinition"
-                            [hideResourceType]="true"></app-fhir-reference>
+                                [parentObject]="currentResource"
+                                propertyName="exampleFor"
+                                resourceType="StructureDefinition"
+                                [hideResourceType]="true"></app-fhir-reference>
         </div>
     </div>
     <div class="modal-footer">
