@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {Address} from '../../models/fhir';
+import {Address} from '../../models/stu3/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 

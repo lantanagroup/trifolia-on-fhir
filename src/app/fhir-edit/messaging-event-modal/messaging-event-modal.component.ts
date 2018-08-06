@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EventComponent} from '../../models/fhir';
+import {EventComponent} from '../../models/stu3/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ValueSetService} from '../services/value-set.service';
-import {OperationOutcome, ValueSet} from '../models/fhir';
+import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 

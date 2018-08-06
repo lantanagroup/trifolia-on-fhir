@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {Coding} from '../../models/fhir';
+import {Coding} from '../../models/stu3/fhir';
 
 @Component({
   selector: 'app-fhir-coding-modal',

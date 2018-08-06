@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Range} from '../../models/fhir';
+import {Range} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 

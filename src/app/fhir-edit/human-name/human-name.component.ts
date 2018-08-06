@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { HumanName } from '../../models/fhir';
+import { HumanName } from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';

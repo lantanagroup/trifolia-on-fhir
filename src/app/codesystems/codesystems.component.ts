@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CodeSystemService} from '../services/code-system.service';
-import {CodeSystem, ValueSet} from '../models/fhir';
+import {CodeSystem, ValueSet} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Component({

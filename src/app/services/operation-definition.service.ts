@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {Bundle, OperationDefinition} from '../models/fhir';
+import {Bundle, OperationDefinition} from '../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable()

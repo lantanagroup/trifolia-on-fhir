@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Identifier} from '../../models/fhir';
+import {Identifier} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 
 @Component({

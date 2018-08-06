@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ValueSetService} from '../services/value-set.service';
-import {ValueSet} from '../models/fhir';
+import {ValueSet} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Component({

@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {ConceptSetComponent, ValueSet} from '../models/fhir';
+import {ConceptSetComponent, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';

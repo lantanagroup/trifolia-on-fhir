@@ -7,7 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition, StructureDefinition, TypeRefComponent, ValueSet} from '../models/fhir';
+import {ElementDefinition, StructureDefinition, TypeRefComponent, ValueSet} from '../models/stu3/fhir';
 import {ElementDef} from '@angular/core/src/view';
 import {DOCUMENT} from '@angular/common';
 import {Observable} from 'rxjs/Observable';

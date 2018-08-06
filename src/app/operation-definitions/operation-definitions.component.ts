@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {OperationDefinitionService} from '../services/operation-definition.service';
-import {OperationDefinition} from '../models/fhir';
+import {OperationDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Component({

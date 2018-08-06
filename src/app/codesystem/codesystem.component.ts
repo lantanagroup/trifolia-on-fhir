@@ -3,7 +3,7 @@ import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CodeSystemService} from '../services/code-system.service';
-import {CapabilityStatement, CodeSystem, ConceptDefinitionComponent} from '../models/fhir';
+import {CapabilityStatement, CodeSystem, ConceptDefinitionComponent} from '../models/stu3/fhir';
 import {Observable} from 'rxjs/Observable';
 import {FhirService} from '../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';

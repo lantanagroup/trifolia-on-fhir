@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../services/implementation-guide.service';
 import { ImplementationGuideListItemModel } from '../models/implementation-guide-list-item-model';
 import {ConfigService} from '../services/config.service';
-import {ImplementationGuide} from '../models/fhir';
+import {ImplementationGuide} from '../models/stu3/fhir';
 
 @Component({
     selector: 'app-implementation-guides',

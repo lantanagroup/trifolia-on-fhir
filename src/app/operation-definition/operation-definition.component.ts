@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {CapabilityStatement, ImplementationGuide, OperationDefinition, ParameterComponent} from '../models/fhir';
+import {CapabilityStatement, ImplementationGuide, OperationDefinition, ParameterComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {OperationDefinitionService} from '../services/operation-definition.service';

@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, ImplementationGuide, PageComponent} from '../models/fhir';
+import {Binary, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs/Observable';

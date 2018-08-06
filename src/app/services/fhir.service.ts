@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Resource} from '../models/fhir';
+import {Resource} from '../models/stu3/fhir';
 import * as Fhir from 'fhir';
 import * as FhirTypes from '../data/profiles-types.json';
 import * as FhirResources from '../data/profiles-resources.json';

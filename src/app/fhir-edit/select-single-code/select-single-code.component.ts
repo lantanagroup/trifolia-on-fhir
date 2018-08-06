@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Coding} from '../../models/fhir';
+import {Coding} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs/Observable';
 import * as _ from 'underscore';

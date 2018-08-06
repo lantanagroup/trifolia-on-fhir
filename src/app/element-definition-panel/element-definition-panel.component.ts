@@ -9,7 +9,7 @@ import {
     ElementDefinitionBindingComponent,
     StructureDefinition,
     TypeRefComponent
-} from '../models/fhir';
+} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Component({

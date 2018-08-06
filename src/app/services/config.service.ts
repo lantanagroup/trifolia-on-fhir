@@ -2,8 +2,8 @@ import {Injectable, EventEmitter} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
 import {Route, Router} from '@angular/router';
-import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from '../stu3/capability-statement/capability-statement.component';
-import {CapabilityStatementComponent as R4CapabilityStatementComponent} from '../r4/capability-statement/capability-statement.component';
+import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from '../capability-statement-wrapper/stu3/capability-statement.component';
+import {CapabilityStatementComponent as R4CapabilityStatementComponent} from '../capability-statement-wrapper/r4/capability-statement.component';
 import * as _ from 'underscore';
 
 @Injectable()
@@ -21,7 +21,8 @@ export class ConfigService {
 
     constructor(
         private http: HttpClient,
-        private routes: Router) {
+        private router: Router) {
+
         this.fhirServer = localStorage.getItem('fhirServer');
 
         this.http.get('/api/config')
@@ -42,7 +43,9 @@ export class ConfigService {
     }
 
     public changeFhirServer(fhirServer: string) {
+        const shouldRedirect = this.fhirServer !== fhirServer;
         this.fhirServer = fhirServer;
+
         localStorage.setItem('fhirServer', this.fhirServer);
 
         this.http.get('/api/config/fhir')
@@ -56,6 +59,10 @@ export class ConfigService {
                     this.fhirVersion.major = parseInt(versionMatch[1]);
                     this.fhirVersion.minor = parseInt(versionMatch[2]);
                     this.fhirVersion.patch = parseInt(versionMatch[3]);
+                }
+
+                if (shouldRedirect) {
+                    this.router.navigate(['/']);
                 }
 
                 this.fhirServerChanged.emit(this.fhirServer);

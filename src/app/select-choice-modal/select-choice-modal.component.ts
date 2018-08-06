@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {Coding, StructureDefinition, TypeRefComponent} from '../models/fhir';
+import {Coding, StructureDefinition, TypeRefComponent} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import * as _ from 'underscore';
 

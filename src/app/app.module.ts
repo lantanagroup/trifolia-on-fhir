@@ -85,8 +85,8 @@ import {FhirEditCodesystemConceptModalComponent} from './fhir-edit/codesystem-co
 import {FhirEditCapabilityStatementResourceModalComponent} from './fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirEditMessagingEventModalComponent} from './fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
-import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './stu3/capability-statement/capability-statement.component';
-import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement/capability-statement.component';
+import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './capability-statement-wrapper/stu3/capability-statement.component';
+import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/capability-statement.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({

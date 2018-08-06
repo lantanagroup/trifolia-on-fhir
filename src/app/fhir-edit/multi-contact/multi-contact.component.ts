@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {ContactDetail} from '../../models/fhir';
+import {ContactDetail} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ContactModalComponent} from '../contact-modal/contact-modal.component';

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {UsageContext} from '../../models/fhir';
+import {UsageContext} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-fhir-multi-use-context',

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AuditEvent, Coding, Bundle, OperationOutcome, Identifier} from '../models/fhir';
+import {AuditEvent, Coding, Bundle, OperationOutcome, Identifier} from '../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 import {AuthService} from './auth.service';
 import * as _ from 'underscore';

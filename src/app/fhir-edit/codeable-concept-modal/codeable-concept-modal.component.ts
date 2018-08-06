@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CodeableConcept, Coding} from '../../models/fhir';
+import {CodeableConcept, Coding} from '../../models/stu3/fhir';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';

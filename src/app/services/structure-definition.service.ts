@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 import { StructureDefinitionListItemModel } from '../models/structure-definition-list-item-model';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, StructureDefinition, ValueSet} from '../models/fhir';
+import {Bundle, StructureDefinition, ValueSet} from '../models/stu3/fhir';
 import * as FhirResources from '../data/profiles-resources.json';
 import * as FhirTypes from '../data/profiles-types.json';
 import * as _ from 'underscore';

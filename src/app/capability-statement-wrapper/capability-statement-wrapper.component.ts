@@ -1,8 +1,12 @@
 import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@angular/core';
 import {ConfigService} from '../services/config.service';
-import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from '../stu3/capability-statement/capability-statement.component';
-import {CapabilityStatementComponent as R4CapabilityStatementComponent} from '../r4/capability-statement/capability-statement.component';
+import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
+import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement.component';
 
+/**
+ * This class is responsible for determining which capability-statement component to render
+ * based on the fhirVersion that is supported by the fhir server.
+ */
 @Component({
     selector: 'app-capability-statement-wrapper',
     template: '<div></div>'

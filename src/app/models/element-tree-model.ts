@@ -1,4 +1,4 @@
-import {ElementDefinition, ElementDefinitionBindingComponent, ResourceReference, TypeRefComponent} from './fhir';
+import {ElementDefinition, ElementDefinitionBindingComponent, ResourceReference, TypeRefComponent} from './stu3/fhir';
 import {ElementDef} from '@angular/core/src/view';
 import {Globals} from '../globals';
 import * as _ from 'underscore';

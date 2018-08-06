@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Coding} from './models/fhir';
+import {Coding} from './models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Injectable()

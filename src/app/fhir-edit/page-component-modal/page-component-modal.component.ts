@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Binary, ImplementationGuide, PageComponent} from '../../models/fhir';
+import {Binary, ImplementationGuide, PageComponent} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import {Globals} from '../../globals';
 import {BinaryService} from '../../services/binary.service';

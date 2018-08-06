@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {ConceptDefinitionComponent, ConceptPropertyComponent} from '../../models/fhir';
+import {ConceptDefinitionComponent, ConceptPropertyComponent} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-fhir-edit-codesystem-concept-modal',

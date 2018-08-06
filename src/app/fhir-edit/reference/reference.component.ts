@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {Bundle, ResourceReference} from '../../models/fhir';
+import {Bundle, ResourceReference} from '../../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';

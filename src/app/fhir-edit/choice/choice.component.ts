@@ -3,7 +3,7 @@ import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditAddressModalComponent} from '../address-modal/address-modal.component';
 import {FhirEditCodeableConceptModalComponent} from '../codeable-concept-modal/codeable-concept-modal.component';
-import {CodeableConcept, Coding} from '../../models/fhir';
+import {CodeableConcept, Coding} from '../../models/stu3/fhir';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
 import {FhirEditContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
 import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';

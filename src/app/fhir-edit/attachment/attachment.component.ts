@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {Attachment} from '../../models/fhir';
+import {Attachment} from '../../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditAttachmentModalComponent} from '../attachment-modal/attachment-modal.component';
 

@@ -1,14 +1,7 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../services/capability-statement.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {
-    CapabilityStatement,
-    Coding, EventComponent,
-    ImplementationGuide,
-    ResourceComponent,
-    RestComponent,
-    UsageContext
-} from '../../models/fhir';
+import {CapabilityStatement, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs/Observable';
 import {RecentItemService} from '../../services/recent-item.service';

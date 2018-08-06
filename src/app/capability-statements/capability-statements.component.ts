@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../services/capability-statement.service';
-import {CapabilityStatement} from '../models/fhir';
+import {CapabilityStatement} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 
 @Component({

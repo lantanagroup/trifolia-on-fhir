@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {ContactPoint} from '../../models/fhir';
+import {ContactPoint} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-fhir-contact-point-modal',

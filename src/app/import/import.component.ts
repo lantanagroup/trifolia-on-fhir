@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ImportService} from '../services/import.service';
-import {OperationOutcome} from '../models/fhir';
+import {OperationOutcome} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 
 enum ContentTypes {

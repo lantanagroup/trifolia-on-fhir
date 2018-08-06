@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ContactDetail} from '../../models/fhir';
+import {ContactDetail} from '../../models/stu3/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 

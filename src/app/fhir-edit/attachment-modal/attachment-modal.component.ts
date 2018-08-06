@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Attachment} from '../../models/fhir';
+import {Attachment} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-fhir-attachment-modal',
