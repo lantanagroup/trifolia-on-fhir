@@ -7,9 +7,9 @@
 <div class="modal-body">
   <app-fhir-string [parentObject]="address" propertyName="text" title="Text" [required]="isRequired()"></app-fhir-string>
 
-  <app-fhir-select-single-code [parentObject]="address" propertyName="use" title="Use" [codes]="globals.addressUseCodes"></app-fhir-select-single-code>
+  <app-fhir-select-single-code [parentObject]="address" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/address-use"></app-fhir-select-single-code>
 
-  <app-fhir-select-single-code [parentObject]="address" propertyName="type" title="Type" [codes]="globals.addressTypeCodes"></app-fhir-select-single-code>
+  <app-fhir-select-single-code [parentObject]="address" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/address-type"></app-fhir-select-single-code>
 
   <div class="card">
     <div class="card-header">

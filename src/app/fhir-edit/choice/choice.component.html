@@ -54,7 +54,7 @@
             <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', '')"/>
         </div>
         <select class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')" [(ngModel)]="parentObject[getChoicePropertyName()].system">
-            <option *ngFor="let cpc of globals.contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
+            <option *ngFor="let cpc of contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
         </select>
         <div class="input-group-addon">
             <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', '')"/>

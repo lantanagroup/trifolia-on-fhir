@@ -64,7 +64,7 @@ export class AppComponent implements OnInit {
             if (event instanceof NavigationEnd) {
                 this.isBigContainer =
                     event.url.startsWith('/implementation-guide/') ||
-                    event.url.startsWith('/structure-definition') ||
+                    (event.url.startsWith('/structure-definition') && !event.url.endsWith('/new')) ||
                     event.url.startsWith('/capability-statement/');
             }
         });

@@ -29,7 +29,7 @@
             <tbody>
             <tr *ngFor="let t of contact.telecom; let ti = index">
                 <td>
-                    <app-fhir-select-single-code [parentObject]="t" propertyName="system" [codes]="globals.contactPointSystemCodes" [isFormGroup]="false"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="t" propertyName="system" valueSetUrl="http://hl7.org/fhir/ValueSet/contact-point-system" [isFormGroup]="false"></app-fhir-select-single-code>
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="t" propertyName="value" [isFormGroup]="false"></app-fhir-string>

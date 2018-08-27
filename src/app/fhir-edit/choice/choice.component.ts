@@ -7,6 +7,7 @@ import {CodeableConcept, Coding} from '../../models/stu3/fhir';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
 import {FhirEditContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
 import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-fhir-choice',
@@ -22,9 +23,11 @@ export class ChoiceComponent implements OnInit {
     @Input() isFormGroup = true;
     @Input() tooltip: string;
     @Input() tooltipKey: string;
+    public contactPointSystemCodes: Coding[] = [];
 
     constructor(
         public globals: Globals,
+        private fhirService: FhirService,
         private modalService: NgbModal) {
     }
 
@@ -230,5 +233,6 @@ export class ChoiceComponent implements OnInit {
         }
 
         this.choices.sort();
+        this.contactPointSystemCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/contact-point-system');
     }
 }

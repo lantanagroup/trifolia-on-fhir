@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {UsageContext} from '../../models/stu3/fhir';
+import {Coding, UsageContext} from '../../models/stu3/fhir';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-fhir-multi-use-context',
@@ -10,8 +11,11 @@ import {UsageContext} from '../../models/stu3/fhir';
 export class MultiUseContextComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
+    public usageContextTypeCodes: Coding[] = [];
 
-    constructor(public globals: Globals) {
+    constructor(
+        public globals: Globals,
+        private fhirService: FhirService) {
     }
 
     public getUseContextCodeType(useContext: UsageContext) {
@@ -61,5 +65,6 @@ export class MultiUseContextComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.usageContextTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/usage-context-type');
     }
 }

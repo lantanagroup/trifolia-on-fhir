@@ -8,6 +8,7 @@ import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-m
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {
+    DifferentialComponent,
     ElementDefinition,
     StructureDefinition
 } from '../models/stu3/fhir';
@@ -216,6 +217,18 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             this.strucDefService.getStructureDefinition(strucDefId)
                 .mergeMap((structureDefinition: any) => {
                     this.structureDefinition = structureDefinition;
+
+                    if (!this.structureDefinition.differential) {
+                        this.structureDefinition.differential = new DifferentialComponent({ element: [] });
+                    }
+
+                    if (this.structureDefinition.differential.element.length === 0) {
+                        this.structureDefinition.differential.element.push({
+                            id: this.structureDefinition.type,
+                            path: this.structureDefinition.type
+                        });
+                    }
+
                     this.configService.setStatusMessage('Loading base structure definition');
                     return this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
                 })

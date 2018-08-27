@@ -7,7 +7,7 @@
 <div class="modal-body">
     <app-fhir-string [parentObject]="humanName" propertyName="text" title="Text"></app-fhir-string>
     
-    <app-fhir-select-single-code [parentObject]="humanName" propertyName="use" title="Use" [codes]="globals.nameUseCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="humanName" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/name-use"></app-fhir-select-single-code>
     
     <app-fhir-string [parentObject]="humanName" propertyName="family" title="Family"></app-fhir-string>
     

@@ -187,7 +187,7 @@
                             </button>
                         </p>
 
-                        <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" [codes]="globals.restfulCapabilityModeCodes" [required]="true"></app-fhir-select-single-code>
+                        <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true"></app-fhir-select-single-code>
 
                         <app-fhir-markdown [parentObject]="r" propertyName="documentation" title="Documentation"></app-fhir-markdown>
 
@@ -270,7 +270,7 @@
                                 <tbody>
                                 <tr *ngFor="let res of r.resource; let resi = index">
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="globals.resourceTypeCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
                                     </td>
                                     <td>
                                         <app-fhir-reference
@@ -320,7 +320,7 @@
                                 <tbody>
                                 <tr *ngFor="let i of r.interaction; let ii = index">
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" [required]="true" [codes]="globals.systemRestfulInteractionCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/type-restful-interaction"></app-fhir-select-single-code>
                                     </td>
                                     <td>
                                         <app-fhir-string [parentObject]="i" propertyName="documentation" [isFormGroup]="false"></app-fhir-string>
@@ -368,7 +368,7 @@
                                         <app-fhir-string [parentObject]="si" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
                                     </td>
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" [codes]="globals.searchParamTypeCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
                                     </td>
                                     <td>
                                         <app-fhir-string [parentObject]="si" propertyName="documentation" [isFormGroup]="false"></app-fhir-string>
@@ -493,7 +493,7 @@
                         <!-- Endpoints -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(r, 'endpoint', [{ protocol: globals.messageTransportCodes[0], address: '' }])"/>
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(r, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
                                 Endpoints
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
@@ -503,7 +503,7 @@
                                     <th>Address</th>
                                     <th>
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Add an endpoint" (click)="messaging.endpoint.push({ protocol: globals.messageTransportCodes[0], address: '' })">
+                                            <button type="button" class="btn btn-default btn-sm" title="Add an endpoint" (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -513,8 +513,8 @@
                                 <tbody>
                                 <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
                                     <td>
-                                        <select class="form-control" [ngModel]="globals.getSelectCoding(endpoint.protocol, globals.messageTransportCodes, true, true)" (ngModelChange)="endpoint.protocol = $event">
-                                            <option *ngFor="let c of globals.messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
+                                        <select class="form-control" [ngModel]="globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)" (ngModelChange)="endpoint.protocol = $event">
+                                            <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
                                         </select>
                                     </td>
                                     <td>
@@ -565,7 +565,7 @@
                                 <tbody>
                                 <tr *ngFor="let sm of messaging.supportedMessage; let smi = index">
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="sm" propertyName="mode" [isFormGroup]="false" [required]="true" [codes]="globals.eventCapabilityModeCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="sm" propertyName="mode" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
                                     </td>
                                     <td>
                                         <app-fhir-reference [parentObject]="sm" propertyName="definition" [isFormGroup]="false" [required]="true" resourceType="MessageDefinition"></app-fhir-reference>
@@ -608,15 +608,15 @@
                                 <tbody>
                                 <tr *ngFor="let event of messaging.event; let eventi = index">
                                     <td>
-                                        <select class="form-control" [ngModel]="globals.getSelectCoding(event.code, globals.messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
-                                            <option *ngFor="let c of globals.messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
+                                        <select class="form-control" [ngModel]="globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
+                                            <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="event" propertyName="mode" [isFormGroup]="false" [required]="true" [codes]="globals.eventCapabilityModeCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="event" propertyName="mode" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
                                     </td>
                                     <td>
-                                        <app-fhir-select-single-code [parentObject]="event" propertyName="focus" [isFormGroup]="false" [required]="true" [codes]="globals.resourceTypeCodes"></app-fhir-select-single-code>
+                                        <app-fhir-select-single-code [parentObject]="event" propertyName="focus" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
                                     </td>
                                     <td>
                                         <app-fhir-reference [parentObject]="event" propertyName="request" [isFormGroup]="false" [required]="true" resourceType="StructureDefinition"></app-fhir-reference>
@@ -670,7 +670,7 @@
                 <tbody>
                 <tr *ngFor="let d of capabilityStatement.document; let i = index">
                     <td>
-                        <app-fhir-select-single-code [parentObject]="d" propertyName="mode" [isFormGroup]="false" [required]="true" [codes]="globals.documentModeCodes"></app-fhir-select-single-code>
+                        <app-fhir-select-single-code [parentObject]="d" propertyName="mode" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/document-mode"></app-fhir-select-single-code>
                     </td>
                     <td>
                         <app-fhir-string [parentObject]="d" propertyName="documentation" [required]="false" [isFormGroup]="false"></app-fhir-string>

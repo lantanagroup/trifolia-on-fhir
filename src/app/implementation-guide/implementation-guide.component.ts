@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, CapabilityStatement, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
+import {Binary, CapabilityStatement, Coding, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs/Observable';
@@ -31,6 +31,7 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
     public validation: any;
     public pages: PageDefinition[];
     private unsavedBinaryAssociations: string[] = [];
+    public resourceTypeCodes: Coding[] = [];
 
     constructor(
         private modal: NgbModal,
@@ -314,6 +315,8 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
                     this.implementationGuide.id,
                     this.implementationGuide.name);
             });
+
+        this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     }
 
     ngDoCheck() {

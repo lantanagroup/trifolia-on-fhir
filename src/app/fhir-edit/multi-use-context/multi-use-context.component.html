@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ code: globals.useContextCodes[0], valueQuantity: { unit: '', value: '' }}])"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }}])"/>
         Use Context
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
@@ -12,7 +12,7 @@
             <th>
                 <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Add a use context"
-                            (click)="parentObject[propertyName].push({ code: globals.useContextCodes[0], valueQuantity: { unit: '', value: '' }})">
+                            (click)="parentObject[propertyName].push({ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }})">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -22,9 +22,9 @@
         <tbody>
         <tr *ngFor="let uc of parentObject[propertyName]; let uci = index">
             <td>
-                <select class="form-control" [ngModel]="globals.getSelectCoding(uc.code, globals.useContextCodes)"
+                <select class="form-control" [ngModel]="globals.getSelectCoding(uc.code, usageContextTypeCodes)"
                         (ngModelChange)="uc.code = $event">
-                    <option *ngFor="let c of globals.useContextCodes" [ngValue]="c">{{c.display}}</option>
+                    <option *ngFor="let c of usageContextTypeCodes" [ngValue]="c">{{c.display}}</option>
                 </select>
             </td>
             <td>

@@ -258,7 +258,7 @@
         <ngb-tab title="Slicing" *ngIf="element.slicing">
             <ng-template ngbTabContent>
                 <app-fhir-select-single-code [parentObject]="element.slicing" propertyName="rules" title="Rules"
-                                             [codes]="globals.slicingRulesCodes"
+                                             valueSetUrl="http://hl7.org/fhir/ValueSet/resource-slicing-rules"
                                              [required]="true"></app-fhir-select-single-code>
 
                 <div class="card">
@@ -287,7 +287,7 @@
                             <td>
                                 <app-fhir-select-single-code [parentObject]="d" propertyName="type"
                                                              [isFormGroup]="false"
-                                                             [codes]="globals.disciminatorTypeCodes"
+                                                             valueSetUrl="http://hl7.org/fhir/ValueSet/discriminator-type"
                                                              [required]="true"></app-fhir-select-single-code>
                             </td>
                             <td>
@@ -379,7 +379,7 @@
                     </div>
                     <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
                         <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength"
-                                                     [codes]="globals.bindingStrengthCodes"
+                                                     valueSetUrl="http://hl7.org/fhir/ValueSet/binding-strength"
                                                      title="Strength"></app-fhir-select-single-code>
 
                         <div class="form-group">

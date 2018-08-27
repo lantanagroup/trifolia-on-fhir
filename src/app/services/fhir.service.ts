@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, Resource, StructureDefinition, ValueSet} from '../models/stu3/fhir';
+import {Bundle, CodeSystem, Coding, Resource, StructureDefinition, ValueSet} from '../models/stu3/fhir';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import * as Fhir from 'fhir';
@@ -23,12 +23,17 @@ export class FhirService {
 
     private loadAssets() {
         this.loaded = false;
+        let loadDirectory = 'stu3';
+
+        if (this.configService.isFhirR4()) {
+            loadDirectory = 'r4';
+        }
 
         const assetPromises = [
-            this.http.get('/assets/stu3/codesystem-iso3166.json'),
-            this.http.get('/assets/stu3/valuesets.json'),
-            this.http.get('/assets/stu3/profiles-types.json'),
-            this.http.get('/assets/stu3/profiles-resources.json')
+            this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json'),
+            this.http.get('/assets/' + loadDirectory + '/valuesets.json'),
+            this.http.get('/assets/' + loadDirectory + '/profiles-types.json'),
+            this.http.get('/assets/' + loadDirectory + '/profiles-resources.json')
         ];
 
         Observable.forkJoin(assetPromises)
@@ -49,6 +54,47 @@ export class FhirService {
             }, (err) => {
                 console.log('Error loading assets');
             });
+    }
+
+    public getValueSetCodes(valueSetUrl: string): Coding[] {
+        let codes: Coding[] = [];
+        const foundValueSet = _.chain(this.valueSets)
+            .filter((item) => item.resourceType === 'ValueSet')
+            .find((valueSet) => valueSet.url === valueSetUrl)
+            .value();
+
+        if (foundValueSet) {
+            if (foundValueSet.compose) {
+                _.each(foundValueSet.compose.include, (include) => {
+                    const foundSystem = _.chain(this.valueSets)
+                        .filter((item) => item.resourceType === 'CodeSystem')
+                        .find((codeSystem: CodeSystem) => codeSystem.url === include.system)
+                        .value();
+
+                    if (foundSystem) {
+                        const csCodes = _.map(foundSystem.concept, (concept) => {
+                            return {
+                                system: include.system,
+                                code: concept.code,
+                                display: concept.display || concept.code
+                            };
+                        });
+                        codes = codes.concat(csCodes);
+                    }
+
+                    const includeCodes = _.map(include.concept, (concept) => {
+                        return {
+                            system: include.system,
+                            code: concept.code,
+                            display: concept.display || concept.code
+                        };
+                    });
+                    codes = codes.concat(includeCodes);
+                });
+            }
+        }
+
+        return codes;
     }
 
     /**

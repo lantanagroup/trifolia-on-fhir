@@ -13,7 +13,7 @@
 
   <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" title="Content Type" [isTypeahead]="true" [codes]="globals.mimeTypeCodes"></app-fhir-select-single-code>
 
-  <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" title="Language" [isTypeahead]="true" [codes]="globals.commonLanguageCodes" defaultCode="en-US"></app-fhir-select-single-code>
+  <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" title="Language" [isTypeahead]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/all-languages" defaultCode="en-US"></app-fhir-select-single-code>
 
   <div class="form-group">
     <label>

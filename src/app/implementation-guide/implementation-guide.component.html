@@ -66,9 +66,7 @@
                     <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
                         <td>
                             <select class="form-control" [(ngModel)]="g.type">
-                                <option *ngFor="let o of globals.resourceTypes | keys" [ngValue]="o.value.code">
-                                    {{o.value.display}}
-                                </option>
+                                <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
                             </select>
                         </td>
                         <td>

@@ -1,3 +1,23 @@
-<p>
-  new-profile works!
-</p>
+<h3>New Structure Definition</h3>
+
+<div class="row">
+  <div class="col-md-8">
+    <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" [required]="true"></app-fhir-string>
+  </div>
+  <div class="col-md-4">
+    <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true"></app-fhir-select-single-code>
+
+    <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true"></app-fhir-select-single-code>
+
+    <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true"></app-fhir-boolean>
+
+    <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/defined-types" [required]="true"></app-fhir-select-single-code>
+  </div>
+</div>
+
+<footer class="footer">
+  <button type="button" class="btn btn-default" (click)="save()" [disabled]="saveDisabled()">Save</button>
+  <span class="message">{{message}}</span>
+</footer>

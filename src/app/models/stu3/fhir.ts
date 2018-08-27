@@ -788,7 +788,7 @@ export class StructureDefinition extends DomainResource {
     public fhirVersion?: string;
     public mapping?: MappingComponent[];
     public kind: string;
-    public abstract: boolean;
+    public abstract = false;
     public contextType?: string;
     public context?: string[];
     public contextInvariant?: string[];
@@ -9770,7 +9770,7 @@ export class ImplementationGuide extends DomainResource {
     public url: string;
     public version?: string;
     public name: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
     public date?: Date;
     public publisher?: string;

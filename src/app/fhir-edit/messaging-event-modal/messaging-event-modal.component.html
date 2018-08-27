@@ -7,8 +7,8 @@
 <div class="modal-body">
     <div class="form-group">
         <label>Code</label>
-        <select class="form-control" [ngModel]="globals.getSelectCoding(event.code, globals.messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
-            <option *ngFor="let c of globals.messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
+        <select class="form-control" [ngModel]="globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
+            <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
         </select>
     </div>
 
@@ -16,11 +16,11 @@
 
     <app-fhir-reference [parentObject]="event" propertyName="response" [required]="true" title="Response" resourceType="StructureDefinition"></app-fhir-reference>
 
-    <app-fhir-select-single-code [parentObject]="event" propertyName="mode" [required]="true" title="Mode" [codes]="globals.eventCapabilityModeCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="event" propertyName="mode" [required]="true" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
 
-    <app-fhir-select-single-code [parentObject]="event" propertyName="focus" [required]="true" title="Focus" [codes]="globals.resourceTypeCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="event" propertyName="focus" [required]="true" title="Focus" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
 
-    <app-fhir-select-single-code [parentObject]="event" propertyName="category" title="Category" [codes]="globals.messageSignificanceCategoryCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="event" propertyName="category" title="Category" valueSetUrl="http://hl7.org/fhir/ValueSet/message-significance-category"></app-fhir-select-single-code>
 
     <app-fhir-string [parentObject]="event" propertyName="documentation" title="Documentation"></app-fhir-string>
 </div>

@@ -1,10 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {Bundle, ResourceReference} from '../../models/stu3/fhir';
+import {Bundle, Coding, ResourceReference} from '../../models/stu3/fhir';
 import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
 import {Subject} from 'rxjs/Subject';
 import {HttpClient} from '@angular/common/http';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-fhir-reference-modal',
@@ -17,10 +18,12 @@ export class FhirEditReferenceModalComponent implements OnInit {
     public contentSearch?: string;
     public contentSearchChanged: Subject<string> = new Subject<string>();
     public results?: Bundle;
+    public resourceTypeCodes: Coding[] = [];
 
     constructor(
         public activeModal: NgbActiveModal,
         private http: HttpClient,
+        private fhirService: FhirService,
         public globals: Globals) {
 
         this.contentSearchChanged
@@ -60,6 +63,7 @@ export class FhirEditReferenceModalComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
         this.criteriaChanged();
     }
 }

@@ -14,9 +14,9 @@
                     <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
                 </div>
                 <div class="col-md-4">
-                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" [codes]="globals.publicationStatusCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
 
-                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" [codes]="globals.codeSystemContentModeCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode"></app-fhir-select-single-code>
 
                     <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version"></app-fhir-string>
 
@@ -156,7 +156,7 @@
                             <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
                         </td>
                         <td>
-                            <app-fhir-select-single-code [parentObject]="uc" propertyName="type" [isFormGroup]="false" [required]="true" [codes]="globals.filterOperatorCodes"></app-fhir-select-single-code>
+                            <app-fhir-select-single-code [parentObject]="uc" propertyName="type" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/concept-property-type"></app-fhir-select-single-code>
                         </td>
                         <td>
                             <div class="pull-right">

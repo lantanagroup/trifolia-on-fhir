@@ -5,11 +5,11 @@
     </button>
 </div>
 <div class="modal-body">
-    <app-fhir-select-single-code [parentObject]="contactPoint" propertyName="system" title="System" [codes]="globals.contactPointSystemCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="contactPoint" propertyName="system" title="System" valueSetUrl="http://hl7.org/fhir/ValueSet/contact-point-system"></app-fhir-select-single-code>
 
     <app-fhir-string [parentObject]="contactPoint" propertyName="value" title="Value"></app-fhir-string>
 
-    <app-fhir-select-single-code [parentObject]="contactPoint" propertyName="use" title="Use" [codes]="globals.contactPointUseCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="contactPoint" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/contact-point-use"></app-fhir-select-single-code>
 
     <div class="form-group">
         <label>

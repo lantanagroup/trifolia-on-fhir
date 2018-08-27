@@ -36,17 +36,22 @@
                         </div>
 
                         <div class="col-md-3">
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" [codes]="globals.publicationStatusCodes"></app-fhir-select-single-code>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true"></app-fhir-select-single-code>
 
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" [codes]="globals.structureDefinitionKindCodes" [required]="true"></app-fhir-select-single-code>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true"></app-fhir-select-single-code>
 
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type" [codes]="globals.definedTypeCodes" [required]="true"></app-fhir-select-single-code>
-
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" [codes]="globals.extensionContextCodes"></app-fhir-select-single-code>
-
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" [codes]="globals.typeDerivationRuleCodes"></app-fhir-select-single-code>
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true" title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type.">
+                                    <option>{{structureDefinition.type}}</option>
+                                </select>
+                            </div>
 
                             <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true"></app-fhir-boolean>
+
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" valueSetUrl="http://hl7.org/fhir/ValueSet/extension-context"></app-fhir-select-single-code>
+
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"></app-fhir-select-single-code>
 
                             <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipKey="sd.date"></app-fhir-date>
                         </div>

@@ -1,7 +1,7 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../services/capability-statement.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CapabilityStatement, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
+import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs/Observable';
 import {RecentItemService} from '../../services/recent-item.service';
@@ -20,6 +20,8 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
     @Input() public capabilityStatement = new CapabilityStatement();
     public message: string;
     public validation: any;
+    public messageEventCodes: Coding[] = [];
+    public messageTransportCodes: Coding[] = [];
 
     constructor(
         public globals: Globals,
@@ -71,7 +73,7 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
 
     public getDefaultMessagingEvent(): EventComponent {
         return {
-            code: this.globals.messageEventCodes[0],
+            code: this.messageEventCodes[0],
             mode: 'sender',
             focus: 'Account',
             request: { reference: '', display: '' },
@@ -114,6 +116,8 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
     }
 
     ngOnInit() {
+        this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
+        this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
         this.getCapabilityStatement()
             .subscribe((cs) => {
                 this.recentItemService.ensureRecentItem(

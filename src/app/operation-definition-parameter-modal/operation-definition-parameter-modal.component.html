@@ -19,7 +19,7 @@
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(parameter, 'type', '')" />
         </label>
         <select class="form-control" [disabled]="!parameter.hasOwnProperty('type')" [(ngModel)]="parameter.type">
-            <option *ngFor="let o of globals.allTypes" [ngValue]="o.code">{{o.display}}</option>
+            <option *ngFor="let o of allTypeCodes" [ngValue]="o.code">{{o.display}}</option>
         </select>
     </div>
 

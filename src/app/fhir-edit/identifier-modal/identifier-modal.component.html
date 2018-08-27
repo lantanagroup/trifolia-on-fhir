@@ -5,13 +5,13 @@
     </button>
 </div>
 <div class="modal-body" *ngIf="identifier">
-    <app-fhir-select-single-code [parentObject]="identifier" propertyName="use" title="Use" [codes]="globals.identifierUseCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="identifier" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use"></app-fhir-select-single-code>
 
     <app-fhir-string [parentObject]="identifier" propertyName="system" title="System"></app-fhir-string>
 
     <app-fhir-string [parentObject]="identifier" propertyName="value" title="Value"></app-fhir-string>
 
-    <app-fhir-select-single-code [parentObject]="identifier" propertyName="type" title="Type" [codes]="globals.identifierTypeCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="identifier" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-type"></app-fhir-select-single-code>
 
     <div class="form-group">
         <label>Period</label>

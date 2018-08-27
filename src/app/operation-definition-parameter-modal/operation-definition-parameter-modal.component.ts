@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OperationDefinition, ParameterComponent} from '../models/stu3/fhir';
+import {Coding, OperationDefinition, ParameterComponent} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-operation-definition-parameter-modal',
@@ -11,9 +12,11 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 export class OperationDefinitionParameterModalComponent implements OnInit {
     @Input() operationDefinition: OperationDefinition;
     @Input() parameter: ParameterComponent;
+    public allTypeCodes: Coding[] = [];
 
     constructor(
         public activeModal: NgbActiveModal,
+        private fhirService: FhirService,
         public globals: Globals) {
 
     }
@@ -45,6 +48,6 @@ export class OperationDefinitionParameterModalComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.allTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/all-types');
     }
-
 }

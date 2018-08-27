@@ -9,7 +9,7 @@
             [parentObject]="resource"
             propertyName="type"
             title="Type"
-            [codes]="globals.resourceTypeCodes"></app-fhir-select-single-code>
+            valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
 
     <app-fhir-reference
             [parentObject]="resource"
@@ -45,7 +45,7 @@
             <tbody>
             <tr *ngFor="let i of resource.interaction; let ii = index">
                 <td>
-                    <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" [codes]="globals.typeRestfulInteractionCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/system-restful-interaction"></app-fhir-select-single-code>
                 </td>
                 <td>
                     <div class="input-group">
@@ -74,7 +74,7 @@
         </table>
     </div>
 
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="versioning" title="Versioning" [codes]="globals.versioningPolicyCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="resource" propertyName="versioning" title="Versioning" valueSetUrl="http://hl7.org/fhir/ValueSet/versioning-policy"></app-fhir-select-single-code>
 
     <app-fhir-boolean [parentObject]="resource" propertyName="readHistory" title="Read History"></app-fhir-boolean>
 
@@ -82,11 +82,11 @@
 
     <app-fhir-boolean [parentObject]="resource" propertyName="conditionalCreate" title="Conditional Create"></app-fhir-boolean>
 
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalRead" title="Conditional Read" [codes]="globals.conditionalReadStatusCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalRead" title="Conditional Read" valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-read-status"></app-fhir-select-single-code>
 
     <app-fhir-boolean [parentObject]="resource" propertyName="conditionalUpdate" title="Conditional Update"></app-fhir-boolean>
 
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalDelete" title="Conditional Delete" [codes]="globals.conditionalDeleteStatusCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalDelete" title="Conditional Delete" valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-delete-status"></app-fhir-select-single-code>
 
     <div class="card">
         <div class="card-header">
@@ -109,7 +109,7 @@
             <tbody>
             <tr *ngFor="let rp of resource.referencePolicy; let rpi = index">
                 <td>
-                    <app-fhir-select-single-code [parentObject]="resource.referencePolicy" [propertyName]="rpi" [isFormGroup]="false" [codes]="globals.referenceHandlingPolicyCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="resource.referencePolicy" [propertyName]="rpi" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/reference-handling-policy"></app-fhir-select-single-code>
                 </td>
                 <td>
                     <div class="pull-right">
@@ -223,7 +223,7 @@
                     <app-fhir-string [parentObject]="si" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
                 </td>
                 <td>
-                    <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" [codes]="globals.searchParamTypeCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="si" propertyName="documentation" [isFormGroup]="false"></app-fhir-string>

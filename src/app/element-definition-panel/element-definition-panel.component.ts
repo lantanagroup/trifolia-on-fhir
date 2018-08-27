@@ -11,6 +11,7 @@ import {
     TypeRefComponent
 } from '../models/stu3/fhir';
 import * as _ from 'underscore';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-element-definition-panel',
@@ -27,8 +28,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
     public editedSliceName: string;
     public valueSetChoices = ['Uri', 'Reference'];
     public types: Coding[] = [];
+    public definedTypeCodes: Coding[] = [];
 
-    constructor(private modalService: NgbModal, public globals: Globals) {
+    constructor(
+        private modalService: NgbModal,
+        private fhirService: FhirService,
+        public globals: Globals) {
 
     }
 
@@ -104,7 +109,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     private getTypes(): Coding[] {
         const elementTreeModelTypes = this.element.type ? this.element.type : [];
 
-        return _.filter(this.globals.definedTypeCodes, (definedTypeCode: Coding) => {
+        return _.filter(this.definedTypeCodes, (definedTypeCode: Coding) => {
             const foundType = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === definedTypeCode.code);
             return !foundType;        // Only return definedTypeCodes that are no found in the list of types in the element
         });
@@ -130,7 +135,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     getTypeDisplay(code: string) {
-        const foundType = _.find(this.globals.definedTypeCodes, (definedTypeCode: Coding) => definedTypeCode.code === code);
+        const foundType = _.find(this.definedTypeCodes, (definedTypeCode: Coding) => definedTypeCode.code === code);
 
         if (foundType) {
             return foundType.display;
@@ -144,6 +149,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.definedTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/defined-types');
         this.types = this.getTypes();
     }
 }

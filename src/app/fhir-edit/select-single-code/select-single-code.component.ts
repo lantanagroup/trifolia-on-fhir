@@ -4,6 +4,7 @@ import {Globals} from '../../globals';
 import {Observable} from 'rxjs/Observable';
 import * as _ from 'underscore';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-fhir-select-single-code',
@@ -14,6 +15,7 @@ export class SelectSingleCodeComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() codes: Coding[];
+    @Input() valueSetUrl: string;
     @Input() required: boolean;
     @Input() tooltip: string;
     @Input() tooltipKey: string;
@@ -22,7 +24,9 @@ export class SelectSingleCodeComponent implements OnInit {
     @Input() isTypeahead = false;
     @Input() defaultCode: string;
 
-    constructor(public globals: Globals) {
+    constructor(
+        public globals: Globals,
+        private fhirService: FhirService) {
     }
 
     public getDefaultCode(): string {
@@ -79,6 +83,10 @@ export class SelectSingleCodeComponent implements OnInit {
 
         if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
+        }
+
+        if (!this.codes && this.valueSetUrl) {
+            this.codes = this.fhirService.getValueSetCodes(this.valueSetUrl);
         }
     }
 }

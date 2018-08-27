@@ -56,7 +56,7 @@ export class StructureDefinitionService {
             const url = '/api/structureDefinition/' + encodeURIComponent(structureDefinition.id);
             return this.http.put<StructureDefinition>(url, structureDefinition);
         } else {
-            return this.http.post<StructureDefinition>('/api/valueSet', structureDefinition);
+            return this.http.post<StructureDefinition>('/api/structureDefinition', structureDefinition);
         }
     }
 

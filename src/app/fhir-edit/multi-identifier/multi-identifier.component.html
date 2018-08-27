@@ -21,7 +21,7 @@
         <tbody>
         <tr *ngFor="let id of parentObject[propertyName]; let idi = index">
             <td>
-                <app-fhir-select-single-code [parentObject]="id" propertyName="use" [isFormGroup]="false" [codes]="globals.identifierUseCodes"></app-fhir-select-single-code>
+                <app-fhir-select-single-code [parentObject]="id" propertyName="use" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use"></app-fhir-select-single-code>
             </td>
             <td>
                 <app-fhir-string [parentObject]="id" propertyName="system" [isFormGroup]="false"></app-fhir-string>

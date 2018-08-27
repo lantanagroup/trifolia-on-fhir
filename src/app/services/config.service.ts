@@ -62,6 +62,18 @@ export class ConfigService {
             });
     }
 
+    public isFhirR4() {
+        return this.fhirVersion &&
+            this.fhirVersion.major >= 3 &&
+            this.fhirVersion.minor >= 2;
+    }
+
+    public isFhirDstu3() {
+        return !this.fhirVersion ||
+            (this.fhirVersion.major === 3 && this.fhirVersion.minor < 2) ||
+            this.fhirVersion.major < 3;
+    }
+
     public setStatusMessage(message: string, timeout?: number) {
         this.statusMessage = message;
 
