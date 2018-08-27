@@ -4,7 +4,7 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
 
-router.use((req, res) => {
+router.use(checkJwt, (req, res) => {
     let url = req.fhirServerBase;
 
     if (url.endsWith('/')) {

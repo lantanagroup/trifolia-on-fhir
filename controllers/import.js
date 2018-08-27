@@ -26,8 +26,8 @@ router.post('/', checkJwt, (req, res) => {
         request(options, cb);
     } else {
         const options = {
-            method: 'POST',
-            url: req.getFhirServerUrl(resourceType),
+            method: req.body.id ? 'PUT' : 'POST',
+            url: req.getFhirServerUrl(resourceType, req.body.id),
             body: req.body,
             json: true
         };

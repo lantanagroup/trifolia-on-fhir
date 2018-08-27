@@ -1,82 +1,117 @@
 body {
-  min-height: 75rem;
-  padding-top: 4.5rem;
+    min-height: 75rem;
+    padding-top: 4.5rem;
 }
 
 footer.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  padding: 5px;
-  background-color: black;
-  width: 100%;
-  z-index: 2;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 5px;
+    background-color: black;
+    width: 100%;
+    z-index: 2;
 }
 
 footer.footer span.message {
-  color: white;
+    color: white;
 }
 
 .tab-pane {
-  padding-top: 5px;
+    padding-top: 5px;
 }
 
 .jumbotron {
-  padding-top: 20px;
+    padding-top: 20px;
 }
 
 .clickable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .fixed-top {
-  z-index: 2;
+    z-index: 2;
 }
 
 div.t-json-viewer {
-  background-color: white;
-  padding: 5px;
+    background-color: white;
+    padding: 5px;
 }
 
 .clickable {
-  pointer: cursor;
+    pointer: cursor;
 }
 
 body.structure-definition {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 body.structure-definition > app-root > div.container {
-  position: absolute;
-  top: 69px;
-  bottom: 58px;
+    position: absolute;
+    top: 69px;
+    bottom: 58px;
 }
 
 body.structure-definition > app-root > div.container > div.jumbotron {
-  height: 100%;
-  overflow-y: auto;
+    height: 100%;
+    overflow-y: auto;
 }
 
 body.structure-definition div.sd-main {
-  height: 92%;
+    height: 92%;
 }
 
 body.structure-definition div.sd-main div.tab-content {
-  height: 97%;
+    height: 97%;
 }
 
 body.structure-definition div.sd-main .tab-content > div.tab-pane {
-  height: 99%;
+    height: 99%;
 }
 
 .status-message {
-  white-space: pre;
+    white-space: pre;
 }
 
 .disable-markdown .CodeMirror {
-  background-color: #e9ecef;
+    background-color: #e9ecef;
+    min-height: 30px;
+    height: 30px;
 }
 
 .disable-markdown .editor-toolbar {
-  display: none;
+    display: none;
+}
+
+.actions-column-1 {
+    width: 54px;
+}
+
+.actions-column-2 {
+    width: 110px;
+}
+
+.actions-column-3 {
+    width: 116px;
+}
+
+.actions-column-4 {
+    width: 126px;
+}
+
+.actions-column-5 {
+    width: 136px;
+}
+
+.input-group .form-control {
+    z-index: 1;
+}
+
+.help-block {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    color: #737373;
+    margin-left: 20px;
+    padding-right: 20px;
 }

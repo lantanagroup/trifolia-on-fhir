@@ -19,7 +19,7 @@ export class MultiContactComponent implements OnInit {
 
     constructor(
         private modalService: NgbModal,
-        private globals: Globals) {
+        public globals: Globals) {
 
     }
 

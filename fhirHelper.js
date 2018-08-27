@@ -1,5 +1,9 @@
 const {resolve} = require('url');
 const _ = require('underscore');
+const Fhir = require('fhir');
+const ValueSets = require('./src/assets/stu3/valuesets');
+const ProfileTypes = require('./src/assets/stu3/profiles-types');
+const ProfileResources = require('./src/assets/stu3/profiles-resources');
 
 module.exports = {
     buildUrl: function(base, resourceType, id, operation, params) {
@@ -54,5 +58,13 @@ module.exports = {
                 historyId: match[5]
             };
         }
+    },
+    getFhirInstance: function() {
+        const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+        parser.parseBundle(ValueSets);
+        parser.parseBundle(ProfileTypes);
+        parser.parseBundle(ProfileResources);
+        const fhir = new Fhir(parser);
+        return fhir;
     }
 };

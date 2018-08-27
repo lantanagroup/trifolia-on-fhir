@@ -4,19 +4,31 @@ import 'rxjs/add/operator/map';
 import { StructureDefinitionListItemModel } from '../models/structure-definition-list-item-model';
 import {HttpClient} from '@angular/common/http';
 import {Bundle, StructureDefinition, ValueSet} from '../models/stu3/fhir';
-import * as FhirResources from '../data/profiles-resources.json';
-import * as FhirTypes from '../data/profiles-types.json';
 import * as _ from 'underscore';
+import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
+import {FhirService} from './fhir.service';
 
 @Injectable()
 export class StructureDefinitionService {
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private fhirService: FhirService) { }
 
-    public getStructureDefinitions(): Observable<StructureDefinitionListItemModel[]> {
-        return this.http.get('/api/structureDefinition')
+    public getStructureDefinitions(page?: number, contentText?: string): Observable<StructureDefinitionListModel> {
+        let url = '/api/structureDefinition?';
+
+        if (page) {
+            url += 'page=' + page.toString() + '&';
+        }
+
+        if (contentText) {
+            url += 'contentText=' + encodeURIComponent(contentText) + '&';
+        }
+
+        return this.http.get(url)
             .map(res => {
-                return <StructureDefinitionListItemModel[]>res;
+                return <StructureDefinitionListModel>res;
             });
     }
 
@@ -26,20 +38,17 @@ export class StructureDefinitionService {
 
     public getBaseStructureDefinition(resourceType: string): Observable<StructureDefinition> {
         return new Observable(subscriber => {
-            const fhirResources = <any> FhirResources;
-            const fhirTypes = <any> FhirTypes;
-            const allEntries = fhirResources.entry.concat(fhirTypes.entry);
-            const foundEntry = _.find(allEntries, (entry) => {
-                return entry.resource.resourceType === 'StructureDefinition' && entry.resource.id === resourceType;
+            const foundResource = _.find(this.fhirService.profiles, (profile) => {
+                return profile.id === resourceType;
             });
 
-            if (foundEntry) {
-                subscriber.next(foundEntry.resource);
+            if (foundResource) {
+                subscriber.next(foundResource);
             } else {
                 subscriber.error('Could not find base structure definition for ' + resourceType);
             }
         });
-        //return this.http.get('/api/structureDefinition/base/' + resourceType);
+        // return this.http.get('/api/structureDefinition/base/' + resourceType);
     }
 
     public save(structureDefinition: StructureDefinition): Observable<StructureDefinition> {

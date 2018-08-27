@@ -5,12 +5,11 @@ import { Person } from '../models/stu3/fhir';
 @Component({
     selector: 'app-user',
     templateUrl: './user.component.html',
-    styleUrls: ['./user.component.css'],
-    providers: [PersonService]
+    styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-    private person: Person;
-    private message: string;
+    public person: Person;
+    public message: string;
 
     constructor(private personService: PersonService) { }
 

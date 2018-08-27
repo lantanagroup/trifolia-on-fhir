@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Coding} from './models/stu3/fhir';
 import * as _ from 'underscore';
+import {FhirVersion} from './models/fhir-version';
 
 @Injectable()
 export class Globals {
@@ -1146,5 +1147,19 @@ export class Globals {
 
     public trackByFn(index, item) {
         return index; // or item.id
+    }
+
+    public parseFhirVersion(fhirVersion: string): FhirVersion {
+        const fhirVersionRegex = /^(\d+)\.(\d+)\.(\d+)$/g;
+        const versionMatch = fhirVersionRegex.exec(fhirVersion);
+
+        if (versionMatch) {
+            const parsedVersion: FhirVersion = {
+                major: parseInt(versionMatch[1]),
+                minor: parseInt(versionMatch[2]),
+                patch: parseInt(versionMatch[3])
+            };
+            return parsedVersion;
+        }
     }
 }

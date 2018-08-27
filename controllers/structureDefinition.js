@@ -11,7 +11,17 @@ const {resolve} = require('url');
 const thisResourceType = 'StructureDefinition';
 
 router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType);
+    var queryParams = { _summary: true, _count: 10 };
+
+    if (req.query.page && parseInt(req.query.page) != 1) {
+        queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * 10;
+    }
+
+    if (req.query.contentText) {
+        queryParams._content = encodeURIComponent(req.query.contentText);
+    }
+
+    const url = req.getFhirServerUrl(thisResourceType, null, null, queryParams);
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
@@ -19,15 +29,43 @@ router.get('/', checkJwt, (req, res) => {
             return res.status(500).send('Error retrieving structure definition from FHIR server');
         }
 
-        const structureDefinitions = _.map(body.entry, (item) => {
-            return {
-                id: item.resource.id,
-                name: item.resource.name,
-                type: 'something'
-            };
-        });
+        if (body && body.resourceType === 'Bundle') {
+            const structureDefinitions = _.map(body.entry, (item) => {
+                var ret = {
+                    id: item.resource.id,
+                    name: item.resource.name,
+                    title: item.resource.title,
+                    type: item.resource.type,
+                    url: item.resource.url,
+                    experimental: item.resource.experimental
+                };
 
-        res.send(structureDefinitions);
+                if (item.resource.contact && item.resource.contact.length > 0) {
+                    ret.contact = _.map(item.resource.contact, (contact) => {
+                        var foundUrl = _.find(contact.telecom, (telecom) => telecom.system === 'url');
+
+                        if (contact.name) {
+                            return 'Name: ' + contact.name;
+                        } else if (foundUrl) {
+                            return 'URL: ' + foundUrl.value;
+                        } else {
+                            return '';
+                        }
+                    }).join(', ');
+                }
+
+                return ret;
+            });
+
+            res.send({
+                total: body.total,
+                pages: Math.ceil(body.total / 10),
+                items: structureDefinitions
+            });
+        } else if (body && body.resourceType === 'OperationOutcome') {
+            console.log(body.text ? body.text.div : JSON.stringify(body));
+            res.status(500).send();
+        }
     });
 });
 

@@ -1,43 +1,54 @@
 <h1>Import</h1>
 
-<ngb-tabset #t="ngbTabset">
-    <ngb-tab id="options" title="Options">
+<ngb-tabset #t="ngbTabset"[activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
+    <ngb-tab id="file" title="Import Files">
         <ng-template ngbTabContent>
-            <div class="form-group">
-                <label>Type</label>
-                <br />
-                <input type="radio" name="importType" value="file" [(ngModel)]="importType"/> File
-                <input type="radio" name="importType" value="text" [(ngModel)]="importType"/> Text
-            </div>
+            <file-drop (onFileDrop)="dropped($event)">
+                <span>Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
+                <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile />
+            </file-drop>
 
+            <p>Selected files:</p>
+            <ul>
+                <li *ngFor="let f of files">{{f.name}}</li>
+                <li *ngIf="files.length === 0">None</li>
+            </ul>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab id="text" title="Import Text">
+        <ng-template ngbTabContent>
             <div class="form-group">
                 <label>Content Type</label>
                 <br />
-                <input type="radio" name="contentType" [value]="0" [(ngModel)]="contentType"/> JSON
-                <input type="radio" name="contentType" [value]="1" [(ngModel)]="contentType"/> XML
+                <input type="radio" name="textContentType" [value]="0" [(ngModel)]="textContentType"/> JSON
+                <input type="radio" name="textContentType" [value]="1" [(ngModel)]="textContentType"/> XML
             </div>
 
-            <div class="form-group" *ngIf="importType === 'file'">
-                <label>File</label>
-                <input type="file" class="form-control" (change)="filesChanged($event)" />
-            </div>
-
-            <div class="form-group" *ngIf="importType === 'text'">
+            <div class="form-group">
                 <label>Text</label>
-                <textarea class="form-control" rows="20" [(ngModel)]="text"></textarea>
+                <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
             </div>
-
-            <p *ngIf="importType === 'text' && text">
-                <button type="button" class="btn btn-primary" (click)="import(t)">Import</button>
-            </p>
         </ng-template>
     </ngb-tab>
-    <ngb-tab id="results" title="Results" [disabled]="!results">
+    <ngb-tab id="results" title="Results" [disabled]="!results || results.length === 0">
         <ng-template ngbTabContent>
-            <div *ngIf="results.resourceType === 'OperationOutcome'">
-                <div *ngIf="results.text" [innerHTML]="results.text.div"></div>
+            <div class="card" *ngFor="let result of results">
+                <div class="card-header">{{result.location[0]}}</div>
+                <div class="card-body">
+                    <div *ngIf="result.resourceType === 'OperationOutcome'">
+                        <div *ngIf="result.text && result.text.div && (!result.issue || result.issue.length === 0)" [innerHTML]="result.text.div"></div>
+                        <ul *ngIf="result.issue && result.issue.length > 0">
+                            <li *ngFor="let issue of result.issue">{{issue.diagnostics}}</li>
+                        </ul>
+                    </div>
+                    <t-json-viewer *ngIf="result.resourceType !== 'OperationOutcome'" [json]="results"></t-json-viewer>
+                </div>
             </div>
-            <t-json-viewer *ngIf="results.resourceType !== 'OperationOutcome'" [json]="results"></t-json-viewer>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="import(t)" [disabled]="importDisabled()">Import</button>
+    <span class="message">{{message}}</span>
+</footer>

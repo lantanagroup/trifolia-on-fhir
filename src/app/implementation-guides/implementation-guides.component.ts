@@ -7,15 +7,16 @@ import {ImplementationGuide} from '../models/stu3/fhir';
 @Component({
     selector: 'app-implementation-guides',
     templateUrl: './implementation-guides.component.html',
-    styleUrls: ['./implementation-guides.component.css'],
-    providers: [ImplementationGuideService]
+    styleUrls: ['./implementation-guides.component.css']
 })
 export class ImplementationGuidesComponent implements OnInit {
     public implementationGuides: ImplementationGuideListItemModel[] = [];
+    public page = 1;
+    public contentText: string;
 
     constructor(private igService: ImplementationGuideService, private configService: ConfigService) { }
 
-    private getImplementationGuides() {
+    public getImplementationGuides() {
         this.implementationGuides = [];
         this.configService.setStatusMessage('Loading implementation guides');
 
@@ -36,6 +37,10 @@ export class ImplementationGuidesComponent implements OnInit {
             }, (err) => {
                 // TODO
             });
+    }
+
+    public contentTextChanged(value: string) {
+
     }
 
     ngOnInit() {

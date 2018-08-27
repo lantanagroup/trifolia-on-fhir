@@ -9,12 +9,14 @@ import {FhirService} from '../../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirEditMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
+import {FhirEditReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {ConfigService} from '../../services/config.service';
+import {FileService} from '../../services/file.service';
 
 @Component({
     selector: 'app-capability-statement',
     templateUrl: './capability-statement.component.html',
-    styleUrls: ['./capability-statement.component.css'],
-    providers: [FhirService]
+    styleUrls: ['./capability-statement.component.css']
 })
 export class CapabilityStatementComponent implements OnInit, DoCheck {
     @Input() public capabilityStatement = new CapabilityStatement();
@@ -23,17 +25,26 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
 
     constructor(
         public globals: Globals,
+        public fhirService: FhirService,
+        public fileService: FileService,
         private modalService: NgbModal,
         private csService: CapabilityStatementService,
+        private configService: ConfigService,
         private route: ActivatedRoute,
         private router: Router,
-        private recentItemService: RecentItemService,
-        private fhirService: FhirService) {
+        private recentItemService: RecentItemService) {
 
     }
 
     public save() {
+        const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
+
         if (!this.validation.valid && !confirm('This capability statement is not valid, are you sure you want to save?')) {
+            return;
+        }
+
+        if (capabilityStatementId === 'from-file') {
+            this.fileService.saveFile();
             return;
         }
 
@@ -76,8 +87,30 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
         modalRef.componentInstance.event = event;
     }
 
+    public selectImplementationGuide(implementationGuideIndex) {
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        modalRef.componentInstance.resourceType = 'ImplementationGuide';
+        modalRef.componentInstance.hideResourceType = true;
+
+        modalRef.result.then((results: any) => {
+            this.capabilityStatement.implementationGuide[implementationGuideIndex] = results.resource.url || results.fullUrl;
+        });
+    }
+
     private getCapabilityStatement(): Observable<CapabilityStatement> {
         const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
+
+        if (capabilityStatementId === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<CapabilityStatement>((observer) => {
+                    this.capabilityStatement = <CapabilityStatement> this.fileService.file.resource;
+                    observer.next(this.capabilityStatement);
+                });
+            } else {
+                this.router.navigate(['/']);
+                return;
+            }
+        }
 
         return new Observable<CapabilityStatement>((observer) => {
             if (capabilityStatementId) {

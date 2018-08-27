@@ -1,10 +1,8 @@
 import {Injectable, EventEmitter} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
-import {Route, Router} from '@angular/router';
-import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from '../capability-statement-wrapper/stu3/capability-statement.component';
-import {CapabilityStatementComponent as R4CapabilityStatementComponent} from '../capability-statement-wrapper/r4/capability-statement.component';
-import * as _ from 'underscore';
+import {Router} from '@angular/router';
+import {Globals} from '../globals';
 
 @Injectable()
 export class ConfigService {
@@ -21,6 +19,7 @@ export class ConfigService {
 
     constructor(
         private http: HttpClient,
+        private globals: Globals,
         private router: Router) {
 
         this.fhirServer = localStorage.getItem('fhirServer');
@@ -43,7 +42,7 @@ export class ConfigService {
     }
 
     public changeFhirServer(fhirServer: string) {
-        const shouldRedirect = this.fhirServer !== fhirServer;
+        const serverChanged = this.fhirServer !== fhirServer;
         this.fhirServer = fhirServer;
 
         localStorage.setItem('fhirServer', this.fhirServer);
@@ -51,17 +50,9 @@ export class ConfigService {
         this.http.get('/api/config/fhir')
             .subscribe((res: any) => {
                 this.fhirConformance = res;
+                this.fhirVersion = this.globals.parseFhirVersion(res.fhirVersion);
 
-                const fhirVersionRegex = /^(\d+)\.(\d+)\.(\d+)$/g;
-                const versionMatch = fhirVersionRegex.exec(res.fhirVersion);
-
-                if (versionMatch) {
-                    this.fhirVersion.major = parseInt(versionMatch[1]);
-                    this.fhirVersion.minor = parseInt(versionMatch[2]);
-                    this.fhirVersion.patch = parseInt(versionMatch[3]);
-                }
-
-                if (shouldRedirect) {
+                if (serverChanged) {
                     this.router.navigate(['/']);
                 }
 

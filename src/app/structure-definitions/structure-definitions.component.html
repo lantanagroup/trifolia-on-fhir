@@ -1,11 +1,21 @@
 <h1>Structure Definitions</h1>
 
+<div class="input-group">
+  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
+      <i class="fa fa-refresh"></i>
+    </button>
+  </div>
+</div>
+
 <table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
       <th>Experimental</th>
-      <th>Description</th>
+      <th>Type</th>
+      <th>Contact</th>
       <th>
         <div class="pull-right">
           <a class="btn btn-default" routerLink="/structure-definition/new">New</a>
@@ -13,11 +23,16 @@
       </th>
     </tr>
   </thead>
-  <tbody>
-    <tr *ngFor="let p of structureDefinitions">
-      <td>{{p.name}} <span class="badge">{{p.id}}</span></td>
+  <tbody *ngIf="response && response.items && response.items.length > 0">
+    <tr *ngFor="let p of response.items">
+      <td>
+        {{p.name}} <span class="badge">{{p.id}}</span> <i class="fa fa-comment" *ngIf="p.description" [ngbTooltip]="p.description"></i>
+        <br/>
+        <sub>{{p.url}}</sub>
+      </td>
       <td>{{p.experimental ? "Yes" : "No"}}</td>
-      <td>{{p.description}}</td>
+      <td>{{p.type}}</td>
+      <td>{{p.contact}}</td>
       <td>
         <div class="pull-right btn-group">
           <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]">Edit</a>
@@ -26,6 +41,24 @@
       </td>
     </tr>
   </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="4">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" [disabled]="!response || page <= 1" title="Previous page" (click)="previousPage()">
+          <i class="fa fa-backward"></i>
+        </button>
+        <button type="button" class="btn btn-default" disabled="disabled">
+          Page {{response && response.pages ? page : 0}} of {{response ? response.pages : 0}} ({{response ? response.total : 0}} structure definitions)
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="!response || page >= response.pages" title="Next page" (click)="nextPage()">
+          <i class="fa fa-forward"></i>
+        </button>
+      </div>
+      <br/>
+    </td>
+  </tr>
+  </tfoot>
 </table>
 
 <footer class="footer">

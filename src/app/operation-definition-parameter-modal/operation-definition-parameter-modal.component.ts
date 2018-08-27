@@ -14,7 +14,7 @@ export class OperationDefinitionParameterModalComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private globals: Globals) {
+        public globals: Globals) {
 
     }
 

@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {ConceptSetComponent, ValueSet} from '../models/stu3/fhir';
+import {ConceptSetComponent, OperationDefinition, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -9,12 +9,12 @@ import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditValuesetIncludeModalComponent} from '../fhir-edit/valueset-include-modal/valueset-include-modal.component';
 import {FhirService} from '../services/fhir.service';
+import {FileService} from '../services/file.service';
 
 @Component({
     selector: 'app-valueset',
     templateUrl: './valueset.component.html',
-    styleUrls: ['./valueset.component.css'],
-    providers: [FhirService]
+    styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent implements OnInit, DoCheck {
     @Input() public valueSet = new ValueSet();
@@ -28,11 +28,19 @@ export class ValuesetComponent implements OnInit, DoCheck {
         private router: Router,
         private modalService: NgbModal,
         private recentItemService: RecentItemService,
+        private fileService: FileService,
         private fhirService: FhirService) {
     }
 
     public save() {
+        const valueSetId = this.route.snapshot.paramMap.get('id');
+
         if (!this.validation.valid && !confirm('This value set is not valid, are you sure you want to save?')) {
+            return;
+        }
+
+        if (valueSetId === 'from-file') {
+            this.fileService.saveFile();
             return;
         }
 
@@ -68,6 +76,18 @@ export class ValuesetComponent implements OnInit, DoCheck {
 
     private getValueSet(): Observable<ValueSet> {
         const valueSetId  = this.route.snapshot.paramMap.get('id');
+
+        if (valueSetId === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<ValueSet>((observer) => {
+                    this.valueSet = <ValueSet> this.fileService.file.resource;
+                    observer.next(this.valueSet);
+                });
+            } else {
+                this.router.navigate(['/']);
+                return;
+            }
+        }
 
         return new Observable<ValueSet>((observer) => {
             if (valueSetId) {

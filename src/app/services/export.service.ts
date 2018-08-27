@@ -2,6 +2,14 @@ import {Injectable} from '@angular/core';
 import {ExportFormats} from '../models/export-formats.enum';
 import {HttpClient} from '@angular/common/http';
 
+export class ExportOptions {
+    public implementationGuideId: number;
+    public exportFormat = ExportFormats.Bundle;
+    public responseFormat = 'application/json';
+    public useTerminologyServer = true;
+    public executeIgPublisher = true;
+}
+
 @Injectable()
 export class ExportService {
 
@@ -9,11 +17,19 @@ export class ExportService {
         private http: HttpClient) {
     }
 
-    public export(implementationGuideId: number, exportFormat: ExportFormats, responseFormat?: string) {
-        let url = '/api/export/' + implementationGuideId + '?exportFormat=' + exportFormat + '&';
+    public export(options: ExportOptions) {
+        let url = '/api/export/' + options.implementationGuideId + '?exportFormat=' + options.exportFormat + '&';
 
-        if (responseFormat) {
-            url += '_format=' + encodeURIComponent(responseFormat);
+        if (options.responseFormat) {
+            url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
+        }
+
+        if (options.useTerminologyServer === true || options.useTerminologyServer === false) {
+            url += 'useTerminologyServer=' + options.useTerminologyServer.toString() + '&';
+        }
+
+        if (options.executeIgPublisher === true || options.executeIgPublisher === false) {
+            url += 'executeIgPublisher=' + options.executeIgPublisher.toString() + '&';
         }
 
         return this.http.post(url, null, { observe: 'response', responseType: 'blob' });

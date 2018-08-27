@@ -1,5 +1,8 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {CapabilityStatement, ImplementationGuide, OperationDefinition, ParameterComponent} from '../models/stu3/fhir';
+import {
+    OperationDefinition,
+    ParameterComponent
+} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {OperationDefinitionService} from '../services/operation-definition.service';
@@ -8,12 +11,12 @@ import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {OperationDefinitionParameterModalComponent} from '../operation-definition-parameter-modal/operation-definition-parameter-modal.component';
 import {FhirService} from '../services/fhir.service';
+import {FileService} from '../services/file.service';
 
 @Component({
     selector: 'app-operation-definition',
     templateUrl: './operation-definition.component.html',
-    styleUrls: ['./operation-definition.component.css'],
-    providers: [FhirService]
+    styleUrls: ['./operation-definition.component.css']
 })
 export class OperationDefinitionComponent implements OnInit, DoCheck {
     @Input() public operationDefinition: OperationDefinition = new OperationDefinition();
@@ -27,6 +30,7 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
         private router: Router,
         private opDefService: OperationDefinitionService,
         private recentItemService: RecentItemService,
+        private fileService: FileService,
         private fhirService: FhirService) {
 
     }
@@ -38,7 +42,14 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
     }
 
     public save() {
+        const operationDefinitionId = this.route.snapshot.paramMap.get('id');
+
         if (!this.validation.valid && !confirm('This operation definition is not valid, are you sure you want to save?')) {
+            return;
+        }
+
+        if (operationDefinitionId === 'from-file') {
+            this.fileService.saveFile();
             return;
         }
 
@@ -58,6 +69,18 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
 
     private getOperationDefinition() {
         const operationDefinitionId = this.route.snapshot.paramMap.get('id');
+
+        if (operationDefinitionId === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<OperationDefinition>((observer) => {
+                    this.operationDefinition = <OperationDefinition> this.fileService.file.resource;
+                    observer.next(this.operationDefinition);
+                });
+            } else {
+                this.router.navigate(['/']);
+                return;
+            }
+        }
 
         return new Observable<OperationDefinition>((observer) => {
             if (operationDefinitionId) {

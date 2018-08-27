@@ -34,7 +34,11 @@ export class Element extends Base {
 
 export class Extension extends Element {
     public url: string;
-    public value?: Element;
+    public valueCode?: string;
+    public valueCodeableConcept?: CodeableConcept;
+    public valueCoding?: Coding;
+    public valueBoolean?: boolean;
+    public valueString?: string;
 
     constructor(obj?: any) {
         super(obj);
@@ -42,8 +46,20 @@ export class Extension extends Element {
             if (obj.url) {
                 this.url = obj.url;
             }
-            if (obj.value) {
-                this.value = new Element(obj.value);
+            if (obj.hasOwnProperty('valueCode')) {
+                this.valueCode = obj.valueCode;
+            }
+            if (obj.hasOwnProperty('valueString')) {
+                this.valueString = obj.valueString;
+            }
+            if (obj.valueCodeableConcept) {
+                this.valueCodeableConcept = obj.valueCodeableConcept;
+            }
+            if (obj.valueCoding) {
+                this.valueCoding = obj.valueCoding;
+            }
+            if (obj.hasOwnProperty('valueBoolean')) {
+                this.valueBoolean = obj.valueBoolean;
             }
         }
     }
@@ -11884,6 +11900,7 @@ export class IssueComponent extends BackboneElement {
 export class OperationOutcome extends DomainResource {
     public resourceType = 'OperationOutcome';
     public issue: IssueComponent[];
+    public location?: string[];
     
     constructor(obj?: any) {
         super(obj);
@@ -11891,6 +11908,10 @@ export class OperationOutcome extends DomainResource {
             if (obj.issue) {
                 this.issue = [];
                 for (let o of obj.issue || []) { this.issue.push(new IssueComponent(o)); }
+            }
+            if (obj.location && obj.location.length > 0) {
+                this.location = [];
+                for (let o of obj.location || []) { this.location.push(o); }
             }
         }
     }

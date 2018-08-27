@@ -31,6 +31,7 @@
             <thead>
             <tr>
                 <th>Code</th>
+                <th title="Extension: http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation">Expectation</th>
                 <th>Documentation</th>
                 <th>
                     <div class="pull-right">
@@ -45,6 +46,18 @@
             <tr *ngFor="let i of resource.interaction; let ii = index">
                 <td>
                     <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" [codes]="globals.typeRestfulInteractionCodes"></app-fhir-select-single-code>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <input type="checkbox" [ngModel]="interactionHasExpectation(i)" (ngModelChange)="toggleInteractionExpectation(i)" />
+                        </div>
+                        <select class="form-control" [ngModel]="getInteractionExpectation(i)" (ngModelChange)="setInteractionExpectation(i, $event)">
+                            <option>SHALL</option>
+                            <option>SHOULD</option>
+                            <option>MAY</option>
+                        </select>
+                    </div>
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="i" propertyName="documentation" [isFormGroup]="false" [required]="false"></app-fhir-string>

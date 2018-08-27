@@ -7,20 +7,20 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {ElementDefinition, StructureDefinition, TypeRefComponent, ValueSet} from '../models/stu3/fhir';
-import {ElementDef} from '@angular/core/src/view';
-import {DOCUMENT} from '@angular/common';
+import {
+    ElementDefinition,
+    StructureDefinition
+} from '../models/stu3/fhir';
 import {Observable} from 'rxjs/Observable';
-import {RecentItemModel} from '../models/recent-item-model';
-import {CookieService} from 'angular2-cookie/core';
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
+import {FileService} from '../services/file.service';
+import {DOCUMENT} from '@angular/common';
 
 @Component({
     selector: 'app-profile',
     templateUrl: './structure-definition.component.html',
-    styleUrls: ['./structure-definition.component.css'],
-    providers: [StructureDefinitionService, FhirService]
+    styleUrls: ['./structure-definition.component.css']
 })
 export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public structureDefinition: StructureDefinition;
@@ -38,6 +38,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 public globals: Globals,
                 private recentItemService: RecentItemService,
                 private fhirService: FhirService,
+                private fileService: FileService,
                 @Inject(DOCUMENT) private document: Document) {
         this.document.body.classList.add('structure-definition');
     }
@@ -194,6 +195,18 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
     private getStructureDefinition(): Observable<null> {
         const strucDefId = this.route.snapshot.paramMap.get('id');
+
+        if (strucDefId === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<StructureDefinition>((observer) => {
+                    this.structureDefinition = <StructureDefinition> this.fileService.file.resource;
+                    observer.next(this.structureDefinition);
+                });
+            } else {
+                this.router.navigate(['/']);
+                return;
+            }
+        }
 
         this.configService.setStatusMessage('Loading structure definition');
         this.structureDefinition = null;
@@ -379,7 +392,14 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     save() {
+        const strucDefId = this.route.snapshot.paramMap.get('id');
+
         if (!this.validation.valid && !confirm('This structure definition is not valid, are you sure you want to save?')) {
+            return;
+        }
+
+        if (strucDefId === 'from-file') {
+            this.fileService.saveFile();
             return;
         }
 

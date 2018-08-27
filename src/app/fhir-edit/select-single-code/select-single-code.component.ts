@@ -22,7 +22,7 @@ export class SelectSingleCodeComponent implements OnInit {
     @Input() isTypeahead = false;
     @Input() defaultCode: string;
 
-    constructor(private globals: Globals) {
+    constructor(public globals: Globals) {
     }
 
     public getDefaultCode(): string {

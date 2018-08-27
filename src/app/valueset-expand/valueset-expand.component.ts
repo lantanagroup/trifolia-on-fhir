@@ -27,14 +27,14 @@ interface ValueSetExpandCriteria {
   styleUrls: ['./valueset-expand.component.css']
 })
 export class ValuesetExpandComponent implements OnInit {
-  private valueSet: ValueSet;
-  private results: ValueSet|OperationOutcome;
+  public valueSet: ValueSet;
+  public results: ValueSet|OperationOutcome;
   public criteria: ValueSetExpandCriteria = {};
 
   constructor(
       private route: ActivatedRoute,
       private valueSetService: ValueSetService,
-      private globals: Globals) {
+      public globals: Globals) {
   }
 
   public expand(tabSet: NgbTabset) {

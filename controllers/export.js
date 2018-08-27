@@ -126,24 +126,29 @@ function sendSocketMessage(req, packageId, status, message) {
 function exportHtml(req, res) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
+    const useTerminologyServer = req.query.useTerminologyServer === undefined || req.query.useTerminologyServer == 'true';
+    const executeIgPublisher = req.query.executeIgPublisher === undefined || req.query.executeIgPublisher == 'true';
+    const homedir = require('os').homedir();
 
-    // Prepare IG Publisher package
-    getBundle(req, 'application/json')
-        .then((bundleJson) => {
-            const bundle = JSON.parse(bundleJson);
-            let implementationGuideResource = null;
+    tmp.dir((err, rootPath, cleanup) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('An error occurred while creating a temporary directory');
+        }
 
-            tmp.dir((err, rootPath, cleanup) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(500).send('An error occurred while creating a temporary directory');
-                }
+        const packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
+        res.send(packageId);
 
-                const packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
-                res.send(packageId);
+        setTimeout(() => {
+            sendSocketMessage(req, packageId, 'progress', 'Created temp directory. Retrieving resources for implementation guide.');
 
-                setTimeout(() => {
-                    sendSocketMessage(req, packageId, 'progress', 'Building package');
+            // Prepare IG Publisher package
+            getBundle(req, 'application/json')
+                .then((bundleJson) => {
+                    const bundle = JSON.parse(bundleJson);
+                    let implementationGuideResource = null;
+
+                    sendSocketMessage(req, packageId, 'progress', 'Resources retrieved. Packaging.');
 
                     try {
                         for (var i = 0; i < bundle.entry.length; i++) {
@@ -180,39 +185,48 @@ function exportHtml(req, res) {
                         fs.copySync(templatePath, rootPath);
 
                         sendSocketMessage(req, packageId, 'progress', 'Done building package');
-                        sendSocketMessage(req, packageId, 'progress', 'Running IG Publisher');
 
-                        const jarLocation = path.join(__dirname, '..', 'org.hl7.fhir.igpublisher.jar');
-                        const igPublisherProcess = spawn('java', ['-jar', jarLocation, '-ig', controlPath]);
+                        if (executeIgPublisher) {
+                            sendSocketMessage(req, packageId, 'progress', 'Running IG Publisher');
 
-                        igPublisherProcess.stdout.on('data', (data) => {
-                            const message = data.toString().replace(tmp.tmpdir, 'XXX');
-                            sendSocketMessage(req, packageId, 'progress', message);
-                        });
+                            const jarLocation = path.join(__dirname, '..', 'org.hl7.fhir.igpublisher.jar');
+                            const jarParams = ['-jar', jarLocation, '-ig', controlPath];
 
-                        igPublisherProcess.stderr.on('data', (data) => {
-                            const message = data.toString().replace(tmp.tmpdir, 'XXX');
-                            sendSocketMessage(req, packageId, 'progress', message);
-                        });
+                            if (!useTerminologyServer) {
+                                jarParams.push('-tx', 'N/A');
+                            }
 
-                        igPublisherProcess.on('exit', (code) => {
-                            sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
+                            const igPublisherProcess = spawn('java', jarParams);
+
+                            igPublisherProcess.stdout.on('data', (data) => {
+                                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                                sendSocketMessage(req, packageId, 'progress', message);
+                            });
+
+                            igPublisherProcess.stderr.on('data', (data) => {
+                                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                                sendSocketMessage(req, packageId, 'progress', message);
+                            });
+
+                            igPublisherProcess.on('exit', (code) => {
+                                sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
+                                sendSocketMessage(req, packageId, 'complete', 'Done');
+                            });
+                        } else {
                             sendSocketMessage(req, packageId, 'complete', 'Done');
-                        });
+                        }
                     } catch (ex) {
                         sendSocketMessage(req, packageId, 'error', ex.message);
                         fs.emptyDirSync(rootPath);
                         fs.rmdirSync(rootPath);
                     }
-                }, 1000);
-            });
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send('Error retrieving bundle from FHIR server');
-        });
-
-    // TODO: Execute IG Publisher
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).send('Error retrieving bundle from FHIR server');
+                });
+        }, 1000);
+    });
 }
 
 router.post('/:implementationGuideId', checkJwt, (req, res) => {

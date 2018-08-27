@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
@@ -19,7 +20,7 @@ const importController = require('./controllers/import');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
-const Fhir = require('fhir');
+const fhir = FhirHelper.getFhirInstance();
 
 const app = express();
 const fhirConfig = config.get('fhir');
@@ -28,10 +29,12 @@ const serverConfig = config.get('server');
 // Parsers for POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(compression());
 
 // Identify the FHIR server to use
 app.use((req, res, next) => {
     req.fhirServerBase = fhirConfig.servers[0].uri;
+    req.fhir = fhir;
 
     if (req.headers['fhirserver']) {
         const foundFhirServer = _.find(fhirConfig.servers, (server) => server.id === req.headers['fhirserver']);
@@ -55,7 +58,6 @@ app.use((req, res, next) => {
 // Parse XML into JSON
 app.use((req, res, next) => {
     if (req.headers['content-type'] === 'application/xml') {
-        const fhir = new Fhir();
         let data = '';
 
         req.on('data', (chunk) => {
@@ -118,6 +120,7 @@ app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 
 // Catch all other routes and return the index file
+app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
 
 app.get('*', (req, res) => {

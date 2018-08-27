@@ -8,6 +8,9 @@
       <li class="nav-item" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
       </li>
+      <li>
+        <a class="nav-link clickable" (click)="openFile()" title="Open a resource on your computer">Open</a>
+      </li>
       <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
         <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="igMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <a class="sub-nav-link" title="Implementation Guides">IG's</a>
@@ -134,6 +137,9 @@
 <div class="container" [class.container-large]="isBigContainer">
   <div class="jumbotron">
     <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="fhirService.loaded"></router-outlet>
+    <div *ngIf="!fhirService.loaded">
+      Loading...
+    </div>
   </div>
 </div>

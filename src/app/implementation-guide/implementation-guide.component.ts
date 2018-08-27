@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
+import {Binary, CapabilityStatement, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs/Observable';
@@ -11,6 +11,7 @@ import {PageComponentModalComponent} from '../fhir-edit/page-component-modal/pag
 import {RecentItemService} from '../services/recent-item.service';
 import {BinaryService} from '../services/binary.service';
 import {FhirService} from '../services/fhir.service';
+import {FileService} from '../services/file.service';
 
 class PageDefinition {
     public page: PageComponent;
@@ -21,8 +22,7 @@ class PageDefinition {
 @Component({
     selector: 'app-implementation-guide',
     templateUrl: './implementation-guide.component.html',
-    styleUrls: ['./implementation-guide.component.css'],
-    providers: [ImplementationGuideService, FhirService]
+    styleUrls: ['./implementation-guide.component.css']
 })
 export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy {
     @Input() public implementationGuide?: ImplementationGuide;
@@ -40,12 +40,25 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
         private authService: AuthService,
         private recentItemService: RecentItemService,
         private binaryService: BinaryService,
+        private fileService: FileService,
         public globals: Globals,
         private fhirService: FhirService) {
     }
 
     private getImplementationGuide(): Observable<ImplementationGuide> {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
+
+        if (implementationGuideId === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<ImplementationGuide>((observer) => {
+                    this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
+                    observer.next(this.implementationGuide);
+                });
+            } else {
+                this.router.navigate(['/']);
+                return;
+            }
+        }
 
         return new Observable((observer) => {
             if (implementationGuideId) {
@@ -72,9 +85,9 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
         }
     }
 
-    public openPackageResourceModal(resource, content) {
+    public editPackageResourceModal(resource, content) {
         this.currentResource = resource;
-        this.modal.open(content);
+        this.modal.open(content, { size: 'lg' });
     }
 
     public closePackageResourceModal(cb) {
@@ -245,7 +258,14 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
     }
 
     public save() {
+        const implementationGuideId = this.route.snapshot.paramMap.get('id');
+
         if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
+            return;
+        }
+
+        if (implementationGuideId === 'from-file') {
+            this.fileService.saveFile();
             return;
         }
 

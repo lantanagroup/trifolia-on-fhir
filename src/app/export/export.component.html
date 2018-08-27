@@ -4,7 +4,7 @@
 
 <div class="form-group">
     <label>Implementation Guide</label>
-    <select class="form-control" [(ngModel)]="implementationGuideId">
+    <select class="form-control" [(ngModel)]="options.implementationGuideId">
         <option></option>
         <option *ngFor="let ig of implementationGuides" [ngValue]="ig.id">{{ig.name}}</option>
     </select>
@@ -12,15 +12,34 @@
 
 <div class="form-group">
     <label>Export Format</label>
-    <select class="form-control" [(ngModel)]="exportFormat">
+    <select class="form-control" [(ngModel)]="options.exportFormat">
         <option [ngValue]="1">Bundle</option>
         <option [ngValue]="2">HTML (IG Publisher)</option>
     </select>
 </div>
 
+<span class="help-block" *ngIf="options.exportFormat === 1">The "Bundle" export format is a Bundle of all resources referenced by the selected implementation guide, including the implementation guide resource.</span>
+<span class="help-block" *ngIf="options.exportFormat === 2">The "HTML (IG Publisher)" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>version 3.0.1-11916</strong>). When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.</span>
+
+<div class="form-group" *ngIf="options.exportFormat == 2">
+    <label>Run the IG Publisher</label>
+    <select class="form-control" [(ngModel)]="options.executeIgPublisher">
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+    </select>
+</div>
+
+<div class="form-group" *ngIf="options.exportFormat == 2 && options.executeIgPublisher">
+    <label>Use terminology server</label>
+    <select class="form-control" [(ngModel)]="options.useTerminologyServer">
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+    </select>
+</div>
+
 <div class="form-group">
     <label>Response Format</label>
-    <select class="form-control" [(ngModel)]="responseFormat">
+    <select class="form-control" [(ngModel)]="options.responseFormat">
         <option value="application/json">JSON</option>
         <option value="application/xml">XML</option>
     </select>
@@ -33,6 +52,6 @@
 </div>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="export()">Export</button>
+    <button type="button" class="btn btn-default" (click)="export()" [disabled]="!options.implementationGuideId || !options.exportFormat || !options.responseFormat">Export</button>
     <span class="message">{{message}}</span>
 </footer>

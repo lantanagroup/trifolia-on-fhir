@@ -2,6 +2,8 @@ import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@an
 import {ConfigService} from '../services/config.service';
 import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
 import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement.component';
+import {ActivatedRoute} from '@angular/router';
+import {FileService} from '../services/file.service';
 
 /**
  * This class is responsible for determining which capability-statement component to render
@@ -16,14 +18,22 @@ export class CapabilityStatementWrapperComponent implements OnInit {
     constructor(
         private viewContainerRef: ViewContainerRef,
         private componentFactoryResolver: ComponentFactoryResolver,
+        private route: ActivatedRoute,
+        private fileService: FileService,
         private configService: ConfigService) {
-        this.onFhirServerChanged();
+        this.versionChanged();
     }
 
-    onFhirServerChanged() {
+    versionChanged() {
         let componentFactory;
+        let version = this.configService.fhirVersion;
+        const id  = this.route.snapshot.paramMap.get('id');
 
-        if (this.configService.fhirVersion.major >= 3 && this.configService.fhirVersion.minor >= 4) {
+        if (id === 'from-file' && this.fileService.file) {
+            version = this.fileService.file.fhirVersion;
+        }
+
+        if (version.major >= 3 && version.minor >= 4) {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4CapabilityStatementComponent);
         } else {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3CapabilityStatementComponent);
@@ -35,7 +45,7 @@ export class CapabilityStatementWrapperComponent implements OnInit {
 
     ngOnInit() {
         this.configService.fhirServerChanged.subscribe(() => {
-            this.onFhirServerChanged();
+            this.versionChanged();
         });
     }
 }

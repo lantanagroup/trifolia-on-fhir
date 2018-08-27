@@ -87,6 +87,17 @@ import {FhirEditMessagingEventModalComponent} from './fhir-edit/messaging-event-
 import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
 import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './capability-statement-wrapper/stu3/capability-statement.component';
 import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/capability-statement.component';
+import {XmlPipe} from './pipes/xml-pipe';
+import {FileDropModule} from 'ngx-file-drop';
+import {FhirEditReferenceModalComponent} from './fhir-edit/reference-modal/reference-modal.component';
+import {FhirService} from './services/fhir.service';
+import {FileService} from './services/file.service';
+import {ConfigService} from './services/config.service';
+import { FileOpenModalComponent } from './file-open-modal/file-open-modal.component';
+import {ImplementationGuideService} from './services/implementation-guide.service';
+import {StructureDefinitionService} from './services/structure-definition.service';
+import {ImportService} from './services/import.service';
+import {ExportService} from './services/export.service';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -118,6 +129,10 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
         return next.handle(clonedRequest);
     }
+}
+
+export function cookieServiceFactory() {
+    return new CookieService();
 }
 
 const appRoutes: Routes = [
@@ -174,10 +189,15 @@ const appRoutes: Routes = [
         FhirEditCapabilityStatementResourceModalComponent,
         FhirEditMessagingEventModalComponent,
         STU3CapabilityStatementComponent,
-        R4CapabilityStatementComponent
+        R4CapabilityStatementComponent,
+        FhirEditReferenceModalComponent,
+        FileOpenModalComponent
     ],
     declarations: [
         AppComponent,
+        KeysPipe,
+        FhirDisplayPipe,
+        XmlPipe,
         ImplementationGuidesComponent,
         HomeComponent,
         ImplementationGuideComponent,
@@ -201,8 +221,6 @@ const appRoutes: Routes = [
         ElementDefinitionTypeModalComponent,
         MarkdownComponent,
         FhirMarkdownComponent,
-        KeysPipe,
-        FhirDisplayPipe,
         ReferenceComponent,
         PageComponentModalComponent,
         CapabilityStatementsComponent,
@@ -244,7 +262,9 @@ const appRoutes: Routes = [
         FhirEditRatioModalComponent,
         FhirEditCodesystemConceptModalComponent,
         FhirEditCapabilityStatementResourceModalComponent,
-        FhirEditMessagingEventModalComponent
+        FhirEditMessagingEventModalComponent,
+        FhirEditReferenceModalComponent,
+        FileOpenModalComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -256,7 +276,8 @@ const appRoutes: Routes = [
         HttpClientModule,
         HttpModule,
         NgbModule.forRoot(),
-        TJsonViewerModule
+        TJsonViewerModule,
+        FileDropModule
     ],
     providers: [
         {
@@ -267,18 +288,27 @@ const appRoutes: Routes = [
             provide: HTTP_INTERCEPTORS,
             useClass: AddHeaderInterceptor,
             multi: true
+        }, {
+            provide: CookieService,
+            useFactory: cookieServiceFactory
         },
         AuthService,
         PersonService,
-        CookieService,
         AuditEventService,
         RecentItemService,
         BinaryService,
-        CapabilityStatementService,
-        OperationDefinitionService,
         ValueSetService,
         CodeSystemService,
-        Globals
+        FhirService,
+        FileService,
+        ConfigService,
+        Globals,
+        ImportService,
+        ExportService,
+        CapabilityStatementService,
+        OperationDefinitionService,
+        ImplementationGuideService,
+        StructureDefinitionService
     ],
     bootstrap: [AppComponent]
 })

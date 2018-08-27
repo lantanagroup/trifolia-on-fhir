@@ -1,26 +1,54 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Resource} from '../models/stu3/fhir';
+import {Bundle, Resource, StructureDefinition, ValueSet} from '../models/stu3/fhir';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 import * as Fhir from 'fhir';
-import * as FhirTypes from '../data/profiles-types.json';
-import * as FhirResources from '../data/profiles-resources.json';
-import * as FhirValuesets from '../data/valuesets.json';
-import * as CodeSystemIso3166 from '../data/codesystem-iso3166.json';
+import * as _ from 'underscore';
+import {ConfigService} from './config.service';
 
 @Injectable()
 export class FhirService {
     private fhir: Fhir;
+    public loaded: boolean;
+    public profiles: StructureDefinition[] = [];
+    public valueSets: ValueSet[] = [];
 
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private configService: ConfigService) {
 
-        const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
-        parser.loadCodeSystem(CodeSystemIso3166);
-        parser.parseBundle(FhirValuesets);
-        parser.parseBundle(FhirTypes);
-        parser.parseBundle(FhirResources);
+        this.configService.fhirServerChanged.subscribe(() => this.loadAssets());
+    }
 
-        this.fhir = new Fhir(parser);
+    private loadAssets() {
+        this.loaded = false;
+
+        const assetPromises = [
+            this.http.get('/assets/stu3/codesystem-iso3166.json'),
+            this.http.get('/assets/stu3/valuesets.json'),
+            this.http.get('/assets/stu3/profiles-types.json'),
+            this.http.get('/assets/stu3/profiles-resources.json')
+        ];
+
+        Observable.forkJoin(assetPromises)
+            .subscribe((allAssets) => {
+                const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+                parser.loadCodeSystem(allAssets[0]);
+                parser.parseBundle(allAssets[1]);
+                parser.parseBundle(allAssets[2]);
+                parser.parseBundle(allAssets[3]);
+
+                this.fhir = new Fhir(parser);
+
+                _.each((<Bundle>allAssets[1]).entry, (entry) => this.valueSets.push(entry.resource));
+                _.each((<Bundle>allAssets[2]).entry, (entry) => this.profiles.push(entry.resource));
+                _.each((<Bundle>allAssets[3]).entry, (entry) => this.profiles.push(entry.resource));
+
+                this.loaded = true;
+            }, (err) => {
+                console.log('Error loading assets');
+            });
     }
 
     /**
@@ -96,5 +124,13 @@ export class FhirService {
      */
     public validate(resource: Resource) {
         return this.fhir.validate(resource);
+    }
+
+    public serialize(resource: Resource) {
+        return this.fhir.objToXml(resource);
+    }
+
+    public deserialize(resourceXml: string) {
+        return this.fhir.xmlToObj(resourceXml);
     }
 }

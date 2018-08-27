@@ -30,6 +30,7 @@
     "body-parser": "^1.18.2",
     "bootstrap": "^4.0.0-beta",
     "classlist.js": "^1.1.20150312",
+    "compression": "^1.7.3",
     "config": "^1.29.4",
     "core-js": "^2.5.1",
     "express": "^4.16.2",
@@ -41,6 +42,7 @@
     "fs-extra": "^6.0.1",
     "jquery": "^3.2.1",
     "jwks-rsa": "^1.2.1",
+    "ngx-file-drop": "^3.0.2",
     "popper.js": "^1.12.5",
     "q": "^1.5.1",
     "request": "^2.83.0",
@@ -52,6 +54,7 @@
     "t-json-viewer": "^1.2.7",
     "tmp": "0.0.33",
     "underscore": "^1.8.3",
+    "vkbeautify": "^0.99.3",
     "zip-dir": "^1.0.2",
     "zone.js": "^0.8.14"
   },

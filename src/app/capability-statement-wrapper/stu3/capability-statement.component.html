@@ -30,7 +30,7 @@
                                     <input type="text" class="form-control"
                                            [(ngModel)]="capabilityStatement.format[i]"/>
                                 </td>
-                                <td>
+                                <td class="actions-column-1">
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-default btn-sm" title="Remove this format"
                                                 (click)="capabilityStatement.format.splice(i, 1)">
@@ -63,7 +63,7 @@
                                     <input type="text" class="form-control"
                                            [(ngModel)]="capabilityStatement.patchFormat[i]"/>
                                 </td>
-                                <td>
+                                <td class="actions-column-1">
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-default btn-sm" title="Remove this format"
                                                 (click)="capabilityStatement.patchFormat.splice(i, 1)">
@@ -137,6 +137,93 @@
                                          property="jurisdiction"></app-fhir-multi-jurisdiction>
 
             <div class="card">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementationGuide')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'implementationGuide', [''])"/>
+                    Implementation Guides
+                </div>
+                <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementationGuide')">
+                    <thead>
+                    <tr>
+                        <th>URI</th>
+                        <th class="actions-column-2">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Add a certificate" (click)="capabilityStatement.implementationGuide.push({})">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let ig of capabilityStatement.implementationGuide; let igi = index; trackBy: globals.trackByFn">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="capabilityStatement.implementationGuide[igi]" />
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Select an implementation guide" (click)="selectImplementationGuide(igi)">
+                                    <i class="fa fa-hand-pointer-o"></i>
+                                </button>
+                                <button type="button" class="btn btn-default" title="Remove this certificate" (click)="capabilityStatement.implementationGuide.splice(igi, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="2">
+                            <strong>Total: {{capabilityStatement.implementationGuide ? capabilityStatement.implementationGuide.length : 0}}</strong>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'profile', [{ reference: '', display: '' }])"/>
+                    Profiles
+                </div>
+                <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('profile')">
+                    <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th class="actions-column-1">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Add a profile" (click)="capabilityStatement.profile.push({ reference: '', display: '' })">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let p of capabilityStatement.profile; let pi = index">
+                        <td>
+                            <app-fhir-reference [parentObject]="capabilityStatement.profile" [propertyName]="pi" [isFormGroup]="false" resourceType="StructureDefinition" [required]="true"></app-fhir-reference>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Remove this profile" (click)="capabilityStatement.profile.splice(pi, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="2">
+                            <strong>Total: {{capabilityStatement.profile ? capabilityStatement.profile.length : 0}}</strong>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card">
                 <div class="card-header">Software</div>
                 <div class="card-body">...</div>
             </div>
@@ -148,16 +235,6 @@
 
             <div class="card">
                 <div class="card-header">Instantiates</div>
-                <div class="card-body">...</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">Implementation Guides</div>
-                <div class="card-body">...</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">Profiles</div>
                 <div class="card-body">...</div>
             </div>
         </ng-template>
@@ -258,7 +335,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Profile</th>
-                                    <th>
+                                    <th class="actions-column-3">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a resource" (click)="r.resource.push({ type: 'Account' })">
                                                 <i class="fa fa-plus"></i>
@@ -308,7 +385,7 @@
                                 <tr>
                                     <th>Code</th>
                                     <th>Documentation</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an interaction" (click)="r.resource.push({ code: 'transaction' })">
                                                 <i class="fa fa-plus"></i>
@@ -350,7 +427,7 @@
                                     <th>Definition</th>
                                     <th>Type</th>
                                     <th>Documentation</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a search param" (click)="r.searchParam.push({})">
                                                 <i class="fa fa-plus"></i>
@@ -396,7 +473,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Definition</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an operation" (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
                                                 <i class="fa fa-plus"></i>
@@ -428,16 +505,16 @@
                         <!-- Compartments -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')" (ngModelChange)="globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])" />
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')" (ngModelChange)="globals.toggleProperty(r, 'compartment', [''])" />
                                 Compartments
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Add an compartment" (click)="r.compartment.push({ name: '', definition: { reference: '', display: '' }})">
+                                            <button type="button" class="btn btn-default btn-sm" title="Add an compartment" (click)="r.compartment.push('')">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -470,7 +547,7 @@
         <ng-template ngbTabContent>
             <div class="input-group">
                 <div class="input-group-addon">
-                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ mode: 'client' }])"/> Includes messaging entries
+                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> Includes messaging entries
                 </div>
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default" *ngIf="capabilityStatement.hasOwnProperty('messaging')" (click)="capabilityStatement.messaging.push({})">Add messaging entry</button>
@@ -493,7 +570,7 @@
                         <!-- Endpoints -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(r, 'endpoint', [{ protocol: globals.messageTransportCodes[0], address: '' }])"/>
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(messaging, 'endpoint', [{ protocol: globals.messageTransportCodes[0], address: '' }])"/>
                                 Endpoints
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
@@ -501,7 +578,7 @@
                                 <tr>
                                     <th>Protocol</th>
                                     <th>Address</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an endpoint" (click)="messaging.endpoint.push({ protocol: globals.messageTransportCodes[0], address: '' })">
                                                 <i class="fa fa-plus"></i>
@@ -553,7 +630,7 @@
                                 <tr>
                                     <th>Mode</th>
                                     <th>Definition</th>
-                                    <th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a supported message" (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
                                                 <i class="fa fa-plus"></i>
@@ -596,7 +673,7 @@
                                     <th>Focus</th>
                                     <th>Request</th>
                                     <th>Response</th>
-                                    <th>
+                                    <th class="actions-column-2">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an event" (click)="messaging.event.push(getDefaultMessagingEvent())">
                                                 <i class="fa fa-plus"></i>
@@ -657,7 +734,7 @@
                     <th>Mode</th>
                     <th>Documentation</th>
                     <th>Profile</th>
-                    <th>
+                    <th class="actions-column-1">
                         <div class="pull-right">
                             <button type="button" class="btn btn-default" title="Add document"
                                     (click)="capabilityStatement.document.push({ mode: 'producer', profile: { reference: '', display: '' }})">
@@ -705,18 +782,23 @@
         </ng-template>
     </ngb-tab>
 
-    <!-- JSON -->
-    <ngb-tab title="JSON">
+    <!-- RAW -->
+    <ngb-tab title="RAW">
         <ng-template ngbTabContent>
             <ngb-tabset [justify]="'fill'">
-                <ngb-tab title="Pretty">
+                <ngb-tab title="Pretty JSON">
                     <ng-template ngbTabContent>
                         <t-json-viewer [json]="capabilityStatement"></t-json-viewer>
                     </ng-template>
                 </ngb-tab>
-                <ngb-tab title="Plain">
+                <ngb-tab title="Plain JSON">
                     <ng-template ngbTabContent>
                         <pre>{{capabilityStatement | json}}</pre>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab title="Plain XML">
+                    <ng-template ngbTabContent>
+                        <pre>{{fhirService.serialize(capabilityStatement) | xml}}</pre>
                     </ng-template>
                 </ngb-tab>
             </ngb-tabset>

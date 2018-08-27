@@ -39,17 +39,21 @@ router.post('/', checkJwt, (req, res) => {
        const location = results.headers.location || results.headers['content-location'];
 
        if (location) {
+           const parsedLocation = fhirHelper.parseUrl(location, req.fhirServerBase);
+
            request(location, (err, results, retrieveBody) => {
                if (err) {
                    console.log('Error from FHIR server while retrieving newly created binary: ' + err);
                    return res.status(500).send('Error from FHIR server while retrieving newly created binary');
                }
 
-               // Need to add the id to Binary because for some reason Binary resources from HAPI do not always return with an id
-               retrieveBody.id = parsedUrl.id;
+               // Server may not include the id in the Binary retrieve response
+               if (!retrieveBody.id && parsedLocation && parsedLocation.id) {
+                   retrieveBody.id = parsedLocation.id;
+               }
 
                res.send(retrieveBody);
-           })
+           });
        } else {
            res.status(500).send('FHIR server did not respond with a location to the newly created binary');
        }
