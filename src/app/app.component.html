@@ -139,7 +139,7 @@
     <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
     <router-outlet *ngIf="fhirService.loaded"></router-outlet>
     <div *ngIf="!fhirService.loaded">
-      Loading...
+      Loading information from selected FHIR server...
     </div>
   </div>
 </div>

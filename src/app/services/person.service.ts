@@ -10,12 +10,13 @@ export class PersonService {
 
     constructor(private http: HttpClient) { }
 
-    public getMe(shouldCreate: boolean = false): Observable<Person> {
-        return this.http.get('/api/person/me?shouldCreate=' + shouldCreate)
+    public getMe(): Observable<Person> {
+        return this.http.get('/api/person/me')
             .map(personObj => new Person(personObj));
     }
 
-    public updateMe(person: Person): Observable<Response> {
-        return this.http.put('/api/person/me', person);
+    public updateMe(person: Person): Observable<Person> {
+        return this.http.post('/api/person/me', person)
+            .map(personObj => new Person(personObj));
     }
 }

@@ -98,6 +98,7 @@ import {ImplementationGuideService} from './services/implementation-guide.servic
 import {StructureDefinitionService} from './services/structure-definition.service';
 import {ImportService} from './services/import.service';
 import {ExportService} from './services/export.service';
+import { NewUserModalComponent } from './new-user-modal/new-user-modal.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -191,7 +192,8 @@ const appRoutes: Routes = [
         STU3CapabilityStatementComponent,
         R4CapabilityStatementComponent,
         FhirEditReferenceModalComponent,
-        FileOpenModalComponent
+        FileOpenModalComponent,
+        NewUserModalComponent
     ],
     declarations: [
         AppComponent,
@@ -264,7 +266,8 @@ const appRoutes: Routes = [
         FhirEditCapabilityStatementResourceModalComponent,
         FhirEditMessagingEventModalComponent,
         FhirEditReferenceModalComponent,
-        FileOpenModalComponent
+        FileOpenModalComponent,
+        NewUserModalComponent
     ],
     imports: [
         RouterModule.forRoot(

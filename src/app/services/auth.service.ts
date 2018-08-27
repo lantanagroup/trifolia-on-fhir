@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import { PersonService } from './person.service';
 import { PersonListModel } from '../models/person-list-model';
+import {Person} from '../models/stu3/fhir';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
         scope: 'openid profile name nickname email'
     });
     public userProfile: any;
-    public person: PersonListModel;
+    public person: Person;
     public authExpiresAt: number;
     public authChanged: EventEmitter<any>;
     public instanceNum = Math.random();
@@ -83,13 +84,12 @@ export class AuthService {
                 self.userProfile = userProfile;
 
                 this.personService.getMe()
-                    .subscribe(person => {
+                    .subscribe((person) => {
                         self.person = person;
 
                         cb(null, userProfile, person);
                         self.authChanged.emit();
-                    }, personErr => {
-                        console.log(personErr);
+                    }, (personErr) => {
                         cb(personErr);
                     });
             }

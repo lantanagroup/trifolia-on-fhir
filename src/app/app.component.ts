@@ -10,6 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
 import {FileModel} from './models/file-model';
 import {FhirService} from './services/fhir.service';
+import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
 
 @Component({
     selector: 'app-root',
@@ -55,10 +56,16 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.authService.isAuthenticated()) {
-            const self = this;
-            this.authService.getProfile((err, profile, person) => { });
-        }
+        this.configService.fhirServerChanged.subscribe((fhirServer) => {
+            if (this.authService.isAuthenticated()) {
+                const self = this;
+                this.authService.getProfile((err, profile, person) => {
+                    if (err && err.status === 404) {
+                        const modalRef = this.modalService.open(NewUserModalComponent);
+                    }
+                });
+            }
+        });
 
         this.router.events.subscribe((event: Event) => {
             if (event instanceof NavigationEnd) {

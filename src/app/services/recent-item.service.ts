@@ -7,12 +7,12 @@ import {ConfigService} from './config.service';
 
 @Injectable()
 export class RecentItemService {
-    public recentImplementationGuides: RecentItemModel[];
-    public recentStructureDefinitions: RecentItemModel[];
-    public recentCapabilityStatements: RecentItemModel[];
-    public recentOperationDefinitions: RecentItemModel[];
-    public recentValueSets: RecentItemModel[];
-    public recentCodeSystems: RecentItemModel[];
+    public recentImplementationGuides: RecentItemModel[] = [];
+    public recentStructureDefinitions: RecentItemModel[] = [];
+    public recentCapabilityStatements: RecentItemModel[] = [];
+    public recentOperationDefinitions: RecentItemModel[] = [];
+    public recentValueSets: RecentItemModel[] = [];
+    public recentCodeSystems: RecentItemModel[] = [];
 
     constructor(
         private cookieService: CookieService,
@@ -84,7 +84,7 @@ export class RecentItemService {
 
     private getCollection(cookieKey: string): RecentItemModel[] {
         const fhirServer = this.configService.fhirServer;
-        
+
         switch (cookieKey) {
             case this.globals.cookieKeys.recentImplementationGuides + '-' + fhirServer:
                 return this.recentImplementationGuides;
