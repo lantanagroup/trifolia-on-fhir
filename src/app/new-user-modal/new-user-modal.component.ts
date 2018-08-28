@@ -16,7 +16,7 @@ export class NewUserModalComponent implements OnInit {
 
     constructor(
         private activeModal: NgbActiveModal,
-        private globals: Globals,
+        public globals: Globals,
         private personService: PersonService,
         private authService: AuthService) {
         this.person.name = [new HumanName()];

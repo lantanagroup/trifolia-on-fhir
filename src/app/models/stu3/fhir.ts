@@ -1739,7 +1739,7 @@ export class CodeSystem extends DomainResource {
     public version?: string;
     public name?: string;
     public title?: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
     public date?: Date;
     public publisher?: string;
@@ -1754,7 +1754,7 @@ export class CodeSystem extends DomainResource {
     public hierarchyMeaning?: string;
     public compositional?: boolean;
     public versionNeeded?: boolean;
-    public content: string;
+    public content = 'not-present';
     public count?: number;
     public filter?: FilterComponent[];
     public property?: PropertyComponent[];

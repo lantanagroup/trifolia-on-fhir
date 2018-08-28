@@ -135,15 +135,9 @@
                     <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
+                            <i class="fa fa-remove" title="Remove this package" (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-default"
-                                        (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?')">
-                                    Remove Package
-                                </button>
-                            </div>
-
                             <div class="form-group">
                                 <label>Name</label>
                                 <input type="text" class="form-control" [(ngModel)]="p.name"/>
@@ -220,6 +214,7 @@
 
                 <p>
                     <button type="button" class="btn btn-primary"
+                            *ngIf="implementationGuide.hasOwnProperty('package')"
                             (click)="implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false}]})">
                         Add Package
                     </button>
@@ -233,7 +228,7 @@
                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('page')"
                        (ngModelChange)="toggleRootPage($event)"/> Implementation guide has pages
 
-                <table class="table">
+                <table class="table" *ngIf="implementationGuide.hasOwnProperty('page')">
                     <thead>
                     <tr>
                         <th>Title</th>

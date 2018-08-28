@@ -90,7 +90,9 @@ export class ValuesetComponent implements OnInit, DoCheck {
         }
 
         return new Observable<ValueSet>((observer) => {
-            if (valueSetId) {
+            if (valueSetId === 'new') {
+                observer.next(this.valueSet);
+            } else if (valueSetId) {
                 this.valueSetService.get(valueSetId)
                     .subscribe((vs) => {
                         this.valueSet = vs;

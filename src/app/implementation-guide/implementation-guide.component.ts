@@ -62,7 +62,9 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
         }
 
         return new Observable((observer) => {
-            if (implementationGuideId) {
+            if (implementationGuideId === 'new') {
+                observer.next(this.implementationGuide);
+            } else if (implementationGuideId) {
                 this.implementationGuideService.getImplementationGuide(implementationGuideId)
                     .subscribe((results: ImplementationGuide) => {
                         this.implementationGuide = results;

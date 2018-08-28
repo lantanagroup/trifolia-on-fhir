@@ -78,7 +78,9 @@ export class CodesystemComponent implements OnInit, DoCheck {
         }
 
         return new Observable<CodeSystem>((observer) => {
-            if (codeSystemId) {
+            if (codeSystemId === 'new') {
+                observer.next(this.codeSystem);
+            } else if (codeSystemId) {
                 this.codeSystemService.get(codeSystemId)
                     .subscribe((cs) => {
                         this.codeSystem = cs;
@@ -101,6 +103,6 @@ export class CodesystemComponent implements OnInit, DoCheck {
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.codeSystem);
+        //this.validation = this.fhirService.validate(this.codeSystem);
     }
 }

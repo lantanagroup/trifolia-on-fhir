@@ -115,7 +115,9 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
         }
 
         return new Observable<CapabilityStatement>((observer) => {
-            if (capabilityStatementId) {
+            if (capabilityStatementId === 'new') {
+                observer.next(this.capabilityStatement);
+            } else if (capabilityStatementId) {
                 this.csService.get(capabilityStatementId)
                     .subscribe((cs) => {
                         this.capabilityStatement = cs;

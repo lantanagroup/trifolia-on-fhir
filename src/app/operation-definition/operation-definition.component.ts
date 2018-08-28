@@ -83,7 +83,9 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
         }
 
         return new Observable<OperationDefinition>((observer) => {
-            if (operationDefinitionId) {
+            if (operationDefinitionId === 'new') {
+                observer.next(this.operationDefinition);
+            } else if (operationDefinitionId) {
                 this.opDefService.get(operationDefinitionId)
                     .subscribe((opDef) => {
                         this.operationDefinition = opDef;
