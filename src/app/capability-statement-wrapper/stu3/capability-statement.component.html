@@ -538,28 +538,15 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Messaging</ng-template>
         <ng-template ngbTabContent>
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> Includes messaging entries
-                </div>
-                <div class="input-group-btn">
-                    <button type="button" class="btn btn-default" *ngIf="capabilityStatement.hasOwnProperty('messaging')" (click)="capabilityStatement.messaging.push({})">Add messaging entry</button>
-                </div>
-            </div>
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries
 
-            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center">
-                <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index">
+            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet>
+                <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
                     <ng-template ngbTabTitle>
-                        Messaging {{mi+1}}
+                        <span>Messaging {{mi+1}} </span>
+                        <i class="fa fa-remove" title="Remove this messaging entry" (click)="globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
-                        <p>
-                            <button type="button" class="btn btn-default" (click)="capabilityStatement.messaging.splice(mi, 1)" title="Remove this messaging entry">
-                                <i class="fa fa-remove"></i>
-                                Remove this messaging entry
-                            </button>
-                        </p>
-
                         <!-- Endpoints -->
                         <div class="card">
                             <div class="card-header">
@@ -709,6 +696,12 @@
                             </table>
                         </div>
                     </ng-template>
+                </ngb-tab>
+                <ngb-tab [disabled]="true">
+                    <ng-template ngbTabTitle>
+                        <button type="button" class="btn btn-default" title="Add a messaging entry" (click)="addMessagingEntry(messagingTabSet)">Add</button>
+                    </ng-template>
+                    <ng-template ngbTabContent></ng-template>
                 </ngb-tab>
             </ngb-tabset>
         </ng-template>

@@ -96,6 +96,15 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
         }, 50);
     }
 
+    public addMessagingEntry(messagingTabSet) {
+        this.capabilityStatement.messaging.push({ });
+        setTimeout(() => {
+            const lastIndex = this.capabilityStatement.messaging.length - 1;
+            const newMessagingTabId = 'messaging-' + lastIndex.toString();
+            messagingTabSet.select(newMessagingTabId);
+        }, 50);
+    }
+
     private getCapabilityStatement(): Observable<CapabilityStatement> {
         const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 
