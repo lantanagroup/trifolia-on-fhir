@@ -46,6 +46,16 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
         private fhirService: FhirService) {
     }
 
+    public addPackageEntry(packagesTabSet) {
+        this.implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false }] });
+
+        setTimeout(() => {
+            const lastIndex = this.implementationGuide.package.length - 1;
+            const newPackageTabId = 'package-' + lastIndex.toString();
+            packagesTabSet.select(newPackageTabId);
+        }, 50);    // 50ms timeout... should occur pretty quickly
+    }
+
     private getImplementationGuide(): Observable<ImplementationGuide> {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 

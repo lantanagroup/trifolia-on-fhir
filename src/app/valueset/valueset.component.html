@@ -89,15 +89,7 @@
                 <div class="col-md-4">
                     <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version"></app-fhir-string>
 
-                    <div class="form-group">
-                        <label>Status <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('status')" (ngModelChange)="globals.toggleProperty(valueSet, 'status', 'draft')" /></label>
-                        <select class="form-control" [disabled]="!valueSet.hasOwnProperty('status')" [(ngModel)]="valueSet.status">
-                            <option value="draft">Draft</option>
-                            <option value="active">Active</option>
-                            <option value="retired">Retired</option>
-                            <option value="unknown">Unknown</option>
-                        </select>
-                    </div>
+                    <app-fhir-select-single-code [parentObject]="valueSet" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
                 </div>
             </div>
         </ng-template>
@@ -105,7 +97,7 @@
 
     <ngb-tab title="Compose">
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { })" /> Value set has a "compose" definition
+            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { include: [{}] })" /> Value set has a "compose" definition
 
             <div *ngIf="valueSet.hasOwnProperty('compose')">
                 <app-fhir-date [parentObject]="valueSet.compose" propertyName="lockedDate" title="Locked Date"></app-fhir-date>
@@ -113,7 +105,7 @@
                 <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive"></app-fhir-boolean>
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" *ngIf="!valueSet.compose.hasOwnProperty('include')">
                         <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [])" />
                         Include
                     </div>
@@ -160,7 +152,7 @@
                                     <button type="button" class="btn btn-default btn-sm" title="Edit this include" (click)="editInclude(include)">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button type="button" class="btn btn-default btn-sm" title="Remove this include" (click)="valueSet.compose.include.splice(ii, 1)">
+                                    <button type="button" class="btn btn-default btn-sm" title="Remove this include" [disabled]="valueSet.compose.include.length === 1" (click)="valueSet.compose.include.splice(ii, 1)">
                                         <i class="fa fa-remove"></i>
                                     </button>
                                 </div>

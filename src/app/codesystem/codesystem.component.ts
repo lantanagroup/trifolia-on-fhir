@@ -103,6 +103,6 @@ export class CodesystemComponent implements OnInit, DoCheck {
     }
 
     ngDoCheck() {
-        //this.validation = this.fhirService.validate(this.codeSystem);
+        this.validation = this.fhirService.validate(this.codeSystem);
     }
 }

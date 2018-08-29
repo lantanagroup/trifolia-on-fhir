@@ -8,7 +8,7 @@ import {Globals} from '../../globals';
 })
 export class MultiJurisdictionComponent implements OnInit {
     @Input() parentObject: any;
-    @Input() property: string;
+    @Input() propertyName: string;
 
     constructor(public globals: Globals) {
     }

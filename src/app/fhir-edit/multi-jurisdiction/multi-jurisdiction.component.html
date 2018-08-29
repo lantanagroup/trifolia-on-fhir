@@ -1,16 +1,16 @@
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(property)" (ngModelChange)="globals.toggleProperty(parentObject, property, [])"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
         Jurisdiction
     </div>
-    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(property)">
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
         <tr>
             <th>Text</th>
             <th>Codes</th>
             <th>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="parentObject[property].push({ })">
+                    <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="parentObject[propertyName].push({})">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -18,7 +18,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let j of parentObject[property]; let ji = index">
+        <tr *ngFor="let j of parentObject[propertyName]; let ji = index">
             <td>
                 <div class="input-group">
                     <div class="input-group-addon">
@@ -56,7 +56,7 @@
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Remove this jurisdiction" (click)="parentObject[property].splice(ji, 1)">
+                    <button type="button" class="btn btn-default" title="Remove this jurisdiction" (click)="parentObject[propertyName].splice(ji, 1)">
                         <i class="fa fa-remove"></i>
                     </button>
                 </div>

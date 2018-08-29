@@ -3577,6 +3577,43 @@ export class SearchParamComponent extends BackboneElement {
 
 }
 
+export class PackageResourceComponent extends BackboneElement {
+    public example = false;
+    public name?: string;
+    public description?: string;
+    public acronym?: string;
+    public sourceUri?: string;
+    public sourceReference?: ResourceReference;
+    public exampleFor?: ResourceReference;
+
+    constructor(obj?: any) {
+        super(obj);
+        if (obj) {
+            if (obj.hasOwnProperty('example')) {
+                this.example = obj.example;
+            }
+            if (obj.name) {
+                this.name = obj.name;
+            }
+            if (obj.description) {
+                this.description = obj.description;
+            }
+            if (obj.acronym) {
+                this.acronym = obj.acronym;
+            }
+            if (obj.sourceUri) {
+                this.sourceUri = obj.sourceUri;
+            }
+            if (obj.sourceReference) {
+                this.sourceReference = new ResourceReference(obj.sourceReference);
+            }
+            if (obj.exampleFor) {
+                this.exampleFor = new ResourceReference(obj.exampleFor);
+            }
+        }
+    }
+}
+
 export class ResourceComponent extends BackboneElement {
     public type: string;
     public profile?: ResourceReference;
@@ -9688,7 +9725,7 @@ export class DependencyComponent extends BackboneElement {
 export class PackageComponent extends BackboneElement {
     public name: string;
     public description?: string;
-    public resource: ResourceComponent[];
+    public resource: PackageResourceComponent[];
     
     constructor(obj?: any) {
         super(obj);
@@ -9701,7 +9738,7 @@ export class PackageComponent extends BackboneElement {
             }
             if (obj.resource) {
                 this.resource = [];
-                for (let o of obj.resource || []) { this.resource.push(new ResourceComponent(o)); }
+                for (let o of obj.resource || []) { this.resource.push(new PackageResourceComponent(o)); }
             }
         }
     }
@@ -11760,8 +11797,8 @@ export class OperationDefinition extends DomainResource {
     public url?: string;
     public version?: string;
     public name: string;
-    public status: string;
-    public kind: string;
+    public status = 'draft';
+    public kind = 'operation';
     public experimental?: boolean;
     public date?: string;
     public publisher?: string;
@@ -11775,9 +11812,9 @@ export class OperationDefinition extends DomainResource {
     public comment?: string;
     public base?: ResourceReference;
     public resource?: string[];
-    public system: boolean;
-    public type: boolean;
-    public instance: boolean;
+    public system = false;
+    public type = false;
+    public instance = false;
     public parameter?: ParameterComponent[];
     public overload?: OverloadComponent[];
     
@@ -16135,7 +16172,7 @@ export class ValueSet extends DomainResource {
     public version?: string;
     public name?: string;
     public title?: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
     public date?: Date;
     public publisher?: string;

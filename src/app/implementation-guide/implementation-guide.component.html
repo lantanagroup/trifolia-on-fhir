@@ -44,7 +44,7 @@
             <ng-template ngbTabContent>
                 <p>
                     <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
-                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [])"/> Allow globals
+                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: { reference: '' }}])"/> Allow globals
                 </p>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
@@ -90,7 +90,7 @@
         <!-- Binary -->
         <ngb-tab id="binary" title="Binary">
             <ng-template ngbTabContent>
-                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [])" />
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [''])" />
                 Implementation guide has binary URIs
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
@@ -126,13 +126,10 @@
         <ngb-tab id="packages">
             <ng-template ngbTabTitle>Packages</ng-template>
             <ng-template ngbTabContent>
-                <p>
-                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
-                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'package', [])"/> This implementation guide has packages
-                </p>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ name: '', sourceUri: '', example: false}]}])"/> This implementation guide has packages
 
-                <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="fill">
-                    <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index">
+                <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet>
+                    <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
                             <i class="fa fa-remove" title="Remove this package" (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
@@ -210,15 +207,13 @@
                             </table>
                         </ng-template>
                     </ngb-tab>
+                    <ngb-tab [disabled]="true">
+                        <ng-template ngbTabTitle>
+                            <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet)">Add</button>
+                        </ng-template>
+                        <ng-template ngbTabContent></ng-template>
+                    </ngb-tab>
                 </ngb-tabset>
-
-                <p>
-                    <button type="button" class="btn btn-primary"
-                            *ngIf="implementationGuide.hasOwnProperty('package')"
-                            (click)="implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false}]})">
-                        Add Package
-                    </button>
-                </p>
             </ng-template>
         </ngb-tab>
 

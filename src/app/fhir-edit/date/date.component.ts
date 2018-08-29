@@ -10,7 +10,7 @@ export class FhirDateComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
-    @Input() required = true;
+    @Input() required = false;
     @Input() isFormGroup = true;
     @Input() defaultValue = '';
     @Input() tooltip: string;
