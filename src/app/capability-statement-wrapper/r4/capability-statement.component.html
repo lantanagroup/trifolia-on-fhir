@@ -165,28 +165,15 @@
     <ngb-tab>
         <ng-template ngbTabTitle>REST</ng-template>
         <ng-template ngbTabContent>
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> Includes REST entries
-                </div>
-                <div class="input-group-btn">
-                    <button type="button" class="btn btn-default" *ngIf="capabilityStatement.hasOwnProperty('rest')" (click)="capabilityStatement.rest.push({ mode: 'client' })">Add REST entry</button>
-                </div>
-            </div>
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries
 
-            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center">
-                <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index">
+            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet>
+                <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
                     <ng-template ngbTabTitle>
                         <span>REST {{ri + 1}} </span>
+                        <i class="fa fa-remove" title="Remove this REST entry" (click)="globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
-                        <p>
-                            <button type="button" class="btn btn-default" (click)="capabilityStatement.rest.splice(ri, 1)" title="Remove this REST entry">
-                                <i class="fa fa-remove"></i>
-                                Remove this REST entry
-                            </button>
-                        </p>
-
                         <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true"></app-fhir-select-single-code>
 
                         <app-fhir-markdown [parentObject]="r" propertyName="documentation" title="Documentation"></app-fhir-markdown>
@@ -461,6 +448,12 @@
                             </table>
                         </div>
                     </ng-template>
+                </ngb-tab>
+                <ngb-tab [disabled]="true">
+                    <ng-template ngbTabTitle>
+                        <button type="button" class="btn btn-default" title="Add a REST entry" (click)="addRestEntry(restTabSet)">Add</button>
+                    </ng-template>
+                    <ng-template ngbTabContent></ng-template>
                 </ngb-tab>
             </ngb-tabset>
         </ng-template>

@@ -87,6 +87,15 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
         
     }
 
+    public addRestEntry(restTabSet) {
+        this.capabilityStatement.rest.push({ mode: 'client' });
+        setTimeout(() => {
+            const lastIndex = this.capabilityStatement.rest.length - 1;
+            const newRestTabId = 'rest-' + lastIndex.toString();
+            restTabSet.select(newRestTabId);
+        }, 50);
+    }
+
     private getCapabilityStatement(): Observable<CapabilityStatement> {
         const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 

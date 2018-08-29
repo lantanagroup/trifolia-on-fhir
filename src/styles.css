@@ -115,3 +115,7 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
     margin-left: 20px;
     padding-right: 20px;
 }
+
+ngb-tabset > ul > li > a > button {
+    margin-top: -6px;
+}
