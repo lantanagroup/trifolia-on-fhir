@@ -4,7 +4,7 @@
 ##
 
 $servname = "service name"
-$server = "dev7"
+$server = "dev7.lantanagroup.com"
 $remotePath = "\\dev7\e$\Websites\nodejs\trifolia-fhir"
 $serverPath = "E:\Websites\nodejs\trifolia-fhir"
 #$credentials = Get-Credential -UserName "sean.mcilvenna@lantanagroup.com" -Message "Please enter your password"
@@ -14,7 +14,7 @@ If(!(test-path ".\dist\")) {
 }
 
 # zip server files
-$serverIncludes = @("controllers\*", "src\assets\stu3\*", "src\assets\r4\*")
+$serverIncludes = @("controllers\*", "src\assets\stu3\*", "src\assets\r4\*", "config\*")
 $serverExcludes = @(".angular-cli.json", ".gitignore", "gulpfile.js", "help.hnd", "karma.conf.js", "package-lock.json", "protractor.conf.js", "TrifoliaFhir.sln", "tsconfig.json", "tslint.json")
 $serverExcludes += "org.hl7.fhir.igpublisher.jar"
 [array]$serverFilesToZip = Get-ChildItem .\* -Exclude $serverExcludes -File

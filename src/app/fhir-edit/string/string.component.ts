@@ -16,6 +16,7 @@ export class StringComponent implements OnInit {
     @Input() tooltip: string;
     @Input() tooltipKey: string;
     @Input() placeholder: string;
+    @Input() disabled: boolean;
 
     constructor(public globals: Globals) {
 

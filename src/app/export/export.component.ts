@@ -66,16 +66,16 @@ export class ExportComponent implements OnInit, OnDestroy {
                 if (!data.message.endsWith('\n')) {
                     this.socketOutput += '\r\n';
                 }
-            }
 
-            if (data.status === 'complete') {
-                const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
-                const igName = ig.name.replace(/\s/g, '_');
+                if (data.status === 'complete') {
+                    const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
+                    const igName = ig.name.replace(/\s/g, '_');
 
-                this.exportService.getPackage(this.packageId)
-                    .subscribe((results: any) => {
-                        saveAs(results.body, igName + '.zip');
-                    });
+                    this.exportService.getPackage(this.packageId)
+                        .subscribe((results: any) => {
+                            saveAs(results.body, igName + '.zip');
+                        });
+                }
             }
         });
     }

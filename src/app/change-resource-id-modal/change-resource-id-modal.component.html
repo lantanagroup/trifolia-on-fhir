@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <h4 class="modal-title">Change resource ID</h4>
+</div>
+<div class="modal-body">
+    <p><strong>Resource: </strong> {{resourceType}}/{{originalId}}</p>
+    <p>You are changing the ID of this resource. The history for this resource will be preserved under the original id. Other resources referencing this by the original ID will need to be updated.</p>
+
+    <p class="alert alert-info" *ngIf="message">{{message}}</p>
+
+    <div class="form-group">
+        <label>New ID</label>
+        <input type="text" class="form-control" [(ngModel)]="newId" />
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="ok()" [disabled]="!newId || newId === originalId">OK</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

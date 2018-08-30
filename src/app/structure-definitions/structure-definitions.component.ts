@@ -5,6 +5,9 @@ import { ConfigService } from '../services/config.service';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import 'rxjs/add/operator/debounceTime';
 import {Subject} from 'rxjs/Subject';
+import {CapabilityStatement} from '../models/stu3/fhir';
+import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-profiles',
@@ -18,7 +21,10 @@ export class StructureDefinitionsComponent implements OnInit {
     public contentText: string;
     public criteriaChangedEvent = new Subject();
 
-    constructor(private structureDefinitionService: StructureDefinitionService, private configService: ConfigService) {
+    constructor(
+        private structureDefinitionService: StructureDefinitionService,
+        private configService: ConfigService,
+        private modalService: NgbModal) {
         this.criteriaChangedEvent
             .debounceTime(500)
             .subscribe(() => {
@@ -26,7 +32,7 @@ export class StructureDefinitionsComponent implements OnInit {
             });
     }
 
-    public delete(structureDefinitionListItem: StructureDefinitionListItemModel) {
+    public remove(structureDefinitionListItem: StructureDefinitionListItemModel) {
         if (!confirm(`Are you sure you want to delete the structure definition ${structureDefinitionListItem.name}`)) {
             return;
         }
@@ -40,6 +46,15 @@ export class StructureDefinitionsComponent implements OnInit {
             }, (err) => {
                 this.message = err;
             });
+    }
+
+    public changeId(structureDefinitionListItem: StructureDefinitionListItemModel) {
+        const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+        modalRef.componentInstance.resourceType = 'StructureDefinition';
+        modalRef.componentInstance.originalId = structureDefinitionListItem.id;
+        modalRef.result.then((newId) => {
+            structureDefinitionListItem.id = newId;
+        });
     }
 
     public nextPage() {

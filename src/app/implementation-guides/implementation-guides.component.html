@@ -1,41 +1,45 @@
 <h1>Implementation Guides</h1>
 
 <div class="input-group">
-  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search" [disabled]="true">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
-      <i class="fa fa-refresh"></i>
-    </button>
-  </div>
+    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
+           placeholder="Search" [disabled]="true">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
 </div>
 
 <table class="table table-striped">
-  <thead>
+    <thead>
     <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>
-        <div class="pull-right">
-          <button type="button" class="btn btn-default" routerLink="/implementation-guide/new">New</button>
-        </div>
-      </th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" routerLink="/implementation-guide/new" title="Create a new implementation guide">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     <tr *ngFor="let ig of implementationGuides">
-      <td>{{ig.name}} <span class="badge">{{ig.id}}</span></td>
-      <td>{{ig.type}}</td>
-      <td>
-        <div class="pull-right">
-          <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}">Edit</a>
-          <button type="button" class="btn btn-default" (click)="remove(ig)">Remove</button>
-        </div>
-      </td>
+        <td>{{ig.name}} <span class="badge">{{ig.id}}</span></td>
+        <td>{{ig.type}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
+                <button type="button" class="btn btn-default" (click)="remove(ig)" title="Remove this resource"><i class="fa fa-remove"></i></button>
+                <button type="button" class="btn btn-default" (click)="changeId(ig)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
+            </div>
+        </td>
     </tr>
-  </tbody>
-  <tfoot>
+    </tbody>
+    <tfoot>
     <tr>
-      <td colspan="3">{{implementationGuides.length}} total implementation guides</td>
+        <td colspan="3">{{implementationGuides.length}} total implementation guides</td>
     </tr>
-  </tfoot>
+    </tfoot>
 </table>

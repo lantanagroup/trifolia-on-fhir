@@ -97,6 +97,11 @@ export class FhirService {
         return codes;
     }
 
+    public changeResourceId(resourceType: string, originalId: string, newId: string): Observable<string> {
+        const url = `/api/fhirOps/change-id?resourceType=${resourceType}&originalId=${originalId}&newId=${newId}`;
+        return this.http.get(url, { responseType: 'text' });
+    }
+
     /**
      * Searches the FHIR server for all resources matching the specified ResourceType
      * @param {string} resourceType

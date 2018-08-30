@@ -1,18 +1,18 @@
 <div class="form-group" *ngIf="isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required && !disabled" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title || propertyName}}
         <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
     </label>
 
     <input type="text" class="form-control"
            [(ngModel)]="parentObject[propertyName]"
-           [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
+           [disabled]="disabled || (!required && !parentObject.hasOwnProperty(propertyName))"
            [class.is-invalid]="required && !parentObject[propertyName]"
            placeholder="{{placeholder}}" />
 </div>
-<div *ngIf="!isFormGroup" [class.input-group]="!required">
-    <div class="input-group-addon" *ngIf="!required">
+<div *ngIf="!isFormGroup" [class.input-group]="!required && !disabled">
+    <div class="input-group-addon" *ngIf="!required && !disabled">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
     </div>
     <div class="input-group-addon" *ngIf="title">
@@ -21,7 +21,7 @@
     </div>
     <input type="text" class="form-control"
            [(ngModel)]="parentObject[propertyName]"
-           [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
+           [disabled]="disabled || (!required && !parentObject.hasOwnProperty(propertyName))"
            [class.is-invalid]="required && !parentObject[propertyName]"
            placeholder="{{placeholder}}" />
 </div>

@@ -119,3 +119,11 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
 ngb-tabset > ul > li > a > button {
     margin-top: -6px;
 }
+
+a.btn > i.fa {
+    color: black;
+}
+
+button {
+    cursor: pointer;
+}

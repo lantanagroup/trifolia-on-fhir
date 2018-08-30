@@ -48,6 +48,10 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.document.body.classList.remove('structure-definition');
     }
 
+    public get isNew() {
+        return this.route.snapshot.paramMap.get('id') === 'new';
+    }
+
     public toggleSelectedElement(element: any) {
         if (!element || this.selectedElement === element) {
             this.selectedElement = null;

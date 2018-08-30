@@ -1,12 +1,24 @@
 <h1>Code Systems</h1>
 
+<div class="input-group">
+  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
+         placeholder="Search" [disabled]="true">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default" title="Refresh" (click)="getCodeSystems()">
+      <i class="fa fa-refresh"></i>
+    </button>
+  </div>
+</div>
+
 <table class="table table-striped">
   <thead>
   <tr>
     <th>Name</th>
     <th>
       <div class="pull-right">
-        <button type="button" class="btn btn-default" routerLink="/code-system/new">New</button>
+        <button type="button" class="btn btn-default" routerLink="/code-system/new" title="Create a new code system">
+          <i class="fa fa-plus"></i>
+        </button>
       </div>
     </th>
   </tr>
@@ -15,9 +27,10 @@
   <tr *ngFor="let cs of codeSystems">
     <td>{{cs.name}} <span class="badge">{{cs.id}}</span></td>
     <td>
-      <div class="pull-right">
-        <a class="btn btn-default" routerLink="/code-system/{{cs.id}}">Edit</a>
-        <button type="button" class="btn btn-default" (click)="remove(cs)">Remove</button>
+      <div class="btn-group pull-right">
+        <a class="btn btn-default" routerLink="/code-system/{{cs.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
+        <button type="button" class="btn btn-default" (click)="remove(cs)" title="Remove this resource"><i class="fa fa-remove"></i></button>
+        <button type="button" class="btn btn-default" (click)="changeId(cs)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
       </div>
     </td>
   </tr>

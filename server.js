@@ -17,6 +17,7 @@ const operationDefinitionController = require('./controllers/operationDefinition
 const valueSetController = require('./controllers/valueSet');
 const codeSystemController = require('./controllers/codeSystem');
 const importController = require('./controllers/import');
+const fhirOperationsController = require('./controllers/fhirOperations');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
@@ -50,6 +51,25 @@ app.use((req, res, next) => {
 
     req.getFhirServerUrl = function(resourceType, id, operation, params) {
         return FhirHelper.buildUrl(req.fhirServerBase, resourceType, id, operation, params);
+    };
+
+    req.getErrorMessage = function(err) {
+        if (err && err.response && err.response.body && err.response.body.resourceType === 'OperationOutcome') {
+            const oo = err.response.body;
+
+            if (oo.issue && oo.issue.length === 1 && oo.issue[0].diagnostics) {
+                return oo.issue[0].diagnostics;
+            } else if (oo.text && oo.text.div) {
+                return oo.text.div;
+            }
+        } else if (err && err.message) {
+            return err.message;
+        } else if (typeof err === 'string') {
+            return err;
+        }
+
+        console.log(err);
+        return 'Unspecified error';
     };
 
     next();
@@ -116,6 +136,7 @@ app.use('/api/capabilityStatement', capabilityStatementController);
 app.use('/api/operationDefinition', operationDefinitionController);
 app.use('/api/valueSet', valueSetController);
 app.use('/api/codeSystem', codeSystemController);
+app.use('/api/fhirOps', fhirOperationsController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 

@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="col-md-3">
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="id" title="ID" tooltipKey="resource.id"></app-fhir-string>
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true"></app-fhir-select-single-code>
 
                             <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipKey="sd.version"></app-fhir-string>
 
@@ -36,8 +36,6 @@
                         </div>
 
                         <div class="col-md-3">
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true"></app-fhir-select-single-code>
-
                             <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true"></app-fhir-select-single-code>
 
                             <div class="form-group">

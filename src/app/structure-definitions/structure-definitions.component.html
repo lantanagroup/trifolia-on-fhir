@@ -18,7 +18,9 @@
       <th>Contact</th>
       <th>
         <div class="pull-right">
-          <a class="btn btn-default" routerLink="/structure-definition/new">New</a>
+          <a class="btn btn-default" routerLink="/structure-definition/new" title="Create a new structure definition">
+            <i class="fa fa-plus"></i>
+          </a>
         </div>
       </th>
     </tr>
@@ -35,8 +37,9 @@
       <td>{{p.contact}}</td>
       <td>
         <div class="pull-right btn-group">
-          <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]">Edit</a>
-          <button type="button" class="btn btn-default" (click)="delete(p)">Delete</button>
+          <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]" title="Edit this resource"><i class="fa fa-edit"></i></a>
+          <button type="button" class="btn btn-default" (click)="remove(p)" title="Remove this resource"><i class="fa fa-remove"></i></button>
+          <button type="button" class="btn btn-default" (click)="changeId(p)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
         </div>
       </td>
     </tr>

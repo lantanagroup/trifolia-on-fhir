@@ -1,30 +1,43 @@
 <h1>Operation Definitions</h1>
 
+<div class="input-group">
+    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
+           placeholder="Search" [disabled]="true">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getOperationDefinitions()">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
+</div>
+
 <table class="table table-striped">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>
-      <div class="pull-right">
-        <button type="button" class="btn btn-default" routerLink="/operation-definition/new">New</button>
-      </div>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let cs of operationDefinitions">
-    <td>{{cs.name}} <span class="badge">{{cs.id}}</span></td>
-    <td>
-      <div class="pull-right">
-        <a class="btn btn-default" routerLink="/operation-definition/{{cs.id}}">Edit</a>
-        <button type="button" class="btn btn-default" (click)="remove(ig)">Remove</button>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="3">{{operationDefinitions.length}} total capability statements</td>
-  </tr>
-  </tfoot>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" routerLink="/operation-definition/new" title="Create a new operation definition">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let od of operationDefinitions">
+        <td>{{od.name}} <span class="badge">{{od.id}}</span></td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" routerLink="/operation-definition/{{od.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
+                <button type="button" class="btn btn-default" (click)="remove(od)" title="Remove this resource"><i class="fa fa-remove"></i></button>
+                <button type="button" class="btn btn-default" (click)="changeId(od)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="3">{{operationDefinitions.length}} total capability statements</td>
+    </tr>
+    </tfoot>
 </table>
