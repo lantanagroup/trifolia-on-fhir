@@ -15,7 +15,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
     public message: string;
 
     constructor(
-        private activeModal: NgbActiveModal,
+        public activeModal: NgbActiveModal,
         private fhirService: FhirService,
         private globals: Globals) {
     }
