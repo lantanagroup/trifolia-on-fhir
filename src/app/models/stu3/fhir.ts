@@ -39,6 +39,7 @@ export class Extension extends Element {
     public valueCoding?: Coding;
     public valueBoolean?: boolean;
     public valueString?: string;
+    public valueReference?: ResourceReference;
 
     constructor(obj?: any) {
         super(obj);
@@ -60,6 +61,9 @@ export class Extension extends Element {
             }
             if (obj.hasOwnProperty('valueBoolean')) {
                 this.valueBoolean = obj.valueBoolean;
+            }
+            if (obj.valueReference) {
+                this.valueReference = new ResourceReference(obj.valueReference);
             }
         }
     }
@@ -774,7 +778,7 @@ export class StructureDefinition extends DomainResource {
     public version?: string;
     public name: string;
     public title?: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
     public date?: Date;
     public publisher?: string;
@@ -787,12 +791,12 @@ export class StructureDefinition extends DomainResource {
     public keyword?: Coding[];
     public fhirVersion?: string;
     public mapping?: MappingComponent[];
-    public kind: string;
+    public kind = 'resource';
     public abstract = false;
     public contextType?: string;
     public context?: string[];
     public contextInvariant?: string[];
-    public type: string;
+    public type = 'Account';
     public baseDefinition?: string;
     public derivation?: string;
     public snapshot?: SnapshotComponent;

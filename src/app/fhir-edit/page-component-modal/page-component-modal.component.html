@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">Hi there!</h4>
+    <h4 class="modal-title">Edit page</h4>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -21,16 +21,23 @@
     <div class="form-group" *ngIf="!pageBinary">
         <label>Source</label>
         <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source" />
-        <div class="help-block" *ngIf="!pageBinary">A contained Binary resource could not be found for this source</div>
     </div>
 
-    <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary"></app-markdown>
+    <div class="form-group">
+        <label>Content</label>
+        <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary"></app-markdown>
+        <div class="help-block" *ngIf="!pageBinary">
+            A contained Binary resource could not be found for this source. This will result in an incomplete FHIR IG Publisher build package.
+            <br/>
+            <input type="file" style="display: none" (change)="importFile(fileInput.files[0])" accept=".html,.txt,.md" #fileInput />
+            <button type="button" class="btn btn-default" (click)="fileInput.click()">Import from computer (HTML, Text, MD/Markdown)</button>
+        </div>
+    </div>
 
     <p>Type...</p>
 
     <p>Package...</p>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="ok()">OK</button>
-    <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn btn-default" (click)="activeModal.dismiss()">Close</button>
 </div>

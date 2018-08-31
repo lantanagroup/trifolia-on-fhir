@@ -1,13 +1,14 @@
 {
   "resourceType": "StructureDefinition",
-  "id": "extension-ig-page-content",
+  "id": "233",
   "meta": {
-    "versionId": "2",
-    "lastUpdated": "2018-08-31T11:42:07.024-04:00"
+    "versionId": "4",
+    "lastUpdated": "2018-08-31T12:46:27.580-04:00"
   },
   "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content",
   "name": "Implementation Guide Page Content Extension",
   "status": "draft",
+  "description": "This extension allows an implementation guide's page to specify a resource reference to a Binary resource that contains the content of the page.",
   "kind": "resource",
   "abstract": false,
   "type": "Extension",
@@ -29,7 +30,8 @@
         "path": "Extension.value[x]",
         "type": [
           {
-            "code": "Resource"
+            "code": "Reference",
+            "profile": "http://hl7.org/fhir/StructureDefinition/Binary"
           }
         ]
       }

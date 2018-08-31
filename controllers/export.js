@@ -52,6 +52,7 @@ function exportBundle(req, res) {
 }
 
 function getControl(extension, implementationGuide, bundle) {
+    // TODO: Set canonicalBase to everything before ImplementationGuide/XXX of the IG
     const control = {
         tool: 'jekyll',
         source: 'ImplementationGuide/' + implementationGuide.id + '.xml',

@@ -5,7 +5,9 @@ import {FhirVersion} from './models/fhir-version';
 
 @Injectable()
 export class Globals {
-    public pageAsContainedBinary = false;
+    // Indicates if in the Implementation Guide Edit screen, page Binary resources should be considered a contained resource
+    public pageAsContainedBinary = true;
+    public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
         const keys = Object.keys(obj);

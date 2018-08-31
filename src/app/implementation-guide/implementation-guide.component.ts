@@ -24,7 +24,7 @@ class PageDefinition {
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css']
 })
-export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy {
+export class ImplementationGuideComponent implements OnInit, DoCheck {
     @Input() public implementationGuide?: ImplementationGuide;
     public message: string;
     public currentResource: any;
@@ -40,7 +40,6 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
         private implementationGuideService: ImplementationGuideService,
         private authService: AuthService,
         private recentItemService: RecentItemService,
-        private binaryService: BinaryService,
         private fileService: FileService,
         public globals: Globals,
         private fhirService: FhirService) {
@@ -123,21 +122,27 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
 
     public toggleRootPage(value: boolean) {
         if (value && !this.implementationGuide.page) {
-            this.implementationGuide.page = new PageComponent();
-
-            const newPage = new PageComponent();
-            const newBinary = new Binary();
-            newBinary.contentType = 'text/plain';
-            newBinary.content = btoa('No page content yet');
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
-
             if (!this.implementationGuide.contained) {
                 this.implementationGuide.contained = [];
             }
 
+            const newBinary = new Binary();
+            newBinary.contentType = 'text/plain';
+            newBinary.content = btoa('No page content yet');
+            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
             this.implementationGuide.contained.push(newBinary);
 
-            this.implementationGuide.page.source = '#' + newBinary.id;
+            const newPage = new PageComponent();
+            newPage.kind = 'page';
+            newPage.extension = [{
+                url: this.globals.extensionIgPageContentUrl,
+                valueReference: {
+                    reference: '#' + newBinary.id,
+                    display: `Page content ${newBinary.id}`
+                }
+            }];
+            newPage.source = 'index.html';
+            this.implementationGuide.page = newPage;
         } else if (!value && this.implementationGuide.page) {
             const foundPageDef = _.find(this.pages, (pageDef) => pageDef.page === this.implementationGuide.page);
             this.removePage(foundPageDef);
@@ -153,39 +158,33 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
     }
 
     public addChildPage(pageDef: PageDefinition) {
-        if (!pageDef.page.page) {
-            pageDef.page.page = [];
-        }
-
-        const newPage = new PageComponent();
-        const newBinary = new Binary();
-        newBinary.contentType = 'text/markdown';
-        newBinary.content = btoa('No page content yet');
-
         if (!this.implementationGuide.contained) {
             this.implementationGuide.contained = [];
         }
 
-        if (this.globals.pageAsContainedBinary) {
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
-            this.implementationGuide.contained.push(newBinary);
-
-            newPage.source = '#' + newBinary.id;
-            pageDef.page.page.push(newPage);
-
-            this.initPages();
-        } else {
-            this.binaryService.save(newBinary)
-                .subscribe((results) => {
-                    newPage.source = 'Binary/' + results.id;
-                    pageDef.page.page.push(newPage);
-
-                    this.unsavedBinaryAssociations.push(results.id);
-                    this.initPages();
-                }, (err) => {
-
-                });
+        if (!pageDef.page.page) {
+            pageDef.page.page = [];
         }
+
+        const newBinary = new Binary();
+        newBinary.contentType = 'text/markdown';
+        newBinary.content = btoa('No page content yet');
+        newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+        this.implementationGuide.contained.push(newBinary);
+
+        const newPage = new PageComponent();
+        newPage.kind = 'page';
+        newPage.extension = [{
+            url: this.globals.extensionIgPageContentUrl,
+            valueReference: {
+                reference: '#' + newBinary.id,
+                display: `Page content ${newBinary.id}`
+            }
+        }];
+        newPage.source = 'newPage.html';
+        pageDef.page.page.push(newPage);
+
+        this.initPages();
     }
 
     public removePage(pageDef: PageDefinition) {
@@ -213,18 +212,6 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
                     const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
                     this.implementationGuide.contained.splice(binaryIndex, 1);
                 }
-            } else if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
-                this.binaryService.delete(parsedSourceUrl.id)      // Async call that we don't have to wait on
-                    .subscribe(() => {
-                        // Remove the id from the list of unsaved binary associations
-                        const unsavedIndex = this.unsavedBinaryAssociations.indexOf(parsedSourceUrl.id);
-                        if (unsavedIndex >= 0) {
-                            this.unsavedBinaryAssociations.splice(unsavedIndex, 1);
-                        }
-                    }, (err) => {
-                        alert('Error deleting Binary resource associated with page');
-                        console.log('Error deleting Binary resource associated with page: ' + err);
-                    });
             }
         }
 
@@ -333,10 +320,5 @@ export class ImplementationGuideComponent implements OnInit, DoCheck, OnDestroy 
 
     ngDoCheck() {
         this.validation = this.fhirService.validate(this.implementationGuide);
-    }
-
-    ngOnDestroy() {
-        // Remove any Binary resources that were created for pages, but whose page was not saved in the IG
-        _.each(this.unsavedBinaryAssociations, (id) => this.binaryService.delete(id));
     }
 }

@@ -3,7 +3,6 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Binary, ImplementationGuide, PageComponent} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import {Globals} from '../../globals';
-import {BinaryService} from '../../services/binary.service';
 
 @Component({
     selector: 'app-fhir-page-component-modal',
@@ -17,8 +16,7 @@ export class PageComponentModalComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        public globals: Globals,
-        private binaryService: BinaryService) {
+        public globals: Globals) {
 
     }
 
@@ -38,38 +36,62 @@ export class PageComponentModalComponent implements OnInit {
         this.pageBinary.content = btoa(value);
     }
 
-    public ok() {
-        const parsedSourceUrl = this.globals.parseFhirUrl(this.page.source);
+    public importFile(file: File) {
+        const reader = new FileReader();
 
-        if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
-            this.binaryService.save(this.pageBinary)
-                .subscribe((results) => {
-                    this.activeModal.close();
-                }, (err) => {
+        reader.onload = (e: any) => {
+            const result = e.target.result;
 
-                });
-        }
-    }
+            if (!this.implementationGuide.contained) {
+                this.implementationGuide.contained = [];
+            }
 
-    public cancel() {
-        this.activeModal.dismiss();
+            const newBinary = new Binary();
+            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+            newBinary.contentType = file.type;
+            newBinary.content = result.substring(5 + file.type.length + 8);
+            this.implementationGuide.contained.push(newBinary);
+
+            if (!this.page.extension) {
+                this.page.extension = [];
+            }
+
+            let contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
+
+            if (!contentExtension) {
+                contentExtension = {
+                    url: this.globals.extensionIgPageContentUrl,
+                    valueReference: {
+                        reference: '#' + newBinary.id,
+                        display: 'Page content ' + newBinary.id
+                    }
+                };
+                this.page.extension.push(contentExtension);
+            } else {
+                contentExtension.valueReference = {
+                    reference: '#' + newBinary.id,
+                    display: 'Page content ' + newBinary.id
+                };
+            }
+
+            this.pageBinary = newBinary;
+        };
+
+        reader.readAsDataURL(file);
     }
 
     ngOnInit() {
         if (this.page.source) {
-            const parsedSourceUrl = this.globals.parseFhirUrl(this.page.source);
+            const contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
 
-            if (this.page.source.startsWith('#')) {
-                // If the page does have a source and it starts with a #
-                // Find the Binary in the contained resources
-                this.pageBinary = _.find(this.implementationGuide.contained, (extension) => extension.id === this.page.source.substring(1));
-            } else if (parsedSourceUrl && parsedSourceUrl.resourceType === 'Binary') {
-                this.binaryService.get(parsedSourceUrl.id)
-                    .subscribe((binary) => {
-                        this.pageBinary = binary;
-                    }, (err) => {
+            if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
+                const reference = contentExtension.valueReference.reference;
+                const parsedSourceUrl = this.globals.parseFhirUrl(reference);
 
-                    });
+                if (reference.startsWith('#')) {
+                    // Find the Binary in the contained resources
+                    this.pageBinary = _.find(this.implementationGuide.contained, (extension) => extension.id === reference.substring(1));
+                }
             }
         }
     }
