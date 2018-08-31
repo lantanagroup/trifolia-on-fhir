@@ -147,3 +147,6 @@ app.use(express.static(path.join(__dirname, 'wwwroot')));
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
 });
+
+// Pre-load all necessary extensions for Trifolia-on-FHIR on the server
+FhirHelper.loadExtensions();

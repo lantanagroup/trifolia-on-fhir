@@ -1,0 +1,38 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "extension-ig-page-content",
+  "meta": {
+    "versionId": "2",
+    "lastUpdated": "2018-08-31T11:42:07.024-04:00"
+  },
+  "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content",
+  "name": "Implementation Guide Page Content Extension",
+  "status": "draft",
+  "kind": "resource",
+  "abstract": false,
+  "type": "Extension",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Extension",
+        "path": "Extension"
+      },
+      {
+        "id": "Extension.url",
+        "path": "Extension.url",
+        "fixedUri": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content"
+      },
+      {
+        "id": "Extension.value[x]",
+        "path": "Extension.value[x]",
+        "type": [
+          {
+            "code": "Resource"
+          }
+        ]
+      }
+    ]
+  }
+}
