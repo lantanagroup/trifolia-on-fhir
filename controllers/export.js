@@ -52,10 +52,16 @@ function exportBundle(req, res) {
 }
 
 function getControl(extension, implementationGuide, bundle) {
-    // TODO: Set canonicalBase to everything before ImplementationGuide/XXX of the IG
+    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
+    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+
+    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
+        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined.');
+    }
+
     const control = {
         tool: 'jekyll',
-        source: 'ImplementationGuide/' + implementationGuide.id + '.xml',
+        source: 'ImplementationGuide/' + implementationGuide.id + '.xml',           // currently, IG has to be XML for IG Publisher
         paths: {
             resources: 'resources',
             qa: 'qa',
@@ -64,7 +70,7 @@ function getControl(extension, implementationGuide, bundle) {
             specification: 'http://www.hl7.org/fhir/'
         },
         'sct-edition': 'http://snomed.info/sct/731000124108',
-        canonicalBase: implementationGuide.url,
+        canonicalBase: canonicalBaseMatch[1],
         defaults: {
             'Any': {
                 'template-format': 'template-format.html',
@@ -99,32 +105,56 @@ function getControl(extension, implementationGuide, bundle) {
         resources: {}
     };
 
-    for (var i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
+    if (bundle && bundle.entry) {
+        for (var i = 0; i < bundle.entry.length; i++) {
+            const entry = bundle.entry[i];
+            const resource = entry.resource;
 
-        if (resource.resourceType === 'ImplementationGuide') {
-            continue;
+            if (resource.resourceType === 'ImplementationGuide') {
+                continue;
+            }
+
+            control.resources[resource.resourceType + '/' + resource.id] = {
+                base: resource.resourceType + '-' + resource.id + '.html',
+                defns: resource.resourceType + '-' + resource.id + '-definitions.html'
+            };
         }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-            base: resource.resourceType + '-' + resource.id + '.html',
-            defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
     }
 
     return control;
 }
 
 function sendSocketMessage(req, packageId, status, message) {
-    req.io.emit('message', {
-        packageId: packageId,
-        status: status,
-        message: message
-    });
+    if (req && req.io) {
+        req.io.emit('message', {
+            packageId: packageId,
+            status: status,
+            message: message
+        });
+    }
 }
 
-function exportHtml(req, res) {
+function packageImplementationGuidePage(pagesPath, implementationGuide, page) {
+    const contentExtension = _.find(page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+
+    if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
+        const reference = contentExtension.valueReference.reference;
+
+        if (reference.startsWith('#')) {
+            const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
+
+            if (contained && contained.resourceType === 'Binary') {
+                const newPagePath = path.join(pagesPath, page.source);
+                const content = Buffer.from(contained.content, 'base64').toString();
+                fs.writeFileSync(newPagePath, content);
+            }
+        }
+    }
+
+    _.each(page.page, (subPage) => packageImplementationGuidePage(pagesPath, implementationGuide, subPage));
+}
+
+function exportHtml(req, res, testCallback) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
     const useTerminologyServer = req.query.useTerminologyServer === undefined || req.query.useTerminologyServer == 'true';
@@ -177,6 +207,17 @@ function exportHtml(req, res) {
                             fs.writeFileSync(resourcePath, resourceContent);
                         }
 
+                        if (!implementationGuideResource) {
+                            throw new Error('The implementation guide was not found in the bundle returned by the server');
+                        }
+
+                        if (implementationGuideResource.page) {
+                            const pagesPath = path.join(rootPath, '_pages');
+                            fs.ensureDirSync(pagesPath);
+
+                            packageImplementationGuidePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
+                        }
+
                         const control = getControl(extension, implementationGuideResource, bundle);
                         const controlPath = path.join(rootPath, 'ig.json');
                         const controlContent = JSON.stringify(control, null, '\t');
@@ -188,6 +229,10 @@ function exportHtml(req, res) {
                         sendSocketMessage(req, packageId, 'progress', 'Done building package');
 
                         if (executeIgPublisher) {
+                            if (testCallback) {
+                                throw new Error('Should not execute the IG publisher in a unit test');
+                            }
+
                             sendSocketMessage(req, packageId, 'progress', 'Running IG Publisher');
 
                             const jarLocation = path.join(__dirname, '..', 'org.hl7.fhir.igpublisher.jar');
@@ -215,16 +260,28 @@ function exportHtml(req, res) {
                             });
                         } else {
                             sendSocketMessage(req, packageId, 'complete', 'Done');
+
+                            if (testCallback) {
+                                testCallback(rootPath);
+                            }
                         }
                     } catch (ex) {
                         sendSocketMessage(req, packageId, 'error', ex.message);
                         fs.emptyDirSync(rootPath);
                         fs.rmdirSync(rootPath);
+
+                        if (testCallback) {
+                            testCallback(rootPath, ex);
+                        }
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                     res.status(500).send('Error retrieving bundle from FHIR server');
+
+                    if (testCallback) {
+                        testCallback(rootPath, err);
+                    }
                 });
         }, 1000);
     });
@@ -264,3 +321,5 @@ router.get('/:packageId', checkJwt, (req, res) => {
 });
 
 module.exports = router;
+module.exports.getControl = getControl;
+module.exports.exportHtml = exportHtml;

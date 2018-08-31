@@ -157,5 +157,6 @@ module.exports = {
     buildUrl: buildUrl,
     parseUrl: parseUrl,
     getFhirInstance: getFhirInstance,
-    loadExtensions: loadExtensions
+    loadExtensions: loadExtensions,
+    joinUrl: joinUrl
 };
