@@ -783,7 +783,7 @@
                 </ngb-tab>
                 <ngb-tab title="Plain XML">
                     <ng-template ngbTabContent>
-                        <pre>{{fhirService.serialize(capabilityStatement) | xml}}</pre>
+                        <pre>{{capabilityStatement | fhirXml}}</pre>
                     </ng-template>
                 </ngb-tab>
             </ngb-tabset>

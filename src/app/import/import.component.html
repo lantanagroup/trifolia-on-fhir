@@ -1,6 +1,6 @@
 <h1>Import</h1>
 
-<ngb-tabset #t="ngbTabset"[activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
+<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
     <ngb-tab id="file" title="Import Files">
         <ng-template ngbTabContent>
             <file-drop (onFileDrop)="dropped($event)">
@@ -13,6 +13,24 @@
                 <li *ngFor="let f of files">{{f.name}}</li>
                 <li *ngIf="files.length === 0">None</li>
             </ul>
+
+            <div *ngIf="files && files.length > 0 && importBundle">
+                <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
+                <ngb-tabset #n="ngbTabset">
+                    <ngb-tab id="importBundleJson">
+                        <ng-template ngbTabTitle>JSON</ng-template>
+                        <ng-template ngbTabContent>
+                            <pre>{{getDisplayImportBundle() | json}}</pre>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="importBundleXml">
+                        <ng-template ngbTabTitle>XML</ng-template>
+                        <ng-template ngbTabContent>
+                            <pre>{{getDisplayImportBundle() | fhirXml}}</pre>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+            </div>
         </ng-template>
     </ngb-tab>
     <ngb-tab id="text" title="Import Text">
@@ -30,20 +48,30 @@
             </div>
         </ng-template>
     </ngb-tab>
-    <ngb-tab id="results" title="Results" [disabled]="!results || results.length === 0">
+    <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
         <ng-template ngbTabContent>
-            <div class="card" *ngFor="let result of results">
-                <div class="card-header">{{result.location[0]}}</div>
-                <div class="card-body">
-                    <div *ngIf="result.resourceType === 'OperationOutcome'">
-                        <div *ngIf="result.text && result.text.div && (!result.issue || result.issue.length === 0)" [innerHTML]="result.text.div"></div>
-                        <ul *ngIf="result.issue && result.issue.length > 0">
-                            <li *ngFor="let issue of result.issue">{{issue.diagnostics}}</li>
-                        </ul>
-                    </div>
-                    <t-json-viewer *ngIf="result.resourceType !== 'OperationOutcome'" [json]="results"></t-json-viewer>
+            <div *ngIf="outcome">
+                <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
+                <div class="card" *ngFor="let issue of outcome.issue">
+                    <div class="card-header">{{issue.severity}} - {{issue.location && issue.location.length === 1 ? issue.location[0] : 'Unknown location'}}</div>
+                    <div class="card-body">{{issue.diagnostics}}</div>
                 </div>
             </div>
+            <div *ngIf="resultsBundle">
+                <div class="card" *ngFor="let entry of resultsBundle.entry; let i = index">
+                    <div class="card-header">Bundle entry {{i+1}} - {{entry.response ? entry.response.status : 'Unknown status'}}</div>
+                    <div class="card-body" *ngIf="getBundleEntryOutcome(entry)">
+                        <p></p>
+                        <ul>
+                            <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
+                                Issue {{ii+1}} - {{issue.diagnostics}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <pre *ngIf="outcome">{{outcome | json}}</pre>
+            <pre *ngIf="resultsBundle">{{resultsBundle | json}}</pre>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

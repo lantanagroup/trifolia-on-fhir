@@ -8,6 +8,12 @@
 
 ## Deploying
 
+Requirements:
+* [Java](https://www.java.com/en/download/) - to run the ig publisher
+* [Jekyll](http://jekyll-windows.juthilo.com/2-jekyll-gem/) - to run the ig publisher without errors
+    * Jekyll must be available to the user that is running the Node.JS server. Consider adding the Ruby installation directory to the global PATH.
+* Node.JS
+
 1. Run `ng build -prod`
     1. This will build the client application in production mode, making the packages much smaller. However, debugging a "prod" build is nearly impossible...
 2. Run `powershell tools\publish.ps1`

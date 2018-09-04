@@ -6,6 +6,7 @@
 Param(
   [switch] $NoPackage = $false,
   [switch] $NoCopy = $false,
+  [switch] $IncludePublisher = $false,
   [string] $Server = "dev7.lantanagroup.com",
   [string] $ServerPath = "E:\Websites\nodejs\trifolia-fhir",
   [string] $CopyPath = "\\dev7\e$\Websites\nodejs\trifolia-fhir",
@@ -20,9 +21,13 @@ If(!(test-path ".\dist\")) {
 
 If ($NoPackage -ne $true) {
 	# zip server files
-	$serverIncludes = @("controllers\*", "src\assets\stu3\*", "src\assets\r4\*", "config\*")
+	$serverIncludes = @("controllers\*", "src\assets\stu3\*", "src\assets\stu3\extensions\*", "src\assets\r4\*", "src\assets\r4\extensions\*", "config\*", "ig-publisher\*")
 	$serverExcludes = @(".angular-cli.json", ".gitignore", "gulpfile.js", "help.hnd", "karma.conf.js", "package-lock.json", "protractor.conf.js", "TrifoliaFhir.sln", "tsconfig.json", "tslint.json")
-	$serverExcludes += "org.hl7.fhir.igpublisher.jar"
+
+	If ($IncludePublisher -ne $true) {
+	    $serverExcludes += "org.hl7.fhir.igpublisher.jar"
+	}
+
 	[array]$serverFilesToZip = Get-ChildItem .\* -Exclude $serverExcludes -File
 	$serverFilesToZip += $serverIncludes | ForEach{Get-ChildItem .\$_ -Exclude $serverExcludes -File}
 	$serverFilesToZip | Write-Zip -EntryPathRoot $(Resolve-Path .\|Select -Expand Path) -OutputPath ".\dist\server.zip"

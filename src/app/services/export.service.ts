@@ -8,6 +8,7 @@ export class ExportOptions {
     public responseFormat = 'application/json';
     public useTerminologyServer = true;
     public executeIgPublisher = true;
+    public useLatest = false;
 }
 
 @Injectable()
@@ -30,6 +31,10 @@ export class ExportService {
 
         if (options.executeIgPublisher === true || options.executeIgPublisher === false) {
             url += 'executeIgPublisher=' + options.executeIgPublisher.toString() + '&';
+        }
+
+        if (options.useLatest === true) {
+            url += 'useLatest=true&';
         }
 
         return this.http.post(url, null, { observe: 'response', responseType: 'blob' });

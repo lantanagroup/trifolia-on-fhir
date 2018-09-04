@@ -9,8 +9,11 @@ const path = require('path');
 const fs = require('fs-extra');
 const zipdir = require('zip-dir');
 const { spawn } = require('child_process');
+const config = require('config');
+const fhirConfig = config.get('fhir');
 const Fhir = require('fhir');
 const fhir = new Fhir();
+const rp = require('request-promise');
 
 function getBundle(req, format) {
     const deferred = Q.defer();
@@ -154,6 +157,40 @@ function packageImplementationGuidePage(pagesPath, implementationGuide, page) {
     _.each(page.page, (subPage) => packageImplementationGuidePage(pagesPath, implementationGuide, subPage));
 }
 
+function getIgPublisher(req, packageId) {
+    const deferred = Q.defer();
+    const fileName = 'org.hl7.fhir.igpublisher.jar';
+    const defaultPath = path.join(__dirname, '../ig-publisher');
+    const defaultFilePath = path.join(defaultPath, fileName);
+
+    if (req.query.useLatest === 'true') {
+        sendSocketMessage(req, packageId, 'progress', 'Downloading latest FHIR IG publisher');
+
+        // TODO: Check http://build.fhir.org/version.info first
+
+        rp(fhirConfig.latestPublisher, { encoding: null })
+            .then((results) => {
+                const latestPath = path.join(defaultPath, 'latest');
+                fs.ensureDirSync(latestPath);
+
+                const buff = Buffer.from(results, 'utf8');
+                const latestFilePath = path.join(latestPath, fileName);
+                fs.writeFileSync(latestFilePath, buff);
+
+                deferred.resolve(latestFilePath);
+            })
+            .catch((err) => {
+                sendSocketMessage(req, packageId, 'progress', 'Encounter error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+                return Q.resolve(defaultFilePath);
+            });
+    } else {
+        sendSocketMessage(req, packageId, 'progress', 'Using existing/default version of FHIR IG publisher');
+        return Q.resolve(defaultFilePath);
+    }
+
+    return deferred.promise;
+}
+
 function exportHtml(req, res, testCallback) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
@@ -229,37 +266,49 @@ function exportHtml(req, res, testCallback) {
                         sendSocketMessage(req, packageId, 'progress', 'Done building package');
 
                         if (executeIgPublisher) {
-                            if (testCallback) {
-                                throw new Error('Should not execute the IG publisher in a unit test');
-                            }
+                            getIgPublisher(req, packageId)
+                                .then((igPublisherLocation) => {
+                                    if (testCallback) {
+                                        throw new Error('Should not execute the IG publisher in a unit test');
+                                    }
 
-                            sendSocketMessage(req, packageId, 'progress', 'Running IG Publisher');
+                                    const igPublisherVersion = req.query.useLatest ? 'latest' : 'default';
+                                    sendSocketMessage(req, packageId, 'progress', `Running ${igPublisherVersion} IG Publisher`);
 
-                            const jarLocation = path.join(__dirname, '..', 'org.hl7.fhir.igpublisher.jar');
-                            const jarParams = ['-jar', jarLocation, '-ig', controlPath];
+                                    const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
 
-                            if (!useTerminologyServer) {
-                                jarParams.push('-tx', 'N/A');
-                            }
+                                    if (!useTerminologyServer) {
+                                        jarParams.push('-tx', 'N/A');
+                                    }
 
-                            const igPublisherProcess = spawn('java', jarParams);
+                                    const igPublisherProcess = spawn('java', jarParams);
 
-                            igPublisherProcess.stdout.on('data', (data) => {
-                                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                                sendSocketMessage(req, packageId, 'progress', message);
-                            });
+                                    igPublisherProcess.stdout.on('data', (data) => {
+                                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                                        sendSocketMessage(req, packageId, 'progress', message);
+                                    });
 
-                            igPublisherProcess.stderr.on('data', (data) => {
-                                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                                sendSocketMessage(req, packageId, 'progress', message);
-                            });
+                                    igPublisherProcess.stderr.on('data', (data) => {
+                                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                                        sendSocketMessage(req, packageId, 'progress', message);
+                                    });
 
-                            igPublisherProcess.on('exit', (code) => {
-                                sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
-                                sendSocketMessage(req, packageId, 'complete', 'Done');
-                            });
+                                    igPublisherProcess.on('exit', (code) => {
+                                        sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
+                                        sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                                    });
+                                })
+                                .catch((err) => {
+                                    sendSocketMessage(req, packageId, 'error', err);
+                                    fs.emptyDirSync(rootPath);
+                                    fs.rmdirSync(rootPath);
+
+                                    if (testCallback) {
+                                        testCallback(rootPath, err);
+                                    }
+                                });
                         } else {
-                            sendSocketMessage(req, packageId, 'complete', 'Done');
+                            sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
 
                             if (testCallback) {
                                 testCallback(rootPath);

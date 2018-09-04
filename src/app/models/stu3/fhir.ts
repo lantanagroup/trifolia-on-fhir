@@ -1091,7 +1091,7 @@ export class ResponseComponent extends BackboneElement {
     public location?: string;
     public etag?: string;
     public lastModified?: Date;
-    public outcome?: Resource;
+    public outcome?: DomainResource;
     
     constructor(obj?: any) {
         super(obj);
@@ -1109,7 +1109,7 @@ export class ResponseComponent extends BackboneElement {
                 this.lastModified = new Date(obj.lastModified);
             }
             if (obj.outcome) {
-                this.outcome = new Resource(obj.outcome);
+                this.outcome = new DomainResource(obj.outcome);
             }
         }
     }

@@ -100,6 +100,7 @@ import {ImportService} from './services/import.service';
 import {ExportService} from './services/export.service';
 import { NewUserModalComponent } from './new-user-modal/new-user-modal.component';
 import { ChangeResourceIdModalComponent } from './change-resource-id-modal/change-resource-id-modal.component';
+import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -201,6 +202,7 @@ const appRoutes: Routes = [
         AppComponent,
         KeysPipe,
         FhirDisplayPipe,
+        FhirXmlPipe,
         XmlPipe,
         ImplementationGuidesComponent,
         HomeComponent,

@@ -28,7 +28,7 @@ const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
 
 // Parsers for POST data
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '15mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 

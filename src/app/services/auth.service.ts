@@ -7,19 +7,27 @@ import {Person} from '../models/stu3/fhir';
 
 @Injectable()
 export class AuthService {
-    auth0 = new auth0.WebAuth({
-        clientID: 'mpXWwpAOBTt5aUM1SE2q5KuUtr4YvUE9',
-        domain: 'trifolia.auth0.com',
+    private readonly clientID = 'mpXWwpAOBTt5aUM1SE2q5KuUtr4YvUE9';
+    private readonly domain = 'trifolia.auth0.com';
+    private readonly audience = 'https://trifolia.lantanagroup.com/api';
+    private readonly scope = 'openid profile name nickname email';
+
+    // expiresIn is in seconds
+    private readonly fiveMinutesInSeconds = 300;
+
+    public auth0 = new auth0.WebAuth({
+        clientID: this.clientID,
+        domain: this.domain,
         responseType: 'token id_token',
-        audience: 'https://trifolia.lantanagroup.com/api',
+        audience: this.audience,
         redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
-        scope: 'openid profile name nickname email'
+        scope: this.scope
     });
     public userProfile: any;
     public person: Person;
     public authExpiresAt: number;
     public authChanged: EventEmitter<any>;
-    public instanceNum = Math.random();
+    private authTimeout: any;
 
     constructor(
         public router: Router,
@@ -27,6 +35,10 @@ export class AuthService {
         private personService: PersonService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
         this.authChanged = new EventEmitter();
+
+        if (this.authExpiresAt) {
+            this.setSessionTimer();
+        }
     }
 
     public login(): void {
@@ -58,6 +70,11 @@ export class AuthService {
         this.userProfile = null;
         this.person = null;
         this.authExpiresAt = null;
+
+        if (this.authTimeout) {
+            clearTimeout(this.authTimeout);
+        }
+
         // Go back to the home route
         this.router.navigate(['/']);
         this.authChanged.emit();
@@ -96,6 +113,32 @@ export class AuthService {
         });
     }
 
+    private setSessionTimer() {
+        const expiresIn = (this.authExpiresAt - new Date().getTime()) / 1000;
+
+        if (expiresIn > this.fiveMinutesInSeconds) {
+            if (this.authTimeout) {
+                clearTimeout(this.authTimeout);
+            }
+
+            const nextTimeout = (expiresIn - this.fiveMinutesInSeconds) * 1000;
+            this.authTimeout = setTimeout(() => {
+                this.authTimeout = null;
+                this.auth0.checkSession({
+                    audience: this.audience,
+                    scope: this.scope
+                }, (err, nextAuthResult) => {
+                    if (err) {
+                        console.log(err);
+                        alert('An error occurred while renewing your authentication session');
+                    } else {
+                        this.setSession(nextAuthResult);
+                    }
+                });
+            }, nextTimeout);
+        }
+    }
+
     private setSession(authResult): void {
         // Set the time that the access token will expire at
         const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
@@ -103,5 +146,7 @@ export class AuthService {
         localStorage.setItem('id_token', authResult.idToken);
         localStorage.setItem('expires_at', expiresAt);
         this.authExpiresAt = JSON.parse(expiresAt);
+
+        this.setSessionTimer();
     }
 }
