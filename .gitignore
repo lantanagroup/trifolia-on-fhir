@@ -45,3 +45,4 @@ TrifoliaFhir/bin/
 .vs/
 wwwroot/
 ig-publisher/latest/
+dist.zip
