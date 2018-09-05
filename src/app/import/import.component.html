@@ -1,6 +1,6 @@
 <h1>Import</h1>
 
-<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
+<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId" [destroyOnHide]="false">
     <ngb-tab id="file" title="Import Files">
         <ng-template ngbTabContent>
             <file-drop (onFileDrop)="dropped($event)">
@@ -16,7 +16,7 @@
 
             <div *ngIf="files && files.length > 0 && importBundle">
                 <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
-                <ngb-tabset #n="ngbTabset">
+                <ngb-tabset #n="ngbTabset" [destroyOnHide]="false">
                     <ngb-tab id="importBundleJson">
                         <ng-template ngbTabTitle>JSON</ng-template>
                         <ng-template ngbTabContent>

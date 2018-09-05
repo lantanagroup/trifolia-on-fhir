@@ -13,6 +13,7 @@
 <table class="table table-striped">
     <thead>
     <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Type</th>
         <th>
@@ -26,7 +27,8 @@
     </thead>
     <tbody>
     <tr *ngFor="let ig of implementationGuides">
-        <td>{{ig.name}} <span class="badge">{{ig.id}}</span></td>
+        <td>{{ig.id}}</td>
+        <td>{{ig.name}}</td>
         <td>{{ig.type}}</td>
         <td>
             <div class="btn-group pull-right">

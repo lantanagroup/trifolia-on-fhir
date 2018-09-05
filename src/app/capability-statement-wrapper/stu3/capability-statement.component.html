@@ -1,6 +1,6 @@
 <h1>Capability Statement</h1>
 
-<ngb-tabset>
+<ngb-tabset [destroyOnHide]="false">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -243,7 +243,7 @@
         <ng-template ngbTabContent>
             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries
 
-            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet>
+            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
                     <ng-template ngbTabTitle>
                         <span>REST {{ri + 1}} </span>
@@ -539,7 +539,7 @@
         <ng-template ngbTabContent>
             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries
 
-            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet>
+            <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
                     <ng-template ngbTabTitle>
                         <span>Messaging {{mi+1}} </span>
@@ -770,23 +770,7 @@
     <!-- RAW -->
     <ngb-tab title="RAW">
         <ng-template ngbTabContent>
-            <ngb-tabset [justify]="'fill'">
-                <ngb-tab title="Pretty JSON">
-                    <ng-template ngbTabContent>
-                        <t-json-viewer [json]="capabilityStatement"></t-json-viewer>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Plain JSON">
-                    <ng-template ngbTabContent>
-                        <pre>{{capabilityStatement | json}}</pre>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Plain XML">
-                    <ng-template ngbTabContent>
-                        <pre>{{capabilityStatement | fhirXml}}</pre>
-                    </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+            <app-raw-resource [resource]="capabilityStatement"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

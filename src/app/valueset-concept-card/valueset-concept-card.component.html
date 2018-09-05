@@ -1,0 +1,62 @@
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="toggleConcepts()"/>
+        Concepts
+    </div>
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
+        <thead>
+        <tr>
+            <th>
+                <input type="text" class="form-control" [ngModel]="searchCode" (input)="searchCodeChanged($event.target.value)" placeholder="Code (search)" />
+            </th>
+            <th>
+                <input type="text" class="form-control" [ngModel]="searchDisplay" (input)="searchDisplayChanged($event.target.value)" placeholder="Display (search)" />
+            </th>
+            <th class="actions-column-2">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" (click)="addConcept()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let concept of concepts; let ci = index">
+            <td>
+                <app-fhir-string [parentObject]="concept" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
+            </td>
+            <td>
+                <app-fhir-string [parentObject]="concept" propertyName="display" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default" title="Edit this concept" (click)="editConcept(concept)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-default" title="Remove this concept" (click)="removeConcept(concept)">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" [disabled]="page <= 1" title="Previous page" (click)="previousPage()">
+                        <i class="fa fa-backward"></i>
+                    </button>
+                    <button type="button" class="btn btn-default" disabled="disabled">
+                        Page {{page}} of {{totalPages}} ({{concepts.length}} concepts)
+                    </button>
+                    <button type="button" class="btn btn-default" [disabled]="page >= totalPages" title="Next page" (click)="nextPage()">
+                        <i class="fa fa-forward"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

@@ -57,7 +57,6 @@ import {CodeSystemService} from './services/code-system.service';
 import {BooleanComponent} from './fhir-edit/boolean/boolean.component';
 import {FhirMarkdownComponent} from './fhir-edit/markdown/markdown.component';
 import {FhirDateComponent} from './fhir-edit/date/date.component';
-import {FhirEditValuesetIncludeModalComponent} from './fhir-edit/valueset-include-modal/valueset-include-modal.component';
 import {ValuesetExpandComponent} from './valueset-expand/valueset-expand.component';
 import {SelectSingleCodeComponent} from './fhir-edit/select-single-code/select-single-code.component';
 import {MultiIdentifierComponent} from './fhir-edit/multi-identifier/multi-identifier.component';
@@ -102,6 +101,9 @@ import { NewUserModalComponent } from './new-user-modal/new-user-modal.component
 import { ChangeResourceIdModalComponent } from './change-resource-id-modal/change-resource-id-modal.component';
 import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
 import { TooltipIconComponent } from './tooltip-icon/tooltip-icon.component';
+import { FhirEditValueSetIncludeConceptModalComponent } from './fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import { RawResourceComponent } from './raw-resource/raw-resource.component';
+import { ValuesetConceptCardComponent } from './valueset-concept-card/valueset-concept-card.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -177,7 +179,6 @@ const appRoutes: Routes = [
         ElementDefinitionTypeModalComponent,
         PageComponentModalComponent,
         OperationDefinitionParameterModalComponent,
-        FhirEditValuesetIncludeModalComponent,
         ContactModalComponent,
         IdentifierModalComponent,
         MarkdownModalComponent,
@@ -197,7 +198,8 @@ const appRoutes: Routes = [
         FhirEditReferenceModalComponent,
         FileOpenModalComponent,
         NewUserModalComponent,
-        ChangeResourceIdModalComponent
+        ChangeResourceIdModalComponent,
+        FhirEditValueSetIncludeConceptModalComponent
     ],
     declarations: [
         AppComponent,
@@ -243,7 +245,6 @@ const appRoutes: Routes = [
         OperationDefinitionParameterModalComponent,
         BooleanComponent,
         FhirDateComponent,
-        FhirEditValuesetIncludeModalComponent,
         ValuesetExpandComponent,
         SelectSingleCodeComponent,
         MultiIdentifierComponent,
@@ -274,7 +275,10 @@ const appRoutes: Routes = [
         FileOpenModalComponent,
         NewUserModalComponent,
         ChangeResourceIdModalComponent,
-        TooltipIconComponent
+        TooltipIconComponent,
+        FhirEditValueSetIncludeConceptModalComponent,
+        RawResourceComponent,
+        ValuesetConceptCardComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -1,69 +1,78 @@
 <h1>Structure Definitions</h1>
 
 <div class="input-group">
-  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
-      <i class="fa fa-refresh"></i>
-    </button>
-  </div>
+    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search all (_content)"/>
+    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Complete StructureDefinition.url"/>
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
 </div>
 
 <table class="table table-striped">
-  <thead>
+    <thead>
     <tr>
-      <th>Name</th>
-      <th>Experimental</th>
-      <th>Type</th>
-      <th>Contact</th>
-      <th>
-        <div class="pull-right">
-          <a class="btn btn-default" routerLink="/structure-definition/new" title="Create a new structure definition">
-            <i class="fa fa-plus"></i>
-          </a>
-        </div>
-      </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Experimental</th>
+        <th>Type</th>
+        <th>Contact</th>
+        <th>
+            <div class="pull-right">
+                <a class="btn btn-default" routerLink="/structure-definition/new" title="Create a new structure definition">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </th>
     </tr>
-  </thead>
-  <tbody *ngIf="response && response.items && response.items.length > 0">
+    </thead>
+    <tbody *ngIf="response && response.items && response.items.length > 0">
     <tr *ngFor="let p of response.items">
-      <td>
-        {{p.name}} <span class="badge">{{p.id}}</span> <i class="fa fa-comment" *ngIf="p.description" [ngbTooltip]="p.description"></i>
-        <br/>
-        <sub>{{p.url}}</sub>
-      </td>
-      <td>{{p.experimental ? "Yes" : "No"}}</td>
-      <td>{{p.type}}</td>
-      <td>{{p.contact}}</td>
-      <td>
-        <div class="pull-right btn-group">
-          <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]" title="Edit this resource"><i class="fa fa-edit"></i></a>
-          <button type="button" class="btn btn-default" (click)="remove(p)" title="Remove this resource"><i class="fa fa-remove"></i></button>
-          <button type="button" class="btn btn-default" (click)="changeId(p)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
-        </div>
-      </td>
+        <td>{{p.id}}</td>
+        <td>
+            {{p.name}} <i class="fa fa-comment" *ngIf="p.description" [ngbTooltip]="p.description"></i>
+            <br/>
+            <sub>{{p.url}}</sub>
+        </td>
+        <td>{{p.experimental ? "Yes" : "No"}}</td>
+        <td>{{p.type}}</td>
+        <td>{{p.contact}}</td>
+        <td>
+            <div class="pull-right btn-group">
+                <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]" title="Edit this resource">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-default" (click)="remove(p)" title="Remove this resource">
+                    <i class="fa fa-remove"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="changeId(p)" title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
     </tr>
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="4">
-      <div class="btn-group">
-        <button type="button" class="btn btn-default" [disabled]="!response || page <= 1" title="Previous page" (click)="previousPage()">
-          <i class="fa fa-backward"></i>
-        </button>
-        <button type="button" class="btn btn-default" disabled="disabled">
-          Page {{response && response.pages ? page : 0}} of {{response ? response.pages : 0}} ({{response ? response.total : 0}} structure definitions)
-        </button>
-        <button type="button" class="btn btn-default" [disabled]="!response || page >= response.pages" title="Next page" (click)="nextPage()">
-          <i class="fa fa-forward"></i>
-        </button>
-      </div>
-      <br/>
-    </td>
-  </tr>
-  </tfoot>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="4">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" [disabled]="!response || page <= 1" title="Previous page" (click)="previousPage()">
+                    <i class="fa fa-backward"></i>
+                </button>
+                <button type="button" class="btn btn-default" disabled="disabled">
+                    Page {{response && response.pages ? page : 0}} of {{response ? response.pages : 0}} ({{response ? response.total : 0}} structure definitions)
+                </button>
+                <button type="button" class="btn btn-default" [disabled]="!response || page >= response.pages" title="Next page" (click)="nextPage()">
+                    <i class="fa fa-forward"></i>
+                </button>
+            </div>
+            <br/>
+        </td>
+    </tr>
+    </tfoot>
 </table>
 
 <footer class="footer">
-  <span class="message">{{message}}</span>
+    <span class="message">{{message}}</span>
 </footer>

@@ -18,7 +18,11 @@ router.get('/', checkJwt, (req, res) => {
     }
 
     if (req.query.contentText) {
-        queryParams._content = encodeURIComponent(req.query.contentText);
+        queryParams._content = req.query.contentText;
+    }
+
+    if (req.query.urlText) {
+        queryParams.url = req.query.urlText;
     }
 
     const url = req.getFhirServerUrl(thisResourceType, null, null, queryParams);

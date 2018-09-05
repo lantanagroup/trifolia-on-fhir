@@ -2,7 +2,7 @@
 <div class="sd-main" *ngIf="structureDefinition">
     <h2>{{structureDefinition.name || 'No name'}}</h2>
 
-    <ngb-tabset (tabChange)="beforeTabChange($event)">
+    <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false">
         <ngb-tab id="general" title="General">
             <ng-template ngbTabContent>
                 <fieldset>
@@ -283,20 +283,9 @@
         </ngb-tab>
 
         <!-- JSON -->
-        <ngb-tab id="json" title="JSON">
+        <ngb-tab id="json" title="RAW">
             <ng-template ngbTabContent>
-                <ngb-tabset [justify]="'fill'">
-                    <ngb-tab title="Pretty">
-                        <ng-template ngbTabContent>
-                            <t-json-viewer [json]="structureDefinition"></t-json-viewer>
-                        </ng-template>
-                    </ngb-tab>
-                    <ngb-tab title="Plain">
-                        <ng-template ngbTabContent>
-                            <pre>{{structureDefinition | json}}</pre>
-                        </ng-template>
-                    </ngb-tab>
-                </ngb-tabset>
+                <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
             </ng-template>
         </ngb-tab>
     </ngb-tabset>

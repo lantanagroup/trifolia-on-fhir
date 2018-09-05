@@ -1,7 +1,7 @@
 <h1>Expand Value Set</h1>
 <p class="badge badge-info" *ngIf="valueSet">{{valueSet.url}}</p>
 
-<ngb-tabset #t="ngbTabset">
+<ngb-tabset #t="ngbTabset" [destroyOnHide]="false">
   <ngb-tab id="options" title="Options">
     <ng-template ngbTabContent>
       <div class="row" *ngIf="valueSet">

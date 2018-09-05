@@ -1,44 +1,55 @@
 <h1>Value Sets</h1>
 
 <div class="input-group">
-  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-         placeholder="Search" [disabled]="true">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default" title="Refresh" (click)="getValueSets()">
-      <i class="fa fa-refresh"></i>
-    </button>
-  </div>
+    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
+           placeholder="Search" [disabled]="true">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getValueSets()">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
 </div>
 
 <table class="table table-striped">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>
-      <div class="pull-right">
-        <button type="button" class="btn btn-default" routerLink="/value-set/new" title="Create a new value set">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let vs of valueSets">
-    <td>{{vs.name}} <span class="badge">{{vs.id}}</span></td>
-    <td>
-      <div class="pull-right">
-        <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
-        <a class="btn btn-default" routerLink="/value-set/{{vs.id}}/expand" title="Expand this value set"><i class="fa fa-expand"></i></a>
-        <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this resource"><i class="fa fa-remove"></i></button>
-        <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="3">{{valueSets ? valueSets.length : 0}} total value sets</td>
-  </tr>
-  </tfoot>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" routerLink="/value-set/new"
+                        title="Create a new value set">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let vs of valueSets">
+        <td>{{vs.id}}</td>
+        <td>{{vs.name}}</td>
+        <td>
+            <div class="pull-right">
+                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this resource">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}/expand" title="Expand this value set">
+                    <i class="fa fa-expand"></i>
+                </a>
+                <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this resource">
+                    <i class="fa fa-remove"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="3">{{valueSets ? valueSets.length : 0}} total value sets</td>
+    </tr>
+    </tfoot>
 </table>

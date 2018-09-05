@@ -13,6 +13,7 @@
 <table class="table table-striped">
   <thead>
   <tr>
+    <th>ID</th>
     <th>Name</th>
     <th>
       <div class="pull-right">
@@ -25,7 +26,8 @@
   </thead>
   <tbody>
   <tr *ngFor="let cs of capabilityStatements">
-    <td>{{cs.name}} <span class="badge">{{cs.id}}</span></td>
+    <td>{{cs.id}}</td>
+    <td>{{cs.name}}</td>
     <td>
       <div class="btn-group pull-right">
         <a class="btn btn-default" routerLink="/capability-statement/{{cs.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>

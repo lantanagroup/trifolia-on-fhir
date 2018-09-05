@@ -1,0 +1,17 @@
+<ngb-tabset [justify]="'fill'" [destroyOnHide]="false">
+    <ngb-tab title="Pretty JSON">
+        <ng-template ngbTabContent>
+            <t-json-viewer [json]="resource"></t-json-viewer>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Plain JSON">
+        <ng-template ngbTabContent>
+            <pre>{{resource | json}}</pre>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="XML">
+        <ng-template ngbTabContent>
+            <pre>{{resource | fhirXml}}</pre>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

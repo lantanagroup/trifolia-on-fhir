@@ -1,6 +1,6 @@
 <h1>Operation Definition</h1>
 
-<ngb-tabset>
+<ngb-tabset [destroyOnHide]="false">
     <!-- General -->
     <ngb-tab title="General">
         <ng-template ngbTabContent>
@@ -190,20 +190,9 @@
     </ngb-tab>
 
     <!-- JSON -->
-    <ngb-tab title="JSON">
+    <ngb-tab title="RAW">
         <ng-template ngbTabContent>
-            <ngb-tabset [justify]="'fill'">
-                <ngb-tab title="Pretty">
-                    <ng-template ngbTabContent>
-                        <t-json-viewer [json]="operationDefinition"></t-json-viewer>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Plain">
-                    <ng-template ngbTabContent>
-                        <pre>{{operationDefinition | json}}</pre>
-                    </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+            <app-raw-resource [resource]="operationDefinition"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

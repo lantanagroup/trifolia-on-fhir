@@ -1,6 +1,6 @@
 <h1>Value Set</h1>
 
-<ngb-tabset>
+<ngb-tabset [destroyOnHide]="false">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -95,7 +95,8 @@
         </ng-template>
     </ngb-tab>
 
-    <ngb-tab title="Compose">
+    <ngb-tab>
+        <ng-template ngbTabTitle>Compose</ng-template>
         <ng-template ngbTabContent>
             <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { include: [{}] })" /> Value set has a "compose" definition
 
@@ -104,63 +105,74 @@
 
                 <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive"></app-fhir-boolean>
 
-                <div class="card">
-                    <div class="card-header" *ngIf="!valueSet.compose.hasOwnProperty('include')">
-                        <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [])" />
-                        Include
-                    </div>
-                    <table class="table table-striped" *ngIf="valueSet.compose.hasOwnProperty('include')">
-                        <thead>
-                        <tr>
-                            <th>System</th>
-                            <th>Version</th>
-                            <th>Concepts</th>
-                            <th>Filter</th>
-                            <th>
-                                <div class="pull-right">
-                                    <button type="button" class="btn btn-default btn-sm" title="Add an include" (click)="valueSet.compose.include.push({})">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
+                <p>
+                    <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries
+                </p>
+
+                <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
+                    <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
+                        <ng-template ngbTabTitle>
+                            Include {{ii+1}}
+                            <i class="fa fa-remove" title="Remove this include" (click)="globals.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <app-fhir-string [parentObject]="include" propertyName="system" title="System"></app-fhir-string>
+
+                            <app-fhir-string [parentObject]="include" propertyName="version" title="Version"></app-fhir-string>
+
+                            <app-valueset-concept-card [parentObject]="include" propertyName="concept"></app-valueset-concept-card>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <input type="checkbox" [ngModel]="include.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(include, 'filter', [{ property: '', op: '=', value: '' }])"/>
+                                    Filters
                                 </div>
-                            </th>
-                        </tr>
-                        <tr *ngFor="let include of valueSet.compose.include; let ii = index">
-                            <td>
-                                <div class="input-group">
-                                    <div class="input-group-addon">
-                                        <input type="checkbox" [ngModel]="include.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(include, 'system', '')" />
-                                    </div>
-                                    <input type="text" class="form-control" [disabled]="!include.hasOwnProperty('system')" [(ngModel)]="include.system" />
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group">
-                                    <div class="input-group-addon">
-                                        <input type="checkbox" [ngModel]="include.hasOwnProperty('version')" (ngModelChange)="globals.toggleProperty(include, 'version', '')" />
-                                    </div>
-                                    <input type="text" class="form-control" [disabled]="!include.hasOwnProperty('version')" [(ngModel)]="include.version" />
-                                </div>
-                            </td>
-                            <td>
-                                {{getIncludeCodes(include)}}
-                            </td>
-                            <td>
-                                {{include.hasOwnProperty('filter') ? 'Yes' : 'No'}}
-                            </td>
-                            <td>
-                                <div class="pull-right btn-group">
-                                    <button type="button" class="btn btn-default btn-sm" title="Edit this include" (click)="editInclude(include)">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-sm" title="Remove this include" [disabled]="valueSet.compose.include.length === 1" (click)="valueSet.compose.include.splice(ii, 1)">
-                                        <i class="fa fa-remove"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
+                                <table class="table table-striped" *ngIf="include.hasOwnProperty('filter')">
+                                    <thead>
+                                    <tr>
+                                        <th>Property</th>
+                                        <th>Operator</th>
+                                        <th>Value</th>
+                                        <th class="actions-column-1">
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" (click)="include.filter.push({ property: '', op: '=', value: '' })">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let filter of include.filter; let fi = index">
+                                        <td>
+                                            <app-fhir-string [parentObject]="filter" propertyName="property" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                                        </td>
+                                        <td>
+                                            <app-fhir-select-single-code [parentObject]="filter" propertyName="op" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/filter-operator"></app-fhir-select-single-code>
+                                        </td>
+                                        <td>
+                                            <app-fhir-string [parentObject]="filter" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                                        </td>
+                                        <td>
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" title="Remove this filter" (click)="globals.promptForRemove(include.filter, fi)">
+                                                    <i class="fa fa-remove"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab [disabled]="true">
+                        <ng-template ngbTabTitle>
+                            <button type="button" class="btn btn-default" title="Add an include entry" (click)="addIncludeEntry(includeTabSet)">Add</button>
+                        </ng-template>
+                        <ng-template ngbTabContent></ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
             </div>
         </ng-template>
     </ngb-tab>
@@ -173,20 +185,9 @@
     </ngb-tab>
 
     <!-- JSON -->
-    <ngb-tab title="JSON">
+    <ngb-tab title="RAW">
         <ng-template ngbTabContent>
-            <ngb-tabset [justify]="'fill'">
-                <ngb-tab title="Pretty">
-                    <ng-template ngbTabContent>
-                        <t-json-viewer [json]="valueSet"></t-json-viewer>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Plain">
-                    <ng-template ngbTabContent>
-                        <pre>{{valueSet | json}}</pre>
-                    </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+            <app-raw-resource [resource]="valueSet"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

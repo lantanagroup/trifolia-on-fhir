@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnInit} from '@angular/core';
-import {ConceptSetComponent, OperationDefinition, ValueSet} from '../models/stu3/fhir';
+import {ConceptReferenceComponent, ConceptSetComponent, OperationDefinition, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -7,9 +7,9 @@ import {ValueSetService} from '../services/value-set.service';
 import {Observable} from 'rxjs/Observable';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditValuesetIncludeModalComponent} from '../fhir-edit/valueset-include-modal/valueset-include-modal.component';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
+import {FhirEditValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 
 @Component({
     selector: 'app-valueset',
@@ -30,6 +30,15 @@ export class ValuesetComponent implements OnInit, DoCheck {
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService) {
+    }
+
+    public addIncludeEntry(includeTabSet) {
+        this.valueSet.compose.include.push({ });
+        setTimeout(() => {
+            const lastIndex = this.valueSet.compose.include.length - 1;
+            const newIncludeTabId = 'include-' + lastIndex.toString();
+            includeTabSet.select(newIncludeTabId);
+        }, 50);
     }
 
     public save() {
@@ -67,11 +76,6 @@ export class ValuesetComponent implements OnInit, DoCheck {
         }
 
         return ret;
-    }
-
-    public editInclude(include: ConceptSetComponent) {
-        const ref = this.modalService.open(FhirEditValuesetIncludeModalComponent, { size: 'lg' });
-        ref.componentInstance.include = include;
     }
 
     private getValueSet(): Observable<ValueSet> {

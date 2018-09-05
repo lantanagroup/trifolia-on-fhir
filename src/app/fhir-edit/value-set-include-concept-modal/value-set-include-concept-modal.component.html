@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit concept</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="concept" propertyName="display" title="Display"></app-fhir-string>
+
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="globals.toggleProperty(concept, 'designation', [{ value: '' }])"/>
+            Designations
+        </div>
+        <table class="table table-striped" *ngIf="concept.hasOwnProperty('designation')">
+            <thead>
+            <tr>
+                <th>Language</th>
+                <th>Use</th>
+                <th>Value</th>
+                <th class="actions-column-1">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" (click)="concept.designation.push({ value: '' })">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let designation of concept.designation; let di = index">
+                <td>
+                    <app-fhir-string [parentObject]="designation" propertyName="language" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    ...TODO...
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="designation" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" title="Remove this designation" (click)="globals.promptForRemove(concept.designation, di)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close()">Close</button>
+</div>

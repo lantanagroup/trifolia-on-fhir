@@ -1,6 +1,6 @@
 <h1>Code System</h1>
 
-<ngb-tabset>
+<ngb-tabset [destroyOnHide]="false">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -234,20 +234,9 @@
     </ngb-tab>
 
     <!-- JSON -->
-    <ngb-tab title="JSON">
+    <ngb-tab title="RAW">
         <ng-template ngbTabContent>
-            <ngb-tabset [justify]="'fill'">
-                <ngb-tab title="Pretty">
-                    <ng-template ngbTabContent>
-                        <t-json-viewer [json]="codeSystem"></t-json-viewer>
-                    </ng-template>
-                </ngb-tab>
-                <ngb-tab title="Plain">
-                    <ng-template ngbTabContent>
-                        <pre>{{codeSystem | json}}</pre>
-                    </ng-template>
-                </ngb-tab>
-            </ngb-tabset>
+            <app-raw-resource [resource]="codeSystem"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

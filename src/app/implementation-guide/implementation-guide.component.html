@@ -3,7 +3,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
     <h2>{{implementationGuide.name || 'No Name'}}</h2>
 
-    <ngb-tabset>
+    <ngb-tabset [destroyOnHide]="false">
         <ngb-tab id="general" title="General">
             <ng-template ngbTabContent>
                 <fieldset>
@@ -128,7 +128,7 @@
             <ng-template ngbTabContent>
                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ name: '', sourceUri: '', example: false}]}])"/> This implementation guide has packages
 
-                <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet>
+                <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
                     <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
@@ -282,20 +282,9 @@
         </ngb-tab>
 
         <!-- JSON -->
-        <ngb-tab id="json" title="JSON">
+        <ngb-tab id="json" title="RAW">
             <ng-template ngbTabContent>
-                <ngb-tabset [justify]="'fill'">
-                    <ngb-tab title="Pretty">
-                        <ng-template ngbTabContent>
-                            <t-json-viewer [json]="implementationGuide"></t-json-viewer>
-                        </ng-template>
-                    </ngb-tab>
-                    <ngb-tab title="Plain">
-                        <ng-template ngbTabContent>
-                            <pre>{{implementationGuide | json}}</pre>
-                        </ng-template>
-                    </ngb-tab>
-                </ngb-tabset>
+                <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
             </ng-template>
         </ngb-tab>
     </ngb-tabset>

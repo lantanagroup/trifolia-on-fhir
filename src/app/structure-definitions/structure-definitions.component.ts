@@ -19,6 +19,7 @@ export class StructureDefinitionsComponent implements OnInit {
     public message: string;
     public page = 1;
     public contentText: string;
+    public urlText: string;
     public criteriaChangedEvent = new Subject();
 
     constructor(
@@ -77,11 +78,17 @@ export class StructureDefinitionsComponent implements OnInit {
         this.criteriaChanged();
     }
 
+    public urlTextChanged(value: string) {
+        this.urlText = value;
+        this.page = 1;
+        this.criteriaChanged();
+    }
+
     public getStructureDefinitions() {
         this.response = null;
         this.configService.setStatusMessage('Loading structure definitions');
 
-        this.structureDefinitionService.getStructureDefinitions(this.page, this.contentText)
+        this.structureDefinitionService.getStructureDefinitions(this.page, this.contentText, this.urlText)
             .subscribe((response: StructureDefinitionListModel) => {
                 this.response = response;
                 this.configService.setStatusMessage('');
