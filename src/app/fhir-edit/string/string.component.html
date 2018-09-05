@@ -2,8 +2,8 @@
     <label>
         <input type="checkbox" *ngIf="!required && !disabled" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title || propertyName}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
     </label>
+    <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
 
     <input type="text" class="form-control"
            [(ngModel)]="parentObject[propertyName]"
@@ -16,8 +16,8 @@
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
     </div>
     <div class="input-group-addon" *ngIf="title">
-        {{title}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <span>{{title}} </span>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="text" class="form-control"
            [(ngModel)]="parentObject[propertyName]"

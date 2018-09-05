@@ -2,7 +2,7 @@
   <label>
     <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, '', openModal, this)"/>
     {{title || propertyName}}
-    <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+    <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
   </label>
   <app-markdown *ngIf="!displayOnly" [(ngModel)]="parentObject[propertyName]" [disabled]="isOptional && !parentObject.hasOwnProperty(propertyName)"></app-markdown>
   <div *ngIf="displayOnly && parentObject.hasOwnProperty(propertyName)">

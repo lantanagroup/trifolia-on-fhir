@@ -14,8 +14,8 @@ export class FhirEditPeriodComponent implements OnInit {
     @Input() required = true;
     @Input() isFormGroup = true;
     @Input() defaultValue = '';
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
 
     constructor(
         public modalService: NgbModal,
@@ -23,10 +23,6 @@ export class FhirEditPeriodComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
-        }
-
         if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.parentObject[this.propertyName] = {};
         }

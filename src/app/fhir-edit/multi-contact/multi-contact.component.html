@@ -2,13 +2,20 @@
     <div class="card-header">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])" />
         {{title || 'Contacts'}}
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Telecom(s)</th>
             <th>
+                Name
+                <app-tooltip-icon tooltipPath="ContactDetail.name"></app-tooltip-icon>
+            </th>
+            <th>
+                Telecom(s)
+                <app-tooltip-icon tooltipPath="ContactDetail.telecom"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-2">
                 <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({})">
                         <i class="fa fa-plus"></i>

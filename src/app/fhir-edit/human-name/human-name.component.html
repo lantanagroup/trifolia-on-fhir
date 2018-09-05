@@ -2,7 +2,7 @@
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
         {{title || 'Human Name'}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
         <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
@@ -17,6 +17,8 @@
 <div class="input-group" *ngIf="!isFormGroup">
     <div class="input-group-addon" *ngIf="!required">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
+        {{title || 'Human Name'}}
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
     <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" placeholder="Family"/>

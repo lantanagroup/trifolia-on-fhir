@@ -17,8 +17,8 @@ export class SelectSingleCodeComponent implements OnInit {
     @Input() codes: Coding[];
     @Input() valueSetUrl: string;
     @Input() required: boolean;
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
     @Input() title: string;
     @Input() isFormGroup = true;
     @Input() isTypeahead = false;
@@ -77,10 +77,6 @@ export class SelectSingleCodeComponent implements OnInit {
     )
 
     ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
-        }
-
         if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
         }

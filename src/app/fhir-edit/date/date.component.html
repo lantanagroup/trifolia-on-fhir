@@ -2,7 +2,7 @@
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <input type="date" class="form-control"
            [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"
@@ -14,7 +14,7 @@
     <div class="input-group-addon" *ngIf="!required || title">
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="date" class="form-control"
            [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"

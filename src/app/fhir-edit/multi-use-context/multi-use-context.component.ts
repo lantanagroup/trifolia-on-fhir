@@ -11,6 +11,9 @@ import {FhirService} from '../../services/fhir.service';
 export class MultiUseContextComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
+    @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
+    public tooltip: string;
     public usageContextTypeCodes: Coding[] = [];
 
     constructor(
@@ -65,6 +68,12 @@ export class MultiUseContextComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (this.tooltipKey) {
+            this.tooltip = this.globals.tooltips[this.tooltipKey];
+        } else if (this.tooltipPath) {
+            this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
+        }
+
         this.usageContextTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/usage-context-type');
     }
 }

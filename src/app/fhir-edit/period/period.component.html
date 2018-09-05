@@ -2,7 +2,7 @@
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
         {{ title || 'Period' }}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
         <input type="datetime-local" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [ngModel]="parentObject[propertyName].start | date: 'yyyy-MM-ddTHH:mm'" (ngModelChange)="parentObject[propertyName].start = $event" placeholder="Start date" />
@@ -13,7 +13,7 @@
     <div class="input-group-addon" *ngIf="!required">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
         {{title || 'Period'}}
-        <i class="fa fa-question" ngbTooltip="{{tooltip}}" placement="top" *ngIf="tooltip"></i>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="datetime-local" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [ngModel]="parentObject[propertyName].start | date: 'yyyy-MM-ddTHH:mm'" (ngModelChange)="parentObject[propertyName].start = $event" placeholder="Start date" />
     <input type="datetime-local" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [ngModel]="parentObject[propertyName].end | date: 'yyyy-MM-ddTHH:mm'" (ngModelChange)="parentObject[propertyName].end = $event" placeholder="End date" />

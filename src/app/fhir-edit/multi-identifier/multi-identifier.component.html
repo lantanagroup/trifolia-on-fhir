@@ -2,14 +2,24 @@
     <div class="card-header">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
         {{title || 'Identifiers'}}
+        <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
         <tr>
-            <th>Use</th>
-            <th>System</th>
-            <th>Value</th>
             <th>
+                Use
+                <app-tooltip-icon tooltipPath="Identifier.use"></app-tooltip-icon>
+            </th>
+            <th>
+                System
+                <app-tooltip-icon tooltipPath="Identifier.system"></app-tooltip-icon>
+            </th>
+            <th>
+                Value
+                <app-tooltip-icon tooltipPath="Identifier.value"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-2">
                 <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'identifier'}}" (click)="parentObject[propertyName].push({})">
                         <i class="fa fa-plus"></i>

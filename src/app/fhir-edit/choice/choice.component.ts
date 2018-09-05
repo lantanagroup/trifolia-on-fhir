@@ -21,8 +21,9 @@ export class ChoiceComponent implements OnInit {
     @Input() title: string;
     @Input() required = false;
     @Input() isFormGroup = true;
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
+    public tooltip: string;
     public contactPointSystemCodes: Coding[] = [];
 
     constructor(
@@ -228,6 +229,12 @@ export class ChoiceComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (this.tooltipKey) {
+            this.tooltip = this.globals.tooltips[this.tooltipKey];
+        } else if (this.tooltipPath) {
+            this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
+        }
+
         if (!this.choices) {
             this.choices = this.globals.dataTypes;
         }

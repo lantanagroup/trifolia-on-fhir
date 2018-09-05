@@ -1,72 +1,72 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{element.path}}'s Type</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title">{{element.path}}'s Type</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <div class="modal-body">
-  <div class="form-group">
-    <label>
-      Code
-      <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.code']}}" placement="top"></i>
-    </label>
-    <select class="form-control" [(ngModel)]="type.code">
-      <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label>
-      <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(type, 'profile', '')" />
-      Profile
-      <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.profile']}}" placement="top"></i>
-    </label>
-    <div class="input-group">
-      <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('profile')" [(ngModel)]="type.profile" />
+    <div class="form-group">
+        <label>
+            Code
+            <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
+        </label>
+        <select class="form-control" [(ngModel)]="type.code">
+            <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+        </select>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label>
-      <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="globals.toggleProperty(type, 'targetProfile', '')" />
-      Target Profile
-      <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.targetProfile']}}" placement="top"></i>
-    </label>
-    <div class="input-group">
-      <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('targetProfile')" [(ngModel)]="type.targetProfile" />
+    <div class="form-group">
+        <label>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(type, 'profile', '')"/>
+            Profile
+            <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
+        </label>
+        <div class="input-group">
+            <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('profile')" [(ngModel)]="type.profile"/>
+        </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label>
-      <input type="checkbox" [ngModel]="type.hasOwnProperty('aggregation')" (ngModelChange)="globals.toggleProperty(type, 'aggregation', 'contained')" />
-      Aggregation
-      <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.aggregation']}}" placement="top"></i>
-    </label>
-    <div class="input-group">
-      <select class="form-control" [disabled]="!type.hasOwnProperty('aggregation')" [(ngModel)]="type.aggregation">
-        <option>contained</option>
-        <option>referenced</option>
-        <option>bundled</option>
-      </select>
+    <div class="form-group">
+        <label>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="globals.toggleProperty(type, 'targetProfile', '')"/>
+            Target Profile
+            <app-tooltip-icon tooltipPath="ElementDefinition.type.targetProfile"></app-tooltip-icon>
+        </label>
+        <div class="input-group">
+            <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('targetProfile')" [(ngModel)]="type.targetProfile"/>
+        </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label>
-      <input type="checkbox" [ngModel]="type.hasOwnProperty('versioning')" (ngModelChange)="globals.toggleProperty(type, 'versioning', 'either')" />
-      Versioning
-      <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type.versioning']}}" placement="top"></i>
-    </label>
-    <div class="input-group">
-      <select class="form-control" [disabled]="!type.hasOwnProperty('versioning')" [(ngModel)]="type.versioning">
-        <option>either</option>
-        <option>independent</option>
-        <option>specific</option>
-      </select>
+    <div class="form-group">
+        <label>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('aggregation')" (ngModelChange)="globals.toggleProperty(type, 'aggregation', 'contained')"/>
+            Aggregation
+            <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
+        </label>
+        <div class="input-group">
+            <select class="form-control" [disabled]="!type.hasOwnProperty('aggregation')" [(ngModel)]="type.aggregation">
+                <option>contained</option>
+                <option>referenced</option>
+                <option>bundled</option>
+            </select>
+        </div>
     </div>
-  </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('versioning')" (ngModelChange)="globals.toggleProperty(type, 'versioning', 'either')"/>
+            Versioning
+            <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
+        </label>
+        <div class="input-group">
+            <select class="form-control" [disabled]="!type.hasOwnProperty('versioning')" [(ngModel)]="type.versioning">
+                <option>either</option>
+                <option>independent</option>
+                <option>specific</option>
+            </select>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

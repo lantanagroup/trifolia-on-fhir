@@ -16,8 +16,8 @@ export class HumanNameComponent implements OnInit {
     @Input() required = false;
     @Input() isFormGroup = true;
     @Input() defaultValue = '';
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
 
     constructor(
         public modalService: NgbModal,
@@ -86,10 +86,6 @@ export class HumanNameComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
-        }
-
         if (this.required && !this.parentObject[this.propertyName]) {
             this.parentObject[this.propertyName] = {};
         }

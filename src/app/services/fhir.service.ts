@@ -168,6 +168,28 @@ export class FhirService {
         // TODO
     }
 
+    public getFhirTooltip(fhirPath: string) {
+        if (!fhirPath || fhirPath.indexOf('.') < 0 || !this.profiles) {
+            return '';
+        }
+
+        const pathSplit = fhirPath.split('.');
+        const resourceType = pathSplit[0];
+        const structureDefinition = _.find(this.profiles, (profile) => profile.id === resourceType);
+
+        if (structureDefinition) {
+            const definition = structureDefinition.snapshot || structureDefinition.differential;
+
+            if (definition && definition.element) {
+                const foundElement = _.find(definition.element, (element) => element.path === fhirPath);
+
+                if (foundElement && foundElement.short) {
+                    return foundElement.short;
+                }
+            }
+        }
+    }
+
     /**
      * Validates the specified resource using the FHIR-JS module
      * @param {Resource} resource

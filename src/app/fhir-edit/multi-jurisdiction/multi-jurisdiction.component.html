@@ -2,13 +2,14 @@
     <div class="card-header">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
         Jurisdiction
+        <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
         <tr>
             <th>Text</th>
             <th>Codes</th>
-            <th>
+            <th class="actions-column-1">
                 <div class="pull-right">
                     <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="parentObject[propertyName].push({})">
                         <i class="fa fa-plus"></i>

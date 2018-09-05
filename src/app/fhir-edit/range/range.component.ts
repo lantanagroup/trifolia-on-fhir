@@ -15,7 +15,7 @@ export class FhirEditRangeComponent implements OnInit {
     @Input() required = true;
     @Input() isFormGroup = true;
     @Input() defaultValue = '';
-    @Input() tooltip: string;
+    @Input() tooltipPath: string;
     @Input() tooltipKey: string;
 
     constructor(
@@ -109,10 +109,6 @@ export class FhirEditRangeComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
-        }
-
         if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.parentObject[this.propertyName] = {};
         }

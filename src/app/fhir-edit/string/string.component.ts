@@ -13,18 +13,16 @@ export class StringComponent implements OnInit {
     @Input() required = false;
     @Input() isFormGroup = true;
     @Input() defaultValue = '';
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
     @Input() placeholder: string;
     @Input() disabled: boolean;
 
-    constructor(public globals: Globals) {
+    constructor(
+        public globals: Globals) {
 
     }
 
     ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
-        }
     }
 }

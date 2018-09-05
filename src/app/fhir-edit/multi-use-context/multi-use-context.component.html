@@ -2,14 +2,21 @@
     <div class="card-header">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }}])"/>
         Use Context
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
         <tr>
-            <th>Code</th>
-            <th>Value Type</th>
-            <th>Value</th>
             <th>
+                Code
+                <app-tooltip-icon tooltipPath="UsageContext.code"></app-tooltip-icon>
+            </th>
+            <th>Value Type</th>
+            <th>
+                Value
+                <app-tooltip-icon tooltipPath="UsageContext.value[x]"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
                 <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Add a use context"
                             (click)="parentObject[propertyName].push({ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }})">

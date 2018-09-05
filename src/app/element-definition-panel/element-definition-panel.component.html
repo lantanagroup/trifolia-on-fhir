@@ -11,7 +11,10 @@
                 </div>
 
                 <div class="form-group" *ngIf="elementTreeModel.isSliceRoot">
-                    <label>Slice Name</label>
+                    <label>
+                        Slice Name
+                        <app-tooltip-icon tooltipPath="ElementDefinition.sliceName"></app-tooltip-icon>
+                    </label>
                     <div class="input-group" *ngIf="!editingSliceName">
                         <input type="text" class="form-control" [ngModel]="element.sliceName" readonly="readonly" *ngIf="!editingSliceName"/>
                         <div class="input-grp-btn">
@@ -39,7 +42,7 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
                                (ngModelChange)="globals.toggleProperty(element, 'code', [])"/>
                         Code
-                        <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.code']}}" placement="top"></i>
+                        <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
                     </label>
                     <div class="pull-right" *ngIf="element.hasOwnProperty('code')">
                         <i class="fa fa-plus" title="Add a code" (click)="element.code.push({})"></i>
@@ -77,7 +80,7 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('min')"
                                (ngModelChange)="globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
                         Min
-                        <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.min']}}" placement="top"></i>
+                        <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
                     </label>
                     <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('min')"
                            [(ngModel)]="element.min"/>
@@ -89,7 +92,7 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('max')"
                                (ngModelChange)="globals.toggleProperty(element, 'max', elementTreeModel.max)"/>
                         Max
-                        <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.max']}}" placement="top"></i>
+                        <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
                     </label>
                     <div class="input-group">
                         <input type="number" class="form-control"
@@ -110,7 +113,7 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('type')"
                                (ngModelChange)="globals.toggleProperty(element, 'type', [])"/>
                         Type
-                        <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.type']}}" placement="top"></i>
+                        <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
                     </label>
                     <div class="pull-right" *ngIf="element.hasOwnProperty('type')">
                         <i class="fa fa-plus clickable" title="Add a type" (click)="addType()"></i>
@@ -141,8 +144,7 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
                                (ngModelChange)="globals.toggleProperty(element, 'representation', ['xmlAttr'])"/>
                         Representation
-                        <i class="fa fa-question" ngbTooltip="{{globals.tooltips['ed.representation']}}"
-                           placement="top"></i>
+                        <app-tooltip-icon tooltipPath="ElementDefinition.representation"></app-tooltip-icon>
                     </label>
                     <div class="pull-right" *ngIf="element.hasOwnProperty('representation')">
                         <i class="fa fa-plus clickable" title="Add a type" (click)="element.representation.push('xmlAttr')"></i>
@@ -168,25 +170,25 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('maxLength')"
                                (ngModelChange)="globals.toggleProperty(element, 'maxLength', 0)"/>
                         Max Length
+                        <app-tooltip-icon tooltipPath="ElementDefinition.maxLength"></app-tooltip-icon>
                     </label>
                     <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('maxLength')"
                            [(ngModel)]="element.maxLength"/>
                 </div>
 
-                <app-fhir-string [parentObject]="element" propertyName="contentReference" title="Content Reference"
-                                 tooltipKey="ed.contentReference"></app-fhir-string>
+                <app-fhir-string [parentObject]="element" propertyName="contentReference" title="Content Reference" tooltipPath="ElementDefinition.contentReference"></app-fhir-string>
 
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')"
-                               (ngModelChange)="globals.toggleProperty(element, 'condition', [''])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')" (ngModelChange)="globals.toggleProperty(element, 'condition', [''])"/>
                         Condition
+                        <app-tooltip-icon tooltipPath="ElementDefinition.condition"></app-tooltip-icon>
                     </div>
                     <table class="table table-striped" *ngIf="element.hasOwnProperty('condition')">
                         <thead>
                         <tr>
                             <td>ID</td>
-                            <td>
+                            <td class="actions-column-1">
                                 <div class="pull-right">
                                     <button type="button" class="btn btn-default btn-sm" title="Add a condition"
                                             (click)="element.condition.push('')">
@@ -216,17 +218,26 @@
 
                 <div class="form-group">
                     <input type="checkbox" [(ngModel)]="element.mustSupport"/>
-                    <label>Must support</label>
+                    <label>
+                        Must support
+                        <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
+                    </label>
                 </div>
 
                 <div class="form-group">
                     <input type="checkbox" [(ngModel)]="element.isModifier"/>
-                    <label>Is modifier</label>
+                    <label>
+                        Is modifier
+                        <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
+                    </label>
                 </div>
 
                 <div class="form-group">
                     <input type="checkbox" [(ngModel)]="element.isSummary"/>
-                    <label>Is summary</label>
+                    <label>
+                        Is summary
+                        <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
+                    </label>
                 </div>
 
                 <div class="form-group">
@@ -234,44 +245,49 @@
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')"
                                (ngModelChange)="globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
                         Constraint
+                        <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
                     </label>
-                    <p *ngFor="let c of element.constraint">{{c.key}} | {{c.severity}} | {{c.human}} |
-                        {{c.expression}}</p>
-                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('constraint')">
-                        Edit
-                    </button>
+                    <p *ngFor="let c of element.constraint">{{c.key}} | {{c.severity}} | {{c.human}} | {{c.expression}}</p>
+                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('constraint')">Edit</button>
                 </div>
 
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')"
-                               (ngModelChange)="globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
                         Mapping
+                        <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
                     </label>
                     <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
-                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')">
-                        Edit
-                    </button>
+                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')">Edit</button>
                 </div>
             </ng-template>
         </ngb-tab>
         <ngb-tab title="Slicing" *ngIf="element.slicing">
             <ng-template ngbTabContent>
-                <app-fhir-select-single-code [parentObject]="element.slicing" propertyName="rules" title="Rules"
+                <app-fhir-select-single-code [parentObject]="element.slicing"
+                                             propertyName="rules"
+                                             title="Rules"
                                              valueSetUrl="http://hl7.org/fhir/ValueSet/resource-slicing-rules"
-                                             [required]="true"></app-fhir-select-single-code>
+                                             [required]="true"
+                                             tooltipPath="ElementDefinition.slicing.rules"></app-fhir-select-single-code>
 
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')"
-                               (ngModelChange)="globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }])"/>
+                        <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')" (ngModelChange)="globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }])"/>
                         Discriminator
+                        <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator"></app-tooltip-icon>
                     </div>
                     <table class="table table-striped" *ngIf="element.slicing.hasOwnProperty('discriminator')">
                         <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Path</th>
+                            <th>
+                                Type
+                                <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.type"></app-tooltip-icon>
+                            </th>
+                            <th>
+                                Path
+                                <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.path"></app-tooltip-icon>
+                            </th>
                             <th>
                                 <div class="pull-right">
                                     <button type="button" class="btn btn-default btn-sm" title="Add a discriminator"
@@ -307,91 +323,45 @@
                     </table>
                 </div>
 
-                <app-fhir-string [parentObject]="element.slicing" propertyName="description"
-                                 title="Description"></app-fhir-string>
+                <app-fhir-string [parentObject]="element.slicing" propertyName="description" title="Description" tooltipPath="ElementDefinition.slicing.description"></app-fhir-string>
 
-                <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered"
-                                  title="Ordered"></app-fhir-boolean>
+                <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered" title="Ordered" tooltipPath="ElementDefinition.slicing.ordered"></app-fhir-boolean>
             </ng-template>
         </ngb-tab>
         <ngb-tab title="Narrative">
             <ng-template ngbTabContent>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('short')"
-                               (ngModelChange)="globals.toggleProperty(element, 'short', [])"/>
-                        Short
-                    </label>
-                    <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('short')"
-                           [(ngModel)]="element.short"/>
-                </div>
+                <app-fhir-string [parentObject]="element" propertyName="short" title="Short" tooltipPath="ElementDefinition.short"></app-fhir-string>
 
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('label')"
-                               (ngModelChange)="globals.toggleProperty(element, 'label', [])"/>
-                        Label
-                    </label>
-                    <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('label')"
-                           [(ngModel)]="element.label"/>
-                </div>
+                <app-fhir-string [parentObject]="element" propertyName="label" title="Label" tooltipPath="ElementDefinition.label"></app-fhir-string>
 
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')"
-                               (ngModelChange)="globals.toggleProperty(element, 'alias', [])"/>
-                        Alias
-                    </label>
-                    <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('alias')"
-                           [(ngModel)]="element.alias"/>
-                </div>
+                <app-fhir-string [parentObject]="element" propertyName="alias" title="Alias" tooltipPath="ElementDefinition.alias"></app-fhir-string>
 
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('orderMeaning')"
-                               (ngModelChange)="globals.toggleProperty(element, 'orderMeaning', [])"/>
-                        Order meaning
-                    </label>
-                    <input type="text" class="form-control" [disabled]="!element.hasOwnProperty('orderMeaning')"
-                           [(ngModel)]="element.orderMeaning"/>
-                </div>
+                <app-fhir-string [parentObject]="element" propertyName="orderMeaning" title="Order meaning" tooltipPath="ElementDefinition.orderMeaning"></app-fhir-string>
 
-                <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition"
-                                   [displayOnly]="true"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true" tooltipPath="ElementDefinition.definition"></app-fhir-markdown>
 
-                <app-fhir-markdown [parentObject]="element" propertyName="comment" title="Comment"
-                                   [displayOnly]="true"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="element" propertyName="comment" title="Comment" [displayOnly]="true" tooltipPath="ElementDefinition.comment"></app-fhir-markdown>
 
-                <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"
-                                   [displayOnly]="true"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements" [displayOnly]="true" tooltipPath="ElementDefinition.requirements"></app-fhir-markdown>
 
-                <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing"
-                                   title="Meaning when missing" [displayOnly]="true"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing" [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing"></app-fhir-markdown>
             </ng-template>
         </ngb-tab>
         <ngb-tab title="Binding">
             <ng-template ngbTabContent>
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')"
-                               (ngModelChange)="globals.toggleProperty(element, 'binding', getDefaultBinding())"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="globals.toggleProperty(element, 'binding', getDefaultBinding())"/>
                         Binding
+                        <app-tooltip-icon tooltipPath="ElementDefinition.binding"></app-tooltip-icon>
                     </div>
                     <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
                         <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength"
                                                      valueSetUrl="http://hl7.org/fhir/ValueSet/binding-strength"
-                                                     title="Strength"></app-fhir-select-single-code>
+                                                     title="Strength" tooltipPath="ElementDefinition.binding.strength"
+                                                     [required]="true"></app-fhir-select-single-code>
 
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" [ngModel]="element.binding.hasOwnProperty('description')"
-                                       (ngModelChange)="globals.toggleProperty(element.binding, 'description', '')"/>
-                                Description
-                            </label>
-                            <input type="text" class="form-control"
-                                   [disabled]="!element.binding.hasOwnProperty('description')"
-                                   [(ngModel)]="element.binding.description"/>
-                        </div>
+                        <app-fhir-string [parentObject]="element.binding" propertyName="description" title="Description" tooltipPath="ElementDefinition.binding.description"></app-fhir-string>
 
                         <div class="form-group">
                             <label>
@@ -399,6 +369,7 @@
                                        [ngModel]="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
                                        (ngModelChange)="globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, '')"/>
                                 Value Set
+                                <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
                             </label>
                             <div class="input-group">
                                 <div class="input-group-addon">
@@ -423,20 +394,19 @@
                     </div>
                 </div>
 
-                <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed"></app-fhir-choice>
+                <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed" tooltipPath="ElementDefinition.fixed[x]"></app-fhir-choice>
 
-                <app-fhir-choice [parentObject]="element" propertyName="pattern" title="Pattern"></app-fhir-choice>
+                <app-fhir-choice [parentObject]="element" propertyName="pattern" title="Pattern" tooltipPath="ElementDefinition.pattern[x]"></app-fhir-choice>
 
-                <app-fhir-choice [parentObject]="element" propertyName="defaultValue"
-                                 title="Default Value"></app-fhir-choice>
+                <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value" tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-                <app-fhir-choice [parentObject]="element" propertyName="example" title="Example"></app-fhir-choice>
+                <app-fhir-choice [parentObject]="element" propertyName="example" title="Example" tooltipPath="ElementDefinition.example[x]"></app-fhir-choice>
 
                 <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value"
-                                 [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"></app-fhir-choice>
+                                 [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']" tooltipPath="ElementDefinition.minValue[x]"></app-fhir-choice>
 
                 <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value"
-                                 [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"></app-fhir-choice>
+                                 [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']" tooltipPath="ElementDefinition.maxValue[x]"></app-fhir-choice>
             </ng-template>
         </ngb-tab>
         <ngb-tab title="JSON">

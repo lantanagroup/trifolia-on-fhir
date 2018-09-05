@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Coding} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-fhir-select-multi-coding',
@@ -12,13 +13,16 @@ export class SelectMultiCodingComponent implements OnInit {
     @Input() propertyName: string;
     @Input() codes: Coding[];
     @Input() required: boolean;
-    @Input() tooltip: string;
     @Input() tooltipKey: string;
+    @Input() tooltipPath: string;
     @Input() title: string;
     @Input() matchSystem = true;
     @Input() matchCode = true;
+    public tooltip: string;
 
-    constructor(public globals: Globals) {
+    constructor(
+        public globals: Globals,
+        private fhirService: FhirService) {
     }
 
     public getCodeType(code: Coding) {
@@ -68,6 +72,8 @@ export class SelectMultiCodingComponent implements OnInit {
     ngOnInit() {
         if (this.tooltipKey) {
             this.tooltip = this.globals.tooltips[this.tooltipKey];
+        } else if (this.tooltipPath) {
+            this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }
     }
 }
