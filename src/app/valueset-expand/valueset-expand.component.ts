@@ -30,6 +30,8 @@ export class ValuesetExpandComponent implements OnInit {
   public valueSet: ValueSet;
   public results: ValueSet|OperationOutcome;
   public criteria: ValueSetExpandCriteria = {};
+  public message: string;
+  public expanding = false;
 
   constructor(
       private route: ActivatedRoute,
@@ -38,11 +40,16 @@ export class ValuesetExpandComponent implements OnInit {
   }
 
   public expand(tabSet: NgbTabset) {
+      this.expanding = true;
+      this.message = 'Expanding... This may take a while.';
+
       const valueSetId = this.route.snapshot.paramMap.get('id');
       this.valueSetService.expand(valueSetId)
           .subscribe((results) => {
               this.results = results;
               setTimeout(() => {
+                  this.expanding = false;
+                  this.message = 'Expansion complete';
                   tabSet.select('results');
               });
           }, (err) => {
@@ -55,6 +62,8 @@ export class ValuesetExpandComponent implements OnInit {
                   issue: []
               };
               setTimeout(() => {
+                  this.expanding = false;
+                  this.message = 'Expansion completed with errors';
                   tabSet.select('results');
               });
           });
