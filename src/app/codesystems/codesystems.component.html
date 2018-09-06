@@ -1,11 +1,12 @@
 <h1>Code Systems</h1>
+<app-tooltip-icon tooltipKey="codesystem.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
   <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
          placeholder="Search" [disabled]="true">
   <div class="input-group-btn">
     <button type="button" class="btn btn-default" title="Refresh" (click)="getCodeSystems()">
-      <i class="fa fa-refresh"></i>
+      <i class="fa fa-search"></i>
     </button>
   </div>
 </div>

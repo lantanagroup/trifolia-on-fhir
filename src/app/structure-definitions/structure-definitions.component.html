@@ -1,11 +1,12 @@
 <h1>Structure Definitions</h1>
+<app-tooltip-icon tooltipKey="structuredefinition.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
     <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search all (_content)"/>
     <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Complete StructureDefinition.url"/>
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
-            <i class="fa fa-refresh"></i>
+            <i class="fa fa-search"></i>
         </button>
     </div>
 </div>

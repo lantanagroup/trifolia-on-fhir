@@ -1,1 +1,10 @@
-<i *ngIf="tooltip" class="fa fa-question-circle tooltip-icon" [ngbTooltip]="tooltip" [placement]="tooltipPlacement" container="body"></i>
+<i *ngIf="tooltip && !showAsAlert" class="fa fa-question-circle tooltip-icon" [ngbTooltip]="tooltip" [placement]="tooltipPlacement" container="body"></i>
+<div class="alert alert-info tooltip-alert">
+    <button aria-label="Show/Hide" class="close" type="button" (click)="toggle()">
+        <span aria-hidden="true">
+            <i class="fa" [class.fa-remove]="!hidden" [class.fa-expand]="hidden"></i>
+        </span>
+    </button>
+    <strong *ngIf="hidden">{{alertTitle || tooltipPath || tooltipKey}}</strong>
+    <span *ngIf="!hidden">{{tooltip}}</span>
+</div>

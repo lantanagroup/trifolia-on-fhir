@@ -1,11 +1,12 @@
 <h1>Implementation Guides</h1>
+<app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
     <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
            placeholder="Search" [disabled]="true">
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
-            <i class="fa fa-refresh"></i>
+            <i class="fa fa-search"></i>
         </button>
     </div>
 </div>
@@ -33,6 +34,7 @@
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
+                <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}/view" title="View this resource"><i class="fa fa-eye"></i></a>
                 <button type="button" class="btn btn-default" (click)="remove(ig)" title="Remove this resource"><i class="fa fa-remove"></i></button>
                 <button type="button" class="btn btn-default" (click)="changeId(ig)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
             </div>

@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {FhirService} from '../services/fhir.service';
 import {Globals} from '../globals';
+import {CookieService} from 'angular2-cookie/core';
 
 @Component({
     selector: 'app-tooltip-icon',
@@ -10,16 +11,35 @@ import {Globals} from '../globals';
 export class TooltipIconComponent implements OnInit {
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
+    @Input() showAsAlert = false;
+    @Input() alertTitle: string;
     public tooltip: string;
     public tooltipPlacement = 'top';
+    public hidden = false;
 
     constructor(
         private fhirService: FhirService,
         private globals: Globals,
-        private el: ElementRef) {
+        private el: ElementRef,
+        private cookieService: CookieService) {
+    }
+
+    public get cookieName(): string {
+        return 'tooltip-' + (this.tooltipKey || this.tooltipPath);
+    }
+
+    public toggle() {
+        this.hidden = !this.hidden;
+        this.cookieService.put(this.cookieName, this.hidden.toString());
     }
 
     ngOnInit() {
+        // If a cookie exists for the tooltip, use it to determine if it should be hidden
+        const cookieValue = this.cookieService.get(this.cookieName);
+        if (cookieValue) {
+            this.hidden = cookieValue.toLowerCase() === 'true';
+        }
+
         if (this.tooltipKey) {
             this.tooltip = this.globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
@@ -30,7 +50,7 @@ export class TooltipIconComponent implements OnInit {
 
         if (bounds.left < 200) {
             this.tooltipPlacement = 'right';
-        } else if (bounds.top < 200) {
+        } else if (bounds.top < 250) {
             this.tooltipPlacement = 'bottom';
         }
     }

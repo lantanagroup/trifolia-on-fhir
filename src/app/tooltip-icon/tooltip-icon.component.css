@@ -1,0 +1,8 @@
+.tooltip-alert > span {
+    white-space: pre-wrap;
+}
+
+.close {
+    font-size: 1rem;
+    line-height: 1.5;
+}

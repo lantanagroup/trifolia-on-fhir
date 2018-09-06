@@ -104,6 +104,8 @@ import { TooltipIconComponent } from './tooltip-icon/tooltip-icon.component';
 import { FhirEditValueSetIncludeConceptModalComponent } from './fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import { RawResourceComponent } from './raw-resource/raw-resource.component';
 import { ValuesetConceptCardComponent } from './valueset-concept-card/valueset-concept-card.component';
+import { ImplementationGuideViewComponent } from './implementation-guide-view/implementation-guide-view.component';
+import {SafePipe} from './pipes/safe-pipe';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -145,6 +147,7 @@ const appRoutes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'implementation-guide', component: ImplementationGuidesComponent},
     {path: 'implementation-guide/new', component: ImplementationGuideComponent},
+    {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent},
     {path: 'implementation-guide/:id', component: ImplementationGuideComponent},
     {path: 'structure-definition', component: StructureDefinitionsComponent},
     {path: 'structure-definition/new', component: NewProfileComponent},
@@ -206,6 +209,7 @@ const appRoutes: Routes = [
         KeysPipe,
         FhirDisplayPipe,
         FhirXmlPipe,
+        SafePipe,
         XmlPipe,
         ImplementationGuidesComponent,
         HomeComponent,
@@ -278,7 +282,8 @@ const appRoutes: Routes = [
         TooltipIconComponent,
         FhirEditValueSetIncludeConceptModalComponent,
         RawResourceComponent,
-        ValuesetConceptCardComponent
+        ValuesetConceptCardComponent,
+        ImplementationGuideViewComponent
     ],
     imports: [
         RouterModule.forRoot(

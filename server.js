@@ -145,7 +145,11 @@ app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxA
 app.use(express.static(path.join(__dirname, 'wwwroot')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
+    if (req.originalUrl.startsWith('/igs/')) {
+        res.status(404).send('The specified page could not be found');
+    } else {
+        res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
+    }
 });
 
 // Pre-load all necessary extensions for Trifolia-on-FHIR on the server

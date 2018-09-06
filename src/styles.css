@@ -125,3 +125,7 @@ a.btn > i.fa {
 button {
     cursor: pointer;
 }
+
+.tooltip-inner {
+    max-width: 350px;
+}

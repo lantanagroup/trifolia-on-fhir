@@ -266,6 +266,9 @@ function exportHtml(req, res, testCallback) {
                         sendSocketMessage(req, packageId, 'progress', 'Done building package');
 
                         if (executeIgPublisher) {
+                            const deployDir = path.resolve(__dirname, '../wwwroot/igs', implementationGuideResource.id);
+                            fs.ensureDirSync(deployDir);
+
                             getIgPublisher(req, packageId)
                                 .then((igPublisherLocation) => {
                                     if (testCallback) {
@@ -295,7 +298,18 @@ function exportHtml(req, res, testCallback) {
 
                                     igPublisherProcess.on('exit', (code) => {
                                         sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
-                                        sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+
+                                        sendSocketMessage(req, packageId, 'progress', 'Copying output to deployment path.');
+
+                                        const outputPath = path.resolve(rootPath, 'output');
+                                        fs.copy(outputPath, deployDir, (err) => {
+                                            if (err) {
+                                                console.log(err);
+                                                sendSocketMessage(req, packageId, 'error', 'Error copying contents to deployment path.');
+                                            } else {
+                                                sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                                            }
+                                        });
                                     });
                                 })
                                 .catch((err) => {
