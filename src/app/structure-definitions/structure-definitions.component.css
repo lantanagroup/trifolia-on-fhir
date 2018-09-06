@@ -1,0 +1,4 @@
+tr > th:last-child,
+tr > td:last-child {
+    padding-right: 0px;
+}

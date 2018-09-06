@@ -129,3 +129,7 @@ button {
 .tooltip-inner {
     max-width: 350px;
 }
+
+a.btn {
+    background-color: buttonface;
+}
