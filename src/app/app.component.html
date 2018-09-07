@@ -1,140 +1,148 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <a class="navbar-brand" href="#">Trifolia on FHIR</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarCollapse">
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item" [routerLinkActive]="['active']">
-        <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li>
-        <a class="nav-link clickable" (click)="openFile()" title="Open a resource on your computer">Open</a>
-      </li>
       <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="igMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link" title="Implementation Guides">IG</a>
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Resources
         </a>
-        <div class="dropdown-menu" aria-labelledby="igMenu">
-          <a class="dropdown-item" routerLink="/implementation-guide">Browse</a>
-          <a class="dropdown-item" routerLink="/implementation-guide/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentImplementationGuides.length > 0"></div>
-          <a class="dropdown-item" routerLink="/implementation-guide/{{ri.id}}" *ngFor="let ri of recentItemService.recentImplementationGuides">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div>
+            <div class="row">
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Implementation Guides</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/implementation-guide">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/implementation-guide/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentImplementationGuides">
+                    <a class="nav-link" routerLink="/implementation-guide/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Structure Definitions</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/structure-definition">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/structure-definition/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentStructureDefinitions">
+                    <a class="nav-link" routerLink="/structure-definition/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Operation Definitions</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/operation-definition">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/operation-definition/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentOperationDefinitions">
+                    <a class="nav-link" routerLink="/operation-definition/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Capability Statements</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/capability-statement">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/capability-statement/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentCapabilityStatements">
+                    <a class="nav-link" routerLink="/capability-statement/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Value Sets</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/value-set">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/value-set/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentValueSets">
+                    <a class="nav-link" routerLink="/value-set/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-uppercase text-white">Code Systems</span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/code-system">Browse</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/code-system/new">New</a>
+                  </li>
+                  <li class="nav-item" *ngFor="let ri of recentItemService.recentCodeSystems">
+                    <a class="nav-link" routerLink="/code-system/{{ri.id}}">{{ri.id}}</a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
         </div>
       </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="sdMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link" title="Structure Definitions">Structure Def</a>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="sdMenu">
-          <a class="dropdown-item" routerLink="/structure-definition">Browse</a>
-          <a class="dropdown-item" routerLink="/structure-definition/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentStructureDefinitions.length > 0"></div>
-          <a class="dropdown-item" routerLink="/structure-definition/{{ri.id}}" *ngFor="let ri of recentItemService.recentStructureDefinitions">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="vsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link">Value Set</a>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="vsMenu">
-          <a class="dropdown-item" routerLink="/value-set">Browse</a>
-          <a class="dropdown-item" routerLink="/value-set/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentValueSets.length > 0"></div>
-          <a class="dropdown-item" routerLink="/value-set/{{ri.id}}" *ngFor="let ri of recentItemService.recentValueSets">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="codeSystemMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link">Code System</a>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="codeSystemMenu">
-          <a class="dropdown-item" routerLink="/code-system">Browse</a>
-          <a class="dropdown-item" routerLink="/code-system/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentCodeSystems.length > 0"></div>
-          <a class="dropdown-item" routerLink="/code-system/{{ri.id}}" *ngFor="let ri of recentItemService.recentCodeSystems">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="csMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link" title="Capability Statements">Capability Stmt</a>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="csMenu">
-          <a class="dropdown-item" routerLink="/capability-statement">Browse</a>
-          <a class="dropdown-item" routerLink="/capability-statement/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentCapabilityStatements.length > 0"></div>
-          <a class="dropdown-item" routerLink="/capability-statement/{{ri.id}}" *ngFor="let ri of recentItemService.recentCapabilityStatements">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
-        <a class="nav-link dropdown-toggle" [routerLinkActive]="['active']" href="#" id="csMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="sub-nav-link" title="Operation Definitions">Operation Def</a>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="csMenu">
-          <a class="dropdown-item" routerLink="/operation-definition">Browse</a>
-          <a class="dropdown-item" routerLink="/operation-definition/new">New</a>
-          <div class="dropdown-divider" *ngIf="recentItemService.recentOperationDefinitions.length > 0"></div>
-          <a class="dropdown-item" routerLink="/operation-definition/{{ri.id}}" *ngFor="let ri of recentItemService.recentOperationDefinitions">
-            {{ri.display}}
-            <div class="badge badge-light">{{ri.id}}</div>
-          </a>
-        </div>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
         <a class="nav-link" routerLink="/other-resources">Other Resources</a>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+      <li class="nav-item">
+        <a class="nav-link" href="javascript:void(0)" (click)="openFile()">Open from computer</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
         <a class="nav-link" routerLink="/export">Export</a>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
         <a class="nav-link" routerLink="/import">Import</a>
       </li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item" *ngIf="configService.config">
-        <select class="form-control" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
-          <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
-        </select>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="helpMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Help
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpMenu">
-          <a class="dropdown-item" href="/help" target="_new">Documentation</a>
-          <a class="dropdown-item" href="#">Request Support</a>
-          <a class="dropdown-item" href="#">:Version:</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" *ngIf="authService.isAuthenticated()" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
-          {{getDisplayName()}}
-        </a>
-        <a class="nav-link dropdown-toggle" *ngIf="!authService.isAuthenticated()" href="#" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Not Logged In</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileMenu">
-          <a class="dropdown-item" *ngIf="authService.isAuthenticated()" routerLink="/users/me">Profile</a>
-          <a class="dropdown-item" *ngIf="!authService.isAuthenticated()" (click)="authService.login()">Login</a>
-          <a class="dropdown-item" *ngIf="authService.isAuthenticated()" (click)="authService.logout()">Logout</a>
-        </div>
-      </li>
-    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
+        <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
+      </select>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" *ngIf="!authService.isAuthenticated()">
+          <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
+        </li>
+        <li class="nav-item" *ngIf="authService.isAuthenticated()">
+          <a class="nav-link" routerLink="/users/me">
+            <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
+            {{getDisplayName()}}
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="authService.isAuthenticated()">
+          <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()">Logout</a>
+        </li>
+      </ul>
+    </form>
   </div>
+
+
 </nav>
 
 <div class="container" [class.container-large]="isBigContainer">
