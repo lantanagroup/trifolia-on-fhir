@@ -11,8 +11,6 @@ const zipdir = require('zip-dir');
 const { spawn } = require('child_process');
 const config = require('config');
 const fhirConfig = config.get('fhir');
-const Fhir = require('fhir');
-const fhir = new Fhir();
 const rp = require('request-promise');
 
 function getBundle(req, format) {
@@ -72,6 +70,9 @@ function getControl(extension, implementationGuide, bundle) {
             pages: 'pages',
             specification: 'http://www.hl7.org/fhir/'
         },
+        pages: ['pages', '_pages'],
+        'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+        'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'sct-edition': 'http://snomed.info/sct/731000124108',
         canonicalBase: canonicalBaseMatch[1],
         defaults: {
@@ -108,6 +109,21 @@ function getControl(extension, implementationGuide, bundle) {
         resources: {}
     };
 
+    // Set the dependencyList based on the extensions in the IG
+    const dependencyExtensions = _.filter(implementationGuide.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency');
+    control.dependencyList = _.map(dependencyExtensions, (dependencyExtension) => {
+        const locationExtension = _.find(dependencyExtension.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
+        const nameExtension = _.find(dependencyExtension.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
+        const versionExtension = _.find(dependencyExtension.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version');
+
+        return {
+            location: locationExtension ? locationExtension.valueUri : '',
+            name: nameExtension ? nameExtension.valueString : '',
+            version: versionExtension ? versionExtension.valueString : ''
+        };
+    });
+
+    // Define the resources in the control and what templates they should use
     if (bundle && bundle.entry) {
         for (var i = 0; i < bundle.entry.length; i++) {
             const entry = bundle.entry[i];
@@ -157,7 +173,11 @@ function packageImplementationGuidePage(pagesPath, implementationGuide, page) {
     _.each(page.page, (subPage) => packageImplementationGuidePage(pagesPath, implementationGuide, subPage));
 }
 
-function getIgPublisher(req, packageId) {
+function getIgPublisher(req, packageId, executeIgPublisher) {
+    if (!executeIgPublisher) {
+        return Q.resolve();
+    }
+
     const deferred = Q.defer();
     const fileName = 'org.hl7.fhir.igpublisher.jar';
     const defaultPath = path.join(__dirname, '../ig-publisher');
@@ -191,12 +211,80 @@ function getIgPublisher(req, packageId) {
     return deferred.promise;
 }
 
+function getDependency(dependencyUrl, dependencyName) {
+    const deferred = Q.defer();
+
+    request(dependencyUrl, { encoding: null }, (err, response, body) => {
+        if (err) {
+            console.log(err);
+            deferred.reject('Could not retrieve dependency at ' + dependencyUrl);
+        } else {
+            deferred.resolve({
+                name: dependencyName,
+                data: body
+            });
+        }
+    });
+
+    return deferred.promise;
+}
+
+function copyExtension(destExtensionsDir, extensionFileName, isXml, fhir) {
+    const sourceExtensionsDir = path.join(__dirname, '../src/assets/stu3/extensions');
+    const sourceExtensionFileName = path.join(sourceExtensionsDir, extensionFileName);
+    let destExtensionFileName = path.join(destExtensionsDir, extensionFileName);
+
+    if (!isXml) {
+        fs.copySync(sourceExtensionFileName, destExtensionFileName);
+    } else {
+        const extensionJson = fs.readFileSync(sourceExtensionFileName).toString();
+        const extensionXml = fhir.jsonToXml(extensionJson);
+
+        destExtensionFileName = destExtensionFileName.substring(0, destExtensionFileName.indexOf('.json')) + '.xml';
+        fs.writeFileSync(destExtensionFileName, extensionXml);
+    }
+}
+
+function getDependencies(control, isXml, resourcesDir, fhir) {
+    // Load the ig dependency extensions into the resources directory
+    if (control.dependencyList && control.dependencyList.length > 0) {
+        const destExtensionsDir = path.join(resourcesDir, 'structuredefinition');
+
+        fs.ensureDirSync(destExtensionsDir);
+
+        copyExtension(destExtensionsDir, 'extension-ig-dependency.json', isXml, fhir);
+        copyExtension(destExtensionsDir, 'extension-ig-dependency-version.json', isXml, fhir);
+        copyExtension(destExtensionsDir, 'extension-ig-dependency-location.json', isXml, fhir);
+        copyExtension(destExtensionsDir, 'extension-ig-dependency-name.json', isXml, fhir);
+    }
+
+    return Q.resolve([]);           // This isn't actually needed, since the IG Publisher attempts to resolve these dependency automatically
+
+    const deferred = Q.defer();
+    const promises = _.map(control.dependencyList, (dependency) => {
+        const dependencyUrl =
+            dependency.location +
+            (dependency.location.endsWith('/') ? '' : '/') + 'definitions.' +
+            (isXml ? 'xml' : 'json') +
+            '.zip';
+        return getDependency(dependencyUrl, dependency.name);
+    });
+
+    Q.all(promises)
+        .then(deferred.resolve)
+        .catch(deferred.reject);
+
+    return deferred.promise;
+}
+
 function exportHtml(req, res, testCallback) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
     const useTerminologyServer = req.query.useTerminologyServer === undefined || req.query.useTerminologyServer == 'true';
     const executeIgPublisher = req.query.executeIgPublisher === undefined || req.query.executeIgPublisher == 'true';
     const homedir = require('os').homedir();
+    let control;
+    let implementationGuideResource;
 
     tmp.dir((err, rootPath, cleanup) => {
         if (err) {
@@ -205,6 +293,7 @@ function exportHtml(req, res, testCallback) {
         }
 
         const packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
+        const controlPath = path.join(rootPath, 'ig.json');
         res.send(packageId);
 
         setTimeout(() => {
@@ -214,133 +303,120 @@ function exportHtml(req, res, testCallback) {
             getBundle(req, 'application/json')
                 .then((bundleJson) => {
                     const bundle = JSON.parse(bundleJson);
-                    let implementationGuideResource = null;
+                    const resourcesDir = path.join(rootPath, 'resources');
 
                     sendSocketMessage(req, packageId, 'progress', 'Resources retrieved. Packaging.');
 
-                    try {
-                        for (var i = 0; i < bundle.entry.length; i++) {
-                            const resourceType = bundle.entry[i].resource.resourceType;
-                            const id = bundle.entry[i].resource.id;
-                            const resourceDir = path.join(rootPath, 'resources', resourceType);
-                            let resourcePath;
+                    for (var i = 0; i < bundle.entry.length; i++) {
+                        const resourceType = bundle.entry[i].resource.resourceType;
+                        const id = bundle.entry[i].resource.id;
+                        const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
+                        let resourcePath;
 
-                            let resourceContent = null;
+                        let resourceContent = null;
 
-                            // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
-                            if (!isXml && resourceType !== 'ImplementationGuide') {
-                                resourceContent = JSON.stringify(bundle.entry[0].resource, null, '\t');
-                                resourcePath = path.join(resourceDir, id + '.json');
-                            } else {
-                                resourceContent = fhir.objToXml(bundle.entry[0].resource);
-                                resourcePath = path.join(resourceDir, id + '.xml');
-                            }
-
-                            if (resourceType == 'ImplementationGuide' && id === req.params.implementationGuideId) {
-                                implementationGuideResource = bundle.entry[i].resource;
-                            }
-
-                            fs.ensureDirSync(resourceDir);
-                            fs.writeFileSync(resourcePath, resourceContent);
-                        }
-
-                        if (!implementationGuideResource) {
-                            throw new Error('The implementation guide was not found in the bundle returned by the server');
-                        }
-
-                        if (implementationGuideResource.page) {
-                            const pagesPath = path.join(rootPath, '_pages');
-                            fs.ensureDirSync(pagesPath);
-
-                            packageImplementationGuidePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
-                        }
-
-                        const control = getControl(extension, implementationGuideResource, bundle);
-                        const controlPath = path.join(rootPath, 'ig.json');
-                        const controlContent = JSON.stringify(control, null, '\t');
-                        fs.writeFileSync(controlPath, controlContent);
-
-                        const templatePath = path.join(__dirname, '..', 'ig-publisher-template');
-                        fs.copySync(templatePath, rootPath);
-
-                        sendSocketMessage(req, packageId, 'progress', 'Done building package');
-
-                        if (executeIgPublisher) {
-                            const deployDir = path.resolve(__dirname, '../wwwroot/igs', implementationGuideResource.id);
-                            fs.ensureDirSync(deployDir);
-
-                            getIgPublisher(req, packageId)
-                                .then((igPublisherLocation) => {
-                                    if (testCallback) {
-                                        throw new Error('Should not execute the IG publisher in a unit test');
-                                    }
-
-                                    const igPublisherVersion = req.query.useLatest ? 'latest' : 'default';
-                                    sendSocketMessage(req, packageId, 'progress', `Running ${igPublisherVersion} IG Publisher`);
-
-                                    const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
-
-                                    if (!useTerminologyServer) {
-                                        jarParams.push('-tx', 'N/A');
-                                    }
-
-                                    const igPublisherProcess = spawn('java', jarParams);
-
-                                    igPublisherProcess.stdout.on('data', (data) => {
-                                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                                        sendSocketMessage(req, packageId, 'progress', message);
-                                    });
-
-                                    igPublisherProcess.stderr.on('data', (data) => {
-                                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                                        sendSocketMessage(req, packageId, 'progress', message);
-                                    });
-
-                                    igPublisherProcess.on('exit', (code) => {
-                                        sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
-
-                                        sendSocketMessage(req, packageId, 'progress', 'Copying output to deployment path.');
-
-                                        const outputPath = path.resolve(rootPath, 'output');
-                                        fs.copy(outputPath, deployDir, (err) => {
-                                            if (err) {
-                                                console.log(err);
-                                                sendSocketMessage(req, packageId, 'error', 'Error copying contents to deployment path.');
-                                            } else {
-                                                sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
-                                            }
-                                        });
-                                    });
-                                })
-                                .catch((err) => {
-                                    sendSocketMessage(req, packageId, 'error', err);
-                                    fs.emptyDirSync(rootPath);
-                                    fs.rmdirSync(rootPath);
-
-                                    if (testCallback) {
-                                        testCallback(rootPath, err);
-                                    }
-                                });
+                        // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
+                        if (!isXml && resourceType !== 'ImplementationGuide') {
+                            resourceContent = JSON.stringify(bundle.entry[0].resource, null, '\t');
+                            resourcePath = path.join(resourceDir, id + '.json');
                         } else {
-                            sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
-
-                            if (testCallback) {
-                                testCallback(rootPath);
-                            }
+                            resourceContent = req.fhir.objToXml(bundle.entry[0].resource);
+                            resourcePath = path.join(resourceDir, id + '.xml');
                         }
-                    } catch (ex) {
-                        sendSocketMessage(req, packageId, 'error', ex.message);
-                        fs.emptyDirSync(rootPath);
-                        fs.rmdirSync(rootPath);
+
+                        if (resourceType == 'ImplementationGuide' && id === req.params.implementationGuideId) {
+                            implementationGuideResource = bundle.entry[i].resource;
+                        }
+
+                        fs.ensureDirSync(resourceDir);
+                        fs.writeFileSync(resourcePath, resourceContent);
+                    }
+
+                    if (!implementationGuideResource) {
+                        throw new Error('The implementation guide was not found in the bundle returned by the server');
+                    }
+
+                    if (implementationGuideResource.page) {
+                        const pagesPath = path.join(rootPath, '_pages');
+                        fs.ensureDirSync(pagesPath);
+
+                        packageImplementationGuidePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
+                    }
+
+                    control = getControl(extension, implementationGuideResource, bundle);
+
+                    return getDependencies(control, isXml, resourcesDir, req.fhir);
+                })
+                .then((dependencies) => {
+                    const controlContent = JSON.stringify(control, null, '\t');
+                    fs.writeFileSync(controlPath, controlContent);
+
+                    const templatePath = path.join(__dirname, '..', 'ig-publisher-template');
+                    fs.copySync(templatePath, rootPath);
+
+                    sendSocketMessage(req, packageId, 'progress', 'Done building package');
+
+                    return getIgPublisher(req, packageId, executeIgPublisher);
+                })
+                .then((igPublisherLocation) => {
+                    if (!executeIgPublisher || !igPublisherLocation) {
+                        sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
 
                         if (testCallback) {
-                            testCallback(rootPath, ex);
+                            testCallback(rootPath);
                         }
+
+                        return;
                     }
+
+                    const deployDir = path.resolve(__dirname, '../wwwroot/igs', implementationGuideResource.id);
+                    fs.ensureDirSync(deployDir);
+
+                    const igPublisherVersion = req.query.useLatest ? 'latest' : 'default';
+                    sendSocketMessage(req, packageId, 'progress', `Running ${igPublisherVersion} IG Publisher`);
+
+                    const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
+
+                    if (!useTerminologyServer) {
+                        jarParams.push('-tx', 'N/A');
+                    }
+
+                    const igPublisherProcess = spawn('java', jarParams);
+
+                    igPublisherProcess.stdout.on('data', (data) => {
+                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                        sendSocketMessage(req, packageId, 'progress', message);
+                    });
+
+                    igPublisherProcess.stderr.on('data', (data) => {
+                        const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                        sendSocketMessage(req, packageId, 'progress', message);
+                    });
+
+                    igPublisherProcess.on('exit', (code) => {
+                        sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
+
+                        if (code !== 0) {
+                            sendSocketMessage(req, packageId, 'progress', 'Won\'t copy output to deployment path.');
+                            sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                        } else {
+                            sendSocketMessage(req, packageId, 'progress', 'Copying output to deployment path.');
+
+                            const outputPath = path.resolve(rootPath, 'output');
+                            fs.copy(outputPath, deployDir, (err) => {
+                                if (err) {
+                                    console.log(err);
+                                    sendSocketMessage(req, packageId, 'error', 'Error copying contents to deployment path.');
+                                } else {
+                                    sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                                }
+                            });
+                        }
+                    });
                 })
                 .catch((err) => {
                     console.log(err);
-                    res.status(500).send('Error retrieving bundle from FHIR server');
+                    sendSocketMessage(req, packageId, 'error', 'Error during export: ' + err);
 
                     if (testCallback) {
                         testCallback(rootPath, err);

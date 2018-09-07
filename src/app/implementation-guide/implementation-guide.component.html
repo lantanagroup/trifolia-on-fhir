@@ -18,6 +18,46 @@
                             <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
 
                             <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+
+                            <div class="card">
+                                <div class="card-header">Dependencies</div>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Location</th>
+                                        <th>Version</th>
+                                        <th class="actions-column-1">
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" title="Add a dependency" (click)="addDependency()">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let dependency of dependencies">
+                                        <td>
+                                            <input type="text" class="form-control" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" [ngModel]="getDependencyLocation(dependency)" (ngModelChange)="setDependencyLocation(dependency, $event)" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" [ngModel]="getDependencyVersion(dependency)" (ngModelChange)="setDependencyVersion(dependency, $event)" />
+                                        </td>
+                                        <td>
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" title="Remove this dependency" (click)="removeDependency(dependency)">
+                                                    <i class="fa fa-remove"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version"></app-fhir-string>

@@ -35,6 +35,7 @@
         <option [ngValue]="true">Yes</option>
         <option [ngValue]="false">No</option>
     </select>
+    <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
 </div>
 
 <div class="form-group" *ngIf="options.exportFormat == 2 && options.executeIgPublisher">
@@ -43,7 +44,6 @@
         <option [ngValue]="true">Yes</option>
         <option [ngValue]="false">No</option>
     </select>
-    <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
 </div>
 
 <div class="form-group">

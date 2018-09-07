@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, CapabilityStatement, Coding, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
+import {Binary, CapabilityStatement, Coding, Extension, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs';
@@ -32,6 +32,10 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     public pages: PageDefinition[];
     private unsavedBinaryAssociations: string[] = [];
     public resourceTypeCodes: Coding[] = [];
+    private readonly dependencyExtensionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency';
+    private readonly dependencyExtensionNameUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name';
+    private readonly dependencyExtensionVersionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version';
+    private readonly dependencyExtensionLocationUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location';
 
     constructor(
         private modal: NgbModal,
@@ -48,6 +52,101 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     public get isNew(): boolean {
         const id  = this.route.snapshot.paramMap.get('id');
         return !id || id === 'new';
+    }
+
+    public get dependencies(): Extension[] {
+        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.dependencyExtensionUrl);
+    }
+
+    public removeDependency(dependency: Extension) {
+        const index = this.implementationGuide.extension.indexOf(dependency);
+        this.implementationGuide.extension.splice(index);
+    }
+
+    public addDependency() {
+        if (!this.implementationGuide.extension) {
+            this.implementationGuide.extension = [];
+        }
+
+        const newDependency = new Extension();
+        newDependency.url = this.dependencyExtensionUrl;
+
+        this.implementationGuide.extension.push(newDependency);
+    }
+
+    public getDependencyLocation(dependency: Extension): string {
+        const locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionLocationUrl);
+
+        if (locationExtension) {
+            return locationExtension.valueUri;
+        }
+    }
+
+    public setDependencyLocation(dependency: Extension, name: string) {
+        let locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionLocationUrl);
+
+        if (!locationExtension) {
+            locationExtension = new Extension();
+            locationExtension.url = this.dependencyExtensionLocationUrl;
+
+            if (!dependency.extension) {
+                dependency.extension = [];
+            }
+
+            dependency.extension.push(locationExtension);
+        }
+
+        locationExtension.valueUri = name;
+    }
+
+    public getDependencyName(dependency: Extension): string {
+        const nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionNameUrl);
+
+        if (nameExtension) {
+            return nameExtension.valueString;
+        }
+    }
+
+    public setDependencyName(dependency: Extension, name: string) {
+        let nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionNameUrl);
+
+        if (!nameExtension) {
+            nameExtension = new Extension();
+            nameExtension.url = this.dependencyExtensionNameUrl;
+
+            if (!dependency.extension) {
+                dependency.extension = [];
+            }
+
+            dependency.extension.push(nameExtension);
+        }
+
+        nameExtension.valueString = name;
+    }
+
+    public getDependencyVersion(dependency: Extension): string {
+        const versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionVersionUrl);
+
+        if (versionExtension) {
+            return versionExtension.valueString;
+        }
+    }
+
+    public setDependencyVersion(dependency: Extension, version: string) {
+        let versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionVersionUrl);
+
+        if (!versionExtension) {
+            versionExtension = new Extension();
+            versionExtension.url = this.dependencyExtensionVersionUrl;
+
+            if (!dependency.extension) {
+                dependency.extension = [];
+            }
+
+            dependency.extension.push(versionExtension);
+        }
+
+        versionExtension.valueString = version;
     }
 
     public addPackageEntry(packagesTabSet) {

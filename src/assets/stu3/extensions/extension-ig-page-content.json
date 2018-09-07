@@ -1,10 +1,6 @@
 {
   "resourceType": "StructureDefinition",
   "id": "233",
-  "meta": {
-    "versionId": "4",
-    "lastUpdated": "2018-08-31T12:46:27.580-04:00"
-  },
   "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content",
   "name": "Implementation Guide Page Content Extension",
   "status": "draft",
