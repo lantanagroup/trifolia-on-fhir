@@ -105,6 +105,7 @@ import {RawResourceComponent} from './raw-resource/raw-resource.component';
 import {ValuesetConceptCardComponent} from './valueset-concept-card/valueset-concept-card.component';
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
 import {SafePipe} from './pipes/safe-pipe';
+import {OtherResourcesComponent} from './other-resources/other-resources.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -160,6 +161,7 @@ const appRoutes: Routes = [
     {path: 'value-set', component: ValuesetsComponent},
     {path: 'value-set/:id', component: ValuesetComponent},
     {path: 'value-set/:id/expand', component: ValuesetExpandComponent},
+    {path: 'other-resources', component: OtherResourcesComponent},
     {path: 'code-system', component: CodesystemsComponent},
     {path: 'code-system/:id', component: CodesystemComponent},
     {path: 'export', component: ExportComponent},
@@ -282,7 +284,8 @@ const appRoutes: Routes = [
         FhirEditValueSetIncludeConceptModalComponent,
         RawResourceComponent,
         ValuesetConceptCardComponent,
-        ImplementationGuideViewComponent
+        ImplementationGuideViewComponent,
+        OtherResourcesComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -15,6 +15,7 @@ footer.footer {
 
 footer.footer span.message {
     color: white;
+    padding-left: 10px;
 }
 
 .tab-pane {
@@ -31,11 +32,6 @@ footer.footer span.message {
 
 .fixed-top {
     z-index: 2;
-}
-
-div.t-json-viewer {
-    background-color: white;
-    padding: 5px;
 }
 
 .clickable {

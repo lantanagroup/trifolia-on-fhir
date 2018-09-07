@@ -13,18 +13,36 @@ router.use(checkJwt, (req, res) => {
 
     url += req.url;
 
+    const headers = JSON.parse(JSON.stringify(req.headers));
+    delete headers['authorization'];
+    delete headers['fhirserver'];
+    delete headers['host'];
+    delete headers['origin'];
+    delete headers['referer'];
+    delete headers['user-agent'];
+    delete headers['content-length'];
+
     const options = {
+        url: url,
         method: req.method,
-        url: url
+        headers: headers,
+        body: req.body,
+        json: true
     };
 
-    const fhirRequest = request(options);
+    try {
+        const fhirRequest = request(options);
 
-    if (req.method.toLowerCase() === 'post' || req.method.toLowerCase() === 'put' || req.method.toLowerCase() === 'patch') {
-        req.pipe(fhirRequest);
+        fhirRequest.on('error', (err) => {
+            console.log(err);
+            res.status(500).send();
+        });
+
+        fhirRequest.pipe(res);
+    } catch (ex) {
+        console.log('Error executing FHIR request: ' + ex);
+        res.status(500).send('Error executing FHIR request');
     }
-
-    fhirRequest.pipe(res);
 });
 
 module.exports = router;

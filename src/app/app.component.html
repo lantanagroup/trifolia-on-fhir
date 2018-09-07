@@ -96,6 +96,9 @@
         </div>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
+        <a class="nav-link" routerLink="/other-resources">Other Resources</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/export">Export</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()" [routerLinkActive]="['active']">

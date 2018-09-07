@@ -319,8 +319,14 @@
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
                                 <thead>
                                 <tr>
-                                    <th>Type</th>
-                                    <th>Profile</th>
+                                    <th>
+                                        Type
+                                        <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.type"></app-tooltip-icon>
+                                    </th>
+                                    <th>
+                                        Profile
+                                        <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.profile"></app-tooltip-icon>
+                                    </th>
                                     <th class="actions-column-3">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a resource" (click)="r.resource.push({ type: 'Account' })">
