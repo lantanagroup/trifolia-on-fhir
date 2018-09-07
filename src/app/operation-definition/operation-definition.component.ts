@@ -35,10 +35,27 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
 
     }
 
+    public get isNew(): boolean {
+        const id  = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
+    }
+
     public editParameter(parameter: ParameterComponent) {
         const modalInstance = this.modal.open(OperationDefinitionParameterModalComponent, { size: 'lg' });
         modalInstance.componentInstance.operationDefinition = this.operationDefinition;
         modalInstance.componentInstance.parameter = parameter;
+    }
+
+    public revert() {
+        this.getOperationDefinition()
+            .subscribe(() => {
+                this.message = 'Reverted operation definition changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the operation definition changes';
+            });
     }
 
     public save() {

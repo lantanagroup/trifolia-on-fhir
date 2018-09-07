@@ -45,6 +45,11 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
         private fhirService: FhirService) {
     }
 
+    public get isNew(): boolean {
+        const id  = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
+    }
+
     public addPackageEntry(packagesTabSet) {
         this.implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false }] });
 
@@ -53,6 +58,18 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
             const newPackageTabId = 'package-' + lastIndex.toString();
             packagesTabSet.select(newPackageTabId);
         }, 50);    // 50ms timeout... should occur pretty quickly
+    }
+
+    public revert() {
+        this.getImplementationGuide()
+            .subscribe(() => {
+                this.message = 'Reverted implementation guide changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the implementation guide changes';
+            });
     }
 
     private getImplementationGuide(): Observable<ImplementationGuide> {

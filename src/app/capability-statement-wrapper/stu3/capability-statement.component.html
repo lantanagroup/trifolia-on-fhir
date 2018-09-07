@@ -782,6 +782,9 @@
 </ngb-tabset>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default" (click)="save()">Save</button>
+        <button type="button" class="btn btn-default" (click)="revert()" *ngIf="!isNew">Revert</button>
+    </div>
     <span class="message">{{message}}</span>
 </footer>

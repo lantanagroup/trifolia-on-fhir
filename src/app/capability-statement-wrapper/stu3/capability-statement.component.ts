@@ -38,6 +38,23 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
 
     }
 
+    public get isNew(): boolean {
+        const id  = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
+    }
+
+    public revert() {
+        this.getCapabilityStatement()
+            .subscribe(() => {
+                this.message = 'Reverted capability statement changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the capability statement changes';
+            });
+    }
+
     public save() {
         const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 

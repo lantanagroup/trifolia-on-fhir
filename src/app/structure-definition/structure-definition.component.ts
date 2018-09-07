@@ -49,7 +49,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public get isNew() {
-        return this.route.snapshot.paramMap.get('id') === 'new';
+        const id = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
     }
 
     public toggleSelectedElement(element: any) {
@@ -408,7 +409,19 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.configService.fhirServerChanged.subscribe((fhirServer) => this.getStructureDefinition());
     }
 
-    save() {
+    public revert() {
+        this.getStructureDefinition()
+            .subscribe(() => {
+                this.message = 'Reverted structure definition changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the structure definition changes';
+            });
+    }
+
+    public save() {
         const strucDefId = this.route.snapshot.paramMap.get('id');
 
         if (!this.validation.valid && !confirm('This structure definition is not valid, are you sure you want to save?')) {

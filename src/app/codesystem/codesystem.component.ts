@@ -31,6 +31,23 @@ export class CodesystemComponent implements OnInit, DoCheck {
         private fhirService: FhirService) {
     }
 
+    public get isNew(): boolean {
+        const id  = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
+    }
+
+    public revert() {
+        this.getCodeSystem()
+            .subscribe(() => {
+                this.message = 'Reverted code system changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the code system changes';
+            });
+    }
+
     public editConcept(concept: ConceptDefinitionComponent) {
         const modalRef = this.modalService.open(FhirEditCodesystemConceptModalComponent, { size: 'lg' });
         modalRef.componentInstance.concept = concept;

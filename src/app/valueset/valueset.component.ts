@@ -32,6 +32,11 @@ export class ValuesetComponent implements OnInit, DoCheck {
         private fhirService: FhirService) {
     }
 
+    public get isNew(): boolean {
+        const id  = this.route.snapshot.paramMap.get('id');
+        return !id || id === 'new';
+    }
+
     public addIncludeEntry(includeTabSet) {
         this.valueSet.compose.include.push({ });
         setTimeout(() => {
@@ -39,6 +44,18 @@ export class ValuesetComponent implements OnInit, DoCheck {
             const newIncludeTabId = 'include-' + lastIndex.toString();
             includeTabSet.select(newIncludeTabId);
         }, 50);
+    }
+
+    public revert() {
+        this.getValueSet()
+            .subscribe(() => {
+                this.message = 'Reverted value set changes';
+                setTimeout(() => {
+                    this.message = null;
+                }, 3000);
+            }, (err) => {
+                this.message = 'An error occurred while reverting the value set changes';
+            });
     }
 
     public save() {
