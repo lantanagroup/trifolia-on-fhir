@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Coding} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import * as _ from 'underscore';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import {FhirService} from '../../services/fhir.service';

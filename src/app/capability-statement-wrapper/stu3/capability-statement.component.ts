@@ -3,7 +3,7 @@ import {CapabilityStatementService} from '../../services/capability-statement.se
 import {ActivatedRoute, Router} from '@angular/router';
 import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';

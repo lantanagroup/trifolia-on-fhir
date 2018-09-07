@@ -1,7 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, CodeSystem, Coding, Resource, StructureDefinition, ValueSet} from '../models/stu3/fhir';
-import {Observable} from 'rxjs/Observable';
+import {
+    Bundle,
+    CodeSystem,
+    Coding, IssueComponent,
+    OperationDefinition, OperationOutcome,
+    Resource,
+    StructureDefinition,
+    ValueSet
+} from '../models/stu3/fhir';
+import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
 import * as Fhir from 'fhir';
 import * as _ from 'underscore';
@@ -105,11 +113,25 @@ export class FhirService {
     /**
      * Searches the FHIR server for all resources matching the specified ResourceType
      * @param {string} resourceType
-     * @param {string} [searchText]
+     * @param {string} [searchContent]
      * @param {boolean} [summary?]
      */
-    public search(resourceType: string, searchText?: string, summary?: boolean) {
-        // TODO
+    public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string) {
+        let url = '/api/fhir/' + resourceType + '?';
+
+        if (searchContent) {
+            url += '_content=' + encodeURIComponent(searchContent) + '&';
+        }
+
+        if (searchUrl) {
+            url += 'url=' + encodeURIComponent(searchUrl) + '&';
+        }
+
+        if (summary === true) {
+            url += '_summary=true&';
+        }
+
+        return this.http.get(url);
     }
 
     /**
@@ -118,7 +140,8 @@ export class FhirService {
      * @param {string} id
      */
     public read(resourceType: string, id: string) {
-        // TODO
+        let url = '/api/fhir/' + resourceType + '/' + id;
+        return this.http.get(url);
     }
 
     /**
@@ -155,8 +178,9 @@ export class FhirService {
      * @param {string} id
      * @param {Resource} resource
      */
-    public update(resourceType: string, id: string, resource: Resource) {
-        // TODO
+    public update(resourceType: string, id: string, resource: Resource): Observable<Resource> {
+        const url = '/api/fhir/' + resourceType + '/' + id;
+        return this.http.put<Resource>(url, resource);
     }
 
     /**
@@ -205,5 +229,22 @@ export class FhirService {
 
     public deserialize(resourceXml: string) {
         return this.fhir.xmlToObj(resourceXml);
+    }
+
+    public getOperationOutcomeMessage(oo: OperationOutcome) {
+        if (oo.issue && oo.issue.length > 0) {
+            const issues = _.map(oo.issue, (issue: IssueComponent) => {
+                if (issue.diagnostics) {
+                    return issue.diagnostics;
+                } else if (issue.code) {
+                    return issue.code;
+                } else {
+                    return issue.severity;
+                }
+            });
+            return issues.concat(', ');
+        } else if (oo.text && oo.text.div) {
+            return oo.text.div;
+        }
     }
 }

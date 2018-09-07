@@ -4,7 +4,7 @@ import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CodeSystemService} from '../services/code-system.service';
 import {CapabilityStatement, CodeSystem, ConceptDefinitionComponent, ValueSet} from '../models/stu3/fhir';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {FhirService} from '../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';

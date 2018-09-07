@@ -23,7 +23,7 @@ export class ImplementationGuideService {
     */
 
     public getImplementationGuides(query?: string): Observable<ImplementationGuideListItemModel[]> {
-        return this.http.get('/api/implementationGuide');
+        return this.http.get<ImplementationGuideListItemModel[]>('/api/implementationGuide');
             //.catch(this._serverError);
 
     }

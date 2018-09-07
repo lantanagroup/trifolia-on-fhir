@@ -4,7 +4,7 @@ import {
     ParameterComponent
 } from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {OperationDefinitionService} from '../services/operation-definition.service';
 import {RecentItemService} from '../services/recent-item.service';
 import {Globals} from '../globals';

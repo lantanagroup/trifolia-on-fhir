@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Bundle, CodeSystem} from '../models/stu3/fhir';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable()

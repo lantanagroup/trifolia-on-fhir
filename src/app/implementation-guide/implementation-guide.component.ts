@@ -3,7 +3,7 @@ import {AuthService} from '../services/auth.service';
 import {Binary, CapabilityStatement, Coding, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';

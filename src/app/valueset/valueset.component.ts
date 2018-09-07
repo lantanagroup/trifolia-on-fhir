@@ -4,7 +4,7 @@ import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ValueSetService} from '../services/value-set.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';

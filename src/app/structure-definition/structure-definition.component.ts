@@ -12,7 +12,7 @@ import {
     ElementDefinition,
     StructureDefinition
 } from '../models/stu3/fhir';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
@@ -198,7 +198,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
     }
 
-    private getStructureDefinition(): Observable<null> {
+    private getStructureDefinition(): Observable<any> {
         const strucDefId = this.route.snapshot.paramMap.get('id');
 
         if (strucDefId === 'from-file') {

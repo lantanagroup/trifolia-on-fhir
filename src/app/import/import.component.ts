@@ -10,7 +10,7 @@ import {
 } from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';

@@ -4,8 +4,7 @@ import { StructureDefinitionListItemModel } from '../models/structure-definition
 import { ConfigService } from '../services/config.service';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import 'rxjs/add/operator/debounceTime';
-import {Subject} from 'rxjs/Subject';
-import {CapabilityStatement} from '../models/stu3/fhir';
+import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 

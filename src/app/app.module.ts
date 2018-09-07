@@ -27,14 +27,13 @@ import {HumanNamesComponent} from './fhir-edit/human-names/human-names.component
 import {NewProfileComponent} from './new-profile/new-profile.component';
 import {CookieService} from 'angular2-cookie/core';
 import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {StringComponent} from './fhir-edit/string/string.component';
 import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-modal.component';
 import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
 import {ElementDefinitionTypeModalComponent} from './fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
 import {Globals} from './globals';
 import {MarkdownComponent} from './markdown/markdown.component';
-import {TJsonViewerModule} from 't-json-viewer';
 import {AuditEventService} from './services/audit-event.service';
 import {KeysPipe} from './pipes/keys-pipe';
 import {ReferenceComponent} from './fhir-edit/reference/reference.component';
@@ -92,19 +91,19 @@ import {FhirEditReferenceModalComponent} from './fhir-edit/reference-modal/refer
 import {FhirService} from './services/fhir.service';
 import {FileService} from './services/file.service';
 import {ConfigService} from './services/config.service';
-import { FileOpenModalComponent } from './file-open-modal/file-open-modal.component';
+import { FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
 import {ImplementationGuideService} from './services/implementation-guide.service';
 import {StructureDefinitionService} from './services/structure-definition.service';
 import {ImportService} from './services/import.service';
 import {ExportService} from './services/export.service';
-import { NewUserModalComponent } from './new-user-modal/new-user-modal.component';
-import { ChangeResourceIdModalComponent } from './change-resource-id-modal/change-resource-id-modal.component';
+import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
+import {ChangeResourceIdModalComponent} from './change-resource-id-modal/change-resource-id-modal.component';
 import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
-import { TooltipIconComponent } from './tooltip-icon/tooltip-icon.component';
-import { FhirEditValueSetIncludeConceptModalComponent } from './fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
-import { RawResourceComponent } from './raw-resource/raw-resource.component';
-import { ValuesetConceptCardComponent } from './valueset-concept-card/valueset-concept-card.component';
-import { ImplementationGuideViewComponent } from './implementation-guide-view/implementation-guide-view.component';
+import {TooltipIconComponent} from './tooltip-icon/tooltip-icon.component';
+import {FhirEditValueSetIncludeConceptModalComponent} from './fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import {RawResourceComponent} from './raw-resource/raw-resource.component';
+import {ValuesetConceptCardComponent} from './valueset-concept-card/valueset-concept-card.component';
+import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
 import {SafePipe} from './pipes/safe-pipe';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
@@ -295,7 +294,6 @@ const appRoutes: Routes = [
         HttpClientModule,
         HttpModule,
         NgbModule.forRoot(),
-        TJsonViewerModule,
         FileDropModule
     ],
     providers: [

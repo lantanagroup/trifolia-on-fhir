@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Bundle, OperationDefinition} from '../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 
