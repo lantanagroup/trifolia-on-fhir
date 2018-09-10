@@ -1,9 +1,9 @@
-import {Component, DoCheck, Input, OnInit} from '@angular/core';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {
     OperationDefinition,
     ParameterComponent
 } from '../models/stu3/fhir';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {OperationDefinitionService} from '../services/operation-definition.service';
 import {RecentItemService} from '../services/recent-item.service';
@@ -18,10 +18,11 @@ import {FileService} from '../services/file.service';
     templateUrl: './operation-definition.component.html',
     styleUrls: ['./operation-definition.component.css']
 })
-export class OperationDefinitionComponent implements OnInit, DoCheck {
+export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public operationDefinition: OperationDefinition = new OperationDefinition();
     public message: string;
     public validation: any;
+    private navSubscription: any;
 
     constructor(
         public globals: Globals,
@@ -47,15 +48,7 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
     }
 
     public revert() {
-        this.getOperationDefinition()
-            .subscribe(() => {
-                this.message = 'Reverted operation definition changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the operation definition changes';
-            });
+        this.getOperationDefinition();
     }
 
     public save() {
@@ -89,36 +82,38 @@ export class OperationDefinitionComponent implements OnInit, DoCheck {
 
         if (operationDefinitionId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<OperationDefinition>((observer) => {
-                    this.operationDefinition = <OperationDefinition> this.fileService.file.resource;
-                    observer.next(this.operationDefinition);
-                });
+                this.operationDefinition = <OperationDefinition> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        return new Observable<OperationDefinition>((observer) => {
-            if (operationDefinitionId === 'new') {
-                observer.next(this.operationDefinition);
-            } else if (operationDefinitionId) {
-                this.opDefService.get(operationDefinitionId)
-                    .subscribe((opDef) => {
-                        this.operationDefinition = opDef;
-                        observer.next(opDef);
-                    }, (err) => {
-                        observer.error(err);
-                    });
-            }
-        });
+        if (operationDefinitionId !== 'new' && operationDefinitionId) {
+            this.opDefService.get(operationDefinitionId)
+                .subscribe((opDef) => {
+                    this.operationDefinition = opDef;
+                    this.recentItemService.ensureRecentItem(
+                        this.globals.cookieKeys.recentOperationDefinitions,
+                        this.operationDefinition.id,
+                        this.operationDefinition.name);
+                }, (err) => {
+                    this.message = 'Error loading operation definition';
+                });
+        }
     }
 
     ngOnInit() {
-        this.getOperationDefinition()
-            .subscribe((opDef) => {
-                this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentOperationDefinitions, this.operationDefinition.id, this.operationDefinition.name);
-            });
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/operation-definition/')) {
+                this.getOperationDefinition();
+            }
+        });
+        this.getOperationDefinition();
+    }
+
+    ngOnDestroy() {
+        this.navSubscription.unsubscribe();
     }
 
     ngDoCheck() {

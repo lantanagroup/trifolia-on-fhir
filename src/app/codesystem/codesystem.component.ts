@@ -1,7 +1,7 @@
-import {Component, DoCheck, Input, OnInit} from '@angular/core';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CodeSystemService} from '../services/code-system.service';
 import {CapabilityStatement, CodeSystem, ConceptDefinitionComponent, ValueSet} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
@@ -15,10 +15,11 @@ import {FileService} from '../services/file.service';
     templateUrl: './codesystem.component.html',
     styleUrls: ['./codesystem.component.css']
 })
-export class CodesystemComponent implements OnInit, DoCheck {
+export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public codeSystem = new CodeSystem();
     public message: string;
     public validation: any;
+    private navSubscription: any;
 
     constructor(
         public globals: Globals,
@@ -37,15 +38,7 @@ export class CodesystemComponent implements OnInit, DoCheck {
     }
 
     public revert() {
-        this.getCodeSystem()
-            .subscribe(() => {
-                this.message = 'Reverted code system changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the code system changes';
-            });
+        this.getCodeSystem();
     }
 
     public editConcept(concept: ConceptDefinitionComponent) {
@@ -79,44 +72,43 @@ export class CodesystemComponent implements OnInit, DoCheck {
             });
     }
 
-    private getCodeSystem(): Observable<CodeSystem> {
+    private getCodeSystem() {
         const codeSystemId  = this.route.snapshot.paramMap.get('id');
 
         if (codeSystemId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<CodeSystem>((observer) => {
-                    this.codeSystem = <CodeSystem> this.fileService.file.resource;
-                    observer.next(this.codeSystem);
-                });
+                this.codeSystem = <CodeSystem> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        return new Observable<CodeSystem>((observer) => {
-            if (codeSystemId === 'new') {
-                observer.next(this.codeSystem);
-            } else if (codeSystemId) {
-                this.codeSystemService.get(codeSystemId)
-                    .subscribe((cs) => {
-                        this.codeSystem = cs;
-                        observer.next(cs);
-                    }, (err) => {
-                        observer.error(err);
-                    });
-            }
-        });
+        if (codeSystemId !== 'new' && codeSystemId) {
+            this.codeSystemService.get(codeSystemId)
+                .subscribe((cs) => {
+                    this.codeSystem = cs;
+                    this.recentItemService.ensureRecentItem(
+                        this.globals.cookieKeys.recentCodeSystems,
+                        cs.id,
+                        cs.name || cs.title);
+                }, (err) => {
+                    this.message = 'Error loading code system';
+                });
+        }
     }
 
     ngOnInit() {
-        this.getCodeSystem()
-            .subscribe((cs) => {
-                this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentCodeSystems,
-                    cs.id,
-                    cs.name || cs.title);
-            });
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/code-system/')) {
+                this.getCodeSystem();
+            }
+        });
+        this.getCodeSystem();
+    }
+
+    ngOnDestroy() {
+        this.navSubscription.unsubscribe();
     }
 
     ngDoCheck() {

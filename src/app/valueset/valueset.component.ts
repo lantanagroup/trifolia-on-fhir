@@ -1,8 +1,8 @@
-import {Component, DoCheck, Input, OnInit} from '@angular/core';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {ConceptReferenceComponent, ConceptSetComponent, OperationDefinition, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ValueSetService} from '../services/value-set.service';
 import {Observable} from 'rxjs';
 import * as _ from 'underscore';
@@ -16,10 +16,11 @@ import {FhirEditValueSetIncludeConceptModalComponent} from '../fhir-edit/value-s
     templateUrl: './valueset.component.html',
     styleUrls: ['./valueset.component.css']
 })
-export class ValuesetComponent implements OnInit, DoCheck {
+export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public valueSet = new ValueSet();
     public message: string;
     public validation: any;
+    private navSubscription: any;
 
     constructor(
         public globals: Globals,
@@ -47,15 +48,7 @@ export class ValuesetComponent implements OnInit, DoCheck {
     }
 
     public revert() {
-        this.getValueSet()
-            .subscribe(() => {
-                this.message = 'Reverted value set changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the value set changes';
-            });
+        this.getValueSet();
     }
 
     public save() {
@@ -95,44 +88,43 @@ export class ValuesetComponent implements OnInit, DoCheck {
         return ret;
     }
 
-    private getValueSet(): Observable<ValueSet> {
+    private getValueSet() {
         const valueSetId  = this.route.snapshot.paramMap.get('id');
 
         if (valueSetId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<ValueSet>((observer) => {
-                    this.valueSet = <ValueSet> this.fileService.file.resource;
-                    observer.next(this.valueSet);
-                });
+                this.valueSet = <ValueSet> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        return new Observable<ValueSet>((observer) => {
-            if (valueSetId === 'new') {
-                observer.next(this.valueSet);
-            } else if (valueSetId) {
-                this.valueSetService.get(valueSetId)
-                    .subscribe((vs) => {
-                        this.valueSet = vs;
-                        observer.next(vs);
-                    }, (err) => {
-                        observer.error(err);
-                    });
-            }
-        });
+        if (valueSetId !== 'new' && valueSetId) {
+            this.valueSetService.get(valueSetId)
+                .subscribe((vs) => {
+                    this.valueSet = vs;
+                    this.recentItemService.ensureRecentItem(
+                        this.globals.cookieKeys.recentValueSets,
+                        vs.id,
+                        vs.name || vs.title);
+                }, (err) => {
+                    this.message = 'Error loading value set';
+                });
+        }
     }
 
     ngOnInit() {
-        this.getValueSet()
-            .subscribe((vs) => {
-                this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentValueSets,
-                    vs.id,
-                    vs.name || vs.title);
-            });
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/value-set/')) {
+                this.getValueSet();
+            }
+        });
+        this.getValueSet();
+    }
+
+    ngOnDestroy() {
+        this.navSubscription.unsubscribe();
     }
 
     ngDoCheck() {

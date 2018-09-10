@@ -60,8 +60,33 @@ export class RecentItemService {
             foundItem.display = display;
         }
 
-        items = _.sortBy(items, (rig) => rig.display);
+        foundItem.date = new Date().toISOString();
+
+        items = _.sortBy(items, (rig) => rig.date);
+        items = items.reverse();
+        items = items.slice(0, 5);
         this.cookieService.putObject(cookieKey, items);
+
+        switch (requestedCookieKey) {
+            case this.globals.cookieKeys.recentImplementationGuides:
+                this.recentImplementationGuides = items;
+                break;
+            case this.globals.cookieKeys.recentStructureDefinitions:
+                this.recentStructureDefinitions = items;
+                break;
+            case this.globals.cookieKeys.recentCapabilityStatements:
+                this.recentCapabilityStatements = items;
+                break;
+            case this.globals.cookieKeys.recentOperationDefinitions:
+                this.recentOperationDefinitions = items;
+                break;
+            case this.globals.cookieKeys.recentValueSets:
+                this.recentValueSets = items;
+                break;
+            case this.globals.cookieKeys.recentCodeSystems:
+                this.recentCodeSystems = items;
+                break;
+        }
     }
 
     public removeRecentItem(requestedCookieKey: string, id: string) {

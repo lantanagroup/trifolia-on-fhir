@@ -1,6 +1,6 @@
-import {Component, DoCheck, Input, OnInit} from '@angular/core';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../services/capability-statement.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs';
@@ -16,12 +16,13 @@ import {FileService} from '../../services/file.service';
     templateUrl: './capability-statement.component.html',
     styleUrls: ['./capability-statement.component.css']
 })
-export class CapabilityStatementComponent implements OnInit, DoCheck {
+export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public capabilityStatement = new CapabilityStatement();
     public message: string;
     public validation: any;
     public messageEventCodes: Coding[] = [];
     public messageTransportCodes: Coding[] = [];
+    private navSubscription: any;
 
     constructor(
         public globals: Globals,
@@ -41,15 +42,7 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
     }
 
     public revert() {
-        this.getCapabilityStatement()
-            .subscribe(() => {
-                this.message = 'Reverted capability statement changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the capability statement changes';
-            });
+        this.getCapabilityStatement();
     }
 
     public save() {
@@ -127,41 +120,40 @@ export class CapabilityStatementComponent implements OnInit, DoCheck {
 
         if (capabilityStatementId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<CapabilityStatement>((observer) => {
-                    this.capabilityStatement = <CapabilityStatement> this.fileService.file.resource;
-                    observer.next(this.capabilityStatement);
-                });
+                this.capabilityStatement = <CapabilityStatement> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        return new Observable<CapabilityStatement>((observer) => {
-            if (capabilityStatementId === 'new') {
-                observer.next(this.capabilityStatement);
-            } else if (capabilityStatementId) {
-                this.csService.get(capabilityStatementId)
-                    .subscribe((cs) => {
-                        this.capabilityStatement = cs;
-                        observer.next(cs);
-                    }, (err) => {
-                        observer.error(err);
-                    });
-            }
-        });
+        if (capabilityStatementId !== 'new' && capabilityStatementId) {
+            this.csService.get(capabilityStatementId)
+                .subscribe((cs) => {
+                    this.capabilityStatement = cs;
+                    this.recentItemService.ensureRecentItem(
+                        this.globals.cookieKeys.recentCapabilityStatements,
+                        cs.id,
+                        cs.name || cs.title);
+                }, (err) => {
+                    this.message = 'Error loading capability statement';
+                });
+        }
     }
 
     ngOnInit() {
         this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
         this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
-        this.getCapabilityStatement()
-            .subscribe((cs) => {
-                this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentCapabilityStatements,
-                    cs.id,
-                    cs.name || cs.title);
-            });
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
+                this.getCapabilityStatement();
+            }
+        });
+        this.getCapabilityStatement();
+    }
+
+    ngOnDestroy() {
+        this.navSubscription.unsubscribe();
     }
 
     ngDoCheck() {

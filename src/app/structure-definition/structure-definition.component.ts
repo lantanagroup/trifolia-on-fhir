@@ -1,7 +1,6 @@
 import {Component, DoCheck, Inject, Input, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, ParamMap, Router} from '@angular/router';
 import {StructureDefinitionService} from '../services/structure-definition.service';
-import {ConfigService} from '../services/config.service';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
@@ -30,11 +29,11 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public selectedElement: any;
     public validation: any;
     public message: string;
+    private navSubscription: any;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private strucDefService: StructureDefinitionService,
-                public configService: ConfigService,
                 private modalService: NgbModal,
                 public globals: Globals,
                 private recentItemService: RecentItemService,
@@ -46,6 +45,9 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
     ngOnDestroy() {
         this.document.body.classList.remove('structure-definition');
+        if (this.navSubscription) {
+            this.navSubscription.unsubscribe();
+        }
     }
 
     public get isNew() {
@@ -199,54 +201,51 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
     }
 
-    private getStructureDefinition(): Observable<any> {
+    private getStructureDefinition() {
         const strucDefId = this.route.snapshot.paramMap.get('id');
 
         if (strucDefId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<StructureDefinition>((observer) => {
-                    this.structureDefinition = <StructureDefinition> this.fileService.file.resource;
-                    observer.next(this.structureDefinition);
-                });
+                this.structureDefinition = <StructureDefinition> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        this.configService.setStatusMessage('Loading structure definition');
+        this.message = 'Loading structure definition...';
         this.structureDefinition = null;
         this.elements = [];
 
-        return new Observable((observer) => {
-            this.strucDefService.getStructureDefinition(strucDefId)
-                .mergeMap((structureDefinition: any) => {
-                    this.structureDefinition = structureDefinition;
+        this.strucDefService.getStructureDefinition(strucDefId)
+            .mergeMap((structureDefinition: any) => {
+                this.structureDefinition = structureDefinition;
 
-                    if (!this.structureDefinition.differential) {
-                        this.structureDefinition.differential = new DifferentialComponent({ element: [] });
-                    }
+                if (!this.structureDefinition.differential) {
+                    this.structureDefinition.differential = new DifferentialComponent({ element: [] });
+                }
 
-                    if (this.structureDefinition.differential.element.length === 0) {
-                        this.structureDefinition.differential.element.push({
-                            id: this.structureDefinition.type,
-                            path: this.structureDefinition.type
-                        });
-                    }
+                if (this.structureDefinition.differential.element.length === 0) {
+                    this.structureDefinition.differential.element.push({
+                        id: this.structureDefinition.type,
+                        path: this.structureDefinition.type
+                    });
+                }
 
-                    this.configService.setStatusMessage('Loading base structure definition');
-                    return this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
-                })
-                .subscribe(baseStructureDefinition => {
-                    this.baseStructureDefinition = baseStructureDefinition;
-                    this.populateBaseElements();
-                    this.configService.setStatusMessage('');
-                    observer.next();
-                }, error => {
-                    this.configService.handleError('Error loading structure definitions.', error);
-                    observer.error(error);
-                });
-        });
+                this.message = 'Loading base structure definition...';
+                return this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
+            })
+            .subscribe(baseStructureDefinition => {
+                this.baseStructureDefinition = baseStructureDefinition;
+                this.populateBaseElements();
+                this.recentItemService.ensureRecentItem(
+                    this.globals.cookieKeys.recentStructureDefinitions,
+                    this.structureDefinition.id,
+                    this.structureDefinition.name);
+                this.message = 'Done loading structure definition';
+            }, error => {
+                this.message = 'Error loading structure definitions';
+            });
     }
 
     public constrainElement(elementTreeModel: ElementTreeModel) {
@@ -398,27 +397,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         return max !== '0' && max !== '1';
     }
 
-    ngOnInit() {
-        this.getStructureDefinition()
-            .subscribe(() => {
-                this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentStructureDefinitions,
-                    this.structureDefinition.id,
-                    this.structureDefinition.name);
-            });
-        this.configService.fhirServerChanged.subscribe((fhirServer) => this.getStructureDefinition());
-    }
-
     public revert() {
-        this.getStructureDefinition()
-            .subscribe(() => {
-                this.message = 'Reverted structure definition changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the structure definition changes';
-            });
+        this.getStructureDefinition();
     }
 
     public save() {
@@ -445,6 +425,15 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             }, (err) => {
                 this.message = 'An error occured while saving the structure definition';
             });
+    }
+
+    ngOnInit() {
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/structure-definition/')) {
+                this.getStructureDefinition();
+            }
+        });
+        this.getStructureDefinition();
     }
 
     ngDoCheck() {

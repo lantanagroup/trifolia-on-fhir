@@ -1,7 +1,7 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {Binary, CapabilityStatement, Coding, Extension, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Observable} from 'rxjs';
 import {Globals} from '../globals';
@@ -24,7 +24,7 @@ class PageDefinition {
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css']
 })
-export class ImplementationGuideComponent implements OnInit, DoCheck {
+export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public implementationGuide?: ImplementationGuide;
     public message: string;
     public currentResource: any;
@@ -36,6 +36,7 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     private readonly dependencyExtensionNameUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name';
     private readonly dependencyExtensionVersionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version';
     private readonly dependencyExtensionLocationUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location';
+    private navSubscription: any;
 
     constructor(
         private modal: NgbModal,
@@ -160,49 +161,34 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     }
 
     public revert() {
-        this.getImplementationGuide()
-            .subscribe(() => {
-                this.message = 'Reverted implementation guide changes';
-                setTimeout(() => {
-                    this.message = null;
-                }, 3000);
-            }, (err) => {
-                this.message = 'An error occurred while reverting the implementation guide changes';
-            });
+        this.getImplementationGuide();
     }
 
-    private getImplementationGuide(): Observable<ImplementationGuide> {
+    private getImplementationGuide() {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
         if (implementationGuideId === 'from-file') {
             if (this.fileService.file) {
-                return new Observable<ImplementationGuide>((observer) => {
-                    this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
-                    observer.next(this.implementationGuide);
-                });
+                this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
             } else {
                 this.router.navigate(['/']);
                 return;
             }
         }
 
-        return new Observable((observer) => {
-            if (implementationGuideId === 'new') {
-                observer.next(this.implementationGuide);
-            } else if (implementationGuideId) {
-                this.implementationGuideService.getImplementationGuide(implementationGuideId)
-                    .subscribe((results: ImplementationGuide) => {
-                        this.implementationGuide = results;
-                        this.initPages();
-                        observer.next(results);
-                    }, (err) => {
-                        observer.error(err);
-                    });
-            } else {
-                this.implementationGuide = new ImplementationGuide();
-                observer.next(this.implementationGuide);
-            }
-        });
+        if (implementationGuideId !== 'new' && implementationGuideId) {
+            this.implementationGuideService.getImplementationGuide(implementationGuideId)
+                .subscribe((results: ImplementationGuide) => {
+                    this.implementationGuide = results;
+                    this.initPages();
+                    this.recentItemService.ensureRecentItem(
+                        this.globals.cookieKeys.recentImplementationGuides,
+                        this.implementationGuide.id,
+                        this.implementationGuide.name);
+                }, (err) => {
+                    this.message = 'Error loading implementation guide';
+                });
+        }
     }
 
     public getResourceSourceType(resource) {
@@ -423,15 +409,17 @@ export class ImplementationGuideComponent implements OnInit, DoCheck {
     }
 
     ngOnInit() {
-        this.getImplementationGuide()
-            .subscribe((ig) => {
-                this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentImplementationGuides,
-                    this.implementationGuide.id,
-                    this.implementationGuide.name);
-            });
-
+        this.navSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd && e.url.startsWith('/implementation-guide/')) {
+                this.getImplementationGuide();
+            }
+        });
         this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+        this.getImplementationGuide();
+    }
+
+    ngOnDestroy() {
+        this.navSubscription.unsubscribe();
     }
 
     ngDoCheck() {

@@ -147,28 +147,28 @@ const appRoutes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'implementation-guide', component: ImplementationGuidesComponent},
     {path: 'implementation-guide/new', component: ImplementationGuideComponent},
-    {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent},
-    {path: 'implementation-guide/:id', component: ImplementationGuideComponent},
+    {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
+    {path: 'implementation-guide/:id', component: ImplementationGuideComponent, runGuardsAndResolvers: 'always'},
     {path: 'structure-definition', component: StructureDefinitionsComponent},
     {path: 'structure-definition/new', component: NewProfileComponent},
-    {path: 'structure-definition/:id', component: StructureDefinitionComponent},
+    {path: 'structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
     {path: 'capability-statement', component: CapabilityStatementsComponent},
     {path: 'capability-statement/new', component: CapabilityStatementWrapperComponent},
-    {path: 'capability-statement/:id', component: CapabilityStatementWrapperComponent},
+    {path: 'capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
     {path: 'operation-definition', component: OperationDefinitionsComponent},
     {path: 'operation-definition/new', component: OperationDefinitionComponent},
-    {path: 'operation-definition/:id', component: OperationDefinitionComponent},
+    {path: 'operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
     {path: 'value-set', component: ValuesetsComponent},
-    {path: 'value-set/:id', component: ValuesetComponent},
-    {path: 'value-set/:id/expand', component: ValuesetExpandComponent},
+    {path: 'value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
+    {path: 'value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
     {path: 'other-resources', component: OtherResourcesComponent},
     {path: 'code-system', component: CodesystemsComponent},
-    {path: 'code-system/:id', component: CodesystemComponent},
+    {path: 'code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
     {path: 'export', component: ExportComponent},
     {path: 'import', component: ImportComponent},
     {path: 'users', component: UsersComponent},
     {path: 'users/me', component: UserComponent},
-    {path: 'users/:id', component: UserComponent},
+    {path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
     {path: 'login', component: LoginComponent},
     {
         path: '',
@@ -289,8 +289,10 @@ const appRoutes: Routes = [
     ],
     imports: [
         RouterModule.forRoot(
-            appRoutes,
-            {enableTracing: false} // <-- debugging purposes only
+            appRoutes, {
+                enableTracing: false,           // <-- debugging purposes only
+                onSameUrlNavigation: 'reload'
+            }
         ),
         BrowserModule,
         FormsModule,

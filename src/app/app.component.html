@@ -24,7 +24,7 @@
                     <a class="nav-link active" routerLink="/implementation-guide/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentImplementationGuides">
-                    <a class="nav-link" routerLink="/implementation-guide/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/implementation-guide/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
@@ -39,7 +39,7 @@
                     <a class="nav-link active" routerLink="/structure-definition/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentStructureDefinitions">
-                    <a class="nav-link" routerLink="/structure-definition/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/structure-definition/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
@@ -54,7 +54,7 @@
                     <a class="nav-link active" routerLink="/operation-definition/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentOperationDefinitions">
-                    <a class="nav-link" routerLink="/operation-definition/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/operation-definition/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
@@ -69,7 +69,7 @@
                     <a class="nav-link active" routerLink="/capability-statement/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentCapabilityStatements">
-                    <a class="nav-link" routerLink="/capability-statement/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/capability-statement/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
@@ -84,7 +84,7 @@
                     <a class="nav-link active" routerLink="/value-set/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentValueSets">
-                    <a class="nav-link" routerLink="/value-set/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/value-set/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
@@ -99,7 +99,7 @@
                     <a class="nav-link active" routerLink="/code-system/new">New</a>
                   </li>
                   <li class="nav-item" *ngFor="let ri of recentItemService.recentCodeSystems">
-                    <a class="nav-link" routerLink="/code-system/{{ri.id}}">{{ri.id}}</a>
+                    <a class="nav-link" routerLink="/code-system/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
                   </li>
                 </ul>
               </div>
