@@ -13,6 +13,7 @@ export class RecentItemService {
     public recentOperationDefinitions: RecentItemModel[] = [];
     public recentValueSets: RecentItemModel[] = [];
     public recentCodeSystems: RecentItemModel[] = [];
+    public recentQuestionnaires: RecentItemModel[] = [];
 
     constructor(
         private cookieService: CookieService,
@@ -31,6 +32,7 @@ export class RecentItemService {
         const recentOperationDefinitionsKey = this.globals.cookieKeys.recentOperationDefinitions + '-' + fhirServer;
         const recentValueSetsKey = this.globals.cookieKeys.recentValueSets + '-' + fhirServer;
         const recentCodeSystemsKey = this.globals.cookieKeys.recentCodeSystems + '-' + fhirServer;
+        const recentQuestionnairesKey = this.globals.cookieKeys.recentQuestionnaires + '-' + fhirServer;
 
         this.recentImplementationGuides = <RecentItemModel[]> this.cookieService.getObject(recentImplementationGuidesKey) || [];
         this.recentStructureDefinitions = <RecentItemModel[]> this.cookieService.getObject(recentStructureDefinitionsKey) || [];
@@ -38,6 +40,7 @@ export class RecentItemService {
         this.recentOperationDefinitions = <RecentItemModel[]> this.cookieService.getObject(recentOperationDefinitionsKey) || [];
         this.recentValueSets = <RecentItemModel[]> this.cookieService.getObject(recentValueSetsKey) || [];
         this.recentCodeSystems = <RecentItemModel[]> this.cookieService.getObject(recentCodeSystemsKey) || [];
+        this.recentQuestionnaires = <RecentItemModel[]> this.cookieService.getObject(recentQuestionnairesKey) || [];
     }
 
     public ensureRecentItem(requestedCookieKey: string, id: string, display: string) {
@@ -86,6 +89,9 @@ export class RecentItemService {
             case this.globals.cookieKeys.recentCodeSystems:
                 this.recentCodeSystems = items;
                 break;
+            case this.globals.cookieKeys.recentQuestionnaires:
+                this.recentQuestionnaires = items;
+                break;
         }
     }
 
@@ -123,6 +129,8 @@ export class RecentItemService {
                 return this.recentValueSets;
             case this.globals.cookieKeys.recentCodeSystems + '-' + fhirServer:
                 return this.recentCodeSystems;
+            case this.globals.cookieKeys.recentQuestionnaires + '-' + fhirServer:
+                return this.recentQuestionnaires;
             default:
                 throw new Error('Unexpected cookieKey value');
         }

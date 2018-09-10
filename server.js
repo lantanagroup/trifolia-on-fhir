@@ -16,6 +16,7 @@ const capabilityStatementController = require('./controllers/capabilityStatement
 const operationDefinitionController = require('./controllers/operationDefinition');
 const valueSetController = require('./controllers/valueSet');
 const codeSystemController = require('./controllers/codeSystem');
+const questionnaireController = require('./controllers/questionnaire');
 const importController = require('./controllers/import');
 const fhirOperationsController = require('./controllers/fhirOperations');
 const socketIO = require('socket.io');
@@ -135,6 +136,7 @@ app.use('/api/binary', binaryController);
 app.use('/api/capabilityStatement', capabilityStatementController);
 app.use('/api/operationDefinition', operationDefinitionController);
 app.use('/api/valueSet', valueSetController);
+app.use('/api/questionnaire', questionnaireController);
 app.use('/api/codeSystem', codeSystemController);
 app.use('/api/fhirOps', fhirOperationsController);
 app.use('/api/fhir', fhirController);

@@ -47,5 +47,4 @@ export class ValuesetsComponent implements OnInit {
     ngOnInit() {
         this.getValueSets();
     }
-
 }

@@ -1,0 +1,82 @@
+<h1>Questionnaire</h1>
+
+<ngb-tabset [destroyOnHide]="false">
+    <ngb-tab title="General">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-8">
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="name" title="Name"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title"></app-fhir-string>
+
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="publisher" title="Publisher"></app-fhir-string>
+
+                    <app-fhir-markdown [parentObject]="questionnaire" propertyName="description" title="Description"></app-fhir-markdown>
+                </div>
+
+                <div class="col-md-4">
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
+
+                    <app-fhir-select-single-code [parentObject]="questionnaire" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+
+                    <app-fhir-boolean [parentObject]="questionnaire" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+
+                    <app-fhir-date [parentObject]="questionnaire" propertyName="date" title="Date"></app-fhir-date>
+
+                    <app-fhir-date [parentObject]="questionnaire" propertyName="approvalDate" title="Approval Date"></app-fhir-date>
+
+                    <app-fhir-date [parentObject]="questionnaire" propertyName="lastReviewDate" title="Last Review Date"></app-fhir-date>
+
+                    <!-- effectivePeriod -->
+
+                    <!-- code -->
+
+                    <!-- subject type -->
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+
+    <ngb-tab title="Additional">
+        <ng-template ngbTabContent>
+            <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+
+            <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+
+            <app-fhir-multi-use-context [parentObject]="questionnaire" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
+
+            <app-fhir-multi-jurisdiction [parentObject]="questionnaire" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
+
+            <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact"></app-fhir-multi-contact>
+        </ng-template>
+    </ngb-tab>
+
+    <ngb-tab title="Items">
+        <ng-template ngbTabContent>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation" title="Validation">
+        <ng-template ngbTabContent>
+            <app-validation-results [results]="validation"></app-validation-results>
+        </ng-template>
+    </ngb-tab>
+
+    <!-- JSON -->
+    <ngb-tab title="RAW">
+        <ng-template ngbTabContent>
+            <app-raw-resource [resource]="questionnaire"></app-raw-resource>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
+
+<footer class="footer">
+    <div class="btn-group">
+        <button type="button" class="btn btn-default" (click)="save()">Save</button>
+        <button type="button" class="btn btn-default" (click)="revert()" *ngIf="!isNew">Revert</button>
+    </div>
+    <span class="message">{{message}}</span>
+</footer>

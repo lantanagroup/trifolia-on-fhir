@@ -106,6 +106,8 @@ import {ValuesetConceptCardComponent} from './valueset-concept-card/valueset-con
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
 import {SafePipe} from './pipes/safe-pipe';
 import {OtherResourcesComponent} from './other-resources/other-resources.component';
+import { QuestionnairesComponent } from './questionnaires/questionnaires.component';
+import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(new AuthConfig({
@@ -161,9 +163,12 @@ const appRoutes: Routes = [
     {path: 'value-set', component: ValuesetsComponent},
     {path: 'value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
     {path: 'value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
-    {path: 'other-resources', component: OtherResourcesComponent},
     {path: 'code-system', component: CodesystemsComponent},
     {path: 'code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
+    {path: 'questionnaire', component: QuestionnairesComponent},
+    {path: 'questionnaire/new', component: QuestionnaireComponent},
+    {path: 'questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
+    {path: 'other-resources', component: OtherResourcesComponent},
     {path: 'export', component: ExportComponent},
     {path: 'import', component: ImportComponent},
     {path: 'users', component: UsersComponent},
@@ -285,7 +290,9 @@ const appRoutes: Routes = [
         RawResourceComponent,
         ValuesetConceptCardComponent,
         ImplementationGuideViewComponent,
-        OtherResourcesComponent
+        OtherResourcesComponent,
+        QuestionnairesComponent,
+        QuestionnaireComponent
     ],
     imports: [
         RouterModule.forRoot(

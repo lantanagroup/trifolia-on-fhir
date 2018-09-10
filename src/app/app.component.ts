@@ -20,7 +20,6 @@ import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
 export class AppComponent implements OnInit {
     public userProfile: any;
     public person: PersonListModel;
-    public isBigContainer = false;
 
     constructor(
         public authService: AuthService,
@@ -64,15 +63,6 @@ export class AppComponent implements OnInit {
                         const modalRef = this.modalService.open(NewUserModalComponent);
                     }
                 });
-            }
-        });
-
-        this.router.events.subscribe((event: Event) => {
-            if (event instanceof NavigationEnd) {
-                this.isBigContainer =
-                    event.url.startsWith('/implementation-guide/') ||
-                    (event.url.startsWith('/structure-definition') && !event.url.endsWith('/new')) ||
-                    event.url.startsWith('/capability-statement/');
             }
         });
     }

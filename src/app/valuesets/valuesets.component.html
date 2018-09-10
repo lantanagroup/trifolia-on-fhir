@@ -32,16 +32,16 @@
         <td>{{vs.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this resource">
+                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this value set">
                     <i class="fa fa-edit"></i>
                 </a>
                 <a class="btn btn-default" routerLink="/value-set/{{vs.id}}/expand" title="Expand this value set">
                     <i class="fa fa-expand"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this resource">
+                <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this value set">
                     <i class="fa fa-remove"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this resource's ID">
+                <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
