@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { ImplementationGuideListItemModel } from '../models/implementation-guide-list-item-model';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
 import {ImplementationGuide} from '../models/stu3/fhir';
 
 @Injectable()

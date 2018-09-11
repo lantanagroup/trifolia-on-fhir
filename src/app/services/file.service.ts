@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Resource} from '../models/stu3/fhir';
 import {saveAs} from 'file-saver';
 import {FhirService} from './fhir.service';
 import {FileModel} from '../models/file-model';

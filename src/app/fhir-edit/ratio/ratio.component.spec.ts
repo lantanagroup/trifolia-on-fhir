@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditRatioComponent } from './ratio.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditRatioComponent} from './ratio.component';
 
 describe('FhirEditRatioComponent', () => {
   let component: FhirEditRatioComponent;

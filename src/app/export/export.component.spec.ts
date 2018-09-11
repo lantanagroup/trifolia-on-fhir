@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ExportComponent } from './export.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ExportComponent} from './export.component';
 
 describe('ExportComponent', () => {
   let component: ExportComponent;

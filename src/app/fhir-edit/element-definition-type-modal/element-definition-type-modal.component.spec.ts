@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ElementDefinitionTypeModalComponent } from './element-definition-type-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ElementDefinitionTypeModalComponent} from './element-definition-type-modal.component';
 
 describe('ElementDefinitionTypeModalComponent', () => {
   let component: ElementDefinitionTypeModalComponent;

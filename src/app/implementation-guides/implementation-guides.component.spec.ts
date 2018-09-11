@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ImplementationGuidesComponent } from './implementation-guides.component';
+import {ImplementationGuidesComponent} from './implementation-guides.component';
 
 describe('ImplementationGuidesComponent', () => {
   let component: ImplementationGuidesComponent;

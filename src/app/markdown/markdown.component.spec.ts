@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MarkdownComponent } from './markdown.component';
+import {MarkdownComponent} from './markdown.component';
 
 describe('MarkdownComponent', () => {
   let component: MarkdownComponent;

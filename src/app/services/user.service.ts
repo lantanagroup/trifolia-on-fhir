@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
-import { AuthHttp } from 'angular2-jwt';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class UserService {
 
-    constructor(public authHttp: AuthHttp) { }
+    constructor(public http: HttpClient) { }
 
     public getUsers(): void {
-        this.authHttp.get('/api/user')
+        this.http.get('/api/user')
             .subscribe(data => {
                 console.log('test');
             },
             error => {
                 console.error(error);
-            })
+            });
     }
 }

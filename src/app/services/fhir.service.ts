@@ -3,8 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {
     Bundle,
     CodeSystem,
-    Coding, IssueComponent,
-    OperationDefinition, OperationOutcome,
+    Coding,
+    IssueComponent,
+    OperationOutcome,
     Resource,
     StructureDefinition,
     ValueSet

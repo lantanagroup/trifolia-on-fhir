@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../globals';
-import {Resource} from '../models/stu3/fhir';
 import {FhirService} from '../services/fhir.service';
 import {FileModel} from '../models/file-model';
 

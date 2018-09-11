@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { ValueSetService } from './value-set.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {ValueSetService} from './value-set.service';
 
 describe('ValueSetService', () => {
   beforeEach(() => {

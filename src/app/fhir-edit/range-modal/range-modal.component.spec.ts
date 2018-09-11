@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditRangeModalComponent } from './range-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditRangeModalComponent} from './range-modal.component';
 
 describe('FhirEditRangeModalComponent', () => {
   let component: FhirEditRangeModalComponent;

@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditAddressModalComponent } from './address-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditAddressModalComponent} from './address-modal.component';
 
 describe('FhirEditAddressModalComponent', () => {
   let component: FhirEditAddressModalComponent;

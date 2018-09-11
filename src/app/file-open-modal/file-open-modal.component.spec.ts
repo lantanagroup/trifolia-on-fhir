@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FileOpenModalComponent } from './file-open-modal.component';
+import {FileOpenModalComponent} from './file-open-modal.component';
 
 describe('FileOpenModalComponent', () => {
   let component: FileOpenModalComponent;

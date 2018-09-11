@@ -6,7 +6,6 @@ import {FhirEditCodeableConceptModalComponent} from '../codeable-concept-modal/c
 import {CodeableConcept, Coding} from '../../models/stu3/fhir';
 import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
 import {FhirEditContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
-import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
 import {FhirService} from '../../services/fhir.service';
 
 @Component({

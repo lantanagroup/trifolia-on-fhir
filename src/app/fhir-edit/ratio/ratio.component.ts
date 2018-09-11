@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditRangeModalComponent} from '../range-modal/range-modal.component';
 import {FhirEditRatioModalComponent} from '../ratio-modal/ratio-modal.component';
 
 @Component({

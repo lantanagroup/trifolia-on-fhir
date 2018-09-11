@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { FhirService } from './fhir.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {FhirService} from './fhir.service';
 
 describe('FhirService', () => {
   beforeEach(() => {

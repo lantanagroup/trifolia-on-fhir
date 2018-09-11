@@ -1,15 +1,13 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, CapabilityStatement, Coding, Extension, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
+import {Binary, Coding, Extension, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {Observable} from 'rxjs';
 import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {PageComponentModalComponent} from '../fhir-edit/page-component-modal/page-component-modal.component';
 import {RecentItemService} from '../services/recent-item.service';
-import {BinaryService} from '../services/binary.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 

@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { ImplementationGuideService } from './implementation-guide.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {ImplementationGuideService} from './implementation-guide.service';
 
 describe('ImplementationGuideService', () => {
   beforeEach(() => {

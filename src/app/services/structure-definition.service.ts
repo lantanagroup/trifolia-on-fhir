@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
-import { StructureDefinitionListItemModel } from '../models/structure-definition-list-item-model';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, StructureDefinition, ValueSet} from '../models/stu3/fhir';
+import {StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import {FhirService} from './fhir.service';

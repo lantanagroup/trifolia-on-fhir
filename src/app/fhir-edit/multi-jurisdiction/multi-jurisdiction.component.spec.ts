@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MultiJurisdictionComponent } from './multi-jurisdiction.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MultiJurisdictionComponent} from './multi-jurisdiction.component';
 
 describe('MultiJurisdictionComponent', () => {
   let component: MultiJurisdictionComponent;

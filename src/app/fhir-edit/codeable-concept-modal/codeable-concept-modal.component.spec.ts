@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditCodeableConceptModalComponent } from './codeable-concept.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditCodeableConceptModalComponent} from './codeable-concept-modal.component';
 
 describe('FhirEditCodeableConceptModalComponent', () => {
   let component: FhirEditCodeableConceptModalComponent;

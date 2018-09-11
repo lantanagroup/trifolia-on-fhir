@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirDateComponent } from './date.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirDateComponent} from './date.component';
 
 describe('FhirDateComponent', () => {
   let component: FhirDateComponent;

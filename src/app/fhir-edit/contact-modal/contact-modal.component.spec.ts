@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ContactModalComponent } from './contact-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ContactModalComponent} from './contact-modal.component';
 
 describe('ContactModalComponent', () => {
   let component: ContactModalComponent;

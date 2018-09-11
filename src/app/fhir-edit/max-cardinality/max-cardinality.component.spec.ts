@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MaxCardinalityComponent } from './max-cardinality.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MaxCardinalityComponent} from './max-cardinality.component';
 
 describe('MaxCardinalityComponent', () => {
   let component: MaxCardinalityComponent;

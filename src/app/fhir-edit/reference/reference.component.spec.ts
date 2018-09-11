@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ReferenceComponent } from './reference.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ReferenceComponent} from './reference.component';
 
 describe('ReferenceComponent', () => {
   let component: ReferenceComponent;

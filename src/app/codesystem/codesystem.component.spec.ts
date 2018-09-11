@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CodesystemComponent } from './codesystem.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {CodesystemComponent} from './codesystem.component';
 
 describe('CodesystemComponent', () => {
   let component: CodesystemComponent;

@@ -1,8 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
-import { PersonService } from './person.service';
-import { PersonListModel } from '../models/person-list-model';
+import {PersonService} from './person.service';
 import {Person} from '../models/stu3/fhir';
 
 @Injectable()

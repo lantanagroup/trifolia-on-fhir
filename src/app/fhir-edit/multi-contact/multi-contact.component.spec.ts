@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MultiContactComponent } from './multi-contact.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MultiContactComponent} from './multi-contact.component';
 
 describe('MultiContactComponent', () => {
   let component: MultiContactComponent;

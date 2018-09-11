@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditHumanNameModalComponent } from './human-name-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditHumanNameModalComponent} from './human-name-modal.component';
 
 describe('FhirEditHumanNameModalComponent', () => {
   let component: FhirEditHumanNameModalComponent;

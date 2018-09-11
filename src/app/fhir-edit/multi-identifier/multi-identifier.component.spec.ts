@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MultiIdentifierComponent } from './multi-identifier.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MultiIdentifierComponent} from './multi-identifier.component';
 
 describe('MultiIdentifierComponent', () => {
   let component: MultiIdentifierComponent;

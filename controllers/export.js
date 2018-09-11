@@ -60,12 +60,14 @@ function getControl(extension, implementationGuide, bundle, version) {
         throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined.');
     }
 
+    // TODO: Extract npm-name from IG extension.
+    // currently, IG resource has to be in XML format for the IG Publisher
     const control = {
         tool: 'jekyll',
-        version: version,
-        source: 'ImplementationGuide/' + implementationGuide.id + '.xml',           // currently, IG has to be XML for IG Publisher
-        'npm-name': implementationGuide.id + '-npm',                                // TODO: Extract from IG extension
-        license: 'CC0-1.0',
+        version: version,                                                           // R4: ImplementationGuide.fhirVersion
+        source: 'implementationguide/' + implementationGuide.id + '.xml',
+        'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
+        license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
         paths: {
             resources: 'resources',
             qa: 'qa',
@@ -114,6 +116,8 @@ function getControl(extension, implementationGuide, bundle, version) {
 
     // Set the dependencyList based on the extensions in the IG
     const dependencyExtensions = _.filter(implementationGuide.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency');
+
+    // R4 ImplementationGuide.dependsOn
     control.dependencyList = _.map(dependencyExtensions, (dependencyExtension) => {
         const locationExtension = _.find(dependencyExtension.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
         const nameExtension = _.find(dependencyExtension.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
@@ -248,9 +252,11 @@ function copyExtension(destExtensionsDir, extensionFileName, isXml, fhir) {
     }
 }
 
-function getDependencies(control, isXml, resourcesDir, fhir) {
+function getDependencies(control, isXml, resourcesDir, fhir, fhirServerConfig) {
+    const isStu3 = fhirServerConfig && fhirServerConfig.version === 'stu3';
+
     // Load the ig dependency extensions into the resources directory
-    if (control.dependencyList && control.dependencyList.length > 0) {
+    if (isStu3 && control.dependencyList && control.dependencyList.length > 0) {
         const destExtensionsDir = path.join(resourcesDir, 'structuredefinition');
 
         fs.ensureDirSync(destExtensionsDir);
@@ -263,6 +269,7 @@ function getDependencies(control, isXml, resourcesDir, fhir) {
 
     return Q.resolve([]);           // This isn't actually needed, since the IG Publisher attempts to resolve these dependency automatically
 
+    // Attempt to resolve the dependency's definitions and include it in the package
     const deferred = Q.defer();
     const promises = _.map(control.dependencyList, (dependency) => {
         const dependencyUrl =
@@ -280,11 +287,7 @@ function getDependencies(control, isXml, resourcesDir, fhir) {
     return deferred.promise;
 }
 
-function getFhirVersion(req) {
-    var fhirServerConfig = _.find(fhirConfig.servers, (serverConfig) => {
-        return serverConfig.id === req.headers['fhirserver'];
-    });
-
+function getFhirControlVersion(fhirServerConfig) {
     if (!fhirServerConfig) {
         return 'current';
     }
@@ -304,6 +307,9 @@ function exportHtml(req, res, testCallback) {
     const useTerminologyServer = req.query.useTerminologyServer === undefined || req.query.useTerminologyServer == 'true';
     const executeIgPublisher = req.query.executeIgPublisher === undefined || req.query.executeIgPublisher == 'true';
     const homedir = require('os').homedir();
+    const fhirServerConfig = _.find(fhirConfig.servers, (serverConfig) => {
+        return serverConfig.id === req.headers['fhirserver'];
+    });
     let control;
     let implementationGuideResource;
 
@@ -364,9 +370,9 @@ function exportHtml(req, res, testCallback) {
                         packageImplementationGuidePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
                     }
 
-                    control = getControl(extension, implementationGuideResource, bundle, getFhirVersion(req));
+                    control = getControl(extension, implementationGuideResource, bundle, getFhirControlVersion(fhirServerConfig));
 
-                    return getDependencies(control, isXml, resourcesDir, req.fhir);
+                    return getDependencies(control, isXml, resourcesDir, req.fhir, fhirServerConfig);
                 })
                 .then((dependencies) => {
                     const controlContent = JSON.stringify(control, null, '\t');

@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PageComponentModalComponent } from './page-component-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {PageComponentModalComponent} from './page-component-modal.component';
 
 describe('PageComponentModalComponent', () => {
   let component: PageComponentModalComponent;

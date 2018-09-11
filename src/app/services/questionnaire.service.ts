@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Bundle, Questionnaire} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';

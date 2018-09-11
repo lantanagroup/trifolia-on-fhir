@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ElementDefinitionPanelComponent } from './element-definition-panel.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ElementDefinitionPanelComponent} from './element-definition-panel.component';
 
 describe('ElementDefinitionPanelComponent', () => {
   let component: ElementDefinitionPanelComponent;

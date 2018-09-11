@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { BinaryService } from './binary.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {BinaryService} from './binary.service';
 
 describe('BinaryService', () => {
   beforeEach(() => {

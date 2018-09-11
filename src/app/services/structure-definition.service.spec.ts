@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { StructureDefinitionService } from './profile.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {StructureDefinitionService} from './structure-definition.service';
 
 describe('StructureDefinitionService', () => {
   beforeEach(() => {

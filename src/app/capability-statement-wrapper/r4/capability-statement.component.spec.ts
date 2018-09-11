@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CapabilityStatementComponent } from './capability-statement.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {CapabilityStatementComponent} from './capability-statement.component';
 
 describe('CapabilityStatementComponent', () => {
   let component: CapabilityStatementComponent;

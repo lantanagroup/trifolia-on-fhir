@@ -2,16 +2,15 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    OnDestroy,
-    OnInit,
-    ViewChild,
     forwardRef,
     Input,
-    OnChanges, SimpleChanges
+    OnChanges,
+    OnDestroy,
+    SimpleChanges,
+    ViewChild
 } from '@angular/core';
 import * as SimpleMDE from 'simplemde';
-import {ControlValueAccessor} from '@angular/forms';
-import {NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 const MARKDOWN_CONTROL_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,

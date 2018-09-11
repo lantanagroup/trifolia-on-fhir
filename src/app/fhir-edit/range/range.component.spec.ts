@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditRangeComponent } from './range.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditRangeComponent} from './range.component';
 
 describe('FhirEditRangeComponent', () => {
   let component: FhirEditRangeComponent;

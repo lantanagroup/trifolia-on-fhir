@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditMessagingEventModalComponent } from './messaging-event-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditMessagingEventModalComponent} from './messaging-event-modal.component';
 
 describe('FhirEditMessagingEventModalComponent', () => {
   let component: FhirEditMessagingEventModalComponent;

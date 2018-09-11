@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { IdentifierComponent } from './identifier.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {IdentifierComponent} from './identifier.component';
 
 describe('IdentifierComponent', () => {
   let component: IdentifierComponent;

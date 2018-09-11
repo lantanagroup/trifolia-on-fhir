@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { OperationDefinitionService } from './operation-definition.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {OperationDefinitionService} from './operation-definition.service';
 
 describe('OperationDefinitionService', () => {
   beforeEach(() => {

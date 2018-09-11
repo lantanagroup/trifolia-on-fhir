@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditAttachmentModalComponent } from './attachment-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditAttachmentModalComponent} from './attachment-modal.component';
 
 describe('FhirEditAttachmentModalComponent', () => {
   let component: FhirEditAttachmentModalComponent;

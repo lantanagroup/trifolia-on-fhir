@@ -16,6 +16,7 @@ import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {DOCUMENT} from '@angular/common';
+import 'rxjs-compat/add/operator/mergeMap';
 
 @Component({
     selector: 'app-profile',

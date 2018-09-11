@@ -16,7 +16,6 @@ import {ValuesetComponent} from './valueset/valueset.component';
 import {CodesystemsComponent} from './codesystems/codesystems.component';
 import {CodesystemComponent} from './codesystem/codesystem.component';
 import {LoginComponent} from './login/login.component';
-import {AuthHttp, AuthConfig} from 'angular2-jwt';
 import {StructureDefinitionsComponent} from './structure-definitions/structure-definitions.component';
 import {UsersComponent} from './users/users.component';
 import {UserComponent} from './user/user.component';
@@ -108,12 +107,6 @@ import {SafePipe} from './pipes/safe-pipe';
 import {OtherResourcesComponent} from './other-resources/other-resources.component';
 import { QuestionnairesComponent } from './questionnaires/questionnaires.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
-
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-    return new AuthHttp(new AuthConfig({
-        noClientCheck: true
-    }), http, options);
-}
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -310,10 +303,6 @@ const appRoutes: Routes = [
     ],
     providers: [
         {
-            provide: AuthHttp,
-            useFactory: authHttpServiceFactory,
-            deps: [Http, RequestOptions]
-        }, {
             provide: HTTP_INTERCEPTORS,
             useClass: AddHeaderInterceptor,
             multi: true

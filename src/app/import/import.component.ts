@@ -1,16 +1,8 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ImportService} from '../services/import.service';
-import {
-    Bundle,
-    DomainResource,
-    EntryComponent,
-    OperationOutcome,
-    RequestComponent,
-    StructureDefinition
-} from '../models/stu3/fhir';
+import {Bundle, DomainResource, EntryComponent, OperationOutcome, RequestComponent} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
-import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';

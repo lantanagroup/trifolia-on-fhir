@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditReferenceModalComponent } from './reference-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditReferenceModalComponent} from './reference-modal.component';
 
 describe('FhirEditReferenceModalComponent', () => {
   let component: FhirEditReferenceModalComponent;

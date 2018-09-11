@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AttachmentComponent } from './attachment.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {AttachmentComponent} from './attachment.component';
 
 describe('AttachmentComponent', () => {
   let component: AttachmentComponent;

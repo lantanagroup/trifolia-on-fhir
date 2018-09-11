@@ -1,6 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
-
-import { ConfigService } from './config.service';
+import {inject, TestBed} from '@angular/core/testing';
+import {ConfigService} from './config.service';
 
 describe('ConfigService', () => {
   beforeEach(() => {

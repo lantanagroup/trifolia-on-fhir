@@ -1,5 +1,5 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { HumanName } from '../../models/stu3/fhir';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {HumanName} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-fhir-edit-human-names',

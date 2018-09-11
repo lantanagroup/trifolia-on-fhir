@@ -1,4 +1,4 @@
-import { HumanName } from './stu3/fhir';
+import {HumanName} from './stu3/fhir';
 
 export class PersonListModel {
     public name?: HumanName[] = [];

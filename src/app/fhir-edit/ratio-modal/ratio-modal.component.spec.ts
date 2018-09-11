@@ -1,5 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FhirEditRatioModalComponent } from './ratio-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditRatioModalComponent} from './ratio-modal.component';
 
 describe('FhirEditRatioModalComponent', () => {
   let component: FhirEditRatioModalComponent;

@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FhirEditCapabilityStatementResourceModalComponent } from './capability-statement-resource-modal.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {FhirEditCapabilityStatementResourceModalComponent} from './capability-statement-resource-modal.component';
 
 describe('FhirEditCapabilityStatementResourceModalComponent', () => {
   let component: FhirEditCapabilityStatementResourceModalComponent;

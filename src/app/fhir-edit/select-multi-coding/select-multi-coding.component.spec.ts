@@ -1,6 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { SelectMultiCodingComponent } from './select-multi-coding.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {SelectMultiCodingComponent} from './select-multi-coding.component';
 
 describe('SelectMultiCodingComponent', () => {
   let component: SelectMultiCodingComponent;
