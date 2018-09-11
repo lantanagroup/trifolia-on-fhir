@@ -9,7 +9,7 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Resources
+          Create/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <div>
@@ -30,7 +30,7 @@
               </div>
 
               <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Structure Definitions</u></span>
+                <span class="text-uppercase text-white" title="Structure Definitions"><u>Profiles</u></span>
                 <ul class="nav flex-column">
                   <li class="nav-item">
                     <a class="nav-link active" routerLink="/structure-definition">Browse</a>
@@ -119,12 +119,18 @@
                 </ul>
               </div>
 
+              <div class="col-md-3">
+                <span class="text-uppercase text-white"><u>Other Resources</u></span>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" routerLink="/other-resources">Browse</a>
+                  </li>
+                </ul>
+              </div>
+
             </div>
           </div>
         </div>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/other-resources">Other Resources</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="javascript:void(0)" (click)="openFile()">Open from computer</a>

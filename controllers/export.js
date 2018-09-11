@@ -52,7 +52,7 @@ function exportBundle(req, res) {
         });
 }
 
-function getControl(extension, implementationGuide, bundle) {
+function getControl(extension, implementationGuide, bundle, version) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
 
@@ -62,7 +62,10 @@ function getControl(extension, implementationGuide, bundle) {
 
     const control = {
         tool: 'jekyll',
+        version: version,
         source: 'ImplementationGuide/' + implementationGuide.id + '.xml',           // currently, IG has to be XML for IG Publisher
+        'npm-name': implementationGuide.id + '-npm',                                // TODO: Extract from IG extension
+        license: 'CC0-1.0',
         paths: {
             resources: 'resources',
             qa: 'qa',
@@ -277,6 +280,24 @@ function getDependencies(control, isXml, resourcesDir, fhir) {
     return deferred.promise;
 }
 
+function getFhirVersion(req) {
+    var fhirServerConfig = _.find(fhirConfig.servers, (serverConfig) => {
+        return serverConfig.id === req.headers['fhirserver'];
+    });
+
+    if (!fhirServerConfig) {
+        return 'current';
+    }
+
+    switch (fhirServerConfig.version) {
+        case 'stu3':
+            return '3.0.1';
+        // case 'r4':
+        default:
+            return 'current';
+    }
+}
+
 function exportHtml(req, res, testCallback) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
@@ -317,10 +338,10 @@ function exportHtml(req, res, testCallback) {
 
                         // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
                         if (!isXml && resourceType !== 'ImplementationGuide') {
-                            resourceContent = JSON.stringify(bundle.entry[0].resource, null, '\t');
+                            resourceContent = JSON.stringify(bundle.entry[i].resource, null, '\t');
                             resourcePath = path.join(resourceDir, id + '.json');
                         } else {
-                            resourceContent = req.fhir.objToXml(bundle.entry[0].resource);
+                            resourceContent = req.fhir.objToXml(bundle.entry[i].resource);
                             resourcePath = path.join(resourceDir, id + '.xml');
                         }
 
@@ -343,7 +364,7 @@ function exportHtml(req, res, testCallback) {
                         packageImplementationGuidePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
                     }
 
-                    control = getControl(extension, implementationGuideResource, bundle);
+                    control = getControl(extension, implementationGuideResource, bundle, getFhirVersion(req));
 
                     return getDependencies(control, isXml, resourcesDir, req.fhir);
                 })
