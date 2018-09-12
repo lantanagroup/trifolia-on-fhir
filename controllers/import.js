@@ -50,7 +50,7 @@ router.get('/vsac/:resourceType/:id', checkJwt, (req, res) => {
 
     const options = {
         method: 'GET',
-        url: `https://cts.nlm.nih.gov/fhir/${resourceType}/${id}/$expand`,
+        url: `https://cts.nlm.nih.gov/fhir/${resourceType}/${id}`,
         headers: {
             'Authorization': vsacAuthorization,
             'Accept': 'application/json'

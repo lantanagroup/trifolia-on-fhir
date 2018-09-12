@@ -2,8 +2,8 @@
 <app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-           placeholder="Search" [disabled]="true">
+    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search">
+    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="URL" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Refresh" (click)="getValueSets()">
             <i class="fa fa-search"></i>
@@ -11,15 +11,14 @@
     </div>
 </div>
 
-<table class="table table-striped">
+<table class="table table-striped" *ngIf="results">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>
+        <th class="actions-column-4">
             <div class="pull-right">
-                <button type="button" class="btn btn-default" routerLink="/value-set/new"
-                        title="Create a new value set">
+                <button type="button" class="btn btn-default" routerLink="/value-set/new" title="Create a new value set">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -27,21 +26,21 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let vs of valueSets">
-        <td>{{vs.id}}</td>
-        <td>{{vs.name}}</td>
+    <tr *ngFor="let entry of results.entry">
+        <td>{{entry.resource.id}}</td>
+        <td>{{getValueSet(entry.resource).name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this value set">
+                <a class="btn btn-default" routerLink="/value-set/{{entry.resource.id}}" title="Edit this value set">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}/expand" title="Expand this value set">
+                <a class="btn btn-default" routerLink="/value-set/{{entry.resource.id}}/expand" title="Expand this value set">
                     <i class="fa fa-expand"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this value set">
+                <button type="button" class="btn btn-default" (click)="remove(getValueSet(entry.resource))" title="Remove this value set">
                     <i class="fa fa-remove"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this value set's ID">
+                <button type="button" class="btn btn-default" (click)="changeId(getValueSet(entry.resource))" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -50,7 +49,20 @@
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="3">{{valueSets ? valueSets.length : 0}} total value sets</td>
+        <td colspan="4">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" [disabled]="!results || page <= 1" title="Previous page" (click)="previousPage()">
+                    <i class="fa fa-backward"></i>
+                </button>
+                <button type="button" class="btn btn-default" disabled="disabled">
+                    Page {{page}} of {{totalPages}} ({{results ? results.total : 0}} value sets)
+                </button>
+                <button type="button" class="btn btn-default" [disabled]="!results || page >= totalPages" title="Next page" (click)="nextPage()">
+                    <i class="fa fa-forward"></i>
+                </button>
+            </div>
+            <br/>
+        </td>
     </tr>
     </tfoot>
 </table>

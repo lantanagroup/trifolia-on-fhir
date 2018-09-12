@@ -10,7 +10,22 @@ const thisResourceType = 'ValueSet';
 const fhirConfig = config.get('fhir');
 
 router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, null, null, req.query);
+    const countPerPage = 8;
+    const queryParams = { _summary: true, _count: countPerPage };
+
+    if (req.query.page && parseInt(req.query.page) != 1) {
+        queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * countPerPage;
+    }
+
+    if (req.query.contentText) {
+        queryParams._content = req.query.contentText;
+    }
+
+    if (req.query.urlText) {
+        queryParams.url = req.query.urlText;
+    }
+
+    const url = req.getFhirServerUrl(thisResourceType, null, null, queryParams);
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {

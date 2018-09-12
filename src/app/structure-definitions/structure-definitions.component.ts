@@ -25,6 +25,7 @@ export class StructureDefinitionsComponent implements OnInit {
         private structureDefinitionService: StructureDefinitionService,
         private configService: ConfigService,
         private modalService: NgbModal) {
+
         this.criteriaChangedEvent
             .debounceTime(500)
             .subscribe(() => {

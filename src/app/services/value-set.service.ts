@@ -20,8 +20,22 @@ export class ValueSetService {
         }
     }
 
-    public search() {
-        return this.http.get<Bundle>('/api/valueSet?_summary=true');
+    public search(page?: number, contentText?: string, urlText?: string) {
+        let url = '/api/valueSet?';
+
+        if (page) {
+            url += 'page=' + page.toString() + '&';
+        }
+
+        if (contentText) {
+            url += 'contentText=' + encodeURIComponent(contentText) + '&';
+        }
+
+        if (urlText) {
+            url += 'urlText=' + encodeURIComponent(urlText) + '&';
+        }
+
+        return this.http.get(url);
     }
 
     public get(id: string) {
