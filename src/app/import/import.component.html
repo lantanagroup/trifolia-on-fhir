@@ -48,12 +48,58 @@
             </div>
         </ng-template>
     </ngb-tab>
+    <ngb-tab id="vsac" title="VSAC">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Search Criteria</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select class="form-control" [(ngModel)]="vsacCriteria.resourceType">
+                                    <option value="ValueSet">Value set</option>
+                                    <option value="CodeSystem">Code system</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>ID</label>
+                                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">VSAC Credentials</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.username" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" [(ngModel)]="vsacCriteria.password" />
+                            </div>
+
+                            <p>
+                                <input type="checkbox" [(ngModel)]="rememberVsacCredentials" /> Remember VSAC credentials in the future <i class="fa fa-question-circle" ngbTooltip="If checked, these credentials will be stored in your browser's cookies. These credentials are never stored on the server, and are only used to authenticate requests to the VSAC on your behalf."></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
     <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
         <ng-template ngbTabContent>
             <div *ngIf="outcome">
                 <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
                 <div class="card" *ngFor="let issue of outcome.issue">
-                    <div class="card-header">{{issue.severity}} - {{issue.location && issue.location.length === 1 ? issue.location[0] : 'Unknown location'}}</div>
+                    <div class="card-header">{{issue.severity}}{{issue.location && issue.location.length === 1 ? ' - ' + issue.location[0] : ''}}</div>
                     <div class="card-body">{{issue.diagnostics}}</div>
                 </div>
             </div>
@@ -70,8 +116,6 @@
                     </div>
                 </div>
             </div>
-            <pre *ngIf="outcome">{{outcome | json}}</pre>
-            <pre *ngIf="resultsBundle">{{resultsBundle | json}}</pre>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>

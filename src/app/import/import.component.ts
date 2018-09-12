@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ImportService} from '../services/import.service';
+import {ImportService, VSACImportCriteria} from '../services/import.service';
 import {Bundle, DomainResource, EntryComponent, OperationOutcome, RequestComponent} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
+import {CookieService} from 'angular2-cookie/core';
 
 enum ContentTypes {
     Json,
@@ -33,11 +34,25 @@ export class ImportComponent implements OnInit {
     public resultsBundle: Bundle;
     public message: string;
     public activeTab = 'file';
+    public vsacCriteria = new VSACImportCriteria();
+    public rememberVsacCredentials: boolean;
+    private readonly vsacUsernameCookieKey = 'vsac_username';
+    private readonly vsacPasswordCookieKey = 'vsac_password';
 
     constructor(
         public fhirService: FhirService,
         private importService: ImportService,
-        private cdr: ChangeDetectorRef) {
+        private cdr: ChangeDetectorRef,
+        private cookieService: CookieService) {
+
+        const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
+        const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
+
+        if (vsacUsername && vsacPassword) {
+            this.vsacCriteria.username = vsacUsername;
+            this.vsacCriteria.password = atob(vsacPassword);
+            this.rememberVsacCredentials = true;
+        }
     }
 
     private populateFile(file) {
@@ -206,6 +221,41 @@ export class ImportComponent implements OnInit {
             });
     }
 
+    private importVsac(tabSet: NgbTabset) {
+        if (this.rememberVsacCredentials) {
+            this.cookieService.put(this.vsacUsernameCookieKey, this.vsacCriteria.username);
+            this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
+        }
+
+        this.importService.importVsac(this.vsacCriteria)
+            .subscribe((results: OperationOutcome|Bundle) => {
+                if (results.resourceType === 'OperationOutcome') {
+                    this.outcome = <OperationOutcome>results;
+                } else if (results.resourceType === 'Bundle') {
+                    this.resultsBundle = <Bundle>results;
+                }
+
+                this.files = [];
+                this.message = 'Done importing';
+                setTimeout(() => {
+                    tabSet.select('results');
+                });
+            }, (err) => {
+                if (err && err.error && err.error.resourceType === 'OperationOutcome') {
+                    this.outcome = <OperationOutcome> err.error;
+                    this.files = [];
+                    this.message = 'Import resulted in errors';
+                    setTimeout(() => {
+                        tabSet.select('results');
+                    });
+                } else if (err && err.message) {
+                    this.message = 'Error while importing: ' + err.message;
+                } else {
+                    this.message = err;
+                }
+            });
+    }
+
     public import(tabSet: NgbTabset) {
         this.outcome = null;
         this.resultsBundle = null;
@@ -215,6 +265,8 @@ export class ImportComponent implements OnInit {
             this.importText(tabSet);
         } else if (this.activeTab === 'file') {
             this.importFiles(tabSet);
+        } else if (this.activeTab === 'vsac') {
+            this.importVsac(tabSet);
         }
     }
 
@@ -223,7 +275,11 @@ export class ImportComponent implements OnInit {
             return !this.files || this.files.length === 0;
         } else if (this.activeTab === 'text') {
             return !this.textContent;
+        } else if (this.activeTab === 'vsac') {
+            return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password || !this.vsacCriteria.resourceType;
         }
+
+        return true;
     }
 
     ngOnInit() {
