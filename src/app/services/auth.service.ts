@@ -3,25 +3,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import {PersonService} from './person.service';
 import {Person} from '../models/stu3/fhir';
+import {ConfigService} from './config.service';
 
 @Injectable()
 export class AuthService {
-    private readonly clientID = 'mpXWwpAOBTt5aUM1SE2q5KuUtr4YvUE9';
-    private readonly domain = 'trifolia.auth0.com';
-    private readonly audience = 'https://trifolia.lantanagroup.com/api';
-    private readonly scope = 'openid profile name nickname email';
-
     // expiresIn is in seconds
     private readonly fiveMinutesInSeconds = 300;
 
-    public auth0 = new auth0.WebAuth({
-        clientID: this.clientID,
-        domain: this.domain,
-        responseType: 'token id_token',
-        audience: this.audience,
-        redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
-        scope: this.scope
-    });
+    public auth0: any;
     public userProfile: any;
     public person: Person;
     public authExpiresAt: number;
@@ -30,6 +19,7 @@ export class AuthService {
 
     constructor(
         public router: Router,
+        private configService: ConfigService,
         private activatedRoute: ActivatedRoute,
         private personService: PersonService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
@@ -38,6 +28,14 @@ export class AuthService {
         if (this.authExpiresAt) {
             this.setSessionTimer();
         }
+
+        this.auth0 = new auth0.WebAuth({
+            clientID: this.configService.config.auth.clientId,
+            domain: this.configService.config.auth.domain,
+            responseType: 'token',
+            redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
+            scope: this.configService.config.auth.scope
+        });
     }
 
     public login(): void {
@@ -47,7 +45,7 @@ export class AuthService {
     public handleAuthentication(): void {
         this.auth0.parseHash((err, authResult) => {
             const path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
-            if (authResult && authResult.accessToken && authResult.idToken) {
+            if (authResult && authResult.idToken) {
                 window.location.hash = '';
                 this.setSession(authResult);
                 this.getProfile(() => {
@@ -124,8 +122,7 @@ export class AuthService {
             this.authTimeout = setTimeout(() => {
                 this.authTimeout = null;
                 this.auth0.checkSession({
-                    audience: this.audience,
-                    scope: this.scope
+                    scope: this.configService.config.auth.scope
                 }, (err, nextAuthResult) => {
                     if (err) {
                         console.log(err);

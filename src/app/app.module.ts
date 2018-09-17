@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 import {HttpModule, Http, RequestOptions} from '@angular/http';
@@ -114,7 +114,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('id_token');
         const fhirServer = localStorage.getItem('fhirServer');
         const headers = {};
 
@@ -174,6 +174,10 @@ const appRoutes: Routes = [
         pathMatch: 'full'
     }
 ];
+
+export function getConfig(configService: ConfigService) {
+    return () => configService.getConfig();
+}
 
 @NgModule({
     entryComponents: [
@@ -302,6 +306,13 @@ const appRoutes: Routes = [
         FileDropModule
     ],
     providers: [
+        ConfigService,
+        {
+            provide: APP_INITIALIZER,
+            useFactory: getConfig,
+            deps: [ConfigService],
+            multi: true
+        },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AddHeaderInterceptor,
@@ -319,7 +330,6 @@ const appRoutes: Routes = [
         CodeSystemService,
         FhirService,
         FileService,
-        ConfigService,
         Globals,
         ImportService,
         ExportService,

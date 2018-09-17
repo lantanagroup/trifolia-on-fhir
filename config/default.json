@@ -3,10 +3,11 @@
     "port": 49366
   },
   "auth": {
-    "jwksUri": "https://trifolia.auth0.com/.well-known/jwks.json",
-    "audience": "https://trifolia.lantanagroup.com/api",
-    "issuer": "https://trifolia.auth0.com/",
-    "algorithms": [ "RS256" ]
+    "clientId": "***REMOVED***",
+    "domain": "trifolia.auth0.com",
+    "scope": "openid profile name nickname email",
+    "secret": "***REMOVED***",
+    "issuer": "https://trifolia.auth0.com/"
   },
   "fhir": {
     "latestPublisher": "http://build.fhir.org/org.hl7.fhir.igpublisher.jar",
@@ -31,12 +32,12 @@
     }],
     "servers": [{
       "id": "lantana_hapi_stu3",
-      "name": "Lantana HAPI STU3 Server",
+      "name": "Lantana HAPI STU3 DEV Server",
       "uri": "https://hapi3-dev.lantanagroup.com/baseDstu3",
       "version": "stu3"
     }, {
       "id": "lantana_hapi_r4",
-      "name": "Lantana HAPI R4 Server",
+      "name": "Lantana HAPI R4 DEV Server",
       "uri": "https://hapi4-dev.lantanagroup.com/baseR4",
       "version": "r4"
     }]
