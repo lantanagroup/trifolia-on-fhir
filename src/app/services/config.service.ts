@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
-import {Router} from '@angular/router';
 import {Globals} from '../globals';
 
 @Injectable()
@@ -18,15 +17,17 @@ export class ConfigService {
     };
 
     constructor(
-        private http: HttpClient,
         private globals: Globals,
-        private router: Router) {
+        private http: HttpClient) {
 
         this.fhirServer = localStorage.getItem('fhirServer');
+    }
 
-        this.http.get('/api/config')
+    public getConfig(): Promise<any> {
+        return this.http.get('/api/config')
             .map(res => <ConfigModel>res)
-            .subscribe((config: ConfigModel) => {
+            .toPromise()
+            .then((config: ConfigModel) => {
                 this.config = config;
 
                 if (!this.fhirServer && this.config.fhirServers.length > 0) {
@@ -51,11 +52,6 @@ export class ConfigService {
             .subscribe((res: any) => {
                 this.fhirConformance = res;
                 this.fhirVersion = this.globals.parseFhirVersion(res.fhirVersion);
-
-                if (serverChanged) {
-                    this.router.navigate(['/']);
-                }
-
                 this.fhirServerChanged.emit(this.fhirServer);
             }, error => {
 

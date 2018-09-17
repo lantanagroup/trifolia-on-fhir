@@ -4,11 +4,17 @@ const checkJwt = require('../authHelper').checkJwt;
 const config = require('config');
 const _ = require('underscore');
 const fhirConfig = config.get('fhir');
+const authConfig = config.get('auth');
 const request = require('request');
 
 router.get('/', (req, res) => {
     const retConfig = {
-        fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name }))
+        fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name })),
+        auth: {
+            clientId: authConfig.clientId,
+            scope: authConfig.scope,
+            domain: authConfig.domain
+        }
     };
 
     res.send(retConfig);
