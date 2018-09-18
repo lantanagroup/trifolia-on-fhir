@@ -56,13 +56,21 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.configService.fhirServerChanged.subscribe((fhirServer) => {
+            // This should only be triggered after the app has been initialized. So, this should truly be when the fhir server
+            // changes during the user's session.
             if (this.authService.isAuthenticated()) {
                 const self = this;
-                this.authService.getProfile((err, profile, person) => {
-                    if (err && err.status === 404) {
-                        const modalRef = this.modalService.open(NewUserModalComponent);
-                    }
-                });
+
+                // After the fhir server has been initialized, make sure the user has a profile on the FHIR server
+                this.authService.getProfile()
+                    .catch((err) => {
+                        if (err && err.status === 404) {
+                            const modalRef = this.modalService.open(NewUserModalComponent);
+                        }
+                    });
+
+                // When the fhir server changes, re-direct the user home so that data shown on the screen isn't from the wrong FHIR server
+                this.router.navigate(['/home']);
             }
         });
     }
