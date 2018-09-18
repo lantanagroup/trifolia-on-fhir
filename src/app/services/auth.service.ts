@@ -48,10 +48,11 @@ export class AuthService {
             if (authResult && authResult.idToken) {
                 window.location.hash = '';
                 this.setSession(authResult);
-                this.getProfile(() => {
-                    this.router.navigate([path]);
-                    this.authChanged.emit();
-                });
+                this.getProfile()
+                    .then(() => {
+                        this.router.navigate([path]);
+                        this.authChanged.emit();
+                    });
             } else if (err) {
                 this.router.navigate(['/home']);
                 console.log(err);
@@ -81,32 +82,37 @@ export class AuthService {
         return new Date().getTime() < this.authExpiresAt;
     }
 
-    public getProfile(cb): void {
+    public getProfile(): Promise<{ userProfile: any, person: Person }> {
         const accessToken = localStorage.getItem('token');
+        const self = this;
 
         if (!accessToken) {
             throw new Error('Access token must exist to fetch profile');
         }
 
-        const self = this;
-        this.auth0.client.userInfo(accessToken, (userInfoErr, userProfile) => {
-            if (userInfoErr) {
-                return cb(userInfoErr);
-            }
+        return new Promise((resolve, reject) => {
+            this.auth0.client.userInfo(accessToken, (userInfoErr, userProfile) => {
+                if (userInfoErr) {
+                    return reject(userInfoErr);
+                }
 
-            if (userProfile) {
-                self.userProfile = userProfile;
+                if (userProfile) {
+                    self.userProfile = userProfile;
 
-                this.personService.getMe()
-                    .subscribe((person) => {
-                        self.person = person;
+                    this.personService.getMe()
+                        .subscribe((person: Person) => {
+                            self.person = person;
 
-                        cb(null, userProfile, person);
-                        self.authChanged.emit();
-                    }, (personErr) => {
-                        cb(personErr);
-                    });
-            }
+                            resolve({
+                                userProfile: userProfile,
+                                person: person
+                            });
+                            self.authChanged.emit();
+                        }, (personErr) => {
+                            reject(personErr);
+                        });
+                }
+            });
         });
     }
 
