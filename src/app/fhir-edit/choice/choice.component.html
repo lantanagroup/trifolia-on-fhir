@@ -68,7 +68,7 @@
             </button>
         </div>
     </div>
-    <app-fhir-edit-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-human-name>
+    <app-fhir-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-human-name>
     <app-fhir-edit-period *ngIf="getChoiceName() === 'Period'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-period>
     <app-fhir-edit-range *ngIf="getChoiceName() === 'Range'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-range>
     <app-fhir-edit-ratio *ngIf="getChoiceName() === 'Ratio'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-edit-ratio>

@@ -12828,6 +12828,11 @@ export class Practitioner extends DomainResource {
         }
     }
 
+    getDisplayName(): string {
+        if (this.name.length > 0) {
+            return this.name[0].getDisplay();
+        }
+    }
 }
 
 export class PractitionerRole extends DomainResource {

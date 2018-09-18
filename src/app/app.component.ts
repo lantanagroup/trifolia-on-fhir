@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
         private router: Router) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
-            this.person = this.authService.person;
+            this.person = this.authService.practitioner;
         });
     }
 
@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
                 this.authService.getProfile()
                     .catch((err) => {
                         if (err && err.status === 404) {
-                            const modalRef = this.modalService.open(NewUserModalComponent);
+                            const modalRef = this.modalService.open(NewUserModalComponent, { size: 'lg' });
                         }
                     });
 

@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const config = require('config');
 const implementationGuideController = require('./controllers/implementationGuide');
 const configController = require('./controllers/config');
-const personController = require('./controllers/person');
+const practitionerController = require('./controllers/practitioner');
 const structureDefinitionController = require('./controllers/structureDefinition');
 const auditEventController = require('./controllers/auditEvent');
 const fhirController = require('./controllers/fhir');
@@ -128,7 +128,7 @@ app.use((req, res, next) => {
 app.use('/help', express.static(path.join(__dirname, 'wwwroot/help')));
 app.use('/api/implementationGuide', implementationGuideController);
 app.use('/api/config', configController);
-app.use('/api/person', personController);
+app.use('/api/practitioner', practitionerController);
 app.use('/api/structureDefinition', structureDefinitionController);
 app.use('/api/auditEvent', auditEventController);
 app.use('/api/export', exportController);

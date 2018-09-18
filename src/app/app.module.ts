@@ -20,7 +20,7 @@ import {StructureDefinitionsComponent} from './structure-definitions/structure-d
 import {UsersComponent} from './users/users.component';
 import {UserComponent} from './user/user.component';
 import {AuthService} from './services/auth.service';
-import {PersonService} from './services/person.service';
+import {PractitionerService} from './services/practitioner.service';
 import {HumanNameComponent} from './fhir-edit/human-name/human-name.component';
 import {HumanNamesComponent} from './fhir-edit/human-names/human-names.component';
 import {NewProfileComponent} from './new-profile/new-profile.component';
@@ -105,8 +105,9 @@ import {ValuesetConceptCardComponent} from './valueset-concept-card/valueset-con
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
 import {SafePipe} from './pipes/safe-pipe';
 import {OtherResourcesComponent} from './other-resources/other-resources.component';
-import { QuestionnairesComponent } from './questionnaires/questionnaires.component';
-import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
+import {QuestionnairesComponent} from './questionnaires/questionnaires.component';
+import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
+import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practitioner.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -289,7 +290,8 @@ export function getConfig(configService: ConfigService) {
         ImplementationGuideViewComponent,
         OtherResourcesComponent,
         QuestionnairesComponent,
-        QuestionnaireComponent
+        QuestionnaireComponent,
+        FhirEditPractitionerComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -322,7 +324,7 @@ export function getConfig(configService: ConfigService) {
             useFactory: cookieServiceFactory
         },
         AuthService,
-        PersonService,
+        PractitionerService,
         AuditEventService,
         RecentItemService,
         BinaryService,
