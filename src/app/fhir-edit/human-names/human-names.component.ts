@@ -1,65 +1,37 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {HumanName} from '../../models/stu3/fhir';
+import {Globals} from '../../globals';
 
 @Component({
-    selector: 'app-fhir-edit-human-names',
+    selector: 'app-fhir-human-names',
     templateUrl: './human-names.component.html',
     styleUrls: ['./human-names.component.css']
 })
 export class HumanNamesComponent implements OnChanges, OnInit {
     humanNames: HumanName[];
-    @Input() title = 'Name';
-    @Input() parent: any;
-    @Input() property: string;
+    @Input() title = 'Name(s)';
+    @Input() parentObject: any;
+    @Input() propertyName: string;
+    @Input() required = false;
 
-    constructor() { }
-
-    initProperty(shouldInit: boolean) {
-        if (!this.parent) {
-            return;
-        }
-
-        if (shouldInit && !this.parent[this.property]) {
-            this.parent[this.property] = [];
-        } else if (!shouldInit && this.parent[this.property]) {
-            delete this.parent[this.property];
-        }
-
-        this.updateHumanNames();
-    }
-
-    addName() {
-        if (!this.humanNames) {
-            return;
-        }
-
-        this.humanNames.push(new HumanName());
-    }
-
-    private updateHumanNames() {
-        if (this.parent) {
-            this.humanNames = this.parent[this.property];
-        } else {
-            this.humanNames = null;
-        }
-    }
-
-    addGiven(humanName) {
-        if (!humanName.given) {
-            humanName.given = [];
-        }
-        humanName.given.push('');
-    }
+    constructor(public globals: Globals) { }
 
     ngOnChanges(changes) {
-        this.updateHumanNames();
+
     }
 
     ngOnInit() {
-        this.updateHumanNames();
-    }
-
-    trackByIndex(index, item) {
-        return index;
+        if (this.required) {
+            if (!this.parentObject[this.propertyName]) {
+                this.parentObject[this.propertyName] = [{ given: [''], family: '' }];
+            } else {
+                if (!this.parentObject[this.propertyName].given) {
+                    this.parentObject[this.propertyName].given = [''];
+                }
+                if (!this.parentObject[this.propertyName].hasOwnProperty('family')) {
+                    this.parentObject[this.propertyName].family = '';
+                }
+            }
+        }
     }
 }

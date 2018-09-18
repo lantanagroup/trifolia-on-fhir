@@ -1,31 +1,38 @@
-<div class="form-group">
-  <label>{{title}}</label>
-  <button type="button" class="btn btn-default btn-sm" *ngIf="humanNames" (click)="initProperty(false)">Exclude</button>
-  <button type="button" class="btn btn-default btn-sm" *ngIf="!humanNames" (click)="initProperty(true)">Include</button>
-  <button type="button" class="btn btn-default btn-sm" *ngIf="humanNames" (click)="addName(true)">Add Name</button>
-  <ul *ngIf="humanNames">
-    <li *ngFor="let hn of humanNames; let hi = index" [attr.data-index]="hi">
-      <div *ngIf="hn.given">
-        <div class="input-group" *ngFor="let given of hn.given; index as gi; trackBy: trackByIndex">
-          <div class="input-group-addon">Given</div>
-          <input type="text" class="form-control" [(ngModel)]="hn.given[gi]" />
-          <div class="input-group-btn" *ngIf="gi === hn.given.length-1">
-            <button type="button" class="btn btn-default" (click)="hn.given.push('')"><i class="fa fa-plus"></i></button>
-            <button type="button" class="btn btn-default" (click)="hn.given.splice(gi, 1)"><i class="fa fa-trash"></i></button>
-          </div>
+<div class="card">
+    <div class="card-header">
+        {{title || 'Name(s)'}}
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ given: [''], family: '' }])"/>
+    </div>
+    <div class="card-body" *ngFor="let name of parentObject[propertyName]; let ni = index">
+        <div class="form-group">
+            <label>
+                <input type="checkbox" *ngIf="!required" [ngModel]="name.hasOwnProperty('given')" (ngModelChange)="globals.toggleProperty(name, 'given', [''])"/>
+                Given
+            </label>
+            <div *ngIf="name.hasOwnProperty('given')">
+                <div class="input-group" *ngFor="let given of name.given; let gi = index; trackBy: globals.trackByFn">
+                    <input type="text" class="form-control" [(ngModel)]="name.given[gi]" [class.is-invalid]="!name.given[gi]" />
+                    <div class="input-group-btn btn-group">
+                        <button type="button" class="btn btn-default" title="Remove this given name" [disabled]="required && name.given.length === 1" (click)="name.given.splice(gi, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                        <button type="button" class="btn btn-default" *ngIf="gi === name.given.length - 1" title="Add a given name" (click)="name.given.push('')">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="input-group" *ngIf="!hn.given || hn.given.length == 0">
-        <div class="input-group-addon">Given</div>
-        <input type="text" class="form-control" [disabled]="true" />
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default" (click)="addGiven(hn)"><i class="fa fa-plus"></i></button>
+        <div class="form-group">
+            <label>Family</label>
+            <input type="text" class="form-control" [(ngModel)]="name.family" [class.is-invalid]="!name.family" />
         </div>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Family</div>
-        <input type="text" class="form-control" [(ngModel)]="hn.family" />
-      </div>
-    </li>
-  </ul>
+
+        <button type="button" class="btn btn-default" *ngIf="ni === parentObject[propertyName].length - 1" (click)="parentObject[propertyName].push({ given: [''], family: '' })">
+            <i class="fa fa-plus"></i> Add a name
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="required && parentObject[propertyName].length === 1" (click)="parentObject[propertyName].splice(ni, 1)" title="Remove this name">
+            <i class="fa fa-remove"></i> Remove this name
+        </button>
+    </div>
 </div>

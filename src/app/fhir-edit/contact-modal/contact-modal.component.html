@@ -12,7 +12,7 @@
             <input type="checkbox" [ngModel]="contact.hasOwnProperty('telecom')" (ngModelChange)="globals.toggleProperty(contact, 'telecom', [{}])"/>
             Telecom(s)
         </div>
-        <table class="table table-striped">
+        <table class="table table-striped" *ngIf="contact.hasOwnProperty('telecom')">
             <thead>
             <tr>
                 <th>System</th>

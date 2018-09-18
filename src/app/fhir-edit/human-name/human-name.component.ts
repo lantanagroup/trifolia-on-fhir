@@ -4,7 +4,7 @@ import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-mo
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-    selector: 'app-fhir-edit-human-name',
+    selector: 'app-fhir-human-name',
     templateUrl: './human-name.component.html',
     styleUrls: ['./human-name.component.css']
 })

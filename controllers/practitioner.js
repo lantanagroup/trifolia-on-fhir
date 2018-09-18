@@ -7,6 +7,8 @@ const {URL, resolve} = require('url');
 const _ = require('underscore');
 var Q = require('q');
 
+const thisResourceType = 'Practitioner';
+
 router.get('/', checkJwt, (req, res) => {
     res.send([]);
 });
@@ -22,21 +24,21 @@ function getMe(req) {
         identifier = authUser.substring(6);
     }
 
-    const url = new URL(resolve(req.fhirServerBase, 'Person'));
+    const url = new URL(resolve(req.fhirServerBase, thisResourceType));
     url.searchParams.set('identifier', system + '|' + identifier);
 
     request(url.toString(), { json: true }, (error, response, body) => {
         if (error) {
-            console.log('Error occurred getting Person for user: ' + error);
+            console.log(`Error occurred getting ${thisResourceType} for user: ` + error);
             return deferred.reject(error);
         }
 
         if (body.total === 0) {
-            return deferred.reject('No Person found for the authenticated user');
+            return deferred.reject(`No ${thisResourceType} found for the authenticated user`);
         }
 
         if (body.total > 1) {
-            return deferred.reject('Expected a single Person resource to be found');
+            return deferred.reject(`Expected a single ${thisResourceType} resource to be found`);
         }
 
         deferred.resolve(body.entry[0].resource);
@@ -45,12 +47,12 @@ function getMe(req) {
     return deferred.promise;
 }
 
-function updateMe(req, existingPerson) {
+function updateMe(req, existingPractitioner) {
     const deferred = Q.defer();
-    const person = req.body;
+    const practitioner = req.body;
 
-    if (!person || person.resourceType !== 'Person') {
-        throw new Error('Expected there to be a Person resource in the body of the request');
+    if (!practitioner || practitioner.resourceType !== thisResourceType) {
+        throw new Error(`Expected there to be a ${thisResourceType} resource in the body of the request`);
     }
 
     const authUser = req.user.sub;
@@ -62,31 +64,31 @@ function updateMe(req, existingPerson) {
         identifier = authUser.substring(6);
     }
 
-    if (!person.identifier) {
-        person.identifier = [];
+    if (!practitioner.identifier) {
+        practitioner.identifier = [];
     }
 
-    const foundIdentifier = _.find(person.identifier, (identifier) => identifier.system === system && identifier.value === identifier);
+    const foundIdentifier = _.find(practitioner.identifier, (identifier) => identifier.system === system && identifier.value === identifier);
 
     if (!foundIdentifier) {
-        person.identifier.push({
+        practitioner.identifier.push({
             system: system,
             value: identifier
         });
     }
 
-    if (existingPerson && existingPerson.id) {
-        person.id = existingPerson.id;
+    if (existingPractitioner && existingPractitioner.id) {
+        practitioner.id = existingPractitioner.id;
     }
 
-    const personRequest = {
-        url: req.getFhirServerUrl('Person', person.id),
-        method: person.id ? 'PUT' : 'POST',
-        body: person,
+    const practitionerRequest = {
+        url: req.getFhirServerUrl(thisResourceType, practitioner.id),
+        method: practitioner.id ? 'PUT' : 'POST',
+        body: practitioner,
         json: true
     };
 
-    request(personRequest, (err, response, body) => {
+    request(practitionerRequest, (err, response, body) => {
         if (err) {
             return deferred.reject(err);
         } else {
@@ -99,7 +101,7 @@ function updateMe(req, existingPerson) {
                     }
                 });
             } else {
-                deferred.resolve(person);
+                deferred.resolve(practitioner);
             }
         }
     });
@@ -109,12 +111,12 @@ function updateMe(req, existingPerson) {
 
 router.get('/me', checkJwt, (req, res) => {
     getMe(req)
-        .then((person) => {
-            res.send(person);
+        .then((practitioner) => {
+            res.send(practitioner);
         })
         .catch((err) => {
             if (typeof err === 'string') {
-                if (err.indexOf('No Person found') === 0) {
+                if (err.indexOf(`No ${thisResourceType} found`) === 0) {
                     return res.status(404).send(err.message);
                 }
 
@@ -126,12 +128,12 @@ router.get('/me', checkJwt, (req, res) => {
 });
 
 router.post('/me', checkJwt, (req, res) => {
-    getMe(req)  // attempt to get the existing person (if any) first
-        .then((person) => {
-            // Person already exists, pass it along to updateMe()
-            updateMe(req, person)
-                .then((updatedPerson) => {
-                    res.send(updatedPerson);
+    getMe(req)  // attempt to get the existing practitioner (if any) first
+        .then((practitioner) => {
+            // already exists, pass it along to updateMe()
+            updateMe(req, practitioner)
+                .then((updatedPractitioner) => {
+                    res.send(updatedPractitioner);
                 })
                 .catch((err) => {
                     if (typeof err === 'string') {
@@ -142,10 +144,10 @@ router.post('/me', checkJwt, (req, res) => {
                 });
         })
         .catch((err) => {
-            // Person does not already exist
+            // does not already exist
             updateMe(req)
-                .then((newPerson) => {
-                    res.send(newPerson);
+                .then((newPractitioner) => {
+                    res.send(newPractitioner);
                 })
                 .catch((err) => {
                     if (typeof err === 'string') {

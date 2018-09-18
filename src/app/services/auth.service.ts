@@ -1,8 +1,8 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
-import {PersonService} from './person.service';
-import {Person} from '../models/stu3/fhir';
+import {PractitionerService} from './practitioner.service';
+import {Practitioner} from '../models/stu3/fhir';
 import {ConfigService} from './config.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class AuthService {
 
     public auth0: any;
     public userProfile: any;
-    public person: Person;
+    public practitioner: Practitioner;
     public authExpiresAt: number;
     public authChanged: EventEmitter<any>;
     private authTimeout: any;
@@ -21,7 +21,7 @@ export class AuthService {
         public router: Router,
         private configService: ConfigService,
         private activatedRoute: ActivatedRoute,
-        private personService: PersonService) {
+        private practitionerService: PractitionerService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
         this.authChanged = new EventEmitter();
 
@@ -66,7 +66,7 @@ export class AuthService {
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
         this.userProfile = null;
-        this.person = null;
+        this.practitioner = null;
         this.authExpiresAt = null;
 
         if (this.authTimeout) {
@@ -82,7 +82,7 @@ export class AuthService {
         return new Date().getTime() < this.authExpiresAt;
     }
 
-    public getProfile(): Promise<{ userProfile: any, person: Person }> {
+    public getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
         const accessToken = localStorage.getItem('token');
         const self = this;
 
@@ -99,17 +99,17 @@ export class AuthService {
                 if (userProfile) {
                     self.userProfile = userProfile;
 
-                    this.personService.getMe()
-                        .subscribe((person: Person) => {
-                            self.person = person;
+                    this.practitionerService.getMe()
+                        .subscribe((practitioner: Practitioner) => {
+                            self.practitioner = practitioner;
 
                             resolve({
                                 userProfile: userProfile,
-                                person: person
+                                practitioner: practitioner
                             });
                             self.authChanged.emit();
-                        }, (personErr) => {
-                            reject(personErr);
+                        }, (err) => {
+                            reject(err);
                         });
                 }
             });
