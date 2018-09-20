@@ -1,10 +1,11 @@
 # Trifolia-on-FHIR
 
 ## Running
-1. Modify configuration to specify server port and authentication
-2. Compile Angular2 application with `ng build` or `ng build --watch` for development
+1. Run npm install
+2. Modify configuration to specify server port and authentication
+3. Compile Angular2 application with `ng build` or `ng build --watch` for development
     1. The results of `ng build` are stored in the wwwroot folder, which is served by the server in the next step.
-3. Run the server with `node server.js`
+4. Run the server with `node server.js`
 
 ## Deploying
 
