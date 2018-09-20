@@ -10,6 +10,7 @@ const allFiles = [
     'package.json',
     'controllers/**',
     'config/default.json',
+    'config/log4js.json',
     'ig-publisher-template/**',
     'ig-publisher/**',
     '!ig-publisher/latest/**',
