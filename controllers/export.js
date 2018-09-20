@@ -11,6 +11,7 @@ const zipdir = require('zip-dir');
 const { spawn } = require('child_process');
 const config = require('config');
 const fhirConfig = config.get('fhir');
+const serverConfig = config.get('server');
 const rp = require('request-promise');
 const log4js = require('log4js');
 const log = log4js.getLogger();
@@ -410,21 +411,27 @@ function exportHtml(req, res, testCallback) {
                         jarParams.push('-tx', 'N/A');
                     }
 
-                    const igPublisherProcess = spawn('java', jarParams);
+                    const igPublisherProcess = spawn(serverConfig.javaLocation || 'java', jarParams);
 
                     igPublisherProcess.stdout.on('data', (data) => {
                         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                        sendSocketMessage(req, packageId, 'progress', message);
+
+                        if (message && message.trim().replace(/\./g, '') !== '') {
+                            sendSocketMessage(req, packageId, 'progress', message);
+                        }
                     });
 
                     igPublisherProcess.stderr.on('data', (data) => {
                         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-                        sendSocketMessage(req, packageId, 'progress', message);
+
+                        if (message && message.trim().replace(/\./g, '') !== '') {
+                            sendSocketMessage(req, packageId, 'progress', message);
+                        }
                     });
 
                     igPublisherProcess.on('error', (err) => {
                         const message = 'Error executing JAVA IG Publisher: ' + err;
-                        sendSocketMessage(req, packageId, 'progress', message);
+                        sendSocketMessage(req, packageId, 'error', message);
                     });
 
                     igPublisherProcess.on('exit', (code) => {
