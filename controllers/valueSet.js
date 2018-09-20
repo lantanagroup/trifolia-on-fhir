@@ -5,6 +5,8 @@ const request = require('request').defaults({ json: true });
 const config = require('config');
 const _ = require('underscore');
 const FhirHelper = require('../fhirHelper');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'ValueSet';
 const fhirConfig = config.get('fhir');
@@ -29,7 +31,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving audit events from FHIR server: ' + error);
+            log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
         }
 
@@ -49,7 +51,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, (err, results, createBody) => {
        if (err) {
-           console.log('Error from FHIR server while creating value set: ' + err);
+           log.error('Error from FHIR server while creating value set: ' + err);
            return res.status(500).send('Error from FHIR server while creating value set');
        }
 
@@ -58,7 +60,7 @@ router.post('/', checkJwt, (req, res) => {
        if (location) {
            request(location, (err, results, retrieveBody) => {
                if (err) {
-                   console.log('Error from FHIR server while retrieving newly created value set: ' + err);
+                   log.error('Error from FHIR server while retrieving newly created value set: ' + err);
                    return res.status(500).send('Error from FHIR server while retrieving newly created value set');
                }
 
@@ -83,7 +85,7 @@ router.put('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, updateBody) => {
         if (err) {
-            console.log('Error from FHIR server while updating value set: ' + err);
+            log.error('Error from FHIR server while updating value set: ' + err);
             return res.status(500).send('Error from FHIR server while updating value set');
         }
 
@@ -92,7 +94,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated value set: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated value set: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated value set');
                 }
 
@@ -114,7 +116,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while retrieving value set: ' + err);
+            log.error('Error from FHIR server while retrieving value set: ' + err);
             return res.status(500).send('Error from FHIR server while retrieving value set');
         }
 
@@ -132,7 +134,7 @@ router.get('/:id/expand', checkJwt, (req, res) => {
 
     request(valueSetOptions, (valueSetError, valueSetResults, valueSet) => {
         if (valueSetError) {
-            console.log('Error from FHIR server while retrieving value set: ' + valueSetError);
+            log.error('Error from FHIR server while retrieving value set: ' + valueSetError);
             return res.status(500).send('Error from FHIR server while retrieving value set');
         }
 
@@ -151,7 +153,7 @@ router.get('/:id/expand', checkJwt, (req, res) => {
 
         request(expandOptions, (expandError, expandResults, expandedValueSet) => {
             if (expandError) {
-                console.log('Error from FHIR server while expanding value set: ' + expandError);
+                log.error('Error from FHIR server while expanding value set: ' + expandError);
                 return res.status(500).send('Error from FHIR server while expanding value set');
             }
 
@@ -170,7 +172,7 @@ router.delete('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while deleting value set: ' + err);
+            log.error('Error from FHIR server while deleting value set: ' + err);
             return res.status(500).send('Error from FHIR server while deleting value set');
         }
 

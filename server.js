@@ -23,10 +23,15 @@ const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
 const fhir = FhirHelper.getFhirInstance();
+const log4js = require('log4js');
 
 const app = express();
 const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
+
+
+log4js.configure('config/log4js.json');
+const log = log4js.getLogger();
 
 // Parsers for POST data
 app.use(bodyParser.json({ limit: '15mb' }));
@@ -69,7 +74,7 @@ app.use((req, res, next) => {
             return err;
         }
 
-        console.log(err);
+        log.error(err);
         return 'Unspecified error';
     };
 
@@ -108,14 +113,14 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(port, () => console.log(`API running on localhost:${port}`));
+server.listen(port, () => log.info(`API running on localhost:${port}`));
 
 const io = socketIO(server);
 
 io.on('connection', (socket) => {
-    console.log('User connected to socket');
+    log.info('User connected to socket');
     socket.on('disconnect', () => {
-        console.log('User disconnected from socket');
+        log.info('User disconnected from socket');
     });
 });
 

@@ -4,6 +4,8 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request').defaults({ json: true });
 const _ = require('underscore');
 const fhirHelper = require('../fhirHelper');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'CapabilityStatement';
 
@@ -12,7 +14,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving audit events from FHIR server: ' + error);
+            log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
         }
 
@@ -32,7 +34,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, (err, results, createBody) => {
        if (err) {
-           console.log('Error from FHIR server while creating capability statement: ' + err);
+           log.error('Error from FHIR server while creating capability statement: ' + err);
            return res.status(500).send('Error from FHIR server while creating capability statement');
        }
 
@@ -41,7 +43,7 @@ router.post('/', checkJwt, (req, res) => {
        if (location) {
            request(location, (err, results, retrieveBody) => {
                if (err) {
-                   console.log('Error from FHIR server while retrieving newly created capability statement: ' + err);
+                   log.error('Error from FHIR server while retrieving newly created capability statement: ' + err);
                    return res.status(500).send('Error from FHIR server while retrieving newly created capability statement');
                }
 
@@ -66,7 +68,7 @@ router.put('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, updateBody) => {
         if (err) {
-            console.log('Error from FHIR server while updating capability statement: ' + err);
+            log.error('Error from FHIR server while updating capability statement: ' + err);
             return res.status(500).send('Error from FHIR server while updating capability statement');
         }
 
@@ -75,7 +77,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated capability statement: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated capability statement: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated capability statement');
                 }
 
@@ -97,7 +99,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while retrieving capability statement: ' + err);
+            log.error('Error from FHIR server while retrieving capability statement: ' + err);
             return res.status(500).send('Error from FHIR server while retrieving capability statement');
         }
 
@@ -115,7 +117,7 @@ router.delete('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while deleting capability statement: ' + err);
+            log.error('Error from FHIR server while deleting capability statement: ' + err);
             return res.status(500).send('Error from FHIR server while deleting capability statement');
         }
 

@@ -3,6 +3,8 @@ const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 router.use(checkJwt, (req, res) => {
     let url = req.fhirServerBase;
@@ -34,13 +36,13 @@ router.use(checkJwt, (req, res) => {
         const fhirRequest = request(options);
 
         fhirRequest.on('error', (err) => {
-            console.log(err);
+            log.error(err);
             res.status(500).send();
         });
 
         fhirRequest.pipe(res);
     } catch (ex) {
-        console.log('Error executing FHIR request: ' + ex);
+        log.error('Error executing FHIR request: ' + ex);
         res.status(500).send('Error executing FHIR request');
     }
 });

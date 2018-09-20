@@ -4,6 +4,8 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request').defaults({ json: true });
 const _ = require('underscore');
 const fhirHelper = require('../fhirHelper');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'Binary';
 
@@ -12,7 +14,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving audit events from FHIR server: ' + error);
+            log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
         }
 
@@ -32,7 +34,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, (err, results, createBody) => {
        if (err) {
-           console.log('Error from FHIR server while creating binary: ' + err);
+           log.error('Error from FHIR server while creating binary: ' + err);
            return res.status(500).send('Error from FHIR server while creating binary');
        }
 
@@ -43,7 +45,7 @@ router.post('/', checkJwt, (req, res) => {
 
            request(location, (err, results, retrieveBody) => {
                if (err) {
-                   console.log('Error from FHIR server while retrieving newly created binary: ' + err);
+                   log.error('Error from FHIR server while retrieving newly created binary: ' + err);
                    return res.status(500).send('Error from FHIR server while retrieving newly created binary');
                }
 
@@ -72,7 +74,7 @@ router.put('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, updateBody) => {
         if (err) {
-            console.log('Error from FHIR server while updating binary: ' + err);
+            log.error('Error from FHIR server while updating binary: ' + err);
             return res.status(500).send('Error from FHIR server while updating binary');
         }
 
@@ -81,7 +83,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated binary: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated binary: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated binary');
                 }
 
@@ -106,7 +108,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while retrieving binary: ' + err);
+            log.error('Error from FHIR server while retrieving binary: ' + err);
             return res.status(500).send('Error from FHIR server while retrieving binary');
         }
 
@@ -127,7 +129,7 @@ router.delete('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while deleting binary: ' + err);
+            log.error('Error from FHIR server while deleting binary: ' + err);
             return res.status(500).send('Error from FHIR server while deleting binary');
         }
 

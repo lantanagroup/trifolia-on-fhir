@@ -6,6 +6,8 @@ const _ = require('underscore');
 const fhirConfig = config.get('fhir');
 const authConfig = config.get('auth');
 const request = require('request');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 router.get('/', (req, res) => {
     const retConfig = {
@@ -25,7 +27,7 @@ router.get('/fhir', (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving metadata from FHIR server: ' + error);
+            log.error('Error retrieving metadata from FHIR server: ' + error);
             return res.status(500).send('Error retrieving metadata from FHIR server');
         }
 

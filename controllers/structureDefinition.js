@@ -7,6 +7,8 @@ const config = require('config');
 const fhirConfig = config.get('fhir');
 const semver = require('semver');
 const {resolve} = require('url');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'StructureDefinition';
 
@@ -29,7 +31,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving structure definitions from FHIR server: ' + error);
+            log.error('Error retrieving structure definitions from FHIR server: ' + error);
             return res.status(500).send('Error retrieving structure definition from FHIR server');
         }
 
@@ -67,7 +69,7 @@ router.get('/', checkJwt, (req, res) => {
                 items: structureDefinitions
             });
         } else if (body && body.resourceType === 'OperationOutcome') {
-            console.log(body.text ? body.text.div : JSON.stringify(body));
+            log.error(body.text ? body.text.div : JSON.stringify(body));
             res.status(500).send();
         }
     });
@@ -78,7 +80,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving structure definition from FHIR server: ' + error);
+            log.error('Error retrieving structure definition from FHIR server: ' + error);
             return res.status(500).send('Error retrieving structure definition from FHIR server');
         }
 
@@ -95,7 +97,7 @@ router.get('/base/:id', checkJwt, (req, res) => {
         });
 
         if (!publishedFhirVersion) {
-            console.log('Unsupported FHIR version ' + conformance.fhirVersion);
+            log.error('Unsupported FHIR version ' + conformance.fhirVersion);
             res.status(500).send('Unsupported FHIR version ' + conformance.fhirVersion);
         }
 
@@ -119,7 +121,7 @@ router.post('/', checkJwt, (req, res) => {
 
     request(options, (err, results, createBody) => {
         if (err) {
-            console.log('Error from FHIR server while creating structure definition: ' + err);
+            log.error('Error from FHIR server while creating structure definition: ' + err);
             return res.status(500).send('Error from FHIR server while creating structure definition');
         }
         const location = results.headers.location || results.headers['content-location'];
@@ -127,7 +129,7 @@ router.post('/', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving newly created structure definition: ' + err);
+                    log.error('Error from FHIR server while retrieving newly created structure definition: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving newly created structure definition');
                 }
 
@@ -152,7 +154,7 @@ router.put('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, updateBody) => {
         if (err) {
-            console.log('Error from FHIR server while updating structure definition: ' + err);
+            log.error('Error from FHIR server while updating structure definition: ' + err);
             return res.status(500).send('Error from FHIR server while updating structure definition');
         }
 
@@ -161,7 +163,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated structure definition: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated structure definition: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated structure definition');
                 }
 
@@ -183,7 +185,7 @@ router.delete('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while deleting structure definition: ' + err);
+            log.error('Error from FHIR server while deleting structure definition: ' + err);
             return res.status(500).send('Error from FHIR server while deleting structure definition');
         }
 
