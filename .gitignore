@@ -46,3 +46,4 @@ TrifoliaFhir/bin/
 wwwroot/
 ig-publisher/latest/
 dist.zip
+*.log

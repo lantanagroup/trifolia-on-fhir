@@ -6,6 +6,8 @@ const url = require('url');
 const {URL, resolve} = require('url');
 const _ = require('underscore');
 var Q = require('q');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'Practitioner';
 
@@ -29,7 +31,7 @@ function getMe(req) {
 
     request(url.toString(), { json: true }, (error, response, body) => {
         if (error) {
-            console.log(`Error occurred getting ${thisResourceType} for user: ` + error);
+            log.error(`Error occurred getting ${thisResourceType} for user: ` + error);
             return deferred.reject(error);
         }
 

@@ -7,6 +7,8 @@ const Fhir = require('fhir');
 const ValueSets = require('./src/assets/stu3/valuesets');
 const ProfileTypes = require('./src/assets/stu3/profiles-types');
 const ProfileResources = require('./src/assets/stu3/profiles-resources');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 function joinUrl() {
     let url = '';
@@ -117,7 +119,7 @@ function loadExtensions() {
             rp(retrieveOptions)
                 .then((retrieveResults) => {
                     if (retrieveResults) {
-                        console.log(`Extension ${extension.url} already exists on server ${fhirServer.id}`);
+                        log.info(`Extension ${extension.url} already exists on server ${fhirServer.id}`);
 
                         if (retrieveResults.url !== extension.url) {
                             throw new Error(`Extension ${extension.id} already exists on server, but has url ${retrieveResults.url} instead of ${extension.url}`);
@@ -139,14 +141,14 @@ function loadExtensions() {
                             };
                             rp(createOptions)
                                 .then((createResults) => {
-                                    console.log(`Successfully loaded extension ${extension.url} on FHIR server ${fhirServer.id}`);
+                                    log.info(`Successfully loaded extension ${extension.url} on FHIR server ${fhirServer.id}`);
                                 })
                                 .catch((err) => {
-                                    console.log(`Error creating extension ${extension.url} on FHIR server ${fhirServer.id}: ${err}`);
+                                    log.error(`Error creating extension ${extension.url} on FHIR server ${fhirServer.id}: ${err}`);
                                 })
                         }
                     } else {
-                        console.log('Error ensuring extension exists on FHIR server: ' + err);
+                        log.error('Error ensuring extension exists on FHIR server: ' + err);
                     }
                 });
         });

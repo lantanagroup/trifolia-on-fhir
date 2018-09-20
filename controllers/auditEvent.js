@@ -3,6 +3,8 @@ const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'AuditEvent';
 
@@ -11,7 +13,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving audit events from FHIR server: ' + error);
+            log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
         }
 
@@ -31,7 +33,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, function(err, results, body) {
        if (err) {
-           console.log('Error from FHIR server while creating audit event: ' + err);
+           log.error('Error from FHIR server while creating audit event: ' + err);
            return res.status(500).send('Error from FHIR server while creating audit event');
        }
 
@@ -49,7 +51,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(options, function(err, results, body) {
         if (err) {
-            console.log('Error from FHIR server while retrieving binary: ' + err);
+            log.error('Error from FHIR server while retrieving binary: ' + err);
             return res.status(500).send('Error from FHIR server while retrieving binary');
         }
 

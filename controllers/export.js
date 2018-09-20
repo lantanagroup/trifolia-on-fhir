@@ -12,6 +12,8 @@ const { spawn } = require('child_process');
 const config = require('config');
 const fhirConfig = config.get('fhir');
 const rp = require('request-promise');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 function getBundle(req, format) {
     const deferred = Q.defer();
@@ -24,7 +26,7 @@ function getBundle(req, format) {
 
     request(url, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving implementation guide bundle from FHIR server: ' + error);
+            log.error('Error retrieving implementation guide bundle from FHIR server: ' + error);
             return deferred.reject('Error retrieving implementation guide bundle from FHIR server');
         }
 
@@ -223,7 +225,7 @@ function getDependency(dependencyUrl, dependencyName) {
 
     request(dependencyUrl, { encoding: null }, (err, response, body) => {
         if (err) {
-            console.log(err);
+            log.error(err);
             deferred.reject('Could not retrieve dependency at ' + dependencyUrl);
         } else {
             deferred.resolve({
@@ -315,7 +317,7 @@ function exportHtml(req, res, testCallback) {
 
     tmp.dir((err, rootPath, cleanup) => {
         if (err) {
-            console.log(err);
+            log.error(err);
             return res.status(500).send('An error occurred while creating a temporary directory');
         }
 
@@ -432,7 +434,7 @@ function exportHtml(req, res, testCallback) {
                             const outputPath = path.resolve(rootPath, 'output');
                             fs.copy(outputPath, deployDir, (err) => {
                                 if (err) {
-                                    console.log(err);
+                                    log.error(err);
                                     sendSocketMessage(req, packageId, 'error', 'Error copying contents to deployment path.');
                                 } else {
                                     sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
@@ -442,7 +444,7 @@ function exportHtml(req, res, testCallback) {
                     });
                 })
                 .catch((err) => {
-                    console.log(err);
+                    log.error(err);
                     sendSocketMessage(req, packageId, 'error', 'Error during export: ' + err);
 
                     if (testCallback) {
@@ -462,7 +464,7 @@ router.post('/:implementationGuideId', checkJwt, (req, res) => {
                 return exportHtml(req, res);
         }
     } catch (ex) {
-        console.log(ex);
+        log.error(ex);
         return res.status(500).send('A fatal error occurred while exporting');
     }
 });
@@ -472,7 +474,7 @@ router.get('/:packageId', checkJwt, (req, res) => {
 
     zipdir(rootPath, (err, buffer) => {
         if (err) {
-            console.log(err);
+            log.error(err);
             fs.emptyDir(rootPath, cleanup);             // Asynchronously removes the temporary folder
             return res.status(500).send('An error occurred while ziping the package');
         }

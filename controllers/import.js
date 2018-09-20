@@ -4,6 +4,8 @@ const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
 const Q = require('q');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 function importResource(resource, getFhirServerUrl) {
     if (!resource) {
@@ -93,7 +95,7 @@ router.post('/', checkJwt, (req, res) => {
             res.send(results);
         })
         .catch((err) => {
-            console.log('An error occurred while importing the resource(s): ' + err);
+            log.error('An error occurred while importing the resource(s): ' + err);
             res.status(500).send(err);
         });
 });

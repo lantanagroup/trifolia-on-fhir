@@ -5,6 +5,8 @@ const request = require('request').defaults({ json: true });
 const config = require('config');
 const _ = require('underscore');
 const FhirHelper = require('../fhirHelper');
+const log4js = require('log4js');
+const log = log4js.getLogger();
 
 const thisResourceType = 'Questionnaire';
 const fhirConfig = config.get('fhir');
@@ -14,7 +16,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(url, { json: true }, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving audit events from FHIR server: ' + error);
+            log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
         }
 
@@ -34,7 +36,7 @@ router.post('/', checkJwt, (req, res) => {
 
    request(options, (err, results, createBody) => {
        if (err) {
-           console.log('Error from FHIR server while creating questionnaire: ' + err);
+           log.error('Error from FHIR server while creating questionnaire: ' + err);
            return res.status(500).send('Error from FHIR server while creating questionnaire');
        }
 
@@ -43,7 +45,7 @@ router.post('/', checkJwt, (req, res) => {
        if (location) {
            request(location, (err, results, retrieveBody) => {
                if (err) {
-                   console.log('Error from FHIR server while retrieving newly created questionnaire: ' + err);
+                   log.error('Error from FHIR server while retrieving newly created questionnaire: ' + err);
                    return res.status(500).send('Error from FHIR server while retrieving newly created questionnaire');
                }
 
@@ -68,7 +70,7 @@ router.put('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, updateBody) => {
         if (err) {
-            console.log('Error from FHIR server while updating questionnaire: ' + err);
+            log.error('Error from FHIR server while updating questionnaire: ' + err);
             return res.status(500).send('Error from FHIR server while updating questionnaire');
         }
 
@@ -77,7 +79,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated questionnaire: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated questionnaire: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated questionnaire');
                 }
 
@@ -99,7 +101,7 @@ router.get('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while retrieving questionnaire: ' + err);
+            log.error('Error from FHIR server while retrieving questionnaire: ' + err);
             return res.status(500).send('Error from FHIR server while retrieving questionnaire');
         }
 
@@ -117,7 +119,7 @@ router.get('/:id/expand', checkJwt, (req, res) => {
 
     request(valueSetOptions, (valueSetError, valueSetResults, valueSet) => {
         if (valueSetError) {
-            console.log('Error from FHIR server while retrieving questionnaire: ' + valueSetError);
+            log.error('Error from FHIR server while retrieving questionnaire: ' + valueSetError);
             return res.status(500).send('Error from FHIR server while retrieving questionnaire');
         }
 
@@ -136,7 +138,7 @@ router.get('/:id/expand', checkJwt, (req, res) => {
 
         request(expandOptions, (expandError, expandResults, expandedValueSet) => {
             if (expandError) {
-                console.log('Error from FHIR server while expanding questionnaire: ' + expandError);
+                log.error('Error from FHIR server while expanding questionnaire: ' + expandError);
                 return res.status(500).send('Error from FHIR server while expanding questionnaire');
             }
 
@@ -155,7 +157,7 @@ router.delete('/:id', checkJwt, (req, res) => {
 
     request(options, (err, results, body) => {
         if (err) {
-            console.log('Error from FHIR server while deleting questionnaire: ' + err);
+            log.error('Error from FHIR server while deleting questionnaire: ' + err);
             return res.status(500).send('Error from FHIR server while deleting questionnaire');
         }
 
