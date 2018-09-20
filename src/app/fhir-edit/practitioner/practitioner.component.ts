@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Practitioner} from '../../models/stu3/fhir';
+import {Globals} from '../../globals';
 
 @Component({
     selector: 'app-fhir-practitioner',
@@ -9,7 +10,7 @@ import {Practitioner} from '../../models/stu3/fhir';
 export class FhirEditPractitionerComponent implements OnInit {
     @Input() practitioner: Practitioner;
 
-    constructor() {
+    constructor(public globals: Globals) {
     }
 
     ngOnInit() {
