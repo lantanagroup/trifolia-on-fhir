@@ -422,6 +422,11 @@ function exportHtml(req, res, testCallback) {
                         sendSocketMessage(req, packageId, 'progress', message);
                     });
 
+                    igPublisherProcess.on('error', (err) => {
+                        const message = 'Error executing JAVA IG Publisher: ' + err;
+                        sendSocketMessage(req, packageId, 'progress', message);
+                    });
+
                     igPublisherProcess.on('exit', (code) => {
                         sendSocketMessage(req, packageId, 'progress', 'IG Publisher finished with code ' + code);
 
