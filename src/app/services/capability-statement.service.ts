@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Bundle, CapabilityStatement} from '../models/stu3/fhir';
+import {Bundle, CapabilityStatement, OperationOutcome} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
@@ -23,7 +23,7 @@ export class CapabilityStatementService {
 
     public get(id: string) {
         const url = '/api/capabilityStatement/' + encodeURIComponent(id);
-        return this.http.get<CapabilityStatement>(url);
+        return this.http.get<CapabilityStatement | OperationOutcome>(url);
     }
 
     public delete(id: string) {

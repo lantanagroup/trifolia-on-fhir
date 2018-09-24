@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Bundle, CodeSystem} from '../models/stu3/fhir';
+import {Bundle, CodeSystem, OperationOutcome} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
@@ -26,7 +26,7 @@ export class CodeSystemService {
 
     public get(id: string) {
         const url = '/api/codeSystem/' + encodeURIComponent(id);
-        return this.http.get<CodeSystem>(url);
+        return this.http.get<CodeSystem | OperationOutcome>(url);
     }
 
     public delete(id: string) {

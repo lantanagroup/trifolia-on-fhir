@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {Globals} from '../globals';
+import {RecentItemService} from '../services/recent-item.service';
 
 @Component({
     selector: 'app-change-resource-id-modal',
@@ -17,12 +18,15 @@ export class ChangeResourceIdModalComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private fhirService: FhirService,
+        private recentItemService: RecentItemService,
         private globals: Globals) {
     }
 
     public ok() {
         this.fhirService.changeResourceId(this.resourceType, this.originalId, this.newId)
             .subscribe(() => {
+                const cookieKey = this.recentItemService.getCookieKey(this.resourceType);
+                this.recentItemService.changeId(cookieKey, this.originalId, this.newId);
                 this.activeModal.close(this.newId);
             }, (err) => {
                 this.message = this.globals.getErrorMessage(err);

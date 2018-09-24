@@ -113,6 +113,43 @@ export class RecentItemService {
         }
     }
 
+    public changeId(cookieKey: string, originalId: string, newId: string) {
+        const existing = this.getRecentItem(cookieKey, originalId);
+
+        if (existing) {
+            this.removeRecentItem(cookieKey, originalId);
+            this.ensureRecentItem(cookieKey, newId, existing.display);
+        }
+    }
+
+    public getCookieKey(resourceType: string): string {
+        switch (resourceType) {
+            case 'StructureDefinition':
+                return this.globals.cookieKeys.recentStructureDefinitions;
+            case 'ImplementationGuide':
+                return this.globals.cookieKeys.recentImplementationGuides;
+            case 'OperationDefinition':
+                return this.globals.cookieKeys.recentOperationDefinitions;
+            case 'CapabilityStatement':
+                return this.globals.cookieKeys.recentCapabilityStatements;
+            case 'ValueSet':
+                return this.globals.cookieKeys.recentValueSets;
+            case 'CodeSystem':
+                return this.globals.cookieKeys.recentCodeSystems;
+            case 'Questionnaire':
+                return this.globals.cookieKeys.recentQuestionnaires;
+        }
+    }
+
+    private getRecentItem(cookieKey: string, id: string): RecentItemModel {
+        const fhirServer = this.configService.fhirServer;
+        const coll = this.getCollection(cookieKey + '-' + fhirServer);
+
+        if (coll) {
+            return _.find(coll, (recentItem: RecentItemModel) => recentItem.id === id);
+        }
+    }
+
     private getCollection(cookieKey: string): RecentItemModel[] {
         const fhirServer = this.configService.fhirServer;
 

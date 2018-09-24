@@ -1,5 +1,11 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {ConceptReferenceComponent, ConceptSetComponent, OperationDefinition, ValueSet} from '../models/stu3/fhir';
+import {
+    ConceptReferenceComponent,
+    ConceptSetComponent,
+    OperationDefinition,
+    OperationOutcome,
+    ValueSet
+} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -102,14 +108,19 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
         if (valueSetId !== 'new' && valueSetId) {
             this.valueSetService.get(valueSetId)
-                .subscribe((vs) => {
-                    this.valueSet = vs;
+                .subscribe((results: ValueSet|OperationOutcome) => {
+                    if (results.resourceType !== 'ValueSet') {
+                        throw new Error('The specified value set either does not exist or was deleted');
+                    }
+
+                    this.valueSet = <ValueSet> results;
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentValueSets,
-                        vs.id,
-                        vs.name || vs.title);
+                        this.valueSet.id,
+                        this.valueSet.name || this.valueSet.title);
                 }, (err) => {
                     this.message = 'Error loading value set';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentValueSets, valueSetId);
                 });
         }
     }

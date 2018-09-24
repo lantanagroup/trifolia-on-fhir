@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Bundle, OperationDefinition} from '../models/stu3/fhir';
+import {Bundle, OperationDefinition, OperationOutcome} from '../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class OperationDefinitionService {
 
     public get(id: string) {
         const url = '/api/operationDefinition/' + encodeURIComponent(id);
-        return this.http.get<OperationDefinition>(url);
+        return this.http.get<OperationDefinition | OperationOutcome>(url);
     }
 
     public delete(id: string) {

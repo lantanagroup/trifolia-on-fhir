@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, Questionnaire} from '../models/stu3/fhir';
+import {Bundle, OperationOutcome, Questionnaire} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class QuestionnaireService {
 
     public get(id: string) {
         const url = '/api/questionnaire/' + encodeURIComponent(id);
-        return this.http.get<Questionnaire>(url);
+        return this.http.get<Questionnaire|OperationOutcome>(url);
     }
 
     public expand(id: string) {

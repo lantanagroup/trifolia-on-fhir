@@ -8,7 +8,7 @@ import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {
     DifferentialComponent,
-    ElementDefinition,
+    ElementDefinition, OperationOutcome,
     StructureDefinition
 } from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
@@ -219,8 +219,12 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.elements = [];
 
         this.strucDefService.getStructureDefinition(strucDefId)
-            .mergeMap((structureDefinition: any) => {
-                this.structureDefinition = structureDefinition;
+            .mergeMap((structureDefinition: StructureDefinition|OperationOutcome) => {
+                if (structureDefinition.resourceType !== 'StructureDefinition') {
+                    throw new Error('The requested StructureDefinition either does not exist or has been deleted');
+                }
+
+                this.structureDefinition = <StructureDefinition> structureDefinition;
 
                 if (!this.structureDefinition.differential) {
                     this.structureDefinition.differential = new DifferentialComponent({ element: [] });
@@ -234,7 +238,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 }
 
                 this.message = 'Loading base structure definition...';
-                return this.strucDefService.getBaseStructureDefinition(structureDefinition.type);
+                return this.strucDefService.getBaseStructureDefinition(this.structureDefinition.type);
             })
             .subscribe(baseStructureDefinition => {
                 this.baseStructureDefinition = baseStructureDefinition;
@@ -246,6 +250,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 this.message = 'Done loading structure definition';
             }, error => {
                 this.message = 'Error loading structure definitions';
+                this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, strucDefId);
             });
     }
 

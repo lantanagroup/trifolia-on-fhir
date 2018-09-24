@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 
 export class ExportOptions {
     public implementationGuideId: number;
-    public exportFormat = ExportFormats.Bundle;
+    public exportFormat = ExportFormats.HTML;
     public responseFormat = 'application/json';
     public useTerminologyServer = true;
     public executeIgPublisher = true;

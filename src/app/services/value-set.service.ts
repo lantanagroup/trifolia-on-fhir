@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Bundle, ValueSet} from '../models/stu3/fhir';
+import {Bundle, OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
@@ -40,7 +40,7 @@ export class ValueSetService {
 
     public get(id: string) {
         const url = '/api/valueSet/' + encodeURIComponent(id);
-        return this.http.get<ValueSet>(url);
+        return this.http.get<ValueSet|OperationOutcome>(url);
     }
 
     public expand(id: string) {

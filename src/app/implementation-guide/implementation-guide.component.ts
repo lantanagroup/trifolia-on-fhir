@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, Coding, Extension, ImplementationGuide, PageComponent} from '../models/stu3/fhir';
+import {Binary, Coding, Extension, ImplementationGuide, OperationOutcome, PageComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Globals} from '../globals';
@@ -176,8 +176,12 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
         if (implementationGuideId !== 'new' && implementationGuideId) {
             this.implementationGuideService.getImplementationGuide(implementationGuideId)
-                .subscribe((results: ImplementationGuide) => {
-                    this.implementationGuide = results;
+                .subscribe((results: ImplementationGuide | OperationOutcome) => {
+                    if (results.resourceType !== 'ImplementationGuide') {
+                        throw new Error('The specified implementation guide either does not exist or was deleted');
+                    }
+
+                    this.implementationGuide = <ImplementationGuide> results;
                     this.initPages();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentImplementationGuides,
@@ -185,6 +189,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                         this.implementationGuide.name);
                 }, (err) => {
                     this.message = 'Error loading implementation guide';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });
         }
     }
