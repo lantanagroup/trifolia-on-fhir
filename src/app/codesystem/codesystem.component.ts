@@ -86,13 +86,18 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         if (codeSystemId !== 'new' && codeSystemId) {
             this.codeSystemService.get(codeSystemId)
                 .subscribe((cs) => {
-                    this.codeSystem = cs;
+                    if (cs.resourceType !== 'CodeSystem') {
+                        throw new Error('The specified code system either does not exist or was deleted');
+                    }
+
+                    this.codeSystem = <CodeSystem> cs;
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentCodeSystems,
-                        cs.id,
-                        cs.name || cs.title);
+                        this.codeSystem.id,
+                        this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
                     this.message = 'Error loading code system';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }
     }

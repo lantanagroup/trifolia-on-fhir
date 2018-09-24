@@ -1,6 +1,6 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {
-    OperationDefinition,
+    OperationDefinition, OperationOutcome,
     ParameterComponent
 } from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -91,14 +91,19 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
         if (operationDefinitionId !== 'new' && operationDefinitionId) {
             this.opDefService.get(operationDefinitionId)
-                .subscribe((opDef) => {
-                    this.operationDefinition = opDef;
+                .subscribe((opDef: OperationDefinition | OperationOutcome) => {
+                    if (opDef.resourceType !== 'OperationDefinition') {
+                        throw new Error('The specified operation definition either does not exist or was deleted');
+                    }
+
+                    this.operationDefinition = <OperationDefinition> opDef;
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentOperationDefinitions,
                         this.operationDefinition.id,
                         this.operationDefinition.name);
                 }, (err) => {
                     this.message = 'Error loading operation definition';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });
         }
     }

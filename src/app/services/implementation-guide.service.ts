@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {ImplementationGuide} from '../models/stu3/fhir';
+import {ImplementationGuide, OperationOutcome} from '../models/stu3/fhir';
 
 @Injectable()
 export class ImplementationGuideService {
@@ -29,7 +29,7 @@ export class ImplementationGuideService {
     }
 
     public getImplementationGuide(id: string) {
-        return this.http.get('/api/implementationGuide/' + id);
+        return this.http.get<ImplementationGuide | OperationOutcome>('/api/implementationGuide/' + id);
     }
 
     public saveImplementationGuide(implementationGuide: ImplementationGuide) {

@@ -1,9 +1,9 @@
 <div class="form-group" *ngIf="isFormGroup">
     <label>
         <input type="checkbox" *ngIf="!required && !disabled" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
-        {{title || propertyName}}
+        <span>{{title || propertyName}} </span>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
-    <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
 
     <input type="text" class="form-control"
            [(ngModel)]="parentObject[propertyName]"

@@ -1,28 +1,24 @@
 <div class="form-group" *ngIf="isFormGroup">
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, getDefaultCode())"/>
-        {{title}}
+        <span>{{title}} </span>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
         <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
             <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
         </select>
         <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
-        <div class="input-group-addon" *ngIf="tooltipPath || tooltipKey">
-            <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-        </div>
     </div>
 </div>
 <div *ngIf="!isFormGroup" [class.input-group]="!required">
     <div class="input-group-addon" *ngIf="!required || title">
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, getDefaultCode())"/>
-        {{title}}
+        <span>{{title}} </span>
+        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
         <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
     </select>
     <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
-    <div class="input-group-addon" *ngIf="tooltipPath || tooltipKey">
-        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-    </div>
 </div>

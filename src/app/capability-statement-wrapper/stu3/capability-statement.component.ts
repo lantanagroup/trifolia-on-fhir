@@ -141,13 +141,18 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
         if (capabilityStatementId !== 'new' && capabilityStatementId) {
             this.csService.get(capabilityStatementId)
                 .subscribe((cs) => {
-                    this.capabilityStatement = cs;
+                    if (cs.resourceType !== 'CapabilityStatement') {
+                        throw new Error('The specified capability statement either does not exist or was deleted');
+                    }
+
+                    this.capabilityStatement = <CapabilityStatement> cs;
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentCapabilityStatements,
-                        cs.id,
-                        cs.name || cs.title);
+                        this.capabilityStatement.id,
+                        this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
                     this.message = 'Error loading capability statement';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }
     }

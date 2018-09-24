@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {ConceptSetComponent, Questionnaire, ValueSet} from '../models/stu3/fhir';
+import {ConceptSetComponent, OperationOutcome, Questionnaire, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -82,14 +82,19 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
 
         if (questionnaireId !== 'new' && questionnaireId) {
             this.questionnaireService.get(questionnaireId)
-                .subscribe((questionnaire) => {
-                    this.questionnaire = questionnaire;
+                .subscribe((questionnaire: Questionnaire | OperationOutcome) => {
+                    if (questionnaire.resourceType !== 'Questionnaire') {
+                        throw new Error('The specified questionnaire either does not exist or was deleted');
+                    }
+
+                    this.questionnaire = <Questionnaire> questionnaire;
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentQuestionnaires,
                         questionnaire.id,
-                        questionnaire.name || questionnaire.title);
+                        this.questionnaire.name || this.questionnaire.title);
                 }, (err) => {
                     this.message = 'Error loading questionnaire';
+                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentQuestionnaires, questionnaireId);
                 });
         }
     }
