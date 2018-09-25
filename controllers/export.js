@@ -72,11 +72,16 @@ function getControl(extension, implementationGuide, bundle, version) {
         'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
         license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
         paths: {
-            resources: 'resources',
-            qa: 'qa',
-            temp: 'temp',
-            pages: 'pages',
-            specification: 'http://www.hl7.org/fhir/'
+            qa: "generated_output/qa",
+            temp: "generated_output/temp",
+            output: "output",
+            txCache: "generated_output/txCache",
+            specification: "http://hl7.org/fhir/STU3",
+            pages: [
+                "framework",
+                "source/pages"
+            ],
+            resources: [ "source/resources" ]
         },
         pages: ['pages'],
         'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
@@ -84,13 +89,37 @@ function getControl(extension, implementationGuide, bundle, version) {
         'sct-edition': 'http://snomed.info/sct/731000124108',
         canonicalBase: canonicalBaseMatch[1],
         defaults: {
-            "Any": {
-                "template-format": "instance-template-format.html",
-                "template-base": "instance-template-base.html"
-            },
+            "Location": {"template-base": "ex.html"},
+            "ProcedureRequest": {"template-base": "ex.html"},
+            "Organization": {"template-base": "ex.html"},
+            "MedicationStatement": {"template-base": "ex.html"},
+            "SearchParameter": {"template-base": "base.html"},
             "StructureDefinition": {
-                "template-base": "instance-template-sd.html"
-            }
+                "template-mappings": "sd-mappings.html",
+                "template-base": "sd.html",
+                "template-defns": "sd-definitions.html"
+            },
+            "Immunization": {"template-base": "ex.html"},
+            "Patient": {"template-base": "ex.html"},
+            "StructureMap": {
+                "content": false,
+                "script": false,
+                "template-base": "ex.html",
+                "profiles": false
+            },
+            "ConceptMap": {"template-base": "base.html"},
+            "Practitioner": {"template-base": "ex.html"},
+            "OperationDefinition": {"template-base": "base.html"},
+            "CodeSystem": {"template-base": "base.html"},
+            "Communication": {"template-base": "ex.html"},
+            "Any": {
+                "template-format": "format.html",
+                "template-base": "base.html"
+            },
+            "PractitionerRole": {"template-base": "ex.html"},
+            "ValueSet": {"template-base": "base.html"},
+            "CapabilityStatement": {"template-base": "base.html"},
+            "Observation": {"template-base": "ex.html"}
         },
         resources: {}
     };
@@ -282,56 +311,132 @@ function getFhirControlVersion(fhirServerConfig) {
     }
 }
 
-function writeResourcesList(resources, rootPath, title, fileName) {
-    let htmlContent = `<h2>${title}</h2>\n`;
+function createTableFromArray(headers, data) {
+    let output = '<table>\n<thead>\n<tr>\n';
 
-    if (resources.length > 0) {
-        htmlContent += '<table><thead><tr><th>Name/Title</th><th>Description</th></tr></thead><tbody>\n';
+    _.each(headers, (header) => {
+        output += `<th>${header}</th>\n`;
+    });
 
-        _.each(resources, (resource) => {
-            const resourceName = resource.name || resource.title;
-            htmlContent += `<tr><td><a href="${resource.resourceType}-${resource.id}.html">${resourceName}</a></td><td>${resource.description || ''}</td></tr>\n`;
+    output += '</tr>\n</thead>\n<tbody>\n';
+
+    _.each(data, (row) => {
+        output += '<tr>\n';
+
+        _.each(row, (cell) => {
+            output += `<td>${cell}</td>\n`;
         });
 
-        htmlContent += '<tbody></table>\n';
-    } else {
-        htmlContent += '<p>No resources of this type are included in this implementation guide</p>\n';
-    }
+        output += '</tr>\n';
+    });
 
-    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
-    fs.writeFileSync(fileLocation, htmlContent);
+    output += '</tbody>\n</table>\n';
+
+    return output;
 }
 
-function writeAuthors(contacts, rootPath, fileName) {
-    let htmlContent = '<h2>Authors</h2>\n';
-
-    if (contacts && contacts.length > 0) {
-        htmlContent += '<table><thead><tr><th>Name</th><th>Email</th></tr></thead><tbody>\n';
-
-        _.each(contacts, (contact) => {
-            const emailTelecom = _.find(contact.telecom, (telecom) => telecom.system === 'email');
-            const email = emailTelecom ? `<a href="mailto:${emailTelecom.value}">${emailTelecom.value}</a>` : '';
-            htmlContent += `<tr><td>${contact.name}</td><td>${email}</td></tr>\n`;
-        });
-
-        htmlContent += '<tbody></table>\n';
-    }
-
-    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
-    fs.writeFileSync(fileLocation, htmlContent);
-}
-
-function writeDescription(implementationGuide, rootPath, fileName) {
-    let htmlContent = '<h2>Description</h2>\n';
+function updateTemplates(rootPath, bundle, implementationGuide) {
+    const valueSets = _.chain(bundle.entry)
+        .filter((entry) => entry.resource.resourceType === 'ValueSet')
+        .map((entry) => entry.resource)
+        .value();
+    const codeSystems = _.chain(bundle.entry)
+        .filter((entry) => entry.resource.resourceType === 'CodeSystem')
+        .map((entry) => entry.resource)
+        .value();
+    const profiles = _.chain(bundle.entry)
+        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && (!entry.resource.baseDefinition || !entry.resource.baseDefinition.endsWith('Extension')))
+        .map((entry) => entry.resource)
+        .value();
+    const extensions = _.chain(bundle.entry)
+        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && entry.resource.baseDefinition && entry.resource.baseDefinition.endsWith('Extension'))
+        .map((entry) => entry.resource)
+        .value();
+    const capabilityStatements = _.chain(bundle.entry)
+        .filter((entry) => entry.resource.resourceType === 'CapabilityStatement')
+        .map((entry) => entry.resource)
+        .value();
 
     if (implementationGuide) {
+        const indexPath = path.join(rootPath, 'source/pages/index.md');
+
         if (implementationGuide.description) {
-            htmlContent += `<p>${implementationGuide.description}</p>\n`;
+            const descriptionContent = '### Description\n\n' + implementationGuide.description + '\n\n';
+            fs.appendFileSync(indexPath, descriptionContent);
+        }
+
+        if (implementationGuide.contact) {
+            const authorsData = _.map(implementationGuide.contact, (contact) => {
+                const foundEmail = _.find(contact.telecom, (telecom) => telecom.system === 'email');
+                return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+            });
+            const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+            fs.appendFileSync(indexPath, authorsContent);
         }
     }
 
-    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
-    fs.writeFileSync(fileLocation, htmlContent);
+    if (profiles.length > 0) {
+        const profilesData = _.map(profiles, (profile) => {
+            return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
+        });
+        const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
+        const profilesPath = path.join(rootPath, 'source/pages/profiles.md');
+        fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
+    }
+
+    if (extensions.length > 0) {
+        const extData = _.map(extensions, (extension) => {
+            return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
+        });
+        const extContent = createTableFromArray(['Name', 'Description'], extData);
+        const extPath = path.join(rootPath, 'source/pages/profiles.md');
+        fs.appendFileSync(extPath, '### Extensions\n\n' + extContent + '\n\n');
+    }
+
+    if (valueSets.length > 0) {
+        let vsContent = '### Value Sets\n\n';
+        const vsPath = path.join(rootPath, 'source/pages/terminology.md');
+
+        _.each(valueSets, (valueSet) => {
+            vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
+        });
+
+        fs.appendFileSync(vsPath, vsContent + '\n\n');
+    }
+
+    if (codeSystems.length > 0) {
+        let csContent = '### Code Systems\n\n';
+        const csPath = path.join(rootPath, 'source/pages/terminology.md');
+
+        _.each(valueSets, (codeSystem) => {
+            csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
+        });
+
+        fs.appendFileSync(csPath, csContent + '\n\n');
+    }
+
+    if (capabilityStatements.length > 0) {
+        const csData = _.map(capabilityStatements, (capabilityStatement) => {
+            return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
+        });
+        const csContent = createTableFromArray(['Name', 'Description'], csData);
+        const csPath = path.join(rootPath, 'source/pages/profiles.md');
+        fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + csContent);
+    }
+}
+
+function writeFilesForResource(rootPath, resource) {
+    if (!resource || !resource.resourceType || resource.resourceType === 'ImplementationGuide') {
+        return;
+    }
+
+    const introPath = path.join(rootPath, `source/pages/_includes/${resource.id}-intro.md`);
+    const searchPath = path.join(rootPath, `source/pages/_includes/${resource.id}-search.md`);
+    const summaryPath = path.join(rootPath, `source/pages/_includes/${resource.id}-summary.md`);
+
+    fs.writeFileSync(introPath, 'TODO - Intro');
+    fs.writeFileSync(searchPath, 'TODO - Search');
+    fs.writeFileSync(summaryPath, 'TODO - Summary');
 }
 
 function exportHtml(req, res, testCallback) {
@@ -364,7 +469,7 @@ function exportHtml(req, res, testCallback) {
             getBundle(req, 'application/json')
                 .then((bundleJson) => {
                     bundle = JSON.parse(bundleJson);
-                    const resourcesDir = path.join(rootPath, 'resources');
+                    const resourcesDir = path.join(rootPath, 'source/resources');
 
                     sendSocketMessage(req, packageId, 'progress', 'Resources retrieved. Packaging.');
 
@@ -409,35 +514,18 @@ function exportHtml(req, res, testCallback) {
                     return getDependencies(control, isXml, resourcesDir, req.fhir, fhirServerConfig);
                 })
                 .then((dependencies) => {
-                    const controlContent = JSON.stringify(control, null, '\t');
-                    fs.writeFileSync(controlPath, controlContent);
-
+                    // Copy the contents of the ig-publisher-template folder to the export temporary folder
                     const templatePath = path.join(__dirname, '..', 'ig-publisher-template');
                     fs.copySync(templatePath, rootPath);
 
-                    const valueSets = _.chain(bundle.entry)
-                        .filter((entry) => entry.resource.resourceType === 'ValueSet')
-                        .map((entry) => entry.resource)
-                        .value();
-                    const codeSystems = _.chain(bundle.entry)
-                        .filter((entry) => entry.resource.resourceType === 'CodeSystem')
-                        .map((entry) => entry.resource)
-                        .value();
-                    const profiles = _.chain(bundle.entry)
-                        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && (!entry.resource.baseDefinition || !entry.resource.baseDefinition.endsWith('Extension')))
-                        .map((entry) => entry.resource)
-                        .value();
-                    const extensions = _.chain(bundle.entry)
-                        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && entry.resource.baseDefinition && entry.resource.baseDefinition.endsWith('Extension'))
-                        .map((entry) => entry.resource)
-                        .value();
+                    // Write the ig.json file to the export temporary folder
+                    const controlContent = JSON.stringify(control, null, '\t');
+                    fs.writeFileSync(controlPath, controlContent);
 
-                    writeResourcesList(valueSets, rootPath, 'Value Sets', 'valuesets.html');
-                    writeResourcesList(profiles, rootPath, 'Profiles', 'profiles.html');
-                    writeResourcesList(codeSystems, rootPath, 'Code Systems', 'codesystems.html');
-                    writeResourcesList(extensions, rootPath, 'Extensions', 'extensions.html');
-                    writeAuthors(implementationGuideResource.contact, rootPath, 'authors.html');
-                    writeDescription(implementationGuideResource, rootPath, 'description.html');
+                    // Write the intro, summary and search MD files for each resource
+                    _.each(bundle.entry, (entry) => writeFilesForResource(rootPath, entry.resource));
+
+                    updateTemplates(rootPath, bundle, implementationGuideResource);
 
                     sendSocketMessage(req, packageId, 'progress', 'Done building package');
 
@@ -497,6 +585,9 @@ function exportHtml(req, res, testCallback) {
                             sendSocketMessage(req, packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
                         } else {
                             sendSocketMessage(req, packageId, 'progress', 'Copying output to deployment path.');
+
+                            const generatedPath = path.resolve(rootPath, 'generated_output');
+                            fs.emptyDirSync(generatedPath);
 
                             const outputPath = path.resolve(rootPath, 'output');
                             fs.copy(outputPath, deployDir, (err) => {

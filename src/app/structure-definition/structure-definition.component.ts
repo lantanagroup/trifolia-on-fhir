@@ -249,7 +249,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     this.structureDefinition.name);
                 this.message = 'Done loading structure definition';
             }, error => {
-                this.message = 'Error loading structure definitions';
+                this.message = error && error.message ? error.message : 'Error loading structure definitions';
                 this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, strucDefId);
             });
     }
