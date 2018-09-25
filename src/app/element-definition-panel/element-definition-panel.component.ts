@@ -107,11 +107,13 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     private getTypes(): Coding[] {
+        const baseTypes = this.elementTreeModel.baseElement.type;
         const elementTreeModelTypes = this.element.type ? this.element.type : [];
 
         return _.filter(this.definedTypeCodes, (definedTypeCode: Coding) => {
-            const foundType = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === definedTypeCode.code);
-            return !foundType;        // Only return definedTypeCodes that are no found in the list of types in the element
+            const allowedType = !baseTypes ? true : _.find(baseTypes, (baseType: TypeRefComponent) => baseType.code === definedTypeCode.code);
+            const typeAlreadySelected = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === definedTypeCode.code);
+            return allowedType && !typeAlreadySelected;        // Only return definedTypeCodes that are no found in the list of types in the element
         });
     }
 
