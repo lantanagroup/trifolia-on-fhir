@@ -23,7 +23,7 @@ class PageDefinition {
     styleUrls: ['./implementation-guide.component.css']
 })
 export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public implementationGuide?: ImplementationGuide;
+    @Input() public implementationGuide = new ImplementationGuide();
     public message: string;
     public currentResource: any;
     public validation: any;
