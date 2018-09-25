@@ -81,10 +81,13 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         }
 
         if (questionnaireId !== 'new' && questionnaireId) {
+            this.questionnaire = null;
+
             this.questionnaireService.get(questionnaireId)
                 .subscribe((questionnaire: Questionnaire | OperationOutcome) => {
                     if (questionnaire.resourceType !== 'Questionnaire') {
-                        throw new Error('The specified questionnaire either does not exist or was deleted');
+                        this.message = 'The specified questionnaire either does not exist or was deleted';
+                        return;
                     }
 
                     this.questionnaire = <Questionnaire> questionnaire;
@@ -93,7 +96,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                         questionnaire.id,
                         this.questionnaire.name || this.questionnaire.title);
                 }, (err) => {
-                    this.message = 'Error loading questionnaire';
+                    this.message = err && err.message ? err.message : 'Error loading questionnaire';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentQuestionnaires, questionnaireId);
                 });
         }
@@ -113,6 +116,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.questionnaire);
+        if (this.questionnaire) {
+            this.validation = this.fhirService.validate(this.questionnaire);
+        }
     }
 }

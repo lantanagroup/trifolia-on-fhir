@@ -5,10 +5,10 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
-        <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
+        <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" (change)="selectedCodeChanged()">
             <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
         </select>
-        <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
+        <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" (change)="selectedCodeChanged()" />
     </div>
 </div>
 <div *ngIf="!isFormGroup" [class.input-group]="!required">
@@ -17,8 +17,8 @@
         <span>{{title}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
-    <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]">
+    <select class="form-control" *ngIf="!isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" (change)="selectedCodeChanged()">
         <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
     </select>
-    <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
+    <input type="text" class="form-control" *ngIf="isTypeahead" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" (change)="selectedCodeChanged()" />
 </div>

@@ -128,10 +128,13 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         if (capabilityStatementId !== 'new' && capabilityStatementId) {
+            this.capabilityStatement = null;
+
             this.csService.get(capabilityStatementId)
                 .subscribe((cs) => {
                     if (cs.resourceType !== 'CapabilityStatement') {
-                        throw new Error('The specified capability statement either does not exist or was deleted');
+                        this.message = 'The specified capability statement either does not exist or was deleted';
+                        return;
                     }
 
                     this.capabilityStatement = <CapabilityStatement> cs;
@@ -140,7 +143,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
                         this.capabilityStatement.id,
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
-                    this.message = 'Error loading capability statement';
+                    this.message = err && err.message ? err.message : 'Error loading capability statement';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }
@@ -162,6 +165,8 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.capabilityStatement);
+        if (this.capabilityStatement) {
+            this.validation = this.fhirService.validate(this.capabilityStatement);
+        }
     }
 }

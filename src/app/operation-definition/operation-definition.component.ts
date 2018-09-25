@@ -90,10 +90,13 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         if (operationDefinitionId !== 'new' && operationDefinitionId) {
+            this.operationDefinition = null;
+
             this.opDefService.get(operationDefinitionId)
                 .subscribe((opDef: OperationDefinition | OperationOutcome) => {
                     if (opDef.resourceType !== 'OperationDefinition') {
-                        throw new Error('The specified operation definition either does not exist or was deleted');
+                        this.message = 'The specified operation definition either does not exist or was deleted';
+                        return;
                     }
 
                     this.operationDefinition = <OperationDefinition> opDef;
@@ -102,7 +105,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                         this.operationDefinition.id,
                         this.operationDefinition.name);
                 }, (err) => {
-                    this.message = 'Error loading operation definition';
+                    this.message = err && err.message ? err.message : 'Error loading operation definition';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });
         }
@@ -122,6 +125,8 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.operationDefinition);
+        if (this.operationDefinition) {
+            this.validation = this.fhirService.validate(this.operationDefinition);
+        }
     }
 }
