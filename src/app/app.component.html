@@ -132,9 +132,6 @@
           </div>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="javascript:void(0)" (click)="openFile()">Open from computer</a>
-      </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()">
         <a class="nav-link" routerLink="/export">Export</a>
       </li>
@@ -158,6 +155,11 @@
         </li>
         <li class="nav-item" *ngIf="authService.isAuthenticated()">
           <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:void(0)" (click)="openFile()" title="Open from computer">
+            <i class="fa fa-upload"></i>
+          </a>
         </li>
       </ul>
     </form>
