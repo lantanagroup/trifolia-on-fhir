@@ -58,6 +58,16 @@ export class StructureDefinitionsComponent implements OnInit {
         });
     }
 
+    public lastPage() {
+        this.page = this.response.pages;
+        this.criteriaChanged();
+    }
+
+    public firstPage() {
+        this.page = 1;
+        this.criteriaChanged();
+    }
+
     public nextPage() {
         this.page = this.page + 1;
         this.criteriaChanged();
