@@ -68,9 +68,6 @@ export class AppComponent implements OnInit {
                             const modalRef = this.modalService.open(NewUserModalComponent, { size: 'lg' });
                         }
                     });
-
-                // When the fhir server changes, re-direct the user home so that data shown on the screen isn't from the wrong FHIR server
-                this.router.navigate(['/home']);
             }
         });
     }

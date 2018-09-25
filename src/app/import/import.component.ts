@@ -135,14 +135,9 @@ export class ImportComponent implements OnInit {
         bundle.entry = _.map(this.files, (importFile: ImportFileModel) => {
             const entry = new EntryComponent();
             entry.request = new RequestComponent();
-            entry.request.method = 'POST';
-            entry.request.url = '/' + importFile.resource.resourceType;
+            entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
+            entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
             entry.resource = importFile.resource;
-
-            // If a URL property exists on the resource, add it to the query for a conditional create
-            if ((<any>importFile.resource).url) {
-                entry.request.ifNoneExist = 'url=' + encodeURIComponent((<any>importFile.resource).url);
-            }
 
             return entry;
         });
@@ -155,8 +150,7 @@ export class ImportComponent implements OnInit {
             return;
         }
 
-        const clone = new Bundle();
-        Object.assign(clone, this.importBundle);
+        const clone = JSON.parse(JSON.stringify(this.importBundle));
 
         _.each(clone.entry, (entry) => {
             entry.resource = {
