@@ -84,10 +84,13 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         }
 
         if (codeSystemId !== 'new' && codeSystemId) {
+            this.codeSystem = null;
+
             this.codeSystemService.get(codeSystemId)
                 .subscribe((cs) => {
                     if (cs.resourceType !== 'CodeSystem') {
-                        throw new Error('The specified code system either does not exist or was deleted');
+                        this.message = 'The specified code system either does not exist or was deleted';
+                        return;
                     }
 
                     this.codeSystem = <CodeSystem> cs;
@@ -96,7 +99,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                         this.codeSystem.id,
                         this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
-                    this.message = 'Error loading code system';
+                    this.message = err && err.message ? err.message : 'Error loading code system';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }
@@ -116,6 +119,8 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.codeSystem);
+        if (this.codeSystem) {
+            this.validation = this.fhirService.validate(this.codeSystem);
+        }
     }
 }

@@ -107,10 +107,13 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         }
 
         if (valueSetId !== 'new' && valueSetId) {
+            this.valueSet = null;
+
             this.valueSetService.get(valueSetId)
                 .subscribe((results: ValueSet|OperationOutcome) => {
                     if (results.resourceType !== 'ValueSet') {
-                        throw new Error('The specified value set either does not exist or was deleted');
+                        this.message = 'The specified value set either does not exist or was deleted';
+                        return;
                     }
 
                     this.valueSet = <ValueSet> results;
@@ -119,7 +122,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                         this.valueSet.id,
                         this.valueSet.name || this.valueSet.title);
                 }, (err) => {
-                    this.message = 'Error loading value set';
+                    this.message = err && err.message ? err.message : 'Error loading value set';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentValueSets, valueSetId);
                 });
         }
@@ -139,6 +142,8 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.valueSet);
+        if (this.valueSet) {
+            this.validation = this.fhirService.validate(this.valueSet);
+        }
     }
 }

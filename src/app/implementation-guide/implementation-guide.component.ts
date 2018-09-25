@@ -175,10 +175,13 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         if (implementationGuideId !== 'new' && implementationGuideId) {
+            this.implementationGuide = null;
+
             this.implementationGuideService.getImplementationGuide(implementationGuideId)
                 .subscribe((results: ImplementationGuide | OperationOutcome) => {
                     if (results.resourceType !== 'ImplementationGuide') {
-                        throw new Error('The specified implementation guide either does not exist or was deleted');
+                        this.message = 'The specified implementation guide either does not exist or was deleted';
+                        return;
                     }
 
                     this.implementationGuide = <ImplementationGuide> results;
@@ -188,7 +191,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                         this.implementationGuide.id,
                         this.implementationGuide.name);
                 }, (err) => {
-                    this.message = 'Error loading implementation guide';
+                    this.message = err && err.message ? err.message : 'Error loading implementation guide';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });
         }
@@ -426,6 +429,8 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     ngDoCheck() {
-        this.validation = this.fhirService.validate(this.implementationGuide);
+        if (this.implementationGuide) {
+            this.validation = this.fhirService.validate(this.implementationGuide);
+        }
     }
 }

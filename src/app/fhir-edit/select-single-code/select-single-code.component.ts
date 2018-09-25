@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Coding} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs';
@@ -23,10 +23,15 @@ export class SelectSingleCodeComponent implements OnInit {
     @Input() isFormGroup = true;
     @Input() isTypeahead = false;
     @Input() defaultCode: string;
+    @Output() change = new EventEmitter<Coding>();
 
     constructor(
         public globals: Globals,
         private fhirService: FhirService) {
+    }
+
+    public selectedCodeChanged() {
+        this.change.emit(this.parentObject[this.propertyName]);
     }
 
     public getDefaultCode(): string {
