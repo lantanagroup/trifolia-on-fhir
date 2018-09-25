@@ -22,6 +22,10 @@ Requirements:
     2. You must be connected to VPN and have access to the \\DEV7 file system as an admin to have the copy succeed
 3. Login to server and run `powershell .\installPackages.ps1` as an administrator
 
+## FHIR Server Requirements
+
+* Must support creating resources via a PUT with an "id" property 
+
 ## Features/functionality
 * FHIR Versions
     * DSTU3

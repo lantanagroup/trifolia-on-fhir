@@ -77,31 +77,24 @@
                 <!-- Min -->
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('min')"
-                               (ngModelChange)="globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('min')" (ngModelChange)="globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
                         Min
                         <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
                     </label>
-                    <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('min')"
-                           [(ngModel)]="element.min"/>
+                    <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('min')" [(ngModel)]="element.min" min="0" />
                 </div>
 
                 <!-- Max -->
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('max')"
-                               (ngModelChange)="globals.toggleProperty(element, 'max', elementTreeModel.max)"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('max')" (ngModelChange)="globals.toggleProperty(element, 'max', elementTreeModel.max)"/>
                         Max
                         <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
                     </label>
                     <div class="input-group">
-                        <input type="number" class="form-control"
-                               [disabled]="!element.hasOwnProperty('max') || element.max === '*'"
-                               [ngModel]="element.max" (ngModelChange)="element.max=$event.toString()"/>
+                        <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('max') || element.max === '*'" [ngModel]="element.max" (ngModelChange)="element.max=$event.toString()" min="0" />
                         <div class="input-group-addon">
-                            <input type="checkbox" [ngModel]="element.max === '*'"
-                                   (ngModelChange)="toggleMaxUnlimited()"
-                                   [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
+                            <input type="checkbox" [ngModel]="element.max === '*'" (ngModelChange)="toggleMaxUnlimited()" [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
                             Unlimited
                         </div>
                     </div>
