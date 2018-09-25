@@ -78,40 +78,18 @@ function getControl(extension, implementationGuide, bundle, version) {
             pages: 'pages',
             specification: 'http://www.hl7.org/fhir/'
         },
-        pages: ['pages', '_pages'],
+        pages: ['pages'],
         'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'sct-edition': 'http://snomed.info/sct/731000124108',
         canonicalBase: canonicalBaseMatch[1],
         defaults: {
-            'Any': {
-                'template-format': 'template-format.html',
-                'template-base': 'template-base.html'
+            "Any": {
+                "template-format": "instance-template-format.html",
+                "template-base": "instance-template-base.html"
             },
-            'StructureDefinition': {
-                'template-base': 'sd-template-base.html',
-                'template-defns': 'sd-template-defns.html',
-                'template-format': 'sd-template-format.html'
-            },
-            'ValueSet': {
-                'template-base': 'tm-template-base.html'
-            },
-            'CodeSystem': {
-                'template-base': 'tm-template-base.html'
-            },
-            'Resource': {
-                'template-base': 'pf-template-base.html'
-            },
-            'Questionnaire': {
-                'template-base': 'in-template-base.html',
-                'template-format': 'in-template-format.html'
-            },
-            'Patient': {
-                'template-base': 'in-template-base.html',
-                'template-format': 'in-template-format.html'
-            },
-            'Extension': {
-                'template-base': 'ex-template-base.html'
+            "StructureDefinition": {
+                "template-base": "instance-template-sd.html"
             }
         },
         resources: {}
@@ -304,6 +282,58 @@ function getFhirControlVersion(fhirServerConfig) {
     }
 }
 
+function writeResourcesList(resources, rootPath, title, fileName) {
+    let htmlContent = `<h2>${title}</h2>\n`;
+
+    if (resources.length > 0) {
+        htmlContent += '<table><thead><tr><th>Name/Title</th><th>Description</th></tr></thead><tbody>\n';
+
+        _.each(resources, (resource) => {
+            const resourceName = resource.name || resource.title;
+            htmlContent += `<tr><td><a href="${resource.resourceType}-${resource.id}.html">${resourceName}</a></td><td>${resource.description || ''}</td></tr>\n`;
+        });
+
+        htmlContent += '<tbody></table>\n';
+    } else {
+        htmlContent += '<p>No resources of this type are included in this implementation guide</p>\n';
+    }
+
+    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
+    fs.writeFileSync(fileLocation, htmlContent);
+}
+
+function writeAuthors(contacts, rootPath, fileName) {
+    let htmlContent = '<h2>Authors</h2>\n';
+
+    if (contacts && contacts.length > 0) {
+        htmlContent += '<table><thead><tr><th>Name</th><th>Email</th></tr></thead><tbody>\n';
+
+        _.each(contacts, (contact) => {
+            const emailTelecom = _.find(contact.telecom, (telecom) => telecom.system === 'email');
+            const email = emailTelecom ? `<a href="mailto:${emailTelecom.value}">${emailTelecom.value}</a>` : '';
+            htmlContent += `<tr><td>${contact.name}</td><td>${email}</td></tr>\n`;
+        });
+
+        htmlContent += '<tbody></table>\n';
+    }
+
+    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
+    fs.writeFileSync(fileLocation, htmlContent);
+}
+
+function writeDescription(implementationGuide, rootPath, fileName) {
+    let htmlContent = '<h2>Description</h2>\n';
+
+    if (implementationGuide) {
+        if (implementationGuide.description) {
+            htmlContent += `<p>${implementationGuide.description}</p>\n`;
+        }
+    }
+
+    const fileLocation = path.join(rootPath, `pages/_includes/${fileName}`);
+    fs.writeFileSync(fileLocation, htmlContent);
+}
+
 function exportHtml(req, res, testCallback) {
     const isXml = req.query._format === 'application/xml';
     const extension = (!isXml ? '.json' : '.xml');
@@ -324,6 +354,7 @@ function exportHtml(req, res, testCallback) {
 
         const packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
         const controlPath = path.join(rootPath, 'ig.json');
+        let bundle;
         res.send(packageId);
 
         setTimeout(() => {
@@ -332,7 +363,7 @@ function exportHtml(req, res, testCallback) {
             // Prepare IG Publisher package
             getBundle(req, 'application/json')
                 .then((bundleJson) => {
-                    const bundle = JSON.parse(bundleJson);
+                    bundle = JSON.parse(bundleJson);
                     const resourcesDir = path.join(rootPath, 'resources');
 
                     sendSocketMessage(req, packageId, 'progress', 'Resources retrieved. Packaging.');
@@ -383,6 +414,30 @@ function exportHtml(req, res, testCallback) {
 
                     const templatePath = path.join(__dirname, '..', 'ig-publisher-template');
                     fs.copySync(templatePath, rootPath);
+
+                    const valueSets = _.chain(bundle.entry)
+                        .filter((entry) => entry.resource.resourceType === 'ValueSet')
+                        .map((entry) => entry.resource)
+                        .value();
+                    const codeSystems = _.chain(bundle.entry)
+                        .filter((entry) => entry.resource.resourceType === 'CodeSystem')
+                        .map((entry) => entry.resource)
+                        .value();
+                    const profiles = _.chain(bundle.entry)
+                        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && (!entry.resource.baseDefinition || !entry.resource.baseDefinition.endsWith('Extension')))
+                        .map((entry) => entry.resource)
+                        .value();
+                    const extensions = _.chain(bundle.entry)
+                        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && entry.resource.baseDefinition && entry.resource.baseDefinition.endsWith('Extension'))
+                        .map((entry) => entry.resource)
+                        .value();
+
+                    writeResourcesList(valueSets, rootPath, 'Value Sets', 'valuesets.html');
+                    writeResourcesList(profiles, rootPath, 'Profiles', 'profiles.html');
+                    writeResourcesList(codeSystems, rootPath, 'Code Systems', 'codesystems.html');
+                    writeResourcesList(extensions, rootPath, 'Extensions', 'extensions.html');
+                    writeAuthors(implementationGuideResource.contact, rootPath, 'authors.html');
+                    writeDescription(implementationGuideResource, rootPath, 'description.html');
 
                     sendSocketMessage(req, packageId, 'progress', 'Done building package');
 

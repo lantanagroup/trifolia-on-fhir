@@ -6,8 +6,6 @@ title:  Index page
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>HAI FHIR R1</title>
 {% include header.html %}
   </head>
   <body>
@@ -17,7 +15,7 @@ title:  Index page
       <div class="container">
         <!-- container -->
         <ul class="breadcrumb">
-          <li title="home"><a href="index.html"><b>Home</b></a></li>
+          <li title="{{ site.data.fhir.igName }}"><b>{{ site.data.fhir.igName }}</b></li>
         </ul>
       </div>
       <!-- /container -->
@@ -32,11 +30,32 @@ title:  Index page
             <div class="col-9">
               <a name="{{ site.data.fhir.igId }}"></a>
               
-                  {% include overview.html %}
-                  
+              <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#overview" aria-controls="home" role="tab" data-toggle="tab">Overview</a></li>
+                <li role="presentation"><a href="#profiles" aria-controls="profile" role="tab" data-toggle="tab">Profiles</a></li>
+                <li role="presentation"><a href="#valuesets" aria-controls="profile" role="tab" data-toggle="tab">Value Sets</a></li>
+                <li role="presentation"><a href="#codesystems" aria-controls="profile" role="tab" data-toggle="tab">Code Systems</a></li>
+                <li role="presentation"><a href="#extensions" aria-controls="profile" role="tab" data-toggle="tab">Extensions</a></li>
+              </ul>
+              
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="overview">
                   {% include description.html %}
-                  
                   {% include authors.html %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="profiles">
+                  {% include profiles.html %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="valuesets">
+                  {% include valuesets.html %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="codesystems">
+                  {% include codesystems.html %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="extensions">
+                  {% include extensions.html %}
+                </div>
               </div>
             </div>
           </div>

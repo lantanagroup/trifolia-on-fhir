@@ -1,8 +1,7 @@
 ---
-id: {{[id]}}
-title: {{[title]}}
-tcode: {{[type]}}
+# jekyll header
 ---
+
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -22,11 +21,13 @@ tcode: {{[type]}}
     <div id="segment-breadcrumb" class="segmnt">
       <div class="container">
         <ul class="breadcrumb">
-          <li title="home"><a href="index.html"><b>Home</b></a></li>
-          <li title="profiles"><a href="profilespage.html"><b>Instances</b></a></li>
-          <li>
-            <b>{{page.title}}</b>
-          </li>
+          <li title="{{ site.data.fhir.igName }}"><a href="index.html"><b>{{site.data.fhir.igName}}</b></a></li>
+          
+          {% if page.title %}
+          <li><b>{{page.title}} Details</b></li>
+          {% else %}
+          <li><b>{{[id]}} Details</b></li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -37,9 +38,9 @@ tcode: {{[type]}}
           <div class="inner-wrapper">
             <div class="col-12">
               <ul class="nav nav-tabs">
-                <li><a href="{{[type]}}-{{[id]}}.html">{{[type]}} Content</a></li>
-                <li class="{% if "{{[fmt]}}" == "xml" %}active{% endif %}"><a href="{{[type]}}-{{[id]}}.xml.html">{{[type]}} XML</a></li>
-                  <li class="{% if "{{[fmt]}}" == "json" %}active{% endif %}"><a href="{{[type]}}-{{[id]}}.json.html">{{[type]}} JSON</a></li>
+                <li><a href="{{[type]}}-{{[id]}}.html">Content</a></li>
+                <li class="{% if "{{[fmt]}}" == "xml" %}active{% endif %}"><a href="{{[type]}}-{{[id]}}.xml.html">XML</a></li>
+                <li class="{% if "{{[fmt]}}" == "json" %}active{% endif %}"><a href="{{[type]}}-{{[id]}}.json.html">JSON</a></li>
               </ul>
               
               <br/>

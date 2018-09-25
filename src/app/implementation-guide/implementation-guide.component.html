@@ -13,11 +13,13 @@
 
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher"></app-fhir-string>
-
                             <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
 
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher"></app-fhir-string>
+
                             <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+
+                            <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts"></app-fhir-multi-contact>
 
                             <div class="card">
                                 <div class="card-header">Dependencies</div>
