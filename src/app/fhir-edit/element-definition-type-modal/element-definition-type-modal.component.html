@@ -19,10 +19,15 @@
         <label>
             <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(type, 'profile', '')"/>
             Profile
-            <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
+            <app-tooltip-icon tooltipKey="ed.type.profile"></app-tooltip-icon>
         </label>
         <div class="input-group">
             <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('profile')" [(ngModel)]="type.profile"/>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" title="Select a profile" (click)="selectProfile('profile')">
+                    <i class="fa fa-hand-pointer-o"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -30,10 +35,15 @@
         <label>
             <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="globals.toggleProperty(type, 'targetProfile', '')"/>
             Target Profile
-            <app-tooltip-icon tooltipPath="ElementDefinition.type.targetProfile"></app-tooltip-icon>
+            <app-tooltip-icon tooltipKey="ed.type.targetProfile"></app-tooltip-icon>
         </label>
         <div class="input-group">
             <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('targetProfile')" [(ngModel)]="type.targetProfile"/>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" title="Select a target profile" (click)="selectProfile('targetProfile')">
+                    <i class="fa fa-hand-pointer-o"></i>
+                </button>
+            </div>
         </div>
     </div>
 
