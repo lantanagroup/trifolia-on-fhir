@@ -18,6 +18,7 @@ export class ValuesetsComponent implements OnInit {
     public urlText: string;
     public criteriaChangedEvent = new Subject();
     public totalPages = 1;
+    public message: string;
 
     constructor(
         private valueSetService: ValueSetService,
@@ -35,6 +36,20 @@ export class ValuesetsComponent implements OnInit {
     }
 
     public remove(valueSet: ValueSet) {
+        if (!confirm(`Are you sure you want to delete the value set ${valueSet.title || valueSet.name || 'no-name'}`)) {
+            return;
+        }
+
+        this.valueSetService.delete(valueSet.id)
+            .subscribe(() => {
+                this.message = `Successfully deleted value set ${valueSet.title || valueSet.name || 'no-name'} (${valueSet.id})`;
+                const entry = _.find(this.results.entry, (entry) => entry.resource.id === valueSet.id);
+                const index = this.results.entry.indexOf(entry);
+                this.results.entry.splice(index, 1);
+                setTimeout(() => this.message = '', 3000);
+            }, (err) => {
+                this.message = err;
+            });
     }
 
     public nextPage() {
@@ -73,10 +88,14 @@ export class ValuesetsComponent implements OnInit {
     }
 
     public getValueSets() {
+        this.results = null;
+        this.message = 'Searching value sets...';
+
         this.valueSetService.search(this.page, this.contentText, this.urlText)
             .subscribe((results: Bundle) => {
                 this.results = results;
                 this.totalPages = results && results.total ? Math.ceil(results.total / 8) : 0;
+                this.message = '';
             });
     }
 
