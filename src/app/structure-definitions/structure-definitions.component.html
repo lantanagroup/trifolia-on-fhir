@@ -4,6 +4,10 @@
 <div class="input-group">
     <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search all (_content)"/>
     <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Complete StructureDefinition.url"/>
+    <select class="form-control" [(ngModel)]="implementationGuideId" (change)="criteriaChanged()">
+        <option [ngValue]="null">Implementation Guide</option>
+        <option *ngFor="let ig of implementationGuides" [ngValue]="ig.id">{{ig.name}}</option>
+    </select>
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
             <i class="fa fa-search"></i>

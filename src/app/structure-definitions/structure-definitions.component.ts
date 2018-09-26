@@ -1,12 +1,14 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
-import { StructureDefinitionService } from '../services/structure-definition.service';
-import { StructureDefinitionListItemModel } from '../models/structure-definition-list-item-model';
-import { ConfigService } from '../services/config.service';
+import {Component, OnInit} from '@angular/core';
+import {StructureDefinitionService} from '../services/structure-definition.service';
+import {StructureDefinitionListItemModel} from '../models/structure-definition-list-item-model';
+import {ConfigService} from '../services/config.service';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import 'rxjs/add/operator/debounceTime';
 import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ImplementationGuideService} from '../services/implementation-guide.service';
+import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 
 @Component({
     selector: 'app-profiles',
@@ -20,8 +22,11 @@ export class StructureDefinitionsComponent implements OnInit {
     public contentText: string;
     public urlText: string;
     public criteriaChangedEvent = new Subject();
+    public implementationGuides: ImplementationGuideListItemModel[] = [];
+    public implementationGuideId: string;
 
     constructor(
+        private implementationGuideService: ImplementationGuideService,
         private structureDefinitionService: StructureDefinitionService,
         private configService: ConfigService,
         private modalService: NgbModal) {
@@ -98,7 +103,7 @@ export class StructureDefinitionsComponent implements OnInit {
         this.response = null;
         this.configService.setStatusMessage('Loading structure definitions');
 
-        this.structureDefinitionService.getStructureDefinitions(this.page, this.contentText, this.urlText)
+        this.structureDefinitionService.getStructureDefinitions(this.page, this.contentText, this.urlText, this.implementationGuideId)
             .subscribe((response: StructureDefinitionListModel) => {
                 this.response = response;
                 this.configService.setStatusMessage('');
@@ -107,8 +112,22 @@ export class StructureDefinitionsComponent implements OnInit {
             });
     }
 
-    ngOnInit() {
-        this.configService.fhirServerChanged.subscribe((fhirServer) => this.getStructureDefinitions());
+    public getImplementationGuides() {
+        this.implementationGuideService.getImplementationGuides()
+            .subscribe((results) => {
+                this.implementationGuides = results;
+            }, (err) => {
+                this.configService.handleError('Error loading implementation guides.', err);
+            });
+    }
+
+    private initData() {
         this.getStructureDefinitions();
+        this.getImplementationGuides();
+    }
+
+    ngOnInit() {
+        this.configService.fhirServerChanged.subscribe((fhirServer) => this.initData());
+        this.initData();
     }
 }
