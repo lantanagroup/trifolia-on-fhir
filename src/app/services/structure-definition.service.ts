@@ -14,7 +14,7 @@ export class StructureDefinitionService {
         private http: HttpClient,
         private fhirService: FhirService) { }
 
-    public getStructureDefinitions(page?: number, contentText?: string, urlText?: string): Observable<StructureDefinitionListModel> {
+    public getStructureDefinitions(page?: number, contentText?: string, urlText?: string, implementationGuideId?: string): Observable<StructureDefinitionListModel> {
         let url = '/api/structureDefinition?';
 
         if (page) {
@@ -27,6 +27,10 @@ export class StructureDefinitionService {
 
         if (urlText) {
             url += 'urlText=' + encodeURIComponent(urlText) + '&';
+        }
+
+        if (implementationGuideId) {
+            url += 'implementationGuideId=' + encodeURIComponent(implementationGuideId) + '&';
         }
 
         return this.http.get(url)
