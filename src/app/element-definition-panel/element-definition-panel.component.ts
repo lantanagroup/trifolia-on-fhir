@@ -12,6 +12,7 @@ import {
 } from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
+import {FhirEditReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 
 @Component({
     selector: 'app-element-definition-panel',
@@ -27,7 +28,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
     public editingSliceName: boolean;
     public editedSliceName: string;
     public valueSetChoices = ['Uri', 'Reference'];
-    public types: Coding[] = [];
     public definedTypeCodes: Coding[] = [];
 
     constructor(
@@ -57,6 +57,16 @@ export class ElementDefinitionPanelComponent implements OnInit {
         const modalRef = this.modalService.open(ElementDefinitionTypeModalComponent);
         modalRef.componentInstance.element = element;
         modalRef.componentInstance.type = type;
+    }
+
+    selectTypeProfile(type: TypeRefComponent) {
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        modalRef.componentInstance.resourceType = 'StructureDefinition';
+        modalRef.componentInstance.hideResourceType = true;
+
+        modalRef.result.then((results) => {
+            type.targetProfile = results.resource.url;
+        });
     }
 
     toggleEditSliceName(commit?: boolean) {
@@ -110,11 +120,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
         const baseTypes = this.elementTreeModel.baseElement.type;
         const elementTreeModelTypes = this.element.type ? this.element.type : [];
 
-        return _.filter(this.definedTypeCodes, (definedTypeCode: Coding) => {
-            const allowedType = !baseTypes ? true : _.find(baseTypes, (baseType: TypeRefComponent) => baseType.code === definedTypeCode.code);
-            const typeAlreadySelected = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === definedTypeCode.code);
-            return allowedType && !typeAlreadySelected;        // Only return definedTypeCodes that are no found in the list of types in the element
+        const filtered = _.filter(baseTypes, (baseType: TypeRefComponent) => {
+            const typeAlreadySelected = _.find(elementTreeModelTypes, (type: TypeRefComponent) => type.code === baseType.code);
+            return !typeAlreadySelected;        // Only return definedTypeCodes that are no found in the list of types in the element
         });
+
+        return filtered;
     }
 
     private getDefaultType(): string {
@@ -129,21 +140,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     addType() {
         this.element.type.push({code: this.getDefaultType()});
-        this.typeChanged();
-    }
-
-    typeChanged() {
-        this.types = this.getTypes();
-    }
-
-    getTypeDisplay(code: string) {
-        const foundType = _.find(this.definedTypeCodes, (definedTypeCode: Coding) => definedTypeCode.code === code);
-
-        if (foundType) {
-            return foundType.display;
-        }
-
-        return '';
     }
 
     getDefaultBinding(): ElementDefinitionBindingComponent {
@@ -152,6 +148,5 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     ngOnInit() {
         this.definedTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/defined-types');
-        this.types = this.getTypes();
     }
 }
