@@ -67,7 +67,7 @@ export class ExportComponent implements OnInit, OnDestroy {
                     this.socketOutput += '\r\n';
                 }
 
-                if (data.status === 'complete') {
+                if (data.status === 'complete' && this.options.downloadOutput) {
                     const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
                     const igName = ig.name.replace(/\s/g, '_');
 

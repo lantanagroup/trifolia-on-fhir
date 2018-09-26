@@ -9,6 +9,7 @@ export class ExportOptions {
     public useTerminologyServer = true;
     public executeIgPublisher = true;
     public useLatest = false;
+    public downloadOutput = true;       // Only applies to HTML exports
 }
 
 @Injectable()
@@ -35,6 +36,10 @@ export class ExportService {
 
         if (options.useLatest === true) {
             url += 'useLatest=true&';
+        }
+
+        if (options.downloadOutput === false) {
+            url += 'downloadOutput=false&';
         }
 
         return this.http.post(url, null, { observe: 'response', responseType: 'blob' });
