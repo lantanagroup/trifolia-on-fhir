@@ -29,7 +29,6 @@ const app = express();
 const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
 
-
 log4js.configure('config/log4js.json');
 const log = log4js.getLogger();
 
@@ -116,11 +115,40 @@ const server = http.createServer(app);
 server.listen(port, () => log.info(`API running on localhost:${port}`));
 
 const io = socketIO(server);
+const connections = [];
 
 io.on('connection', (socket) => {
-    log.info('User connected to socket');
+    log.info(`Client (id: ${socket.client.id}) connected to socket`);
+
+    connections.push({
+        id: socket.client.id
+    });
+
     socket.on('disconnect', () => {
-        log.info('User disconnected from socket');
+        log.info(`Client (id: ${socket.client.id}) disconnected from socket`);
+
+        const foundConnection = _.find(connections, (connection) => connection.id === socket.client.id);
+
+        if (foundConnection) {
+            const index = connections.indexOf(foundConnection);
+            connections.splice(index, 1);
+            log.debug(`Removed connection with id ${socket.client.id} from connections list`);
+        } else {
+            log.error(`Socket disconnected, but no connection found for id ${socket.client.id}.`);
+        }
+    });
+
+    socket.on('authenticated', (data) => {
+        log.debug(`Client socket (id: ${socket.client.id}) sent authentication information`);
+
+        const foundConnection = _.find(connections, (connection) => connection.id === socket.client.id);
+
+        if (!foundConnection) {
+            log.error(`Authentication information sent by a client socket connection, but no connection could be found for socket id ${socket.client.id}`);
+            return;
+        }
+
+        Object.assign(foundConnection, data);
     });
 });
 

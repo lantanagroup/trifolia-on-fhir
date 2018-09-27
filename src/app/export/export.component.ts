@@ -1,20 +1,19 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../services/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
 import * as _ from 'underscore';
-import * as io from 'socket.io-client';
+import {SocketMessage, SocketService} from '../services/socket.service';
 
 @Component({
     selector: 'app-export',
     templateUrl: './export.component.html',
     styleUrls: ['./export.component.css']
 })
-export class ExportComponent implements OnInit, OnDestroy {
+export class ExportComponent implements OnInit {
     public message: string;
-    private socket;
     public socketOutput = '';
     private packageId;
     public implementationGuides: ImplementationGuideListItemModel[];
@@ -23,6 +22,7 @@ export class ExportComponent implements OnInit, OnDestroy {
 
     constructor(
         private implementationGuideService: ImplementationGuideService,
+        private socketService: SocketService,
         private exportService: ExportService) {
     }
 
@@ -57,9 +57,7 @@ export class ExportComponent implements OnInit, OnDestroy {
                 this.message = err;
             });
 
-        this.socket = io(location.origin);
-
-        this.socket.on('message', (data) => {
+        this.socketService.onMessage.subscribe((data: SocketMessage) => {
             if (data.packageId === this.packageId) {
                 this.socketOutput += data.message;
 
@@ -77,10 +75,8 @@ export class ExportComponent implements OnInit, OnDestroy {
                         });
                 }
             }
+        }, (err) => {
+            this.socketOutput += 'An error occurred while communicating with the server for the export';
         });
-    }
-
-    ngOnDestroy() {
-        this.socket.disconnect();
     }
 }

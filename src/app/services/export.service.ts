@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ExportFormats} from '../models/export-formats.enum';
 import {HttpClient} from '@angular/common/http';
+import {SocketService} from './socket.service';
 
 export class ExportOptions {
     public implementationGuideId: number;
@@ -16,11 +17,16 @@ export class ExportOptions {
 export class ExportService {
 
     constructor(
+        private socketService: SocketService,
         private http: HttpClient) {
     }
 
     public export(options: ExportOptions) {
         let url = '/api/export/' + options.implementationGuideId + '?exportFormat=' + options.exportFormat + '&';
+
+        if (!this.socketService.socketId) {
+            throw new Error('Your browser could not connect to the server via a socket to export the package');
+        }
 
         if (options.responseFormat) {
             url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
@@ -41,6 +47,8 @@ export class ExportService {
         if (options.downloadOutput === false) {
             url += 'downloadOutput=false&';
         }
+
+        url += 'socketId=' + encodeURIComponent(this.socketService.socketId);
 
         return this.http.post(url, null, { observe: 'response', responseType: 'blob' });
     }

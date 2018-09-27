@@ -4,6 +4,9 @@ import * as auth0 from 'auth0-js';
 import {PractitionerService} from './practitioner.service';
 import {Practitioner} from '../models/stu3/fhir';
 import {ConfigService} from './config.service';
+import {SocketService} from './socket.service';
+import {NewUserModalComponent} from '../new-user-modal/new-user-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +22,10 @@ export class AuthService {
 
     constructor(
         public router: Router,
+        private socketService: SocketService,
         private configService: ConfigService,
         private activatedRoute: ActivatedRoute,
+        private modalService: NgbModal,
         private practitionerService: PractitionerService) {
         this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
         this.authChanged = new EventEmitter();
@@ -36,6 +41,35 @@ export class AuthService {
             redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
             scope: this.configService.config.auth.scope
         });
+
+        this.configService.fhirServerChanged.subscribe((fhirServer) => {
+            // This should only be triggered after the app has been initialized. So, this should truly be when the fhir server
+            // changes during the user's session.
+            if (this.isAuthenticated()) {
+                // After the fhir server has been initialized, make sure the user has a profile on the FHIR server
+                this.getProfile()
+                    .then(() => {
+                        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+                    })
+                    .catch((err) => {
+                        if (err && err.status === 404) {
+                            const modalRef = this.modalService.open(NewUserModalComponent, {size: 'lg'});
+                            modalRef.result.then((practitioner: Practitioner) => {
+                                this.practitioner = practitioner;
+                                this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+                                this.authChanged.emit();
+                            });
+                        }
+                    });
+            }
+        });
+
+        // If the socket re-connects, then re-send the authentication information for the connection
+        this.socketService.onConnected.subscribe(() => {
+            if (this.isAuthenticated()) {
+                this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+            }
+        })
     }
 
     public login(): void {
@@ -52,6 +86,10 @@ export class AuthService {
                     .then(() => {
                         this.router.navigate([path]);
                         this.authChanged.emit();
+                        this.socketService.notifyAuthenticated({
+                            userProfile: this.userProfile,
+                            practitioner: this.practitioner
+                        });
                     });
             } else if (err) {
                 this.router.navigate(['/home']);
@@ -68,6 +106,7 @@ export class AuthService {
         this.userProfile = null;
         this.practitioner = null;
         this.authExpiresAt = null;
+        this.socketService.authInfoSent = false;
 
         if (this.authTimeout) {
             clearTimeout(this.authTimeout);

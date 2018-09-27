@@ -17,17 +17,14 @@ export class NewUserModalComponent implements OnInit {
     constructor(
         private activeModal: NgbActiveModal,
         public globals: Globals,
-        private practitionerService: PractitionerService,
-        private authService: AuthService) {
+        private practitionerService: PractitionerService) {
         this.practitioner.name = [new HumanName()];
     }
 
     public ok() {
         this.practitionerService.updateMe(this.practitioner)
-            .subscribe((newPerson) => {
-                this.authService.practitioner = newPerson;
-                this.authService.authChanged.emit();
-                this.activeModal.close();
+            .subscribe((newPractitioner) => {
+                this.activeModal.close(newPractitioner);
             }, (err) => {
                 this.message = this.globals.getErrorMessage(err);
             });
