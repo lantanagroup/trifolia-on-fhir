@@ -108,6 +108,7 @@ import {OtherResourcesComponent} from './other-resources/other-resources.compone
 import {QuestionnairesComponent} from './questionnaires/questionnaires.component';
 import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practitioner.component';
+import {SocketService} from './services/socket.service';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -338,7 +339,8 @@ export function getConfig(configService: ConfigService) {
         CapabilityStatementService,
         OperationDefinitionService,
         ImplementationGuideService,
-        StructureDefinitionService
+        StructureDefinitionService,
+        SocketService
     ],
     bootstrap: [AppComponent]
 })

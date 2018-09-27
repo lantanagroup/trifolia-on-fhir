@@ -161,8 +161,13 @@ function getControl(extension, implementationGuide, bundle, version) {
 }
 
 function sendSocketMessage(req, packageId, status, message) {
+    if (!req.query.socketId) {
+        log.error('Won\'t send socket message for export because the original request did not specify a socketId');
+        return;
+    }
+
     if (req && req.io) {
-        req.io.emit('message', {
+        req.io.to(req.query.socketId).emit('message', {
             packageId: packageId,
             status: status,
             message: message

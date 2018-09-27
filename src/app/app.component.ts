@@ -11,6 +11,7 @@ import {FileOpenModalComponent} from './file-open-modal/file-open-modal.componen
 import {FileModel} from './models/file-model';
 import {FhirService} from './services/fhir.service';
 import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
+import {SocketService} from './services/socket.service';
 
 @Component({
     selector: 'app-root',
@@ -25,11 +26,12 @@ export class AppComponent implements OnInit {
         public authService: AuthService,
         public configService: ConfigService,
         public recentItemService: RecentItemService,
+        public fhirService: FhirService,
         public globals: Globals,
         private modalService: NgbModal,
         private fileService: FileService,
-        public fhirService: FhirService,
-        private router: Router) {
+        private router: Router,
+        private socketService: SocketService) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.practitioner;
@@ -55,20 +57,5 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.configService.fhirServerChanged.subscribe((fhirServer) => {
-            // This should only be triggered after the app has been initialized. So, this should truly be when the fhir server
-            // changes during the user's session.
-            if (this.authService.isAuthenticated()) {
-                const self = this;
-
-                // After the fhir server has been initialized, make sure the user has a profile on the FHIR server
-                this.authService.getProfile()
-                    .catch((err) => {
-                        if (err && err.status === 404) {
-                            const modalRef = this.modalService.open(NewUserModalComponent, { size: 'lg' });
-                        }
-                    });
-            }
-        });
     }
 }
