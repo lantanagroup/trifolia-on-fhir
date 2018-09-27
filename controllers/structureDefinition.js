@@ -44,6 +44,8 @@ function prepareSearchUrl(req) {
         const deferred = Q.defer();
         const igUrl = req.getFhirServerUrl('ImplementationGuide', req.query.implementationGuideId);
 
+        // TODO: possibly change to _has:ImplementationGuide:resource:_id=ig.id
+
         request(igUrl, { json: true }, (error, results, implementationGuide) => {
             if (error) {
                 return deferred.reject(error);

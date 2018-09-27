@@ -9,7 +9,8 @@
            [(ngModel)]="parentObject[propertyName]"
            [disabled]="disabled || (!required && !parentObject.hasOwnProperty(propertyName))"
            [class.is-invalid]="required && !parentObject[propertyName]"
-           placeholder="{{placeholder}}" />
+           placeholder="{{placeholder}}"
+           (change)="onChanged()" />
 </div>
 <div *ngIf="!isFormGroup" [class.input-group]="!required && !disabled">
     <div class="input-group-addon" *ngIf="!required && !disabled">
@@ -23,5 +24,6 @@
            [(ngModel)]="parentObject[propertyName]"
            [disabled]="disabled || (!required && !parentObject.hasOwnProperty(propertyName))"
            [class.is-invalid]="required && !parentObject[propertyName]"
-           placeholder="{{placeholder}}" />
+           placeholder="{{placeholder}}"
+           (change)="onChanged()" />
 </div>

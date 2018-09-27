@@ -8,9 +8,9 @@
                 <fieldset>
                     <div class="row">
                         <div class="col-md-6">
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url"></app-fhir-string>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url" (change)="nameChanged()"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" tooltipPath="StructureDefinition.name"></app-fhir-string>
+                            <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" tooltipPath="StructureDefinition.name" (change)="nameChanged()"></app-fhir-string>
 
                             <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
 

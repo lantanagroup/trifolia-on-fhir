@@ -17,6 +17,7 @@ import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {DOCUMENT} from '@angular/common';
 import 'rxjs-compat/add/operator/mergeMap';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-profile',
@@ -34,6 +35,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
+                private configService: ConfigService,
                 private strucDefService: StructureDefinitionService,
                 private modalService: NgbModal,
                 public globals: Globals,
@@ -49,6 +51,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         if (this.navSubscription) {
             this.navSubscription.unsubscribe();
         }
+        this.configService.setTitle(null);
     }
 
     public get isNew() {
@@ -109,6 +112,10 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
     public populateElement(element: ElementTreeModel) {
         return [element];
+    }
+
+    public nameChanged() {
+        this.configService.setTitle(`StructureDefinition - ${this.structureDefinition.title || this.structureDefinition.name || 'no-name'}`);
     }
 
     public populateConstrainedElements(elementTreeModels: ElementTreeModel[], sliceName: string) {
@@ -208,6 +215,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         if (strucDefId === 'from-file') {
             if (this.fileService.file) {
                 this.structureDefinition = <StructureDefinition> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -225,6 +233,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 }
 
                 this.structureDefinition = <StructureDefinition> structureDefinition;
+                this.nameChanged();
 
                 if (!this.structureDefinition.differential) {
                     this.structureDefinition.differential = new DifferentialComponent({ element: [] });

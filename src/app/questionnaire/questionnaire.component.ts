@@ -7,6 +7,7 @@ import {RecentItemService} from '../services/recent-item.service';
 import {FileService} from '../services/file.service';
 import {FhirService} from '../services/fhir.service';
 import {QuestionnaireService} from '../services/questionnaire.service';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-questionnaire',
@@ -24,6 +25,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         private questionnaireService: QuestionnaireService,
         private route: ActivatedRoute,
         private router: Router,
+        private configService: ConfigService,
         private modalService: NgbModal,
         private recentItemService: RecentItemService,
         private fileService: FileService,
@@ -74,6 +76,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         if (questionnaireId === 'from-file') {
             if (this.fileService.file) {
                 this.questionnaire = <Questionnaire> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -91,6 +94,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                     }
 
                     this.questionnaire = <Questionnaire> questionnaire;
+                    this.nameChanged();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentQuestionnaires,
                         questionnaire.id,
@@ -113,6 +117,11 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
+    }
+
+    nameChanged() {
+        this.configService.setTitle(`Questionnaire - ${this.questionnaire.title || this.questionnaire.name || 'no-name'}`);
     }
 
     ngDoCheck() {

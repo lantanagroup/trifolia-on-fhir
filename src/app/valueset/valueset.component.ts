@@ -16,6 +16,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {FhirEditValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-valueset',
@@ -34,6 +35,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         private route: ActivatedRoute,
         private router: Router,
         private modalService: NgbModal,
+        private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService) {
@@ -100,6 +102,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         if (valueSetId === 'from-file') {
             if (this.fileService.file) {
                 this.valueSet = <ValueSet> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -117,6 +120,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                     }
 
                     this.valueSet = <ValueSet> results;
+                    this.nameChanged();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentValueSets,
                         this.valueSet.id,
@@ -139,6 +143,11 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
+    }
+
+    nameChanged() {
+        this.configService.setTitle(`ValueSet - ${this.valueSet.title || this.valueSet.name || 'no-name'}`);
     }
 
     ngDoCheck() {

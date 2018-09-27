@@ -10,6 +10,7 @@ import {PageComponentModalComponent} from '../fhir-edit/page-component-modal/pag
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
+import {ConfigService} from '../services/config.service';
 
 class PageDefinition {
     public page: PageComponent;
@@ -42,6 +43,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         private router: Router,
         private implementationGuideService: ImplementationGuideService,
         private authService: AuthService,
+        private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
         public globals: Globals,
@@ -168,6 +170,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         if (implementationGuideId === 'from-file') {
             if (this.fileService.file) {
                 this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -185,6 +188,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                     }
 
                     this.implementationGuide = <ImplementationGuide> results;
+                    this.nameChanged();
                     this.initPages();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentImplementationGuides,
@@ -424,8 +428,13 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         this.getImplementationGuide();
     }
 
+    nameChanged() {
+        this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`);
+    }
+
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
     }
 
     ngDoCheck() {

@@ -1,7 +1,7 @@
 <h1>Implementation Guide</h1>
 
 <div class="ig-main" *ngIf="implementationGuide">
-    <h2>{{implementationGuide.name || 'No Name'}}</h2>
+    <h2>{{implementationGuide.name || 'no-name'}}</h2>
 
     <ngb-tabset [destroyOnHide]="false">
         <ngb-tab id="general" title="General">
@@ -11,7 +11,7 @@
                         <div class="col-md-8">
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true"></app-fhir-string>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
 
                             <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
 

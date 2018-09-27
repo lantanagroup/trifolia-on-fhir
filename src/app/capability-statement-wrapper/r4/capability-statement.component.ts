@@ -10,6 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirEditMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {FileService} from '../../services/file.service';
+import {ConfigService} from '../../services/config.service';
 
 @Component({
     selector: 'app-capability-statement',
@@ -26,6 +27,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
 
     constructor(
         public globals: Globals,
+        private configService: ConfigService,
         private modalService: NgbModal,
         private csService: CapabilityStatementService,
         private route: ActivatedRoute,
@@ -121,6 +123,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
         if (capabilityStatementId === 'from-file') {
             if (this.fileService.file) {
                 this.capabilityStatement = <CapabilityStatement> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -138,6 +141,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
                     }
 
                     this.capabilityStatement = <CapabilityStatement> cs;
+                    this.nameChanged();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentCapabilityStatements,
                         this.capabilityStatement.id,
@@ -147,6 +151,10 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }
+    }
+
+    nameChanged() {
+        this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
     }
 
     ngOnInit() {
@@ -162,6 +170,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
 
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
     }
 
     ngDoCheck() {
