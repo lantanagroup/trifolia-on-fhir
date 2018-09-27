@@ -19,6 +19,7 @@ const codeSystemController = require('./controllers/codeSystem');
 const questionnaireController = require('./controllers/questionnaire');
 const importController = require('./controllers/import');
 const fhirOperationsController = require('./controllers/fhirOperations');
+const manageController = require('./controllers/manage');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
@@ -154,6 +155,7 @@ io.on('connection', (socket) => {
 
 app.use((req, res, next) => {
     req.io = io;
+    req.ioConnections = connections;
     next();
 });
 
@@ -174,6 +176,7 @@ app.use('/api/codeSystem', codeSystemController);
 app.use('/api/fhirOps', fhirOperationsController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
+app.use('/api/manage', manageController);
 
 // Catch all other routes and return the index file
 app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
