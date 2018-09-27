@@ -7,9 +7,9 @@
                 <div class="col-md-8">
                     <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
 
                     <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
                 </div>

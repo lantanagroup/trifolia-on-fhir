@@ -2,6 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
 import {Globals} from '../globals';
+import {Title} from '@angular/platform-browser';
 
 @Injectable()
 export class ConfigService {
@@ -18,9 +19,21 @@ export class ConfigService {
 
     constructor(
         private globals: Globals,
+        private titleService: Title,
         private http: HttpClient) {
 
         this.fhirServer = localStorage.getItem('fhirServer');
+    }
+
+    public setTitle(value: string) {
+        const mainTitle = 'Trifolia-on-FHIR';
+
+        if (value) {
+            this.titleService.setTitle(`${mainTitle}: ${value}`);
+            return;
+        }
+
+        this.titleService.setTitle(mainTitle);
     }
 
     public getConfig(): Promise<any> {

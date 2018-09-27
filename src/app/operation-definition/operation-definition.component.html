@@ -6,7 +6,7 @@
         <ng-template ngbTabContent>
             <div class="row">
                 <div class="col-md-8">
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
 
                     <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL"></app-fhir-string>
 

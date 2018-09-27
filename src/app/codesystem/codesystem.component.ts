@@ -8,6 +8,7 @@ import {FhirService} from '../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 import {FileService} from '../services/file.service';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-codesystem',
@@ -26,6 +27,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         private codeSystemService: CodeSystemService,
         private route: ActivatedRoute,
         private router: Router,
+        private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService) {
@@ -77,6 +79,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         if (codeSystemId === 'from-file') {
             if (this.fileService.file) {
                 this.codeSystem = <CodeSystem> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -94,6 +97,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     }
 
                     this.codeSystem = <CodeSystem> cs;
+                    this.nameChanged();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentCodeSystems,
                         this.codeSystem.id,
@@ -103,6 +107,10 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }
+    }
+
+    nameChanged() {
+        this.configService.setTitle(`CodeSystem - ${this.codeSystem.title || this.codeSystem.name || 'no-name'}`);
     }
 
     ngOnInit() {
@@ -116,6 +124,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
     }
 
     ngDoCheck() {

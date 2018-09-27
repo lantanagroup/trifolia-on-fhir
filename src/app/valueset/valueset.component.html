@@ -7,9 +7,9 @@
                 <div class="col-md-8">
                     <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
 
                     <div class="card">
                         <div class="card-header">

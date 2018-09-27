@@ -12,6 +12,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {OperationDefinitionParameterModalComponent} from '../operation-definition-parameter-modal/operation-definition-parameter-modal.component';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-operation-definition',
@@ -29,6 +30,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         private modal: NgbModal,
         private route: ActivatedRoute,
         private router: Router,
+        private configService: ConfigService,
         private opDefService: OperationDefinitionService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
@@ -83,6 +85,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         if (operationDefinitionId === 'from-file') {
             if (this.fileService.file) {
                 this.operationDefinition = <OperationDefinition> this.fileService.file.resource;
+                this.nameChanged();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -100,6 +103,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     }
 
                     this.operationDefinition = <OperationDefinition> opDef;
+                    this.nameChanged();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentOperationDefinitions,
                         this.operationDefinition.id,
@@ -109,6 +113,10 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });
         }
+    }
+
+    nameChanged() {
+        this.configService.setTitle(`OperationDefinition - ${this.operationDefinition.name || 'no-name'}`);
     }
 
     ngOnInit() {
@@ -122,6 +130,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
     ngOnDestroy() {
         this.navSubscription.unsubscribe();
+        this.configService.setTitle(null);
     }
 
     ngDoCheck() {
