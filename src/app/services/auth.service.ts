@@ -2,7 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import {PractitionerService} from './practitioner.service';
-import {Practitioner} from '../models/stu3/fhir';
+import {HumanName, Identifier, Practitioner} from '../models/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {NewUserModalComponent} from '../new-user-modal/new-user-modal.component';
@@ -53,7 +53,24 @@ export class AuthService {
                     })
                     .catch((err) => {
                         if (err && err.status === 404) {
+                            const newPractitioner = new Practitioner();
+                            const identifierSystem = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
+                                'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
+                            const identifierValue = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
+                                this.userProfile.user_id.substring(6) : this.userProfile.user_id;
+                            newPractitioner.identifier = [new Identifier({
+                                system: identifierSystem,
+                                value: identifierValue
+                            })];
+                            newPractitioner.name = [];
+                            newPractitioner.name.push(new HumanName({
+                                family: '',
+                                given: ['']
+                            }));
+
                             const modalRef = this.modalService.open(NewUserModalComponent, {size: 'lg'});
+                            modalRef.componentInstance.practitioner = newPractitioner;
+
                             modalRef.result.then((practitioner: Practitioner) => {
                                 this.practitioner = practitioner;
                                 this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
