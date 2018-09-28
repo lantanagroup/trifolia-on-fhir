@@ -59,23 +59,25 @@ function updateMe(req, existingPractitioner) {
 
     const authUser = req.user.sub;
     let system = '';
-    let identifier = authUser;
+    let value = authUser;
 
     if (authUser.startsWith('auth0|')) {
         system =  'https://auth0.com';
-        identifier = authUser.substring(6);
+        value = authUser.substring(6);
     }
 
     if (!practitioner.identifier) {
         practitioner.identifier = [];
     }
 
-    const foundIdentifier = _.find(practitioner.identifier, (identifier) => identifier.system === system && identifier.value === identifier);
+    const foundIdentifier = _.find(practitioner.identifier, (identifier) => {
+        return identifier.system === system && identifier.value === value
+    });
 
     if (!foundIdentifier) {
         practitioner.identifier.push({
             system: system,
-            value: identifier
+            value: value
         });
     }
 
