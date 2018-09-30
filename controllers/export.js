@@ -60,14 +60,17 @@ function getBundle(req) {
             const promises = [];
 
             _.each(implementationGuide.package, (package) => {
-                _.chain(package.resource)
-                    .filter((packageResource) => packageResource.sourceReference && packageResource.sourceReference.reference)
-                    .each((packageResource) => {
-                        const parsed = FhirHelper.parseUrl(packageResource.sourceReference.reference);
-                        const resourceUrl = req.getFhirServerUrl(parsed.resourceType, parsed.id);
-                        const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
-                        promises.push(resourcePromise);
-                    });
+                const references = _.chain(package.resource)
+                    .filter((resource) => resource.sourceReference && resource.sourceReference.reference)
+                    .map((resource) => resource.sourceReference.reference)
+                    .value();
+
+                _.each(references, (reference) => {
+                    const parsed = FhirHelper.parseUrl(reference);
+                    const resourceUrl = req.getFhirServerUrl(parsed.resourceType, parsed.id);
+                    const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
+                    promises.push(resourcePromise);
+                });
             });
 
             return Q.all(promises);
@@ -98,7 +101,7 @@ function getBundle(req) {
                 })
                 .value();
 
-            if (responses.length != resourceEntries.length) {
+            if (responses.length !== resourceEntries.length) {
                 log.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
             }
 
