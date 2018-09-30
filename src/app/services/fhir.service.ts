@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {
     Bundle,
     CodeSystem,
-    Coding,
+    Coding, ConceptDefinitionComponent,
     IssueComponent,
     OperationOutcome,
     Resource,
@@ -65,6 +65,18 @@ export class FhirService {
             });
     }
 
+    private getSystemConcepts(concepts: ConceptDefinitionComponent[]): Coding[] {
+        let all = [];
+
+        _.each(concepts, (concept) => {
+            all.push(new Coding(concept));
+            const next = this.getSystemConcepts(concept.concept);
+            all = all.concat(next);
+        });
+
+        return all;
+    }
+
     public getValueSetCodes(valueSetUrl: string): Coding[] {
         let codes: Coding[] = [];
         const foundValueSet = _.chain(this.valueSets)
@@ -75,19 +87,13 @@ export class FhirService {
         if (foundValueSet) {
             if (foundValueSet.compose) {
                 _.each(foundValueSet.compose.include, (include) => {
-                    const foundSystem = _.chain(this.valueSets)
+                    const foundSystem: CodeSystem = _.chain(this.valueSets)
                         .filter((item) => item.resourceType === 'CodeSystem')
                         .find((codeSystem: CodeSystem) => codeSystem.url === include.system)
                         .value();
 
                     if (foundSystem) {
-                        const csCodes = _.map(foundSystem.concept, (concept) => {
-                            return {
-                                system: include.system,
-                                code: concept.code,
-                                display: concept.display || concept.code
-                            };
-                        });
+                        const csCodes = this.getSystemConcepts(foundSystem.concept);
                         codes = codes.concat(csCodes);
                     }
 
