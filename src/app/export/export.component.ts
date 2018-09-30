@@ -28,7 +28,7 @@ export class ExportComponent implements OnInit {
 
     public export() {
         this.socketOutput = '';
-        this.messaging = 'Exporting...';
+        this.message = 'Exporting...';
 
         this.exportService.export(this.options)
             .subscribe((results: any) => {
