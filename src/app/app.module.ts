@@ -109,6 +109,7 @@ import {QuestionnairesComponent} from './questionnaires/questionnaires.component
 import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practitioner.component';
 import {SocketService} from './services/socket.service';
+import {FhirEditQuestionnaireItemModalComponent} from './fhir-edit/questionnaire-item-modal/questionnaire-item-modal.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -207,7 +208,8 @@ export function getConfig(configService: ConfigService) {
         FileOpenModalComponent,
         NewUserModalComponent,
         ChangeResourceIdModalComponent,
-        FhirEditValueSetIncludeConceptModalComponent
+        FhirEditValueSetIncludeConceptModalComponent,
+        FhirEditQuestionnaireItemModalComponent
     ],
     declarations: [
         AppComponent,
@@ -292,7 +294,8 @@ export function getConfig(configService: ConfigService) {
         OtherResourcesComponent,
         QuestionnairesComponent,
         QuestionnaireComponent,
-        FhirEditPractitionerComponent
+        FhirEditPractitionerComponent,
+        FhirEditQuestionnaireItemModalComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -13415,6 +13415,110 @@ export class Provenance extends DomainResource {
 
 }
 
+export class QuestionnaireItemEnableWhenComponent extends BackboneElement {
+    public question: string;
+    public hasAnswer?: boolean;
+    public answerBoolean?: boolean;
+    public answerDecimal?: number;
+    public answerInteger?: number;
+    public answerDate?: string;
+    public answerDateTime?: string;
+    public answerTime?: string;
+    public answerUri?: string;
+    public answerString?: string;
+    public answerAttachment?: Attachment;
+    public answerCoding?: Coding;
+    public answerQuantity?: Quantity;
+    public answerReference?: ResourceReference;
+
+    constructor(obj?: any) {
+        super(obj);
+        Object.assign(this, obj);
+
+        if (obj) {
+            if (obj.question) {
+                this.question = obj.question;
+            }
+            if (obj.hasOwnProperty('hasAnswer')) {
+                this.hasAnswer = obj.hasAnswer;
+            }
+            if (obj.hasOwnProperty('answerBoolean')) {
+                this.answerBoolean = obj.answerBoolean;
+            }
+            if (obj.hasOwnProperty('answerDecimal')) {
+                this.answerDecimal = obj.answerDecimal;
+            }
+            if (obj.hasOwnProperty('answerInteger')) {
+                this.answerInteger = obj.answerInteger;
+            }
+            if (obj.answerDate) {
+                this.answerDate = obj.answerDate;
+            }
+            if (obj.answerDateTime) {
+                this.answerDateTime = obj.answerDateTime;
+            }
+            if (obj.answerTime) {
+                this.answerTime = obj.answerTime;
+            }
+            if (obj.answerUri) {
+                this.answerUri = obj.answerUri;
+            }
+            if (obj.answerString) {
+                this.answerString = obj.answerString;
+            }
+            if (obj.answerAttachment) {
+                this.answerAttachment = new Attachment(obj.answerAttachment);
+            }
+            if (obj.answerCoding) {
+                this.answerCoding = new Coding(obj.answerCoding);
+            }
+            if (obj.answerQuantity) {
+                this.answerQuantity = new Quantity(obj.answerQuantity);
+            }
+            if (obj.answerReference) {
+                this.answerReference = new ResourceReference(obj.answerReference);
+            }
+        }
+    }
+}
+
+export class QuestionnaireItemComponent extends BackboneElement {
+    public linkId: string;
+    public definition?: string;
+    public code?: Coding[];
+    public prefix?: string;
+    public text?: string;
+    public type?: string;
+    public enableWhen?: QuestionnaireItemEnableWhenComponent[];
+    public item?: QuestionnaireItemComponent[];
+
+    constructor(obj?: any) {
+        super(obj);
+        
+        if (obj) {
+            if (obj.linkId) {
+                this.linkId = obj.linkId;
+            }
+            if (obj.definition) {
+                this.definition = obj.definition;
+            }
+            if (obj.code) {
+                this.code = [];
+                for (let o of obj.code || []) { this.code.push(new Coding(o)); }
+            }
+            if (obj.prefix) {
+                this.prefix = obj.prefix;
+            }
+            if (obj.text) {
+                this.text = obj.text;
+            }
+            if (obj.type) {
+                this.type = obj.type;
+            }
+        }
+    }
+}
+
 export class Questionnaire extends DomainResource {
     public resourceType = 'Questionnaire';
     public url?: string;
@@ -13437,7 +13541,7 @@ export class Questionnaire extends DomainResource {
     public copyright?: string;
     public code?: Coding[];
     public subjectType?: string[];
-    public item?: ItemComponent[];
+    public item?: QuestionnaireItemComponent[];
     
     constructor(obj?: any) {
         super(obj);
@@ -13509,7 +13613,7 @@ export class Questionnaire extends DomainResource {
             }
             if (obj.item) {
                 this.item = [];
-                for (let o of obj.item || []) { this.item.push(new ItemComponent(o)); }
+                for (let o of obj.item || []) { this.item.push(new QuestionnaireItemComponent(o)); }
             }
         }
     }

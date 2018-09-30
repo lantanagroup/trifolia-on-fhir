@@ -39,7 +39,7 @@ export class SelectSingleCodeComponent implements OnInit {
             return this.defaultCode;
         }
 
-        if (this.codes.length > 0) {
+        if (this.codes && this.codes.length > 0) {
             return this.codes[0].code || this.codes[0].display;
         }
 

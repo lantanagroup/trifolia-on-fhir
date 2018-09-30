@@ -55,6 +55,56 @@
 
     <ngb-tab title="Items">
         <ng-template ngbTabContent>
+            <p>
+                <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="toggleItems()" /> This questionnaire includes items
+            </p>
+
+            <table class="table table-striped" *ngIf="questionnaire.hasOwnProperty('item')">
+                <thead>
+                <tr>
+                    <th>Link ID</th>
+                    <th>Text</th>
+                    <th>Type</th>
+                    <th class="actions-column-1">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default" title="Add an item to the top level" (click)="addItem()">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let fi of flattenedItems; let fii = index">
+                    <td style="display: flex;">
+                        <span style="float: left; line-height: 37px;">
+                            <i class="fa" [class.fa-plus]="!fi.expanded" [class.fa-minus]="fi.expanded" (click)="toggleExpandItem(fi)"></i>
+                        </span>
+                        <span style="white-space: pre; float: left;">{{fi.getSpaces()}}</span>
+                        <input type="text" style="float: left;" class="form-control" [(ngModel)]="fi.item.linkId" />
+                    </td>
+                    <td>
+                        <app-fhir-string [parentObject]="fi.item" propertyName="text" [isFormGroup]="false"></app-fhir-string>
+                    </td>
+                    <td>
+                        <app-fhir-select-single-code [parentObject]="fi.item" propertyName="type" valueSetUrl="http://hl7.org/fhir/ValueSet/item-type" [isFormGroup]="false"></app-fhir-select-single-code>
+                    </td>
+                    <td class="actions-column-2">
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default" tile="Add a child item" (click)="addItem(fi)">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-default" tile="Edit this item" (click)="editItem(fi)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-default" title="Remove this item">
+                                <i class="fa fa-remove"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </ng-template>
     </ngb-tab>
 
