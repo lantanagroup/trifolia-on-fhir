@@ -13,9 +13,11 @@ const config = require('config');
 const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
 const rp = require('request-promise');
+const FhirHelper = require('../fhirHelper');
 const log4js = require('log4js');
 const log = log4js.getLogger();
 
+/*
 function getBundle(req, format) {
     const deferred = Q.defer();
     let query = {
@@ -36,10 +38,97 @@ function getBundle(req, format) {
 
     return deferred.promise;
 }
+*/
 
+/**
+ * Gets a bundle for the implementation guide in the request
+ * @param req The express http request
+ * @param req.params.implementationGuideId
+ * @return {*}
+ */
+function getBundle(req) {
+    const deferred = Q.defer();
+    const igUrl = req.getFhirServerUrl('ImplementationGuide', req.params.implementationGuideId);
+    let implementationGuide;
+    let implementationGuideFullUrl;
+
+    rp({ url: igUrl, json: true, resolveWithFullResponse: true })
+        .then((response) => {
+            implementationGuide = response.body;
+            implementationGuideFullUrl = response.headers['content-location'];
+
+            const promises = [];
+
+            _.each(implementationGuide.package, (package) => {
+                _.chain(package.resource)
+                    .filter((packageResource) => packageResource.sourceReference && packageResource.sourceReference.reference)
+                    .each((packageResource) => {
+                        const parsed = FhirHelper.parseUrl(packageResource.sourceReference.reference);
+                        const resourceUrl = req.getFhirServerUrl(parsed.resourceType, parsed.id);
+                        const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
+                        promises.push(resourcePromise);
+                    });
+            });
+
+            return Q.all(promises);
+        })
+        .then((responses) => {
+            const badResponses = _.filter(responses, (response) => {
+                return !response.body || !response.body.resourceType;
+            });
+            const resourceEntries = _.chain(responses)
+                .filter((response) => {
+                    return response.body && response.body.resourceType;
+                })
+                .map((response) => {
+                    let fullUrl = response.headers['content-location'];
+
+                    if (!fullUrl) {
+                        fullUrl = FhirHelper.joinUrl(req.fhirServerBase, response.body.resourceType, response.body.id);
+
+                        if (response.body.meta && response.body.meta.versionId) {
+                            fullUrl = FhirHelper.joinUrl(fullUrl, '_history', response.body.meta.versionId);
+                        }
+                    }
+
+                    return {
+                        fullUrl: fullUrl,
+                        resource: response.body
+                    };
+                })
+                .value();
+
+            if (responses.length != resourceEntries.length) {
+                log.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
+            }
+
+            const bundle = {
+                resourceType: 'Bundle',
+                type: 'collection',
+                total: resourceEntries.length + 1,
+                entry: [{ fullUrl: implementationGuideFullUrl, resource: implementationGuide }].concat(resourceEntries)
+            };
+
+            deferred.resolve(bundle);
+        })
+        .catch((err) => {
+            deferred.reject(err);
+        });
+
+    return deferred.promise;
+}
+
+/**
+ * Exports a bundle for the specified implementation guide in the http request
+ * @param req The express http request
+ * @param req.params.implementationGuideId {string} The id of the implementation guide to export
+ * @param req.query._format {string} The format that should be returned by the bundle. See http://www.hl7.org/fhir/http.html#mime-type
+ * @param res The express http response
+ * @param res.headers Sets the content-type and content-disposition to reflect downloading an attached file
+ */
 function exportBundle(req, res) {
     getBundle(req)
-        .then((body) => {
+        .then((bundle) => {
             let fileExt = '.json';
 
             if (req.query._format && req.query._format === 'application/xml') {
@@ -48,13 +137,28 @@ function exportBundle(req, res) {
 
             res.setHeader('Content-Type', 'application/octet-stream');
             res.setHeader('Content-Disposition', 'attachment; filename=ig-bundle' + fileExt);      // TODO: Determine file name
-            res.send(body);
+
+            let responseContent = bundle;
+
+            if (req.query._format === 'xml' || req.query._format === 'application/xml' || req.query._format === 'application/fhir+xml') {
+                responseContent = req.fhir.objToXml(bundle);
+            }
+
+            res.send(responseContent);
         })
         .catch((err) => {
             res.status(500).send(err);
         });
 }
 
+/**
+ * Builds a control file based on the specified criteria
+ * @param extension The extension of the files to export - not currently used in control
+ * @param implementationGuide {ImplementationGuide} - The implementation guide resource to build the control file for
+ * @param bundle {Bundle} - The bundle of resources the control file represents
+ * @param version {string} - The FHIR version to use in the control file
+ * @return {{tool: string, version: *, source: string, "npm-name": string, license: string, paths: {qa: string, temp: string, output: string, txCache: string, specification: string, pages: string[], resources: string[]}, pages: string[], "extension-domains": string[], "allowed-domains": string[], "sct-edition": string, canonicalBase: string, defaults: {Location: {"template-base": string}, ProcedureRequest: {"template-base": string}, Organization: {"template-base": string}, MedicationStatement: {"template-base": string}, SearchParameter: {"template-base": string}, StructureDefinition: {"template-mappings": string, "template-base": string, "template-defns": string}, Immunization: {"template-base": string}, Patient: {"template-base": string}, StructureMap: {content: boolean, script: boolean, "template-base": string, profiles: boolean}, ConceptMap: {"template-base": string}, Practitioner: {"template-base": string}, OperationDefinition: {"template-base": string}, CodeSystem: {"template-base": string}, Communication: {"template-base": string}, Any: {"template-format": string, "template-base": string}, PractitionerRole: {"template-base": string}, ValueSet: {"template-base": string}, CapabilityStatement: {"template-base": string}, Observation: {"template-base": string}}, resources: {}}}
+ */
 function getControl(extension, implementationGuide, bundle, version) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
@@ -472,8 +576,8 @@ function exportHtml(req, res, testCallback) {
 
             // Prepare IG Publisher package
             getBundle(req, 'application/json')
-                .then((bundleJson) => {
-                    bundle = JSON.parse(bundleJson);
+                .then((results) => {
+                    bundle = results;
                     const resourcesDir = path.join(rootPath, 'source/resources');
 
                     sendSocketMessage(req, packageId, 'progress', 'Resources retrieved. Packaging.');

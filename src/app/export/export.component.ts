@@ -28,6 +28,7 @@ export class ExportComponent implements OnInit {
 
     public export() {
         this.socketOutput = '';
+        this.messaging = 'Exporting...';
 
         this.exportService.export(this.options)
             .subscribe((results: any) => {
@@ -35,6 +36,8 @@ export class ExportComponent implements OnInit {
                     const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
                     const igName = ig.name.replace(/\s/g, '_');
                     const extension = (this.options.responseFormat === 'application/xml' ? '.xml' : '.json');
+
+                    this.message = 'Done exporting';
 
                     saveAs(results.body, igName + extension);
                 } else if (this.options.exportFormat === ExportFormats.HTML) {
@@ -65,14 +68,18 @@ export class ExportComponent implements OnInit {
                     this.socketOutput += '\r\n';
                 }
 
-                if (data.status === 'complete' && this.options.downloadOutput) {
-                    const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
-                    const igName = ig.name.replace(/\s/g, '_');
+                if (data.status === 'complete') {
+                    this.message = 'Done exporting';
 
-                    this.exportService.getPackage(this.packageId)
-                        .subscribe((results: any) => {
-                            saveAs(results.body, igName + '.zip');
-                        });
+                    if (this.options.downloadOutput) {
+                        const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
+                        const igName = ig.name.replace(/\s/g, '_');
+
+                        this.exportService.getPackage(this.packageId)
+                            .subscribe((results: any) => {
+                                saveAs(results.body, igName + '.zip');
+                            });
+                    }
                 }
             }
         }, (err) => {
