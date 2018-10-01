@@ -421,6 +421,18 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
             });
     }
 
+    public editImplementationGuideResource(igResource: ImplementationGuideResource) {
+        if (!igResource.resource.sourceReference.reference.startsWith('StructureDefinition/')) {
+            alert('The reference is not relative, cannot edit.');
+            return;
+        }
+
+        if (confirm('This will redirect you to the "Edit Structure Definition" screen. Any unsaved changes will be lost. Are you sure you want to continue?')) {
+            const id = igResource.resource.sourceReference.reference.substring('StructureDefinition/'.length);
+            this.router.navigate(['/structure-definition/' + id]);
+        }
+    }
+
     public initResources() {
         this.resources = _.reduce(this.implementationGuide.package, (list, igPackage: PackageComponent) => {
             const packageResources = _.chain(igPackage.resource)

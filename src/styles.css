@@ -190,3 +190,7 @@ nav.navbar {
         display: block !important;
     }
 }
+
+.strikethrough {
+    text-decoration: line-through;
+}

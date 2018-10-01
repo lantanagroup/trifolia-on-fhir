@@ -29,11 +29,14 @@
                                 </thead>
                                 <tbody>
                                 <tr *ngFor="let ig of options.implementationGuides">
-                                    <td>{{ig.name}}</td>
+                                    <td [class.strikethrough]="ig.removed">{{ig.name}}</td>
                                     <td class="actions-column-1">
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-default" title="Remove this structure definition from the implementation guide" (click)="removeImplementationGuide(ig)">
+                                            <button type="button" class="btn btn-default" title="Remove this structure definition from the implementation guide" *ngIf="!ig.removed" (click)="ig.removed = true">
                                                 <i class="fa fa-remove"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-default" title="Undo removing this structure definition from the IG" *ngIf="ig.removed" (click)="ig.removed = false">
+                                                <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </td>
