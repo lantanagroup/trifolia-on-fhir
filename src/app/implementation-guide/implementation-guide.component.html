@@ -3,7 +3,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
     <h2>{{implementationGuide.name || 'no-name'}}</h2>
 
-    <ngb-tabset [destroyOnHide]="false">
+    <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)">
         <ngb-tab id="general" title="General">
             <ng-template ngbTabContent>
                 <fieldset>
@@ -129,7 +129,7 @@
             </ng-template>
         </ngb-tab>
 
-        <ngb-tab id="resourcess" title="Resources">
+        <ngb-tab id="resources" title="Resources">
             <ng-template ngbTabContent>
                 <table class="table table-striped">
                     <thead>
