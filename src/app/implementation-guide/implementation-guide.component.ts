@@ -421,16 +421,58 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
             });
     }
 
+    public canEditImplementationGuideResource(igResource: ImplementationGuideResource) {
+        const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
+
+        if (!parsed) {
+            return false;
+        }
+
+        return parsed.id && (
+            parsed.resourceType === 'ImplementationGuide' ||
+                parsed.resourceType === 'StructureDefinition' ||
+                parsed.resourceType === 'CapabilityStatement' ||
+                parsed.resourceType === 'OperationDefinition' ||
+                parsed.resourceType === 'CodeSystem' ||
+                parsed.resourceType === 'ValueSet' ||
+                parsed.resourceType === 'Questionnaire'
+        );
+    }
+
     public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-        if (!igResource.resource.sourceReference.reference.startsWith('StructureDefinition/')) {
-            alert('The reference is not relative, cannot edit.');
+        const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
+
+        if (!confirm('This will redirect you to the "Edit Structure Definition" screen. Any unsaved changes will be lost. Are you sure you want to continue?')) {
             return;
         }
 
-        if (confirm('This will redirect you to the "Edit Structure Definition" screen. Any unsaved changes will be lost. Are you sure you want to continue?')) {
-            const id = igResource.resource.sourceReference.reference.substring('StructureDefinition/'.length);
-            this.router.navigate(['/structure-definition/' + id]);
+        let routeBase: string;
+
+        switch (parsed.resourceType) {
+            case 'ImplementationGuide':
+                routeBase = 'implementation-guide';
+                break;
+            case 'StructureDefinition':
+                routeBase = 'structure-definition':
+                break;
+            case 'CapabilityStatement':
+                routeBase = 'capability-statement';
+                break;
+            case 'OperationDefinition':
+                routeBase = 'operation-definition';
+                break;
+            case 'ValueSet':
+                routeBase = 'value-set';
+                break;
+            case 'CodeSystem':
+                routeBase = 'code-system';
+                break;
+            case 'Questionnaire':
+                routeBase = 'questionnaire';
+                break;
         }
+
+        this.router.navigate([ '/' + routeBase + '/' + parsed.id ]);
     }
 
     public initResources() {
