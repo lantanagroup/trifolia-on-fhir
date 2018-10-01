@@ -11,8 +11,17 @@ const log4js = require('log4js');
 const log = log4js.getLogger();
 const Q = require('q');
 const FhirHelper = require('../fhirHelper');
+const rp = require('request-promise');
 
 const thisResourceType = 'StructureDefinition';
+
+function saveAdditionalOptions(req, location) {
+    const deferred = Q.defer();
+
+    return Q.resolve();
+
+    return deferred.promise;
+}
 
 /**
  * Prepares a url to search for structure definitions based on the criteria specified in the request
@@ -131,15 +140,36 @@ router.get('/', checkJwt, (req, res) => {
 
 router.get('/:id', checkJwt, (req, res) => {
     const url = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    request(url, { json: true }, (error, results, body) => {
-        if (error) {
-            log.error('Error retrieving structure definition from FHIR server: ' + error);
-            return res.status(500).send('Error retrieving structure definition from FHIR server');
-        }
-
-        res.send(body);
+    const igsUrl = req.getFhirServerUrl('ImplementationGuide', null, null, {
+        _summary: true,
+        resource: 'StructureDefinition/' + encodeURIComponent(req.params.id)
     });
+    let structureDefinition;
+
+    rp({ url: url, json: true })
+        .then((results) => {
+            structureDefinition = results;
+            return rp({ url: igsUrl, json: true });
+        })
+        .then((results) => {
+            const options = {
+                implementationGuides: _.map(results && results.entry ? results.entry : [], (entry) => {
+                    return {
+                        name: entry.resource.name,
+                        id: entry.resource.id
+                    };
+                })
+            };
+
+            res.send({
+                resource: structureDefinition,
+                options: options
+            });
+        })
+        .catch((err) => {
+            log.error('Error retrieving structure definition from FHIR server: ' + err);
+            return res.status(500).send('Error retrieving structure definition from FHIR server');
+        });
 });
 
 router.get('/base/:id', checkJwt, (req, res) => {
@@ -163,6 +193,12 @@ router.get('/base/:id', checkJwt, (req, res) => {
     });
 });
 
+/**
+ * @param req Express.JS http request
+ * @param req.body
+ * @param req.body.resource The StructureDefinition resource
+ * @param req.body.options The additional options for the StructureDefinition
+ */
 router.post('/', checkJwt, (req, res) => {
     const createUrl = req.getFhirServerUrl(thisResourceType);
 
@@ -170,7 +206,7 @@ router.post('/', checkJwt, (req, res) => {
         url: createUrl,
         method: 'POST',
         json: true,
-        body: req.body
+        body: req.body.resource
     };
 
     request(options, (err, results, createBody) => {
@@ -180,22 +216,35 @@ router.post('/', checkJwt, (req, res) => {
         }
         const location = results.headers.location || results.headers['content-location'];
 
-        if (location) {
-            request(location, (err, results, retrieveBody) => {
-                if (err) {
-                    log.error('Error from FHIR server while retrieving newly created structure definition: ' + err);
-                    return res.status(500).send('Error from FHIR server while retrieving newly created structure definition');
-                }
+        saveAdditionalOptions(req, location)
+            .then(() => {
+                if (location) {
+                    request(location, (err, results, retrieveBody) => {
+                        if (err) {
+                            log.error('Error from FHIR server while retrieving newly created structure definition: ' + err);
+                            return res.status(500).send('Error from FHIR server while retrieving newly created structure definition');
+                        }
 
-                res.send(retrieveBody);
+                        res.send(retrieveBody);
+                    })
+                } else {
+                    res.status(500).send('FHIR server did not respond with a location to the newly created structure definition');
+                }
             })
-        } else {
-            res.status(500).send('FHIR server did not respond with a location to the newly created structure definition');
-        }
+            .catch((err) => {
+                log.error(err);
+                res.status(500).send('An error occurred while saving additional options for the StructureDefinition');
+            });
     });
 });
 
 
+/**
+ * @param req Express.JS http request
+ * @param req.body
+ * @param req.body.resource The StructureDefinition resource
+ * @param req.body.options The additional options for the StructureDefinition
+ */
 router.put('/:id', checkJwt, (req, res) => {
     const url = req.getFhirServerUrl(thisResourceType, req.params.id);
 
@@ -203,7 +252,7 @@ router.put('/:id', checkJwt, (req, res) => {
         url: url,
         method: 'PUT',
         json: true,
-        body: req.body
+        body: req.body.resource
     };
 
     request(options, (err, results, updateBody) => {
@@ -214,18 +263,25 @@ router.put('/:id', checkJwt, (req, res) => {
 
         const location = results.headers.location || results.headers['content-location'];
 
-        if (location) {
-            request(location, (err, results, retrieveBody) => {
-                if (err) {
-                    log.error('Error from FHIR server while retrieving recently updated structure definition: ' + err);
-                    return res.status(500).send('Error from FHIR server while retrieving recently updated structure definition');
-                }
+        saveAdditionalOptions(req, location)
+            .then(() => {
+                if (location) {
+                    request(location, (err, results, retrieveBody) => {
+                        if (err) {
+                            log.error('Error from FHIR server while retrieving recently updated structure definition: ' + err);
+                            return res.status(500).send('Error from FHIR server while retrieving recently updated structure definition');
+                        }
 
-                res.send(retrieveBody);
+                        res.send(retrieveBody);
+                    })
+                } else {
+                    res.status(500).send('FHIR server did not respond with a location to the recently updated structure definition');
+                }
             })
-        } else {
-            res.status(500).send('FHIR server did not respond with a location to the recently updated structure definition');
-        }
+            .catch((err) => {
+                log.error(err);
+                res.status(500).send('An error occurred while saving additional options for the StructureDefinition');
+            });
     });
 });
 
