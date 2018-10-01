@@ -191,7 +191,6 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                 this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
                 this.nameChanged();
                 this.initPages();
-                this.initResources();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -211,7 +210,6 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                     this.implementationGuide = <ImplementationGuide> results;
                     this.nameChanged();
                     this.initPages();
-                    this.initResources();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentImplementationGuides,
                         this.implementationGuide.id,
@@ -234,6 +232,12 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public editPackageResourceModal(resource, content) {
         this.currentResource = resource;
         this.modal.open(content, { size: 'lg' });
+    }
+
+    public tabChange(event) {
+        if (event.nextId === 'resources') {
+            this.initResources();
+        }
     }
 
     public closePackageResourceModal(cb) {
