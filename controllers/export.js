@@ -313,14 +313,20 @@ function getIgPublisher(req, packageId, executeIgPublisher) {
     const defaultFilePath = path.join(defaultPath, fileName);
 
     if (req.query.useLatest === 'true') {
+        log.debug('Request to get latest version of FHIR IG publisher. Retrieving from: ' + fhirConfig.latestPublisher);
+
         sendSocketMessage(req, packageId, 'progress', 'Downloading latest FHIR IG publisher');
 
         // TODO: Check http://build.fhir.org/version.info first
 
         rp(fhirConfig.latestPublisher, { encoding: null })
             .then((results) => {
+                log.debug('Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists');
+
                 const latestPath = path.join(defaultPath, 'latest');
                 fs.ensureDirSync(latestPath);
+
+                log.debug('Saving FHIR IG publisher to ' + latestFilePath);
 
                 const buff = Buffer.from(results, 'utf8');
                 const latestFilePath = path.join(latestPath, fileName);
@@ -329,10 +335,12 @@ function getIgPublisher(req, packageId, executeIgPublisher) {
                 deferred.resolve(latestFilePath);
             })
             .catch((err) => {
+                log.error("Error getting latest version of FHIR IG publisher: " + err);
                 sendSocketMessage(req, packageId, 'progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
                 return Q.resolve(defaultFilePath);
             });
     } else {
+        log.debug('Using built-in version of FHIR IG publisher for export');
         sendSocketMessage(req, packageId, 'progress', 'Using existing/default version of FHIR IG publisher');
         return Q.resolve(defaultFilePath);
     }
@@ -658,14 +666,14 @@ function exportHtml(req, res, testCallback) {
                     fs.ensureDirSync(deployDir);
 
                     const igPublisherVersion = req.query.useLatest ? 'latest' : 'default';
-                    sendSocketMessage(req, packageId, 'progress', `Running ${igPublisherVersion} IG Publisher`);
-
                     const process = serverConfig.javaLocation || 'java';
                     const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
 
                     if (!useTerminologyServer) {
                         jarParams.push('-tx', 'N/A');
                     }
+
+                    sendSocketMessage(req, packageId, 'progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`);
 
                     log.debug(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
