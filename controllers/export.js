@@ -329,7 +329,7 @@ function getIgPublisher(req, packageId, executeIgPublisher) {
                 deferred.resolve(latestFilePath);
             })
             .catch((err) => {
-                sendSocketMessage(req, packageId, 'progress', 'Encounter error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+                sendSocketMessage(req, packageId, 'progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
                 return Q.resolve(defaultFilePath);
             });
     } else {
