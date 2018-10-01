@@ -129,37 +129,50 @@
             </ng-template>
         </ngb-tab>
 
-        <!-- Binary -->
-        <ngb-tab id="binary" title="Binary">
+        <ngb-tab id="resourcess" title="Resources">
             <ng-template ngbTabContent>
-                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [''])" />
-                Implementation guide has binary URIs
-
-                <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
+                <table class="table table-striped">
                     <thead>
-                    <th>URI</th>
-                    <th class="actions-column-1">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
-                    </th>
+                    <tr>
+                        <th>Package</th>
+                        <th>Resource</th>
+                        <th>Example?</th>
+                        <th class="actions-column-1">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Add a resource to this implementation guide" (click)="addResource()">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: globals.trackByFn">
+                    <tr *ngFor="let ir of resources; let iri = index">
                         <td>
-                            <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
+                            <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)">
+                                <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
+                            </select>
                         </td>
                         <td>
-                            <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1)">
+                            <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                        </td>
+                        <td>
+                            <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default" title="Remove this resource (and package, if no resources are left in it) from this implementation guide" (click)="removeResource(ir)">
                                     <i class="fa fa-remove"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                     </tbody>
+                    <tfoot>
+                    <tr *ngIf="resources.length === 0">
+                        <td colspan="3">No resources are associated with this implementation guide.</td>
+                    </tr>
+                    </tfoot>
                 </table>
             </ng-template>
         </ngb-tab>
@@ -256,6 +269,41 @@
                         <ng-template ngbTabContent></ng-template>
                     </ngb-tab>
                 </ngb-tabset>
+            </ng-template>
+        </ngb-tab>
+
+        <!-- Binary -->
+        <ngb-tab id="binary" title="Binary">
+            <ng-template ngbTabContent>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [''])" />
+                Implementation guide has binary URIs
+
+                <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
+                    <thead>
+                    <th>URI</th>
+                    <th class="actions-column-1">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: globals.trackByFn">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
+                        </td>
+                        <td>
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1)">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </ng-template>
         </ngb-tab>
 

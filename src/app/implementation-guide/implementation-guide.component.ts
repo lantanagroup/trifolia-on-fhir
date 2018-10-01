@@ -1,6 +1,14 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Binary, Coding, Extension, ImplementationGuide, OperationOutcome, PageComponent} from '../models/stu3/fhir';
+import {
+    Binary,
+    Coding,
+    Extension,
+    ImplementationGuide,
+    OperationOutcome, PackageComponent, PackageResourceComponent,
+    PageComponent,
+    ResourceReference
+} from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {Globals} from '../globals';
@@ -16,6 +24,16 @@ class PageDefinition {
     public page: PageComponent;
     public parent?: PageComponent;
     public level: number;
+}
+
+class ImplementationGuideResource {
+    public resource: PackageResourceComponent;
+    public igPackage: PackageComponent;
+
+    constructor(resource: PackageResourceComponent, igPackage: PackageComponent) {
+        this.resource = resource;
+        this.igPackage = igPackage;
+    }
 }
 
 @Component({
@@ -36,6 +54,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     private readonly dependencyExtensionVersionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version';
     private readonly dependencyExtensionLocationUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location';
     private navSubscription: any;
+    private resources: ImplementationGuideResource[] = [];
 
     constructor(
         private modal: NgbModal,
@@ -171,6 +190,8 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
             if (this.fileService.file) {
                 this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
                 this.nameChanged();
+                this.initPages();
+                this.initResources();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -190,6 +211,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                     this.implementationGuide = <ImplementationGuide> results;
                     this.nameChanged();
                     this.initPages();
+                    this.initResources();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentImplementationGuides,
                         this.implementationGuide.id,
@@ -393,6 +415,70 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
             }, (err) => {
                 this.message = 'An error occured while saving the implementation guide';
             });
+    }
+
+    public initResources() {
+        this.resources = _.reduce(this.implementationGuide.package, (list, igPackage: PackageComponent) => {
+            const packageResources = _.chain(igPackage.resource)
+                .filter((resource: PackageResourceComponent) => {
+                    return !!resource.sourceReference;
+                })
+                .map((resource: PackageResourceComponent) => {
+                    return new ImplementationGuideResource(resource, igPackage);
+                })
+                .sortBy((igResource: ImplementationGuideResource) => {
+                    return igResource.resource.sourceReference.reference || igResource.resource.sourceReference.display || igResource.igPackage.name;
+                })
+                .value();
+            return list.concat(packageResources);
+        }, []);
+    }
+
+    public removeResource(igResource: ImplementationGuideResource) {
+        const packageResourceIndex = igResource.igPackage.resource.indexOf(igResource.resource);
+        igResource.igPackage.resource.splice(packageResourceIndex, 1);
+
+        if (igResource.igPackage.resource.length === 0) {
+            const packageIndex = this.implementationGuide.package.indexOf(igResource.igPackage);
+            this.implementationGuide.package.splice(packageIndex, 1);
+        }
+
+        this.initResources();
+    }
+
+    public changeResourcePackage(igResource: ImplementationGuideResource, newPackage: PackageComponent) {
+        const originalResourceIndex = igResource.igPackage.resource.indexOf(igResource.resource);
+        igResource.igPackage.resource.splice(originalResourceIndex, 1);
+        newPackage.resource.push(igResource.resource);
+        this.initResources();
+    }
+
+    public addResource() {
+        if (!this.implementationGuide.package) {
+            this.implementationGuide.package = [];
+        }
+
+        if (this.implementationGuide.package.length === 0) {
+            this.implementationGuide.package.push({
+                name: 'default',
+                resource: []
+            });
+        }
+
+        const firstPackage = this.implementationGuide.package[0];
+
+        // Just in case we are working with someone else's invalid implementation guide
+        if (!firstPackage.resource) {
+            firstPackage.resource = [];
+        }
+
+        const newResource = {
+            sourceReference: { reference: '', display: '' },
+            example: false
+        };
+        firstPackage.resource.push(newResource);
+
+        this.initResources();
     }
 
     private initPage(page: PageComponent, level = 0, parent?: PageComponent) {
