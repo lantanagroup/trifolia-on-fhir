@@ -231,6 +231,73 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
+    public canMoveItemUp(itemModel: ItemModel): boolean {
+        const parentItem = itemModel.parent ? itemModel.parent.item : null;
+        let itemIndex;
+
+        if (parentItem) {
+            itemIndex = parentItem.item.indexOf(itemModel.item);
+        } else {
+            itemIndex = this.questionnaire.item.indexOf(itemModel.item);
+        }
+
+        return itemIndex > 0;
+    }
+
+    public canMoveItemDown(itemModel: ItemModel): boolean {
+        const parentItem = itemModel.parent ? itemModel.parent.item : null;
+
+        if (parentItem) {
+            const itemIndex = parentItem.item.indexOf(itemModel.item);
+            return itemIndex < parentItem.item.length - 1;
+        } else {
+            const itemIndex = this.questionnaire.item.indexOf(itemModel.item);
+            return itemIndex < this.questionnaire.item.length - 1;
+        }
+    }
+
+    public moveItem(up: boolean, itemModel: ItemModel) {
+        const wasExpanded = itemModel.expanded;
+        const parentItem = itemModel.parent ? itemModel.parent.item : null;
+        const itemModelIndex = this.flattenedItems.indexOf(itemModel);
+
+        // Make sure the item is collapsed before we muck with the order of it
+        if (wasExpanded) {
+            this.toggleExpandItem(itemModel);
+        }
+
+        if (parentItem) {
+            const itemIndex = parentItem.item.indexOf(itemModel.item);
+            const newItemIndex = up ? itemIndex - 1 : itemIndex + 1;
+            const newItemModelIndex = up ? itemModelIndex - 1 : itemModelIndex + 1;
+
+            // remove the item and the itemModel from its parent
+            parentItem.item.splice(itemIndex, 1);
+            this.flattenedItems.splice(itemModelIndex, 1);
+
+            // add the item in its new position to both the parent item and the flattened items
+            parentItem.item.splice(newItemIndex, 0, itemModel.item);
+            this.flattenedItems.splice(newItemModelIndex, 0, itemModel);
+        } else {
+            const itemIndex = this.questionnaire.item.indexOf(itemModel.item);
+            const newItemIndex = up ? itemIndex - 1 : itemIndex + 1;
+            const newItemModelIndex = up ? itemModelIndex - 1 : itemModelIndex + 1;
+
+            // remove the item and the itemModel from its parent
+            this.questionnaire.item.splice(itemIndex, 1);
+            this.flattenedItems.splice(itemModelIndex, 1);
+
+            // add the item in its new position to both the parent item and the flattened items
+            this.questionnaire.item.splice(newItemIndex, 0, itemModel.item);
+            this.flattenedItems.splice(newItemModelIndex, 0, itemModel);
+        }
+
+        // Re-expand the item if it was originally expanded
+        if (wasExpanded) {
+            this.toggleExpandItem(itemModel);
+        }
+    }
+
     ngOnInit() {
         this.navSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd && e.url.startsWith('/questionnaire/')) {
