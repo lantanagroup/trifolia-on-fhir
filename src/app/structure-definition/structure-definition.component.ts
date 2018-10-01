@@ -1,6 +1,9 @@
 import {Component, DoCheck, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, ParamMap, Router} from '@angular/router';
-import {StructureDefinitionService} from '../services/structure-definition.service';
+import {
+    GetStructureDefinitionModel, StructureDefinitionImplementationnGuide, StructureDefinitionOptions,
+    StructureDefinitionService
+} from '../services/structure-definition.service';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
@@ -11,7 +14,6 @@ import {
     ElementDefinition, OperationOutcome,
     StructureDefinition
 } from '../models/stu3/fhir';
-import {Observable} from 'rxjs';
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
@@ -26,6 +28,7 @@ import {ConfigService} from '../services/config.service';
 })
 export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public structureDefinition: StructureDefinition;
+    public options = new StructureDefinitionOptions();
     public baseStructureDefinition;
     public elements = [];
     public selectedElement: any;
@@ -98,6 +101,14 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             this.populateBaseElements(target);
             target.expanded = true;
         }
+    }
+
+    public addImplementationGuide() {
+        alert('Not yet functional');
+    }
+
+    public removeImplementationGuide(ig: StructureDefinitionImplementationnGuide) {
+        alert('Not yet functional');
     }
 
     public selectChoice(element: ElementTreeModel) {
@@ -227,12 +238,13 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.elements = [];
 
         this.strucDefService.getStructureDefinition(strucDefId)
-            .mergeMap((structureDefinition: StructureDefinition|OperationOutcome) => {
-                if (structureDefinition.resourceType !== 'StructureDefinition') {
+            .mergeMap((results: GetStructureDefinitionModel) => {
+                if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
                     throw new Error('The requested StructureDefinition either does not exist or has been deleted');
                 }
 
-                this.structureDefinition = <StructureDefinition> structureDefinition;
+                this.structureDefinition = results.resource;
+                this.options = results.options;
                 this.nameChanged();
 
                 if (!this.structureDefinition.differential) {

@@ -14,11 +14,32 @@
 
                             <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
 
-                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
-
-                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>
-
-                            <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"></app-fhir-markdown>
+                            <table class="table table-striped" *ngIf="options">
+                                <thead>
+                                <tr>
+                                    <th>Implementation Guides</th>
+                                    <th class="actions-column-1">
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default" title="Add this structure definition to an implementation guide" (click)="addImplementationGuide()">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let ig of options.implementationGuides">
+                                    <td>{{ig.name}}</td>
+                                    <td class="actions-column-1">
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default" title="Remove this structure definition from the implementation guide" (click)="removeImplementationGuide(ig)">
+                                                <i class="fa fa-remove"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
 
                         <div class="col-md-3">
@@ -57,6 +78,17 @@
                 </fieldset>
             </ng-template>
         </ngb-tab>
+
+        <ngb-tab id="narrative" title="Narrative">
+            <ng-template ngbTabContent>
+                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
+
+                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>
+
+                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"></app-fhir-markdown>
+            </ng-template>
+        </ngb-tab>
+
         <ngb-tab id="additional" title="Additional">
             <ng-template ngbTabContent>
                 <div class="row">

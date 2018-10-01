@@ -2,10 +2,30 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
 import {HttpClient} from '@angular/common/http';
-import {StructureDefinition} from '../models/stu3/fhir';
+import {OperationOutcome, StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import {FhirService} from './fhir.service';
+
+export class StructureDefinitionImplementationnGuide {
+    public id: string;
+    public name: string;
+    public removed = false;
+}
+
+export class StructureDefinitionOptions {
+    public implementationGuides: StructureDefinitionImplementationnGuide[] = [];
+}
+
+export class GetStructureDefinitionModel {
+    public resource: StructureDefinition;
+    public options: StructureDefinitionOptions;
+
+    constructor(resource?: StructureDefinition, options?: StructureDefinitionOptions) {
+        this.resource = resource;
+        this.options = options;
+    }
+}
 
 @Injectable()
 export class StructureDefinitionService {
@@ -40,7 +60,7 @@ export class StructureDefinitionService {
     }
 
     public getStructureDefinition(id: string) {
-        return this.http.get('/api/structureDefinition/' + id);
+        return this.http.get<GetStructureDefinitionModel>('/api/structureDefinition/' + id);
     }
 
     public getBaseStructureDefinition(resourceType: string): Observable<StructureDefinition> {
@@ -58,12 +78,18 @@ export class StructureDefinitionService {
         // return this.http.get('/api/structureDefinition/base/' + resourceType);
     }
 
-    public save(structureDefinition: StructureDefinition): Observable<StructureDefinition> {
+    public save(structureDefinition: StructureDefinition, options?: StructureDefinitionOptions): Observable<StructureDefinition> {
+        let url = '/api/structureDefinition';
+        const body = {
+            resource: structureDefinition,
+            options: options
+        };
+
         if (structureDefinition.id) {
-            const url = '/api/structureDefinition/' + encodeURIComponent(structureDefinition.id);
-            return this.http.put<StructureDefinition>(url, structureDefinition);
+            url += '/' + encodeURIComponent(structureDefinition.id);
+            return this.http.put<StructureDefinition>(url, body);
         } else {
-            return this.http.post<StructureDefinition>('/api/structureDefinition', structureDefinition);
+            return this.http.post<StructureDefinition>(url, body);
         }
     }
 
