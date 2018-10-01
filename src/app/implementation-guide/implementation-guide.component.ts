@@ -453,7 +453,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                 routeBase = 'implementation-guide';
                 break;
             case 'StructureDefinition':
-                routeBase = 'structure-definition':
+                routeBase = 'structure-definition';
                 break;
             case 'CapabilityStatement':
                 routeBase = 'capability-statement';
