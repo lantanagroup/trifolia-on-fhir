@@ -137,7 +137,7 @@
                         <th>Package</th>
                         <th>Resource</th>
                         <th>Example?</th>
-                        <th class="actions-column-1">
+                        <th class="actions-column-2">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Add a resource to this implementation guide" (click)="addResource()">
                                     <i class="fa fa-plus"></i>
@@ -160,7 +160,10 @@
                             <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>
                         </td>
                         <td>
-                            <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-default" title="Edit this resource" (click)="editImplementationGuideResource(ir)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
                                 <button type="button" class="btn btn-default" title="Remove this resource (and package, if no resources are left in it) from this implementation guide" (click)="removeResource(ir)">
                                     <i class="fa fa-remove"></i>
                                 </button>

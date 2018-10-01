@@ -107,10 +107,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         alert('Not yet functional');
     }
 
-    public removeImplementationGuide(ig: StructureDefinitionImplementationnGuide) {
-        alert('Not yet functional');
-    }
-
     public selectChoice(element: ElementTreeModel) {
         const modalRef = this.modalService.open(SelectChoiceModalComponent);
         modalRef.componentInstance.structureDefinition = this.baseStructureDefinition;
