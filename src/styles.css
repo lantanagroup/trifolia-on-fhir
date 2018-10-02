@@ -194,3 +194,7 @@ nav.navbar {
 .strikethrough {
     text-decoration: line-through;
 }
+
+.atlwdg-trigger {
+    z-index: 3;
+}
