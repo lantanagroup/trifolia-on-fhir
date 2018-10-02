@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {PageComponentModalComponent} from './page-component-modal.component';
 
-describe('PageComponentModalComponent', () => {
+describe('STU3PageComponentModalComponent', () => {
   let component: PageComponentModalComponent;
   let fixture: ComponentFixture<PageComponentModalComponent>;
 
