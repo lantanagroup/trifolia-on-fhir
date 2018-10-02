@@ -4,8 +4,8 @@
     {{title || 'Reference'}}
   </label>
   <div class="input-group">
-    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
-    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
+    <input type="text" class="form-control" [class.is-invalid]="required && parentObject[propertyName] && !parentObject[propertyName].reference" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
+    <input type="text" class="form-control" [class.is-invalid]="required && parentObject[propertyName] && !parentObject[propertyName].display" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
     <div class="input-group-btn">
       <button type="button" class="btn btn-default" title="Select a resource for the reference" (click)="open(selectReferenceModal)" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled">
         <i class="fa fa-hand-pointer-o"></i>
@@ -18,8 +18,8 @@
     <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
     {{title}}
   </div>
-  <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
-  <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
+  <input type="text" class="form-control" [class.is-invalid]="required && parentObject[propertyName] && !parentObject[propertyName].reference" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
+  <input type="text" class="form-control" [class.is-invalid]="required && parentObject[propertyName] && !parentObject[propertyName].display" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
   <div class="input-group-btn">
     <button type="button" class="btn btn-default" title="Select a resource for the reference" (click)="open(selectReferenceModal)" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled">
       <i class="fa fa-hand-pointer-o"></i>

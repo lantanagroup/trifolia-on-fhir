@@ -13122,7 +13122,8 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
 }
 
 export class ImplementationGuidePageComponent extends BackboneElement {
-    public name: Element;
+    public nameUrl?: string;
+    public nameReference?: ResourceReference;
     public title: string;
     public generation: string;
     public page?: ImplementationGuidePageComponent[];
@@ -13130,8 +13131,11 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     constructor(obj?: any) {
         super(obj);
         if (obj) {
-            if (obj.hasOwnProperty('name')) {
-                this.name = new Element(obj.name);
+            if (obj.hasOwnProperty('nameUrl')) {
+                this.nameUrl = obj.nameUrl;
+            }
+            if (obj.hasOwnProperty('nameReference')) {
+                this.nameReference = obj.nameReference;
             }
             if (obj.hasOwnProperty('title')) {
                 this.title = obj.title;

@@ -2,11 +2,12 @@ import {BrowserModule} from '@angular/platform-browser';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
-import {HttpModule, Http, RequestOptions} from '@angular/http';
+import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuidesComponent} from './implementation-guides/implementation-guides.component';
 import {HomeComponent} from './home/home.component';
-import {ImplementationGuideComponent} from './implementation-guide/implementation-guide.component';
+import {ImplementationGuideComponent as STU3ImplementationGuideComponent} from './implementation-guide-wrapper/stu3/implementation-guide.component';
+import {ImplementationGuideComponent as R4ImplementationGuideComponent} from './implementation-guide-wrapper/r4/implementation-guide.component';
 import {RouterModule, Routes} from '@angular/router';
 import {ExportComponent} from './export/export.component';
 import {ImportComponent} from './import/import.component';
@@ -110,6 +111,7 @@ import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practitioner.component';
 import {SocketService} from './services/socket.service';
 import {FhirEditQuestionnaireItemModalComponent} from './fhir-edit/questionnaire-item-modal/questionnaire-item-modal.component';
+import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -144,9 +146,9 @@ export function cookieServiceFactory() {
 const appRoutes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'implementation-guide', component: ImplementationGuidesComponent},
-    {path: 'implementation-guide/new', component: ImplementationGuideComponent},
+    {path: 'implementation-guide/new', component: ImplementationGuideWrapperComponent},
     {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-    {path: 'implementation-guide/:id', component: ImplementationGuideComponent, runGuardsAndResolvers: 'always'},
+    {path: 'implementation-guide/:id', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
     {path: 'structure-definition', component: StructureDefinitionsComponent},
     {path: 'structure-definition/new', component: NewProfileComponent},
     {path: 'structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
@@ -209,7 +211,9 @@ export function getConfig(configService: ConfigService) {
         NewUserModalComponent,
         ChangeResourceIdModalComponent,
         FhirEditValueSetIncludeConceptModalComponent,
-        FhirEditQuestionnaireItemModalComponent
+        FhirEditQuestionnaireItemModalComponent,
+        STU3ImplementationGuideComponent,
+        R4ImplementationGuideComponent
     ],
     declarations: [
         AppComponent,
@@ -220,7 +224,8 @@ export function getConfig(configService: ConfigService) {
         XmlPipe,
         ImplementationGuidesComponent,
         HomeComponent,
-        ImplementationGuideComponent,
+        STU3ImplementationGuideComponent,
+        R4ImplementationGuideComponent,
         ExportComponent,
         ImportComponent,
         StructureDefinitionComponent,
@@ -295,7 +300,8 @@ export function getConfig(configService: ConfigService) {
         QuestionnairesComponent,
         QuestionnaireComponent,
         FhirEditPractitionerComponent,
-        FhirEditQuestionnaireItemModalComponent
+        FhirEditQuestionnaireItemModalComponent,
+        ImplementationGuideWrapperComponent
     ],
     imports: [
         RouterModule.forRoot(

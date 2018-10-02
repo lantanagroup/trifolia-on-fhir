@@ -13,7 +13,7 @@ import {ConfigService} from '../../services/config.service';
 import {FileService} from '../../services/file.service';
 
 @Component({
-    selector: 'app-capability-statement',
+    selector: 'app-stu3-capability-statement',
     templateUrl: './capability-statement.component.html',
     styleUrls: ['./capability-statement.component.css']
 })
