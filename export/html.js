@@ -184,16 +184,11 @@ HtmlExporter.prototype._getDependencies = function(control, isXml, resourcesDir,
 };
 
 HtmlExporter.prototype._getFhirControlVersion = function(fhirServerConfig) {
-    if (!fhirServerConfig) {
-        return 'current';
-    }
+    const configVersion = fhirServerConfig ? fhirServerConfig.version : null;
 
-    switch (fhirServerConfig.version) {
+    switch (configVersion) {
         case 'stu3':
             return '3.0.1';
-        // case 'r4':
-        default:
-            return 'current';
     }
 };
 
@@ -313,7 +308,6 @@ HtmlExporter.prototype._getControl = function(extension, implementationGuide, bu
     // currently, IG resource has to be in XML format for the IG Publisher
     const control = {
         tool: 'jekyll',
-        version: version,                                                           // R4: ImplementationGuide.fhirVersion
         source: 'implementationguide/' + implementationGuide.id + '.xml',
         'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
         license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
@@ -369,6 +363,10 @@ HtmlExporter.prototype._getControl = function(extension, implementationGuide, bu
         },
         resources: {}
     };
+
+    if (version) {
+        control.version = version;
+    }
 
     // Set the dependencyList based on the extensions in the IG
     const dependencyExtensions = _.filter(implementationGuide.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency');
