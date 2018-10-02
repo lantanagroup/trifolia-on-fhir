@@ -1,24 +1,23 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../../services/auth.service';
 import {
     Binary,
     Coding,
     Extension,
     ImplementationGuide,
     OperationOutcome, PackageComponent, PackageResourceComponent,
-    PageComponent,
-    ResourceReference
-} from '../models/stu3/fhir';
+    PageComponent
+} from '../../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {Globals} from '../globals';
+import {ImplementationGuideService} from '../../services/implementation-guide.service';
+import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
-import {PageComponentModalComponent} from '../fhir-edit/page-component-modal/page-component-modal.component';
-import {RecentItemService} from '../services/recent-item.service';
-import {FhirService} from '../services/fhir.service';
-import {FileService} from '../services/file.service';
-import {ConfigService} from '../services/config.service';
+import {PageComponentModalComponent} from '../../fhir-edit/page-component-modal/page-component-modal.component';
+import {RecentItemService} from '../../services/recent-item.service';
+import {FhirService} from '../../services/fhir.service';
+import {FileService} from '../../services/file.service';
+import {ConfigService} from '../../services/config.service';
 
 class PageDefinition {
     public page: PageComponent;
@@ -37,7 +36,6 @@ class ImplementationGuideResource {
 }
 
 @Component({
-    selector: 'app-implementation-guide',
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css']
 })

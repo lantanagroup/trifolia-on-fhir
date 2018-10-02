@@ -13,7 +13,7 @@ import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 
 @Component({
-    selector: 'app-capability-statement',
+    selector: 'app-r4-capability-statement',
     templateUrl: './capability-statement.component.html',
     styleUrls: ['./capability-statement.component.css']
 })
