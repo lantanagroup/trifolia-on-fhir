@@ -38,7 +38,8 @@ import {AuditEventService} from './services/audit-event.service';
 import {KeysPipe} from './pipes/keys-pipe';
 import {ReferenceComponent} from './fhir-edit/reference/reference.component';
 import {FhirDisplayPipe} from './pipes/fhir-display-pipe';
-import {PageComponentModalComponent} from './fhir-edit/page-component-modal/page-component-modal.component';
+import {PageComponentModalComponent as STU3PageComponentModalComponent} from './implementation-guide-wrapper/stu3/page-component-modal.component';
+import {PageComponentModalComponent as R4PageComponentModalComponent} from './implementation-guide-wrapper/r4/page-component-modal.component';
 import {RecentItemService} from './services/recent-item.service';
 import {BinaryService} from './services/binary.service';
 import {CapabilityStatementsComponent} from './capability-statements/capability-statements.component';
@@ -188,7 +189,8 @@ export function getConfig(configService: ConfigService) {
     entryComponents: [
         SelectChoiceModalComponent,
         ElementDefinitionTypeModalComponent,
-        PageComponentModalComponent,
+        STU3PageComponentModalComponent,
+        R4PageComponentModalComponent,
         OperationDefinitionParameterModalComponent,
         ContactModalComponent,
         IdentifierModalComponent,
@@ -247,7 +249,8 @@ export function getConfig(configService: ConfigService) {
         MarkdownComponent,
         FhirMarkdownComponent,
         ReferenceComponent,
-        PageComponentModalComponent,
+        STU3PageComponentModalComponent,
+        R4PageComponentModalComponent,
         CapabilityStatementsComponent,
         CapabilityStatementWrapperComponent,
         STU3CapabilityStatementComponent,

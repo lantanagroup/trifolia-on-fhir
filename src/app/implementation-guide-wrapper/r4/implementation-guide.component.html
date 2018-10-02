@@ -255,7 +255,7 @@
                     <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Kind</th>
+                        <th>Generation</th>
                         <th class="actions-column-5">&nbsp;</th>
                     </tr>
                     </thead>
@@ -266,16 +266,7 @@
                                    [class.is-invalid]="!p.page.title"/>
                         </td>
                         <td>
-                            <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
-                                <option value="page">Page</option>
-                                <option value="example">Example</option>
-                                <option value="list">List</option>
-                                <option value="include">Include</option>
-                                <option value="directory">Directory</option>
-                                <option value="dictionary">Dictionary</option>
-                                <option value="toc">Table of Contents</option>
-                                <option value="resource">Resource</option>
-                            </select>
+                            <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [isFormGroup]="false"></app-fhir-select-single-code>
                         </td>
                         <td>
                             <div class="btn-group pull-right">

@@ -13,7 +13,7 @@ import {ImplementationGuideService} from '../../services/implementation-guide.se
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
-import {PageComponentModalComponent} from '../../fhir-edit/page-component-modal/page-component-modal.component';
+import {PageComponentModalComponent} from './page-component-modal.component';
 import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
