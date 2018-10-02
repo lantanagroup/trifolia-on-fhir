@@ -13,25 +13,29 @@
 
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
 
-                            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
-
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher"></app-fhir-string>
-
-                            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
-
                             <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts"></app-fhir-multi-contact>
 
                             <div class="card">
-                                <div class="card-header">Dependencies</div>
-                                <table class="table table-striped">
+                                <div class="card-header">
+                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ uri: '' }])" />
+                                    Dependencies
+                                    <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
+                                </div>
+                                <table class="table table-striped" *ngIf="implementationGuide.hasOwnProperty('dependsOn')">
                                     <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Location</th>
-                                        <th>Version</th>
+                                        <th>
+                                            URI <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
+                                        </th>
+                                        <th>
+                                            Package ID <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
+                                        </th>
+                                        <th>
+                                            Version <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
+                                        </th>
                                         <th class="actions-column-1">
                                             <div class="pull-right">
-                                                <button type="button" class="btn btn-default" title="Add a dependency" (click)="addDependency()">
+                                                <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '' })">
                                                     <i class="fa fa-plus"></i>
                                                 </button>
                                             </div>
@@ -39,19 +43,19 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let dependency of dependencies">
+                                    <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
+                                            <app-fhir-string [parentObject]="dependsOn" propertyName="uri" [isFormGroup]="false" [required]="true"></app-fhir-string>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyLocation(dependency)" (ngModelChange)="setDependencyLocation(dependency, $event)" />
+                                            <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyVersion(dependency)" (ngModelChange)="setDependencyVersion(dependency, $event)" />
+                                            <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>
                                         </td>
                                         <td>
                                             <div class="pull-right">
-                                                <button type="button" class="btn btn-default" title="Remove this dependency" (click)="removeDependency(dependency)">
+                                                <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
                                                     <i class="fa fa-remove"></i>
                                                 </button>
                                             </div>
@@ -81,12 +85,22 @@
             </ng-template>
         </ngb-tab>
 
+        <ngb-tab id="narrative" title="Narrative">
+            <ng-template ngbTabContent>
+                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
+
+                <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher"></app-fhir-string>
+
+                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+            </ng-template>
+        </ngb-tab>
+
         <!-- Globals -->
         <ngb-tab id="globals" title="Globals">
             <ng-template ngbTabContent>
                 <p>
                     <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
-                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: { reference: '' }}])"/> Allow globals
+                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/> Allow globals
                 </p>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
@@ -94,10 +108,10 @@
                     <tr>
                         <th>Type</th>
                         <th>Profile</th>
-                        <th>
+                        <th class="actions-column-1">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-primary" title="Add global"
-                                        (click)="implementationGuide.global.push({type: '', profile: { reference: '' }})">
+                                        (click)="implementationGuide.global.push({type: '', profile: '' })">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
@@ -112,9 +126,7 @@
                             </select>
                         </td>
                         <td>
-                            <app-fhir-reference
-                                    [parentObject]="g"
-                                    propertyName="profile"></app-fhir-reference>
+                            <app-fhir-string [parentObject]="g" propertyName="profile" [required]="true" [isFormGroup]="false"></app-fhir-string>
                         </td>
                         <td>
                             <div class="pull-right">
