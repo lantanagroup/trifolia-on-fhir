@@ -22,6 +22,34 @@ function HtmlExporter(fhirServerBase, fhirServerId, fhir, io, socketId, implemen
     this._socketId = socketId;
 }
 
+function getDisplayName(name) {
+    if (!name) {
+        return;
+    }
+
+    if (typeof name === 'string') {
+        return name;
+    }
+
+    if (name.length === 0) {
+        return;
+    }
+
+    let display = name.family;
+
+    if (name.given) {
+        if (display) {
+            display += ', ';
+        } else {
+            display = '';
+        }
+
+        display += name.given.join(' ');
+    }
+
+    return display;
+}
+
 function createTableFromArray(headers, data) {
     let output = '<table>\n<thead>\n<tr>\n';
 
@@ -193,26 +221,17 @@ HtmlExporter.prototype._getFhirControlVersion = function(fhirServerConfig) {
 };
 
 HtmlExporter.prototype._updateTemplates = function(rootPath, bundle, implementationGuide) {
-    const valueSets = _.chain(bundle.entry)
-        .filter((entry) => entry.resource.resourceType === 'ValueSet')
+    const mainResourceTypes = ['ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
+    const distinctResources = _.chain(bundle.entry)
         .map((entry) => entry.resource)
+        .uniq((resource) => resource.id)
         .value();
-    const codeSystems = _.chain(bundle.entry)
-        .filter((entry) => entry.resource.resourceType === 'CodeSystem')
-        .map((entry) => entry.resource)
-        .value();
-    const profiles = _.chain(bundle.entry)
-        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && (!entry.resource.baseDefinition || !entry.resource.baseDefinition.endsWith('Extension')))
-        .map((entry) => entry.resource)
-        .value();
-    const extensions = _.chain(bundle.entry)
-        .filter((entry) => entry.resource.resourceType === 'StructureDefinition' && entry.resource.baseDefinition && entry.resource.baseDefinition.endsWith('Extension'))
-        .map((entry) => entry.resource)
-        .value();
-    const capabilityStatements = _.chain(bundle.entry)
-        .filter((entry) => entry.resource.resourceType === 'CapabilityStatement')
-        .map((entry) => entry.resource)
-        .value();
+    const valueSets = _.filter(distinctResources, (resource) => resource.resourceType === 'ValueSet');
+    const codeSystems = _.filter(distinctResources, (resource) => resource.resourceType === 'CodeSystem');
+    const profiles = _.filter(distinctResources, (resource) => resource.resourceType === 'StructureDefinition' && (!resource.baseDefinition || !resource.baseDefinition.endsWith('Extension')));
+    const extensions = _.filter(distinctResources, (resource) => resource.resourceType === 'StructureDefinition' && resource.baseDefinition && resource.baseDefinition.endsWith('Extension'));
+    const capabilityStatements = _.filter(distinctResources, (resource) => resource.resourceType === 'CapabilityStatement');
+    const otherResources = _.filter(distinctResources, (resource) => mainResourceTypes.indexOf(resource.resourceType) < 0);
 
     if (implementationGuide) {
         const indexPath = path.join(rootPath, 'source/pages/index.md');
@@ -233,18 +252,22 @@ HtmlExporter.prototype._updateTemplates = function(rootPath, bundle, implementat
     }
 
     if (profiles.length > 0) {
-        const profilesData = _.map(profiles, (profile) => {
-            return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
-        });
+        const profilesData = _.chain(profiles)
+            .sortBy((profile) => profile.name)
+            .map((profile) => {
+                return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
+            }).value();
         const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
         const profilesPath = path.join(rootPath, 'source/pages/profiles.md');
         fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
     }
 
     if (extensions.length > 0) {
-        const extData = _.map(extensions, (extension) => {
-            return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
-        });
+        const extData = _.chain(extensions)
+            .sortBy((extension) => extension.name)
+            .map((extension) => {
+                return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
+            }).value();
         const extContent = createTableFromArray(['Name', 'Description'], extData);
         const extPath = path.join(rootPath, 'source/pages/profiles.md');
         fs.appendFileSync(extPath, '### Extensions\n\n' + extContent + '\n\n');
@@ -254,9 +277,11 @@ HtmlExporter.prototype._updateTemplates = function(rootPath, bundle, implementat
         let vsContent = '### Value Sets\n\n';
         const vsPath = path.join(rootPath, 'source/pages/terminology.md');
 
-        _.each(valueSets, (valueSet) => {
-            vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
-        });
+        _.chain(valueSets)
+            .sortBy((valueSet) => valueSet.title || valueSet.name)
+            .each((valueSet) => {
+                vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
+            });
 
         fs.appendFileSync(vsPath, vsContent + '\n\n');
     }
@@ -265,20 +290,40 @@ HtmlExporter.prototype._updateTemplates = function(rootPath, bundle, implementat
         let csContent = '### Code Systems\n\n';
         const csPath = path.join(rootPath, 'source/pages/terminology.md');
 
-        _.each(valueSets, (codeSystem) => {
-            csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
-        });
+        _.chain(codeSystems)
+            .sortBy((codeSystem) => codeSystem.title || codeSystem.name)
+            .each((codeSystem) => {
+                csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
+            });
 
         fs.appendFileSync(csPath, csContent + '\n\n');
     }
 
     if (capabilityStatements.length > 0) {
-        const csData = _.map(capabilityStatements, (capabilityStatement) => {
-            return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
-        });
+        const csData = _.chain(capabilityStatements)
+            .sortBy((capabilityStatement) => capabilityStatement.name)
+            .map((capabilityStatement) => {
+                return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
+            }).value();
         const csContent = createTableFromArray(['Name', 'Description'], csData);
-        const csPath = path.join(rootPath, 'source/pages/profiles.md');
+        const csPath = path.join(rootPath, 'source/pages/capstatements.md');
         fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + csContent);
+    }
+
+    if (otherResources.length > 0) {
+        const oData = _.chain(otherResources)
+            .sortBy((resource) => {
+                let display = resource.title || getDisplayName(resource.name) || resource.id;
+                return resource.resourceType + display;
+            })
+            .map((resource) => {
+                let name = resource.title || getDisplayName(resource.name) || resource.id;
+                return [resource.resourceType, `<a href="CapabilityStatement-${resource.id}.html">${name}</a>`];
+            })
+            .value();
+        const oContent = createTableFromArray(['Type', 'Name'], oData);
+        const csPath = path.join(rootPath, 'source/pages/other.md');
+        fs.appendFileSync(csPath, '### Other Resources\n\n' + oContent);
     }
 };
 

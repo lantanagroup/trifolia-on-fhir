@@ -24,6 +24,7 @@
 - [Profiles, Extensions & Transactions](profiles.html)
 - [Terminology](terminology.html)
 - [Capability Statements](capstatements.html)
+- [Other](other.html)
 - [Downloads](downloads.html)
 
 <!-- ******* how to create a dropdown menu in md ********
