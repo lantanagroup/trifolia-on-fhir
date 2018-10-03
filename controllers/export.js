@@ -11,7 +11,7 @@ const BundleExporter = require('../export/bundle');
 const HtmlExporter = require('../export/html');
 
 function exportBundle(req, res) {
-    const exporter = new BundleExporter(req.fhirServerBase, req.fhir, req.params.implementationGuideId);
+    const exporter = new BundleExporter(req.fhirServerBase, req.headers['fhirserver'], req.fhir, req.params.implementationGuideId);
     exporter.export(req.query._format)
         .then((response) => {
             let fileExt = '.json';

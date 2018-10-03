@@ -8,11 +8,28 @@
                 <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile />
             </file-drop>
 
-            <p>Selected files:</p>
-            <ul>
-                <li *ngFor="let f of files">{{f.name}}</li>
-                <li *ngIf="files.length === 0">None</li>
-            </ul>
+            <table class="table table-striped" *ngIf="files && files.length > 0">
+                <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let f of files; let fi = index" [class.invalid]="!f.resource">
+                    <td>{{f.name}}</td>
+                    <td>{{f.resource ? f.resource.id : 'INVALID'}}</td>
+                    <td>{{f.resource ? f.resource.resourceType : 'INVALID'}}</td>
+                    <td class="actions-column-1">
+                        <div class="pull-right">
+                            <i class="fa fa-remove" (click)="removeImportFile(fi)"></i>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
             <div *ngIf="files && files.length > 0 && importBundle">
                 <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>

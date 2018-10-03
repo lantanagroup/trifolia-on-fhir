@@ -296,7 +296,7 @@ HtmlExporter.prototype._writeFilesForResource = function(rootPath, resource) {
     fs.writeFileSync(summaryPath, 'TODO - Summary');
 };
 
-HtmlExporter.prototype._getControl = function(extension, implementationGuide, bundle, version) {
+HtmlExporter.prototype._getStu3Control = function(extension, implementationGuide, bundle, version) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
 
@@ -404,9 +404,111 @@ HtmlExporter.prototype._getControl = function(extension, implementationGuide, bu
     return control;
 };
 
+
+
+HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, bundle, version) {
+    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
+    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+
+    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
+        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined.');
+    }
+
+    // TODO: Extract npm-name from IG extension.
+    // currently, IG resource has to be in XML format for the IG Publisher
+    const control = {
+        tool: 'jekyll',
+        source: 'implementationguide/' + implementationGuide.id + '.xml',
+        'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
+        license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
+        paths: {
+            qa: "generated_output/qa",
+            temp: "generated_output/temp",
+            output: "output",
+            txCache: "generated_output/txCache",
+            specification: "http://hl7.org/fhir/STU3",
+            pages: [
+                "framework",
+                "source/pages"
+            ],
+            resources: [ "source/resources" ]
+        },
+        pages: ['pages'],
+        'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+        'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+        'sct-edition': 'http://snomed.info/sct/731000124108',
+        canonicalBase: canonicalBaseMatch[1],
+        defaults: {
+            "Location": {"template-base": "ex.html"},
+            "ProcedureRequest": {"template-base": "ex.html"},
+            "Organization": {"template-base": "ex.html"},
+            "MedicationStatement": {"template-base": "ex.html"},
+            "SearchParameter": {"template-base": "base.html"},
+            "StructureDefinition": {
+                "template-mappings": "sd-mappings.html",
+                "template-base": "sd.html",
+                "template-defns": "sd-definitions.html"
+            },
+            "Immunization": {"template-base": "ex.html"},
+            "Patient": {"template-base": "ex.html"},
+            "StructureMap": {
+                "content": false,
+                "script": false,
+                "template-base": "ex.html",
+                "profiles": false
+            },
+            "ConceptMap": {"template-base": "base.html"},
+            "Practitioner": {"template-base": "ex.html"},
+            "OperationDefinition": {"template-base": "base.html"},
+            "CodeSystem": {"template-base": "base.html"},
+            "Communication": {"template-base": "ex.html"},
+            "Any": {
+                "template-format": "format.html",
+                "template-base": "base.html"
+            },
+            "PractitionerRole": {"template-base": "ex.html"},
+            "ValueSet": {"template-base": "base.html"},
+            "CapabilityStatement": {"template-base": "base.html"},
+            "Observation": {"template-base": "ex.html"}
+        },
+        resources: {}
+    };
+
+    if (version) {
+        control.version = version;
+    }
+
+    control.dependencyList = _.map(implementationGuide.dependsOn, (dependsOn) => {
+        return {
+            location: dependsOn.uri,
+            name: dependsOn.packageId,
+            version: dependsOn.version
+        };
+    });
+
+    // Define the resources in the control and what templates they should use
+    if (bundle && bundle.entry) {
+        for (let i = 0; i < bundle.entry.length; i++) {
+            const entry = bundle.entry[i];
+            const resource = entry.resource;
+
+            if (resource.resourceType === 'ImplementationGuide') {
+                continue;
+            }
+
+            control.resources[resource.resourceType + '/' + resource.id] = {
+                base: resource.resourceType + '-' + resource.id + '.html',
+                defns: resource.resourceType + '-' + resource.id + '-definitions.html'
+            };
+        }
+    }
+
+    return control;
+};
+
 HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminologyServer, useLatest, downloadOutput, testCallback) {
     const deferred = Q.defer();
-    const bundleExporter = new BundleExporter(this._fhirServerBase, this._fhir, this._implementationGuideId);
+    const bundleExporter = new BundleExporter(this._fhirServerBase, this._fhirServerId, this._fhir, this._implementationGuideId);
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
     const extension = (!isXml ? '.json' : '.xml');
     const homedir = require('os').homedir();
@@ -474,7 +576,11 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         this._packagePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
                     }
 
-                    control = this._getControl(extension, implementationGuideResource, bundle, this._getFhirControlVersion(fhirServerConfig));
+                    if (fhirServerConfig.version === 'stu3') {
+                        control = this._getStu3Control(extension, implementationGuideResource, bundle, this._getFhirControlVersion(fhirServerConfig));
+                    } else {
+                        control = this._getR4Control(extension, implementationGuideResource, bundle, this._getFhirControlVersion(fhirServerConfig));
+                    }
 
                     return this._getDependencies(control, isXml, resourcesDir, this._fhir, fhirServerConfig);
                 })

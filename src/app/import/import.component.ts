@@ -18,6 +18,7 @@ class ImportFileModel {
     public contentType: ContentTypes = ContentTypes.Json;
     public content: string;
     public resource: DomainResource;
+    public message: string;
 }
 
 @Component({
@@ -78,7 +79,7 @@ export class ImportComponent implements OnInit {
                     importFileModel.resource = JSON.parse(result);
                 }
             } catch (ex) {
-                throw new Error('Error parsing the resource: ' + ex.message);
+                importFileModel.message = ex.message;
             }
 
             const foundImportFile = _.find(this.files, (importFile: ImportFileModel) => importFile.name === file.name);
@@ -108,6 +109,11 @@ export class ImportComponent implements OnInit {
         }
     }
 
+    public removeImportFile(index: number) {
+        this.files.splice(index, 1);
+        this.importBundle = this.getFileBundle();
+    }
+
     public dropped(event: UploadEvent) {
         for (const droppedFile of event.files) {
             if (droppedFile.fileEntry.isFile) {
@@ -132,15 +138,18 @@ export class ImportComponent implements OnInit {
     private getFileBundle(): Bundle {
         const bundle = new Bundle();
         bundle.type = 'transaction';
-        bundle.entry = _.map(this.files, (importFile: ImportFileModel) => {
-            const entry = new EntryComponent();
-            entry.request = new RequestComponent();
-            entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
-            entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
-            entry.resource = importFile.resource;
+        bundle.entry = _.chain(this.files)
+            .filter((importFile: ImportFileModel) => !!importFile.resource)
+            .map((importFile: ImportFileModel) => {
+                const entry = new EntryComponent();
+                entry.request = new RequestComponent();
+                entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
+                entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
+                entry.resource = importFile.resource;
 
-            return entry;
-        });
+                return entry;
+            })
+            .value();
 
         return bundle;
     }
