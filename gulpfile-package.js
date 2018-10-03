@@ -8,6 +8,7 @@ const allFiles = [
     'server.js',
     '*Helper.js',
     'package.json',
+    'export/**',
     'controllers/**',
     'config/default.json',
     'config/log4js.json',
