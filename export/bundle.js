@@ -2,9 +2,13 @@ const FhirHelper = require('../fhirHelper');
 const Q = require('q');
 const rp = require('request-promise');
 const _ = require('underscore');
+const config = require('config');
 
-function BundleExporter(fhirServerBase, fhir, implementationGuideId) {
+const fhirConfig = config.get('fhir');
+
+function BundleExporter(fhirServerBase, fhirServerId, fhir, implementationGuideId) {
     this._fhirServerBase = fhirServerBase;
+    this._fhirServerId = fhirServerId;
     this._fhir = fhir;
     this._implementationGuideId = implementationGuideId;
 }
@@ -32,9 +36,51 @@ function getBundle(req, format) {
 }
 */
 
+BundleExporter.prototype._getStu3Resources = function(implemnetationGuide) {
+    const promises = [];
+
+    _.each(implementationGuide.package, (igPackage) => {
+        const references = _.chain(igPackage.resource)
+            .filter((resource) => resource.sourceReference && resource.sourceReference.reference)
+            .map((resource) => resource.sourceReference.reference)
+            .value();
+
+        _.each(references, (reference) => {
+            const parsed = FhirHelper.parseUrl(reference);
+            const resourceUrl = FhirHelper.buildUrl(this._fhirServerBase, parsed.resourceType, parsed.id);
+            const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
+            promises.push(resourcePromise);
+        });
+    });
+
+    return Q.all(promises);
+};
+
+BundleExporter.prototype._getR4Resources = function(implemnetationGuide) {
+    if (!implemnetationGuide.definition) {
+        return Q.resolve([]);
+    }
+
+    const promises = _.chain(implemnetationGuide.definition.resource)
+        .filter((resource) => !!resource.reference && !!resource.reference.reference)
+        .map((resource) => {
+            const reference = resource.reference.reference;
+            const parsed = FhirHelper.parseUrl(reference);
+            const resourceUrl = FhirHelper.buildUrl(this._fhirServerBase, parsed.resourceType, parsed.id);
+            const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
+            return resourcePromise;
+        })
+        .value();
+
+    return Q.all(promises);
+};
+
 BundleExporter.prototype.getBundle = function() {
     const deferred = Q.defer();
     const igUrl = FhirHelper.buildUrl(this._fhirServerBase, 'ImplementationGuide', this._implementationGuideId);
+    const fhirServerConfig = _.find(fhirConfig.servers, (serverConfig) => {
+        return serverConfig.id === this._fhirServerId;
+    });
     let implementationGuide;
     let implementationGuideFullUrl;
 
@@ -43,23 +89,11 @@ BundleExporter.prototype.getBundle = function() {
             implementationGuide = response.body;
             implementationGuideFullUrl = response.headers['content-location'];
 
-            const promises = [];
+            if (fhirServerConfig.version === 'stu3') {
+                return this._getStu3Resources(implementationGuide);
+            }
 
-            _.each(implementationGuide.package, (igPackage) => {
-                const references = _.chain(igPackage.resource)
-                    .filter((resource) => resource.sourceReference && resource.sourceReference.reference)
-                    .map((resource) => resource.sourceReference.reference)
-                    .value();
-
-                _.each(references, (reference) => {
-                    const parsed = FhirHelper.parseUrl(reference);
-                    const resourceUrl = FhirHelper.buildUrl(this._fhirServerBase, parsed.resourceType, parsed.id);
-                    const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
-                    promises.push(resourcePromise);
-                });
-            });
-
-            return Q.all(promises);
+            return this._getR4Resources(implementationGuide);
         })
         .then((responses) => {
             const badResponses = _.filter(responses, (response) => {
@@ -101,7 +135,22 @@ BundleExporter.prototype.getBundle = function() {
             deferred.resolve(bundle);
         })
         .catch((err) => {
-            deferred.reject(err);
+            if (err && err.response && err.response.body) {
+                const errBody = err.response.body;
+                const issueTexts = _.map(errBody.issue, (issue) => issue.diagnostics);
+
+                if (issueTexts.length > 0) {
+                    deferred.reject(issueTexts.join(' & '));
+                } else if (errBody.text && errBody.text.div) {
+                    deferred.reject(errBody.text.div);
+                } else {
+                    log.error(errBody);
+                    deferred.reject('Unknown error returned by FHIR server when getting resources for implementation guide');
+                }
+            } else {
+                log.error(err);
+                deferred.reject(err);
+            }
         });
 
     return deferred.promise;
