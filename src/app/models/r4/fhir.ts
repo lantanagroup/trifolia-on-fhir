@@ -13095,7 +13095,8 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
     public reference: ResourceReference;
     public name?: string;
     public description?: string;
-    public example?: Element;
+    public exampleBoolean?: boolean;
+    public exampleCanonical?: string;
     public package?: string;
     
     constructor(obj?: any) {
@@ -13110,8 +13111,11 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
             if (obj.hasOwnProperty('description')) {
                 this.description = obj.description;
             }
-            if (obj.hasOwnProperty('example')) {
-                this.example = new Element(obj.example);
+            if (obj.hasOwnProperty('exampleBoolean')) {
+                this.exampleBoolean = obj.exampleBoolean;
+            }
+            if (obj.hasOwnProperty('exampleCanonical')) {
+                this.exampleCanonical = obj.exampleCanonical;
             }
             if (obj.hasOwnProperty('package')) {
                 this.package = obj.package;
