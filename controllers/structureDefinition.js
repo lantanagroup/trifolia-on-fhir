@@ -144,22 +144,27 @@ router.get('/:id', checkJwt, (req, res) => {
         _summary: true,
         resource: 'StructureDefinition/' + encodeURIComponent(req.params.id)
     });
+    const fhirServerConfig = _.find(fhirConfig.servers, (server) => server.id === req.headers['fhirserver']);
     let structureDefinition;
 
     rp({ url: url, json: true })
         .then((results) => {
             structureDefinition = results;
-            return rp({ url: igsUrl, json: true });
+
+            // TODO: Right now, HAPI R4 does not support the "resource" parameter on ImplementationGuide. Undo the "if" later.
+            if (fhirServerConfig.version === 'stu3') {
+                return rp({url: igsUrl, json: true});
+            }
         })
         .then((results) => {
-            const options = {
+            const options = results ? {
                 implementationGuides: _.map(results && results.entry ? results.entry : [], (entry) => {
                     return {
                         name: entry.resource.name,
                         id: entry.resource.id
                     };
                 })
-            };
+            } : null;
 
             res.send({
                 resource: structureDefinition,
