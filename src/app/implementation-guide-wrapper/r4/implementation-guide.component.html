@@ -3,7 +3,93 @@
 <div class="ig-main" *ngIf="implementationGuide">
     <h2>{{implementationGuide.name || 'no-name'}}</h2>
 
-    <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)">
+    <ngb-tabset (tabChange)="tabChange($event)">
+        <ngb-tab id="quick" title="Quick">
+            <ng-template ngbTabContent>
+                <div class="alert alert-info">These fields are the key fields used to develop and publish an implementation guide package. Use the other tabs to access more details.</div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="ImplementationGuide.name"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Status <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon></label>
+                            <select class="form-control" [(ngModel)]="implementationGuide.status">
+                                <option [ngValue]="'draft'">Draft</option>
+                                <option [ngValue]="'active'">Active</option>
+                                <option [ngValue]="'retired'">Retired</option>
+                                <option [ngValue]="'unknown'">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+                    </div>
+
+                    <div class="col-md-12">
+                        <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.resource" (ngModelChange)="toggleResources($event)" />
+                                Resources
+                                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource"></app-tooltip-icon>
+                            </div>
+                            <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
+                                <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Name</th>
+                                    <th>Example?</th>
+                                    <th class="actions-column-1">
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default" (click)="implementationGuide.definition.resource.push({ reference: { reference: '', display: '' }, exampleBoolean: false })">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let resource of (implementationGuide.definition ? implementationGuide.definition.resource : []); let ri = index">
+                                    <td>
+                                        <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                                    </td>
+                                    <td>
+                                        <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+                                    </td>
+                                    <td>
+                                        <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
+                                    </td>
+                                    <td>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-default" (click)="implementationGuide.definition.resource.splice(ri, 1)">
+                                                <i class="fa fa-remove"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ngb-tab>
+
         <ngb-tab id="general" title="General">
             <ng-template ngbTabContent>
                 <fieldset>
@@ -15,55 +101,7 @@
 
                             <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts"></app-fhir-multi-contact>
 
-                            <div class="card">
-                                <div class="card-header">
-                                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ uri: '' }])" />
-                                    Dependencies
-                                    <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
-                                </div>
-                                <table class="table table-striped" *ngIf="implementationGuide.hasOwnProperty('dependsOn')">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            URI <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
-                                        </th>
-                                        <th>
-                                            Package ID <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
-                                        </th>
-                                        <th>
-                                            Version <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
-                                        </th>
-                                        <th class="actions-column-1">
-                                            <div class="pull-right">
-                                                <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '' })">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
-                                        <td>
-                                            <app-fhir-string [parentObject]="dependsOn" propertyName="uri" [isFormGroup]="false" [required]="true"></app-fhir-string>
-                                        </td>
-                                        <td>
-                                            <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
-                                        </td>
-                                        <td>
-                                            <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>
-                                        </td>
-                                        <td>
-                                            <div class="pull-right">
-                                                <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
-                                                    <i class="fa fa-remove"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
                         </div>
                         <div class="col-md-4">
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version"></app-fhir-string>
@@ -308,6 +346,58 @@
         </ngb-tab>
     </ngb-tabset>
 </div>
+
+<ng-template #dependsOn>
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ uri: '' }])" />
+            Dependencies
+            <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
+        </div>
+        <table class="table table-striped" *ngIf="implementationGuide.hasOwnProperty('dependsOn')">
+            <thead>
+            <tr>
+                <th>
+                    URI <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
+                </th>
+                <th>
+                    Package ID <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
+                </th>
+                <th>
+                    Version <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
+                </th>
+                <th class="actions-column-1">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '' })">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
+                <td>
+                    <app-fhir-string [parentObject]="dependsOn" propertyName="uri" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</ng-template>
 
 <footer class="footer">
     <div class="btn-group">

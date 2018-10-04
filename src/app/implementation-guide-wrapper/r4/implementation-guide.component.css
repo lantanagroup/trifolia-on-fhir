@@ -16,3 +16,6 @@ tr.page-prefix-5 td:first-child {
 tr.page-prefix-6 td:first-child {
     padding-left: 75px;
 }
+.card {
+    margin-bottom: 15px;
+}
