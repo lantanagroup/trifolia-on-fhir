@@ -10,6 +10,7 @@
     "issuer": "https://trifolia.auth0.com/"
   },
   "fhir": {
+    "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
     "latestPublisher": "http://build.fhir.org/org.hl7.fhir.igpublisher.jar",
     "publishedVersions": [{
       "version": "0.4.0 - 1.0.2",

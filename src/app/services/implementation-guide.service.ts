@@ -5,6 +5,12 @@ import {HttpClient} from '@angular/common/http';
 import {ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../models/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../models/r4/fhir';
 
+export class PublishedGuideModel {
+    public name: string;
+    public url: string;
+    public version: string;
+}
+
 @Injectable()
 export class ImplementationGuideService {
 
@@ -22,6 +28,10 @@ export class ImplementationGuideService {
         return Observable.throw(err || 'backend server error');
     }
     */
+
+    public getPublished(): Observable<PublishedGuideModel[]> {
+        return this.http.get<PublishedGuideModel[]>('/api/implementationGuide/published');
+    }
 
     public getImplementationGuides(query?: string): Observable<ImplementationGuideListItemModel[]> {
         return this.http.get<ImplementationGuideListItemModel[]>('/api/implementationGuide');
