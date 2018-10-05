@@ -1,179 +1,74 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" routerLink="/">Trifolia-on-FHIR</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <a class="navbar-brand" href="#">Trifolia-on-FHIR</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Create/Edit
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <div>
-            <div class="row">
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Implementation Guides</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/implementation-guide">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/implementation-guide/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentImplementationGuides">
-                    <a class="nav-link" routerLink="/implementation-guide/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white" title="Structure Definitions"><u>Profiles</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/structure-definition">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/structure-definition/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentStructureDefinitions">
-                    <a class="nav-link" routerLink="/structure-definition/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Operation Definitions</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/operation-definition">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/operation-definition/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentOperationDefinitions">
-                    <a class="nav-link" routerLink="/operation-definition/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Capability Statements</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/capability-statement">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/capability-statement/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentCapabilityStatements">
-                    <a class="nav-link" routerLink="/capability-statement/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Value Sets</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/value-set">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/value-set/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentValueSets">
-                    <a class="nav-link" routerLink="/value-set/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Code Systems</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/code-system">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/code-system/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentCodeSystems">
-                    <a class="nav-link" routerLink="/code-system/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Questionnaires</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/questionnaire">Browse</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/questionnaire/new">New</a>
-                  </li>
-                  <li class="nav-item" *ngFor="let ri of recentItemService.recentQuestionnaires">
-                    <a class="nav-link" routerLink="/questionnaire/{{ri.id}}">{{ri.display}} ({{ri.id}})</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-3">
-                <span class="text-uppercase text-white"><u>Other Resources</u></span>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" routerLink="/other-resources">Browse</a>
-                  </li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/export">Export</a>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/import">Import</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
-        <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
-      </select>
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item" *ngIf="!authService.isAuthenticated()">
-          <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
-        </li>
-        <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" routerLink="/users/me">
-            <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
-            {{getDisplayName()}}
-          </a>
-        </li>
-        <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()">Logout</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" (click)="openFile()" title="Open from computer">
-            <i class="fa fa-upload"></i>
-          </a>
-        </li>
-      </ul>
-    </form>
-  </div>
-
-
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" routerLink="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Browse/Edit
+                </a>
+                <div class="dropdown-menu" aria-labelledby="browseMenu">
+                    <a class="dropdown-item" routerLink="/implementation-guide">Implementation Guides</a>
+                    <a class="dropdown-item" routerLink="/structure-definition">Profiles</a>
+                    <a class="dropdown-item" routerLink="/capability-statement">Capability Statements</a>
+                    <a class="dropdown-item" routerLink="/operation-definition">Operation Definition</a>
+                    <a class="dropdown-item" routerLink="/value-set">Value Sets</a>
+                    <a class="dropdown-item" routerLink="/questionnaire">Questionnaires</a>
+                </div>
+            </li>
+            <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                <a class="nav-link" routerLink="/export">Export</a>
+            </li>
+            <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                <a class="nav-link" routerLink="/import">Import</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
+                <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
+            </select>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" *ngIf="!authService.isAuthenticated()">
+                    <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
+                </li>
+                <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                    <a class="nav-link" routerLink="/users/me">
+                        <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
+                        {{getDisplayName()}}
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                    <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()">Logout</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" (click)="openFile()" title="Open from computer">
+                        <i class="fa fa-upload"></i>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="/help/index.html" target="tof-help" title="Documentation">
+                        <i class="fa fa-question"></i>
+                    </a>
+                </li>
+            </ul>
+        </form>
+    </div>
 </nav>
 
 <div class="container container-large">
-  <div class="jumbotron">
-    <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">{{configService.statusMessage}}</div>
-    <router-outlet *ngIf="fhirService.loaded"></router-outlet>
-    <div *ngIf="!fhirService.loaded">
-      Loading information from selected FHIR server...
+    <div class="jumbotron">
+        <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
+            {{configService.statusMessage}}
+        </div>
+        <router-outlet *ngIf="fhirService.loaded"></router-outlet>
+        <div *ngIf="!fhirService.loaded">
+            Loading information from selected FHIR server...
+        </div>
     </div>
-  </div>
 </div>

@@ -130,67 +130,6 @@ a.btn {
     background-color: buttonface;
 }
 
-/* MENU */
-
-nav.navbar {
-    width: 100%;
-    position: absolute;
-    top: 0px;
-    background-color: black !important;
-}
-
-.navbar .dropdown-menu div[class*="col"] {
-    margin-bottom: 1rem;
-}
-
-.navbar .dropdown-menu {
-    border: none;
-    background-color: black !important;
-}
-
-.navbar .dropdown-menu > div {
-    padding-left: 30px;
-    padding-right: 10px;
-}
-
-.navbar .row  .nav-link,
-.navbar .row  .nav-item {
-    padding: 0px;
-}
-
-/* breakpoint and up - mega dropdown styles */
-@media screen and (min-width: 992px) {
-    /* remove the padding from the navbar so the dropdown hover state is not broken */
-    .navbar {
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-
-    /* remove the padding from the nav-item and add some margin to give some breathing room on hovers */
-    .navbar .nav-item {
-        padding: .5rem .5rem;
-        margin: 0 .25rem;
-    }
-
-    /* makes the dropdown full width  */
-    .navbar .dropdown {
-        position: static;
-    }
-
-    .navbar .dropdown-menu {
-        width: 100%;
-        left: 0;
-        right: 0;
-        /*  height of nav-item  */
-        top: 45px;
-    }
-
-    /* shows the dropdown menu on hover */
-    .navbar .dropdown:hover .dropdown-menu, .navbar .dropdown .dropdown-menu:hover {
-        display: block !important;
-    }
-}
-
 .strikethrough {
     text-decoration: line-through;
 }
