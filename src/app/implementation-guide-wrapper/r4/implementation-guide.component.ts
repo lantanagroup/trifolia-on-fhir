@@ -8,10 +8,10 @@ import {
     ImplementationGuidePageComponent,
     ResourceReference,
     ImplementationGuideDefinitionComponent,
-    ImplementationGuidePackageComponent, ImplementationGuideResourceComponent
+    ImplementationGuidePackageComponent, ImplementationGuideResourceComponent, ImplementationGuideDependsOnComponent
 } from '../../models/r4/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ImplementationGuideService} from '../../services/implementation-guide.service';
+import {ImplementationGuideService, PublishedGuideModel} from '../../services/implementation-guide.service';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
@@ -20,6 +20,7 @@ import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
+import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 
 class PageDefinition {
     public page: ImplementationGuidePageComponent;
@@ -61,6 +62,15 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public get isNew(): boolean {
         const id  = this.route.snapshot.paramMap.get('id');
         return !id || id === 'new';
+    }
+
+    public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
+        const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg' });
+        modalRef.result.then((guide: PublishedGuideModel) => {
+            dependsOn.packageId = guide.name;
+            dependsOn.uri = guide.url;
+            dependsOn.version = guide.version;
+        });
     }
 
     public revert() {

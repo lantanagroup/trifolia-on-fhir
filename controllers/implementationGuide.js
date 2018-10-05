@@ -3,8 +3,37 @@ const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
+const config = require('config');
+const rp = require('request-promise');
 
+const fhirConfig = config.get('fhir');
 const thisResourceType = 'ImplementationGuide';
+
+router.get('/published', checkJwt, (req, res) => {
+    if (!fhirConfig.publishedGuides) {
+        return res.status(500).send('Server is not configured with a publishedGuides property');
+    }
+
+    rp(fhirConfig.publishedGuides, { json: true })
+        .then((results) => {
+            const guides = [];
+
+            _.each(results.guides, (guide) => {
+                _.each(guide.editions, (edition) => {
+                    guides.push({
+                        name: guide.name,
+                        url: edition.url,
+                        'version': edition['ig-version']
+                    })
+                })
+            });
+
+            res.send(guides);
+        })
+        .catch((err) => {
+            res.status(500).send(err);
+        });
+});
 
 router.get('/', checkJwt, (req, res) => {
     const url = req.getFhirServerUrl(thisResourceType);

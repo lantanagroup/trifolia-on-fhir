@@ -378,7 +378,14 @@
             <tbody>
             <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
                 <td>
-                    <app-fhir-string [parentObject]="dependsOn" propertyName="uri" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                    <div class="input-group">
+                        <input type="text" class="form-control" [class.is-invalid]="!dependsOn.uri" [(ngModel)]="dependsOn.uri" />
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependsOn)">
+                                <i class="fa fa-hand-pointer-o"></i>
+                            </button>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
