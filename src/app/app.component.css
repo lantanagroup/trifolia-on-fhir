@@ -1,15 +1,6 @@
-.sub-nav-link {
-  color: rgba(255,255,255,.5);
-  text-decoration: none;
-}
-
 .profile-picture {
   width: 21px;
   height: 21px;
-}
-
-.nav-link.dropdown-toggle.active a {
-  color: #fff;
 }
 
 .container.container-large {
