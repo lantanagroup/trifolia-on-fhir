@@ -41,7 +41,14 @@
                                     <tbody>
                                     <tr *ngFor="let dependency of dependencies">
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependency)">
+                                                        <i class="fa fa-hand-pointer-o"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" [ngModel]="getDependencyLocation(dependency)" (ngModelChange)="setDependencyLocation(dependency, $event)" />
