@@ -3,6 +3,7 @@
         <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
         {{title || 'Choice'}}
     </label>
+    <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)" *ngIf="!isFormGroup && !hasChoice()" />
     <app-tooltip-icon *ngIf="isFormGroup && !hasChoice()" [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     <div class="input-group" *ngIf="hasChoice()">
         <div class="input-group-addon">

@@ -78,7 +78,8 @@
                 <tr *ngFor="let fi of flattenedItems; let fii = index">
                     <td style="display: flex;">
                         <span style="float: left; line-height: 37px;">
-                            <i class="fa" [class.fa-plus]="!fi.expanded" [class.fa-minus]="fi.expanded" (click)="toggleExpandItem(fi)"></i>
+                            <i class="fa" [class.fa-plus]="fi.hasChildren() && !fi.expanded" [class.fa-minus]="fi.hasChildren() && fi.expanded" (click)="toggleExpandItem(fi)"></i>
+                            <span *ngIf="!fi.hasChildren()">&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </span>
                         <span style="white-space: pre; float: left;">{{fi.getSpaces()}}</span>
                         <input type="text" style="float: left;" class="form-control" [(ngModel)]="fi.item.linkId" />
@@ -103,7 +104,7 @@
                             <button type="button" class="btn btn-default" tile="Move this item down" [disabled]="!canMoveItemDown(fi)" (click)="moveItem(false, fi)">
                                 <i class="fa fa-chevron-down"></i>
                             </button>
-                            <button type="button" class="btn btn-default" title="Remove this item">
+                            <button type="button" class="btn btn-default" title="Remove this item" (click)="removeItem(fi)">
                                 <i class="fa fa-remove"></i>
                             </button>
                         </div>

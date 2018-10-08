@@ -13,7 +13,7 @@ import {FhirService} from '../services/fhir.service';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import {ConfigService} from '../services/config.service';
 import * as _ from 'underscore';
-import {FhirEditQuestionnaireItemModalComponent} from '../fhir-edit/questionnaire-item-modal/questionnaire-item-modal.component';
+import {FhirEditQuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
 
 export class ItemModel {
     public item: QuestionnaireItemComponent;
@@ -118,8 +118,6 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         }
 
         if (questionnaireId !== 'new' && questionnaireId) {
-            this.questionnaire = null;
-
             this.questionnaireService.get(questionnaireId)
                 .subscribe((questionnaire: Questionnaire | OperationOutcome) => {
                     if (questionnaire.resourceType !== 'Questionnaire') {
@@ -160,9 +158,28 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         });
     }
 
+    public removeItem(itemModel: ItemModel) {
+        if (itemModel.expanded) {
+            this.toggleExpandItem(itemModel);       // Make sure the item is closed so that children can be more-easily removed
+        }
+
+        if (itemModel.parent) {
+            const parentItem = itemModel.parent.item;
+            const itemIndex = parentItem.item.indexOf(itemModel.item);
+            parentItem.item.splice(itemIndex, 1);
+        } else {
+            const itemIndex = this.questionnaire.item.indexOf(itemModel.item);
+            this.questionnaire.item.splice(itemIndex, 1);
+        }
+
+        const itemModelIndex = this.flattenedItems.indexOf(itemModel);
+        this.flattenedItems.splice(itemModelIndex, 1);
+    }
+
     public editItem(itemModel: ItemModel) {
         const modalRef = this.modalService.open(FhirEditQuestionnaireItemModalComponent, { size: 'lg' });
         modalRef.componentInstance.item = itemModel.item;
+        modalRef.componentInstance.questionnaire = this.questionnaire;
     }
 
     public addItem(parent?: ItemModel) {
