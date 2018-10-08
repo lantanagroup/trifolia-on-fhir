@@ -346,7 +346,7 @@ HtmlExporter.prototype._getStu3Control = function(extension, implementationGuide
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
 
     if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined.');
+        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined. Format of ImplementationGuide.url should be "http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/<id>"');
     }
 
     // TODO: Extract npm-name from IG extension.
