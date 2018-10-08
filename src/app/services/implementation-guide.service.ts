@@ -9,6 +9,7 @@ export class PublishedGuideModel {
     public name: string;
     public url: string;
     public version: string;
+    public 'npm-name': string;
 }
 
 @Injectable()
