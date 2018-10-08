@@ -23,9 +23,10 @@ router.get('/published', checkJwt, (req, res) => {
                     guides.push({
                         name: guide.name,
                         url: edition.url,
-                        'version': edition['ig-version']
-                    })
-                })
+                        version: edition['ig-version'],
+                        'npm-name': guide['npm-name']
+                    });
+                });
             });
 
             res.send(guides);

@@ -78,7 +78,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg' });
         modalRef.result.then((guide: PublishedGuideModel) => {
             this.setDependencyLocation(dependency, guide.url);
-            this.setDependencyName(dependency, guide.name);
+            this.setDependencyName(dependency, guide['npm-name']);
             this.setDependencyVersion(dependency, guide.version);
         });
     }
