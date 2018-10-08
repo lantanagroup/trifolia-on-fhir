@@ -9,7 +9,7 @@ import {
     PageComponent
 } from '../../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ImplementationGuideService} from '../../services/implementation-guide.service';
+import {ImplementationGuideService, PublishedGuideModel} from '../../services/implementation-guide.service';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
@@ -18,6 +18,8 @@ import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
+import {ImplementationGuideDependsOnComponent} from '../../models/r4/fhir';
+import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 
 class PageDefinition {
     public page: PageComponent;
@@ -72,6 +74,15 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         return !id || id === 'new';
     }
 
+    public selectPublishedIg(dependency: Extension) {
+        const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg' });
+        modalRef.result.then((guide: PublishedGuideModel) => {
+            this.setDependencyLocation(dependency, guide.url);
+            this.setDependencyName(dependency, guide.name);
+            this.setDependencyVersion(dependency, guide.version);
+        });
+    }
+
     public get dependencies(): Extension[] {
         return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.dependencyExtensionUrl);
     }
@@ -90,6 +101,8 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         newDependency.url = this.dependencyExtensionUrl;
 
         this.implementationGuide.extension.push(newDependency);
+
+        return newDependency;
     }
 
     public getDependencyLocation(dependency: Extension): string {
