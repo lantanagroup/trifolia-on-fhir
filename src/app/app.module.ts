@@ -111,7 +111,7 @@ import {QuestionnairesComponent} from './questionnaires/questionnaires.component
 import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practitioner.component';
 import {SocketService} from './services/socket.service';
-import {FhirEditQuestionnaireItemModalComponent} from './fhir-edit/questionnaire-item-modal/questionnaire-item-modal.component';
+import {FhirEditQuestionnaireItemModalComponent} from './questionnaire/questionnaire-item-modal.component';
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 import { PublishedIgSelectModalComponent } from './published-ig-select-modal/published-ig-select-modal.component';
 
