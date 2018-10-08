@@ -13482,6 +13482,14 @@ export class QuestionnaireItemEnableWhenComponent extends BackboneElement {
     }
 }
 
+export class QuestionnaireItemOptionComponent extends BackboneElement {
+    public valueInteger?: number;
+    public valueDate?: string;
+    public valueTime?: string;
+    public valueString?: string;
+    public valueCoding?: Coding;
+}
+
 export class QuestionnaireItemComponent extends BackboneElement {
     public linkId: string;
     public definition?: string;
@@ -13491,6 +13499,9 @@ export class QuestionnaireItemComponent extends BackboneElement {
     public type?: string;
     public enableWhen?: QuestionnaireItemEnableWhenComponent[];
     public item?: QuestionnaireItemComponent[];
+    public maxLength?: number;
+    public options?: ResourceReference;
+    public option?: QuestionnaireItemOptionComponent[];
 
     constructor(obj?: any) {
         super(obj);
@@ -13514,6 +13525,16 @@ export class QuestionnaireItemComponent extends BackboneElement {
             }
             if (obj.type) {
                 this.type = obj.type;
+            }
+            if (obj.hasOwnProperty('maxLength')) {
+                this.maxLength = obj.maxLength;
+            }
+            if (obj.hasOwnProperty('options')) {
+                this.options = new ResourceReference(obj.options);
+            }
+            if (obj.hasOwnProperty('option')) {
+                this.option = [];
+                for (let o of obj.option || []) { this.option.push(new QuestionnaireItemOptionComponent(o)); }
             }
         }
     }

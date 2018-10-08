@@ -34,7 +34,7 @@
                 <input type="number" class="form-control" [(ngModel)]="item.maxLength" [disabled]="!item.hasOwnProperty('maxLength')" />
             </div>
 
-            <app-fhir-reference [parentObject]="item" propertyName="options" title="Options" [resourceType]="ValueSet" [hideResourceType]="true"></app-fhir-reference>
+            <app-fhir-reference [parentObject]="item" propertyName="options" title="Options" resourceType="ValueSet" [hideResourceType]="true"></app-fhir-reference>
 
             <p>OPTION</p>
 
@@ -66,7 +66,7 @@
             <tr *ngFor="let ew of item.enableWhen; let ewi = index">
                 <td>
                     <select class="form-control" [(ngModel)]="ew.question">
-                        <option *ngFor="let item of allQuestions" [ngValue]="item.linkId">{{item.linkId}} ({{item.text}})</option>
+                        <option *ngFor="let aqi of allQuestions" [ngValue]="aqi.linkId">{{aqi.linkId}} ({{aqi.text}})</option>
                     </select>
                 </td>
                 <td>
