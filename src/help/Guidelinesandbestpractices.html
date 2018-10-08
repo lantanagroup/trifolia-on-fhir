@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Welcome</title>
+  <title>Guidelines and best practices</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Welcome">
+  <meta name="twitter:title" content="Guidelines and best practices">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Welcome" />
+  <meta property="og:title" content="Guidelines and best practices" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,50 +163,39 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Welcome"
-		  data-hnd-context="1"
-		  data-hnd-title="Welcome"
+		  data-hnd-id="Guidelinesandbestpractices"
+		  data-hnd-context="11"
+		  data-hnd-title="Guidelines and best practices"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="Introduction.html">Introduction</a></li>
+                        <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Whatsnew.html" title="What's new" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Process.html" title="Process" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Systemrequirements.html" title="System requirements" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Welcome</h2>
+            <h2>Guidelines and best practices</h2>
 
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is an editor for FHIR resources that uses a FHIR server natively as its back-end. All STU3-compliant FHIR servers work with Trifolia-on-FHIR.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Core Features</span></span></h3>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Implementation Guide</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Edit conformance resource types:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">ImplementationGuide</span></li>
-<li class="rvps3"><span class="rvts8">StructureDefinition</span></li>
-<li class="rvps3"><span class="rvts8">ValueSet</span></li>
-<li class="rvps3"><span class="rvts8">CodeSystem</span></li>
-<li class="rvps3"><span class="rvts8">CapabilityStatement</span></li>
-<li class="rvps3"><span class="rvts8">OperationDefinition</span></li>
-<li class="rvps3"><span class="rvts8">Questionnaire</span></li>
+<li class="rvps3"><span class="rvts8">The URL of the implementation guide must be in the format of </span><span class="rvts17">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts8">. For example: </span><span class="rvts17">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
+<li class="rvps3"><span class="rvts8">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts17">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8">, the id must be "</span><span class="rvts17">myproject-ig</span><span class="rvts8">". To ensure this, you may use the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
+<li class="rvps3"><span class="rvts8">The implementation guide should have a description. The description of the implementation guide is displayed on the main screen of the FHIR IG Publisher export.</span></li>
+<li class="rvps3"><span class="rvts8">Any contacts listed in the implementation guide are shown as authors in the FHIR IG Publisher export.</span></li>
+<li class="rvps3"><span class="rvts8">Only resources referenced directly within the implementation guide resource are exported; make sure all resources used by your implementation guide are referenced within the implementation guide resource, or they will not be included in the export.</span></li>
 </ul>
-<li class="rvps3"><span class="rvts8">Import and view any other resource in FHIR specification (such as Patient, Observation, MedicationStatement, etc.)</span></li>
-<li class="rvps3"><span class="rvts8">Validate with the "Validation" tab on every resource editing screen, which uses </span><a class="rvts13" href="https://github.com/lantanagroup/fhir.js" target="_blank">FHIR.js.</a></li>
-<li class="rvps3"><span class="rvts8">Export:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">Implementation Guides and associated resources</span></li>
-<li class="rvps3"><span class="rvts8">Bundles</span></li>
-<li class="rvps3"><span class="rvts8">FHIR IG Publisher packages</span></li>
-</ul>
-<li class="rvps3"><span class="rvts8">Import any resource or transaction bundle.</span></li>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">All Resources</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">All resources used within an implementation guide must have a similarly formatted URL. Based on the example above, if your implementation guide's URL is </span><span class="rvts17">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8"> then all of the profiles (StructureDefinition resources) within the implementation guide must have a URL that starts with </span><span class="rvts17">http://myproject.com/someRoot/StructureDefinition/</span><span class="rvts8">.</span></li>
 </ul>
 <p></p>
 
