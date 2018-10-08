@@ -3,7 +3,9 @@ const Q = require('q');
 const rp = require('request-promise');
 const _ = require('underscore');
 const config = require('config');
+const log4js = require('log4js');
 
+const log = log4js.getLogger();
 const fhirConfig = config.get('fhir');
 
 function BundleExporter(fhirServerBase, fhirServerId, fhir, implementationGuideId) {
@@ -36,7 +38,7 @@ function getBundle(req, format) {
 }
 */
 
-BundleExporter.prototype._getStu3Resources = function(implemnetationGuide) {
+BundleExporter.prototype._getStu3Resources = function(implementationGuide) {
     const promises = [];
 
     _.each(implementationGuide.package, (igPackage) => {
@@ -56,12 +58,12 @@ BundleExporter.prototype._getStu3Resources = function(implemnetationGuide) {
     return Q.all(promises);
 };
 
-BundleExporter.prototype._getR4Resources = function(implemnetationGuide) {
-    if (!implemnetationGuide.definition) {
+BundleExporter.prototype._getR4Resources = function(implementationGuide) {
+    if (!implementationGuide.definition) {
         return Q.resolve([]);
     }
 
-    const promises = _.chain(implemnetationGuide.definition.resource)
+    const promises = _.chain(implementationGuide.definition.resource)
         .filter((resource) => !!resource.reference && !!resource.reference.reference)
         .map((resource) => {
             const reference = resource.reference.reference;
