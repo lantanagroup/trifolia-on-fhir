@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Welcome</title>
+  <title>Process</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Welcome">
+  <meta name="twitter:title" content="Process">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Welcome" />
+  <meta property="og:title" content="Process" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,51 +163,43 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Welcome"
-		  data-hnd-context="1"
-		  data-hnd-title="Welcome"
+		  data-hnd-id="Process"
+		  data-hnd-context="10"
+		  data-hnd-title="Process"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="Introduction.html">Introduction</a></li>
+                        <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Whatsnew.html" title="What's new" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Navigating.html" title="Navigating" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Guidelinesandbestpractices.html" title="Guidelines and best practices" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Welcome</h2>
+            <h2>Process</h2>
 
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is an editor for FHIR resources that uses a FHIR server natively as its back-end. All STU3-compliant FHIR servers work with Trifolia-on-FHIR.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Core Features</span></span></h3>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Edit conformance resource types:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">ImplementationGuide</span></li>
-<li class="rvps3"><span class="rvts8">StructureDefinition</span></li>
-<li class="rvps3"><span class="rvts8">ValueSet</span></li>
-<li class="rvps3"><span class="rvts8">CodeSystem</span></li>
-<li class="rvps3"><span class="rvts8">CapabilityStatement</span></li>
-<li class="rvps3"><span class="rvts8">OperationDefinition</span></li>
-<li class="rvps3"><span class="rvts8">Questionnaire</span></li>
-</ul>
-<li class="rvps3"><span class="rvts8">Import and view any other resource in FHIR specification (such as Patient, Observation, MedicationStatement, etc.)</span></li>
-<li class="rvps3"><span class="rvts8">Validate with the "Validation" tab on every resource editing screen, which uses </span><a class="rvts13" href="https://github.com/lantanagroup/fhir.js" target="_blank">FHIR.js.</a></li>
-<li class="rvps3"><span class="rvts8">Export:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">Implementation Guides and associated resources</span></li>
-<li class="rvps3"><span class="rvts8">Bundles</span></li>
-<li class="rvps3"><span class="rvts8">FHIR IG Publisher packages</span></li>
-</ul>
-<li class="rvps3"><span class="rvts8">Import any resource or transaction bundle.</span></li>
-</ul>
+<p class="rvps3"><span class="rvts8">The work-flow for authoring an implementation guide in ToF is as follows:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Create an Implementation Guide</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Create Profiles (StructureDefinition resources)</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Create other resources (such as OperationDefinition, CapabilityStatement, ValueSet and CodeSystem) as needed for the profiles and implementation guide</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Create samples of the profiles manually and import into ToF</span></li>
+</ol>
+<li value="3" class="rvps3"><span class="rvts8">Associate profiles, other conformance resources, and samples with the Implementation Guide</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Export Implementation Guide using FHIR IG Publisher</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">The results of the export via the FHIR IG publisher can be viewed from the "Browse Implementation Guides" screen</span></li>
+<li value="2" class="rvps3"><span class="rvts8">The results include a Q/A tab that shows any errors the FHIR IG Publisher found during publication. Errors should be fixed where possible, and the export with FHIR IG publisher should be re-executed.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">When satisfied with the export results, the exported package may be downloaded an uploaded to the appropriate GitHub repository for the Implementation Guide project.</span></li>
+</ol></ol>
 <p></p>
 
             </div>
