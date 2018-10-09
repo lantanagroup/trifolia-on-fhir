@@ -4,16 +4,18 @@
 1. Run npm install
 2. Modify configuration to specify server port and authentication
 3. Compile Angular2 application with `ng build` or `ng build --watch` for development
-    1. The results of `ng build` are stored in the wwwroot folder, which is served by the server in the next step.
+    1. Angular CLI - must be installed globally to build the UI/client application `npm install -g @angular/cli`
+    2. The results of `ng build` are stored in the wwwroot folder, which is served by the server in the next step.
 4. Run the server with `node server.js`
 
 ## Deploying
 
 Requirements:
+* Angular CLI (for compiling) - See note above in "Running"
 * [Java](https://www.java.com/en/download/) - to run the ig publisher
 * [Jekyll](http://jekyll-windows.juthilo.com/2-jekyll-gem/) - to run the ig publisher without errors
     * Jekyll must be available to the user that is running the Node.JS server. Consider adding the Ruby installation directory to the global PATH.
-* Node.JS
+* Node.JSng
 
 1. Run `ng build -prod`
     1. This will build the client application in production mode, making the packages much smaller. However, debugging a "prod" build is nearly impossible...
