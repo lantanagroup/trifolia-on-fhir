@@ -50,13 +50,11 @@
     </table>
 </div>
 
-<app-fhir-human-names *ngIf="practitioner" [parentObject]="practitioner" propertyName="name" title="Name(s)"
-                      [required]="true"></app-fhir-human-names>
+<app-fhir-human-names *ngIf="practitioner" [parentObject]="practitioner" propertyName="name" title="Name(s)" [required]="true"></app-fhir-human-names>
 
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="practitioner.hasOwnProperty('telecom')"
-               (ngModelChange)="globals.toggleProperty(practitioner, 'telecom', [{}])"/>
+        <input type="checkbox" [ngModel]="practitioner.hasOwnProperty('telecom')" (ngModelChange)="globals.toggleProperty(practitioner, 'telecom', [{ system: 'phone', value: '' }])"/>
         Telecom(s)
     </div>
     <table class="table table-striped" *ngIf="practitioner.hasOwnProperty('telecom')">
@@ -66,8 +64,7 @@
             <th>Value</th>
             <th class="actions-column-1">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a telecom"
-                            (click)="practitioner.telecom.push({})">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a telecom" (click)="practitioner.telecom.push({ system: 'phone', value: '' })">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -77,12 +74,10 @@
         <tbody>
         <tr *ngFor="let t of practitioner.telecom; let ti = index">
             <td>
-                <app-fhir-select-single-code [parentObject]="t" propertyName="system"
-                                             valueSetUrl="http://hl7.org/fhir/ValueSet/practitioner-point-system"
-                                             [isFormGroup]="false"></app-fhir-select-single-code>
+                <app-fhir-select-single-code [parentObject]="t" propertyName="system" valueSetUrl="http://hl7.org/fhir/ValueSet/contact-point-system" [isFormGroup]="false" [required]="true"></app-fhir-select-single-code>
             </td>
             <td>
-                <app-fhir-string [parentObject]="t" propertyName="value" [isFormGroup]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="t" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
                 <div class="pull-right">
