@@ -7,6 +7,7 @@
     </ngb-tab>
     <ngb-tab title="QA">
         <ng-template ngbTabContent>
+            <div class="alert alert-info">The links in this QA report are not functional. Download the IG Publisher Package and run on your machine to produce a QA.html file with working links.</div>
             <a href="{{implementationGuideQAUrl}}" target="_new">Open in new tab</a>
             <iframe *ngIf="implementationGuideId" [src]="implementationGuideQAUrl | safe"></iframe>
         </ng-template>
