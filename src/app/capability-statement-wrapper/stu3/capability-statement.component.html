@@ -5,17 +5,17 @@
         <ng-template ngbTabContent>
             <div class="row">
                 <div class="col-md-8">
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL" tooltipPath="CapabilityStatement.url"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CapabilityStatement.name"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CapabilityStatement.title"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" title="Publisher"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" title="Publisher" tooltipPath="CapabilityStatement.publisher"></app-fhir-string>
 
                     <div class="card">
                         <div class="card-header">
-                            Formats
+                            Formats <app-tooltip-icon tooltipPath="CapabilityStatement.format"></app-tooltip-icon>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Add a format"
                                         (click)="capabilityStatement.format.push('')">
@@ -45,7 +45,6 @@
 
                     <div class="card">
                         <div class="card-header">
-                            Patch Formats
                             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('patchFormat')"
                                    (ngModelChange)="globals.toggleProperty(capabilityStatement, 'patchFormat', [''])"/>
                             <div class="pull-right">
@@ -55,6 +54,7 @@
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
+                            Patch Formats <app-tooltip-icon tooltipPath="CapabilityStatement.patchFormat"></app-tooltip-icon>
                         </div>
                         <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('patchFormat')">
                             <tbody>
@@ -76,18 +76,18 @@
                         </table>
                     </div>
 
-                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="description" title="Description" [isOptional]="true" tooltipPath="CapabilityStatement.description"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="purpose" title="Purpose" tooltipPath="CapabilityStatement.purpose"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="copyright" title="Copyright" tooltipPath="CapabilityStatement.copyright"></app-fhir-markdown>
                 </div>
 
                 <div class="col-md-4">
-                    <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false"></app-fhir-date>
+                    <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false" tooltipPath="CapabilityStatement.date"></app-fhir-date>
 
                     <div class="form-group">
-                        <label>Status</label>
+                        <label>Status <app-tooltip-icon tooltipPath="CapabilityStatement.status"></app-tooltip-icon></label>
                         <select class="form-control" [(ngModel)]="capabilityStatement.status"
                                 [class.is-invalid]="!capabilityStatement.status">
                             <option value="draft">Draft</option>
@@ -98,7 +98,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Kind</label>
+                        <label>Kind <app-tooltip-icon tooltipPath="CapabilityStatement.kind"></app-tooltip-icon></label>
                         <select class="form-control" [(ngModel)]="capabilityStatement.kind"
                                 [class.is-invalid]="!capabilityStatement.kind">
                             <option value="instance">Instance</option>
@@ -108,7 +108,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Accept Unknown</label>
+                        <label>Accept Unknown <app-tooltip-icon tooltipPath="CapabilityStatement.acceptUnknown"></app-tooltip-icon></label>
                         <select class="form-control" [(ngModel)]="capabilityStatement.acceptUnknown"
                                 [class.is-invalid]="!capabilityStatement.acceptUnknown">
                             <option value="no">No</option>
@@ -118,11 +118,11 @@
                         </select>
                     </div>
 
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="fhirVersion" title="FHIR Version" [required]="true"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="fhirVersion" title="FHIR Version" [required]="true" tooltipPath="CapabilityStatement.fhirVersion"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="version" title="Version" [required]="true"></app-fhir-string>
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="version" title="Version" [required]="true" tooltipPath="CapabilityStatement.version"></app-fhir-string>
 
-                    <app-fhir-boolean [parentObject]="capabilityStatement" propertyName="experimental" title="Experimental" [required]="true"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="capabilityStatement" propertyName="experimental" title="Experimental" [required]="true" tooltipPath="CapabilityStatement.experimental"></app-fhir-boolean>
                 </div>
             </div>
         </ng-template>
@@ -131,15 +131,16 @@
         <ng-template ngbTabContent>
 
             <!-- Use Context -->
-            <app-fhir-multi-use-context [parentObject]="capabilityStatement" propertyName="useContext"></app-fhir-multi-use-context>
+            <app-fhir-multi-use-context [parentObject]="capabilityStatement" propertyName="useContext" tooltipPath="CapabilityStatement.useContext"></app-fhir-multi-use-context>
 
-            <app-fhir-multi-jurisdiction [parentObject]="capabilityStatement" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+            <app-fhir-multi-jurisdiction [parentObject]="capabilityStatement" propertyName="jurisdiction" tooltipPath="CapabilityStatement.jurisdiction"></app-fhir-multi-jurisdiction>
 
             <div class="card">
                 <div class="card-header">
                     <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementationGuide')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'implementationGuide', [''])"/>
-                    Implementation Guides
+                    Implementation Guides <app-tooltip-icon tooltipPath="CapabilityStatement.implementationGuide"></app-tooltip-icon>
                 </div>
+
                 <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementationGuide')">
                     <thead>
                     <tr>
@@ -183,8 +184,9 @@
             <div class="card">
                 <div class="card-header">
                     <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'profile', [{ reference: '', display: '' }])"/>
-                    Profiles
+                    Profiles <app-tooltip-icon tooltipPath="CapabilityStatement.profile"></app-tooltip-icon>
                 </div>
+
                 <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('profile')">
                     <thead>
                     <tr>
@@ -201,7 +203,7 @@
                     <tbody>
                     <tr *ngFor="let p of capabilityStatement.profile; let pi = index">
                         <td>
-                            <app-fhir-reference [parentObject]="capabilityStatement.profile" [propertyName]="pi" [isFormGroup]="false" resourceType="StructureDefinition" [required]="true"></app-fhir-reference>
+                            <app-fhir-reference [parentObject]="capabilityStatement.profile" [propertyName]="pi" [isFormGroup]="false" resourceType="StructureDefinition" [required]="true" tooltipPath="CapabilityStatement.profile"></app-fhir-reference>
                         </td>
                         <td>
                             <div class="pull-right">
@@ -223,17 +225,17 @@
             </div>
 
             <div class="card">
-                <div class="card-header">Software</div>
+                <div class="card-header">Software <app-tooltip-icon tooltipPath="CapabilityStatement.software"></app-tooltip-icon></div>
                 <div class="card-body">...</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Implementation</div>
+                <div class="card-header">Implementation <app-tooltip-icon tooltipPath="CapabilityStatement.implementation"></app-tooltip-icon></div>
                 <div class="card-body">...</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Instantiates</div>
+                <div class="card-header">Instantiates <app-tooltip-icon tooltipPath="CapabilityStatement.instantiates"></app-tooltip-icon></div>
                 <div class="card-body">...</div>
             </div>
         </ng-template>
@@ -241,7 +243,7 @@
     <ngb-tab>
         <ng-template ngbTabTitle>REST</ng-template>
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries <app-tooltip-icon tooltipPath="CapabilityStatement.rest"></app-tooltip-icon>
 
             <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
@@ -250,31 +252,31 @@
                         <i class="fa fa-remove" title="Remove this REST entry" (click)="globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
-                        <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true"></app-fhir-select-single-code>
+                        <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true" tooltipPath="CapabilityStatement.rest.mode"></app-fhir-select-single-code>
 
-                        <app-fhir-markdown [parentObject]="r" propertyName="documentation" title="Documentation"></app-fhir-markdown>
+                        <app-fhir-markdown [parentObject]="r" propertyName="description" title="Description" tooltipPath="CapabilityStatement.description"></app-fhir-markdown>
 
                         <!-- Security -->
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="globals.toggleProperty(r, 'security', [{}])"/>
-                                Security
+                                Security <app-tooltip-icon tooltipPath="CapabilityStatement.rest.security"></app-tooltip-icon>
                             </div>
                             <div class="card-body" *ngIf="r.hasOwnProperty('security')">
-                                <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS"></app-fhir-boolean>
+                                <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS" tooltipPath="CapabilityStatement.rest.security.cors"></app-fhir-boolean>
 
-                                <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
+                                <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description" tooltipPath="CapabilityStatement.rest.security.description"></app-fhir-string>
 
                                 <div class="card">
                                     <div class="card-header">
                                         <input type="checkbox" [ngModel]="r.security.hasOwnProperty('certificate')" (ngModelChange)="globals.toggleProperty(r.security, 'certificate', [{}])"/>
-                                        Certificate
+                                        Certificate <app-tooltip-icon tooltipPath="CapabilityStatement.rest.security.certificate"></app-tooltip-icon>
                                     </div>
                                     <table class="table table-striped" *ngIf="r.security.hasOwnProperty('certificate')">
                                         <thead>
                                         <tr>
-                                            <th>Type</th>
-                                            <th>Blob</th>
+                                            <th>Type <app-tooltip-icon tooltipPath="CapabilityStatement.rest.security.certificate.type"></app-tooltip-icon></th>
+                                            <th>Blob <app-tooltip-icon tooltipPath="CapabilityStatement.rest.security.certificate.blob"></app-tooltip-icon></th>
                                             <th>
                                                 <div class="pull-right">
                                                     <button type="button" class="btn btn-default" title="Add a certificate" (click)="r.security.certificate.push({})">
@@ -314,7 +316,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')" (ngModelChange)="globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
-                                Resource(s)
+                                Resource(s) <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
                                 <thead>
@@ -370,13 +372,13 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')" (ngModelChange)="globals.toggleProperty(r, 'interaction', [{ code: 'transaction' }])"/>
-                                Interaction(s)
+                                Interaction(s) <app-tooltip-icon tooltipPath="CapabilityStatement.rest.interaction"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
                                 <thead>
                                 <tr>
-                                    <th>Code</th>
-                                    <th>Documentation</th>
+                                    <th>Code <app-tooltip-icon tooltipPath="CapabilityStatement.rest.interaction.code"></app-tooltip-icon></th>
+                                    <th>Documentation <app-tooltip-icon tooltipPath="CapabilityStatement.rest.interaction.documentation"></app-tooltip-icon></th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an interaction" (click)="r.resource.push({ code: 'transaction' })">
@@ -410,15 +412,15 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')" (ngModelChange)="globals.toggleProperty(r, 'searchParam', [{}])" />
-                                Search Params
+                                Search Params <app-tooltip-icon tooltipPath="CapabilityStatement.rest.searchParam"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('searchParam')">
                                 <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Definition</th>
-                                    <th>Type</th>
-                                    <th>Documentation</th>
+                                    <th>Name <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.searchParam.name"></app-tooltip-icon></th>
+                                    <th>Definition <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.searchParam.definition"></app-tooltip-icon></th>
+                                    <th>Type <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.searchParam.type"></app-tooltip-icon></th>
+                                    <th>Documentation <app-tooltip-icon tooltipPath="CapabilityStatement.rest.resource.searchParam.documentation"></app-tooltip-icon></th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a search param" (click)="r.searchParam.push({})">
@@ -458,13 +460,13 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')" (ngModelChange)="globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])" />
-                                Operations
+                                Operations <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('operation')">
                                 <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Definition</th>
+                                    <th>Name <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation.name"></app-tooltip-icon></th>
+                                    <th>Definition <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation.definition"></app-tooltip-icon></th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an operation" (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
@@ -498,7 +500,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')" (ngModelChange)="globals.toggleProperty(r, 'compartment', [''])" />
-                                Compartments
+                                Compartments <app-tooltip-icon tooltipPath="CapabilityStatement.rest.compartment"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
                                 <thead>
@@ -543,7 +545,7 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Messaging</ng-template>
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries <app-tooltip-icon tooltipPath="CapabilityStatement.messaging"></app-tooltip-icon>
 
             <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
@@ -556,13 +558,13 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
-                                Endpoints
+                                Endpoints <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.endpoint"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
                                 <thead>
                                 <tr>
-                                    <th>Protocol</th>
-                                    <th>Address</th>
+                                    <th>Protocol <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.endpoint.protocol"></app-tooltip-icon></th>
+                                    <th>Address <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.endpoint.address"></app-tooltip-icon></th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an endpoint" (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
@@ -597,24 +599,24 @@
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" [ngModel]="messaging.hasOwnProperty('reliableCache')" (ngModelChange)="globals.toggleProperty(messaging, 'reliableCache', 1)" />
-                                Reliable Cache
+                                Reliable Cache <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.reliableCache"></app-tooltip-icon>
                             </label>
                             <input type="number" class="form-control" [disabled]="!messaging.hasOwnProperty('reliableCache')" [(ngModel)]="messaging.reliableCache" />
                         </div>
 
-                        <app-fhir-string [parentObject]="messaging" propertyName="documentation" title="Documentation"></app-fhir-string>
+                        <app-fhir-string [parentObject]="messaging" propertyName="documentation" title="Documentation" tooltipPath="CapabilityStatement.messaging.documentation"></app-fhir-string>
 
                         <!-- Supported Messages -->
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')" (ngModelChange)="globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])" />
-                                Supported Messages
+                                Supported Messages <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.supportedMessage"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('supportedMessage')">
                                 <thead>
                                 <tr>
-                                    <th>Mode</th>
-                                    <th>Definition</th>
+                                    <th>Mode <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.supportedMessage.mode"></app-tooltip-icon></th>
+                                    <th>Definition <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.supportedMessage.definition"></app-tooltip-icon></th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a supported message" (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
@@ -648,16 +650,16 @@
                         <div class="card">
                             <div class="card-header">
                                 <input type="checkbox" [ngModel]="messaging.hasOwnProperty('event')" (ngModelChange)="globals.toggleProperty(messaging, 'event', [getDefaultMessagingEvent()])" />
-                                Events
+                                Events <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event"></app-tooltip-icon>
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('event')">
                                 <thead>
                                 <tr>
-                                    <th>Code</th>
-                                    <th>Mode</th>
-                                    <th>Focus</th>
-                                    <th>Request</th>
-                                    <th>Response</th>
+                                    <th>Code <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event.code"></app-tooltip-icon></th>
+                                    <th>Mode <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event.mode"></app-tooltip-icon></th>
+                                    <th>Focus <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event.focus"></app-tooltip-icon></th>
+                                    <th>Request <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event.request"></app-tooltip-icon></th>
+                                    <th>Response <app-tooltip-icon tooltipPath="CapabilityStatement.messaging.event.response"></app-tooltip-icon></th>
                                     <th class="actions-column-2">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add an event" (click)="messaging.event.push(getDefaultMessagingEvent())">
@@ -716,15 +718,15 @@
             <p>
                 <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('document')"
                        (ngModelChange)="globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
-                Capability statement has document(s)
+                Capability statement has document(s) <app-tooltip-icon tooltipPath="CapabilityStatement.document"></app-tooltip-icon>
             </p>
 
             <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('document')">
                 <thead>
                 <tr>
-                    <th>Mode</th>
-                    <th>Documentation</th>
-                    <th>Profile</th>
+                    <th>Mode <app-tooltip-icon tooltipPath="CapabilityStatement.document.mode"></app-tooltip-icon></th>
+                    <th>Documentation <app-tooltip-icon tooltipPath="CapabilityStatement.document.documentation"></app-tooltip-icon></th>
+                    <th>Profile <app-tooltip-icon tooltipPath="CapabilityStatement.document.profile"></app-tooltip-icon></th>
                     <th class="actions-column-1">
                         <div class="pull-right">
                             <button type="button" class="btn btn-default" title="Add document"
