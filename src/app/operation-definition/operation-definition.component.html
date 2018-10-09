@@ -6,25 +6,26 @@
         <ng-template ngbTabContent>
             <div class="row">
                 <div class="col-md-8">
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL" tooltipPath="OperationDefinition.url"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"></app-fhir-string>
 
-                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description" tooltipPath="OperationDefinition.description"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose" tooltipPath="OperationDefinition.purpose"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment" tooltipPath="OperationDefinition.comment"></app-fhir-markdown>
 
-                    <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact"></app-fhir-multi-contact>
+                    <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
                 </div>
                 <div class="col-md-4">
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
 
                     <div class="form-group">
-                        <label>Status</label>
+                        <label>Status <app-tooltip-icon tooltipPath="OperationDefinition.status"></app-tooltip-icon></label>
+
                         <select class="form-control" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')">
                             <option value="draft">Draft</option>
                             <option value="active">Active</option>
@@ -34,26 +35,26 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Kind</label>
+                        <label>Kind <app-tooltip-icon tooltipPath="OperationDefinition.kind"></app-tooltip-icon></label>
                         <select class="form-control" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')">
                             <option value="operation">Operation</option>
                             <option value="query">Query</option>
                         </select>
                     </div>
 
-                    <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version"></app-fhir-string>
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version" tooltipPath="OperationDefinition.version"></app-fhir-string>
 
-                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental" tooltipPath="OperationDefinition.experimental"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent" tooltipPath="OperationDefinition.idempotent"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true" tooltipPath="OperationDefinition.system"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true" tooltipPath="OperationDefinition.type"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true" tooltipPath="OperationDefinition.instance"></app-fhir-boolean>
 
-                    <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date"></app-fhir-date>
+                    <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date" tooltipPath="OperationDefinition.date"></app-fhir-date>
                 </div>
             </div>
         </ng-template>
@@ -62,9 +63,9 @@
     <!-- Additional -->
     <ngb-tab title="Additional">
         <ng-template ngbTabContent>
-            <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext"></app-fhir-multi-use-context>
+            <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext"></app-fhir-multi-use-context>
 
-            <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction"></app-fhir-multi-jurisdiction>
+            <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
         </ng-template>
     </ngb-tab>
 
@@ -72,15 +73,15 @@
     <ngb-tab title="Parameters">
         <ng-template ngbTabContent>
             <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'parameter', [])" />
-            Operation definition has parameters
+            Operation definition has parameters <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
 
             <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('parameter')">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Use</th>
-                    <th>Min</th>
-                    <th>Max</th>
+                    <th>Name <app-tooltip-icon tooltipPath="OperationDefinition.parameter.name"></app-tooltip-icon></th>
+                    <th>Use <app-tooltip-icon tooltipPath="OperationDefinition.parameter.use"></app-tooltip-icon></th>
+                    <th>Min <app-tooltip-icon tooltipPath="OperationDefinition.parameter.min"></app-tooltip-icon></th>
+                    <th>Max <app-tooltip-icon tooltipPath="OperationDefinition.parameter.max"></app-tooltip-icon></th>
                     <th>
                         <div class="pull-right">
                             <button type="button" class="btn btn-primary" title="Add a parameter" (click)="operationDefinition.parameter.push({ name: '', use: 'in', min: 0, max: '*' })">
@@ -127,13 +128,13 @@
     <ngb-tab title="Overload">
         <ng-template ngbTabContent>
             <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'overload', [])" />
-            Operation definition has overload
+            Operation definition has overload <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
 
             <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('overload')">
                 <thead>
                 <tr>
-                    <th>Parameter Name(s)</th>
-                    <th>Comment</th>
+                    <th>Parameter Name(s) <app-tooltip-icon tooltipPath="OperationDefinition.overload.parameterName"></app-tooltip-icon></th>
+                    <th>Comment <app-tooltip-icon tooltipPath="OperationDefinition.overload.comment"></app-tooltip-icon></th>
                     <th>
                         <div class="pull-right">
                             <button type="button" class="btn btn-primary" title="Add a overload" (click)="operationDefinition.overload.push({ })">
