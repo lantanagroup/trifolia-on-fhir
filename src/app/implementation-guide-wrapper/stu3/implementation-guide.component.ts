@@ -290,7 +290,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                     display: `Page content ${newBinary.id}`
                 }
             }];
-            newPage.source = 'index.html';
+            newPage.source = 'newPage.html';
             this.implementationGuide.page = newPage;
         } else if (!value && this.implementationGuide.page) {
             const foundPageDef = _.find(this.pages, (pageDef) => pageDef.page === this.implementationGuide.page);

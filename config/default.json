@@ -9,6 +9,9 @@
     "secret": "2c5vExJczhV5hoJPNxjbUK8bQNpjXgDAHYBth49jgmjuKSbK",
     "issuer": "https://trifolia.auth0.com/"
   },
+  "import": {
+    "phinVadsUrl": "https://phinvads.cdc.gov/vocabService/v2"
+  },
   "fhir": {
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
     "latestPublisher": "http://build.fhir.org/org.hl7.fhir.igpublisher.jar",
