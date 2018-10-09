@@ -31,23 +31,6 @@ export class MultiContactComponent implements OnInit {
         ref.componentInstance.contact = contact;
     }
 
-    public getTelecomDisplay(contact: ContactDetail) {
-        const telecoms = _.map(contact.telecom, (telecom) => {
-            if (telecom.system) {
-                return telecom.value + ' (' + telecom.system + ')';
-            } else {
-                return telecom.value;
-            }
-        });
-        const telecomsString = telecoms.join(', ');
-
-        if (telecomsString.length > 50) {
-            return telecomsString.substring(0, 50) + '...';
-        }
-
-        return telecomsString;
-    }
-
     ngOnInit() {
         if (this.tooltipKey) {
             this.tooltip = this.globals.tooltips[this.tooltipKey];

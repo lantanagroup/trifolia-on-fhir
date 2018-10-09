@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])" />
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ name: '' }])" />
         {{title || 'Contacts'}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
@@ -11,13 +11,9 @@
                 Name
                 <app-tooltip-icon tooltipPath="ContactDetail.name"></app-tooltip-icon>
             </th>
-            <th>
-                Telecom(s)
-                <app-tooltip-icon tooltipPath="ContactDetail.telecom"></app-tooltip-icon>
-            </th>
             <th class="actions-column-2">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({})">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({ name: '' })">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -27,10 +23,7 @@
         <tbody>
         <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
             <td>
-                <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-                {{getTelecomDisplay(c)}}
+                <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
                 <div class="btn-group pull-right">
