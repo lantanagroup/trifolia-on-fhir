@@ -66,6 +66,21 @@ export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnD
         super();
     }
 
+    /**
+     * Replaces the non-ascii dash character with the ascii dash character
+     * Removes any remaining non-ascii characters
+     * @param value {string} The value to fix/replace/remove
+     */
+    private getFixedValue(value: string) {
+        if (!value) {
+            return value;
+        }
+
+        return value
+            .replace(/–/g, '-')
+            .replace(/[^\x00-\x7F]/g, '');
+    }
+
     writeValue(v: any) {
         if (v !== this._innerValue) {
             this._innerValue = v;
@@ -74,7 +89,8 @@ export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnD
                 if (this.value === undefined) {
                     this.simplemde.value('');
                 } else {
-                    this.simplemde.value(this.value);
+                    const fixedValue = this.getFixedValue(this.value);
+                    this.simplemde.value(fixedValue);
                 }
             }
 
@@ -91,7 +107,8 @@ export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnD
         this.simplemde = new SimpleMDE(config);
 
         if (this.tmpValue) {
-            this.simplemde.value(this.tmpValue);
+            const fixedValue = this.getFixedValue(this.tmpValue);
+            this.simplemde.value(fixedValue);
             this.tmpValue = null;
         }
 
@@ -100,7 +117,14 @@ export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnD
                 return;
             }
 
-            this.value = this.simplemde.value();
+            const value = this.simplemde.value();
+            const fixedValue = this.getFixedValue(value);
+
+            if (value !== fixedValue) {
+                this.simplemde.value(fixedValue);
+            }
+
+            this.value = fixedValue;
         });
     }
 
