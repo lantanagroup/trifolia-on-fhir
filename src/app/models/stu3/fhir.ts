@@ -12404,9 +12404,11 @@ export class Person extends DomainResource {
     }
 
     getDisplayName(): string {
-        if (this.name.length > 0) {
+        if (this.name && this.name.length > 0) {
             return this.name[0].getDisplay();
         }
+
+        return 'Unspecified Name';
     }
 }
 
@@ -12829,9 +12831,11 @@ export class Practitioner extends DomainResource {
     }
 
     getDisplayName(): string {
-        if (this.name.length > 0) {
+        if (this.name && this.name.length > 0) {
             return this.name[0].getDisplay();
         }
+
+        return 'Unspecified Name';
     }
 }
 

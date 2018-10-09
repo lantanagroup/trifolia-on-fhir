@@ -13,8 +13,10 @@ export class PersonListModel {
     }
 
     public getDisplayName(): string {
-        if (this.name.length > 0) {
+        if (this.name && this.name.length > 0) {
             return this.name[0].getDisplay();
         }
+
+        return 'Unspecified Name';
     }
 }
