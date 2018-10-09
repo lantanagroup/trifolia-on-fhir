@@ -722,7 +722,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                                     log.error(err);
                                     this._sendSocketMessage(packageId, 'error', 'Error copying contents to deployment path.');
                                 } else {
-                                    const finalMessage = 'Done executing the FHIR IG Publisher.' + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
+                                    const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/implementation-guide/${this._implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
                                     this._sendSocketMessage(packageId, 'complete', finalMessage);
                                 }
 

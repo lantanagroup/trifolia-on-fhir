@@ -113,7 +113,8 @@ import {FhirEditPractitionerComponent} from './fhir-edit/practitioner/practition
 import {SocketService} from './services/socket.service';
 import {FhirEditQuestionnaireItemModalComponent} from './questionnaire/questionnaire-item-modal.component';
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
-import { PublishedIgSelectModalComponent } from './published-ig-select-modal/published-ig-select-modal.component';
+import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
+import {RouteTransformerDirective} from './route-transformer.directive';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -307,7 +308,8 @@ export function getConfig(configService: ConfigService) {
         FhirEditPractitionerComponent,
         FhirEditQuestionnaireItemModalComponent,
         ImplementationGuideWrapperComponent,
-        PublishedIgSelectModalComponent
+        PublishedIgSelectModalComponent,
+        RouteTransformerDirective
     ],
     imports: [
         RouterModule.forRoot(

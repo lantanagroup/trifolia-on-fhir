@@ -65,7 +65,7 @@
 
 <div class="card" *ngIf="socketOutput">
     <div class="card-body">
-        <pre>{{socketOutput}}</pre>
+        <pre [innerHTML]="socketOutput" routeTransformer></pre>
     </div>
 </div>
 
