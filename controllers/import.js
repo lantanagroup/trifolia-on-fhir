@@ -1,10 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
 const _ = require('underscore');
 const Q = require('q');
 const log4js = require('log4js');
+const PhinVadsImporter = require('../import/phinVadsImporter');
+const ExcelValueSetImporter = require('../import/excelValueSetImporter');
+
+const router = express.Router();
 const log = log4js.getLogger();
 
 function importResource(resource, getFhirServerUrl) {
@@ -45,6 +48,37 @@ function importResource(resource, getFhirServerUrl) {
     return deferred.promise;
 }
 
+/** EXCEL VALUESET **/
+router.post('/excelValueSet', (req, res) => {
+    const importer = new ExcelValueSetImporter();
+    importer.import(req.body)
+        .then((results) => {
+            res.send(results);
+        })
+        .catch((err) => {
+            log.error(err);
+            res.status(500).send(err);
+        });
+});
+
+/** PHIN VADS **/
+router.get('/phinVads', (req, res) => {
+    const importer = new PhinVadsImporter();
+    importer.search(req.query.searchText)
+        .then((results) => {
+            res.send(results);
+        })
+        .catch((err) => {
+            log.error(err);
+            res.status(500).send(err);
+        });
+});
+
+router.post('/phinVads', (req, res) => {
+    res.send('todo');
+});
+
+/** VSAC **/
 router.get('/vsac/:resourceType/:id', checkJwt, (req, res) => {
     const vsacAuthorization = req.headers['vsacauthorization'];
     const resourceType = req.params.resourceType;
@@ -89,6 +123,7 @@ router.get('/vsac/:resourceType/:id', checkJwt, (req, res) => {
     })
 });
 
+/** FHIR Transaction Bundles **/
 router.post('/', checkJwt, (req, res) => {
     importResource(req.body, req.getFhirServerUrl)
         .then((results) => {
