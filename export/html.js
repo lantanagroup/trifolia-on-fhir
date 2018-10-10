@@ -89,27 +89,6 @@ HtmlExporter.prototype._sendSocketMessage = function(packageId, status, message)
     }
 };
 
-HtmlExporter.prototype._packagePage = function(pagesPath, implementationGuide, page) {
-    const contentExtension = _.find(page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
-
-    if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-            const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
-
-            if (contained && contained.resourceType === 'Binary') {
-                const newPagePath = path.join(pagesPath, page.source);
-                // noinspection JSUnresolvedFunction
-                const content = Buffer.from(contained.content, 'base64').toString();
-                fs.writeFileSync(newPagePath, content);
-            }
-        }
-    }
-
-    _.each(page.page, (subPage) => this._packagePage(pagesPath, implementationGuide, subPage));
-};
-
 HtmlExporter.prototype._getIgPublisher = function(packageId, useLatest, executeIgPublisher) {
     if (!executeIgPublisher) {
         return Q.resolve();
@@ -344,9 +323,12 @@ HtmlExporter.prototype._writeFilesForResource = function(rootPath, resource) {
 HtmlExporter.prototype._getStu3Control = function(extension, implementationGuide, bundle, version) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+    let canonicalBase;
 
     if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined. Format of ImplementationGuide.url should be "http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/<id>"');
+        canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
+    } else {
+        canonicalBase = canonicalBaseMatch[1];
     }
 
     // TODO: Extract npm-name from IG extension.
@@ -372,7 +354,7 @@ HtmlExporter.prototype._getStu3Control = function(extension, implementationGuide
         'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'sct-edition': 'http://snomed.info/sct/731000124108',
-        canonicalBase: canonicalBaseMatch[1],
+        canonicalBase: canonicalBase,
         defaults: {
             "Location": {"template-base": "ex.html"},
             "ProcedureRequest": {"template-base": "ex.html"},
@@ -449,14 +431,15 @@ HtmlExporter.prototype._getStu3Control = function(extension, implementationGuide
     return control;
 };
 
-
-
 HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, bundle, version) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+    let canonicalBase;
 
     if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-        throw new Error('The ImplementationGuide.url is not in the correct format. A canonical base cannot be determined.');
+        canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
+    } else {
+        canonicalBase = canonicalBaseMatch[1];
     }
 
     // TODO: Extract npm-name from IG extension.
@@ -482,7 +465,7 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
         'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
         'sct-edition': 'http://snomed.info/sct/731000124108',
-        canonicalBase: canonicalBaseMatch[1],
+        canonicalBase: canonicalBase,
         defaults: {
             "Location": {"template-base": "ex.html"},
             "ProcedureRequest": {"template-base": "ex.html"},
@@ -551,6 +534,179 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
     return control;
 };
 
+HtmlExporter.prototype._getStu3PageContent = function(implementationGuide, page) {
+    const contentExtension = _.find(page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+
+    if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
+        const reference = contentExtension.valueReference.reference;
+
+        if (reference.startsWith('#')) {
+            const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
+
+            if (contained && contained.resourceType === 'Binary') {
+                return {
+                    fileName: page.source,
+                    content: Buffer.from(contained.content, 'base64').toString()
+                };
+            }
+        }
+    }
+};
+
+HtmlExporter.prototype._writeStu3Page = function(pagesPath, implementationGuide, page, level, tocEntries) {
+    const pageContent = this._getStu3PageContent(implementationGuide, page);
+
+    if (page.kind !== 'toc' && pageContent) {
+        const newPagePath = path.join(pagesPath, pageContent.fileName);
+
+        const content = '---\n' +
+            `title: ${page.title}\n` +
+            'layout: default\n' +
+            `active: ${page.title}\n` +
+            '---\n\n' + pageContent.content;
+
+        fs.writeFileSync(newPagePath, content);
+    }
+
+    // Add an entry to the TOC
+    tocEntries.push({ level: level, fileName: page.kind === 'page' && pageContent ? pageContent.fileName : null, title: page.title });
++-
+    _.each(page.page, (subPage) => this._writeStu3Page(pagesPath, implementationGuide, subPage, level + 1, tocEntries));
+};
+
+HtmlExporter.prototype._writeR4Page = function(pagesPath, implementationGuide, page, level, tocEntries) {
+    let fileName;
+
+    if (page.nameReference && page.nameReference.reference && page.title) {
+        const reference = page.nameReference.reference;
+
+        if (reference.startsWith('#')) {
+            const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
+
+            if (contained && contained.resourceType === 'Binary') {
+                fileName = page.title.replace(/ /g, '_');
+
+                if (fileName.indexOf('.') < 0) {
+                    fileName += this._getPageExtension(page);
+                }
+
+                const newPagePath = path.join(pagesPath, fileName);
+
+                // noinspection JSUnresolvedFunction
+                const binaryContent = Buffer.from(contained.data, 'base64').toString();
+                const content = '---\n' +
+                    `title: ${page.title}\n` +
+                    'layout: default\n' +
+                    `active: ${page.title}\n` +
+                    `---\n\n${binaryContent}`;
+                fs.writeFileSync(newPagePath, content);
+            }
+        }
+    }
+
+    // Add an entry to the TOC
+    tocEntries.push({ level: level, fileName: fileName, title: page.title });
+
+    _.each(page.page, (subPage) => this._writeR4Page(pagesPath, implementationGuide, subPage, level + 1, tocEntries));
+};
+
+HtmlExporter.prototype._generateTableOfContents = function(rootPath, tocEntries, shouldAutoGenerate, pageContent) {
+    const tocPath = path.join(rootPath, 'source/pages/toc.md');
+    let tocContent = '';
+
+    if (shouldAutoGenerate) {
+        _.each(tocEntries, (entry) => {
+            let fileName = entry.fileName;
+
+            if (fileName && fileName.endsWith('.md')) {
+                fileName = fileName.substring(0, fileName.length - 3) + '.html';
+            }
+
+            for (let i = 1; i < entry.level; i++) {
+                tocContent += '    ';
+            }
+
+            tocContent += '* ';
+
+            if (fileName) {
+                tocContent += `<a href="${fileName}">${entry.title}</a>\n`;
+            } else {
+                tocContent += `${entry.title}\n`;
+            }
+        });
+    } else if (pageContent && pageContent.content) {
+        tocContent = pageContent.content;
+    }
+
+    if (tocContent) {
+        fs.appendFileSync(tocPath, tocContent);
+    }
+};
+
+HtmlExporter.prototype._writeStu3Pages = function(rootPath, implementationGuide) {
+    const tocFilePath = path.join(rootPath, 'source/pages/toc.md');
+    const tocEntries = [];
+
+    if (implementationGuide.page) {
+        const autoGenerateExtension = _.find(implementationGuide.page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
+        const shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
+        const pageContent = this._getStu3PageContent(implementationGuide, implementationGuide.page);
+        const pagesPath = path.join(rootPath, 'source/pages');
+        fs.ensureDirSync(pagesPath);
+
+        this._writeStu3Page(pagesPath, implementationGuide, implementationGuide.page, 1, tocEntries);
+        this._generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, pageContent);
+    }
+};
+
+HtmlExporter.prototype._writeR4Pages = function(rootPath, implementationGuide) {
+    const tocEntries = [];
+    let shouldAutoGenerate = true;
+    let rootPageContent;
+    let rootPageFileName;
+
+    if (implementationGuide.definition && implementationGuide.definition.page) {
+        const autoGenerateExtension = _.find(implementationGuide.definition.page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
+        shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
+        const pagesPath = path.join(rootPath, 'source/pages');
+        fs.ensureDirSync(pagesPath);
+
+        if (implementationGuide.definition.page.nameReference) {
+            const nameReference = implementationGuide.definition.page.nameReference;
+
+            if (nameReference.reference && nameReference.reference.startsWith('#')) {
+                const foundContained = _.find(implementationGuide.contained, (contained) => contained.id === nameReference.reference.substring(1));
+
+                if (foundContained && foundContained.resourceType === 'Binary') {
+                    rootPageContent = new Buffer(foundContained.data, 'base64').toString();
+                    rootPageFileName = implementationGuide.definition.page.title.replace(/ /g, '_');
+
+                    if (!rootPageFileName.endsWith('.md')) {
+                        rootPageFileName += '.md';
+                    }
+                }
+            }
+        }
+
+        this._writeR4Page(pagesPath, implementationGuide, implementationGuide.definition.page, 1, tocEntries);
+    }
+
+    // Append TOC Entries to the toc.md file in the template
+    this._generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, { fileName: rootPageFileName, content: rootPageContent });
+};
+
+HtmlExporter.prototype._getPageExtension = function(page) {
+    switch (page.generation) {
+        case 'html':
+        case 'generated':
+            return '.html';
+        case 'xml':
+            return '.xml';
+        default:
+            return '.md';
+    }
+};
+
 HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminologyServer, useLatest, downloadOutput, testCallback) {
     const deferred = Q.defer();
     const bundleExporter = new BundleExporter(this._fhirServerBase, this._fhirServerId, this._fhir, this._implementationGuideId);
@@ -593,6 +749,16 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
 
                         let resourceContent = null;
 
+                        // TODO: HACK: HAPI R4 doesn't respect Binary.data... Need to convert Binary.content to Binary.data so that the IG Publisher runs.
+                        if (resourceType === 'ImplementationGuide' && fhirServerConfig.version !== 'stu3') {
+                            _.chain(bundle.entry[i].resource.contained)
+                                .filter((contained) => contained.resourceType === 'Binary')
+                                .each((contained) => {
+                                    contained.data = contained.content;
+                                    delete contained.content;
+                                });
+                        }
+
                         // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
                         if (!isXml && resourceType !== 'ImplementationGuide') {
                             resourceContent = JSON.stringify(bundle.entry[i].resource, null, '\t');
@@ -612,13 +778,6 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
 
                     if (!implementationGuideResource) {
                         throw new Error('The implementation guide was not found in the bundle returned by the server');
-                    }
-
-                    if (implementationGuideResource.page) {
-                        const pagesPath = path.join(rootPath, '_pages');
-                        fs.ensureDirSync(pagesPath);
-
-                        this._packagePage(pagesPath, implementationGuideResource, implementationGuideResource.page);
                     }
 
                     if (fhirServerConfig.version === 'stu3') {
@@ -642,6 +801,12 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                     _.each(bundle.entry, (entry) => this._writeFilesForResource(rootPath, entry.resource));
 
                     this._updateTemplates(rootPath, bundle, implementationGuideResource);
+
+                    if (fhirServerConfig.version === 'stu3') {
+                        this._writeStu3Pages(rootPath, implementationGuideResource);
+                    } else {
+                        this._writeR4Pages(rootPath, implementationGuideResource);
+                    }
 
                     this._sendSocketMessage(packageId, 'progress', 'Done building package');
 

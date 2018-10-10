@@ -271,26 +271,15 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
     public toggleRootPage(value: boolean) {
         if (value && !this.implementationGuide.page) {
-            if (!this.implementationGuide.contained) {
-                this.implementationGuide.contained = [];
-            }
-
-            const newBinary = new Binary();
-            newBinary.contentType = 'text/plain';
-            newBinary.content = btoa('No page content yet');
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
-            this.implementationGuide.contained.push(newBinary);
-
             const newPage = new PageComponent();
-            newPage.kind = 'page';
+            newPage.kind = 'toc';
+            newPage.title = 'Table of Contents';
+            newPage.format = 'markdown';
             newPage.extension = [{
-                url: this.globals.extensionIgPageContentUrl,
-                valueReference: {
-                    reference: '#' + newBinary.id,
-                    display: `Page content ${newBinary.id}`
-                }
+                url: this.globals.extensionIgPageAutoGenerateToc,
+                valueBoolean: true
             }];
-            newPage.source = 'newPage.html';
+            newPage.source = 'toc.md';
             this.implementationGuide.page = newPage;
         } else if (!value && this.implementationGuide.page) {
             const foundPageDef = _.find(this.pages, (pageDef) => pageDef.page === this.implementationGuide.page);
@@ -323,6 +312,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
         const newPage = new PageComponent();
         newPage.kind = 'page';
+        newPage.format = 'markdown';
         newPage.extension = [{
             url: this.globals.extensionIgPageContentUrl,
             valueReference: {
@@ -330,7 +320,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                 display: `Page content ${newBinary.id}`
             }
         }];
-        newPage.source = 'newPage.html';
+        newPage.source = 'newPage.md';
         pageDef.page.page.push(newPage);
 
         this.initPages();

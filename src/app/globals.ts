@@ -8,6 +8,7 @@ export class Globals {
     // Indicates if in the Implementation Guide Edit screen, page Binary resources should be considered a contained resource
     public pageAsContainedBinary = true;
     public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
+    public readonly extensionIgPageAutoGenerateToc = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc';
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
         const keys = Object.keys(obj);

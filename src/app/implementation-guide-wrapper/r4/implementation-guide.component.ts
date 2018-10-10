@@ -8,7 +8,9 @@ import {
     ImplementationGuidePageComponent,
     ResourceReference,
     ImplementationGuideDefinitionComponent,
-    ImplementationGuidePackageComponent, ImplementationGuideResourceComponent, ImplementationGuideDependsOnComponent
+    ImplementationGuidePackageComponent,
+    ImplementationGuideResourceComponent,
+    ImplementationGuideDependsOnComponent
 } from '../../models/r4/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../services/implementation-guide.service';
@@ -38,12 +40,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public currentResource: any;
     public validation: any;
     public pages: PageDefinition[];
-    private unsavedBinaryAssociations: string[] = [];
     public resourceTypeCodes: Coding[] = [];
-    private readonly dependencyExtensionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency';
-    private readonly dependencyExtensionNameUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name';
-    private readonly dependencyExtensionVersionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version';
-    private readonly dependencyExtensionLocationUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location';
     private navSubscription: any;
 
     constructor(
@@ -166,22 +163,16 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         if (value && !this.implementationGuide.definition.page) {
-            if (!this.implementationGuide.contained) {
-                this.implementationGuide.contained = [];
-            }
-
-            const newBinary = new Binary();
-            newBinary.contentType = 'text/plain';
-            newBinary.data = btoa('No page content yet');
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
-            this.implementationGuide.contained.push(newBinary);
-
             const newPage = new ImplementationGuidePageComponent();
-            newPage.title = 'index.html';
-            newPage.generation = 'markdown';
-            newPage.nameReference = new ResourceReference();
-            newPage.nameReference.reference = '#' + newBinary.id;
-            newPage.nameReference.display = `Page content ${newBinary.id}`;
+            newPage.title = 'Table of Contents';
+            newPage.generation = 'generated';
+            newPage.nameUrl = 'toc.md';
+
+            newPage.extension = [{
+                url: this.globals.extensionIgPageAutoGenerateToc,
+                valueBoolean: true
+            }];
+
             this.implementationGuide.definition.page = newPage;
         } else if (!value && this.implementationGuide.definition.page) {
             const foundPageDef = _.find(this.pages, (pageDef) => pageDef.page === this.implementationGuide.definition.page);
@@ -195,6 +186,10 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         const modalRef = this.modal.open(PageComponentModalComponent, { size: 'lg' });
         modalRef.componentInstance.implementationGuide = this.implementationGuide;
         modalRef.componentInstance.page = pageDef.page;
+
+        if (this.implementationGuide.definition.page === pageDef.page) {
+            modalRef.componentInstance.rootPage = true;
+        }
     }
 
     public addChildPage(pageDef: PageDefinition) {
@@ -213,7 +208,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         this.implementationGuide.contained.push(newBinary);
 
         const newPage = new ImplementationGuidePageComponent();
-        newPage.title = 'index.html';
+        newPage.title = 'New Page';
         newPage.generation = 'markdown';
         newPage.nameReference = new ResourceReference();
         newPage.nameReference.reference = '#' + newBinary.id;

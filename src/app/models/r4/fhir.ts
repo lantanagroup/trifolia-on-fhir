@@ -15,7 +15,7 @@ export class Extension {
     public id?: string;
     public extension?: Extension[];
     public url: string;
-    public value?: any;
+    public valueBoolean?: boolean;
 
     constructor(obj?: any) {
         if (obj) {
@@ -29,9 +29,11 @@ export class Extension {
             if (obj.hasOwnProperty('url')) {
                 this.url = obj.url;
             }
-            if (obj.hasOwnProperty('value')) {
-                this.value = new Element(obj.value);
+            if (obj.hasOwnProperty('valueBoolean')) {
+                this.valueBoolean = obj.valueBoolean;
             }
+
+            // TODO: Add other properties as needed
         }
     }
 
@@ -249,7 +251,7 @@ export class Binary extends Resource {
     public resourceType = 'Binary';
     public contentType: string;
     public securityContext?: ResourceReference;
-    public data?: string;
+    public content?: string;
     
     constructor(obj?: any) {
         super(obj);
@@ -260,8 +262,8 @@ export class Binary extends Resource {
             if (obj.hasOwnProperty('securityContext')) {
                 this.securityContext = new ResourceReference(obj.securityContext);
             }
-            if (obj.hasOwnProperty('data')) {
-                this.data = obj.data;
+            if (obj.hasOwnProperty('content')) {
+                this.content = obj.content;
             }
         }
     }

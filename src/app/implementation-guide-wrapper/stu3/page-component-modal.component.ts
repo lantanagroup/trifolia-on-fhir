@@ -20,6 +20,49 @@ export class PageComponentModalComponent implements OnInit {
 
     }
 
+    public get autoGenerate(): boolean {
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+
+        if (autoGenerateExtension) {
+            return autoGenerateExtension.valueBoolean === true;
+        }
+
+        return false;
+    }
+
+    public set autoGenerate(value: boolean) {
+        if (!this.page.extension) {
+            this.page.extension = [];
+        }
+
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+
+        if (!autoGenerateExtension) {
+            autoGenerateExtension = {
+                url: this.globals.extensionIgPageAutoGenerateToc,
+                valueBoolean: false
+            };
+            this.page.extension.push(autoGenerateExtension);
+        }
+
+        autoGenerateExtension.valueBoolean = value;
+
+        const foundIgPageContentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
+
+        if (value && foundIgPageContentExtension && foundIgPageContentExtension.valueReference && foundIgPageContentExtension.valueReference.reference && foundIgPageContentExtension.valueReference.reference.startsWith('#')) {
+            const foundBinary = _.find(this.implementationGuide.contained, (contained) => contained.id === foundIgPageContentExtension.valueReference.reference.substring(1));
+
+            if (foundBinary) {
+                const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
+                const extensionIndex = this.page.extension.indexOf(foundIgPageContentExtension);
+
+                this.implementationGuide.contained.splice(binaryIndex, 1);
+                this.page.extension.splice(extensionIndex, 1);
+                this.pageBinary = null;
+            }
+        }
+    }
+
     public get pageContent() {
         if (!this.pageBinary || !this.pageBinary.content) {
             return '';

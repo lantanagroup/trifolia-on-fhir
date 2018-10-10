@@ -5,6 +5,14 @@
     </button>
 </div>
 <div class="modal-body">
+    <div class="form-group" *ngIf="rootPage">
+        <label>Auto Generate Table of Contents?</label>
+        <select class="form-control" [(ngModel)]="autoGenerate">
+            <option [ngValue]="false">No</option>
+            <option [ngValue]="true">Yes</option>
+        </select>
+    </div>
+
     <div class="form-group">
         <label>Name Type</label>
         <select class="form-control" [(ngModel)]="nameType">
@@ -21,7 +29,7 @@
 
     <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true"></app-fhir-select-single-code>
 
-    <div class="form-group">
+    <div class="form-group" *ngIf="!autoGenerate">
         <label>Content</label>
         <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary"></app-markdown>
         <div class="help-block" *ngIf="!pageBinary">
