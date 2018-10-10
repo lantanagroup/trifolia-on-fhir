@@ -42,9 +42,77 @@
         </div>
     </div>
 
-    <p>Type...</p>
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(page, 'type', ['Account'])" />
+            <span> Types </span>
+            <app-tooltip-icon tooltipPath="ImplementationGuide.page.type"></app-tooltip-icon>
+        </div>
+        <table class="table table-striped" *ngIf="page.hasOwnProperty('type')">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th class="actions-column-1">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" (click)="page.type.push('Account')">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let type of page.type; let ti = index">
+                <td>
+                    <app-fhir-select-single-code [parentObject]="page.type" [propertyName]="ti" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types" [required]="true" [isFormGroup]="false"></app-fhir-select-single-code>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" (click)="page.type.splice(ti, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <p>Package...</p>
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(page, 'package', [''])" />
+            <span> Packages </span>
+            <app-tooltip-icon tooltipPath="ImplementationGuide.page.package"></app-tooltip-icon>
+        </div>
+        <table class="table table-striped" *ngIf="page.hasOwnProperty('package')">
+            <thead>
+            <tr>
+                <th>Package</th>
+                <th class="actions-column-1">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" (click)="page.package.push('')">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let package of page.package; let pi = index; trackBy: globals.trackByFn">
+                <td>
+                    <input type="text" class="form-control" [class.is-invalid]="!page.package[pi]" [(ngModel)]="page.package[pi]" />
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default" (click)="page.package.splice(pi, 1)">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" (click)="activeModal.dismiss()">Done</button>
