@@ -203,7 +203,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
         const newBinary = new Binary();
         newBinary.contentType = 'text/markdown';
-        newBinary.data = btoa('No page content yet');
+        newBinary.content = btoa('No page content yet');
         newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
         this.implementationGuide.contained.push(newBinary);
 
