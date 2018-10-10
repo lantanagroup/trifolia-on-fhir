@@ -12,12 +12,53 @@ import {Globals} from '../../globals';
 export class PageComponentModalComponent implements OnInit {
     @Input() page: ImplementationGuidePageComponent;
     @Input() implementationGuide: ImplementationGuide;
+    @Input() rootPage: boolean;
     public pageBinary: Binary;
 
     constructor(
         public activeModal: NgbActiveModal,
         public globals: Globals) {
 
+    }
+
+    public get autoGenerate(): boolean {
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+
+        if (autoGenerateExtension) {
+            return autoGenerateExtension.valueBoolean === true;
+        }
+
+        return false;
+    }
+
+    public set autoGenerate(value: boolean) {
+        if (!this.page.extension) {
+            this.page.extension = [];
+        }
+
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+
+        if (!autoGenerateExtension) {
+            autoGenerateExtension = {
+                url: this.globals.extensionIgPageAutoGenerateToc,
+                valueBoolean: false
+            };
+            this.page.extension.push(autoGenerateExtension);
+        }
+
+        autoGenerateExtension.valueBoolean = value;
+
+        if (value && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
+            const foundBinary = _.find(this.implementationGuide.contained, (contained) => contained.id === this.page.nameReference.reference.substring(1));
+
+            if (foundBinary) {
+                const index = this.implementationGuide.contained.indexOf(foundBinary);
+                this.implementationGuide.contained.splice(index, 1);
+                delete this.page.nameReference;
+                this.page.nameUrl = 'toc.md';
+                this.pageBinary = null;
+            }
+        }
     }
 
     public get nameType(): string {
@@ -44,11 +85,11 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     public get pageContent() {
-        if (!this.pageBinary || !this.pageBinary.data) {
+        if (!this.pageBinary || !this.pageBinary.content) {
             return '';
         }
 
-        return atob(this.pageBinary.data);
+        return atob(this.pageBinary.content);
     }
 
     public set pageContent(value: string) {
@@ -56,7 +97,7 @@ export class PageComponentModalComponent implements OnInit {
             return;
         }
 
-        this.pageBinary.data = btoa(value);
+        this.pageBinary.content = btoa(value);
     }
 
     public importFile(file: File) {
@@ -72,7 +113,7 @@ export class PageComponentModalComponent implements OnInit {
             const newBinary = new Binary();
             newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
             newBinary.contentType = file.type;
-            newBinary.data = result.substring(5 + file.type.length + 8);
+            newBinary.content = result.substring(5 + file.type.length + 8);
             this.implementationGuide.contained.push(newBinary);
 
             if (!this.page.extension) {
