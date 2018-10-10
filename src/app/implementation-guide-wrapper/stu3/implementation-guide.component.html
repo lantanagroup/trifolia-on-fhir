@@ -101,7 +101,7 @@
                     <tr>
                         <th>Type <app-tooltip-icon tooltipPath="ImplementationGuide.global.type"></app-tooltip-icon></th>
                         <th>Profile <app-tooltip-icon tooltipPath="ImplementationGuide.global.profile"></app-tooltip-icon></th>
-                        <th>
+                        <th class="actions-column-1">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-primary" title="Add global"
                                         (click)="implementationGuide.global.push({type: '', profile: { reference: '' }})">
@@ -119,9 +119,7 @@
                             </select>
                         </td>
                         <td>
-                            <app-fhir-reference
-                                    [parentObject]="g"
-                                    propertyName="profile"></app-fhir-reference>
+                            <app-fhir-reference [parentObject]="g" propertyName="profile" [isFormGroup]="false"></app-fhir-reference>
                         </td>
                         <td>
                             <div class="pull-right">
