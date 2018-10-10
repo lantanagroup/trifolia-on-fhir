@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {SocketService} from './socket.service';
 
 export class ExportOptions {
-    public implementationGuideId: number;
+    public implementationGuideId: string;
     public exportFormat = ExportFormats.HTML;
     public responseFormat = 'application/json';
     public useTerminologyServer = true;

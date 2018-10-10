@@ -6,6 +6,9 @@ import {ExportOptions, ExportService} from '../services/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
 import * as _ from 'underscore';
 import {SocketMessage, SocketService} from '../services/socket.service';
+import {Globals} from '../globals';
+import {CookieService} from 'angular2-cookie/core';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-export',
@@ -23,12 +26,19 @@ export class ExportComponent implements OnInit {
     constructor(
         private implementationGuideService: ImplementationGuideService,
         private socketService: SocketService,
-        private exportService: ExportService) {
+        private exportService: ExportService,
+        private globals: Globals,
+        private cookieService: CookieService,
+        private configService: ConfigService) {
+
+        this.options.implementationGuideId = this.cookieService.get(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     }
 
     public export() {
         this.socketOutput = '';
         this.message = 'Exporting...';
+
+        this.cookieService.put(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
         this.exportService.export(this.options)
             .subscribe((results: any) => {
