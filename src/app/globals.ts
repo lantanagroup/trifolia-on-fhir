@@ -49,7 +49,8 @@ export class Globals {
         recentOperationDefinitions: 'recentOperationDefinitions',
         recentValueSets: 'recentValueSets',
         recentCodeSystems: 'recentCodeSystems',
-        recentQuestionnaires: 'recentQuestionnaires'
+        recentQuestionnaires: 'recentQuestionnaires',
+        exportLastImplementationGuideId: 'exportLastImplementationGuideId'
     };
 
     public readonly FHIRUrls = {
