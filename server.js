@@ -42,6 +42,7 @@ app.use(compression());
 // Identify the FHIR server to use
 app.use((req, res, next) => {
     req.fhirServerBase = fhirConfig.servers[0].uri;
+    req.fhirServerVersion = fhirConfig.servers[0].version;
     req.fhir = fhir;
 
     if (req.headers['fhirserver']) {
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
 
         if (foundFhirServer) {
             req.fhirServerBase = foundFhirServer.uri;
+            req.fhirServerVersion = foundFhirServer.version;
         }
     }
 

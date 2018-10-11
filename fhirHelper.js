@@ -9,6 +9,28 @@ const ProfileTypes = require('./src/assets/stu3/profiles-types');
 const ProfileResources = require('./src/assets/stu3/profiles-resources');
 const log4js = require('log4js');
 const log = log4js.getLogger();
+const Q = require('q');
+
+function getResource(fhirServerBase, resourceType, id) {
+    const url = buildUrl(fhirServerBase, resourceType, id);
+    const options = {
+        url: url,
+        method: 'GET',
+        json: true
+    };
+    return rp(options);
+}
+
+function updateResource(fhirServerBase, resourceType, id, resource) {
+    const url = buildUrl(fhirServerBase, resourceType, id);
+    const options = {
+        url: url,
+        method: 'PUT',
+        json: true,
+        body: resource
+    };
+    return rp(options);
+}
 
 function joinUrl() {
     let url = '';
@@ -160,5 +182,7 @@ module.exports = {
     parseUrl: parseUrl,
     getFhirInstance: getFhirInstance,
     loadExtensions: loadExtensions,
-    joinUrl: joinUrl
+    joinUrl: joinUrl,
+    getResource: getResource,
+    updateResource: updateResource
 };
