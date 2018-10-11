@@ -103,10 +103,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         }
     }
 
-    public addImplementationGuide() {
-        alert('Not yet functional');
-    }
-
     public selectChoice(element: ElementTreeModel) {
         const modalRef = this.modalService.open(SelectChoiceModalComponent);
         modalRef.componentInstance.structureDefinition = this.baseStructureDefinition;
@@ -436,11 +432,20 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             return;
         }
 
-        this.strucDefService.save(this.structureDefinition)
+        this.strucDefService.save(this.structureDefinition, this.options)
             .subscribe((results: StructureDefinition) => {
                 if (!this.structureDefinition.id) {
                     this.router.navigate(['/structure-definition/' + results.id]);
                 } else {
+                    if (this.options && this.options.implementationGuides) {
+                        const removedImplementationGuides = _.filter(this.options.implementationGuides, (implementationGuide) => implementationGuide.isRemoved);
+                        for (let i = removedImplementationGuides.length - 1; i > 0; i--) {
+                            const index = this.options.implementationGuides.indexOf(removedImplementationGuides[i]);
+                            this.options.implementationGuides.splice(index, 1);
+                        }
+                        _.each(this.options.implementationGuides, (implementationGuide) => implementationGuide.isNew = false);
+                    }
+
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
                     this.message = 'Successfully saved structure definition!';
                     setTimeout(() => { this.message = ''; }, 3000);

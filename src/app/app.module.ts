@@ -115,6 +115,7 @@ import {FhirEditQuestionnaireItemModalComponent} from './questionnaire/questionn
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
+import { ImplementationGuidesPanelComponent } from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -309,7 +310,8 @@ export function getConfig(configService: ConfigService) {
         FhirEditQuestionnaireItemModalComponent,
         ImplementationGuideWrapperComponent,
         PublishedIgSelectModalComponent,
-        RouteTransformerDirective
+        RouteTransformerDirective,
+        ImplementationGuidesPanelComponent
     ],
     imports: [
         RouterModule.forRoot(

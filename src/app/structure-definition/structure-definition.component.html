@@ -14,35 +14,7 @@
 
                             <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
 
-                            <table class="table table-striped" *ngIf="options">
-                                <thead>
-                                <tr>
-                                    <th>Implementation Guides</th>
-                                    <th class="actions-column-1">
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default" title="Add this structure definition to an implementation guide" (click)="addImplementationGuide()">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let ig of options.implementationGuides">
-                                    <td [class.strikethrough]="ig.removed">{{ig.name}}</td>
-                                    <td class="actions-column-1">
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default" title="Remove this structure definition from the implementation guide" *ngIf="!ig.removed" (click)="ig.removed = true">
-                                                <i class="fa fa-remove"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-default" title="Undo removing this structure definition from the IG" *ngIf="ig.removed" (click)="ig.removed = false">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <app-implementation-guides-panel [options]="options"></app-implementation-guides-panel>
                         </div>
 
                         <div class="col-md-3">

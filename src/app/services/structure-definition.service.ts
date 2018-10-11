@@ -10,7 +10,8 @@ import {FhirService} from './fhir.service';
 export class StructureDefinitionImplementationnGuide {
     public id: string;
     public name: string;
-    public removed = false;
+    public isRemoved = false;
+    public isNew = false;
 }
 
 export class StructureDefinitionOptions {

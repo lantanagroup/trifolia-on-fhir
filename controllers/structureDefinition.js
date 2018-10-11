@@ -15,12 +15,148 @@ const rp = require('request-promise');
 
 const thisResourceType = 'StructureDefinition';
 
-function saveAdditionalOptions(req, location) {
-    const deferred = Q.defer();
+function saveAdditionalOptions(req, structureDefinition) {
+    if (!req.body.options) {
+        return Q.resolve();
+    }
 
-    return Q.resolve();
+    function addToImplementationGuide(implementationGuideId) {
+        const deferred = Q.defer();
 
-    return deferred.promise;
+        FhirHelper.getResource(req.fhirServerBase, 'ImplementationGuide', implementationGuideId)
+            .then((implementationGuide) => {
+                if (req.fhirServerVersion !== 'stu3') {         // r4
+                    if (!implementationGuide.definition) {
+                        implementationGuide.definition = { resource: [] };
+                    }
+
+                    if (!implementationGuide.definition.resource) {
+                        implementationGuide.definition.resource = [];
+                    }
+
+                    const foundResource = _.find(implementationGuide.definition.resource, (resource) => {
+                        if (resource.reference) {
+                            return resource.reference.reference === `StructureDefinition/${structureDefinition.id}`;
+                        }
+                    });
+
+                    if (!foundResource) {
+                        implementationGuide.definition.resource.push({
+                            reference: {
+                                reference: `StructureDefinition/${structureDefinition.id}`,
+                                name: structureDefinition.title || structureDefinition.name
+                            }
+                        });
+                    }
+                } else {                                        // stu3
+                    if (!implementationGuide.package) {
+                        implementationGuide.package = [];
+                    }
+
+                    const foundInPackages = _.filter(implementationGuide.package, (package) => {
+                        return _.find(package.resource, (resource) => {
+                            if (resource.sourceReference && resource.sourceReference.reference) {
+                                return resource.sourceReference.reference === `StructureDefinition/${structureDefinition.id}`;
+                            }
+                        });
+                    });
+
+                    if (foundInPackages.length === 0) {
+                        const newResource = {
+                            name: structureDefinition.title || structureDefinition.name,
+                            sourceReference: {
+                                reference: `StructureDefinition/${structureDefinition.id}`,
+                                display: structureDefinition.title || structureDefinition.name
+                            }
+                        };
+
+                        if (implementationGuide.package.length === 0) {
+                            implementationGuide.package.push({
+                                name: 'Default Package',
+                                resource: [newResource]
+                            });
+                        } else {
+                            if (!implementationGuide.package[0].resource) {
+                                implementationGuide.package[0].resource = [];
+                            }
+
+                            implementationGuide.package[0].resource.push(newResource);
+                        }
+                    }
+                }
+
+                FhirHelper.updateResource(req.fhirServerBase, 'ImplementationGuide', implementationGuideId, implementationGuide)
+                    .then(deferred.resolve)
+                    .catch(deferred.reject);
+            })
+            .catch(deferred.reject);
+
+        return deferred.promise;
+    };
+
+    function removeFromImplementationGuide(implementationGuideId) {
+        const deferred = Q.defer();
+
+        FhirHelper.getResource(req.fhirServerBase, 'ImplementationGuide', implementationGuideId)
+            .then((implementationGuide) => {
+                if (req.fhirServerVersion !== 'stu3') {         // r4
+                    if (!implementationGuide.definition) {
+                        implementationGuide.definition = { resource: [] };
+                    }
+
+                    if (!implementationGuide.definition.resource) {
+                        implementationGuide.definition.resource = [];
+                    }
+
+                    const foundResource = _.find(implementationGuide.definition.resource, (resource) => {
+                        if (resource.reference) {
+                            return resource.reference.reference === `StructureDefinition/${structureDefinition.id}`;
+                        }
+                    });
+
+                    if (foundResource) {
+                        const index = implementationGuide.definition.resource.indexOf(foundResource);
+                        implementationGuide.definition.resource.splice(index, 1);
+                    }
+                } else {                                        // stu3
+                    if (!implementationGuide.package) {
+                        implementationGuide.package = [];
+                    }
+
+                    _.each(implementationGuide.package, (package) => {
+                        const foundResource = _.find(package.resource, (resource) => {
+                            if (resource.sourceReference && resource.sourceReference.reference) {
+                                return resource.sourceReference.reference === `StructureDefinition/${structureDefinition.id}`;
+                            }
+                        });
+
+                        if (foundResource) {
+                            const index = package.resource.indexOf(foundResource);
+                            package.resource.splice(index, 1);
+                        }
+                    });
+                }
+
+                FhirHelper.updateResource(req.fhirServerBase, 'ImplementationGuide', implementationGuideId, implementationGuide)
+                    .then(deferred.resolve)
+                    .catch(deferred.reject);
+            })
+            .catch(deferred.reject);
+
+        return deferred.promise;
+    }
+
+    const promises = [];
+
+    _.each(req.body.options.implementationGuides, (implementationGuide) => {
+        if (implementationGuide.isNew) {
+            promises.push(addToImplementationGuide(implementationGuide.id));
+        } else {
+            promises.push(removeFromImplementationGuide(implementationGuide.id));
+        }
+    });
+
+    return Q.all(promises);
 }
 
 /**
@@ -221,25 +357,25 @@ router.post('/', checkJwt, (req, res) => {
         }
         const location = results.headers.location || results.headers['content-location'];
 
-        saveAdditionalOptions(req, location)
-            .then(() => {
-                if (location) {
-                    request(location, (err, results, retrieveBody) => {
-                        if (err) {
-                            log.error('Error from FHIR server while retrieving newly created structure definition: ' + err);
-                            return res.status(500).send('Error from FHIR server while retrieving newly created structure definition');
-                        }
+        if (location) {
+            request(location, (err, results, retrieveBody) => {
+                if (err) {
+                    log.error('Error from FHIR server while retrieving newly created structure definition: ' + err);
+                    return res.status(500).send('Error from FHIR server while retrieving newly created structure definition');
+                }
 
+                saveAdditionalOptions(req, retrieveBody)
+                    .then(() => {
                         res.send(retrieveBody);
                     })
-                } else {
-                    res.status(500).send('FHIR server did not respond with a location to the newly created structure definition');
-                }
+                    .catch((err) => {
+                        log.error(err);
+                        res.status(500).send('An error occurred while saving additional options for the StructureDefinition');
+                    });
             })
-            .catch((err) => {
-                log.error(err);
-                res.status(500).send('An error occurred while saving additional options for the StructureDefinition');
-            });
+        } else {
+            res.status(500).send('FHIR server did not respond with a location to the newly created structure definition');
+        }
     });
 });
 
@@ -252,42 +388,23 @@ router.post('/', checkJwt, (req, res) => {
  */
 router.put('/:id', checkJwt, (req, res) => {
     const url = req.getFhirServerUrl(thisResourceType, req.params.id);
+    let structureDefinition = req.body.resource;
 
-    const options = {
-        url: url,
-        method: 'PUT',
-        json: true,
-        body: req.body.resource
-    };
-
-    request(options, (err, results, updateBody) => {
-        if (err) {
-            log.error('Error from FHIR server while updating structure definition: ' + err);
-            return res.status(500).send('Error from FHIR server while updating structure definition');
-        }
-
-        const location = results.headers.location || results.headers['content-location'];
-
-        saveAdditionalOptions(req, location)
-            .then(() => {
-                if (location) {
-                    request(location, (err, results, retrieveBody) => {
-                        if (err) {
-                            log.error('Error from FHIR server while retrieving recently updated structure definition: ' + err);
-                            return res.status(500).send('Error from FHIR server while retrieving recently updated structure definition');
-                        }
-
-                        res.send(retrieveBody);
-                    })
-                } else {
-                    res.status(500).send('FHIR server did not respond with a location to the recently updated structure definition');
-                }
-            })
-            .catch((err) => {
-                log.error(err);
-                res.status(500).send('An error occurred while saving additional options for the StructureDefinition');
-            });
-    });
+    FhirHelper.updateResource(req.fhirServerBase, 'StructureDefinition', req.params.id, structureDefinition)
+        .then((response) => {
+            return FhirHelper.getResource(req.fhirServerBase, 'StructureDefinition', req.params.id);
+        })
+        .then((updatedStructureDefinition) => {
+            structureDefinition = updatedStructureDefinition;
+            return saveAdditionalOptions(req, structureDefinition);
+        })
+        .then(() => {
+            res.send(structureDefinition);
+        })
+        .catch((err) => {
+            log.error('Error from FHIR server: ' + err);
+            return res.status(500).send('Error from FHIR server');
+        });
 });
 
 router.delete('/:id', checkJwt, (req, res) => {
