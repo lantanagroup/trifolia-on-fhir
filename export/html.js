@@ -20,6 +20,7 @@ function HtmlExporter(fhirServerBase, fhirServerId, fhir, io, socketId, implemen
     this._implementationGuideId = implementationGuideId;
     this._io = io;
     this._socketId = socketId;
+    this._packageId = null;
 }
 
 function getDisplayName(name) {
@@ -74,7 +75,7 @@ function createTableFromArray(headers, data) {
     return output;
 };
 
-HtmlExporter.prototype._sendSocketMessage = function(packageId, status, message) {
+HtmlExporter.prototype._sendSocketMessage = function(status, message) {
     if (!this._socketId) {
         log.error('Won\'t send socket message for export because the original request did not specify a socketId');
         return;
@@ -82,14 +83,14 @@ HtmlExporter.prototype._sendSocketMessage = function(packageId, status, message)
 
     if (this._io) {
         this._io.to(this._socketId).emit('message', {
-            packageId: packageId,
+            packageId: this._packageId,
             status: status,
             message: message
         });
     }
 };
 
-HtmlExporter.prototype._getIgPublisher = function(packageId, useLatest, executeIgPublisher) {
+HtmlExporter.prototype._getIgPublisher = function(useLatest, executeIgPublisher) {
     if (!executeIgPublisher) {
         return Q.resolve();
     }
@@ -102,7 +103,7 @@ HtmlExporter.prototype._getIgPublisher = function(packageId, useLatest, executeI
     if (useLatest === 'true') {
         log.debug('Request to get latest version of FHIR IG publisher. Retrieving from: ' + fhirConfig.latestPublisher);
 
-        this._sendSocketMessage(packageId, 'progress', 'Downloading latest FHIR IG publisher');
+        this._sendSocketMessage(this._packageId, 'progress', 'Downloading latest FHIR IG publisher');
 
         // TODO: Check http://build.fhir.org/version.info first
 
@@ -125,12 +126,12 @@ HtmlExporter.prototype._getIgPublisher = function(packageId, useLatest, executeI
             })
             .catch((err) => {
                 log.error("Error getting latest version of FHIR IG publisher: " + err);
-                this._sendSocketMessage(packageId, 'progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+                this._sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
                 return Q.resolve(defaultFilePath);
             });
     } else {
         log.debug('Using built-in version of FHIR IG publisher for export');
-        this._sendSocketMessage(packageId, 'progress', 'Using existing/default version of FHIR IG publisher');
+        this._sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
         return Q.resolve(defaultFilePath);
     }
 
@@ -725,13 +726,14 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
             return deferred.reject('An error occurred while creating a temporary directory: ' + err);
         }
 
-        const packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
         const controlPath = path.join(rootPath, 'ig.json');
         let bundle;
-        deferred.resolve(packageId);
+
+        this._packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
+        deferred.resolve(this._packageId);
 
         setTimeout(() => {
-            this._sendSocketMessage(packageId, 'progress', 'Created temp directory. Retrieving resources for implementation guide.');
+            this._sendSocketMessage('progress', 'Created temp directory. Retrieving resources for implementation guide.');
 
             // Prepare IG Publisher package
             bundleExporter.getBundle()
@@ -739,24 +741,35 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                     bundle = results;
                     const resourcesDir = path.join(rootPath, 'source/resources');
 
-                    this._sendSocketMessage(packageId, 'progress', 'Resources retrieved. Packaging.');
+                    this._sendSocketMessage('progress', 'Resources retrieved. Packaging.');
 
                     for (let i = 0; i < bundle.entry.length; i++) {
-                        const resourceType = bundle.entry[i].resource.resourceType;
+                        const resource = bundle.entry[i].resource;
+                        const resourceType = resource.resourceType;
                         const id = bundle.entry[i].resource.id;
                         const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
                         let resourcePath;
 
                         let resourceContent = null;
 
+                        if (resourceType == 'ImplementationGuide' && id === this._implementationGuideId) {
+                            implementationGuideResource = resource;
+                        }
+
                         // TODO: HACK: HAPI R4 doesn't respect Binary.data... Need to convert Binary.content to Binary.data so that the IG Publisher runs.
                         if (resourceType === 'ImplementationGuide' && fhirServerConfig.version !== 'stu3') {
-                            _.chain(bundle.entry[i].resource.contained)
+
+                            _.chain(resource.contained)
                                 .filter((contained) => contained.resourceType === 'Binary')
                                 .each((contained) => {
                                     contained.data = contained.content;
                                     delete contained.content;
                                 });
+
+                            // Convert a string fhirVersion to an array
+                            if (typeof resource.fhirVersion === 'string') {
+                                resource.fhirVersion = [resource.fhirVersion];
+                            }
                         }
 
                         // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
@@ -766,10 +779,6 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         } else {
                             resourceContent = this._fhir.objToXml(bundle.entry[i].resource);
                             resourcePath = path.join(resourceDir, id + '.xml');
-                        }
-
-                        if (resourceType == 'ImplementationGuide' && id === this._implementationGuideId) {
-                            implementationGuideResource = bundle.entry[i].resource;
                         }
 
                         fs.ensureDirSync(resourceDir);
@@ -808,13 +817,13 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         this._writeR4Pages(rootPath, implementationGuideResource);
                     }
 
-                    this._sendSocketMessage(packageId, 'progress', 'Done building package');
+                    this._sendSocketMessage('progress', 'Done building package');
 
-                    return this._getIgPublisher(packageId, useLatest, executeIgPublisher);
+                    return this._getIgPublisher(useLatest, executeIgPublisher);
                 })
                 .then((igPublisherLocation) => {
                     if (!executeIgPublisher || !igPublisherLocation) {
-                        this._sendSocketMessage(packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                        this._sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
 
                         if (testCallback) {
                             testCallback(rootPath);
@@ -834,7 +843,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         jarParams.push('-tx', 'N/A');
                     }
 
-                    this._sendSocketMessage(packageId, 'progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`);
+                    this._sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`);
 
                     log.debug(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
@@ -844,7 +853,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
 
                         if (message && message.trim().replace(/\./g, '') !== '') {
-                            this._sendSocketMessage(packageId, 'progress', message);
+                            this._sendSocketMessage('progress', message);
                         }
                     });
 
@@ -852,26 +861,26 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
 
                         if (message && message.trim().replace(/\./g, '') !== '') {
-                            this._sendSocketMessage(packageId, 'progress', message);
+                            this._sendSocketMessage('progress', message);
                         }
                     });
 
                     igPublisherProcess.on('error', (err) => {
                         const message = 'Error executing FHIR IG Publisher: ' + err;
                         log.error(message);
-                        this._sendSocketMessage(packageId, 'error', message);
+                        this._sendSocketMessage('error', message);
                     });
 
                     igPublisherProcess.on('exit', (code) => {
                         log.debug(`IG Publisher is done executing for ${rootPath}`);
 
-                        this._sendSocketMessage(packageId, 'progress', 'IG Publisher finished with code ' + code);
+                        this._sendSocketMessage('progress', 'IG Publisher finished with code ' + code);
 
                         if (code !== 0) {
-                            this._sendSocketMessage(packageId, 'progress', 'Won\'t copy output to deployment path.');
-                            this._sendSocketMessage(packageId, 'complete', 'Done. You will be prompted to download the package in a moment.');
+                            this._sendSocketMessage('progress', 'Won\'t copy output to deployment path.');
+                            this._sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
                         } else {
-                            this._sendSocketMessage(packageId, 'progress', 'Copying output to deployment path.');
+                            this._sendSocketMessage('progress', 'Copying output to deployment path.');
 
                             const generatedPath = path.resolve(rootPath, 'generated_output');
                             const outputPath = path.resolve(rootPath, 'output');
@@ -885,10 +894,10 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                             fs.copy(outputPath, deployDir, (err) => {
                                 if (err) {
                                     log.error(err);
-                                    this._sendSocketMessage(packageId, 'error', 'Error copying contents to deployment path.');
+                                    this._sendSocketMessage('error', 'Error copying contents to deployment path.');
                                 } else {
                                     const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/implementation-guide/${this._implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
-                                    this._sendSocketMessage(packageId, 'complete', finalMessage);
+                                    this._sendSocketMessage('complete', finalMessage);
                                 }
 
                                 if (!downloadOutput) {
@@ -902,7 +911,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                 })
                 .catch((err) => {
                     log.error(err);
-                    this._sendSocketMessage(packageId, 'error', 'Error during export: ' + err);
+                    this._sendSocketMessage('error', 'Error during export: ' + err);
 
                     if (testCallback) {
                         testCallback(rootPath, err);

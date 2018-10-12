@@ -41,6 +41,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public validation: any;
     public pages: PageDefinition[];
     public resourceTypeCodes: Coding[] = [];
+    public newFhirVersion: string;
     private navSubscription: any;
 
     constructor(
@@ -59,6 +60,21 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public get isNew(): boolean {
         const id  = this.route.snapshot.paramMap.get('id');
         return !id || id === 'new';
+    }
+
+    public isDuplicateResource(resource: ImplementationGuideResourceComponent) {
+        const thisReference = resource && resource.reference && resource.reference.reference ?
+            resource.reference.reference.trim().toLowerCase() : null;
+
+        const found = _.filter(this.implementationGuide.definition.resource, (next: ImplementationGuideResourceComponent) =>
+            next.reference && next.reference.reference && next.reference.reference.trim().toLowerCase() === thisReference);
+
+        return found.length !== 1;
+    }
+
+    public addNewFhirVersion() {
+        this.implementationGuide.fhirVersion.push(this.newFhirVersion);
+        this.newFhirVersion = null;
     }
 
     public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {

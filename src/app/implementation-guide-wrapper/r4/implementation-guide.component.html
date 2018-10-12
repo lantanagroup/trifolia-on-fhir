@@ -33,6 +33,37 @@
                         </div>
                     </div>
 
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'fhirVersion', [])" />
+                                FHIR Version
+                            </label>
+                            <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: globals.trackByFn">
+                                <input type="text" class="form-control" [ngModel]="fhirVersion" readonly="readonly" />
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
+                                        <i class="fa fa-remove"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group" *ngIf="implementationGuide.hasOwnProperty('fhirVersion')">
+                                <select class="form-control" [(ngModel)]="newFhirVersion">
+                                    <option>3.0.0</option>
+                                    <option>3.0.1</option>
+                                    <option>3.3.0</option>
+                                    <option>3.5.0</option>
+                                    <option>3.6.0</option>
+                                </select>
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
                         <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
                     </div>
@@ -66,6 +97,7 @@
                                 <tbody>
                                 <tr *ngFor="let resource of (implementationGuide.definition ? implementationGuide.definition.resource : []); let ri = index">
                                     <td>
+                                        <i class="fa fa-copy" *ngIf="isDuplicateResource(resource)" title="This is a duplicate"></i>
                                         <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
                                     </td>
                                     <td>

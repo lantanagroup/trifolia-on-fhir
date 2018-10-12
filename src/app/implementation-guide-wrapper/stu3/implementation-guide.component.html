@@ -81,6 +81,8 @@
                                 </select>
                             </div>
 
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="fhirVersion" title="FHIR Version"></app-fhir-string>
+
                             <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
                         </div>
                     </div>

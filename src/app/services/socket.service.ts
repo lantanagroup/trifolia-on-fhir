@@ -33,7 +33,10 @@ export class SocketService implements OnDestroy {
             this.onConnected.emit();
         });
 
-        this.socket.on('disconnect', () => this.authInfoSent = false);
+        this.socket.on('disconnect', () => {
+            console.log('socket disconnected');
+            this.authInfoSent = false;
+        });
     }
 
     public get socketId(): string {
@@ -50,6 +53,10 @@ export class SocketService implements OnDestroy {
             });
             this.authInfoSent = true;
         }
+    }
+
+    notifyExporting(packageId) {
+        this.socket.emit('exporting', packageId);
     }
 
     ngOnDestroy() {

@@ -23,8 +23,10 @@ const manageController = require('./controllers/manage');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
-const fhir = FhirHelper.getFhirInstance();
 const log4js = require('log4js');
+
+const fhirStu3 = FhirHelper.getFhirStu3Instance();
+const fhirR4 = FhirHelper.getFhirR4Instance();
 
 const app = express();
 const fhirConfig = config.get('fhir');
@@ -43,7 +45,6 @@ app.use(compression());
 app.use((req, res, next) => {
     req.fhirServerBase = fhirConfig.servers[0].uri;
     req.fhirServerVersion = fhirConfig.servers[0].version;
-    req.fhir = fhir;
 
     if (req.headers['fhirserver']) {
         const foundFhirServer = _.find(fhirConfig.servers, (server) => server.id === req.headers['fhirserver']);
@@ -52,6 +53,17 @@ app.use((req, res, next) => {
             req.fhirServerBase = foundFhirServer.uri;
             req.fhirServerVersion = foundFhirServer.version;
         }
+    }
+
+    switch (req.fhirServerVersion) {
+        case 'stu3':
+            req.fhir = fhirStu3;
+            break;
+        case 'r4':
+            req.fhir = fhirR4;
+            break;
+        default:
+            throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
     }
 
     if (!req.fhirServerBase.endsWith('/')) {
@@ -153,6 +165,16 @@ io.on('connection', (socket) => {
         }
 
         Object.assign(foundConnection, data);
+    });
+
+    socket.on('exporting', (packageId) => {
+        log.debug(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
+
+        const exporters = _.filter(exportController.htmlExporters, (exporter) => exporter._packageId === packageId);
+
+        log.debug(`Found ${exporters.length} exporters to update socket id for`);
+
+        _.each(exporters, (exporter) => exporter._socketId = socket.client.id);
     });
 });
 
