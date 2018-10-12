@@ -10,6 +10,8 @@ const log = log4js.getLogger();
 const BundleExporter = require('../export/bundle');
 const HtmlExporter = require('../export/html');
 
+const htmlExports = [];
+
 function exportBundle(req, res) {
     const exporter = new BundleExporter(req.fhirServerBase, req.headers['fhirserver'], req.fhir, req.params.implementationGuideId);
     exporter.export(req.query._format)
@@ -33,9 +35,11 @@ function exportHtml(req, res) {
     const exporter = new HtmlExporter(req.fhirServerBase, req.headers['fhirserver'], req.fhir, req.io, req.query.socketId, req.params.implementationGuideId);
     const format = req.query._format;
     const executeIgPublisher = req.query.hasOwnProperty('executeIgPublisher') && req.query.executeIgPublisher.toLowerCase() === 'true';
-    const useTerminologyServer = !req.query.hasOwnProperty('useTerminologyServer') && req.query.useTerminologyServer.toLowerCase() === 'true';
+    const useTerminologyServer = !req.query.hasOwnProperty('useTerminologyServer') || req.query.useTerminologyServer.toLowerCase() === 'true';
     const useLatest = req.query.hasOwnProperty('downloadOutput') && req.query.downloadOutput.toLowerCase() === 'true';
     const downloadOutput = !req.query.hasOwnProperty('downloadOutput') || req.query.downloadOutput.toLowerCase() === 'true';
+
+    htmlExports.push(exporter);
 
     exporter.export(format, executeIgPublisher, useTerminologyServer, useLatest, downloadOutput)
         .then((response) => {
@@ -44,6 +48,10 @@ function exportHtml(req, res) {
         .catch((err) => {
             log.error(err);
             res.status(500).send('An error occurred while exporting HTML: ' + err);
+        })
+        .finally(() => {
+            const index = htmlExports.indexOf(exporter);
+            htmlExports.splice(index);
         });
 }
 
@@ -88,3 +96,4 @@ router.get('/:packageId', checkJwt, (req, res) => {
 });
 
 module.exports = router;
+module.exports.htmlExports = htmlExports;

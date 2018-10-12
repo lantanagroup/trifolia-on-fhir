@@ -32,6 +32,13 @@ export class ExportComponent implements OnInit {
         private configService: ConfigService) {
 
         this.options.implementationGuideId = this.cookieService.get(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+
+        // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
+        this.socketService.onConnected.subscribe(() => {
+            if (this.packageId) {
+                this.socketService.notifyExporting(this.packageId);
+            }
+        });
     }
 
     public export() {

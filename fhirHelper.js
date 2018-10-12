@@ -100,13 +100,19 @@ function parseUrl(url, base) {
     }
 }
 
-function getFhirInstance() {
+function getFhirStu3Instance() {
     // TODO: Determine which FHIR version to load
     const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
     parser.parseBundle(ValueSets);
     parser.parseBundle(ProfileTypes);
     parser.parseBundle(ProfileResources);
     const fhir = new Fhir(parser);
+    return fhir;
+}
+
+function getFhirR4Instance() {
+    const fhir = new Fhir();
+    // TODO: Consider loading specific base resources for FHIR R4...
     return fhir;
 }
 
@@ -180,7 +186,8 @@ function loadExtensions() {
 module.exports = {
     buildUrl: buildUrl,
     parseUrl: parseUrl,
-    getFhirInstance: getFhirInstance,
+    getFhirStu3Instance: getFhirStu3Instance,
+    getFhirR4Instance: getFhirR4Instance,
     loadExtensions: loadExtensions,
     joinUrl: joinUrl,
     getResource: getResource,
