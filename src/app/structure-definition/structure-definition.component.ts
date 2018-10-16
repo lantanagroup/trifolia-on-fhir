@@ -215,16 +215,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     private getStructureDefinition() {
         const strucDefId = this.route.snapshot.paramMap.get('id');
 
-        if (strucDefId === 'from-file') {
-            if (this.fileService.file) {
-                this.structureDefinition = <StructureDefinition> this.fileService.file.resource;
-                this.nameChanged();
-            } else {
-                this.router.navigate(['/']);
-                return;
-            }
-        }
-
         this.message = 'Loading structure definition...';
         this.structureDefinition = null;
         this.elements = [];
