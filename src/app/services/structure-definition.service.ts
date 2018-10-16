@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
 import {HttpClient} from '@angular/common/http';
-import {OperationOutcome, StructureDefinition} from '../models/stu3/fhir';
+import {StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import {FhirService} from './fhir.service';
+import {FileService} from './file.service';
 
 export class StructureDefinitionImplementationnGuide {
     public id: string;
@@ -20,7 +21,7 @@ export class StructureDefinitionOptions {
 
 export class GetStructureDefinitionModel {
     public resource: StructureDefinition;
-    public options: StructureDefinitionOptions;
+    public options?: StructureDefinitionOptions;
 
     constructor(resource?: StructureDefinition, options?: StructureDefinitionOptions) {
         this.resource = resource;
@@ -33,7 +34,8 @@ export class StructureDefinitionService {
 
     constructor(
         private http: HttpClient,
-        private fhirService: FhirService) { }
+        private fhirService: FhirService,
+        private fileService: FileService) { }
 
     public getStructureDefinitions(page?: number, contentText?: string, urlText?: string, implementationGuideId?: string): Observable<StructureDefinitionListModel> {
         let url = '/api/structureDefinition?';
@@ -60,7 +62,17 @@ export class StructureDefinitionService {
             });
     }
 
-    public getStructureDefinition(id: string) {
+    public getStructureDefinition(id: string): Observable<GetStructureDefinitionModel> {
+        if (id === 'from-file') {
+            if (this.fileService.file) {
+                return new Observable<GetStructureDefinitionModel>((observer) => {
+                    observer.next({
+                        resource: <StructureDefinition> this.fileService.file.resource
+                    });
+                });
+            }
+        }
+
         return this.http.get<GetStructureDefinitionModel>('/api/structureDefinition/' + id);
     }
 
