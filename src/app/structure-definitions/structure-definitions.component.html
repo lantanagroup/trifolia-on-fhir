@@ -20,9 +20,9 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Experimental</th>
+        <th class="experimental">Experimental</th>
         <th>Type</th>
-        <th>Contact</th>
+        <th class="contact">Contact</th>
         <th>
             <div class="pull-right">
                 <a class="btn btn-default" routerLink="/structure-definition/new" title="Create a new structure definition">
@@ -40,9 +40,9 @@
             <br/>
             <sub>{{p.url}}</sub>
         </td>
-        <td>{{p.experimental ? "Yes" : "No"}}</td>
+        <td class="experimental">{{p.experimental ? "Yes" : "No"}}</td>
         <td>{{p.type}}</td>
-        <td>{{p.contact}}</td>
+        <td class="contact">{{p.contact}}</td>
         <td>
             <div class="pull-right btn-group">
                 <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]" title="Edit this resource">
