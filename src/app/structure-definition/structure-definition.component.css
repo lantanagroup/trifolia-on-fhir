@@ -6,9 +6,24 @@ div.element-definition > .card-header > .pull-right {
     display: none;
 }
 
+div.elements > .element {
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid lightgray;
+}
+
+div.elements > .element span.property,
+div.elements > .element span.action {
+    margin-left: 10px;
+}
+
 @media (max-width: 1024px) {
     div.element-definition {
-        width: 100% !important;
+        top: 0px;
+        height: 100%;
+        left: 6px;
+        width: auto !important;
+        right: 14px;
     }
 
     table.elements {

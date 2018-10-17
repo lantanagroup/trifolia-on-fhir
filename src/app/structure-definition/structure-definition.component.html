@@ -219,17 +219,26 @@
         <ngb-tab id="elements" title="Elements">
             <ng-template ngbTabContent>
                 <div class="elements">
-                    <div *ngFor="let e of elements">
+                    <div class="element" *ngFor="let e of elements">
                         <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
                             <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                         </div>
                         <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
                         <div>
-                            <a href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a> <i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)" *ngIf="e.constrainedElement"></i> <i class="fa fa-cut" title="Slice this element" (click)="sliceElement(e)" *ngIf="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"></i> <i class="fa fa-remove" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" *ngIf="!e.constrainedElement || e.depth === 1 || hasSlices(e)"></i>
+                            <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
+                            <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
+
+                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
+                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
+                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
+                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
+                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
+
+                            <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
+                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut" title="Slice this element" (click)="sliceElement(e)"></i> </span>
+                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fa fa-remove" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
                             <br />
-                            <span class="badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i> </span> <span class="badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span> <span class="badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span> <span class="badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span> <span class="badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
-                            <br />
-                            <span class="badge badge-light">{{e.type}}</span> <span class="badge badge-light">{{e.min}}..{{e.max}}</span> <span class="badge badge-secondary">{{e.binding}}</span>
+                            <span title="Type">{{e.type}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
                         </div>
                     </div>
                 </div>
