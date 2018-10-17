@@ -2,3 +2,15 @@ tr > th:last-child,
 tr > td:last-child {
     padding-right: 0px;
 }
+
+@media (max-width: 1024px) {
+    th.experimental,
+    td.experimental {
+        display: none;
+    }
+
+    th.contact,
+    td.contact {
+        display: none;
+    }
+}
