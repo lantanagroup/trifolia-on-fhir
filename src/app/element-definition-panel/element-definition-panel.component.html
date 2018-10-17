@@ -254,7 +254,7 @@
                         <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
                     </label>
                     <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
-                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')">Edit</button>
+                    <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')" (click)="editMappings()">Edit</button>
                 </div>
             </ng-template>
         </ngb-tab>

@@ -389,6 +389,32 @@ export class BackboneElement extends Element {
 
 }
 
+export class ElementDefinitionMappingComponent extends BackboneElement {
+    public identity: string;
+    public language?: string;
+    public map: string;
+    public comment?: string;
+
+    constructor(obj?: any) {
+        super(obj);
+        if (obj) {
+            if (obj.identity) {
+                this.identity = obj.identity;
+            }
+            if (obj.language) {
+                this.language = obj.language;
+            }
+            if (obj.map) {
+                this.map = obj.map;
+            }
+            if (obj.comment) {
+                this.comment = obj.comment;
+            }
+        }
+    }
+
+}
+
 export class MappingComponent extends BackboneElement {
     public identity: string;
     public uri?: string;
@@ -630,7 +656,7 @@ export class ElementDefinition extends Element {
     public isModifier?: boolean;
     public isSummary?: boolean;
     public binding?: ElementDefinitionBindingComponent;
-    public mapping?: MappingComponent[];
+    public mapping?: ElementDefinitionMappingComponent[];
     
     constructor(obj?: any) {
         super(obj);
@@ -734,7 +760,7 @@ export class ElementDefinition extends Element {
             }
             if (obj.mapping) {
                 this.mapping = [];
-                for (let o of obj.mapping || []) { this.mapping.push(new MappingComponent(o)); }
+                for (let o of obj.mapping || []) { this.mapping.push(new ElementDefinitionMappingComponent(o)); }
             }
         }
     }
