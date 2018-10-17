@@ -1,3 +1,37 @@
+div.elements {
+    display: none;
+}
+
+div.element-definition > .card-header > .pull-right {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    div.element-definition {
+        width: 100% !important;
+    }
+
+    table.elements {
+        display:  none;
+    }
+
+    div.elements {
+        display: inherit;
+    }
+
+    div.element-definition > .card-header > .pull-right {
+        display: inherit;
+    }
+}
+
+div.element-definition {
+    position: absolute;
+    width: 33%;
+    right: 23px;
+    top: 0px;
+    height: 100%;
+}
+
 tr.selected > td {
     border-top: 2px solid black;
     border-bottom: 2px solid black;
@@ -9,11 +43,6 @@ tr.selected > td:first-child {
 
 tr.selected > td:last-child {
     border-right: 2px solid black;
-}
-
-.element-definition .card-body {
-    padding: 0px;
-    margin-top: -1px;
 }
 
 tr.constrained {
@@ -42,15 +71,14 @@ tr.constrained {
     max-height: 85%;
 }
 
-div.element-definition {
-    height: 100%;
-    width: 34%;
-    float: left;
-}
-
 div.element-definition > div.card-body {
     height: 100%;
     overflow-y: auto;
+}
+
+div.element-definition .card-body {
+    padding: 0px;
+    margin-top: -1px;
 }
 
 .card.context {
@@ -60,15 +88,6 @@ div.element-definition > div.card-body {
 div.expand-collapse {
     display: inline-block;
     width: 15px;
-}
-
-table.elements {
-    overflow-y: auto;
-    height: 97%;
-    width: 64%;
-    float: left;
-    display: inline-table;
-    margin-right: 5px;
 }
 
 table.elements .element-binding {

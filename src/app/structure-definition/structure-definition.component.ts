@@ -62,7 +62,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         return !id || id === 'new';
     }
 
-    public toggleSelectedElement(element: any) {
+    public toggleSelectedElement(element?: any) {
         if (!element || this.selectedElement === element) {
             this.selectedElement = null;
         } else {
@@ -257,7 +257,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             });
     }
 
-    public constrainElement(elementTreeModel: ElementTreeModel) {
+    public constrainElement(elementTreeModel: ElementTreeModel, event?: any) {
         const parentSliceName = elementTreeModel.parent.constrainedElement.sliceName;
         const constrainedElement = new ElementDefinition();
         constrainedElement.id = elementTreeModel.baseElement.path;
@@ -270,15 +270,23 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         // Set the constrainedElement on the treeModel
         elementTreeModel.constrainedElement = constrainedElement;
 
-        // Add the element to the SD's differential elements, and sort the list so that it matches the base model's order
+        // Add the element to the SD's differential elements
         this.structureDefinition.differential.element.push(constrainedElement);
+
+        if (this.selectedElement !== elementTreeModel) {
+            this.toggleSelectedElement(elementTreeModel);
+        }
+
+        event.preventDefault();
+
+        // sort the list so that it matches the base model's order
         this.structureDefinition.differential.element = _.sortBy(this.structureDefinition.differential.element, (element) => {
             const foundElementTreeModel = _.find(this.elements, (nextElementTreeModel) =>
                 nextElementTreeModel.constrainedElement === element);
+
+            // TODO: Fix bug. not ever differential element has an entry in the tree models (child entries not expanded, for example)
             return foundElementTreeModel.position;
         });
-
-        this.toggleSelectedElement(elementTreeModel);
     }
 
     public hasSlices(elementTreeModel: ElementTreeModel) {
