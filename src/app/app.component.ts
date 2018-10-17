@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Event, NavigationEnd, Router} from '@angular/router';
 import {AuthService} from './services/auth.service';
 import {PersonListModel} from './models/person-list-model';
@@ -10,8 +10,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
 import {FileModel} from './models/file-model';
 import {FhirService} from './services/fhir.service';
-import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
 import {SocketService} from './services/socket.service';
+import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 
 @Component({
     selector: 'app-root',
@@ -21,6 +21,9 @@ import {SocketService} from './services/socket.service';
 export class AppComponent implements OnInit {
     public userProfile: any;
     public person: PersonListModel;
+
+    @ViewChild('navbarToggler', { read: ElementRef }) navbarToggler: ElementRef;
+    @ViewChild('navbarCollapse', { read: ElementRef }) navbarCollapse: ElementRef;
 
     constructor(
         public authService: AuthService,
@@ -56,6 +59,13 @@ export class AppComponent implements OnInit {
         });
     }
 
+    public editSettings() {
+        const modalRef = this.modalService.open(SettingsModalComponent, { size: 'lg' });
+    }
+
     ngOnInit() {
+        this.router.events.subscribe(() => {
+            this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
+        });
     }
 }

@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <a class="navbar-brand" routerLink="/">Trifolia-on-FHIR</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" #navbarToggler>
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
                 <a class="nav-link" routerLink="/">Home <span class="sr-only">(current)</span></a>
@@ -31,9 +31,6 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
-                <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
-            </select>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item" *ngIf="!authService.isAuthenticated()">
                     <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
@@ -44,15 +41,16 @@
                         {{getDisplayName()}}
                     </a>
                 </li>
-                <li class="nav-item" *ngIf="authService.isAuthenticated()">
-                    <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()">Logout</a>
-                </li>
-                <li class="nav-item">
+                <li class="nav-item nav-icons">
+                    <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()" title="Logout" *ngIf="authService.isAuthenticated()">
+                        <i class="fa fa-sign-out"></i>
+                    </a>
+                    <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="Edit settings">
+                        <i class="fa fa-gear"></i>
+                    </a>
                     <a class="nav-link" href="javascript:void(0)" (click)="openFile()" title="Open from computer">
                         <i class="fa fa-upload"></i>
                     </a>
-                </li>
-                <li class="nav-item dropdown">
                     <a class="nav-link" href="/help/index.html" target="tof-help" title="Documentation">
                         <i class="fa fa-question"></i>
                     </a>

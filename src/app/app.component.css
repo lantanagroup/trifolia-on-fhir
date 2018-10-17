@@ -1,8 +1,12 @@
 .profile-picture {
-  width: 21px;
-  height: 21px;
+    width: 21px;
+    height: 21px;
 }
 
 .container.container-large {
-  max-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.nav-icons {
+    display: inherit;
 }

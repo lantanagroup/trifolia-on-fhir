@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit settings</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label>FHIR Server</label>
+        <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
+            <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
+        </select>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Done</button>
+</div>
