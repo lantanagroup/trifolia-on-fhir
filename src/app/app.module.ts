@@ -117,6 +117,7 @@ import {PublishedIgSelectModalComponent} from './published-ig-select-modal/publi
 import {RouteTransformerDirective} from './route-transformer.directive';
 import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 import {MappingModalComponent} from './element-definition-panel/mapping-modal/mapping-modal.component';
+import { SettingsModalComponent } from './settings-modal/settings-modal.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -221,7 +222,8 @@ export function getConfig(configService: ConfigService) {
         STU3ImplementationGuideComponent,
         R4ImplementationGuideComponent,
         PublishedIgSelectModalComponent,
-        MappingModalComponent
+        MappingModalComponent,
+        SettingsModalComponent
     ],
     declarations: [
         AppComponent,
@@ -314,7 +316,8 @@ export function getConfig(configService: ConfigService) {
         PublishedIgSelectModalComponent,
         RouteTransformerDirective,
         ImplementationGuidesPanelComponent,
-        MappingModalComponent
+        MappingModalComponent,
+        SettingsModalComponent
     ],
     imports: [
         RouterModule.forRoot(

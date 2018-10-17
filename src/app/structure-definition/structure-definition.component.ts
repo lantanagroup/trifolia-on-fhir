@@ -62,10 +62,10 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         return !id || id === 'new';
     }
 
-    public toggleSelectedElement(element?: any) {
+    public toggleSelectedElement(element?: ElementTreeModel) {
         if (!element || this.selectedElement === element) {
             this.selectedElement = null;
-        } else {
+        } else if (element && element.constrainedElement) {
             this.selectedElement = element;
         }
     }
