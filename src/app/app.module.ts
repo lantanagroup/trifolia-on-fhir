@@ -115,7 +115,8 @@ import {FhirEditQuestionnaireItemModalComponent} from './questionnaire/questionn
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
-import { ImplementationGuidesPanelComponent } from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
+import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
+import {MappingModalComponent} from './element-definition-panel/mapping-modal/mapping-modal.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -219,7 +220,8 @@ export function getConfig(configService: ConfigService) {
         FhirEditQuestionnaireItemModalComponent,
         STU3ImplementationGuideComponent,
         R4ImplementationGuideComponent,
-        PublishedIgSelectModalComponent
+        PublishedIgSelectModalComponent,
+        MappingModalComponent
     ],
     declarations: [
         AppComponent,
@@ -311,7 +313,8 @@ export function getConfig(configService: ConfigService) {
         ImplementationGuideWrapperComponent,
         PublishedIgSelectModalComponent,
         RouteTransformerDirective,
-        ImplementationGuidesPanelComponent
+        ImplementationGuidesPanelComponent,
+        MappingModalComponent
     ],
     imports: [
         RouterModule.forRoot(

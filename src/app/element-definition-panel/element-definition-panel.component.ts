@@ -13,6 +13,7 @@ import {
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
 import {FhirEditReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 
 @Component({
     selector: 'app-element-definition-panel',
@@ -39,6 +40,11 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     get element(): ElementDefinition {
         return this.elementTreeModel.constrainedElement;
+    }
+
+    editMappings() {
+        const modalRef = this.modalService.open(MappingModalComponent, { size: 'lg' });
+        modalRef.componentInstance.mappings = this.element.mapping;
     }
 
     toggleMaxUnlimited() {
