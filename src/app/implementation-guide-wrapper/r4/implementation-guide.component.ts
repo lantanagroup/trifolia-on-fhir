@@ -42,6 +42,12 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public pages: PageDefinition[];
     public resourceTypeCodes: Coding[] = [];
     public newFhirVersion: string;
+    public filterResourceType = {
+        profile: true,
+        terminology: true,
+        example: true
+    };
+    public filterResourceQuery: string;
     private navSubscription: any;
 
     constructor(
@@ -57,9 +63,79 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         private fhirService: FhirService) {
     }
 
+    public get resources(): ImplementationGuideResourceComponent[] {
+        if (!this.implementationGuide.definition) {
+            return [];
+        }
+
+        const profileTypes = ['StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'ImplementationGuide', 'SearchParameter'];
+        const terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
+
+        return _.chain(this.implementationGuide.definition.resource)
+            .filter((resource: ImplementationGuideResourceComponent) => {
+                if (!resource.reference || !resource.reference.reference) {
+                    return true;
+                }
+
+                const parsedReference = this.fhirService.parseReference(resource.reference.reference);
+
+                if (this.filterResourceType.profile && profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+                    return true;
+                }
+
+                if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) >= 0) {
+                    return true;
+                }
+
+                if (this.filterResourceType.example && profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
+                    return true;
+                }
+
+                return false;
+            })
+            .filter((resource: ImplementationGuideResourceComponent) => {
+                if (!this.filterResourceQuery) {
+                    return true;
+                }
+
+                const reference = resource.reference && resource.reference.reference ?
+                    resource.reference.reference.toLowerCase().trim() :
+                    '';
+                const name = resource.name ?
+                    resource.name.toLowerCase().trim() :
+                    '';
+
+                return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
+            })
+            .value();
+    }
+
     public get isNew(): boolean {
         const id  = this.route.snapshot.paramMap.get('id');
         return !id || id === 'new';
+    }
+
+    public get isFilterResourceTypeAll() {
+        return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+    }
+
+    public toggleFilterResourceType(type: string) {
+        switch (type) {
+            case 'all':
+                this.filterResourceType.profile = true;
+                this.filterResourceType.terminology = true;
+                this.filterResourceType.example = true;
+                break;
+            case 'profile':
+                this.filterResourceType.profile = !this.filterResourceType.profile;
+                break;
+            case 'terminology':
+                this.filterResourceType.terminology = !this.filterResourceType.terminology;
+                break;
+            case 'example':
+                this.filterResourceType.example = !this.filterResourceType.example;
+                break;
+        }
     }
 
     public isDuplicateResource(resource: ImplementationGuideResourceComponent) {
@@ -75,6 +151,17 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public addNewFhirVersion() {
         this.implementationGuide.fhirVersion.push(this.newFhirVersion);
         this.newFhirVersion = null;
+    }
+
+    public removeResource(resource: ImplementationGuideResourceComponent) {
+        if (!confirm('Are you sure you want to remove this resource from the implementation guide?')) {
+            return;
+        }
+
+        if (this.implementationGuide.definition && this.implementationGuide.definition.resource) {
+            const index = this.implementationGuide.definition.resource.indexOf(resource);
+            this.implementationGuide.definition.resource.splice(index, 1);
+        }
     }
 
     public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
