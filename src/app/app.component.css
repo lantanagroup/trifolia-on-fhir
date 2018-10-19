@@ -10,3 +10,11 @@
 .nav-icons {
     display: inherit;
 }
+
+.navbar-brand > img {
+    position: absolute;
+}
+
+.navbar-brand > span {
+    margin-left: 64px;
+}
