@@ -12,7 +12,9 @@ import {
 } from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
-import * as Fhir from 'fhir';
+import {Fhir} from 'fhir/fhir';
+import {ParseConformance} from 'fhir/parseConformance';
+import {Versions as FhirVersions} from 'fhir/fhir';
 import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 
@@ -53,7 +55,7 @@ export class FhirService {
 
         Observable.forkJoin(assetPromises)
             .subscribe((allAssets) => {
-                const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+                const parser = new ParseConformance(false, FhirVersions.STU3);
                 parser.loadCodeSystem(allAssets[0]);
                 parser.parseBundle(allAssets[1]);
                 parser.parseBundle(allAssets[2]);
