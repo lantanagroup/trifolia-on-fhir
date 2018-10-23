@@ -18,7 +18,6 @@ import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
-import {ImplementationGuideDependsOnComponent} from '../../models/r4/fhir';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 
 class PageDefinition {

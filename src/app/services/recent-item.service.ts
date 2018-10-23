@@ -56,7 +56,8 @@ export class RecentItemService {
         if (!foundItem) {
             foundItem = {
                 id: id,
-                display: display || 'No display name'
+                display: display || 'No display name',
+                date: new Date().toISOString()
             };
             items.push(foundItem);
         } else if (foundItem.display !== display) {

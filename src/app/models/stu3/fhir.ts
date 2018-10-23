@@ -40,6 +40,7 @@ export class Extension extends Element {
     public valueBoolean?: boolean;
     public valueString?: string;
     public valueReference?: ResourceReference;
+    public valueUri?: string;
 
     constructor(obj?: any) {
         super(obj);
@@ -1145,7 +1146,7 @@ export class ResponseComponent extends BackboneElement {
 export class EntryComponent extends BackboneElement {
     public link?: LinkComponent[];
     public fullUrl?: string;
-    public resource?: Resource;
+    public resource?: DomainResource;
     public search?: SearchComponent;
     public request?: RequestComponent;
     public response?: ResponseComponent;
@@ -1161,7 +1162,7 @@ export class EntryComponent extends BackboneElement {
                 this.fullUrl = obj.fullUrl;
             }
             if (obj.resource) {
-                this.resource = new Resource(obj.resource);
+                this.resource = new DomainResource(obj.resource);
             }
             if (obj.search) {
                 this.search = new SearchComponent(obj.search);
