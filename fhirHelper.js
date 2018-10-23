@@ -3,7 +3,9 @@ const config = require('config');
 const fhirConfig = config.get('fhir');
 const fs = require('fs');
 const rp = require('request-promise');
-const Fhir = require('fhir');
+const Fhir = require('fhir').Fhir;
+const FhirVersions = require('fhir').Versions;
+const ParseConformance = require('fhir').ParseConformance;
 const ValueSets = require('./src/assets/stu3/valuesets');
 const ProfileTypes = require('./src/assets/stu3/profiles-types');
 const ProfileResources = require('./src/assets/stu3/profiles-resources');
@@ -102,7 +104,7 @@ function parseUrl(url, base) {
 
 function getFhirStu3Instance() {
     // TODO: Determine which FHIR version to load
-    const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+    const parser = new ParseConformance(false, FhirVersions.STU3);
     parser.parseBundle(ValueSets);
     parser.parseBundle(ProfileTypes);
     parser.parseBundle(ProfileResources);
