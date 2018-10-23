@@ -133,7 +133,7 @@ export class PageComponentModalComponent implements OnInit {
 
                 if (reference.startsWith('#')) {
                     // Find the Binary in the contained resources
-                    this.pageBinary = _.find(this.implementationGuide.contained, (extension) => extension.id === reference.substring(1));
+                    this.pageBinary = <Binary> _.find(this.implementationGuide.contained, (extension) => extension.id === reference.substring(1));
                 }
             }
         }

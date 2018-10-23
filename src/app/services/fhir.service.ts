@@ -3,13 +3,14 @@ import {HttpClient} from '@angular/common/http';
 import {
     Bundle,
     CodeSystem,
-    Coding, ConceptDefinitionComponent,
+    Coding, ConceptDefinitionComponent, ConceptSetComponent, ImplementationGuide,
     IssueComponent,
-    OperationOutcome,
+    OperationOutcome, PackageComponent, PackageResourceComponent,
     Resource,
     StructureDefinition,
     ValueSet
 } from '../models/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../models/r4/fhir';
 import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
 import {Fhir} from 'fhir/fhir';
@@ -17,6 +18,7 @@ import {ParseConformance} from 'fhir/parseConformance';
 import {Versions as FhirVersions} from 'fhir/fhir';
 import * as _ from 'underscore';
 import {ConfigService} from './config.service';
+import {ValidatorMessage} from 'fhir/validator';
 
 export class ParsedUrlModel {
     public resourceType: string;
@@ -30,12 +32,25 @@ export class FhirService {
     public loaded: boolean;
     public profiles: StructureDefinition[] = [];
     public valueSets: ValueSet[] = [];
+    private customValidator: CustomValidator;
+
+    readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition'];
+    readonly terminologyTypes = ['ValueSet', 'CodeSystem'];
 
     constructor(
         private http: HttpClient,
         private configService: ConfigService) {
 
-        this.configService.fhirServerChanged.subscribe(() => this.loadAssets());
+        this.customValidator = new CustomSTU3Validator(this);
+        this.configService.fhirServerChanged.subscribe(() => {
+            this.loadAssets();
+
+            if (this.configService.isFhirR4()) {
+                this.customValidator = new CustomR4Validator(this);
+            } else {            // Assume default of STU3
+                this.customValidator = new CustomSTU3Validator(this);
+            }
+        });
     }
 
     private loadAssets() {
@@ -63,9 +78,9 @@ export class FhirService {
 
                 this.fhir = new Fhir(parser);
 
-                _.each((<Bundle>allAssets[1]).entry, (entry) => this.valueSets.push(entry.resource));
-                _.each((<Bundle>allAssets[2]).entry, (entry) => this.profiles.push(entry.resource));
-                _.each((<Bundle>allAssets[3]).entry, (entry) => this.profiles.push(entry.resource));
+                _.each((<Bundle>allAssets[1]).entry, (entry) => this.valueSets.push(<ValueSet> entry.resource));
+                _.each((<Bundle>allAssets[2]).entry, (entry) => this.profiles.push(<StructureDefinition> entry.resource));
+                _.each((<Bundle>allAssets[3]).entry, (entry) => this.profiles.push(<StructureDefinition> entry.resource));
 
                 this.loaded = true;
             }, (err) => {
@@ -107,7 +122,7 @@ export class FhirService {
 
         if (foundValueSet) {
             if (foundValueSet.compose) {
-                _.each(foundValueSet.compose.include, (include) => {
+                _.each(foundValueSet.compose.include, (include: ConceptSetComponent) => {
                     const foundSystem: CodeSystem = _.chain(this.valueSets)
                         .filter((item) => item.resourceType === 'CodeSystem')
                         .find((codeSystem: CodeSystem) => codeSystem.url === include.system)
@@ -248,7 +263,9 @@ export class FhirService {
      * @return {any}
      */
     public validate(resource: Resource) {
-        return this.fhir.validate(resource);
+        return this.fhir.validate(resource, {
+            onBeforeValidateResource: (nextResource) => this.validateResource(nextResource)
+        });
     }
 
     public serialize(resource: Resource) {
@@ -259,7 +276,7 @@ export class FhirService {
         return this.fhir.xmlToObj(resourceXml);
     }
 
-    public getOperationOutcomeMessage(oo: OperationOutcome) {
+    public getOperationOutcomeMessage(oo: OperationOutcome): string {
         if (oo.issue && oo.issue.length > 0) {
             const issues = _.map(oo.issue, (issue: IssueComponent) => {
                 if (issue.diagnostics) {
@@ -270,9 +287,68 @@ export class FhirService {
                     return issue.severity;
                 }
             });
-            return issues.concat(', ');
+            return issues.join(', ');
         } else if (oo.text && oo.text.div) {
             return oo.text.div;
         }
+    }
+
+    private validateResource(resource: any): ValidatorMessage[] {
+        if (!this.customValidator) {
+            return;
+        }
+
+        switch (resource.resourceType) {
+            case 'ImplementationGuide':
+                return this.customValidator.validateImplementationGuide(resource);
+            // TODO: add more custom logic per each resource
+        }
+    }
+}
+
+abstract class CustomValidator {
+    protected fhirService: FhirService;
+
+    protected constructor(fhirService: FhirService) {
+        this.fhirService = fhirService;
+    }
+
+    public abstract validateImplementationGuide(implementationGuide: any): ValidatorMessage[];
+}
+
+class CustomSTU3Validator extends CustomValidator {
+    constructor(fhirService: FhirService) { super(fhirService); }
+
+    public validateImplementationGuide(implementationGuide: ImplementationGuide): ValidatorMessage[] {
+        const messages = [];
+        const allResources = _.flatten(_.map(implementationGuide.package, (nextPackage: PackageComponent) => nextPackage.resource));
+        const exampleTypeResources = _.filter(allResources, (resource: PackageResourceComponent) => {
+            const parsedReference = resource.sourceReference && resource.sourceReference.reference ?
+                this.fhirService.parseReference(resource.sourceReference.reference) : null;
+
+            if (parsedReference) {
+                return this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes).indexOf(parsedReference.resourceType) < 0;
+            }
+        });
+        _.each(exampleTypeResources, (resource: PackageResourceComponent) => {
+            if (!resource.example) {
+                messages.push({
+                    location: 'ImplementationGuide.package.resource',
+                    resourceId: resource.id,
+                    severity: 'warning',
+                    message: 'Resource with reference "' + resource.sourceReference.reference + '" should be flagged as an example.'
+                });
+            }
+        });
+
+        return messages;
+    }
+}
+
+class CustomR4Validator extends CustomValidator {
+    constructor(fhirService: FhirService) { super(fhirService); }
+
+    public validateImplementationGuide(implementationGuide: R4ImplementationGuide): ValidatorMessage[] {
+        return [];
     }
 }

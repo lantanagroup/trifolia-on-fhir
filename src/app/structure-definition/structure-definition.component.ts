@@ -165,7 +165,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
         const parentPath = parent ? parent.baseElement.path : '';
         const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
-        let filtered;
+        let filtered: ElementDefinition[];
 
         if (parent && parent.baseElement.path.endsWith('[x]')) {
             // this is a choice element, the child elements are the types of the choice
@@ -189,7 +189,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         for (let i = 0; i < filtered.length; i++) {
             const position = this.baseStructureDefinition.snapshot.element.indexOf(filtered[i]);
             const depth = parent ? parent.depth + 1 : 1;
-            const hasChildren = _.filter(this.baseStructureDefinition.snapshot.element, (element) => {
+            const hasChildren = _.filter(this.baseStructureDefinition.snapshot.element, (element: ElementDefinition) => {
                 return element.path.startsWith(filtered[i].path + '.') &&
                     element.path.split('.').length === (filtered[i].path.split('.').length + 1);
             }).length > 0;

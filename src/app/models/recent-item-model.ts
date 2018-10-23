@@ -1,5 +1,5 @@
 export class RecentItemModel {
     public id: string;
     public display: string;
-    public date: Date;
+    public date: string;
 }

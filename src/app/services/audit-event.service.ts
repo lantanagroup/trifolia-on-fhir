@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AuditEvent, Bundle, Coding, Identifier} from '../models/stu3/fhir';
+import {AuditEvent, Bundle, Coding, EntryComponent, Identifier} from '../models/stu3/fhir';
 import {HttpClient} from '@angular/common/http';
 import {AuthService} from './auth.service';
 import * as _ from 'underscore';
@@ -26,25 +26,25 @@ export class AuditEventService {
                             // Find recent ImplementationGuides in the results
                             this.recentImplementationGuides = _.chain(res.entry)
                                 .filter((entry) => {
-                                    return _.find(entry.resource.entity, (entity) =>
+                                    return !!_.find((<AuditEvent>entry.resource).entity, (entity) =>
                                         entity.identifier &&
                                         entity.identifier.system === this.globals.FHIRUrls.ImplementationGuide);
                                 })
-                                .uniq((entry) => entry.resource.entity[0].identifier.value)
+                                .uniq((entry: EntryComponent) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .first(5)
-                                .map((entry) => entry.resource.entity[0].identifier.value)
+                                .map((entry: EntryComponent) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .value();
 
                             // Find recent StructureDefinitions in the results
                             this.recentStructureDefinitions = _.chain(res.entry)
                                 .filter((entry) => {
-                                    return _.find(entry.resource.entity, (entity) =>
+                                    return !!_.find((<AuditEvent>entry.resource).entity, (entity) =>
                                         entity.identifier &&
                                         entity.identifier.system === this.globals.FHIRUrls.StructureDefinition);
                                 })
-                                .uniq((entry) => entry.resource.entity[0].identifier.value)
+                                .uniq((entry) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .first(5)
-                                .map((entry) => entry.resource.entity[0].identifier.value)
+                                .map((entry) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .value();
                         });
                 }

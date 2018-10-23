@@ -9,3 +9,7 @@ declare var module: NodeModule;
 interface NodeModule {
   id: string;
 }
+
+interface Array<T> extends _.List<T> {
+
+}

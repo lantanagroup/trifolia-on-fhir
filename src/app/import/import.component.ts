@@ -161,7 +161,7 @@ export class ImportComponent implements OnInit {
 
         const clone = JSON.parse(JSON.stringify(this.importBundle));
 
-        _.each(clone.entry, (entry) => {
+        _.each(clone.entry, (entry: EntryComponent) => {
             entry.resource = {
                 resourceType: entry.resource.resourceType,
                 id: entry.resource.id
