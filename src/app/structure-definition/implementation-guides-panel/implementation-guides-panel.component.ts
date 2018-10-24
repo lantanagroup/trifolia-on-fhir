@@ -62,7 +62,7 @@ export class ImplementationGuidesPanelComponent implements OnInit {
             .subscribe((implementationGuides) => {
                 this.implementationGuides = implementationGuides;
             }, (err) => {
-                this.configService.handleError('An error occurred while retrieving implementation guides', err);
+                this.configService.handleError(err, 'An error occurred while retrieving implementation guides');
             });
     }
 }

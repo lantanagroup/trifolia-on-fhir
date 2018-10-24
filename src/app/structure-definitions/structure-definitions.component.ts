@@ -107,8 +107,8 @@ export class StructureDefinitionsComponent implements OnInit {
             .subscribe((response: StructureDefinitionListModel) => {
                 this.response = response;
                 this.configService.setStatusMessage('');
-            }, error => {
-                this.configService.handleError('Error loading structure definitions.', error);
+            }, (err) => {
+                this.configService.handleError(err, 'Error loading structure definitions.');
             });
     }
 
@@ -117,7 +117,7 @@ export class StructureDefinitionsComponent implements OnInit {
             .subscribe((results) => {
                 this.implementationGuides = results;
             }, (err) => {
-                this.configService.handleError('Error loading implementation guides.', err);
+                this.configService.handleError(err, 'Error loading implementation guides.');
             });
     }
 

@@ -30,7 +30,7 @@ export class ImplementationGuidesComponent implements OnInit {
                 this.implementationGuides = res;
                 this.configService.setStatusMessage('');
             }, err => {
-                this.configService.handleError('Error loading implementation guides.', err);
+                this.configService.handleError(err, 'Error loading implementation guides.');
             });
     }
 

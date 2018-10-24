@@ -223,7 +223,15 @@ function prepareSearchUrl(req) {
 router.get('/', checkJwt, (req, res) => {
     prepareSearchUrl(req)
         .then(function(url) {
-            request(url, { json: true }, (error, results, body) => {
+            const options = {
+                url: url,
+                json: true,
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            };
+
+            request(options, (error, results, body) => {
                 if (error) {
                     log.error('Error retrieving structure definitions from FHIR server: ' + error);
                     return res.status(500).send('Error retrieving structure definition from FHIR server');

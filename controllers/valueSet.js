@@ -27,9 +27,15 @@ router.get('/', checkJwt, (req, res) => {
         queryParams.url = req.query.urlText;
     }
 
-    const url = req.getFhirServerUrl(thisResourceType, null, null, queryParams);
+    const options = {
+        url: req.getFhirServerUrl(thisResourceType, null, null, queryParams),
+        json: true,
+        headers: {
+            'Cache-Control': 'no-cache'
+        }
+    };
 
-    request(url, { json: true }, (error, results, body) => {
+    request(options, (error, results, body) => {
         if (error) {
             log.error('Error retrieving audit events from FHIR server: ' + error);
             return res.status(500).send('Error retrieving audit events from FHIR server');
