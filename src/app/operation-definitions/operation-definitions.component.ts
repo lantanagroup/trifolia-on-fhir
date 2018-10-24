@@ -4,6 +4,7 @@ import {OperationDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-operation-definitions',
@@ -15,6 +16,7 @@ export class OperationDefinitionsComponent implements OnInit {
     public contentText: string;
 
     constructor(
+        private configService: ConfigService,
         private opDefService: OperationDefinitionService,
         private modalService: NgbModal) {
 
@@ -25,7 +27,17 @@ export class OperationDefinitionsComponent implements OnInit {
     }
 
     public remove(operationDefinition: OperationDefinition) {
+        if (!confirm(`Are you sure you want to delete the operation definition ${operationDefinition.name || operationDefinition.id}`)) {
+            return;
+        }
 
+        this.opDefService.delete(operationDefinition.id)
+            .subscribe(() => {
+                const index = this.operationDefinitions.indexOf(operationDefinition);
+                this.operationDefinitions.splice(index, 1);
+            }, (err) => {
+                this.configService.handleError(err, 'An error cocurred while deleting the operation definition');
+            });
     }
 
     public changeId(operationDefinition: OperationDefinition) {
@@ -41,6 +53,8 @@ export class OperationDefinitionsComponent implements OnInit {
         this.opDefService.search()
             .subscribe((results) => {
                 this.operationDefinitions = _.map(results.entry, (entry) => <OperationDefinition> entry.resource);
+            }, (err) => {
+                this.configService.handleError(err, 'An error occurred while searching for operation definitions');
             });
     }
 

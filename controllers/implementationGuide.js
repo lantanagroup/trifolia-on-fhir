@@ -37,9 +37,15 @@ router.get('/published', checkJwt, (req, res) => {
 });
 
 router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType);
+    const options = {
+        url: req.getFhirServerUrl(thisResourceType, null, null, req.query),
+        json: true,
+        headers: {
+            'Cache-Control': 'no-cache'
+        }
+    };
 
-    request(url, { json: true }, (error, results, body) => {
+    request(options, (error, results, body) => {
         if (error) {
             console.log('Error retrieving implementation guides from FHIR server: ' + error);
             return res.status(500).send('Error retrieving implementation guides from FHIR server');

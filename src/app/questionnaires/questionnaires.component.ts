@@ -4,6 +4,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import * as _ from 'underscore';
+import {ConfigService} from '../services/config.service';
 
 @Component({
   selector: 'app-questionnaires',
@@ -15,13 +16,24 @@ export class QuestionnairesComponent implements OnInit {
     public contentText: string;
 
     constructor(
+        private configService: ConfigService,
         private questionnaireService: QuestionnaireService,
         private modalService: NgbModal) {
 
     }
 
-    public remove(valueSet: Questionnaire) {
+    public remove(questionnaire: Questionnaire) {
+        if (!confirm(`Are you sure you want to delete the questionnaire ${questionnaire.title || questionnaire.name || questionnaire.id}`)) {
+            return;
+        }
 
+        this.questionnaireService.delete(questionnaire.id)
+            .subscribe(() => {
+                const index = this.questionnaires.indexOf(questionnaire);
+                this.questionnaires.splice(index, 1);
+            }, (err) => {
+                this.configService.handleError(err, 'An error occurred while deleting the questionnaire');
+            });
     }
 
     public contentTextChanged(value: string) {
@@ -41,6 +53,8 @@ export class QuestionnairesComponent implements OnInit {
         this.questionnaireService.search()
             .subscribe((results) => {
                 this.questionnaires = _.map(results.entry, (entry) => <Questionnaire> entry.resource);
+            }, (err) => {
+                this.configService.handleError(err, 'An error occurred while searching for questionnaires');
             });
     }
 

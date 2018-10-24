@@ -91,10 +91,10 @@ export class ConfigService {
         }
     }
 
-    public handleError(messageFormat: string, error: any) {
+    public getMessageFromError(error: any, prefix?: string): string {
         let errorMessage: string;
 
-        if (error.message) {
+        if (typeof error.message === 'string') {
             errorMessage = error.message;
         } else if (error.data && typeof error.data === 'string') {
             errorMessage = error.data;
@@ -102,10 +102,15 @@ export class ConfigService {
             errorMessage = error;
         }
 
-        if (errorMessage) {
-            this.setStatusMessage(`${messageFormat}\r\n${errorMessage}`);
-        } else {
-            this.setStatusMessage(messageFormat);
+        if (prefix) {
+            return `${prefix}: ${errorMessage}`;
         }
+
+        return errorMessage;
+    }
+
+    public handleError(error: any, prefix?: string) {
+        const errorMessage = this.getMessageFromError(error, prefix);
+        this.setStatusMessage(errorMessage);
     }
 }
