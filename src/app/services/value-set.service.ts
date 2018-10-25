@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Bundle, OperationOutcome, ValueSet} from '../models/stu3/fhir';
+import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
@@ -20,19 +20,15 @@ export class ValueSetService {
         }
     }
 
-    public search(page?: number, contentText?: string, urlText?: string) {
-        let url = '/api/valueSet?';
+    public search(page = 1, name?: string, searchUrl?: string) {
+        let url = '/api/valueSet?page=' + page + '&';
 
-        if (page) {
-            url += 'page=' + page.toString() + '&';
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
         }
 
-        if (contentText) {
-            url += 'contentText=' + encodeURIComponent(contentText) + '&';
-        }
-
-        if (urlText) {
-            url += 'urlText=' + encodeURIComponent(urlText) + '&';
+        if (searchUrl) {
+            url += 'url=' + encodeURIComponent(searchUrl) + '&';
         }
 
         return this.http.get(url);

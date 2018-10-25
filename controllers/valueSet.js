@@ -19,12 +19,12 @@ router.get('/', checkJwt, (req, res) => {
         queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * countPerPage;
     }
 
-    if (req.query.contentText) {
-        queryParams._content = req.query.contentText;
+    if (req.query.name) {
+        queryParams['name:contains'] = req.query.name;
     }
 
-    if (req.query.urlText) {
-        queryParams.url = req.query.urlText;
+    if (req.query.url) {
+        queryParams.url = req.query.url;
     }
 
     const options = {

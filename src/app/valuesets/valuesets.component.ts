@@ -13,7 +13,7 @@ import {Subject} from 'rxjs';
 })
 export class ValuesetsComponent implements OnInit {
     public results: Bundle;
-    public contentText: string;
+    public nameText: string;
     public page = 1;
     public urlText: string;
     public criteriaChangedEvent = new Subject();
@@ -31,8 +31,18 @@ export class ValuesetsComponent implements OnInit {
             });
     }
 
-    public getValueSet(resource: Resource) {
-        return <ValueSet> resource;
+    public get valueSets() {
+        if (!this.results) {
+            return [];
+        }
+
+        return _.map(this.results.entry, (entry) => <ValueSet> entry.resource);
+    }
+
+    public clearFilters() {
+        this.nameText = null;
+        this.urlText = null;
+        this.criteriaChanged();
     }
 
     public remove(valueSet: ValueSet) {
@@ -66,8 +76,8 @@ export class ValuesetsComponent implements OnInit {
         this.criteriaChangedEvent.next();
     }
 
-    public contentTextChanged(value: string) {
-        this.contentText = value;
+    public nameTextChanged(value: string) {
+        this.nameText = value;
         this.page = 1;
         this.criteriaChanged();
     }
@@ -91,7 +101,7 @@ export class ValuesetsComponent implements OnInit {
         this.results = null;
         this.message = 'Searching value sets...';
 
-        this.valueSetService.search(this.page, this.contentText, this.urlText)
+        this.valueSetService.search(this.page, this.nameText, this.urlText)
             .subscribe((results: Bundle) => {
                 this.results = results;
                 this.totalPages = results && results.total ? Math.ceil(results.total / 8) : 0;
