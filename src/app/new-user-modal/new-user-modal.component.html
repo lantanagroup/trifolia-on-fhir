@@ -9,5 +9,5 @@
     <app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="ok()">OK</button>
+    <button type="button" class="btn btn-default" (click)="ok()" [disabled]="okDisabled">OK</button>
 </div>
