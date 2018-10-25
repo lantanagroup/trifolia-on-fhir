@@ -148,7 +148,7 @@ function saveAdditionalOptions(req, structureDefinition) {
 
     const promises = [];
 
-    _.each(req.body.options.implementationGuides, (implementationGuide) => {
+    _.each(req.body.options.implementationGuidesBundle, (implementationGuide) => {
         if (implementationGuide.isNew) {
             promises.push(addToImplementationGuide(implementationGuide.id));
         } else {
@@ -165,14 +165,14 @@ function saveAdditionalOptions(req, structureDefinition) {
  * @return {Promise<string>} A promise that resolves with a string parameter representing the query that should be executed against the fhir server
  */
 function prepareSearchUrl(req) {
-    var queryParams = { _summary: true, _count: 10 };
+    const queryParams = { _summary: true, _count: 10 };
 
     if (req.query.page && parseInt(req.query.page) != 1) {
         queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * 10;
     }
 
-    if (req.query.contentText) {
-        queryParams._content = req.query.contentText;
+    if (req.query.name) {
+        queryParams['name:contains'] = req.query.name;
     }
 
     if (req.query.urlText) {

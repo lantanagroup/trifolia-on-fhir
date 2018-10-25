@@ -12,6 +12,7 @@ const ProfileResources = require('./src/assets/stu3/profiles-resources');
 const log4js = require('log4js');
 const log = log4js.getLogger();
 const Q = require('q');
+const path = require('path');
 
 function getResource(fhirServerBase, resourceType, id) {
     const url = buildUrl(fhirServerBase, resourceType, id);
@@ -185,6 +186,35 @@ function loadExtensions() {
     });
 }
 
+function hostExtensions(app, fhirStu3, fhirR4) {
+    const stu3ExtensionFiles = fs.readdirSync(path.join(__dirname, 'wwwroot/assets/stu3/extensions'));
+    const r4ExtensionFiles = fs.readdirSync(path.join(__dirname, 'wwwroot/assets/r4/extensions'));
+
+    function hostExtension(fhirVersion, extension) {
+        const route = `/${fhirVersion}/${extension.resourceType}/${extension.id}`;
+        app.get(route, (req, res) => {
+            if (req.accepts('xml') && !req.accepts('json')) {
+                const xml = fhirStu3.objToXml(extension);
+                res.contentType('application/xml').send(xml);
+            } else {
+                res.send(extension);
+            }
+        });
+    }
+
+    _.each(stu3ExtensionFiles, (extensionFileName) => {
+        const fullFileName = path.join(__dirname, 'wwwroot/assets/stu3/extensions', extensionFileName);
+        const extension = JSON.parse(fs.readFileSync(fullFileName).toString());
+        hostExtension('stu3', extension);
+    });
+
+    _.each(r4ExtensionFiles, (extensionFileName) => {
+        const fullFileName = path.join(__dirname, 'wwwroot/assets/r4/extensions', extensionFileName);
+        const extension = JSON.parse(fs.readFileSync(fullFileName).toString());
+        hostExtension('r4', extension);
+    });
+}
+
 module.exports = {
     buildUrl: buildUrl,
     parseUrl: parseUrl,
@@ -193,5 +223,6 @@ module.exports = {
     loadExtensions: loadExtensions,
     joinUrl: joinUrl,
     getResource: getResource,
-    updateResource: updateResource
+    updateResource: updateResource,
+    hostExtensions: hostExtensions
 };

@@ -3,12 +3,13 @@ import {StructureDefinitionService} from '../services/structure-definition.servi
 import {StructureDefinitionListItemModel} from '../models/structure-definition-list-item-model';
 import {ConfigService} from '../services/config.service';
 import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
-import 'rxjs/add/operator/debounceTime';
 import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
+import {Bundle, ImplementationGuide} from '../models/stu3/fhir';
+import * as _ from 'underscore';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
     selector: 'app-profiles',
@@ -19,11 +20,11 @@ export class StructureDefinitionsComponent implements OnInit {
     public response: StructureDefinitionListModel;
     public message: string;
     public page = 1;
-    public contentText: string;
+    public nameText: string;
     public urlText: string;
     public criteriaChangedEvent = new Subject();
-    public implementationGuides: ImplementationGuideListItemModel[] = [];
-    public implementationGuideId: string;
+    public implementationGuidesBundle: Bundle;
+    public implementationGuideId: string = null;
 
     constructor(
         private implementationGuideService: ImplementationGuideService,
@@ -36,6 +37,14 @@ export class StructureDefinitionsComponent implements OnInit {
             .subscribe(() => {
                 this.getStructureDefinitions();
             });
+    }
+
+    public get implementationGuides() {
+        if (!this.implementationGuidesBundle) {
+            return [];
+        }
+
+        return _.map(this.implementationGuidesBundle.entry, (entry) => <ImplementationGuide> entry.resource);
     }
 
     public remove(structureDefinitionListItem: StructureDefinitionListItemModel) {
@@ -87,8 +96,8 @@ export class StructureDefinitionsComponent implements OnInit {
         this.criteriaChangedEvent.next();
     }
 
-    public contentTextChanged(value: string) {
-        this.contentText = value;
+    public nameTextChanged(value: string) {
+        this.nameText = value;
         this.page = 1;
         this.criteriaChanged();
     }
@@ -99,11 +108,18 @@ export class StructureDefinitionsComponent implements OnInit {
         this.criteriaChanged();
     }
 
+    public clearFilters() {
+        this.nameText = null;
+        this.urlText = null;
+        this.implementationGuideId = null;
+        this.criteriaChanged();
+    }
+
     public getStructureDefinitions() {
         this.response = null;
         this.configService.setStatusMessage('Loading structure definitions');
 
-        this.structureDefinitionService.getStructureDefinitions(this.page, this.contentText, this.urlText, this.implementationGuideId)
+        this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.urlText, this.implementationGuideId)
             .subscribe((response: StructureDefinitionListModel) => {
                 this.response = response;
                 this.configService.setStatusMessage('');
@@ -115,7 +131,7 @@ export class StructureDefinitionsComponent implements OnInit {
     public getImplementationGuides() {
         this.implementationGuideService.getImplementationGuides()
             .subscribe((results) => {
-                this.implementationGuides = results;
+                this.implementationGuidesBundle = results;
             }, (err) => {
                 this.configService.handleError(err, 'Error loading implementation guides.');
             });

@@ -7,6 +7,7 @@ import {ImplementationGuideService} from '../../services/implementation-guide.se
 import {ImplementationGuideListItemModel} from '../../models/implementation-guide-list-item-model';
 import {ConfigService} from '../../services/config.service';
 import * as _ from 'underscore';
+import {Bundle, ImplementationGuide} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-implementation-guides-panel',
@@ -15,7 +16,7 @@ import * as _ from 'underscore';
 })
 export class ImplementationGuidesPanelComponent implements OnInit {
     @Input() options = new StructureDefinitionOptions();
-    public implementationGuides: ImplementationGuideListItemModel[];
+    public implementationGuidesBundle: Bundle;
     public newImplementationGuide: StructureDefinitionImplementationnGuide;
 
     constructor(
@@ -23,17 +24,25 @@ export class ImplementationGuidesPanelComponent implements OnInit {
         private configService: ConfigService) {
     }
 
-    addImplementationGuide() {
+    public get implementationGuides() {
+        if (!this.implementationGuidesBundle) {
+            return [];
+        }
+
+        return _.map(this.implementationGuidesBundle.entry, (entry) => <ImplementationGuide> entry.resource);
+    }
+
+    public addImplementationGuide() {
         this.newImplementationGuide = new StructureDefinitionImplementationnGuide();
         this.newImplementationGuide.isNew = true;
     }
 
-    doneAdding() {
+    public doneAdding() {
         this.options.implementationGuides.push(this.newImplementationGuide);
         this.newImplementationGuide = null;
     }
 
-    removeImplementationGuide(ig: StructureDefinitionImplementationnGuide) {
+    public removeImplementationGuide(ig: StructureDefinitionImplementationnGuide) {
         if (ig.isNew) {
             const index = this.options.implementationGuides.indexOf(ig);
             this.options.implementationGuides.splice(index, 1);
@@ -42,13 +51,13 @@ export class ImplementationGuidesPanelComponent implements OnInit {
         }
     }
 
-    getUnusedImplementationGuides(): ImplementationGuideListItemModel[] {
+    public getUnusedImplementationGuides() {
         return _.filter(this.implementationGuides, (implementationGuide) => {
             return !_.find(this.options.implementationGuides, (next) => next.id === implementationGuide.id);
         });
     }
 
-    setNewImplementationGuide(id: string) {
+    public setNewImplementationGuide(id: string) {
         const foundImplementationGuide = _.find(this.implementationGuides, (implementationGuide) => implementationGuide.id === id);
 
         if (foundImplementationGuide) {
@@ -59,8 +68,8 @@ export class ImplementationGuidesPanelComponent implements OnInit {
 
     ngOnInit() {
         this.implementationGuideService.getImplementationGuides()
-            .subscribe((implementationGuides) => {
-                this.implementationGuides = implementationGuides;
+            .subscribe((results) => {
+                this.implementationGuidesBundle = results;
             }, (err) => {
                 this.configService.handleError(err, 'An error occurred while retrieving implementation guides');
             });

@@ -14,3 +14,15 @@ tr > td:last-child {
         display: none;
     }
 }
+
+select.disabled {
+    color: graytext;
+}
+
+option {
+    color: black;
+}
+
+option[value='0: null'] {
+    color: graytext;
+}

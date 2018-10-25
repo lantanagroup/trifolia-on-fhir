@@ -1,7 +1,7 @@
 {
   "resourceType": "StructureDefinition",
   "id": "extension-ig-dependency",
-  "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency",
+  "url": "https://trifolia-on-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-dependency",
   "name": "Implementation Guide Dependency Extension",
   "status": "active",
   "description": "This extension allows dependencies to be defined directly in the implementation guide.\nThis extension should only be used for FHIR STU3 ImplementationGuide resources; it is planned to be implemented explicitly as a direct property of ImplementationGuide in FHIR R4.",

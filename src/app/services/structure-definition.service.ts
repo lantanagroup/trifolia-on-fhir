@@ -37,15 +37,15 @@ export class StructureDefinitionService {
         private fhirService: FhirService,
         private fileService: FileService) { }
 
-    public getStructureDefinitions(page?: number, contentText?: string, urlText?: string, implementationGuideId?: string): Observable<StructureDefinitionListModel> {
+    public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string): Observable<StructureDefinitionListModel> {
         let url = '/api/structureDefinition?';
 
         if (page) {
             url += 'page=' + page.toString() + '&';
         }
 
-        if (contentText) {
-            url += 'contentText=' + encodeURIComponent(contentText) + '&';
+        if (nameText) {
+            url += 'name=' + encodeURIComponent(nameText) + '&';
         }
 
         if (urlText) {

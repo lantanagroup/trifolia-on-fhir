@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../services/export.service';
@@ -9,6 +8,7 @@ import {SocketMessage, SocketService} from '../services/socket.service';
 import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../services/config.service';
+import {Bundle, ImplementationGuide} from '../models/stu3/fhir';
 
 @Component({
     selector: 'app-export',
@@ -19,7 +19,7 @@ export class ExportComponent implements OnInit {
     public message: string;
     public socketOutput = '';
     private packageId;
-    public implementationGuides: ImplementationGuideListItemModel[];
+    public implementationGuidesBundle: Bundle;
 
     public options = new ExportOptions();
 
@@ -39,6 +39,14 @@ export class ExportComponent implements OnInit {
                 this.socketService.notifyExporting(this.packageId);
             }
         });
+    }
+
+    public get implementationGuides() {
+        if (!this.implementationGuidesBundle) {
+            return [];
+        }
+
+        return _.map(this.implementationGuidesBundle.entry, (entry) => <ImplementationGuide> entry.resource);
     }
 
     public export() {
@@ -72,7 +80,7 @@ export class ExportComponent implements OnInit {
     ngOnInit() {
         this.implementationGuideService.getImplementationGuides()
             .subscribe((results) => {
-                this.implementationGuides = results;
+                this.implementationGuidesBundle = results;
             }, (err) => {
                 this.message = err;
             });
