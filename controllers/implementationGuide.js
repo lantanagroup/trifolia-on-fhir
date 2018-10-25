@@ -37,8 +37,18 @@ router.get('/published', checkJwt, (req, res) => {
 });
 
 router.get('/', checkJwt, (req, res) => {
+    const queryParams = { _summary: true, _count: 10 };
+
+    if (req.query.name) {
+        queryParams['name:contains'] = req.query.name;
+    }
+
+    if (req.query.page && parseInt(req.query.page) != 1) {
+        queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * 10;
+    }
+
     const options = {
-        url: req.getFhirServerUrl(thisResourceType, null, null, req.query),
+        url: req.getFhirServerUrl(thisResourceType, null, null, queryParams),
         json: true,
         headers: {
             'Cache-Control': 'no-cache'
@@ -51,16 +61,7 @@ router.get('/', checkJwt, (req, res) => {
             return res.status(500).send('Error retrieving implementation guides from FHIR server');
         }
 
-        const implementationGuides = _.map(body.entry, (item) => {
-            return {
-                id: item.resource.id,
-                name: item.resource.name,
-                experimental: item.resource.experimental,
-                description: item.resource.description
-            };
-        });
-
-        res.send(implementationGuides);
+        res.send(body);
     });
 });
 

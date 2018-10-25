@@ -1,7 +1,7 @@
 {
   "resourceType": "StructureDefinition",
   "id": "extension-ig-dependency-name",
-  "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name",
+  "url": "https://trifolia-on-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-dependency-name",
   "name": "Implementation Guide Dependency Name Extension",
   "status": "active",
   "kind": "resource",

@@ -203,6 +203,8 @@ app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 app.use('/api/manage', manageController);
 
+FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
+
 // Catch all other routes and return the index file
 app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
@@ -216,4 +218,4 @@ app.get('*', (req, res) => {
 });
 
 // Pre-load all necessary extensions for Trifolia-on-FHIR on the server
-FhirHelper.loadExtensions();
+//FhirHelper.loadExtensions();

@@ -1,7 +1,7 @@
 {
   "resourceType": "StructureDefinition",
   "id": "extension-ig-dependency-location",
-  "url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location",
+  "url": "https://trifolia-on-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-dependency-location",
   "name": "Implementation Guide Dependency Location Extension",
   "status": "draft",
   "kind": "resource",

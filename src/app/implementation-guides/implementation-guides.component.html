@@ -2,8 +2,7 @@
 <app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-           placeholder="Search" [disabled]="true">
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
             <i class="fa fa-search"></i>
@@ -11,14 +10,20 @@
     </div>
 </div>
 
-<table class="table table-striped">
+<br />
+
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+
+<table class="table table-striped" *ngIf="results">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Type</th>
         <th>
             <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+                    <i class="fa fa-times"></i>
+                </button>
                 <button type="button" class="btn btn-default" routerLink="/implementation-guide/new" title="Create a new implementation guide">
                     <i class="fa fa-plus"></i>
                 </button>
@@ -30,7 +35,6 @@
     <tr *ngFor="let ig of implementationGuides">
         <td>{{ig.id}}</td>
         <td>{{ig.name}}</td>
-        <td>{{ig.type}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
@@ -43,7 +47,9 @@
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="3">{{implementationGuides.length}} total implementation guides</td>
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+        </td>
     </tr>
     </tfoot>
 </table>

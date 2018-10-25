@@ -2,18 +2,25 @@
 <app-tooltip-icon tooltipKey="structuredefinition.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search all (_content)"/>
-    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Complete StructureDefinition.url"/>
-    <select class="form-control" [(ngModel)]="implementationGuideId" (change)="criteriaChanged()">
-        <option [ngValue]="null">Implementation Guide</option>
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name"/>
+    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete url"/>
+    <select class="form-control" [(ngModel)]="implementationGuideId" (change)="criteriaChanged()" [class.disabled]="!implementationGuideId">
+        <option [ngValue]="null" selected>Search implementation guide</option>
         <option *ngFor="let ig of implementationGuides" [ngValue]="ig.id">{{ig.name}}</option>
     </select>
     <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
         <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
             <i class="fa fa-search"></i>
         </button>
     </div>
 </div>
+
+<br />
+
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="response.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>
@@ -60,25 +67,8 @@
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="4">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" [disabled]="!response || page <= 1" title="Previous page" (click)="firstPage()">
-                    <i class="fa fa-fast-backward"></i>
-                </button>
-                <button type="button" class="btn btn-default" [disabled]="!response || page <= 1" title="Previous page" (click)="previousPage()">
-                    <i class="fa fa-backward"></i>
-                </button>
-                <button type="button" class="btn btn-default" disabled="disabled">
-                    Page {{response && response.pages ? page : 0}} of {{response ? response.pages : 0}} ({{response ? response.total : 0}} structure definitions)
-                </button>
-                <button type="button" class="btn btn-default" [disabled]="!response || page >= response.pages" title="Next page" (click)="nextPage()">
-                    <i class="fa fa-forward"></i>
-                </button>
-                <button type="button" class="btn btn-default" [disabled]="!response || page >= response.pages" title="Last page" (click)="lastPage()">
-                    <i class="fa fa-fast-forward"></i>
-                </button>
-            </div>
-            <br/>
+        <td colspan="6">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="response.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

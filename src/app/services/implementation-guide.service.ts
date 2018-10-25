@@ -2,7 +2,11 @@ import {Injectable} from '@angular/core';
 import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../models/stu3/fhir';
+import {
+    Bundle,
+    ImplementationGuide as STU3ImplementationGuide,
+    OperationOutcome as STU3OperationOutcome
+} from '../models/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../models/r4/fhir';
 
 export class PublishedGuideModel {
@@ -34,10 +38,14 @@ export class ImplementationGuideService {
         return this.http.get<PublishedGuideModel[]>('/api/implementationGuide/published');
     }
 
-    public getImplementationGuides(query?: string): Observable<ImplementationGuideListItemModel[]> {
-        return this.http.get<ImplementationGuideListItemModel[]>('/api/implementationGuide');
-            //.catch(this._serverError);
+    public getImplementationGuides(page = 1, name?: string) {
+        let url = '/api/implementationGuide?page=' + page + '&';
 
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        return this.http.get<Bundle>(url);
     }
 
     public getImplementationGuide(id: string) {
