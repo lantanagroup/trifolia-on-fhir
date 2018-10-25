@@ -2,20 +2,28 @@
 <app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)" placeholder="Search">
-    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="URL" />
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete URL" />
     <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
         <button type="button" class="btn btn-default" title="Refresh" (click)="getValueSets()">
             <i class="fa fa-search"></i>
         </button>
     </div>
 </div>
 
+<br />
+
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+
 <table class="table table-striped" *ngIf="results">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>URL</th>
         <th class="actions-column-4">
             <div class="pull-right">
                 <button type="button" class="btn btn-default" routerLink="/value-set/new" title="Create a new value set">
@@ -26,21 +34,22 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let entry of results.entry">
-        <td>{{entry.resource.id}}</td>
-        <td>{{getValueSet(entry.resource).name}}</td>
+    <tr *ngFor="let vs of valueSets">
+        <td>{{vs.id}}</td>
+        <td>{{vs.name}}</td>
+        <td>{{vs.url}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/value-set/{{entry.resource.id}}" title="Edit this value set">
+                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}" title="Edit this value set">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a class="btn btn-default" routerLink="/value-set/{{entry.resource.id}}/expand" title="Expand this value set">
+                <a class="btn btn-default" routerLink="/value-set/{{vs.id}}/expand" title="Expand this value set">
                     <i class="fa fa-expand"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(getValueSet(entry.resource))" title="Remove this value set">
+                <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this value set">
                     <i class="fa fa-remove"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(getValueSet(entry.resource))" title="Change this value set's ID">
+                <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -50,18 +59,7 @@
     <tfoot>
     <tr>
         <td colspan="4">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" [disabled]="!results || page <= 1" title="Previous page" (click)="previousPage()">
-                    <i class="fa fa-backward"></i>
-                </button>
-                <button type="button" class="btn btn-default" disabled="disabled">
-                    Page {{page}} of {{totalPages}} ({{results ? results.total : 0}} value sets)
-                </button>
-                <button type="button" class="btn btn-default" [disabled]="!results || page >= totalPages" title="Next page" (click)="nextPage()">
-                    <i class="fa fa-forward"></i>
-                </button>
-            </div>
-            <br/>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>
