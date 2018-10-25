@@ -29,7 +29,15 @@ function getMe(req) {
     const url = new URL(resolve(req.fhirServerBase, thisResourceType));
     url.searchParams.set('identifier', system + '|' + identifier);
 
-    request(url.toString(), { json: true }, (error, response, body) => {
+    const options = {
+        url: url.toString(),
+        json: true,
+        headers: {
+            'Cache-Control': 'no-cache'
+        }
+    };
+
+    request(options, (error, response, body) => {
         if (error) {
             log.error(`Error occurred getting ${thisResourceType} for user: ` + error);
             return deferred.reject(error);

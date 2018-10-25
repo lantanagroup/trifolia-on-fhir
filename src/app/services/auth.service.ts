@@ -53,29 +53,9 @@ export class AuthService {
                     })
                     .catch((err) => {
                         if (err && err.status === 404) {
-                            const newPractitioner = new Practitioner();
-                            const identifierSystem = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
-                                'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
-                            const identifierValue = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
-                                this.userProfile.user_id.substring(6) : this.userProfile.user_id;
-                            newPractitioner.identifier = [new Identifier({
-                                system: identifierSystem,
-                                value: identifierValue
-                            })];
-                            newPractitioner.name = [];
-                            newPractitioner.name.push(new HumanName({
-                                family: '',
-                                given: ['']
-                            }));
-
-                            const modalRef = this.modalService.open(NewUserModalComponent, {size: 'lg'});
-                            modalRef.componentInstance.practitioner = newPractitioner;
-
-                            modalRef.result.then((practitioner: Practitioner) => {
-                                this.practitioner = practitioner;
-                                this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
-                                this.authChanged.emit();
-                            });
+                            this.createNewPractitioner();
+                        } else {
+                            console.log('An unknown error has occurred while retrieving your Practitioner profile');
                         }
                     });
             }
@@ -86,7 +66,33 @@ export class AuthService {
             if (this.isAuthenticated()) {
                 this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
             }
-        })
+        });
+    }
+
+    private createNewPractitioner() {
+        const newPractitioner = new Practitioner();
+        const identifierSystem = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
+            'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
+        const identifierValue = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
+            this.userProfile.user_id.substring(6) : this.userProfile.user_id;
+        newPractitioner.identifier = [new Identifier({
+            system: identifierSystem,
+            value: identifierValue
+        })];
+        newPractitioner.name = [];
+        newPractitioner.name.push(new HumanName({
+            family: '',
+            given: ['']
+        }));
+
+        const modalRef = this.modalService.open(NewUserModalComponent, {size: 'lg', backdrop: 'static'});
+        modalRef.componentInstance.practitioner = newPractitioner;
+
+        modalRef.result.then((practitioner: Practitioner) => {
+            this.practitioner = practitioner;
+            this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+            this.authChanged.emit();
+        });
     }
 
     public login(): void {
@@ -107,6 +113,12 @@ export class AuthService {
                             userProfile: this.userProfile,
                             practitioner: this.practitioner
                         });
+                    }, (err) => {
+                        if (err && err.status === 404) {
+                            this.createNewPractitioner();
+                        } else {
+                            console.log('An unknown error has occurred while retrieving your Practitioner profile');
+                        }
                     });
             } else if (err) {
                 this.router.navigate(['/home']);
