@@ -16,8 +16,12 @@
 
 <br/>
 
-<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="codeSystemsBundle.total"
-                [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center" *ngIf="codeSystemsBundle && codeSystemsBundle.total > 0"
+                [maxSize]="5"
+                [collectionSize]="codeSystemsBundle.total"
+                [(page)]="page"
+                [boundaryLinks]="true"
+                (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
 
 <table class="table table-striped" *ngIf="codeSystems">
     <thead>
@@ -51,7 +55,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr>
+    <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total === 0">
+        <td colspan="3">No code systems! Create one by clicking <a routerLink="/code-system/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
                             [collectionSize]="codeSystemsBundle.total" [(page)]="page" [boundaryLinks]="true"

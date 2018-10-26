@@ -2,52 +2,72 @@
 <app-tooltip-icon tooltipKey="questionnaire.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-         placeholder="Search" [disabled]="true">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default" title="Refresh" (click)="getQuestionnaires()">
-      <i class="fa fa-search"></i>
-    </button>
-  </div>
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getQuestionnaires()">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
 </div>
 
+<br />
+
+<ngb-pagination class="d-flex justify-content-center"
+                *ngIf="questionnairesBundle && questionnairesBundle.total > 0"
+                [maxSize]="5"
+                [collectionSize]="questionnairesBundle.total"
+                [(page)]="page"
+                [boundaryLinks]="true"
+                (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+
 <table class="table table-striped">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>
-      <div class="pull-right">
-        <button type="button" class="btn btn-default" routerLink="/questionnaire/new"
-                title="Create a new value set">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let questionnaire of questionnaires">
-    <td>{{questionnaire.id}}</td>
-    <td>{{questionnaire.name}}</td>
-    <td>
-      <div class="btn-group pull-right">
-        <a class="btn btn-default" routerLink="/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
-          <i class="fa fa-edit"></i>
-        </a>
-        <button type="button" class="btn btn-default" (click)="remove(questionnaire)" title="Remove this questionnaire">
-          <i class="fa fa-remove"></i>
-        </button>
-        <button type="button" class="btn btn-default" (click)="changeId(questionnaire)" title="Change this questionnaire's ID">
-          <i class="fa fa-id-badge"></i>
-        </button>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="3">{{questionnaires ? questionnaires.length : 0}} total questionnaires</td>
-  </tr>
-  </tfoot>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" routerLink="/questionnaire/new"
+                        title="Create a new value set">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let questionnaire of questionnaires">
+        <td>{{questionnaire.id}}</td>
+        <td>{{questionnaire.name}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" routerLink="/questionnaire/{{questionnaire.id}}"
+                   title="Edit this questionnaire">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-default" (click)="remove(questionnaire)"
+                        title="Remove this questionnaire">
+                    <i class="fa fa-remove"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="changeId(questionnaire)"
+                        title="Change this questionnaire's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr *ngIf="questionnairesBundle && questionnairesBundle.total === 0">
+        <td colspan="3">No questionnaires! Create one by clicking <a routerLink="/questionnaire/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="questionnairesBundle && questionnairesBundle.total > 0">
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="questionnairesBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+        </td>
+    </tr>
+    </tfoot>
 </table>

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {Questionnaire} from '../models/stu3/fhir';
+import {Bundle, Questionnaire} from '../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import * as _ from 'underscore';
 import {ConfigService} from '../services/config.service';
+import {Subject} from 'rxjs';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-questionnaires',
@@ -12,14 +14,29 @@ import {ConfigService} from '../services/config.service';
   styleUrls: ['./questionnaires.component.css']
 })
 export class QuestionnairesComponent implements OnInit {
-    public questionnaires: Questionnaire[];
-    public contentText: string;
+    public questionnairesBundle: Bundle;
+    public nameText: string;
+    public criteriaChangedEvent = new Subject();
+    public page = 1;
 
     constructor(
         private configService: ConfigService,
         private questionnaireService: QuestionnaireService,
         private modalService: NgbModal) {
 
+        this.criteriaChangedEvent
+            .debounceTime(500)
+            .subscribe(() => {
+                this.getQuestionnaires();
+            });
+    }
+
+    public get questionnaires(): Questionnaire[] {
+        if (!this.questionnairesBundle) {
+            return [];
+        }
+
+        return _.map(this.questionnairesBundle.entry, (entry) => <Questionnaire> entry.resource);
     }
 
     public remove(questionnaire: Questionnaire) {
@@ -36,8 +53,16 @@ export class QuestionnairesComponent implements OnInit {
             });
     }
 
-    public contentTextChanged(value: string) {
+    public nameTextChanged(value: string) {
+        this.nameText = value;
+        this.page = 1;
+        this.criteriaChangedEvent.next();
+    }
 
+    public clearFilters() {
+        this.nameText = null;
+        this.page = 1;
+        this.criteriaChangedEvent.next();
     }
 
     public changeId(valueSet: Questionnaire) {
@@ -50,9 +75,9 @@ export class QuestionnairesComponent implements OnInit {
     }
 
     public getQuestionnaires() {
-        this.questionnaireService.search()
+        this.questionnaireService.search(this.page, this.nameText)
             .subscribe((results) => {
-                this.questionnaires = _.map(results.entry, (entry) => <Questionnaire> entry.resource);
+                this.questionnairesBundle = results;
             }, (err) => {
                 this.configService.handleError(err, 'An error occurred while searching for questionnaires');
             });
@@ -60,5 +85,6 @@ export class QuestionnairesComponent implements OnInit {
 
     ngOnInit() {
         this.getQuestionnaires();
+        this.configService.fhirServerChanged.subscribe((fhirServer) => this.getQuestionnaires());
     }
 }

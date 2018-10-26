@@ -15,7 +15,13 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center"
+                *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total > 0"
+                [maxSize]="5"
+                [collectionSize]="operationDefinitionsBundle.total"
+                [(page)]="page"
+                [boundaryLinks]="true"
+                (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>
@@ -45,7 +51,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr>
+    <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total === 0">
+        <td colspan="3">No operation definitions! Create one by clicking <a routerLink="/operation-definition/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>

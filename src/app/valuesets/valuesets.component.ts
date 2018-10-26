@@ -6,6 +6,7 @@ import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-valuesets',
@@ -18,10 +19,10 @@ export class ValuesetsComponent implements OnInit {
     public page = 1;
     public urlText: string;
     public criteriaChangedEvent = new Subject();
-    public totalPages = 1;
     public message: string;
 
     constructor(
+        private configService: ConfigService,
         private valueSetService: ValueSetService,
         private modalService: NgbModal) {
 
@@ -96,12 +97,14 @@ export class ValuesetsComponent implements OnInit {
         this.valueSetService.search(this.page, this.nameText, this.urlText)
             .subscribe((results: Bundle) => {
                 this.results = results;
-                this.totalPages = results && results.total ? Math.ceil(results.total / 8) : 0;
                 this.message = '';
+            }, (err) => {
+                this.configService.handleError(err, 'An error occurred while searching for value sets');
             });
     }
 
     ngOnInit() {
         this.getValueSets();
+        this.configService.fhirServerChanged.subscribe((fhirServer) => this.getValueSets());
     }
 }

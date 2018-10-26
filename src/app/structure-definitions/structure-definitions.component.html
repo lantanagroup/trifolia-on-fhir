@@ -20,7 +20,13 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="response.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center"
+                *ngIf="response && response.total > 0"
+                [maxSize]="5"
+                [collectionSize]="response.total"
+                [(page)]="page"
+                [boundaryLinks]="true"
+                (pageChange)="criteriaChanged()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>
@@ -66,7 +72,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr>
+    <tr *ngIf="response && response.total === 0">
+        <td colspan="3">No profiles (structure definitions)! Create one by clicking <a routerLink="/structure-definition/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="response && response.total > 0">
         <td colspan="6">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="response.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>

@@ -15,7 +15,12 @@
 
 <br/>
 
-<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="capabilityStatementsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center" *ngIf="capabilityStatementsBundle && capabilityStatementsBundle.total > 0"
+                [maxSize]="5"
+                [collectionSize]="capabilityStatementsBundle.total"
+                [(page)]="page"
+                [boundaryLinks]="true"
+                (pageChange)="criteriaChanged()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>
@@ -51,7 +56,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr>
+    <tr *ngIf="capabilityStatementsBundle && capabilityStatementsBundle.total === 0">
+        <td colspan="3">No capability statements! Create one by clicking <a routerLink="/capability-statement/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="capabilityStatementsBundle && capabilityStatementsBundle.total > 0" >
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="capabilityStatementsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
