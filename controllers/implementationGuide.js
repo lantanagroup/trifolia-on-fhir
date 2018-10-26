@@ -55,6 +55,8 @@ router.get('/', checkJwt, (req, res) => {
         }
     };
 
+    log.debug('Searching implementation guides');
+
     request(options, (error, results, body) => {
         if (error) {
             console.log('Error retrieving implementation guides from FHIR server: ' + error);

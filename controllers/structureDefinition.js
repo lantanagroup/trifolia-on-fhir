@@ -191,6 +191,8 @@ function prepareSearchUrl(req) {
 
         // TODO: possibly change to _has:ImplementationGuide:resource:_id=ig.id
 
+        log.debug('Preparing search url for structure definitions');
+
         request(igUrl, { json: true }, (error, results, implementationGuide) => {
             if (error) {
                 return deferred.reject(error);
@@ -230,6 +232,8 @@ router.get('/', checkJwt, (req, res) => {
                     'Cache-Control': 'no-cache'
                 }
             };
+
+            log.debug('Searching structure definitions');
 
             request(options, (error, results, body) => {
                 if (error) {

@@ -30,6 +30,8 @@ router.get('/', checkJwt, (req, res) => {
         }
     };
 
+    log.debug('Searching questionnaires');
+
     request(options, (error, results, body) => {
         if (error) {
             log.error('Error retrieving audit events from FHIR server: ' + error);

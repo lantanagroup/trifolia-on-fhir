@@ -17,8 +17,14 @@ export class OperationDefinitionService {
         }
     }
 
-    public search() {
-        return this.http.get<Bundle>('/api/operationDefinition?_summary=true');
+    public search(page = 1, name?: string) {
+        let url = '/api/operationDefinition?page=' + page + '&';
+
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        return this.http.get<Bundle>(url);
     }
 
     public get(id: string) {

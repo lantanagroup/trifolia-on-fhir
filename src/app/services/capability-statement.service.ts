@@ -17,8 +17,8 @@ export class CapabilityStatementService {
         }
     }
 
-    public search(name?: string) {
-        let url = '/api/capabilityStatement?_summary=true&';
+    public search(page = 1, name?: string) {
+        let url = '/api/capabilityStatement?page=' + page + '&';
 
         if (name) {
             url += 'name=' + encodeURIComponent(name) + '&';

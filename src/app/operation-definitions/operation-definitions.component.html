@@ -2,14 +2,20 @@
 <app-tooltip-icon tooltipKey="operationdefinition.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-           placeholder="Search" [disabled]="true">
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search">
     <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
         <button type="button" class="btn btn-default" title="Refresh" (click)="getOperationDefinitions()">
             <i class="fa fa-search"></i>
         </button>
     </div>
 </div>
+
+<br />
+
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>
@@ -40,7 +46,9 @@
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="3">{{operationDefinitions.length}} total capability statements</td>
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+        </td>
     </tr>
     </tfoot>
 </table>

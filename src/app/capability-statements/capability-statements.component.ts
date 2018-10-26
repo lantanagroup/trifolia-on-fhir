@@ -70,7 +70,7 @@ export class CapabilityStatementsComponent implements OnInit {
 
     public getCapabilityStatements() {
         this.capabilityStatementsBundle = null;
-        this.csService.search(this.nameText)
+        this.csService.search(this.page, this.nameText)
             .subscribe((results) => {
                 this.capabilityStatementsBundle = results;
             }, (err) => {
