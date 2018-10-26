@@ -6,11 +6,11 @@ const path = require('path');
 const fs = require('fs-extra');
 const zipdir = require('zip-dir');
 const log4js = require('log4js');
-const log = log4js.getLogger();
 const BundleExporter = require('../export/bundle');
 const HtmlExporter = require('../export/html');
 
 const htmlExports = [];
+const log = log4js.getLogger();
 
 function exportBundle(req, res) {
     const exporter = new BundleExporter(req.fhirServerBase, req.headers['fhirserver'], req.fhir, req.params.implementationGuideId);

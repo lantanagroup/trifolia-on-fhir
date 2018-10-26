@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ValueSetService} from '../services/value-set.service';
-import {Bundle, DomainResource, Resource, ValueSet} from '../models/stu3/fhir';
+import {Bundle, ValueSet} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
     selector: 'app-valuesets',

@@ -15,7 +15,7 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
 
 <table class="table table-striped">
     <thead>

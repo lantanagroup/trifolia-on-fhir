@@ -6,10 +6,10 @@ const config = require('config');
 const _ = require('underscore');
 const FhirHelper = require('../fhirHelper');
 const log4js = require('log4js');
-const log = log4js.getLogger();
 
 const thisResourceType = 'Questionnaire';
 const fhirConfig = config.get('fhir');
+const log = log4js.getLogger();
 
 router.get('/', checkJwt, (req, res) => {
     const queryParams = { _summary: true, _count: 10 };
