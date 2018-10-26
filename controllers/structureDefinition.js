@@ -8,12 +8,12 @@ const fhirConfig = config.get('fhir');
 const semver = require('semver');
 const {resolve} = require('url');
 const log4js = require('log4js');
-const log = log4js.getLogger();
 const Q = require('q');
 const FhirHelper = require('../fhirHelper');
 const rp = require('request-promise');
 
 const thisResourceType = 'StructureDefinition';
+const log = log4js.getLogger();
 
 function saveAdditionalOptions(req, structureDefinition) {
     if (!req.body.options) {

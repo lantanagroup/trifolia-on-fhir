@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {CodeSystemService} from '../services/code-system.service';
-import {CodeSystem} from '../models/stu3/fhir';
+import {Bundle, CodeSystem} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../services/config.service';
+import {Subject} from 'rxjs';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
     selector: 'app-codesystems',
@@ -12,18 +14,41 @@ import {ConfigService} from '../services/config.service';
     styleUrls: ['./codesystems.component.css']
 })
 export class CodesystemsComponent implements OnInit {
-    public codeSystems: CodeSystem[];
-    public contentText: string;
+    public codeSystemsBundle: Bundle;
+    public nameText: string;
+    public page = 1;
+    public criteriaChangedEvent = new Subject();
 
     constructor(
         private configService: ConfigService,
         private codeSystemService: CodeSystemService,
         private modalService: NgbModal) {
 
+        this.criteriaChangedEvent
+            .debounceTime(500)
+            .subscribe(() => {
+                this.getCodeSystems();
+            });
     }
 
-    public contentTextChanged(value: string) {
+    public get codeSystems(): CodeSystem[] {
+        if (!this.codeSystemsBundle) {
+            return [];
+        }
 
+        return _.map(this.codeSystemsBundle.entry, (entry) => <CodeSystem> entry.resource);
+    }
+
+    public nameTextChanged(value: string) {
+        this.nameText = value;
+        this.page = 1;
+        this.criteriaChangedEvent.next();
+    }
+
+    public clearFilters() {
+        this.nameText = null;
+        this.page = 1;
+        this.criteriaChangedEvent.next();
     }
 
     public remove(codeSystem: CodeSystem) {
@@ -50,9 +75,11 @@ export class CodesystemsComponent implements OnInit {
     }
 
     public getCodeSystems() {
-        this.codeSystemService.search()
+        this.codeSystemService.search(this.page, this.nameText)
             .subscribe((results) => {
-                this.codeSystems = _.map(results.entry, (entry) => <CodeSystem> entry.resource);
+                this.codeSystemsBundle = results;
+            }, (err) => {
+                this.configService.handleError(err, 'An error occurred while searching for code systems');
             });
     }
 

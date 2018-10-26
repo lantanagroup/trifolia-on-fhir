@@ -20,8 +20,14 @@ export class CodeSystemService {
         }
     }
 
-    public search() {
-        return this.http.get<Bundle>('/api/codeSystem?_summary=true');
+    public search(page = 1, name?: string) {
+        let url = '/api/codeSystem?page=' + page + '&';
+
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        return this.http.get<Bundle>(url);
     }
 
     public get(id: string) {

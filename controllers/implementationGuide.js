@@ -5,7 +5,9 @@ const request = require('request');
 const _ = require('underscore');
 const config = require('config');
 const rp = require('request-promise');
+const log4js = require('log4js');
 
+const log = log4js.getLogger();
 const fhirConfig = config.get('fhir');
 const thisResourceType = 'ImplementationGuide';
 

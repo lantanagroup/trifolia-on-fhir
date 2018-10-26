@@ -5,9 +5,9 @@ const request = require('request').defaults({ json: true });
 const _ = require('underscore');
 const fhirHelper = require('../fhirHelper');
 const log4js = require('log4js');
-const log = log4js.getLogger();
 
 const thisResourceType = 'OperationDefinition';
+const log = log4js.getLogger();
 
 router.get('/', checkJwt, (req, res) => {
     const queryParams = { _summary: true, _count: 10 };
