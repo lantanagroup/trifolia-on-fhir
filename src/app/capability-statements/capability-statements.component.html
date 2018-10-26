@@ -2,45 +2,59 @@
 <app-tooltip-icon tooltipKey="capabilitystatement.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-  <input type="text" class="form-control" [ngModel]="contentText" (ngModelChange)="contentTextChanged($event)"
-         placeholder="Search" [disabled]="true">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default" title="Refresh" (click)="getCapabilityStatements()">
-      <i class="fa fa-search"></i>
-    </button>
-  </div>
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
+        <button type="button" class="btn btn-default" title="Refresh" (click)="getCapabilityStatements()">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
 </div>
 
+<br/>
+
+<ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="capabilityStatementsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+
 <table class="table table-striped">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>
-      <div class="pull-right">
-        <button type="button" class="btn btn-default" routerLink="/capability-statement/new" title="Create a new capability statement">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let cs of capabilityStatements">
-    <td>{{cs.id}}</td>
-    <td>{{cs.name}}</td>
-    <td>
-      <div class="btn-group pull-right">
-        <a class="btn btn-default" routerLink="/capability-statement/{{cs.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
-        <button type="button" class="btn btn-default" (click)="remove(cs)" title="Remove this resource"><i class="fa fa-remove"></i></button>
-        <button type="button" class="btn btn-default" (click)="changeId(cs)" title="Change this resource's ID"><i class="fa fa-id-badge"></i></button>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="3">{{capabilityStatements.length}} total capability statements</td>
-  </tr>
-  </tfoot>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" routerLink="/capability-statement/new" title="Create a new capability statement">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let cs of capabilityStatements">
+        <td>{{cs.id}}</td>
+        <td>{{cs.name}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" routerLink="/capability-statement/{{cs.id}}" title="Edit this resource">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-default" (click)="remove(cs)" title="Remove this resource">
+                    <i class="fa fa-remove"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="changeId(cs)" title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="capabilityStatementsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+        </td>
+    </tr>
+    </tfoot>
 </table>

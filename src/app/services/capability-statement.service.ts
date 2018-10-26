@@ -17,8 +17,14 @@ export class CapabilityStatementService {
         }
     }
 
-    public search() {
-        return this.http.get<Bundle>('/api/capabilityStatement?_summary=true');
+    public search(name?: string) {
+        let url = '/api/capabilityStatement?_summary=true&';
+
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        return this.http.get<Bundle>(url);
     }
 
     public get(id: string) {
