@@ -22,8 +22,14 @@ export class QuestionnaireService {
         }
     }
 
-    public search() {
-        return this.http.get<Bundle>('/api/questionnaire?_summary=true');
+    public search(page = 1, name?: string) {
+        let url = '/api/questionnaire?page=' + encodeURIComponent(page.toString()) + '&';
+
+        if (name) {
+            url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        return this.http.get<Bundle>(url);
     }
 
     public get(id: string) {
