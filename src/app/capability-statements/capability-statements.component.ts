@@ -17,6 +17,7 @@ export class CapabilityStatementsComponent implements OnInit {
     public capabilityStatementsBundle: Bundle;
     public nameText: string;
     public criteriaChangedEvent = new Subject();
+    public page = 1;
 
     constructor(
         private configService: ConfigService,
@@ -54,6 +55,7 @@ export class CapabilityStatementsComponent implements OnInit {
 
     public nameTextChanged(value: string) {
         this.nameText = value;
+        this.page = 1;
         this.criteriaChanged();
     }
 
@@ -81,7 +83,7 @@ export class CapabilityStatementsComponent implements OnInit {
         this.criteriaChanged();
     }
 
-    private criteriaChanged() {
+    public criteriaChanged() {
         this.criteriaChangedEvent.next();
     }
 

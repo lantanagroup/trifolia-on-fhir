@@ -72,26 +72,6 @@ export class StructureDefinitionsComponent implements OnInit {
         });
     }
 
-    public lastPage() {
-        this.page = this.response.pages;
-        this.criteriaChanged();
-    }
-
-    public firstPage() {
-        this.page = 1;
-        this.criteriaChanged();
-    }
-
-    public nextPage() {
-        this.page = this.page + 1;
-        this.criteriaChanged();
-    }
-
-    public previousPage() {
-        this.page = this.page - 1;
-        this.criteriaChanged();
-    }
-
     public criteriaChanged() {
         this.criteriaChangedEvent.next();
     }
@@ -112,6 +92,7 @@ export class StructureDefinitionsComponent implements OnInit {
         this.nameText = null;
         this.urlText = null;
         this.implementationGuideId = null;
+        this.page = 1;
         this.criteriaChanged();
     }
 
