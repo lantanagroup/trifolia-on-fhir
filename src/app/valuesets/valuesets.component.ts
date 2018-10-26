@@ -42,6 +42,7 @@ export class ValuesetsComponent implements OnInit {
     public clearFilters() {
         this.nameText = null;
         this.urlText = null;
+        this.page = 1;
         this.criteriaChanged();
     }
 
@@ -60,16 +61,6 @@ export class ValuesetsComponent implements OnInit {
             }, (err) => {
                 this.message = err;
             });
-    }
-
-    public nextPage() {
-        this.page = this.page + 1;
-        this.criteriaChanged();
-    }
-
-    public previousPage() {
-        this.page = this.page - 1;
-        this.criteriaChanged();
     }
 
     public criteriaChanged() {

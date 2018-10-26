@@ -33,6 +33,7 @@ export class ImplementationGuidesComponent implements OnInit {
 
     public clearFilters() {
         this.nameText = null;
+        this.page = 1;
         this.criteriaChanged();
     }
 
@@ -79,6 +80,7 @@ export class ImplementationGuidesComponent implements OnInit {
 
     public nameTextChanged(value: string) {
         this.nameText = value;
+        this.page = 1;
         this.criteriaChanged();
     }
 
