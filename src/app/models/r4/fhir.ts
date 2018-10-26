@@ -13314,7 +13314,7 @@ export class ImplementationGuide extends DomainResource {
     public version?: string;
     public name: string;
     public title?: string;
-    public status: string;
+    public status = 'draft';
     public experimental?: boolean;
     public date?: Date;
     public publisher?: string;
