@@ -189,11 +189,13 @@
                 <fieldset>
                     <div class="row">
                         <div class="col-md-8">
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true"></app-fhir-string>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="ImplementationGuide.name"></app-fhir-string>
 
-                            <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts"></app-fhir-multi-contact>
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
+
+                            <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
 
                             <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
                         </div>
@@ -201,7 +203,10 @@
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version"></app-fhir-string>
 
                             <div class="form-group">
-                                <label>Status</label>
+                                <label>
+                                    <span>Status </span>
+                                    <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
+                                </label>
                                 <select class="form-control" [(ngModel)]="implementationGuide.status">
                                     <option [ngValue]="'draft'">Draft</option>
                                     <option [ngValue]="'active'">Active</option>
@@ -210,7 +215,7 @@
                                 </select>
                             </div>
 
-                            <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+                            <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
                         </div>
                     </div>
                 </fieldset>
@@ -219,11 +224,11 @@
 
         <ngb-tab id="narrative" title="Narrative">
             <ng-template ngbTabContent>
-                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
 
-                <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher"></app-fhir-string>
+                <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
 
-                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
             </ng-template>
         </ngb-tab>
 
@@ -231,15 +236,18 @@
         <ngb-tab id="globals" title="Globals">
             <ng-template ngbTabContent>
                 <p>
-                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
-                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/> Allow globals
+                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/> Allow globals
                 </p>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
                     <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Profile</th>
+                        <th>
+                            Type <app-tooltip-icon tooltipPath="ImplementationGuide.global.type"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Profile <app-tooltip-icon tooltipPath="ImplementationGuide.global.profile"></app-tooltip-icon>
+                        </th>
                         <th class="actions-column-1">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-primary" title="Add global"
@@ -282,9 +290,15 @@
                 <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.package">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
+                        <th>
+                            ID <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.id"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Name <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.name"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Description <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.description"></app-tooltip-icon>
+                        </th>
                         <th class="actions-column-1">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Add a package to the implementation guide" (click)="implementationGuide.definition.package.push({ id: 'new-id', name: 'New Package' })">
@@ -327,11 +341,21 @@
                 <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
                     <thead>
                     <tr>
-                        <th>Reference</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th style="width: 150px;">Example?</th>
-                        <th style="width: 225px;">Package</th>
+                        <th>
+                            Reference <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.reference"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Name <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.name"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Description <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
+                        </th>
+                        <th style="width: 150px;">
+                            Example? <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.example[x]"></app-tooltip-icon>
+                        </th>
+                        <th style="width: 225px;">
+                            Package <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.package"></app-tooltip-icon>
+                        </th>
                         <th class="actions-column-1">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Add a resource to the implementation guide" (click)="implementationGuide.definition.resource.push({ reference: { reference: '', display: '' } })">
@@ -356,14 +380,10 @@
                             <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
                         </td>
                         <td>
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <input type="checkbox" [ngModel]="resource.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(resource, 'package', getDefaultPackageId())" [disabled]="!implementationGuide.definition.package || implementationGuide.definition.package.length === 0" />
-                                </div>
-                                <select class="form-control" [(ngModel)]="resource.package" [disabled]="!resource.hasOwnProperty('package')">
-                                    <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
-                                </select>
-                            </div>
+                            <select class="form-control" [(ngModel)]="resource.package">
+                                <option [ngValue]="undefined">Unspecified</option>
+                                <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
+                            </select>
                         </td>
                         <td>
                             <div class="pull-right">
@@ -386,8 +406,12 @@
                 <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
                     <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Generation</th>
+                        <th>
+                            Title <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
+                        </th>
+                        <th>
+                            Generation <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.generation"></app-tooltip-icon>
+                        </th>
                         <th class="actions-column-5">&nbsp;</th>
                     </tr>
                     </thead>

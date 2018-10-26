@@ -20,7 +20,25 @@ export class BooleanComponent implements OnInit {
         public globals: Globals) {
     }
 
-    ngOnInit() {
+    public get value(): boolean {
+        if (!this.parentObject) {
+            return;
+        }
+
+        return this.parentObject[this.propertyName];
     }
 
+    public set value(newValue: boolean) {
+        if (newValue !== true && newValue !== false && this.parentObject.hasOwnProperty(this.propertyName)) {
+            delete this.parentObject[this.propertyName];
+        } else if (newValue === true || newValue === false) {
+            this.parentObject[this.propertyName] = newValue;
+        }
+    }
+
+    ngOnInit() {
+        if (!this.parentObject.hasOwnProperty(this.propertyName) && this.required) {
+            this.parentObject[this.propertyName] = false;
+        }
+    }
 }

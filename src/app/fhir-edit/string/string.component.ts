@@ -24,6 +24,22 @@ export class StringComponent implements OnInit {
 
     }
 
+    public get value() {
+        if (!this.parentObject[this.propertyName]) {
+            return '';
+        }
+
+        return this.parentObject[this.propertyName];
+    }
+
+    public set value(newValue: string) {
+        if (!newValue && this.parentObject[this.propertyName]) {
+            delete this.parentObject[this.propertyName];
+        } else if (newValue) {
+            this.parentObject[this.propertyName] = newValue;
+        }
+    }
+
     public onChanged() {
         this.change.emit(this.parentObject[this.propertyName]);
     }
