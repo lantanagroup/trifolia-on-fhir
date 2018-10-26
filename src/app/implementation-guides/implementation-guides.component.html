@@ -4,6 +4,9 @@
 <div class="input-group">
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <div class="input-group-btn">
+        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
         <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
             <i class="fa fa-search"></i>
         </button>
@@ -21,9 +24,6 @@
         <th>Name</th>
         <th>
             <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
-                    <i class="fa fa-times"></i>
-                </button>
                 <button type="button" class="btn btn-default" routerLink="/implementation-guide/new" title="Create a new implementation guide">
                     <i class="fa fa-plus"></i>
                 </button>

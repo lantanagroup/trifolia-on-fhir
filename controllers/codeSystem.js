@@ -10,8 +10,18 @@ const log = log4js.getLogger();
 const thisResourceType = 'CodeSystem';
 
 router.get('/', checkJwt, (req, res) => {
+    const queryParams = { _summary: true, _count: 10 };
+
+    if (req.query.name) {
+        queryParams['name:contains'] = req.query.name;
+    }
+
+    if (req.query.page && parseInt(req.query.page) != 1) {
+        queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * 10;
+    }
+
     const options = {
-        url: req.getFhirServerUrl(thisResourceType, null, null, req.query),
+        url: req.getFhirServerUrl(thisResourceType, null, null, queryParams),
         json: true,
         headers: {
             'Cache-Control': 'no-cache'
