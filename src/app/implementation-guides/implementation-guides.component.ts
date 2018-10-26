@@ -84,7 +84,7 @@ export class ImplementationGuidesComponent implements OnInit {
         this.criteriaChanged();
     }
 
-    private criteriaChanged() {
+    public criteriaChanged() {
         this.criteriaChangedEvent.next();
     }
 
