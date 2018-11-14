@@ -308,7 +308,7 @@ export class ImportComponent implements OnInit {
                     } else {
                         throw new Error(`${file.path} does not appear to be a valid JSON or XML file.`);
                     }
-                    
+
                     if (!entry.resource.extension) {
                         entry.resource.extension = [];
                     }
