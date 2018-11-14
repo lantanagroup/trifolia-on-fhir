@@ -111,6 +111,11 @@
             </div>
         </ng-template>
     </ngb-tab>
+    <ngb-tab id="github" title="GitHub">
+        <ng-template ngbTabContent>
+            <app-import-github-panel #importGithubPanel></app-import-github-panel>
+        </ng-template>
+    </ngb-tab>
     <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
         <ng-template ngbTabContent>
             <div *ngIf="outcome">

@@ -25,7 +25,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
               "src/styles.css",
-              "src/simplemde.min.css"
+              "src/simplemde.min.css",
+              "node_modules/ng2-tree/styles.css"
             ],
             "scripts": [
               "node_modules/auth0-js/build/auth0.js",

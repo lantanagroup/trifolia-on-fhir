@@ -12,6 +12,10 @@
   "import": {
     "phinVadsUrl": "https://phinvads.cdc.gov/vocabService/v2"
   },
+  "github": {
+    "clientId": "",
+    "secret": ""
+  },
   "fhir": {
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
     "latestPublisher": "http://build.fhir.org/org.hl7.fhir.igpublisher.jar",
