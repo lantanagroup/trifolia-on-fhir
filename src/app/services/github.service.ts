@@ -63,6 +63,23 @@ export interface BranchModel {
     protection_url: string;
 }
 
+export interface UserModel {
+    login: string;
+    id: string;
+    node_id: string;
+    avatar_url: string;
+    html_url: string;
+    url: string;
+    repos_url: string;
+    type: string;
+    site_admin: boolean;
+    name: string;
+    company: string;
+    blog: string;
+    location: string;
+    email: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -90,7 +107,7 @@ export class GithubService {
     private getOptions() {
         return {
             headers: {
-                'Accept': 'application/json',
+                'Accept': 'application/vnd.github.v3+json',
                 'Authorization': 'Bearer ' + this.token
             }
         };
@@ -123,11 +140,30 @@ export class GithubService {
         });
     }
 
+    public getUser(): Observable<UserModel> {
+        return new Observable<UserModel>((observer) => {
+            this.login()
+                .subscribe(() => {
+                    this.http.get<UserModel>('https://api.github.com/user', this.getOptions())
+                        .subscribe((user) => {
+                            observer.next(user);
+                            observer.complete();
+                        }, (err) => {
+                            observer.error(err);
+                            observer.complete();
+                        });
+                }, (err) => {
+                    observer.error(err);
+                    observer.complete();
+                });
+        });
+    }
+
     public getRepositories(): Observable<RepositoryModel[]> {
         return new Observable<RepositoryModel[]>((observer) => {
             this.login()
                 .subscribe(() => {
-                    this.http.get<RepositoryModel[]>('https://api.github.com/user/repos', this.getOptions())
+                    this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100', this.getOptions())
                         .subscribe((repositories) => {
                             observer.next(repositories);
                             observer.complete();
