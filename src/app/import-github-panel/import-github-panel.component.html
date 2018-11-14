@@ -1,0 +1,24 @@
+<div class="alert alert-warning" *ngIf="message">{{message}}</div>
+
+<div class="row" *ngIf="githubService.token">
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
+        <div class="form-group">
+            <label>Select a repository</label>
+            <select class="form-control" [(ngModel)]="repositoryId" (change)="repositoryChanged()">
+                <option *ngFor="let repo of repositories" [ngValue]="repo.id">{{repo.owner.login}}: {{repo.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6" *ngIf="repositoryId">
+        <div class="form-group">
+            <label>Select a branch</label>
+            <select class="form-control" [(ngModel)]="branchName" (change)="branchChanged()">
+                <option *ngFor="let b of branches">{{b.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12" *ngIf="tree">
+        <label>Select files</label>
+        <tree [tree]="tree" [settings]="{ rootIsVisible: false, showCheckboxes: true }" (nodeChecked)="handleSelected($event)" (nodeUnchecked)="handleUnselected($event)" #treeComponent></tree>
+    </div>
+</div>

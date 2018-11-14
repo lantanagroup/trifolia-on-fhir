@@ -24,6 +24,8 @@ const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
 const log4js = require('log4js');
+const rp = require('request-promise');
+const fs = require('fs');
 
 const fhirStu3 = FhirHelper.getFhirStu3Instance();
 const fhirR4 = FhirHelper.getFhirR4Instance();
@@ -31,6 +33,7 @@ const fhirR4 = FhirHelper.getFhirR4Instance();
 const app = express();
 const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
+const githubConfig = config.get('github');
 
 log4js.configure('config/log4js.json');
 const log = log4js.getLogger();
@@ -203,11 +206,39 @@ app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 app.use('/api/manage', manageController);
 
+// Host extensions at /stu3/StructureDefinition/XXX and /r4/StructureDefinition/XXX
 FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
 
 // Catch all other routes and return the index file
 app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
+
+app.get('/github/callback', function(req, res) {
+    const code = req.query.code;
+    const clientId = githubConfig.clientId;
+    const secret = githubConfig.secret;
+    const url = 'https://github.com/login/oauth/access_token?client_id=' + encodeURIComponent(clientId) + '&client_secret=' + encodeURIComponent(secret) + '&code=' + encodeURIComponent(code);
+    let templateContent = fs.readFileSync('src/assets/github-callback.html').toString();
+
+    res.contentType('text/html');
+
+    rp({
+        url: url,
+        method: 'POST',
+        json: true,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then((data) => {
+            templateContent = templateContent.replace('%ACCESS_TOKEN%', data['access_token']);
+            res.send(templateContent);
+        })
+        .catch((err) => {
+            templateContent = templateContent.replace('%ACCESS_TOKEN%', '');
+            res.send(templateContent);
+        });
+});
 
 app.get('*', (req, res) => {
     if (req.originalUrl.startsWith('/igs/')) {

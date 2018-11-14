@@ -118,6 +118,8 @@ import {RouteTransformerDirective} from './route-transformer.directive';
 import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 import {MappingModalComponent} from './element-definition-panel/mapping-modal/mapping-modal.component';
 import { SettingsModalComponent } from './settings-modal/settings-modal.component';
+import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
+import {TreeModule} from 'ng2-tree';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -129,12 +131,14 @@ export class AddHeaderInterceptor implements HttpInterceptor {
         const fhirServer = localStorage.getItem('fhirServer');
         const headers = {};
 
-        if (token) {
-            headers['Authorization'] = 'Bearer ' + token;
-        }
+        if (req.url.startsWith('/')) {
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
 
-        if (fhirServer) {
-            headers['fhirServer'] = fhirServer;
+            if (fhirServer) {
+                headers['fhirServer'] = fhirServer;
+            }
         }
 
         const clonedRequest = req.clone({
@@ -317,7 +321,8 @@ export function getConfig(configService: ConfigService) {
         RouteTransformerDirective,
         ImplementationGuidesPanelComponent,
         MappingModalComponent,
-        SettingsModalComponent
+        SettingsModalComponent,
+        ImportGithubPanelComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -331,7 +336,8 @@ export function getConfig(configService: ConfigService) {
         HttpClientModule,
         HttpModule,
         NgbModule.forRoot(),
-        FileDropModule
+        FileDropModule,
+        TreeModule
     ],
     providers: [
         ConfigService,

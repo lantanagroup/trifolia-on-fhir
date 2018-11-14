@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../services/import.service';
 import {Bundle, DomainResource, EntryComponent, OperationOutcome, RequestComponent} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
@@ -7,6 +7,10 @@ import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
+import {AuthService} from '../services/auth.service';
+import {ContentModel, GithubService} from '../services/github.service';
+import {ImportGithubPanelComponent} from '../import-github-panel/import-github-panel.component';
+import {forkJoin} from 'rxjs';
 
 enum ContentTypes {
     Json,
@@ -37,14 +41,19 @@ export class ImportComponent implements OnInit {
     public activeTab = 'file';
     public vsacCriteria = new VSACImportCriteria();
     public rememberVsacCredentials: boolean;
+    public githubSelectedPaths: string[] = [];
     private readonly vsacUsernameCookieKey = 'vsac_username';
     private readonly vsacPasswordCookieKey = 'vsac_password';
+
+    @ViewChild('importGithubPanel')
+    private importGithubPanel: ImportGithubPanelComponent;
 
     constructor(
         public fhirService: FhirService,
         private importService: ImportService,
         private cdr: ChangeDetectorRef,
-        private cookieService: CookieService) {
+        private cookieService: CookieService,
+        public githubService: GithubService) {
 
         const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
         const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
@@ -259,6 +268,96 @@ export class ImportComponent implements OnInit {
             });
     }
 
+    public importGithub(tabSet: NgbTabset) {
+        const observables = _.map(this.importGithubPanel.selectedPaths, (selectedPath: string) => {
+            return this.githubService.getAllContents(this.importGithubPanel.ownerLogin, this.importGithubPanel.repositoryName, this.importGithubPanel.branchName, selectedPath);
+        });
+
+        forkJoin(observables).subscribe((results) => {
+            let allFiles = [];
+
+            _.each(results, (files) => {
+                allFiles = allFiles.concat(files);
+            });
+
+            const notSupportedFiles = _.chain(allFiles)
+                .filter((file: ContentModel) => !file.name.endsWith('.xml') && !file.name.endsWith('.json'))
+                .map((file: ContentModel) => file.name)
+                .value();
+
+            if (notSupportedFiles.length > 0) {
+                this.message = `One or more files are not XML or JSON files. Please un-select them before continuing: ${notSupportedFiles.join(', ')}`;
+                return;
+            }
+
+            try {
+                const bundle = new Bundle();
+                bundle.type = 'transaction';
+                bundle.entry = _.map(allFiles, (file: ContentModel) => {
+                    const decodedContent = atob(file.content);
+                    const entry = new EntryComponent();
+
+                    if (decodedContent.startsWith('{')) {
+                        entry.resource = JSON.parse(decodedContent);
+                    } else if (decodedContent.startsWith('<')) {
+                        try {
+                            entry.resource = this.fhirService.deserialize(decodedContent);
+                        } catch (ex) {
+                            throw new Error(`An error occurred while converting ${file.path} from XML to JSON: ${ex.message}`);
+                        }
+                    } else {
+                        throw new Error(`${file.path} does not appear to be a valid JSON or XML file.`);
+                    }
+                    
+                    if (!entry.resource.extension) {
+                        entry.resource.extension = [];
+                    }
+
+                    entry.resource.extension.push({
+                        url: 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
+                        valueString: this.importGithubPanel.branchName
+                    });
+                    entry.resource.extension.push({
+                        url: 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
+                        valueString: this.importGithubPanel.ownerLogin + '/' + this.importGithubPanel.repositoryName + file.path
+                    });
+
+                    entry.request.method = entry.resource.id ? 'PUT' : 'POST';
+                    entry.request.url = entry.resource.resourceType + (entry.resource.id ? '/' + entry.resource.id : '');
+                    entry.resource = entry.resource;
+
+                    return entry;
+                });
+
+                const json = JSON.stringify(bundle, null, '\t');
+                this.importService.import('json', json)
+                    .subscribe((importResults: OperationOutcome|Bundle) => {
+                        if (importResults.resourceType === 'OperationOutcome') {
+                            this.outcome = <OperationOutcome> importResults;
+                        } else if (importResults.resourceType === 'Bundle') {
+                            this.resultsBundle = <Bundle> importResults;
+                        }
+
+                        this.files = [];
+                        this.message = 'Done importing';
+                        setTimeout(() => {
+                            tabSet.select('results');
+                        });
+                    }, (err) => {
+                        if (err && err.message) {
+                            this.message = 'Error while importing: ' + err.message;
+                        } else {
+                            this.message = err;
+                        }
+                    });
+            } catch (ex) {
+                this.message = ex.message;
+            }
+        }, (err) => {
+            this.message = err.message || err;
+        });
+    }
+
     public import(tabSet: NgbTabset) {
         this.outcome = null;
         this.resultsBundle = null;
@@ -270,6 +369,8 @@ export class ImportComponent implements OnInit {
             this.importFiles(tabSet);
         } else if (this.activeTab === 'vsac') {
             this.importVsac(tabSet);
+        } else if (this.activeTab === 'github') {
+            this.importGithub(tabSet);
         }
     }
 
@@ -280,6 +381,8 @@ export class ImportComponent implements OnInit {
             return !this.textContent;
         } else if (this.activeTab === 'vsac') {
             return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password || !this.vsacCriteria.resourceType;
+        } else if (this.activeTab === 'github') {
+            return this.importGithubPanel.selectedPaths.length === 0;
         }
 
         return true;
