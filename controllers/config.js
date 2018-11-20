@@ -1,12 +1,14 @@
 const express = require('express');
-const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const config = require('config');
 const _ = require('underscore');
-const fhirConfig = config.get('fhir');
-const authConfig = config.get('auth');
 const request = require('request');
 const log4js = require('log4js');
+
+const fhirConfig = config.get('fhir');
+const authConfig = config.get('auth');
+const githubConfig = config.get('github');
+const router = express.Router();
 const log = log4js.getLogger();
 
 router.get('/', (req, res) => {
@@ -16,6 +18,9 @@ router.get('/', (req, res) => {
             clientId: authConfig.clientId,
             scope: authConfig.scope,
             domain: authConfig.domain
+        },
+        github: {
+            clientId: githubConfig.clientId
         }
     };
 

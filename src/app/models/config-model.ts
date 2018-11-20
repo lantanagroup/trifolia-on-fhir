@@ -1,12 +1,17 @@
 import {ConfigFhirServerModel} from './config-fhir-server-model';
 
 export class AuthConfigModel {
-    public clientId: string;
-    public domain: string;
-    public scope: string;
+    clientId: string;
+    domain: string;
+    scope: string;
+}
+
+export class GithubConfigModel {
+    clientId: string;
 }
 
 export class ConfigModel {
     public fhirServers: ConfigFhirServerModel[];
     public auth: AuthConfigModel;
+    public github: GithubConfigModel;
 }

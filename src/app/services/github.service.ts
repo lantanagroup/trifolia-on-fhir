@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import * as _ from 'underscore';
 import * as SHA from 'js-sha1';
+import {ConfigService} from './config.service';
 
 export interface RepositoryOwnerModel {
     login: string;
@@ -91,6 +92,7 @@ export class GithubService {
     private readonly tokenKey = 'github-token';
 
     constructor(
+        private configService: ConfigService,
         private http: HttpClient) {
 
         this.token = localStorage.getItem(this.tokenKey);
@@ -134,10 +136,13 @@ export class GithubService {
 
     public login(): Observable<any> {
         if (this.token) {
-            return new Observable((observer) => observer.next());
+            return new Observable((observer) => {
+                observer.next();
+                observer.complete();
+            });
         }
 
-        const url = 'https://github.com/login/oauth/authorize?client_id=3c6a5975e04b6feb6de2&scope=user,repo&allow_signup=false';
+        const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false';
         const activeWin = window.open(url,'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
 
         return new Observable<any>((observer) => {

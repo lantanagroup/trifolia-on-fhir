@@ -217,6 +217,14 @@ app.get('/github/callback', function(req, res) {
     const code = req.query.code;
     const clientId = githubConfig.clientId;
     const secret = githubConfig.secret;
+
+    if (!code) {
+        log.error('No code specified for GitHub callback');
+        return res.send('No code specified in GitHub callback');
+    }
+
+    log.debug(`Github callback initiated with code ${code}. Requesting token from GitHub with client id ${clientId}.`);
+
     const url = 'https://github.com/login/oauth/access_token?client_id=' + encodeURIComponent(clientId) + '&client_secret=' + encodeURIComponent(secret) + '&code=' + encodeURIComponent(code);
     let templateContent = fs.readFileSync('src/assets/github-callback.html').toString();
 
@@ -231,10 +239,14 @@ app.get('/github/callback', function(req, res) {
         }
     })
         .then((data) => {
+            log.debug(`Token received from GitHub, sending to client: ${data['access_token']}`);
+
             templateContent = templateContent.replace('%ACCESS_TOKEN%', data['access_token']);
             res.send(templateContent);
         })
         .catch((err) => {
+            log.error(`Error received from GitHub when requesting token: ${err}`);
+
             templateContent = templateContent.replace('%ACCESS_TOKEN%', '');
             res.send(templateContent);
         });
