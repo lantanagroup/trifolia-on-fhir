@@ -10,52 +10,35 @@
     </select>
 </div>
 
-<div class="form-group">
+<div class="form-group" *ngIf="options.implementationGuideId">
     <label>Export Format</label>
-    <select class="form-control" [(ngModel)]="options.exportFormat">
+    <select class="form-control" [(ngModel)]="options.exportFormat" (change)="exportFormatChanged()">
         <option [ngValue]="1">Bundle</option>
         <option [ngValue]="2">HTML (IG Publisher)</option>
+        <option [ngValue]="3">GitHub</option>
     </select>
 </div>
 
 <span class="help-block" *ngIf="options.exportFormat === 1">The "Bundle" export format is a Bundle of all resources referenced by the selected implementation guide, including the implementation guide resource.</span>
 <span class="help-block" *ngIf="options.exportFormat === 2">The "HTML (IG Publisher)" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>v3.6.0-8660b499</strong>). When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.</span>
+<span class="help-block" *ngIf="options.exportFormat === 3">The "GitHub" export format places all the resources within the IG in the specified GitHub repository/branch.</span>
 
-<div class="form-group" *ngIf="options.exportFormat == 2">
-    <label>Run the IG Publisher</label>
-    <select class="form-control" [(ngModel)]="options.executeIgPublisher">
-        <option [ngValue]="true">Yes</option>
-        <option [ngValue]="false">No</option>
-    </select>
+<div *ngIf="options.exportFormat === 2">
+    <ng-container *ngTemplateOutlet="htmlExport"></ng-container>
 </div>
 
-<div class="form-group" *ngIf="options.exportFormat == 2 && options.executeIgPublisher">
-    <label>Use latest FHIR IG Publisher</label>
-    <select class="form-control" [(ngModel)]="options.useLatest">
-        <option [ngValue]="true">Yes</option>
-        <option [ngValue]="false">No</option>
-    </select>
-    <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
+<div *ngIf="options.exportFormat === 3">
+    <div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to GitHub. If the file already exists in GitHub, it will be completely overwritten by this export.</div>
+
+    <div class="form-group" [class.is-invalid]="!githubCommitMessage">
+        <label>Commit Message</label>
+        <textarea class="form-control" [(ngModel)]="githubCommitMessage" placeholder="Required"></textarea>
+    </div>
+
+    <app-export-github-panel [resourcesBundle]="githubResourcesBundle"></app-export-github-panel>
 </div>
 
-<div class="form-group" *ngIf="options.exportFormat == 2 && options.executeIgPublisher">
-    <label>Use terminology server</label>
-    <select class="form-control" [(ngModel)]="options.useTerminologyServer">
-        <option [ngValue]="true">Yes</option>
-        <option [ngValue]="false">No</option>
-    </select>
-</div>
-
-<div class="form-group" *ngIf="options.exportFormat == 2 && options.executeIgPublisher">
-    <label>Download?</label>
-    <select class="form-control" [(ngModel)]="options.downloadOutput">
-        <option [ngValue]="true">Yes</option>
-        <option [ngValue]="false">No</option>
-    </select>
-    <div class="help-block">Selecting "Yes" will prompt you to download the entire contents of the build package after the FHIR IG publisher has finished executing.</div>
-</div>
-
-<div class="form-group">
+<div class="form-group" *ngIf="options.exportFormat !== 3">
     <label>Response Format</label>
     <select class="form-control" [(ngModel)]="options.responseFormat">
         <option value="application/json">JSON</option>
@@ -70,6 +53,42 @@
 </div>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="export()" [disabled]="!options.implementationGuideId || !options.exportFormat || !options.responseFormat">Export</button>
+    <button type="button" class="btn btn-default" (click)="export()" [disabled]="exportDisabled">Export</button>
     <span class="message">{{message}}</span>
 </footer>
+
+<ng-template #htmlExport>
+    <div class="form-group">
+        <label>Run the IG Publisher</label>
+        <select class="form-control" [(ngModel)]="options.executeIgPublisher">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+        </select>
+    </div>
+
+    <div class="form-group" *ngIf="options.executeIgPublisher">
+        <label>Use latest FHIR IG Publisher</label>
+        <select class="form-control" [(ngModel)]="options.useLatest">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+        </select>
+        <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
+    </div>
+
+    <div class="form-group" *ngIf="options.executeIgPublisher">
+        <label>Use terminology server</label>
+        <select class="form-control" [(ngModel)]="options.useTerminologyServer">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+        </select>
+    </div>
+
+    <div class="form-group" *ngIf="options.executeIgPublisher">
+        <label>Download?</label>
+        <select class="form-control" [(ngModel)]="options.downloadOutput">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+        </select>
+        <div class="help-block">Selecting "Yes" will prompt you to download the entire contents of the build package after the FHIR IG publisher has finished executing.</div>
+    </div>
+</ng-template>

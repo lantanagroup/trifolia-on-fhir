@@ -309,22 +309,15 @@ export class ImportComponent implements OnInit {
                         throw new Error(`${file.path} does not appear to be a valid JSON or XML file.`);
                     }
 
-                    if (!entry.resource.extension) {
-                        entry.resource.extension = [];
-                    }
-
-                    entry.resource.extension.push({
-                        url: 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
-                        valueString: this.importGithubPanel.branchName
-                    });
-                    entry.resource.extension.push({
-                        url: 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
-                        valueString: this.importGithubPanel.ownerLogin + '/' + this.importGithubPanel.repositoryName + file.path
+                    this.fhirService.setResourceGithubDetails(entry.resource, {
+                        owner: this.importGithubPanel.ownerLogin,
+                        repository: this.importGithubPanel.repositoryName,
+                        branch: this.importGithubPanel.branchName,
+                        path: file.path
                     });
 
                     entry.request.method = entry.resource.id ? 'PUT' : 'POST';
                     entry.request.url = entry.resource.resourceType + (entry.resource.id ? '/' + entry.resource.id : '');
-                    entry.resource = entry.resource;
 
                     return entry;
                 });
