@@ -9,6 +9,8 @@ export class Globals {
     public pageAsContainedBinary = true;
     public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
     public readonly extensionIgPageAutoGenerateToc = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc';
+    public readonly extensionGithubPath = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path';
+    public readonly extensionGithubBranch = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch';
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
         const keys = Object.keys(obj);

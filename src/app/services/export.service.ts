@@ -6,11 +6,11 @@ import {SocketService} from './socket.service';
 export class ExportOptions {
     public implementationGuideId: string;
     public exportFormat = ExportFormats.HTML;
-    public responseFormat = 'application/json';
-    public useTerminologyServer = true;
-    public executeIgPublisher = true;
-    public useLatest = false;
-    public downloadOutput = true;       // Only applies to HTML exports
+    public responseFormat? = 'application/json';
+    public useTerminologyServer? = true;
+    public executeIgPublisher? = true;
+    public useLatest? = false;
+    public downloadOutput? = true;       // Only applies to HTML exports
 }
 
 @Injectable()

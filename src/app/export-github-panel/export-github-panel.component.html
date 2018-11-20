@@ -1,0 +1,84 @@
+<div class="alert alert-info" *ngIf="message">{{message}}</div>
+
+<div class="row" *ngIf="resourcesBundle && !isChanging">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><input type="checkbox" [(ngModel)]="isAllChecked" /></th>
+                <th>Resource</th>
+                <th>Repository</th>
+                <th>Branch</th>
+                <th>Path</th>
+                <th>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-sm" [disabled]="checkedIds.length === 0" (click)="changeSelected()">Change Selected</button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let entry of resourcesBundle.entry">
+                <td><input type="checkbox" [ngModel]="isChecked(entry)" (ngModelChange)="setChecked(entry, $event)" /></td>
+                <td>{{entry.resource.resourceType}}: {{entry.resource.id}}</td>
+                <td>{{getRepositoryFromResource(entry.resource)}}</td>
+                <td>{{getBranchFromResource(entry.resource)}}</td>
+                <td>{{getPathFromResource(entry.resource)}}</td>
+                <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card" *ngIf="isChanging">
+    <div class="card-header">Change destination to {{checkedIds.length}} selected resources</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label>Select a repository</label>
+                    <select class="form-control" [(ngModel)]="newRepository" (change)="repositoryChanged()">
+                        <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}: {{repo.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="newRepository">
+                    <label>Select a branch</label>
+                    <select class="form-control" [(ngModel)]="newBranchName" (change)="branchChanged()">
+                        <option *ngFor="let b of branches">{{b.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="newBranchName">
+                    <label>Select format</label>
+                    <select class="form-control" [(ngModel)]="newType">
+                        <option value="xml">XML</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="newBranchName">
+                    <label>Directory per resource type?</label>
+                    <select class="form-control" [(ngModel)]="resourceTypeDir">
+                        <option [ngValue]="true">Yes</option>
+                        <option [ngValue]="false">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" *ngIf="tree">
+                <label>Select destination {{newPath}}</label>
+                <div class="input-group" *ngIf="newPath">
+                    <input type="text" class="form-control" [(ngModel)]="newFolderName" />
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" title="Add a new folder below the selected folder" (click)="addNewFolder()" [disabled]="!newFolderName || newFolderName.indexOf('/') >= 0">Add folder below selection</button>
+                    </div>
+                </div>
+                <tree [tree]="tree" (nodeSelected)="nodeSelected($event)" #treeComponent></tree>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" [disabled]="!newPath" (click)="okChanging()">OK</button>
+            <button type="button" class="btn btn-default" (click)="isChanging = false">Cancel</button>
+        </div>
+    </div>
+</div>

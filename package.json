@@ -40,6 +40,7 @@
     "font-awesome": "^4.7.0",
     "fs-extra": "^6.0.1",
     "jquery": "^3.2.1",
+    "js-sha1": "^0.6.0",
     "jwks-rsa": "^1.2.1",
     "log4js": "^3.0.5",
     "ng2-tree": "^2.0.0-rc.11",

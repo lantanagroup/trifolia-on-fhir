@@ -2,6 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import * as _ from 'underscore';
+import * as SHA from 'js-sha1';
 
 export interface RepositoryOwnerModel {
     login: string;
@@ -55,12 +56,12 @@ export interface ContentModel {
 
 export interface BranchModel {
     name: string;
-    commit: {
+    commit?: {
         sha: string;
         url: string;
     };
-    protected: boolean;
-    protection_url: string;
+    protected?: boolean;
+    protection_url?: string;
 }
 
 export interface UserModel {
@@ -244,6 +245,41 @@ export class GithubService {
                     this.http.get<ContentModel[]>(url, this.getOptions())
                         .subscribe((contents) => {
                             observer.next(contents);
+                            observer.complete();
+                        }, (err) => {
+                            observer.error(err);
+                            observer.complete();
+                        });
+                }, (err) => observer.error(err));
+        });
+    }
+
+    public updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
+        return new Observable<ContentModel[]>((observer) => {
+            this.login()
+                .subscribe(() => {
+                    let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+
+                    const sha = SHA(content);
+
+                    const data = {
+                        content: btoa(content),
+                        sha: sha
+                    };
+
+                    if (branchName) {
+                        data['branch'] = branchName;
+                    }
+
+                    if (message) {
+                        data['message'] = message;
+                    }
+
+                    this.http.put<any>(url, data, this.getOptions())
+                        .subscribe((contents) => {
+                            console.log(contents);
+
+                            observer.next();
                             observer.complete();
                         }, (err) => {
                             observer.error(err);

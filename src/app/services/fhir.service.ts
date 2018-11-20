@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {
     Bundle,
     CodeSystem,
-    Coding, ConceptDefinitionComponent, ConceptSetComponent, ImplementationGuide,
+    Coding, ConceptDefinitionComponent, ConceptSetComponent, DomainResource, ImplementationGuide,
     IssueComponent,
     OperationOutcome, PackageComponent, PackageResourceComponent,
     Resource,
@@ -19,11 +19,30 @@ import {Versions as FhirVersions} from 'fhir/fhir';
 import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 import {ValidatorMessage} from 'fhir/validator';
+import {Globals} from '../globals';
 
 export class ParsedUrlModel {
     public resourceType: string;
     public id: string;
     public historyId: string;
+}
+
+export interface IResourceGithubDetails {
+    owner: string;
+    repository: string;
+    branch: string;
+    path: string;
+}
+
+export class ResourceGithubDetails implements IResourceGithubDetails {
+    owner: string;
+    repository: string;
+    branch: string;
+    path: string;
+
+    public hasAllDetails(): boolean {
+        return !!(this.owner && this.repository && this.branch && this.path);
+    }
 }
 
 @Injectable()
@@ -39,6 +58,7 @@ export class FhirService {
 
     constructor(
         private http: HttpClient,
+        private globals: Globals,
         private configService: ConfigService) {
 
         this.customValidator = new CustomSTU3Validator(this);
@@ -98,6 +118,42 @@ export class FhirService {
         });
 
         return all;
+    }
+
+    public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails  {
+        const branchExtension = _.find(resource.extension, (extension) => extension.url === this.globals.extensionGithubBranch);
+        const pathExtension = _.find(resource.extension, (extension) => extension.url === this.globals.extensionGithubPath);
+        const pathSplit = pathExtension && pathExtension.valueString ? pathExtension.valueString.split('/') : [];
+
+        const details = new ResourceGithubDetails();
+        details.owner = pathSplit.length >= 1 ? pathSplit[0] : null;
+        details.repository = pathSplit.length >= 2 ? pathSplit[1] : null;
+        details.branch = branchExtension && branchExtension.valueString ? branchExtension.valueString : null;
+        details.path = pathSplit.length >= 3 ? pathSplit.slice(2).join('/') : null;
+
+        return details;
+    }
+
+    public setResourceGithubDetails(resource: DomainResource, details: IResourceGithubDetails) {
+        if (!resource.extension) {
+            resource.extension = [];
+        }
+
+        let branchExtension = _.find(resource.extension, (extension) => extension.url === this.globals.extensionGithubBranch);
+        let pathExtension = _.find(resource.extension, (extension) => extension.url === this.globals.extensionGithubPath);
+
+        if (!branchExtension) {
+            branchExtension = { url: this.globals.extensionGithubBranch };
+            resource.extension.push(branchExtension);
+        }
+
+        if (!pathExtension) {
+            pathExtension = { url: this.globals.extensionGithubPath };
+            resource.extension.push(pathExtension);
+        }
+
+        branchExtension.valueString = details.branch;
+        pathExtension.valueString = details.owner + '/' + details.repository + '/' + (details.path.startsWith('/') ? details.path.substring(1) : details.path);
     }
 
     public parseReference(reference: string): ParsedUrlModel {
