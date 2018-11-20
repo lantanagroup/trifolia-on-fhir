@@ -88,21 +88,34 @@ export class GithubService {
     public token: string;
     public authChanged: EventEmitter<any> = new EventEmitter();
 
+    private readonly tokenKey = 'github-token';
+
     constructor(
         private http: HttpClient) {
 
-        this.token = localStorage.getItem('github-token');
+        this.token = localStorage.getItem(this.tokenKey);
 
         // Watch for changes to the local storage. GitHub auth is handled in a separate window, and sets the key
         // in the local storage when logged in. Retrieve the key from local storage when the storage changes.
         window.addEventListener('storage', () => {
-            const newToken = localStorage.getItem('github-token');
+            const newToken = localStorage.getItem(this.tokenKey);
 
             if (this.token !== newToken) {
                 this.token = newToken;
                 this.authChanged.emit();
             }
         });
+    }
+
+    private handleError(err, observer?) {
+        if (err.status === 401) {
+            this.logout();
+        }
+
+        if (observer) {
+            observer.error(err);
+            observer.complete();
+        }
     }
 
     private getOptions() {
@@ -112,6 +125,11 @@ export class GithubService {
                 'Authorization': 'Bearer ' + this.token
             }
         };
+    }
+
+    public logout() {
+        this.token = null;
+        localStorage.removeItem(this.tokenKey);
     }
 
     public login(): Observable<any> {
@@ -149,14 +167,8 @@ export class GithubService {
                         .subscribe((user) => {
                             observer.next(user);
                             observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        });
-                }, (err) => {
-                    observer.error(err);
-                    observer.complete();
-                });
+                        }, (err) => this.handleError(err, observer));
+                }, (err) => this.handleError(err, observer));
         });
     }
 
@@ -168,14 +180,8 @@ export class GithubService {
                         .subscribe((repositories) => {
                             observer.next(repositories);
                             observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        });
-                }, (err) => {
-                    observer.error(err);
-                    observer.complete();
-                });
+                        }, (err) => this.handleError(err, observer));
+                }, (err) => this.handleError(err, observer));
         });
     }
 
@@ -189,11 +195,8 @@ export class GithubService {
                         .subscribe((branches) => {
                             observer.next(branches);
                             observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        });
-                }, (err) => observer.error(err));
+                        }, (err) => this.handleError(err, observer));
+                }, (err) => this.handleError(err, observer));
         });
     }
 
@@ -216,14 +219,8 @@ export class GithubService {
 
                                 observer.next(files);
                                 observer.complete();
-                            }, (err) => {
-                                observer.error(err);
-                                observer.complete();
-                            });
-                    }, (err) => {
-                        observer.error(err);
-                        observer.complete();
-                    });
+                            }, (err) => this.handleError(err, observer));
+                    }, (err) => this.handleError(err, observer));
             });
         }
     }
@@ -246,11 +243,8 @@ export class GithubService {
                         .subscribe((contents) => {
                             observer.next(contents);
                             observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        });
-                }, (err) => observer.error(err));
+                        }, (err) => this.handleError(err, observer));
+                }, (err) => this.handleError(err, observer));
         });
     }
 
@@ -276,16 +270,11 @@ export class GithubService {
                     }
 
                     this.http.put<any>(url, data, this.getOptions())
-                        .subscribe((contents) => {
-                            console.log(contents);
-
+                        .subscribe(() => {
                             observer.next();
                             observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        });
-                }, (err) => observer.error(err));
+                        }, (err) => this.handleError(err, observer));
+                }, (err) => this.handleError(err, observer));
         });
     }
 }

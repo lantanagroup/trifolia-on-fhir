@@ -77,7 +77,7 @@ a.rvts13, span.rvts13
 }
 span.rvts14
 {
- font-size: 13pt;
+ font-size: 16pt;
  font-weight: bold;
 }
 span.rvts15
@@ -88,13 +88,18 @@ span.rvts15
 }
 span.rvts16
 {
- font-style: italic;
+ font-size: 14pt;
+ font-weight: bold;
 }
 span.rvts17
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-style: italic;
 }
 span.rvts18
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+span.rvts19
 {
  font-weight: bold;
 }

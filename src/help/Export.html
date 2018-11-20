@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Process</title>
+  <title>Export</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Process">
+  <meta name="twitter:title" content="Export">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Process" />
+  <meta property="og:title" content="Export" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,46 +163,39 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Process"
-		  data-hnd-context="10"
-		  data-hnd-title="Process"
+		  data-hnd-id="Export"
+		  data-hnd-context="14"
+		  data-hnd-title="Export"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li>Authoring</li>
+                        <li>Export/Import</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="FHIRVersions.html" title="FHIR Versions" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="GuidelinesandBestPractices.html" title="Guidelines and Best Practices" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Help.html" title="Help" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Process</h2>
+            <h2>Export</h2>
 
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps5"><span class="rvts0"><span class="rvts14">Process</span></span></h1>
-<p class="rvps3"><span class="rvts8">The work-flow for authoring an Implementation Guide:</span></p>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Create an Implementation Guide</span></li>
-<li value="2" class="rvps3"><span class="rvts8">Create Profiles (StructureDefinition resources):</span></li>
-</ol>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">Create other resources (e.g., OperationDefinition, CapabilityStatement, ValueSet and CodeSystem) as needed for the profiles and implementation guide</span></li>
-<li class="rvps3"><span class="rvts8">Create samples of the profiles manually and import into ToF</span></li>
-</ul></ul>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="3" class="rvps3"><span class="rvts8">Associate profiles, other conformance resources, and samples with the Implementation Guide</span></li>
-<li value="4" class="rvps3"><span class="rvts8">Export Implementation Guide using FHIR IG Publisher:</span></li>
-</ol>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">View the results of the export via the FHIR IG Publisher on the "Browse Implementation Guides" screen</span></li>
-<li class="rvps3"><span class="rvts8">The results include a Q/A tab, which identifies all errors the FHIR IG Publisher found during publication. Users should fix errors, when possible, and re-execute the export with the FHIR IG Publisher.</span></li>
-<li class="rvps3"><span class="rvts8">Users can download or upload the exported package to the appropriate GitHub repository for the Implementation Guide project.</span></li>
+<h1 class="rvps5"><span class="rvts0"><span class="rvts14">Export</span></span></h1>
+<p class="rvps3"><span class="rvts8">Select Export in the tabbed tool bar on the top of the screen. </span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<p class="rvps3"><span class="rvts8">The Export page contains form fields that allow users to specify the details of their exports. Users can export the Implementation Guides (IGs) saved under the Browse/Edit tab at the top right side of the screen. Users can export IGs as bundles or HTML with the IG Publisher. Once the form fields are complete, select the Export button on the left side of the scrolling tab at the bottom of the screen.</span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts13" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts8"> that can be used to import the resources for the implementation guide in another FHIR environment.</span></li>
+<li class="rvps3"><span class="rvts8">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts13" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts8">. Depending on whether you select "Run IG Publisher", the IG Publisher will automatically be executed for the package, and the output from the IG Publisher will be included in the download. If you select </span><span class="rvts17">not </span><span class="rvts8">to execute the IG Publisher, the package will still be produced and can be downloaded.</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li class="rvps3"><span class="rvts8">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export. Users will see the tool processing the export as lines of code executions. After completing the process, the export will automatically download to users' computers in a compressed folder.</span></li>
+<li class="rvps3"><span class="rvts8">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview.</span></li>
 </ul></ul>
 <p></p>
 
