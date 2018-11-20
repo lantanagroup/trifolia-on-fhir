@@ -1,6 +1,8 @@
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<div class="row" *ngIf="resourcesBundle && !isChanging">
+<button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubService.login()">Login to GitHub</button>
+
+<div class="row" *ngIf="githubService.token && resourcesBundle && !isChanging">
     <div class="col-md-12">
         <table class="table table-striped">
             <thead>
@@ -31,7 +33,7 @@
         </table>
     </div>
 </div>
-<div class="card" *ngIf="isChanging">
+<div class="card" *ngIf="githubService.token && isChanging">
     <div class="card-header">Change destination to {{checkedIds.length}} selected resources</div>
     <div class="card-body">
         <div class="row">

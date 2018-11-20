@@ -144,12 +144,26 @@ export class ImportGithubPanelComponent implements OnInit {
             });
     }
 
+    githubLogin() {
+        this.githubService.login()
+            .subscribe(() => {
+                this.githubService.getRepositories()
+                    .subscribe((repositories) => {
+                        this.repositories = repositories;
+                    }, (err) => {
+                        this.message = err.message || err.data || err;
+                    });
+            }, (err) => {
+                this.message = err.message || err.data || err;
+            });
+    }
+
     ngOnInit() {
         this.githubService.getRepositories()
             .subscribe((repositories) => {
                 this.repositories = repositories;
             }, (err) => {
-                this.message = err;
+                this.message = err.message || err.data || err;
             });
     }
 }

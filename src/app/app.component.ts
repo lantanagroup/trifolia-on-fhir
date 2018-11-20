@@ -12,6 +12,7 @@ import {FileModel} from './models/file-model';
 import {FhirService} from './services/fhir.service';
 import {SocketService} from './services/socket.service';
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
+import {GithubService} from './services/github.service';
 
 @Component({
     selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
 
     constructor(
         public authService: AuthService,
+        public githubService: GithubService,
         public configService: ConfigService,
         public recentItemService: RecentItemService,
         public fhirService: FhirService,

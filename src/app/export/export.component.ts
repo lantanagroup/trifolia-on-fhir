@@ -54,7 +54,7 @@ export class ExportComponent implements OnInit {
         }
 
         if (this.options.exportFormat === ExportFormats.GitHub) {
-            if (!this.githubResourcesBundle || !this.githubResourcesBundle.entry) {
+            if (!this.githubService.token || !this.githubResourcesBundle || !this.githubResourcesBundle.entry) {
                 return true;
             }
 
