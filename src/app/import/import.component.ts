@@ -375,7 +375,7 @@ export class ImportComponent implements OnInit {
         } else if (this.activeTab === 'vsac') {
             return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password || !this.vsacCriteria.resourceType;
         } else if (this.activeTab === 'github') {
-            return this.importGithubPanel.selectedPaths.length === 0;
+            return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
         }
 
         return true;
