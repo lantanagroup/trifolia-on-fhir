@@ -1,6 +1,6 @@
 <h1>Import</h1>
 
-<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId" [destroyOnHide]="false">
+<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
     <ngb-tab id="file" title="Import Files">
         <ng-template ngbTabContent>
             <file-drop (onFileDrop)="dropped($event)">

@@ -142,7 +142,8 @@ export class GithubService {
             });
         }
 
-        const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false';
+        const redirectUri = location.origin + '/github/callback';
+        const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
         const activeWin = window.open(url,'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
 
         return new Observable<any>((observer) => {
