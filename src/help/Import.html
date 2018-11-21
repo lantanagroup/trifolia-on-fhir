@@ -185,16 +185,125 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps5"><span class="rvts0"><span class="rvts14">Import</span></span></h1>
-<p class="rvps3"><span class="rvts8">ToF allows users to import files, text, and VSAC content. </span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
+<p class="rvps3"><span class="rvts8">ToF allows users to import resource files, copy/pasted resource JSON/XML, value sets from excel files, GitHub and VSAC content. </span></p>
 <p class="rvps3"><span class="rvts8">File imports allow users to drag-and-drop resources (e.g., StructureDefinitions, ValueSets, CodeSystems) from users' hard drives to the ToF tool.</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">VSAC imports require users' VSAC credentials, which are not persisted on the ToF server. If users select 'Remember VSAC Credentials,' the tool will store this information as cookies in the users' browser.</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Import Files</span></span></h2>
 <p class="rvps3"><span class="rvts8">Users who upload more than 20 resources at once may experience a timeout error notification. In the event of a timeout error notification, users should reduce the size of the resource import. </span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">Users can edit resource numbers based on individual needs.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Excel</span></span></h2>
+<p class="rvps3"><span class="rvts8">Import value sets and code systems using the excel file import format. Using the "Import Files" tab, select (or drag-and-drop) an excel file that is prepared with the following structure:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">Worksheet: (name does not matter - the first worksheet in the workbook is used)</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li class="rvps3"><span class="rvts8">Column: "ID" (optional)</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">The column must exist, but does not have to have a value</span></li>
+<li class="rvps3"><span class="rvts8">This is the ID of the value set. It will be used to either update an existing value set or create a new value set with a pre-defined ID (assuming the FHIR server supports that functionality).</span></li>
+</ul>
+<li class="rvps3"><span class="rvts8">Column: "Name"</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">The name of the value set.</span></li>
+<li class="rvps3"><span class="rvts8">This name should be repeated for each code/row in the value set</span></li>
+<li class="rvps3"><span class="rvts8">Mapping: ValueSet.name</span></li>
+</ul>
+<li class="rvps3"><span class="rvts8">Column: "URL" - the URL for the value set</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">The URL of the value set that will be used to find or create the value set</span></li>
+<li class="rvps3"><span class="rvts8">This URL should be repeated for each code/row in the value set</span></li>
+<li class="rvps3"><span class="rvts8">Mapping: ValueSet.url</span></li>
+</ul>
+<li class="rvps3"><span class="rvts8">Column: "Code"</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">Mapping: ValueSet.compose.include.concept.code</span></li>
+</ul>
+<li class="rvps3"><span class="rvts8">Column: "Display"</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">Mapping: ValueSet.compose.include.concept.display</span></li>
+</ul>
+<li class="rvps3"><span class="rvts8">Column: "System"</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li class="rvps3"><span class="rvts8">This is the URL of the code system that the code belongs to</span></li>
+<li class="rvps3"><span class="rvts8">Mapping: ValueSet.compose.include.system</span></li>
+</ul></ul></ul>
+<h3 class="rvps7"><span class="rvts0"><span class="rvts19">Additional</span></span></h3>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">The worksheet must have a header. ToF always ignores the first row.</span></li>
+<li class="rvps3"><span class="rvts8">The heading of the columns do not matter, but the columns must appear in the order described above.</span></li>
+<li class="rvps3"><span class="rvts8">If the value set already exists on the server, the entire value set will be overwritten with the data from the import excel file; including all codes in the existing value set that are not in the excel file.</span></li>
+</ul>
+<h3 class="rvps7"><span class="rvts0"><span class="rvts19">Example</span></span></h3>
+<div class="rvps8"><table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
+<tr valign="top">
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">ID</span></p>
+</td>
+<td width="82" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">Name</span></p>
+</td>
+<td width="203" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">URL</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">Code</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">Display</span></p>
+</td>
+<td width="232" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts20">System</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">vs1-test</span></p>
+</td>
+<td width="82" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">Value Set 1</span></p>
+</td>
+<td width="203" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/ValueSet/v1</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">asdf1</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">TEST1</span></p>
+</td>
+<td width="232" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/CodeSystem/cs1</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">vs1-test</span></p>
+</td>
+<td width="82" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">Value Set 1</span></p>
+</td>
+<td width="203" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/ValueSet/v1</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">asdf2</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">TEST2</span></p>
+</td>
+<td width="232" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/CodeSystem/cs2</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">vs2-test</span></p>
+</td>
+<td width="82" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">Value Set 2</span></p>
+</td>
+<td width="203" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/ValueSet/v2</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">asdf1</span></p>
+</td>
+<td width="69" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">TEST1</span></p>
+</td>
+<td width="232" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts21">http://test.com/CodeSystem/cs2</span></p>
+</td>
+</tr>
+</table>
+</div>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">VSAC</span></span></h2>
+<p class="rvps3"><span class="rvts8">VSAC imports require users' VSAC credentials, which are not persisted on the ToF server. If users select 'Remember VSAC Credentials,' the tool will store this information as cookies in the users' browser.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">GitHub</span></span></h2>
+<p class="rvps3"><span class="rvts8">To import resources from a GitHub repository, navigate to the "GitHub" tab in the "Import" screen. As soon as the tab is selected, you will be prompted to login to GitHub (unless you have already logged into GitHub in ToF previously).</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Select a repository within GitHub that you have access to</span></li>
+<li value="2" class="rvps3"><span class="rvts8">The default branch for the repository it will be automatically selected. If the default branch does not exist or is not configured in the repository, you will have to select a branch manually.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">A tree of all files available within the GitHub repository will be shown. Place a check-mark next to each of the files you wish to import.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">The "Import" button is only enabled when at least one valid JSON or XML file is selected within the GitHub repository.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Select the "Import" button, and the resources will be imported from GitHub. If the resource already exists in ToF with the same ID, the resource in ToF will be overwritten with the contents of the resource from GitHub.</span></li>
+</ol>
+<p class="rvps3"><span class="rvts8">See </span><a class="rvts13" href="GitHubIntegration.html">GitHub Integration</a><span class="rvts8"> for more information.</span></p>
+<p class="rvps3"><span class="rvts21"><br/></span></p>
 <p></p>
 
             </div>
