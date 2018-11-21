@@ -59,7 +59,7 @@
                                         <td>
                                             <div class="pull-right">
                                                 <button type="button" class="btn btn-default" title="Remove this dependency" (click)="removeDependency(dependency)">
-                                                    <i class="fa fa-remove"></i>
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -126,7 +126,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Remove global"
-                                        (click)="implementationGuide.global.splice(i, 1)"><i class="fa fa-remove"></i>
+                                        (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -172,7 +172,7 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" title="Remove this resource (and package, if no resources are left in it) from this implementation guide" (click)="removeResource(ir)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -196,7 +196,7 @@
                     <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
-                            <i class="fa fa-remove" title="Remove this package" (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this package" (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <div class="form-group">
@@ -262,7 +262,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1" (click)="globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -306,7 +306,7 @@
                         <td>
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -354,7 +354,7 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
                                     <i class="fa fa-plus"></i>

@@ -31,7 +31,7 @@
                                 <input type="text" class="form-control" [ngModel]="fhirVersion" readonly="readonly" />
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
-                                        <i class="fa fa-remove"></i>
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default" (click)="removeResource(resource)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -162,7 +162,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
                                                 <i class="fa fa-plus"></i>
@@ -271,7 +271,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Remove global"
-                                        (click)="implementationGuide.global.splice(i, 1)"><i class="fa fa-remove"></i>
+                                        (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -322,7 +322,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(ri, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -388,7 +388,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Remove this resource from the implementation guide" (click)="implementationGuide.definition.resource.splice(ri, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -430,7 +430,7 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
                                     <i class="fa fa-plus"></i>
@@ -514,7 +514,7 @@
                 <td>
                     <div class="pull-right">
                         <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
-                            <i class="fa fa-remove"></i>
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                 </td>

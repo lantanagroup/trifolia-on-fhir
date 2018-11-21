@@ -106,7 +106,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -142,7 +142,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -207,7 +207,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -236,7 +236,7 @@
 
                             <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
                             <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut" title="Slice this element" (click)="sliceElement(e)"></i> </span>
-                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fa fa-remove" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
+                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fas fa-trash-alt" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
                             <br />
                             <span title="Type">{{e.type}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
                         </div>
@@ -279,7 +279,7 @@
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Constrain this element" (click)="constrainElement(e, $event)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
                                 <button type="button" class="btn btn-default btn-sm" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fa fa-remove"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -318,7 +318,7 @@
             <!--div class="btn-group pull-right">
                 <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
                 <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
-                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(selectedElement.constrainedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fa fa-remove"></i></button>
+                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(selectedElement.constrainedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fas fa-trash-alt"></i></button>
             </div-->
         </div>
         <div class="card-body">

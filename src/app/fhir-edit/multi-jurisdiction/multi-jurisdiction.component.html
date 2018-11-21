@@ -44,7 +44,7 @@
                     <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
                     <div class="input-group-btn">
                         <button type="button" class="btn btn-default" title="Remove this code" (click)="j.coding.splice(ci, 1)">
-                            <i class="fa fa-remove"></i>
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
             <td>
                 <div class="pull-right">
                     <button type="button" class="btn btn-default" title="Remove this jurisdiction" (click)="parentObject[propertyName].splice(ji, 1)">
-                        <i class="fa fa-remove"></i>
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>

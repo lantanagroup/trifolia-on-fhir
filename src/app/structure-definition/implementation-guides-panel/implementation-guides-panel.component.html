@@ -17,7 +17,7 @@
         <td class="actions-column-2">
             <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default" title="Remove this structure definition from the implementation guide" *ngIf="!ig.isRemoved" (click)="removeImplementationGuide(ig)">
-                    <i class="fa fa-remove"></i>
+                    <i class="fas fa-trash-alt"></i>
                 </button>
                 <button type="button" class="btn btn-default" title="Undo removing this structure definition from the IG" *ngIf="ig.isRemoved" (click)="ig.isRemoved = false">
                     <i class="fa fa-undo"></i>

@@ -34,7 +34,7 @@
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-default btn-sm" title="Remove this format"
                                                 (click)="capabilityStatement.format.splice(i, 1)">
-                                            <i class="fa fa-remove"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -67,7 +67,7 @@
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-default btn-sm" title="Remove this format"
                                                 (click)="capabilityStatement.patchFormat.splice(i, 1)">
-                                            <i class="fa fa-remove"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -165,7 +165,7 @@
                                     <i class="fa fa-hand-pointer-o"></i>
                                 </button>
                                 <button type="button" class="btn btn-default" title="Remove this certificate" (click)="capabilityStatement.implementationGuide.splice(igi, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -208,7 +208,7 @@
                         <td>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default" title="Remove this profile" (click)="capabilityStatement.profile.splice(pi, 1)">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
@@ -249,7 +249,7 @@
                 <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
                     <ng-template ngbTabTitle>
                         <span>REST {{ri + 1}} </span>
-                        <i class="fa fa-remove" title="Remove this REST entry" (click)="globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this REST entry" (click)="globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true" tooltipPath="CapabilityStatement.rest.mode"></app-fhir-select-single-code>
@@ -297,7 +297,7 @@
                                             <td>
                                                 <div class="pull-right">
                                                     <button type="button" class="btn btn-default" title="Remove this certificate" (click)="r.security.certificate.splice(ci, 1)">
-                                                        <i class="fa fa-remove"></i>
+                                                        <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -359,7 +359,7 @@
                                                 <i class="fa fa-copy"></i>
                                             </button>
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this resource" (click)="r.resource.splice(resi, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -399,7 +399,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this interaction" (click)="r.interaction.splice(ii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -447,7 +447,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this search param" (click)="r.searchParam.splice(sii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -487,7 +487,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this operation" (click)="r.operation.splice(sii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -523,7 +523,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -551,7 +551,7 @@
                 <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
                     <ng-template ngbTabTitle>
                         <span>Messaging {{mi+1}} </span>
-                        <i class="fa fa-remove" title="Remove this messaging entry" (click)="globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this messaging entry" (click)="globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <!-- Endpoints -->
@@ -587,7 +587,7 @@
                                     <td>
                                         <div class="pull-right btn-group">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this endpoint" (click)="messaging.endpoint.splice(ei, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -637,7 +637,7 @@
                                     <td>
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this supported message" (click)="messaging.supportedMessage.splice(smi, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -694,7 +694,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-default btn-sm" title="Remove this event" (click)="messaging.event.splice(eventi, 1)">
-                                                <i class="fa fa-remove"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -758,7 +758,7 @@
                         <div class="pull-right">
                             <button type="button" class="btn btn-default" title="Remove this document"
                                     (click)="capabilityStatement.document.splice(i, 1)">
-                                <i class="fa fa-remove"></i>
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </td>
