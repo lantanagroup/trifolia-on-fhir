@@ -41,7 +41,7 @@
                     <button type="button" class="btn btn-default" title="Remove this identifier"
                             [disabled]="identifier.system === 'https://auth0.com'"
                             (click)="practitioner.identifier.splice(ii, 1)">
-                        <i class="fa fa-remove"></i>
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>
@@ -83,7 +83,7 @@
                 <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Remove this telecom"
                             (click)="practitioner.telecom.splice(ti, 1)">
-                        <i class="fa fa-remove"></i>
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>

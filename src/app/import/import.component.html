@@ -3,6 +3,8 @@
 <ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
     <ngb-tab id="file" title="Import Files">
         <ng-template ngbTabContent>
+            <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.</div>
+
             <file-drop (onFileDrop)="dropped($event)">
                 <span>Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
                 <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile />
@@ -12,19 +14,19 @@
                 <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>ID</th>
+                    <th>ID(s)</th>
                     <th>Type</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let f of files; let fi = index" [class.invalid]="!f.resource">
+                <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
                     <td>{{f.name}}</td>
-                    <td>{{f.resource ? f.resource.id : 'INVALID'}}</td>
-                    <td>{{f.resource ? f.resource.resourceType : 'INVALID'}}</td>
+                    <td>{{getIdDisplay(f)}}</td>
+                    <td>{{getContentTypeDisplay(f)}}</td>
                     <td class="actions-column-1">
                         <div class="pull-right">
-                            <i class="fa fa-remove" (click)="removeImportFile(fi)"></i>
+                            <i class="fas fa-trash-alt" (click)="removeImportFile(fi)"></i>
                         </div>
                     </td>
                 </tr>

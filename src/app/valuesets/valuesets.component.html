@@ -20,6 +20,7 @@
                 [maxSize]="5"
                 [collectionSize]="results.total"
                 [(page)]="page"
+                [pageSize]="8"
                 [boundaryLinks]="true"
                 (pageChange)="criteriaChanged()"></ngb-pagination>
 
@@ -52,7 +53,7 @@
                     <i class="fa fa-expand"></i>
                 </a>
                 <button type="button" class="btn btn-default" (click)="remove(vs)" title="Remove this value set">
-                    <i class="fa fa-remove"></i>
+                    <i class="fas fa-trash-alt"></i>
                 </button>
                 <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
@@ -67,7 +68,7 @@
     </tr>
     <tr *ngIf="results && results.total > 0">
         <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

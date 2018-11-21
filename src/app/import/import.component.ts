@@ -1,27 +1,36 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../services/import.service';
-import {Bundle, DomainResource, EntryComponent, OperationOutcome, RequestComponent} from '../models/stu3/fhir';
+import {
+    Bundle,
+    DomainResource,
+    EntryComponent,
+    OperationOutcome,
+    RequestComponent,
+    ValueSet
+} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
-import {AuthService} from '../services/auth.service';
 import {ContentModel, GithubService} from '../services/github.service';
 import {ImportGithubPanelComponent} from '../import-github-panel/import-github-panel.component';
 import {forkJoin} from 'rxjs';
+import * as XLSX from 'xlsx';
 
 enum ContentTypes {
-    Json,
-    Xml
+    Json = 0,
+    Xml = 1,
+    Xlsx = 2
 }
 
 class ImportFileModel {
     public name: string;
     public contentType: ContentTypes = ContentTypes.Json;
-    public content: string;
-    public resource: DomainResource;
+    public content: string | Uint8Array;
+    public resource?: DomainResource;
+    public vsBundle?: Bundle;
     public message: string;
 }
 
@@ -41,7 +50,6 @@ export class ImportComponent implements OnInit {
     public activeTab = 'file';
     public vsacCriteria = new VSACImportCriteria();
     public rememberVsacCredentials: boolean;
-    public githubSelectedPaths: string[] = [];
     private readonly vsacUsernameCookieKey = 'vsac_username';
     private readonly vsacPasswordCookieKey = 'vsac_password';
 
@@ -66,11 +74,11 @@ export class ImportComponent implements OnInit {
     }
 
     private populateFile(file) {
-        const extension = file.name.substring(file.name.lastIndexOf('.'));
+        const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
         const reader = new FileReader();
 
-        if (extension !== '.json' && extension !== '.xml') {
-            alert('Expected either json or xml');
+        if (extension !== '.json' && extension !== '.xml' && extension !== '.xlsx') {
+            alert('Expected either JSON, XML or XLSX file');
             return;
         }
 
@@ -79,13 +87,28 @@ export class ImportComponent implements OnInit {
             const importFileModel = new ImportFileModel();
             importFileModel.name = file.name;
             importFileModel.content = result;
-            importFileModel.contentType = extension === '.json' ? ContentTypes.Json : ContentTypes.Xml;
+
+            if (extension === '.json') {
+                importFileModel.contentType = ContentTypes.Json;
+            } else if (extension === '.xml') {
+                importFileModel.contentType = ContentTypes.Xml;
+            } else if (extension === '.xlsx') {
+                importFileModel.contentType = ContentTypes.Xlsx;
+            }
 
             try {
                 if (importFileModel.contentType === ContentTypes.Xml) {
                     importFileModel.resource = this.fhirService.deserialize(result);
-                } else {
+                } else if (importFileModel.contentType === ContentTypes.Json) {
                     importFileModel.resource = JSON.parse(result);
+                } else if (importFileModel.contentType === ContentTypes.Xlsx) {
+                    const convertResults = this.importService.convertExcelToValueSetBundle(result);
+
+                    if (!convertResults.success) {
+                        throw new Error(convertResults.message);
+                    }
+
+                    importFileModel.vsBundle = convertResults.bundle;
                 }
             } catch (ex) {
                 importFileModel.message = ex.message;
@@ -104,7 +127,11 @@ export class ImportComponent implements OnInit {
             this.cdr.detectChanges();
         };
 
-        reader.readAsText(file);
+        if (extension === '.json' || extension === '.xml') {
+            reader.readAsText(file);
+        } else if (extension === '.xlsx') {
+            reader.readAsArrayBuffer(file);
+        }
     }
 
     public filesChanged(event) {
@@ -148,7 +175,7 @@ export class ImportComponent implements OnInit {
         const bundle = new Bundle();
         bundle.type = 'transaction';
         bundle.entry = _.chain(this.files)
-            .filter((importFile: ImportFileModel) => !!importFile.resource)
+            .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Json || importFile.contentType === ContentTypes.Xml)
             .map((importFile: ImportFileModel) => {
                 const entry = new EntryComponent();
                 entry.request = new RequestComponent();
@@ -159,6 +186,12 @@ export class ImportComponent implements OnInit {
                 return entry;
             })
             .value();
+
+        _.chain(this.files)
+            .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Xlsx)
+            .each((importFile: ImportFileModel) => {
+                bundle.entry = bundle.entry.concat(importFile.vsBundle.entry);
+            });
 
         return bundle;
     }
@@ -356,10 +389,10 @@ export class ImportComponent implements OnInit {
         this.resultsBundle = null;
         this.message = 'Importing...';
 
-        if (this.activeTab === 'text') {
-            this.importText(tabSet);
-        } else if (this.activeTab === 'file') {
+        if (this.activeTab === 'file') {
             this.importFiles(tabSet);
+        } else if (this.activeTab === 'text') {
+            this.importText(tabSet);
         } else if (this.activeTab === 'vsac') {
             this.importVsac(tabSet);
         } else if (this.activeTab === 'github') {
@@ -369,7 +402,7 @@ export class ImportComponent implements OnInit {
 
     public importDisabled(): boolean {
         if (this.activeTab === 'file') {
-            return !this.files || this.files.length === 0;
+            return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0;
         } else if (this.activeTab === 'text') {
             return !this.textContent;
         } else if (this.activeTab === 'vsac') {
@@ -381,7 +414,30 @@ export class ImportComponent implements OnInit {
         return true;
     }
 
-    ngOnInit() {
+    public getIdDisplay(file: ImportFileModel) {
+        if (file.contentType === ContentTypes.Json || file.contentType === ContentTypes.Xml) {
+            if (file.resource) {
+                return file.resource.id;
+            }
+        } else if (file.contentType === ContentTypes.Xlsx) {
+            if (file.vsBundle) {
+                const ids = _.map(file.vsBundle.entry, (entry) => entry.resource.id);
+                return ids.join(', ');
+            }
+        }
     }
 
+    public getContentTypeDisplay(file: ImportFileModel) {
+        switch (file.contentType) {
+            case ContentTypes.Json:
+                return 'Resource JSON';
+            case ContentTypes.Xml:
+                return 'Resource XML';
+            case ContentTypes.Xlsx:
+                return 'Value Set XLSX';
+        }
+    }
+
+    ngOnInit() {
+    }
 }

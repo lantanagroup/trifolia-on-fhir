@@ -69,7 +69,7 @@
                                             <i class="fa fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-default btn-sm" title="Remove this identifier" (click)="valueSet.identifier.splice(ii, 1)">
-                                            <i class="fa fa-remove"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -113,7 +113,7 @@
                     <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
                         <ng-template ngbTabTitle>
                             Include {{ii+1}}
-                            <i class="fa fa-remove" title="Remove this include" (click)="globals.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this include" (click)="globals.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <app-fhir-string [parentObject]="include" propertyName="system" title="System"></app-fhir-string>
@@ -156,7 +156,7 @@
                                         <td>
                                             <div class="pull-right">
                                                 <button type="button" class="btn btn-default" title="Remove this filter" (click)="globals.promptForRemove(include.filter, fi)">
-                                                    <i class="fa fa-remove"></i>
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         </td>

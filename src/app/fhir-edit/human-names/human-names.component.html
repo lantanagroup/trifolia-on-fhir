@@ -14,7 +14,7 @@
                     <input type="text" class="form-control" [(ngModel)]="name.given[gi]" [class.is-invalid]="!name.given[gi]" />
                     <div class="input-group-btn btn-group">
                         <button type="button" class="btn btn-default" title="Remove this given name" [disabled]="required && name.given.length === 1" (click)="name.given.splice(gi, 1)">
-                            <i class="fa fa-remove"></i>
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                         <button type="button" class="btn btn-default" *ngIf="gi === name.given.length - 1" title="Add a given name" (click)="name.given.push('')">
                             <i class="fa fa-plus"></i>
@@ -32,7 +32,7 @@
             <i class="fa fa-plus"></i> Add a name
         </button>
         <button type="button" class="btn btn-default" [disabled]="required && parentObject[propertyName].length === 1" (click)="parentObject[propertyName].splice(ni, 1)" title="Remove this name">
-            <i class="fa fa-remove"></i> Remove this name
+            <i class="fas fa-trash-alt"></i> Remove this name
         </button>
     </div>
 </div>
