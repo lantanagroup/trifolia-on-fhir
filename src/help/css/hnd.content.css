@@ -101,6 +101,24 @@ span.rvts18
 }
 span.rvts19
 {
+ font-size: 13pt;
+ font-weight: bold;
+}
+span.rvts20
+{
+ font-size: 11pt;
+ font-family: 'Calibri';
+ font-weight: bold;
+ color: #000000;
+}
+span.rvts21
+{
+ font-size: 11pt;
+ font-family: 'Calibri';
+ color: #000000;
+}
+span.rvts22
+{
  font-weight: bold;
 }
 /* ========== Para Styles ========== */
@@ -148,6 +166,17 @@ p,ul,ol /* Paragraph Style */
  page-break-after: avoid;
  padding: 0px 0px 0px 0px;
  margin: 16px 0px 4px 0px;
+}
+.rvps7
+{
+ text-align: left;
+ text-indent: 0px;
+ page-break-after: avoid;
+ padding: 0px 0px 0px 0px;
+ margin: 16px 0px 4px 0px;
+}
+.rvps8
+{
 }
 /* ========== Lists ========== */
 .list0 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;}

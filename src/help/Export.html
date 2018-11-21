@@ -185,18 +185,36 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps5"><span class="rvts0"><span class="rvts14">Export</span></span></h1>
 <p class="rvps3"><span class="rvts8">Select Export in the tabbed tool bar on the top of the screen. </span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">The Export page contains form fields that allow users to specify the details of their exports. Users can export the Implementation Guides (IGs) saved under the Browse/Edit tab at the top right side of the screen. Users can export IGs as bundles or HTML with the IG Publisher. Once the form fields are complete, select the Export button on the left side of the scrolling tab at the bottom of the screen.</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Bundle</span></span></h2>
+<p class="rvps3"><span class="rvts8">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts13" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts8"> that can be used to import the resources for the implementation guide in another FHIR environment.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">HTML (and FHIR IG Publisher)</span></span></h2>
+<p class="rvps3"><span class="rvts8">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts13" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts8">. Depending on whether you select "Run IG Publisher", the IG Publisher will automatically be executed for the package, and the output from the IG Publisher will be included in the download. If you select </span><span class="rvts17">not </span><span class="rvts8">to execute the IG Publisher, the package will still be produced and can be downloaded.</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts13" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts8"> that can be used to import the resources for the implementation guide in another FHIR environment.</span></li>
-<li class="rvps3"><span class="rvts8">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts13" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts8">. Depending on whether you select "Run IG Publisher", the IG Publisher will automatically be executed for the package, and the output from the IG Publisher will be included in the download. If you select </span><span class="rvts17">not </span><span class="rvts8">to execute the IG Publisher, the package will still be produced and can be downloaded.</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
 <li class="rvps3"><span class="rvts8">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export. Users will see the tool processing the export as lines of code executions. After completing the process, the export will automatically download to users' computers in a compressed folder.</span></li>
 <li class="rvps3"><span class="rvts8">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview.</span></li>
-</ul></ul>
+</ul>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">GitHub</span></span></h2>
+<p class="rvps3"><span class="rvts8">Exporting to GitHub will upload the resources within the selected Implementation Guide to the destination repository on GitHub. Resources that already exist at the specified paths will be overwritten with the content in ToF.</span></p>
+<p class="rvps3"><span class="rvts8">To export the Implementation Guide resources:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Navigate to the "Export" screen</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the implementation guide to export</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Select "GitHub" for the export format</span></li>
+<li value="4" class="rvps3"><span class="rvts8">If you are not already logged into GitHub within ToF, you will be prompted to login.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Specify a "Commit Message". This message is used by GitHub to describe the changes.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">All resources within the implementation guide are listed in a table. Only resources that have a repository, branch and path specified for them will be uploaded to GitHub. To change the repository/branch/path for a resource</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Place a check-mark next to each of the resources you want to change</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select "Change Selected" in the top-right corner of the table</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Select a GitHub repository</span></li>
+<li value="4" class="rvps3"><span class="rvts8">A branch will automatically be selected if the repository has a default branch. If no default branch is specified, you will have to manually select the branch.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Select the format that the resources should be stored in GitHub (JSON or XML)</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Indicate if the resources should be stored in a directory per resource type (for example, if you select the "resources" directory from the tree, but specify "Yes" to "Directory per resource type", the resource will be stored in "/resources/implementationguide/XXX.xml" (assuming the resource is an "ImplementationGuide" resource type)</span></li>
+<li value="7" class="rvps3"><span class="rvts8">Select the destination directory to store the resources from the tree on the right. Optionally, you may create a new folder by typing the new folder name in the text field above the tree, and selecting "Add folder below selection".</span></li>
+</ol></ol>
+<p class="rvps3"><span class="rvts8">See </span><a class="rvts13" href="GitHubIntegration.html">GitHub Integration</a><span class="rvts8"> for more information.</span></p>
 <p></p>
 
             </div>
