@@ -13097,7 +13097,7 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
     public reference: ResourceReference;
     public name?: string;
     public description?: string;
-    public exampleBoolean?: boolean;
+    public exampleBoolean?: boolean = false;
     public exampleCanonical?: string;
     public package?: string;
     
