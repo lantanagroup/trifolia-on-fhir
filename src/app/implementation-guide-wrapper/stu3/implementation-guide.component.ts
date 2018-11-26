@@ -19,6 +19,7 @@ import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
+import {ValidatorResponse} from 'fhir/validator';
 
 class PageDefinition {
     public page: PageComponent;
@@ -44,7 +45,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     @Input() public implementationGuide = new ImplementationGuide();
     public message: string;
     public currentResource: any;
-    public validation: any;
+    public validation: ValidatorResponse;
     public pages: PageDefinition[];
     private unsavedBinaryAssociations: string[] = [];
     public resourceTypeCodes: Coding[] = [];

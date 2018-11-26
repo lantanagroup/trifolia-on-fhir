@@ -374,7 +374,8 @@
         </ngb-tab>
 
         <!-- Validation -->
-        <ngb-tab id="validation" title="Validation">
+        <ngb-tab id="validation">
+            <ng-template ngbTabTitle>Validation <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span></ng-template>
             <ng-template ngbTabContent>
                 <app-validation-results [results]="validation"></app-validation-results>
             </ng-template>
