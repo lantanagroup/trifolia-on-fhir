@@ -5,12 +5,16 @@ import {
     CodeSystem,
     Coding, ConceptDefinitionComponent, ConceptSetComponent, DomainResource, ImplementationGuide,
     IssueComponent,
-    OperationOutcome, PackageComponent, PackageResourceComponent,
+    OperationOutcome, PackageComponent, PackageResourceComponent, PageComponent,
     Resource,
     StructureDefinition,
     ValueSet
 } from '../models/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../models/r4/fhir';
+import {
+    ImplementationGuide as R4ImplementationGuide,
+    ImplementationGuidePageComponent,
+    ImplementationGuideResourceComponent
+} from '../models/r4/fhir';
 import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
 import {Fhir} from 'fhir/fhir';
@@ -18,7 +22,7 @@ import {ParseConformance} from 'fhir/parseConformance';
 import {Versions as FhirVersions} from 'fhir/fhir';
 import * as _ from 'underscore';
 import {ConfigService} from './config.service';
-import {ValidatorMessage} from 'fhir/validator';
+import {ValidatorMessage, ValidatorResponse} from 'fhir/validator';
 import {Globals} from '../globals';
 
 export class ParsedUrlModel {
@@ -53,8 +57,8 @@ export class FhirService {
     public valueSets: ValueSet[] = [];
     private customValidator: CustomValidator;
 
-    readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition'];
-    readonly terminologyTypes = ['ValueSet', 'CodeSystem'];
+    readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter'];
+    readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
     constructor(
         private http: HttpClient,
@@ -318,7 +322,7 @@ export class FhirService {
      * @param {Resource} resource
      * @return {any}
      */
-    public validate(resource: Resource) {
+    public validate(resource: Resource): ValidatorResponse {
         return this.fhir.validate(resource, {
             onBeforeValidateResource: (nextResource) => this.validateResource(nextResource)
         });
@@ -375,9 +379,29 @@ abstract class CustomValidator {
 class CustomSTU3Validator extends CustomValidator {
     constructor(fhirService: FhirService) { super(fhirService); }
 
+    private getAllPages(implementationGuide: ImplementationGuide): PageComponent[] {
+        const pages: PageComponent[] = [];
+
+        function next(page: PageComponent) {
+            pages.push(page);
+            _.each(page.page, (nextPage) => next(nextPage));
+        }
+
+        if (implementationGuide.page) {
+            next(implementationGuide.page);
+        }
+
+        return pages;
+    }
+
     public validateImplementationGuide(implementationGuide: ImplementationGuide): ValidatorMessage[] {
         const messages = [];
         const allResources = _.flatten(_.map(implementationGuide.package, (nextPackage: PackageComponent) => nextPackage.resource));
+        const groupedResources = _.groupBy(allResources, (resource: PackageResourceComponent) => resource.sourceReference ? resource.sourceReference.reference : resource.sourceUri);
+        const allPages = this.getAllPages(implementationGuide);
+        const groupedPageTitles = _.groupBy(allPages, (page: PageComponent) => page.title);
+        const groupedPageFileNames = _.groupBy(allPages, (page: PageComponent) => page.source);
+
         const exampleTypeResources = _.filter(allResources, (resource: PackageResourceComponent) => {
             const parsedReference = resource.sourceReference && resource.sourceReference.reference ?
                 this.fhirService.parseReference(resource.sourceReference.reference) : null;
@@ -386,6 +410,7 @@ class CustomSTU3Validator extends CustomValidator {
                 return this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes).indexOf(parsedReference.resourceType) < 0;
             }
         });
+
         _.each(exampleTypeResources, (resource: PackageResourceComponent) => {
             if (!resource.example) {
                 messages.push({
@@ -397,6 +422,72 @@ class CustomSTU3Validator extends CustomValidator {
             }
         });
 
+        _.each(groupedResources, (resourceGroup, reference) => {
+            if (resourceGroup.length > 1) {
+                messages.push({
+                    location: 'ImplementationGuide.package.resource',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Multiple resources found with reference ${reference || '""'}`
+                });
+            }
+        });
+
+        if (_.filter(allPages, (page) => !page.title).length > 0) {
+            messages.push({
+                location: 'ImplementationGuide.page+',
+                resourceId: implementationGuide.id,
+                severity: 'warning',
+                message: 'One more more pages does not have a title'
+            });
+        }
+
+        _.each(groupedPageTitles, (pages, title) => {
+            if (pages.length > 1) {
+                messages.push({
+                    location: 'ImplementationGuide.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Multiple pages found with the same title ${title || '""'}`
+                });
+            }
+        });
+
+        _.each(groupedPageFileNames, (pages, fileName) => {
+            if (pages.length > 1) {
+                messages.push({
+                    location: 'ImplementationGuide.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Multiple pages found with the same source (file name) ${fileName || '""'}`
+                });
+            }
+        });
+
+        _.each(allPages, (page: PageComponent) => {
+            const foundContentExtension = _.find(page.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+
+            if (!foundContentExtension) {
+                messages.push({
+                    location: 'ImplementationGuide.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `The page with title ${page.title} does not specify content.`
+                });
+            }
+        });
+
+        _.each(allResources, (resource: PackageResourceComponent) => {
+            if (resource.sourceUri) {
+                messages.push({
+                    location: 'ImplementationGuide.package.resource',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `A resource within a package uses a URI ${resource.sourceUri} instead of a relative reference. This resource will not export correctly.`
+                });
+            }
+        })
+
         return messages;
     }
 }
@@ -404,7 +495,115 @@ class CustomSTU3Validator extends CustomValidator {
 class CustomR4Validator extends CustomValidator {
     constructor(fhirService: FhirService) { super(fhirService); }
 
+    private getAllPages(implementationGuide: R4ImplementationGuide): ImplementationGuidePageComponent[] {
+        const pages: ImplementationGuidePageComponent[] = [];
+
+        function next(page: ImplementationGuidePageComponent) {
+            pages.push(page);
+            _.each(page.page, (nextPage) => next(nextPage));
+        }
+
+        if (implementationGuide.definition.page) {
+            next(implementationGuide.definition.page);
+        }
+
+        return pages;
+    }
+
     public validateImplementationGuide(implementationGuide: R4ImplementationGuide): ValidatorMessage[] {
-        return [];
+        if (!implementationGuide.definition) {
+            return [];
+        }
+
+        const messages = [];
+        const allResources = implementationGuide.definition.resource;
+        const groupedResources = _.groupBy(allResources, (resource: ImplementationGuideResourceComponent) => resource.reference ? resource.reference.reference : null);
+        const allPages = this.getAllPages(implementationGuide);
+        const groupedPageTitles = _.groupBy(allPages, (page: ImplementationGuidePageComponent) => page.title);
+        const allProfileTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+
+        _.each(allResources, (resource: ImplementationGuideResourceComponent, index) => {
+            if (!resource.reference || !resource.reference.reference) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.resource',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Resource #${index + 1} does not have a reference`
+                });
+            } else {
+                const parsedReference = this.fhirService.parseReference(resource.reference.reference);
+
+                if (resource.exampleBoolean || resource.exampleCanonical) {
+                    if (allProfileTypes.indexOf(parsedReference.resourceType) >= 0) {
+                        messages.push({
+                            location: 'ImplementationGuide.definition.resource',
+                            resourceId: implementationGuide.id,
+                            severity: 'warning',
+                            message: `Resource with reference ${resource.reference.reference} may incorrectly be flagged as an example`
+                        });
+                    }
+                } else {
+                    if (allProfileTypes.indexOf(parsedReference.resourceType) < 0) {
+                        messages.push({
+                            location: 'ImplementationGuide.definition.resource',
+                            resourceId: implementationGuide.id,
+                            severity: 'warning',
+                            message: `Resource with reference ${resource.reference.reference} should be flagged as an example`
+                        });
+                    }
+                }
+            }
+        });
+
+        _.each(groupedResources, (resourceGroup, reference) => {
+            if (resourceGroup.length > 1) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.resource',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Multiple resources found with reference ${reference || '""'}`
+                });
+            }
+        });
+
+        _.each(groupedPageTitles, (pages, title) => {
+            if (!title && pages.length > 0) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `One or more pages does not have a title. It will not be exported.`
+                });
+            }
+
+            if (title && pages.length > 1) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Multiple pages found with the same title ${title || '""'}`
+                });
+            }
+        });
+
+        _.each(allPages, (page: ImplementationGuidePageComponent) => {
+            if (!page.nameReference || !page.nameReference.reference) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `Page with title ${page.title} does not specify a reference to the content of the page`
+                });
+            } else if (!page.nameReference.reference.startsWith('#')) {
+                messages.push({
+                    location: 'ImplementationGuide.definition.page+',
+                    resourceId: implementationGuide.id,
+                    severity: 'warning',
+                    message: `The reference for the page with the title ${page.title} should be a Binary resource contained within the ImplementationGuide so that ToF knows how to export it`
+                });
+            }
+        });
+
+        return messages;
     }
 }
