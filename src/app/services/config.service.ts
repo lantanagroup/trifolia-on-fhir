@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
 import {Globals} from '../globals';
 import {Title} from '@angular/platform-browser';
+import {CapabilityStatement as STU3CapabilityStatement} from '../models/stu3/fhir';
+import {CapabilityStatement as R4CapabilityStatement} from '../models/r4/fhir';
 
 @Injectable()
 export class ConfigService {
@@ -10,7 +12,7 @@ export class ConfigService {
     public fhirServer: string;
     public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
     public statusMessage: string;
-    public fhirConformance;
+    public fhirConformance: STU3CapabilityStatement | R4CapabilityStatement;
     public fhirVersion = {
         major: 3,
         minor: 0,

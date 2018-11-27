@@ -23,7 +23,7 @@ export class ElementDefinitionTypeModalComponent implements OnInit {
     }
 
     selectProfile(dest: string) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'StructureDefinition';
         modalRef.componentInstance.hideResourceType = true;
 

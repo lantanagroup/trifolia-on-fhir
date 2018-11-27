@@ -57,7 +57,7 @@ export class ReferenceComponent implements OnInit {
     }
 
     open(content) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = this.resourceType;
         modalRef.componentInstance.hideResourceType = this.hideResourceType;
 

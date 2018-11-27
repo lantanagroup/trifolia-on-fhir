@@ -23,14 +23,20 @@ router.use(checkJwt, (req, res) => {
     delete headers['referer'];
     delete headers['user-agent'];
     delete headers['content-length'];
+    delete headers['cookie'];
+    delete headers['connection'];
+
+    headers['Cache-Control'] = 'no-cache';
 
     const options = {
         url: url,
         method: req.method,
-        headers: headers,
-        body: req.body,
-        json: true
+        headers: headers
     };
+
+    if (req.method !== 'GET' && req.method !== 'DELETE') {
+        options.body = req.body;
+    }
 
     try {
         const fhirRequest = request(options);

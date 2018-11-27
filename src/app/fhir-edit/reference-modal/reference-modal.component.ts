@@ -16,9 +16,14 @@ export class FhirEditReferenceModalComponent implements OnInit {
     @Input() public resourceType?: string;
     @Input() public hideResourceType?: boolean;
     public contentSearch?: string;
-    public contentSearchChanged: Subject<string> = new Subject<string>();
+    public criteriaChangedEvent: Subject<string> = new Subject<string>();
+    public nameSearch?: string;
+    public titleSearch?: string;
     public results?: Bundle;
     public resourceTypeCodes: Coding[] = [];
+    public nameSearchTypes: string[] = [];
+    public titleSearchTypes: string[] = [];
+    public message: string;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -26,10 +31,22 @@ export class FhirEditReferenceModalComponent implements OnInit {
         private fhirService: FhirService,
         public globals: Globals) {
 
-        this.contentSearchChanged
+        this.criteriaChangedEvent
             .debounceTime(500)
             .distinctUntilChanged()
             .subscribe(() => this.criteriaChanged());
+    }
+
+    public get showContentSearch() {
+        return this.resourceType && this.nameSearchTypes.concat(this.titleSearchTypes).indexOf(this.resourceType) < 0;
+    }
+
+    public get showNameSearch() {
+        return this.nameSearchTypes.indexOf(this.resourceType) >= 0;
+    }
+
+    public get showTitleSearch() {
+        return this.titleSearchTypes.indexOf(this.resourceType) >= 0;
     }
 
     public select(resourceEntry) {
@@ -42,28 +59,50 @@ export class FhirEditReferenceModalComponent implements OnInit {
         });
     }
 
-    criteriaChanged() {
-        if (!this.resourceType) {
+    criteriaChanged(loadMore?: boolean) {
+        if (!loadMore) {
             this.results = null;
+        }
+
+        if (!this.resourceType) {
             return;
         }
 
-        let url = '/api/fhir/' + this.resourceType + '?_summary=true&';
+        const nonContentResourceTypes = this.nameSearchTypes.concat(this.titleSearchTypes);
+        let url = '/api/fhir/' + this.resourceType + '?_summary=true&_count=10&';
 
-        if (this.contentSearch) {
+        if (this.results && this.results.entry) {
+            url += '_getpagesoffset=' + this.results.entry.length + '&';
+        }
+
+        if (this.contentSearch && nonContentResourceTypes.indexOf(this.resourceType) < 0) {
             url += '_content=' + encodeURIComponent(this.contentSearch) + '&';
+        }
+
+        if (this.nameSearch && this.nameSearchTypes.indexOf(this.resourceType) >= 0) {
+            url += 'name:contains=' + encodeURIComponent(this.nameSearch);
+        }
+
+        if (this.titleSearch && this.titleSearchTypes.indexOf(this.resourceType) >= 0) {
+            url += 'title:contains=' + encodeURIComponent(this.titleSearch);
         }
 
         this.http.get(url)
             .subscribe((results: Bundle) => {
-                this.results = results;
+                if (this.results) {
+                    this.results.entry = this.results.entry.concat(results.entry);
+                } else {
+                    this.results = results;
+                }
             }, (err) => {
-                // TODO
+                this.message = err.message || err.data || err;
             });
     }
 
     ngOnInit() {
         this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
         this.criteriaChanged();
+        this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
+        this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
     }
 }

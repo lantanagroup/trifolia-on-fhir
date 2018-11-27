@@ -12,10 +12,22 @@
         </select>
     </div>
 
-    <div class="input-group">
+    <div class="input-group" *ngIf="showContentSearch">
         <div class="input-group-addon">Search</div>
-        <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="contentSearchChanged.next($event)"/>
+        <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
     </div>
+
+    <div class="input-group" *ngIf="showNameSearch">
+        <div class="input-group-addon">Name</div>
+        <input class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+    </div>
+
+    <div class="input-group" *ngIf="showTitleSearch">
+        <div class="input-group-addon">Title</div>
+        <input class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+    </div>
+
+    <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
     <table class="table" *ngIf="results">
         <thead>
@@ -36,10 +48,15 @@
                 </div>
             </td>
         </tr>
+        <tr *ngIf="results.entry.length < results.total">
+            <td colspan="2">
+                <a href="javascript:void()" (click)="criteriaChanged(true)">Load More</a>
+            </td>
+        </tr>
         </tbody>
         <tfoot>
         <tr>
-            <th colspan="2">Total results: {{results.total}}</th>
+            <th colspan="2">Showing {{results.entry.length}} of {{results.total}} results</th>
         </tr>
         </tfoot>
     </table>
