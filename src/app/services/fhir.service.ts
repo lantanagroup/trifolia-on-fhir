@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {
-    Bundle,
+    Bundle, CapabilityStatement,
     CodeSystem,
     Coding, ConceptDefinitionComponent, ConceptSetComponent, DomainResource, ImplementationGuide,
     IssueComponent,
     OperationOutcome, PackageComponent, PackageResourceComponent, PageComponent,
-    Resource,
+    Resource, ResourceComponent, RestComponent, SearchParamComponent,
     StructureDefinition,
     ValueSet
 } from '../models/stu3/fhir';
@@ -351,6 +351,23 @@ export class FhirService {
         } else if (oo.text && oo.text.div) {
             return oo.text.div;
         }
+    }
+
+    public findResourceTypesWithSearchParam(searchParamName: string): string[] {
+        const cs = <CapabilityStatement> this.configService.fhirConformance;
+        const resourceTypes: string[] = [];
+
+        _.each(cs.rest, (rest: RestComponent) => {
+            _.each(rest.resource, (resource: ResourceComponent) => {
+                const found = _.find(resource.searchParam, (searchParam: SearchParamComponent) => searchParam.name === searchParamName);
+
+                if (found) {
+                    resourceTypes.push(resource.type);
+                }
+            });
+        });
+
+        return resourceTypes;
     }
 
     private validateResource(resource: any): ValidatorMessage[] {

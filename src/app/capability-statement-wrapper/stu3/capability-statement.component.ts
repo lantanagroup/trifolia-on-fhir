@@ -99,7 +99,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public selectImplementationGuide(implementationGuideIndex) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'ImplementationGuide';
         modalRef.componentInstance.hideResourceType = true;
 

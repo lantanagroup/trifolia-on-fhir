@@ -66,7 +66,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     selectTypeProfile(type: TypeRefComponent) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent);
+        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'StructureDefinition';
         modalRef.componentInstance.hideResourceType = true;
 
