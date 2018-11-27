@@ -34,6 +34,22 @@ export class SelectSingleCodeComponent implements OnInit {
         this.change.emit(this.parentObject[this.propertyName]);
     }
 
+    public get theValue() {
+        if (this.parentObject) {
+            return this.parentObject[this.propertyName] || '';
+        }
+
+        return '';
+    }
+
+    public set theValue(value: any) {
+        if (!value && this.theValue) {
+            delete this.parentObject[this.propertyName];
+        } else if (value && this.parentObject) {
+            this.parentObject[this.propertyName] = value;
+        }
+    }
+
     public getDefaultCode(): string {
         if (this.defaultCode) {
             return this.defaultCode;
@@ -82,12 +98,12 @@ export class SelectSingleCodeComponent implements OnInit {
     )
 
     ngOnInit() {
-        if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
-            this.globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
-        }
-
         if (!this.codes && this.valueSetUrl) {
             this.codes = this.fhirService.getValueSetCodes(this.valueSetUrl);
+        }
+
+        if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
+            this.globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
         }
     }
 }
