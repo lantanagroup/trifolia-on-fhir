@@ -213,24 +213,24 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="checkbox" [(ngModel)]="element.mustSupport"/>
                     <label>
+                        <input type="checkbox" [(ngModel)]="element.mustSupport"/>
                         Must support
                         <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
                     </label>
                 </div>
 
                 <div class="form-group">
-                    <input type="checkbox" [(ngModel)]="element.isModifier"/>
                     <label>
+                        <input type="checkbox" [(ngModel)]="element.isModifier"/>
                         Is modifier
                         <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
                     </label>
                 </div>
 
                 <div class="form-group">
-                    <input type="checkbox" [(ngModel)]="element.isSummary"/>
                     <label>
+                        <input type="checkbox" [(ngModel)]="element.isSummary"/>
                         Is summary
                         <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
                     </label>
@@ -238,8 +238,7 @@
 
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')"
-                               (ngModelChange)="globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
                         Constraint
                         <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
                     </label>
