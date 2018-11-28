@@ -9,9 +9,15 @@
             <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
         </select>
         <input type="text" class="form-control" *ngIf="isTypeahead" [class.is-invalid]="required && !parentObject[propertyName]" [(ngModel)]="theValue" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" (change)="selectedCodeChanged()" />
+        <div class="input-group-append" *ngIf="isTypeahead">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu scrollable-menu dropdown-menu-right">
+                <a class="dropdown-item" href="javascript:void()" *ngFor="let o of codes" (click)="theValue = o.code">{{o.display || o.code}}</a>
+            </div>
+        </div>
     </div>
 </div>
-<div *ngIf="!isFormGroup" [class.input-group]="!required">
+<div *ngIf="!isFormGroup" [class.input-group]="!required || isTypeahead">
     <div class="input-group-addon" *ngIf="title">
         <span>{{title}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
@@ -21,4 +27,10 @@
         <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
     </select>
     <input type="text" class="form-control" *ngIf="isTypeahead" [class.is-invalid]="!parentObject[propertyName]" [(ngModel)]="theValue" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter" (change)="selectedCodeChanged()" />
+    <div class="input-group-append" *ngIf="isTypeahead">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+        <div class="dropdown-menu scrollable-menu dropdown-menu-right">
+            <a class="dropdown-item" href="javascript:void()" *ngFor="let o of codes" (click)="theValue = o.code">{{o.display || o.code}}</a>
+        </div>
+    </div>
 </div>
