@@ -100,7 +100,7 @@
                                     <th>Example?</th>
                                     <th class="actions-column-1">
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-default" (click)="implementationGuide.definition.resource.push({ reference: { reference: '', display: '' }, exampleBoolean: false })">
+                                            <button type="button" class="btn btn-default" (click)="addResources()">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -358,7 +358,7 @@
                         </th>
                         <th class="actions-column-1">
                             <div class="pull-right">
-                                <button type="button" class="btn btn-default" title="Add a resource to the implementation guide" (click)="implementationGuide.definition.resource.push({ reference: { reference: '', display: '' }, exampleBoolean: false })">
+                                <button type="button" class="btn btn-default" title="Add a resource to the implementation guide" (click)="addResources()">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>

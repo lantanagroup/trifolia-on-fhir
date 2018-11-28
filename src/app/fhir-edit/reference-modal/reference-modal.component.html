@@ -32,17 +32,21 @@
     <table class="table" *ngIf="results">
         <thead>
         <tr>
+            <th *ngIf="selectMultiple"> </th>
             <th>Resources</th>
-            <th>&nbsp;</th>
+            <th *ngIf="!selectMultiple">&nbsp;</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let e of results.entry">
+            <td *ngIf="selectMultiple">
+                <input type="checkbox" [ngModel]="isSelected(e)" (ngModelChange)="setSelected(e, $event)" />
+            </td>
             <td>
                 {{e.resource | fhirDisplay}}
                 <sub>{{e.resource.resourceType}}/{{e.resource.id}}</sub>
             </td>
-            <td>
+            <td *ngIf="!selectMultiple">
                 <div class="pull-right">
                     <button type="button" class="btn btn-default" (click)="select(e, c)">Select</button>
                 </div>
@@ -62,5 +66,10 @@
     </table>
 </div>
 <div class="modal-footer">
+    <div class="pull-left" *ngIf="selected.length > 0">
+        Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
+        [ <a href="javascript:void()" (click)="selected.splice(0, selected.length)">clear</a> ]
+    </div>
+    <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple" [disabled]="selected.length === 0">OK</button>
     <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
 </div>

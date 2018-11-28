@@ -23,6 +23,10 @@ import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
+import {
+    FhirEditReferenceModalComponent,
+    ResourceSelection
+} from '../../fhir-edit/reference-modal/reference-modal.component';
 
 class PageDefinition {
     public page: ImplementationGuidePageComponent;
@@ -117,6 +121,31 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
     public get isFilterResourceTypeAll() {
         return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+    }
+
+    public addResources() {
+        const modalRef = this.modal.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        modalRef.componentInstance.selectMultiple = true;
+
+        modalRef.result.then((results: ResourceSelection[]) => {
+            if (!this.implementationGuide.definition) {
+                this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
+                this.implementationGuide.definition.resource = [];
+            }
+
+            const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+
+            _.each(results, (result: ResourceSelection) => {
+                this.implementationGuide.definition.resource.push({
+                    reference: {
+                        reference: result.resourceType + '/' + result.id,
+                        display: result.display
+                    },
+                    name: result.display,
+                    exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
+                });
+            });
+        });
     }
 
     public toggleFilterResourceType(type: string) {

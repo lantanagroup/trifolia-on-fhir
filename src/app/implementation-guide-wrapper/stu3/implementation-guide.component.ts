@@ -20,6 +20,11 @@ import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 import {ValidatorResponse} from 'fhir/validator';
+import {
+    FhirEditReferenceModalComponent,
+    ResourceSelection
+} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {ImplementationGuideDefinitionComponent} from '../../models/r4/fhir';
 
 class PageDefinition {
     public page: PageComponent;
@@ -90,6 +95,64 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public removeDependency(dependency: Extension) {
         const index = this.implementationGuide.extension.indexOf(dependency);
         this.implementationGuide.extension.splice(index);
+    }
+
+    public addResources(destPackage?: PackageComponent) {
+        const modalRef = this.modal.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        modalRef.componentInstance.selectMultiple = true;
+
+        modalRef.result.then((results: ResourceSelection[]) => {
+            if (!this.implementationGuide.package) {
+                this.implementationGuide.package = [];
+            }
+
+            if (this.implementationGuide.package.length === 0) {
+                this.implementationGuide.package.push({
+                    name: 'default',
+                    resource: []
+                });
+            }
+
+            if (!destPackage) {
+                destPackage = this.implementationGuide.package[0];
+            }
+
+            const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+
+            if (!destPackage.resource) {
+                destPackage.resource = [];
+            }
+
+            _.each(results, (result: ResourceSelection) => {
+                let found = false;
+
+                // Determine if the resource is already referenced in one of the packages
+                _.each(this.implementationGuide.package, (next: PackageComponent) => {
+                    const foundNext = _.find(next.resource, (resource: PackageResourceComponent) => {
+                        if (resource.sourceReference) {
+                            const parsed = this.fhirService.parseReference(resource.sourceReference.reference);
+                            return parsed.resourceType === result.resourceType && parsed.id === result.id;
+                        }
+                    });
+
+                    if (foundNext) {
+                        found = true;
+                    }
+                });
+
+                if (!found) {
+                    destPackage.resource.push({
+                        sourceReference: {
+                            reference: result.resourceType + '/' + result.id,
+                            display: result.display
+                        },
+                        example: allProfilingTypes.indexOf(result.resourceType) < 0
+                    });
+                }
+            });
+
+            this.initResources();
+        });
     }
 
     public addDependency() {
@@ -509,34 +572,6 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         const originalResourceIndex = igResource.igPackage.resource.indexOf(igResource.resource);
         igResource.igPackage.resource.splice(originalResourceIndex, 1);
         newPackage.resource.push(igResource.resource);
-        this.initResources();
-    }
-
-    public addResource() {
-        if (!this.implementationGuide.package) {
-            this.implementationGuide.package = [];
-        }
-
-        if (this.implementationGuide.package.length === 0) {
-            this.implementationGuide.package.push({
-                name: 'default',
-                resource: []
-            });
-        }
-
-        const firstPackage = this.implementationGuide.package[0];
-
-        // Just in case we are working with someone else's invalid implementation guide
-        if (!firstPackage.resource) {
-            firstPackage.resource = [];
-        }
-
-        const newResource = {
-            sourceReference: { reference: '', display: '' },
-            example: false
-        };
-        firstPackage.resource.push(newResource);
-
         this.initResources();
     }
 
