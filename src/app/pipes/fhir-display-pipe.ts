@@ -22,6 +22,7 @@ export class FhirDisplayPipe implements PipeTransform {
 
         switch (value.resourceType) {
             case 'Patient':
+            case 'Practitioner':
                 let name = '';
 
                 if (value.name.length > 0) {

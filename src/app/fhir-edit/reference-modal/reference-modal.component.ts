@@ -1,11 +1,20 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {Bundle, Coding} from '../../models/stu3/fhir';
+import {Bundle, Coding, EntryComponent} from '../../models/stu3/fhir';
 import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
 import {Subject} from 'rxjs/Subject';
 import {HttpClient} from '@angular/common/http';
 import {FhirService} from '../../services/fhir.service';
+import * as _ from 'underscore';
+
+export interface ResourceSelection {
+    resourceType: string;
+    id: string;
+    display?: string;
+    fullUrl?: string;
+    resource?: any;
+}
 
 @Component({
     selector: 'app-fhir-reference-modal',
@@ -15,10 +24,12 @@ import {FhirService} from '../../services/fhir.service';
 export class FhirEditReferenceModalComponent implements OnInit {
     @Input() public resourceType?: string;
     @Input() public hideResourceType?: boolean;
+    @Input() public selectMultiple = false;
     public contentSearch?: string;
     public criteriaChangedEvent: Subject<string> = new Subject<string>();
     public nameSearch?: string;
     public titleSearch?: string;
+    public selected: ResourceSelection[] = [];
     public results?: Bundle;
     public resourceTypeCodes: Coding[] = [];
     public nameSearchTypes: string[] = [];
@@ -49,14 +60,39 @@ export class FhirEditReferenceModalComponent implements OnInit {
         return this.titleSearchTypes.indexOf(this.resourceType) >= 0;
     }
 
-    public select(resourceEntry) {
-        this.activeModal.close({
-            resourceType: resourceEntry.resource.resourceType,
-            id: resourceEntry.resource.id,
-            display: new FhirDisplayPipe().transform(resourceEntry.resource, []),
-            fullUrl: resourceEntry.fullUrl,
-            resource: resourceEntry.resource
-        });
+    public isSelected(entry: EntryComponent) {
+        return !!_.find(this.selected, (selected) => selected.resourceType === entry.resource.resourceType && selected.id === entry.resource.id);
+    }
+
+    public setSelected(entry: EntryComponent, isSelected) {
+        const found = _.find(this.selected, (selected) => selected.resourceType === entry.resource.resourceType && selected.id === entry.resource.id);
+
+        if (found && !isSelected) {
+            const index = this.selected.indexOf(found);
+            this.selected.splice(index, 1);
+        } else if (!found && isSelected) {
+            this.selected.push({
+                resourceType: entry.resource.resourceType,
+                id: entry.resource.id,
+                display: new FhirDisplayPipe().transform(entry.resource, []),
+                fullUrl: entry.fullUrl,
+                resource: entry.resource
+            });
+        }
+    }
+
+    public select(resourceEntry?) {
+        if (resourceEntry) {
+            this.activeModal.close(<ResourceSelection>{
+                resourceType: resourceEntry.resource.resourceType,
+                id: resourceEntry.resource.id,
+                display: new FhirDisplayPipe().transform(resourceEntry.resource, []),
+                fullUrl: resourceEntry.fullUrl,
+                resource: resourceEntry.resource
+            });
+        } else if (this.selectMultiple) {
+            this.activeModal.close(this.selected);
+        }
     }
 
     criteriaChanged(loadMore?: boolean) {
