@@ -5,41 +5,42 @@
         <ng-template ngbTabContent>
             <div class="row">
                 <div class="col-md-8">
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CodeSystem.title"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher" tooltipPath="CodeSystem.publisher"></app-fhir-string>
                 </div>
                 <div class="col-md-4">
-                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" tooltipPath="CodeSystem.status"></app-fhir-select-single-code>
 
-                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode" tooltipPath="CodeSystem.content"></app-fhir-select-single-code>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version" tooltipPath="CodeSystem.version"></app-fhir-string>
 
-                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental" tooltipPath="CodeSystem.experimental"></app-fhir-boolean>
                 </div>
                 <div class="col-md-6">
-                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive" tooltipPath="CodeSystem.caseSensitive"></app-fhir-boolean>
 
-                    <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date"></app-fhir-date>
+                    <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date" tooltipPath="CodeSystem.date"></app-fhir-date>
 
-                    <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI"></app-fhir-string>
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
 
-                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="globals.codeSystemHierarchyMeaningCodes"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="globals.codeSystemHierarchyMeaningCodes" tooltipPath="CodeSystem.hierarchyMeaning"></app-fhir-select-single-code>
                 </div>
                 <div class="col-md-6">
-                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional" tooltipPath="CodeSystem.compositional"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed" tooltipPath="CodeSystem.versionNeeded"></app-fhir-boolean>
 
                     <div class="form-group">
                         <label>
                             <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('count')" (ngModelChange)="globals.toggleProperty(codeSystem, 'count', 1)" />
-                            Rank
+                            Count
+                            <app-tooltip-icon tooltipPath="CodeSystem.count"></app-tooltip-icon>
                         </label>
                         <input type="number" class="form-control" [disabled]="!codeSystem.hasOwnProperty('count')" [(ngModel)]="codeSystem.count" />
                     </div>
@@ -50,11 +51,11 @@
 
     <ngb-tab title="Narrative">
         <ng-template ngbTabContent>
-            <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description" tooltipPath="CodeSystem.description"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose" tooltipPath="CodeSystem.purpose"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright" tooltipPath="CodeSystem.copyright"></app-fhir-markdown>
         </ng-template>
     </ngb-tab>
 
@@ -64,14 +65,15 @@
                 <div class="card-header">
                     <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(codeSystem, 'filter', [{ code: '', operator: ['='], value: '' }])"/>
                     Filter
+                    <app-tooltip-icon tooltipPath="CodeSystem.filter"></app-tooltip-icon>
                 </div>
                 <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('filter')">
                     <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Description</th>
-                        <th>Operator</th>
-                        <th>Value</th>
+                        <th>Code <app-tooltip-icon tooltipPath="CodeSystem.filter.code"></app-tooltip-icon></th>
+                        <th>Description <app-tooltip-icon tooltipPath="CodeSystem.filter.description"></app-tooltip-icon></th>
+                        <th>Operator <app-tooltip-icon tooltipPath="CodeSystem.filter.operator"></app-tooltip-icon></th>
+                        <th>Value <app-tooltip-icon tooltipPath="CodeSystem.filter.value"></app-tooltip-icon></th>
                         <th>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Add a filter" (click)="codeSystem.filter.push({ code: '', operator: ['='], value: '' })">
@@ -127,14 +129,15 @@
                 <div class="card-header">
                     <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('property')" (ngModelChange)="globals.toggleProperty(codeSystem, 'property', [{ code: '', type: 'code' }])"/>
                     Property
+                    <app-tooltip-icon tooltipPath="CodeSystem.property"></app-tooltip-icon>
                 </div>
                 <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('property')">
                     <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>URI</th>
-                        <th>Description</th>
-                        <th>Type</th>
+                        <th>Code <app-tooltip-icon tooltipPath="CodeSystem.property.code"></app-tooltip-icon></th>
+                        <th>URI <app-tooltip-icon tooltipPath="CodeSystem.property.uri"></app-tooltip-icon></th>
+                        <th>Description <app-tooltip-icon tooltipPath="CodeSystem.property.description"></app-tooltip-icon></th>
+                        <th>Type <app-tooltip-icon tooltipPath="CodeSystem.property.type"></app-tooltip-icon></th>
                         <th>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Add a property" (click)="codeSystem.property.push({ code: '', type: 'code' })">
@@ -170,26 +173,26 @@
                 </table>
             </div>
 
-            <app-fhir-multi-contact [parentObject]="codeSystem" propertyName="contact" title="Contact"></app-fhir-multi-contact>
+            <app-fhir-multi-contact [parentObject]="codeSystem" propertyName="contact" title="Contact" tooltipPath="CodeSystem.contact"></app-fhir-multi-contact>
 
-            <app-fhir-multi-use-context [parentObject]="codeSystem" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
+            <app-fhir-multi-use-context [parentObject]="codeSystem" propertyName="useContext" title="Use Context" tooltipPath="CodeSystem.useContext"></app-fhir-multi-use-context>
 
-            <app-fhir-multi-jurisdiction [parentObject]="codeSystem" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
+            <app-fhir-multi-jurisdiction [parentObject]="codeSystem" propertyName="jurisdiction" title="Jurisdiction" tooltipPath="CodeSystem.jurisdiction"></app-fhir-multi-jurisdiction>
         </ng-template>
     </ngb-tab>
 
     <ngb-tab title="Concept(s)">
         <ng-template ngbTabContent>
             <p>
-                <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="globals.toggleProperty(codeSystem, 'concept', [{}])" /> Code system has concepts
+                <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="globals.toggleProperty(codeSystem, 'concept', [{}])" /> Code system has concepts <app-tooltip-icon tooltipPath="CodeSystem.concept"></app-tooltip-icon>
             </p>
 
             <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('concept')">
                 <thead>
                 <tr>
-                    <th>Code</th>
-                    <th>Display</th>
-                    <th>Definition</th>
+                    <th>Code <app-tooltip-icon tooltipPath="CodeSystem.concept.code"></app-tooltip-icon></th>
+                    <th>Display <app-tooltip-icon tooltipPath="CodeSystem.concept.display"></app-tooltip-icon></th>
+                    <th>Definition <app-tooltip-icon tooltipPath="CodeSystem.concept.definition"></app-tooltip-icon></th>
                     <th>
                         <div class="pull-right">
                             <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="codeSystem.concept.push({})">

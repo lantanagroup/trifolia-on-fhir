@@ -5,23 +5,24 @@
     </button>
 </div>
 <div class="modal-body">
-    <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+    <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true" tooltipPath="CodeSystem.concept.code"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="concept" propertyName="display" title="Display"></app-fhir-string>
+    <app-fhir-string [parentObject]="concept" propertyName="display" title="Display" tooltipPath="CodeSystem.concept.display"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="concept" propertyName="definition" title="Definition"></app-fhir-string>
+    <app-fhir-string [parentObject]="concept" propertyName="definition" title="Definition" tooltipPath="CodeSystem.concept.definition"></app-fhir-string>
 
     <div class="card">
         <div class="card-header">
             <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="globals.toggleProperty(concept, 'designation', [{ value: '' }])" />
             Designation
+            <app-tooltip-icon tooltipPath="CodeSystem.concept.designation"></app-tooltip-icon>
         </div>
         <table class="table table-striped" *ngIf="concept.hasOwnProperty('designation')">
             <thead>
             <tr>
-                <th>Language</th>
-                <th>Use</th>
-                <th>Value</th>
+                <th>Language <app-tooltip-icon tooltipPath="CodeSystem.concept.designation.language"></app-tooltip-icon></th>
+                <th>Use <app-tooltip-icon tooltipPath="CodeSystem.concept.designation.use"></app-tooltip-icon></th>
+                <th>Value <app-tooltip-icon tooltipPath="CodeSystem.concept.designation.value"></app-tooltip-icon></th>
                 <th>
                     <div class="pull-right">
                         <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="concept.designation.push({ value: '' })">
@@ -66,13 +67,14 @@
         <div class="card-header">
             <input type="checkbox" [ngModel]="concept.hasOwnProperty('property')" (ngModelChange)="globals.toggleProperty(concept, 'property', [{ code: '' }])" />
             Property
+            <app-tooltip-icon tooltipPath="CodeSystem.concept.property"></app-tooltip-icon>
         </div>
         <table class="table table-striped" *ngIf="concept.hasOwnProperty('property')">
             <thead>
             <tr>
-                <th>Code</th>
+                <th>Code <app-tooltip-icon tooltipPath="CodeSystem.concept.property.code"></app-tooltip-icon></th>
                 <th>Value Type</th>
-                <th>Value</th>
+                <th>Value <app-tooltip-icon tooltipPath="CodeSystem.concept.property.value[x]"></app-tooltip-icon></th>
                 <th>
                     <div class="pull-right">
                         <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="concept.property.push({ code: '' })">
