@@ -9,6 +9,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirEditCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
+import * as _ from 'underscore';
 
 @Component({
     selector: 'app-codesystem',
@@ -17,8 +18,15 @@ import {ConfigService} from '../services/config.service';
 })
 export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public codeSystem = new CodeSystem();
+    public filteredConcepts: ConceptDefinitionComponent[] = [];
+    public pagedConcepts: ConceptDefinitionComponent[] = [];
     public message: string;
     public validation: any;
+    public searchCode: string;
+    public searchDisplay: string;
+    public searchDefinition: string;
+    public perPage = 10;
+    public page = 1;
     private navSubscription: any;
 
     constructor(
@@ -42,9 +50,72 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         this.getCodeSystem();
     }
 
+    public searchCodeChanged(newValue: string) {
+        this.searchCode = newValue;
+        this.refreshConcepts();
+    }
+
+    public searchDisplayChanged(newValue: string) {
+        this.searchDisplay = newValue;
+        this.refreshConcepts();
+    }
+
+    public searchDefinitionChanged(newValue: string) {
+        this.searchDefinition = newValue;
+        this.refreshConcepts();
+    }
+
+    public refreshConcepts() {
+        const actualConcepts = <ConceptDefinitionComponent[]> this.codeSystem.concept;
+        let filtered = [];
+
+        if (actualConcepts && actualConcepts.length > 0) {
+            const lowerSearchCode = this.searchCode ? this.searchCode.toLowerCase() : null;
+            const lowerSearchDisplay = this.searchDisplay ? this.searchDisplay.toLowerCase() : null;
+            const lowerSearchDefinition = this.searchDefinition ? this.searchDefinition.toLowerCase() : null;
+
+            filtered = _.filter(actualConcepts, (concept: ConceptDefinitionComponent) => {
+                const matchesCode = !lowerSearchCode ||
+                    (concept.code && concept.code.toLowerCase().indexOf(lowerSearchCode) >= 0);
+                const matchesDisplay = !lowerSearchDisplay ||
+                    (concept.display && concept.display.toLowerCase().indexOf(lowerSearchDisplay) >= 0);
+                const matchesDefinition = !lowerSearchDefinition ||
+                    (concept.definition && concept.definition.toLowerCase().indexOf(lowerSearchDefinition) >= 0);
+
+                return matchesCode && matchesDisplay && matchesDefinition;
+            });
+        }
+
+        const totalPages = Math.ceil(filtered.length / this.perPage);
+
+        if (this.page > totalPages) {
+            this.page = totalPages;
+        }
+
+        this.filteredConcepts = filtered;
+
+        const startIndex = this.page <= 1 ? 0 : (this.page - 1) * this.perPage;
+        this.pagedConcepts = filtered.slice(startIndex, startIndex + this.perPage);
+    }
+
+    public removeConcept(concept: ConceptDefinitionComponent) {
+        const index = this.codeSystem.concept.indexOf(concept);
+        this.codeSystem.concept.splice(index, 1);
+        this.refreshConcepts();
+    }
+
     public editConcept(concept: ConceptDefinitionComponent) {
         const modalRef = this.modalService.open(FhirEditCodesystemConceptModalComponent, { size: 'lg' });
         modalRef.componentInstance.concept = concept;
+    }
+
+    public addConcept() {
+        this.searchCode = null;
+        this.searchDisplay = null;
+        this.searchDefinition = null;
+        this.page = Math.ceil(this.codeSystem.concept.length / this.perPage);
+        this.codeSystem.concept.push({ code: '' });
+        this.refreshConcepts();
     }
 
     public save() {
@@ -80,6 +151,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
             if (this.fileService.file) {
                 this.codeSystem = <CodeSystem> this.fileService.file.resource;
                 this.nameChanged();
+                this.refreshConcepts();
             } else {
                 this.router.navigate(['/']);
                 return;
@@ -98,6 +170,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
 
                     this.codeSystem = <CodeSystem> cs;
                     this.nameChanged();
+                    this.refreshConcepts();
                     this.recentItemService.ensureRecentItem(
                         this.globals.cookieKeys.recentCodeSystems,
                         this.codeSystem.id,

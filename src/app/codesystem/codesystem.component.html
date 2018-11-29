@@ -187,23 +187,29 @@
                 <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="globals.toggleProperty(codeSystem, 'concept', [{}])" /> Code system has concepts <app-tooltip-icon tooltipPath="CodeSystem.concept"></app-tooltip-icon>
             </p>
 
-            <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('concept')">
+            <table class="table table-striped" *ngIf="codeSystem.concept">
                 <thead>
                 <tr>
                     <th>Code <app-tooltip-icon tooltipPath="CodeSystem.concept.code"></app-tooltip-icon></th>
                     <th>Display <app-tooltip-icon tooltipPath="CodeSystem.concept.display"></app-tooltip-icon></th>
                     <th>Definition <app-tooltip-icon tooltipPath="CodeSystem.concept.definition"></app-tooltip-icon></th>
-                    <th>
+                    <th class="actions-column-2">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="codeSystem.concept.push({})">
+                            <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="addConcept()">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
                     </th>
                 </tr>
+                <tr>
+                    <th><input type="text" class="form-control" placeholder="Search code" [ngModel]="searchCode" (input)="searchCodeChanged($event.target.value)" /></th>
+                    <th><input type="text" class="form-control" placeholder="Search display" [ngModel]="searchDisplay" (input)="searchDisplayChanged($event.target.value)" /></th>
+                    <th><input type="text" class="form-control" placeholder="Search definition" [ngModel]="searchDefinition" (input)="searchDefinitionChanged($event.target.value)" /></th>
+                    <th>&nbsp;</th>
+                </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let c of codeSystem.concept; let ci = index">
+                <tr *ngFor="let c of pagedConcepts">
                     <td>
                         <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
                     </td>
@@ -218,13 +224,26 @@
                             <button type="button" class="btn btn-default btn-sm" title="Edit this concept" (click)="editConcept(c)">
                                 <i class="fa fa-edit"></i>
                             </button>
-                            <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="codeSystem.concept.splice(ci, 1)">
+                            <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="removeConcept(c)">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </td>
                 </tr>
                 </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
+                                        [maxSize]="5"
+                                        [collectionSize]="filteredConcepts.length"
+                                        [(page)]="page"
+                                        [pageSize]="perPage"
+                                        [boundaryLinks]="true"
+                                        (pageChange)="refreshConcepts()"></ngb-pagination>
+                    </td>
+                </tr>
+                </tfoot>
             </table>
         </ng-template>
     </ngb-tab>

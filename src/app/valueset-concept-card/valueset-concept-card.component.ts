@@ -14,6 +14,7 @@ export class ValuesetConceptCardComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     public filteredConcepts: ConceptReferenceComponent[] = [];
+    public pagedConcepts: ConceptReferenceComponent[] = [];
     public page = 1;
     public totalPages = 1;
     public searchCode: string;
@@ -106,10 +107,10 @@ export class ValuesetConceptCardComponent implements OnInit {
             this.page = this.totalPages;
         }
 
-        const startIndex = this.page <= 1 ? 0 : (this.page - 1) * this.perPage;
-        filtered = filtered.slice(startIndex, startIndex + this.perPage);
-
         this.filteredConcepts = filtered;
+
+        const startIndex = this.page <= 1 ? 0 : (this.page - 1) * this.perPage;
+        this.pagedConcepts = filtered.slice(startIndex, startIndex + this.perPage);
     }
 
     ngOnInit() {
