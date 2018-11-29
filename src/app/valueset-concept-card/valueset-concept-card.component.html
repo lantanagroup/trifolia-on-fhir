@@ -23,7 +23,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let concept of filteredConcepts; let ci = index">
+        <tr *ngFor="let concept of pagedConcepts">
             <td>
                 <app-fhir-string [parentObject]="concept" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
@@ -45,9 +45,9 @@
         <tfoot>
         <tr>
             <td colspan="3">
-                <ngb-pagination class="d-flex justify-content-center" *ngIf="concepts && concepts.length > 0"
+                <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
                                 [maxSize]="5"
-                                [collectionSize]="concepts.length"
+                                [collectionSize]="filteredConcepts.length"
                                 [(page)]="page"
                                 [pageSize]="perPage"
                                 [boundaryLinks]="true"
