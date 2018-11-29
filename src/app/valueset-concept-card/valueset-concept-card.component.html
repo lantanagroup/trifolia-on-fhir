@@ -23,7 +23,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let concept of concepts; let ci = index">
+        <tr *ngFor="let concept of filteredConcepts; let ci = index">
             <td>
                 <app-fhir-string [parentObject]="concept" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
@@ -45,17 +45,13 @@
         <tfoot>
         <tr>
             <td colspan="3">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default" [disabled]="page <= 1" title="Previous page" (click)="previousPage()">
-                        <i class="fa fa-backward"></i>
-                    </button>
-                    <button type="button" class="btn btn-default" disabled="disabled">
-                        Page {{page}} of {{totalPages}} ({{concepts.length}} concepts)
-                    </button>
-                    <button type="button" class="btn btn-default" [disabled]="page >= totalPages" title="Next page" (click)="nextPage()">
-                        <i class="fa fa-forward"></i>
-                    </button>
-                </div>
+                <ngb-pagination class="d-flex justify-content-center" *ngIf="concepts && concepts.length > 0"
+                                [maxSize]="5"
+                                [collectionSize]="concepts.length"
+                                [(page)]="page"
+                                [pageSize]="perPage"
+                                [boundaryLinks]="true"
+                                (pageChange)="refreshConcepts()"></ngb-pagination>
             </td>
         </tr>
         </tfoot>

@@ -13,16 +13,24 @@ import {Globals} from '../globals';
 export class ValuesetConceptCardComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
-    public concepts: ConceptReferenceComponent[] = [];
+    public filteredConcepts: ConceptReferenceComponent[] = [];
     public page = 1;
     public totalPages = 1;
     public searchCode: string;
     public searchDisplay: string;
-    private readonly perPage = 10;
+    public readonly perPage = 5;
 
     constructor(
         private globals: Globals,
         private modalService: NgbModal) {
+    }
+
+    public get concepts(): ConceptReferenceComponent[] {
+        if (this.parentObject && this.propertyName && this.parentObject[this.propertyName]) {
+            return this.parentObject[this.propertyName];
+        }
+
+        return [];
     }
 
     public addConcept() {
@@ -50,16 +58,6 @@ export class ValuesetConceptCardComponent implements OnInit {
 
     public criteriaChanged() {
         this.page = 1;
-        this.refreshConcepts();
-    }
-
-    public previousPage() {
-        this.page = this.page - 1;
-        this.refreshConcepts();
-    }
-
-    public nextPage() {
-        this.page = this.page + 1;
         this.refreshConcepts();
     }
 
@@ -111,7 +109,7 @@ export class ValuesetConceptCardComponent implements OnInit {
         const startIndex = this.page <= 1 ? 0 : (this.page - 1) * this.perPage;
         filtered = filtered.slice(startIndex, startIndex + this.perPage);
 
-        this.concepts = filtered;
+        this.filteredConcepts = filtered;
     }
 
     ngOnInit() {
