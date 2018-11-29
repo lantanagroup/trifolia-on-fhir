@@ -316,7 +316,17 @@ HtmlExporter.prototype._writeFilesForResource = function(rootPath, resource) {
     const searchPath = path.join(rootPath, `source/pages/_includes/${resource.id}-search.md`);
     const summaryPath = path.join(rootPath, `source/pages/_includes/${resource.id}-summary.md`);
 
-    fs.writeFileSync(introPath, 'TODO - Intro');
+    let intro = '---\n' +
+        `title: ${resource.resourceType}-${resource.id}-intro\n` +
+        'layout: default\n' +
+        `active: ${resource.resourceType}-${resource.id}-intro\n` +
+        '---\n\n';
+
+    if (resource.description) {
+        intro += resource.description;
+    }
+
+    fs.writeFileSync(introPath, intro);
     fs.writeFileSync(searchPath, 'TODO - Search');
     fs.writeFileSync(summaryPath, 'TODO - Summary');
 };
