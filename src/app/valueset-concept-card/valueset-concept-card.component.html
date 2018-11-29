@@ -2,6 +2,7 @@
     <div class="card-header">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="toggleConcepts()"/>
         Concepts
+        <app-tooltip-icon tooltipPath="ValueSet.compose.include.concept"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>
