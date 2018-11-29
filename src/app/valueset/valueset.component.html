@@ -5,23 +5,24 @@
         <ng-template ngbTabContent>
             <div class="row">
                 <div class="col-md-8">
-                    <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL" tooltipPath="ValueSet.url"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="ValueSet.name"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="ValueSet.title"></app-fhir-string>
 
                     <div class="card">
                         <div class="card-header">
                             <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('identifier')" (ngModelChange)="globals.toggleProperty(valueSet, 'identifier', [{ use: 'official', value: ''}])" />
                             Identifier(s)
+                            <app-tooltip-icon tooltipPath="ValueSet.identifier"></app-tooltip-icon>
                         </div>
                         <table class="table table-striped" *ngIf="valueSet.hasOwnProperty('identifier')">
                             <thead>
                             <tr>
-                                <th>Use</th>
-                                <th>System</th>
-                                <th>Value</th>
+                                <th>Use <app-tooltip-icon tooltipPath="Identifier.use"></app-tooltip-icon></th>
+                                <th>System <app-tooltip-icon tooltipPath="Identifier.system"></app-tooltip-icon></th>
+                                <th>Value <app-tooltip-icon tooltipPath="Identifier.value"></app-tooltip-icon></th>
                                 <th>
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-default btn-sm" title="Add an identifier" (click)="valueSet.identifier.push({ use: 'official', value: '' })">
@@ -78,18 +79,18 @@
                         </table>
                     </div>
 
-                    <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext"></app-fhir-multi-use-context>
+                    <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext" tooltipPath="ValueSet.useContext"></app-fhir-multi-use-context>
 
-                    <app-fhir-markdown [parentObject]="valueSet" propertyName="description" title="Description" [isFormGroup]="true"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="description" title="Description" [isFormGroup]="true" tooltipPath="ValueSet.description"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="valueSet" propertyName="purpose" title="Purpose" [isFormGroup]="true"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="purpose" title="Purpose" [isFormGroup]="true" tooltipPath="ValueSet.purpose"></app-fhir-markdown>
 
-                    <app-fhir-markdown [parentObject]="valueSet" propertyName="copyright" title="Copyright" [isFormGroup]="true"></app-fhir-markdown>
+                    <app-fhir-markdown [parentObject]="valueSet" propertyName="copyright" title="Copyright" [isFormGroup]="true" tooltipPath="ValueSet.copyright"></app-fhir-markdown>
                 </div>
                 <div class="col-md-4">
-                    <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version"></app-fhir-string>
+                    <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version" tooltipPath="ValueSet.version"></app-fhir-string>
 
-                    <app-fhir-select-single-code [parentObject]="valueSet" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="valueSet" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" tooltipPath="ValueSet.status"></app-fhir-select-single-code>
                 </div>
             </div>
         </ng-template>
@@ -98,15 +99,15 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Compose</ng-template>
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { include: [{}] })" /> Value set has a "compose" definition
+            <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="globals.toggleProperty(valueSet, 'compose', { include: [{}] })" /> Value set has a "compose" definition <app-tooltip-icon tooltipPath="ValueSet.compose"></app-tooltip-icon>
 
             <div *ngIf="valueSet.hasOwnProperty('compose')">
-                <app-fhir-date [parentObject]="valueSet.compose" propertyName="lockedDate" title="Locked Date"></app-fhir-date>
+                <app-fhir-date [parentObject]="valueSet.compose" propertyName="lockedDate" title="Locked Date" tooltipPath="ValueSet.compose.lockedDate"></app-fhir-date>
 
-                <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive"></app-fhir-boolean>
+                <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive" tooltipPath="ValueSet.compose.inactive"></app-fhir-boolean>
 
                 <p>
-                    <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries
+                    <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries  tooltipPath="ValueSet.compose.include"
                 </p>
 
                 <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
@@ -116,9 +117,9 @@
                             <i class="fas fa-trash-alt" title="Remove this include" (click)="globals.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
-                            <app-fhir-string [parentObject]="include" propertyName="system" title="System"></app-fhir-string>
+                            <app-fhir-string [parentObject]="include" propertyName="system" title="System" tooltipPath="ValueSet.compose.include.system"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="include" propertyName="version" title="Version"></app-fhir-string>
+                            <app-fhir-string [parentObject]="include" propertyName="version" title="Version" tooltipPath="ValueSet.compose.include.version"></app-fhir-string>
 
                             <app-valueset-concept-card [parentObject]="include" propertyName="concept"></app-valueset-concept-card>
 
@@ -126,13 +127,14 @@
                                 <div class="card-header">
                                     <input type="checkbox" [ngModel]="include.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(include, 'filter', [{ property: '', op: '=', value: '' }])"/>
                                     Filters
+                                    <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter"></app-tooltip-icon>
                                 </div>
                                 <table class="table table-striped" *ngIf="include.hasOwnProperty('filter')">
                                     <thead>
                                     <tr>
-                                        <th>Property</th>
-                                        <th>Operator</th>
-                                        <th>Value</th>
+                                        <th>Property <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.property"></app-tooltip-icon></th>
+                                        <th>Operator <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.op"></app-tooltip-icon></th>
+                                        <th>Value <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.value"></app-tooltip-icon></th>
                                         <th class="actions-column-1">
                                             <div class="pull-right">
                                                 <button type="button" class="btn btn-default" (click)="include.filter.push({ property: '', op: '=', value: '' })">
