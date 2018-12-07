@@ -10,8 +10,8 @@ import {FhirService} from '../services/fhir.service';
     styleUrls: ['./operation-definition-parameter-modal.component.css']
 })
 export class OperationDefinitionParameterModalComponent implements OnInit {
-    @Input() operationDefinition: OperationDefinition;
-    @Input() parameter: ParameterComponent;
+    @Input() operationDefinition = new OperationDefinition();
+    @Input() parameter = new ParameterComponent();
     public allTypeCodes: Coding[] = [];
 
     constructor(

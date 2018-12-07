@@ -8,7 +8,7 @@ import {ConceptReferenceComponent} from '../../models/stu3/fhir';
     templateUrl: './value-set-include-concept-modal.component.html',
     styleUrls: ['./value-set-include-concept-modal.component.css']
 })
-export class FhirEditValueSetIncludeConceptModalComponent implements OnInit {
+export class FhirValueSetIncludeConceptModalComponent implements OnInit {
     @Input() concept: ConceptReferenceComponent;
 
     constructor(

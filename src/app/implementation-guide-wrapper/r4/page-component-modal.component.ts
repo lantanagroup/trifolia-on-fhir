@@ -132,11 +132,11 @@ export class PageComponentModalComponent implements OnInit {
 
     ngOnInit() {
         // Make sure the page has the required name property
-        if (!this.page.nameReference && !this.page.nameUrl) {
+        if (this.page && !this.page.nameReference && !this.page.nameUrl) {
             this.page.nameReference = { reference: '', display: '' };
         }
 
-        if (this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
+        if (this.page && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
             // Find the Binary in the contained resources
             this.pageBinary = <Binary> _.find(this.implementationGuide.contained, (extension) => extension.id === this.page.nameReference.reference.substring(1));
         }

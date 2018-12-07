@@ -6,9 +6,9 @@ import {Globals} from '../../globals';
 import {RecentItemService} from '../../services/recent-item.service';
 import {FhirService} from '../../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import {FhirEditMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
-import {FhirEditReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
+import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ConfigService} from '../../services/config.service';
 import {FileService} from '../../services/file.service';
 
@@ -74,7 +74,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public editResource(resource: ResourceComponent) {
-        const modalRef = this.modalService.open(FhirEditCapabilityStatementResourceModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resource = resource;
     }
 
@@ -94,12 +94,12 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public editEvent(event: EventComponent) {
-        const modalRef = this.modalService.open(FhirEditMessagingEventModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirMessagingEventModalComponent, { size: 'lg' });
         modalRef.componentInstance.event = event;
     }
 
     public selectImplementationGuide(implementationGuideIndex) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'ImplementationGuide';
         modalRef.componentInstance.hideResourceType = true;
 

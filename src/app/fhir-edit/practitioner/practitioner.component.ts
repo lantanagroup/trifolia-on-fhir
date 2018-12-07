@@ -7,8 +7,8 @@ import {Globals} from '../../globals';
     templateUrl: './practitioner.component.html',
     styleUrls: ['./practitioner.component.css']
 })
-export class FhirEditPractitionerComponent implements OnInit {
-    @Input() practitioner: Practitioner;
+export class FhirPractitionerComponent implements OnInit {
+    @Input() practitioner = new Practitioner();
 
     constructor(public globals: Globals) {
     }

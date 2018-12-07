@@ -9,7 +9,6 @@ export class UserService {
     public getUsers(): void {
         this.http.get('/api/user')
             .subscribe(data => {
-                console.log('test');
             },
             error => {
                 console.error(error);

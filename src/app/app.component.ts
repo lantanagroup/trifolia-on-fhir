@@ -35,8 +35,7 @@ export class AppComponent implements OnInit {
         public globals: Globals,
         private modalService: NgbModal,
         private fileService: FileService,
-        private router: Router,
-        private socketService: SocketService) {
+        private router: Router) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.practitioner;

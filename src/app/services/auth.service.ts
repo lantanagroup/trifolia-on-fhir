@@ -34,13 +34,15 @@ export class AuthService {
             this.setSessionTimer();
         }
 
-        this.auth0 = new auth0.WebAuth({
-            clientID: this.configService.config.auth.clientId,
-            domain: this.configService.config.auth.domain,
-            responseType: 'token',
-            redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
-            scope: this.configService.config.auth.scope
-        });
+        if (this.configService.config && this.configService.config.auth) {
+            this.auth0 = new auth0.WebAuth({
+                clientID: this.configService.config.auth.clientId,
+                domain: this.configService.config.auth.domain,
+                responseType: 'token',
+                redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
+                scope: this.configService.config.auth.scope
+            });
+        }
 
         this.configService.fhirServerChanged.subscribe((fhirServer) => {
             // This should only be triggered after the app has been initialized. So, this should truly be when the fhir server
@@ -96,10 +98,18 @@ export class AuthService {
     }
 
     public login(): void {
+        if (!this.auth0) {
+            throw new Error('Auth0 has not been initialized!');
+        }
+
         this.auth0.authorize();
     }
 
     public handleAuthentication(): void {
+        if (!this.auth0) {
+            return;
+        }
+
         this.auth0.parseHash((err, authResult) => {
             const path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
             if (authResult && authResult.idToken) {
@@ -151,6 +161,10 @@ export class AuthService {
     }
 
     public getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
+        if (!this.auth0) {
+            throw new Error('Auth0 has not been initialized!');
+        }
+
         const accessToken = localStorage.getItem('token');
         const self = this;
 
@@ -185,6 +199,10 @@ export class AuthService {
     }
 
     private setSessionTimer() {
+        if (!this.auth0) {
+            throw new Error('Auth0 has not been initialized!');
+        }
+
         const expiresIn = (this.authExpiresAt - new Date().getTime()) / 1000;
 
         if (expiresIn > this.fiveMinutesInSeconds) {

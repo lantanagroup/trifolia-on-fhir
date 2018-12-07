@@ -5,8 +5,7 @@ import {
     DomainResource,
     EntryComponent,
     OperationOutcome,
-    RequestComponent,
-    ValueSet
+    RequestComponent
 } from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
@@ -15,9 +14,8 @@ import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 import {ContentModel, GithubService} from '../services/github.service';
-import {ImportGithubPanelComponent} from '../import-github-panel/import-github-panel.component';
+import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
 import {forkJoin} from 'rxjs';
-import * as XLSX from 'xlsx';
 
 enum ContentTypes {
     Json = 0,

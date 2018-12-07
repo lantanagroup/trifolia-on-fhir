@@ -3,7 +3,7 @@ import {Globals} from '../../globals';
 import {ContactDetail} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ContactModalComponent} from '../contact-modal/contact-modal.component';
+import {FhirContactModalComponent} from '../contact-modal/contact-modal.component';
 import {FhirService} from '../../services/fhir.service';
 
 @Component({
@@ -11,7 +11,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './multi-contact.component.html',
     styleUrls: ['./multi-contact.component.css']
 })
-export class MultiContactComponent implements OnInit {
+export class FhirMultiContactComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -27,7 +27,7 @@ export class MultiContactComponent implements OnInit {
     }
 
     public editContact(contact: ContactDetail) {
-        const ref = this.modalService.open(ContactModalComponent, { size: 'lg' });
+        const ref = this.modalService.open(FhirContactModalComponent, { size: 'lg' });
         ref.componentInstance.contact = contact;
     }
 

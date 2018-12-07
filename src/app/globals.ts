@@ -5,8 +5,6 @@ import {FhirVersion} from './models/fhir-version';
 
 @Injectable()
 export class Globals {
-    // Indicates if in the Implementation Guide Edit screen, page Binary resources should be considered a contained resource
-    public pageAsContainedBinary = true;
     public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
     public readonly extensionIgPageAutoGenerateToc = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc';
     public readonly extensionGithubPath = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path';
@@ -161,6 +159,10 @@ export class Globals {
     }
 
     public toggleProperty(parent, propertyName, defaultValue, callback?: any, caller?: any) {
+        if (!parent) {
+            return;
+        }
+
         if (parent.hasOwnProperty(propertyName)) {
             delete parent[propertyName];
         } else {

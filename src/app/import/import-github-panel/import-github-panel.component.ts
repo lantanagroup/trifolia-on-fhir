@@ -1,12 +1,9 @@
-import {Component, OnInit, Output, ViewChild} from '@angular/core';
-import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../services/github.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../../services/github.service';
 import * as _ from 'underscore';
 import {
-    Ng2TreeSettings,
     NodeCheckedEvent,
-    NodeSelectedEvent,
     NodeUncheckedEvent,
-    NodeUnselectedEvent,
     TreeModel
 } from 'ng2-tree';
 

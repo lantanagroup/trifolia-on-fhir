@@ -124,7 +124,7 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.page.source) {
+        if (this.page && this.page.source) {
             const contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
 
             if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {

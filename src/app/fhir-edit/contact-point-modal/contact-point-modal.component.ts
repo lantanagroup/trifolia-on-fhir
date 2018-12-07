@@ -8,7 +8,7 @@ import {ContactPoint} from '../../models/stu3/fhir';
     templateUrl: './contact-point-modal.component.html',
     styleUrls: ['./contact-point-modal.component.css']
 })
-export class FhirEditContactPointModalComponent implements OnInit {
+export class FhirContactPointModalComponent implements OnInit {
     @Input() contactPoint: ContactPoint;
 
     constructor(

@@ -7,7 +7,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './multi-jurisdiction.component.html',
     styleUrls: ['./multi-jurisdiction.component.css']
 })
-export class MultiJurisdictionComponent implements OnInit {
+export class FhirMultiJurisdictionComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() tooltipPath: string;

@@ -1,10 +1,13 @@
 import {inject, TestBed} from '@angular/core/testing';
 import {ExportService} from './export.service';
+import {SocketService} from './socket.service';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('ExportService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ExportService]
+      imports: [HttpClientModule],
+      providers: [ExportService, SocketService]
     });
   });
 

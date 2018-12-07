@@ -7,7 +7,7 @@ import {Globals} from '../../globals';
     templateUrl: './human-names.component.html',
     styleUrls: ['./human-names.component.css']
 })
-export class HumanNamesComponent implements OnChanges, OnInit {
+export class FhirHumanNamesComponent implements OnChanges, OnInit {
     humanNames: HumanName[];
     @Input() title = 'Name(s)';
     @Input() parentObject: any;
@@ -21,7 +21,7 @@ export class HumanNamesComponent implements OnChanges, OnInit {
     }
 
     ngOnInit() {
-        if (this.required) {
+        if (this.required && this.parentObject) {
             if (!this.parentObject[this.propertyName]) {
                 this.parentObject[this.propertyName] = [{ given: [''], family: '' }];
             } else {

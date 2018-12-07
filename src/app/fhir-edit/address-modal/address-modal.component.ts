@@ -8,7 +8,7 @@ import {Globals} from '../../globals';
     templateUrl: './address-modal.component.html',
     styleUrls: ['./address-modal.component.css']
 })
-export class FhirEditAddressModalComponent implements OnInit, DoCheck {
+export class FhirAddressModalComponent implements OnInit, DoCheck {
     @Input() address: Address;
 
     constructor(
@@ -18,6 +18,10 @@ export class FhirEditAddressModalComponent implements OnInit, DoCheck {
     }
 
     isRequired() {
+        if (!this.address) {
+            return false;
+        }
+
         return !!this.address.use || !!this.address.type || (!!this.address.line && this.address.line.length > 0) ||
             !!this.address.city || !!this.address.district || !!this.address.state || !!this.address.postalCode ||
             !!this.address.country || !!this.address.period;
@@ -27,7 +31,7 @@ export class FhirEditAddressModalComponent implements OnInit, DoCheck {
     }
 
     ngDoCheck() {
-        if (!this.isRequired()) {
+        if (!this.isRequired() || !this.address) {
             return;
         }
 

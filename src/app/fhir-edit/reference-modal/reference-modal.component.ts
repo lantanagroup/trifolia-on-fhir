@@ -21,7 +21,7 @@ export interface ResourceSelection {
     templateUrl: './reference-modal.component.html',
     styleUrls: ['./reference-modal.component.css']
 })
-export class FhirEditReferenceModalComponent implements OnInit {
+export class FhirReferenceModalComponent implements OnInit {
     @Input() public resourceType?: string;
     @Input() public hideResourceType?: boolean;
     @Input() public selectMultiple = false;

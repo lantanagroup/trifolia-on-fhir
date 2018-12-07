@@ -24,7 +24,7 @@ import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 import {
-    FhirEditReferenceModalComponent,
+    FhirReferenceModalComponent,
     ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
 
@@ -124,7 +124,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public addResources() {
-        const modalRef = this.modal.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.selectMultiple = true;
 
         modalRef.result.then((results: ResourceSelection[]) => {

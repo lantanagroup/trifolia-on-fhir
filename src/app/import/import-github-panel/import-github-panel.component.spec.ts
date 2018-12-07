@@ -1,46 +1,43 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {FhirMarkdownComponent} from './markdown.component';
+
+import {ImportGithubPanelComponent} from './import-github-panel.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
-import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {FileDropModule} from 'ngx-file-drop';
+import {TreeModule} from 'ng2-tree';
+import {GithubService} from '../../services/github.service';
 import {ConfigService} from '../../services/config.service';
-import {CookieService} from 'angular2-cookie/core';
-import {MarkdownComponent} from '../../markdown/markdown.component';
+import {Globals} from '../../globals';
 
-describe('FhirMarkdownComponent', () => {
-    let component: FhirMarkdownComponent;
-    let fixture: ComponentFixture<FhirMarkdownComponent>;
+describe('ImportGithubPanelComponent', () => {
+    let component: ImportGithubPanelComponent;
+    let fixture: ComponentFixture<ImportGithubPanelComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                FhirMarkdownComponent,
-                TooltipIconComponent,
-                MarkdownComponent
-            ],
+            declarations: [ImportGithubPanelComponent],
             imports: [
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
                 NgbModule.forRoot(),
-                FormsModule
+                FormsModule,
+                FileDropModule,
+                TreeModule
             ],
             providers: [
-                Globals,
-                FhirService,
+                GithubService,
                 ConfigService,
-                CookieService
+                Globals
             ]
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(FhirMarkdownComponent);
+        fixture = TestBed.createComponent(ImportGithubPanelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

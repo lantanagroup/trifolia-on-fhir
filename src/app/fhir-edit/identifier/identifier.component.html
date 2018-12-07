@@ -1,50 +1,50 @@
-<div class="form-group" *ngIf="isFormGroup">
-  <label>
-    <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
-    {{title || 'Identifier'}}
-  </label>
-  <div class="input-group">
+<div class="form-group" *ngIf="parentObject && isFormGroup">
+    <label>
+        <input type="checkbox" *ngIf="!required" [ngModel]="identifier && identifier.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)"/>
+        {{title || 'Identifier'}}
+    </label>
+    <div class="input-group">
+        <!-- use -->
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(identifier, 'use', '')"/>
+        </div>
+        <select class="form-control" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
+            <option value="usual">Usual</option>
+            <option value="official">Official</option>
+            <option value="temp">Temporary</option>
+            <option value="secondary">Secondary</option>
+        </select>
+        <!-- system -->
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(identifier, 'system', '')"/>
+        </div>
+        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
+        <!-- value -->
+        <div class="input-group-addon">
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(identifier, 'value', '')"/>
+        </div>
+        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
+    </div>
+</div>
+<div class="input-group" *ngIf="parentObject && !isFormGroup">
     <!-- use -->
     <div class="input-group-addon">
-      <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'use', '')" />
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(identifier, 'use', '')"/>
     </div>
-    <select class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('use')" [(ngModel)]="parentObject[propertyName].use">
-      <option value="usual">Usual</option>
-      <option value="official">Official</option>
-      <option value="temp">Temporary</option>
-      <option value="secondary">Secondary</option>
+    <select class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
+        <option value="usual">Usual</option>
+        <option value="official">Official</option>
+        <option value="temp">Temporary</option>
+        <option value="secondary">Secondary</option>
     </select>
     <!-- system -->
     <div class="input-group-addon">
-      <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'system', '')" />
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(identifier, 'system', '')"/>
     </div>
-    <input type="text" [disabled]="!parentObject[propertyName].hasOwnProperty('system')" [(ngModel)]="parentObject[propertyName].system" placeholder="System" title="System" />
+    <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
     <!-- value -->
     <div class="input-group-addon">
-      <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'value', '')" />
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(identifier, 'value', '')"/>
     </div>
-    <input type="text" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" title="Value" />
-  </div>
-</div>
-<div class="input-group" *ngIf="!isFormGroup">
-  <!-- use -->
-  <div class="input-group-addon">
-    <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'use', '')" />
-  </div>
-  <select class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('use')" [(ngModel)]="parentObject[propertyName].use">
-    <option value="usual">Usual</option>
-    <option value="official">Official</option>
-    <option value="temp">Temporary</option>
-    <option value="secondary">Secondary</option>
-  </select>
-  <!-- system -->
-  <div class="input-group-addon">
-    <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'system', '')" />
-  </div>
-  <input type="text" [disabled]="!parentObject[propertyName].hasOwnProperty('system')" [(ngModel)]="parentObject[propertyName].system" placeholder="System" title="System" />
-  <!-- value -->
-  <div class="input-group-addon">
-    <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(parentObject[propertyName], 'value', '')" />
-  </div>
-  <input type="text" class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" title="Value" />
+    <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
 </div>

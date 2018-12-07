@@ -13,7 +13,7 @@ import {FhirService} from '../services/fhir.service';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import {ConfigService} from '../services/config.service';
 import * as _ from 'underscore';
-import {FhirEditQuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
+import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
 
 export class ItemModel {
     public item: QuestionnaireItemComponent;
@@ -177,7 +177,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public editItem(itemModel: ItemModel) {
-        const modalRef = this.modalService.open(FhirEditQuestionnaireItemModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(QuestionnaireItemModalComponent, { size: 'lg' });
         modalRef.componentInstance.item = itemModel.item;
         modalRef.componentInstance.questionnaire = this.questionnaire;
     }

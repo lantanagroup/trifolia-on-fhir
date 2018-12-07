@@ -1,11 +1,11 @@
 <div class="form-group" *ngIf="isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title || 'Attachment'}}
     </label>
     <div class="input-group">
         <input type="text" class="form-control" readonly [ngModel]="getDisplay()" />
-        <div class="input-group-btn" *ngIf="parentObject.hasOwnProperty(propertyName)">
+        <div class="input-group-btn" *ngIf="parentObject && parentObject.hasOwnProperty(propertyName)">
             <button type="button" class="btn btn-default" title="Edit attachment" (click)="editAttachment()">
                 <i class="fa fa-edit"></i>
             </button>
@@ -14,11 +14,11 @@
 </div>
 <div class="input-group" *ngIf="!isFormGroup">
     <div class="input-group-addon" *ngIf="title">
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)" />
         {{title}}
     </div>
     <input type="text" class="form-control" readonly [ngModel]="getDisplay()" />
-    <div class="input-group-btn" *ngIf="parentObject.hasOwnProperty(propertyName)">
+    <div class="input-group-btn" *ngIf="parentObject && parentObject.hasOwnProperty(propertyName)">
         <button type="button" class="btn btn-default" title="Edit attachment" (click)="editAttachment()">
             <i class="fa fa-edit"></i>
         </button>

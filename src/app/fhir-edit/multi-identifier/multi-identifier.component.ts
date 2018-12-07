@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {Identifier} from '../../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {IdentifierModalComponent} from '../identifier-modal/identifier-modal.component';
+import {FhirIdentifierModalComponent} from '../identifier-modal/identifier-modal.component';
 import {FhirService} from '../../services/fhir.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './multi-identifier.component.html',
     styleUrls: ['./multi-identifier.component.css']
 })
-export class MultiIdentifierComponent implements OnInit {
+export class FhirMultiIdentifierComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -25,7 +25,7 @@ export class MultiIdentifierComponent implements OnInit {
     }
 
     public editIdentifier(identifier: Identifier) {
-        const ref = this.modalService.open(IdentifierModalComponent, {size: 'lg'});
+        const ref = this.modalService.open(FhirIdentifierModalComponent, {size: 'lg'});
         ref.componentInstance.identifier = identifier;
     }
 

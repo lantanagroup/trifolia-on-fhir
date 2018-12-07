@@ -1,58 +1,68 @@
-<div class="card">
-  <div class="card-header">
-    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
-    {{title || 'Coding'}}
-    <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
-  </div>
-  <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
-    <thead>
-    <tr>
-      <th *ngIf="codes && codes.length > 0">Type</th>
-      <th>Code</th>
-      <th class="actions-column-1">
-        <div class="pull-right">
-          <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'coding'}}" (click)="parentObject[propertyName].push({})">
-            <i class="fa fa-plus"></i>
-          </button>
-        </div>
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
-      <td *ngIf="codes && codes.length > 0">
-        <select class="form-control" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event)">
-          <option value="custom">Custom</option>
-          <option value="pre">Pre-defined</option>
-        </select>
-      </td>
-      <td>
-        <div class="input-group" *ngIf="getCodeType(c) === 'custom'">
-          <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="globals.toggleProperty(c, 'code', '')" />
-          </div>
-          <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code" placeholder="Code" />
-          <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="globals.toggleProperty(c, 'display', '')" />
-          </div>
-          <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display" placeholder="Display" />
-          <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(c, 'system', '')" />
-          </div>
-          <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system" placeholder="System" />
-        </div>
-        <select class="form-control" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCode(ci)" (ngModelChange)="setCode(ci, $event)">
-          <option *ngFor="let o of codes" [ngValue]="o">{{o.display || o.code}}</option>
-        </select>
-      </td>
-      <td>
-        <div class="pull-right">
-          <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'code'}}" (click)="parentObject[propertyName].splice(ci, 1)">
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<div class="card" *ngIf="parentObject">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)"
+               (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
+        {{title || 'Coding'}}
+        <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
+    </div>
+    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
+        <thead>
+        <tr>
+            <th *ngIf="codes && codes.length > 0">Type</th>
+            <th>Code</th>
+            <th class="actions-column-1">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'coding'}}"
+                            (click)="parentObject[propertyName].push({})">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
+            <td *ngIf="codes && codes.length > 0">
+                <select class="form-control" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event)">
+                    <option value="custom">Custom</option>
+                    <option value="pre">Pre-defined</option>
+                </select>
+            </td>
+            <td>
+                <div class="input-group" *ngIf="getCodeType(c) === 'custom'">
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
+                               (ngModelChange)="globals.toggleProperty(c, 'code', '')"/>
+                    </div>
+                    <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code"
+                           placeholder="Code"/>
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
+                               (ngModelChange)="globals.toggleProperty(c, 'display', '')"/>
+                    </div>
+                    <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('display')"
+                           [(ngModel)]="c.display" placeholder="Display"/>
+                    <div class="input-group-addon">
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
+                               (ngModelChange)="globals.toggleProperty(c, 'system', '')"/>
+                    </div>
+                    <input type="text" class="form-control" [disabled]="!c.hasOwnProperty('system')"
+                           [(ngModel)]="c.system" placeholder="System"/>
+                </div>
+                <select class="form-control" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCode(ci)"
+                        (ngModelChange)="setCode(ci, $event)">
+                    <option *ngFor="let o of codes" [ngValue]="o">{{o.display || o.code}}</option>
+                </select>
+            </td>
+            <td>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'code'}}"
+                            (click)="parentObject[propertyName].splice(ci, 1)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>

@@ -6,7 +6,7 @@ import {Globals} from '../../globals';
     templateUrl: './string.component.html',
     styleUrls: ['./string.component.css']
 })
-export class StringComponent implements OnInit {
+export class FhirStringComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;

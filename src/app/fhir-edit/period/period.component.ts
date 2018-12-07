@@ -7,7 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './period.component.html',
   styleUrls: ['./period.component.css']
 })
-export class FhirEditPeriodComponent implements OnInit {
+export class FhirPeriodComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -23,7 +23,7 @@ export class FhirEditPeriodComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
+        if (this.parentObject && this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.parentObject[this.propertyName] = {};
         }
     }

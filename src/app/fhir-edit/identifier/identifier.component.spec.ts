@@ -1,24 +1,41 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {IdentifierComponent} from './identifier.component';
+import {FhirIdentifierComponent} from './identifier.component';
+import {Globals} from '../../globals';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientModule} from '@angular/common/http';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule} from '@angular/forms';
 
-describe('IdentifierComponent', () => {
-  let component: IdentifierComponent;
-  let fixture: ComponentFixture<IdentifierComponent>;
+describe('FhirIdentifierComponent', () => {
+    let component: FhirIdentifierComponent;
+    let fixture: ComponentFixture<FhirIdentifierComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ IdentifierComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [FhirIdentifierComponent],
+            imports: [
+                BrowserModule,
+                RouterTestingModule,
+                HttpClientModule,
+                NgbModule.forRoot(),
+                FormsModule
+            ],
+            providers: [
+                Globals
+            ]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(IdentifierComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(FhirIdentifierComponent);
+        component = fixture.componentInstance;
+        component.parentObject = { test: 'blah' };
+        component.propertyName = 'someIdentifier';
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

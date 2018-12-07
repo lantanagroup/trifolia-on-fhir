@@ -1,2 +1,2 @@
-<input type="number" class="form-control" [(ngModel)]="cardinalityNumber" [disabled]="parentObject[property] === '*'" />
-<input type="checkbox" [ngModel]="parentObject[property] === '*'" (ngModelChange)="toggleUnlimited($event)" /> Unlimited
+<input type="number" class="form-control" *ngIf="parentObject" [(ngModel)]="cardinalityNumber" [disabled]="parentObject[property] === '*'" />
+<input type="checkbox" *ngIf="parentObject" [ngModel]="parentObject[property] === '*'" (ngModelChange)="toggleUnlimited($event)" /> Unlimited

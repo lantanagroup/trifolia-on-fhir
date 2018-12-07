@@ -1,24 +1,54 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ContactModalComponent} from './contact-modal.component';
+import {FhirContactModalComponent} from './contact-modal.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientModule} from '@angular/common/http';
+import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule} from '@angular/forms';
+import {Globals} from '../../globals';
+import {FhirStringComponent} from '../string/string.component';
+import {FhirSelectSingleCodeComponent} from '../select-single-code/select-single-code.component';
+import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {FhirService} from '../../services/fhir.service';
+import {ConfigService} from '../../services/config.service';
+import {CookieService} from 'angular2-cookie/core';
 
-describe('ContactModalComponent', () => {
-  let component: ContactModalComponent;
-  let fixture: ComponentFixture<ContactModalComponent>;
+describe('FhirContactModalComponent', () => {
+    let component: FhirContactModalComponent;
+    let fixture: ComponentFixture<FhirContactModalComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ContactModalComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [
+                FhirContactModalComponent,
+                FhirStringComponent,
+                FhirSelectSingleCodeComponent,
+                TooltipIconComponent
+            ],
+            imports: [
+                BrowserModule,
+                RouterTestingModule,
+                HttpClientModule,
+                NgbModule.forRoot(),
+                FormsModule
+            ],
+            providers: [
+                NgbActiveModal,
+                Globals,
+                FhirService,
+                ConfigService,
+                CookieService
+            ]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ContactModalComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(FhirContactModalComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

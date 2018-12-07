@@ -1,24 +1,54 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {FhirEditHumanNameModalComponent} from './human-name-modal.component';
+import {FhirHumanNameModalComponent} from './human-name-modal.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientModule} from '@angular/common/http';
+import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule} from '@angular/forms';
+import {Globals} from '../../globals';
+import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {FhirStringComponent} from '../string/string.component';
+import {ConfigService} from '../../services/config.service';
+import {FhirService} from '../../services/fhir.service';
+import {CookieService} from 'angular2-cookie/core';
+import {FhirSelectSingleCodeComponent} from '../select-single-code/select-single-code.component';
 
-describe('FhirEditHumanNameModalComponent', () => {
-  let component: FhirEditHumanNameModalComponent;
-  let fixture: ComponentFixture<FhirEditHumanNameModalComponent>;
+describe('FhirHumanNameModalComponent', () => {
+    let component: FhirHumanNameModalComponent;
+    let fixture: ComponentFixture<FhirHumanNameModalComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ FhirEditHumanNameModalComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [
+                FhirHumanNameModalComponent,
+                TooltipIconComponent,
+                FhirStringComponent,
+                FhirSelectSingleCodeComponent
+            ],
+            imports: [
+                BrowserModule,
+                RouterTestingModule,
+                HttpClientModule,
+                NgbModule.forRoot(),
+                FormsModule
+            ],
+            providers: [
+                NgbActiveModal,
+                Globals,
+                ConfigService,
+                FhirService,
+                CookieService
+            ]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(FhirEditHumanNameModalComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(FhirHumanNameModalComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

@@ -8,7 +8,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
     templateUrl: './range-modal.component.html',
     styleUrls: ['./range-modal.component.css']
 })
-export class FhirEditRangeModalComponent implements OnInit {
+export class FhirRangeModalComponent implements OnInit {
     @Input() range: Range;
 
     constructor(
