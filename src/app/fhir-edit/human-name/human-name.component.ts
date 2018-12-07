@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {FhirEditHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
+import {FhirHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -8,7 +8,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
     templateUrl: './human-name.component.html',
     styleUrls: ['./human-name.component.css']
 })
-export class HumanNameComponent implements OnInit {
+export class FhirHumanNameComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -80,7 +80,7 @@ export class HumanNameComponent implements OnInit {
     }
 
     editHumanName() {
-        const modalRef = this.modalService.open(FhirEditHumanNameModalComponent);
+        const modalRef = this.modalService.open(FhirHumanNameModalComponent);
         modalRef.componentInstance.humanName = this.parentObject[this.propertyName];
     }
 

@@ -9,7 +9,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './messaging-event-modal.component.html',
     styleUrls: ['./messaging-event-modal.component.css']
 })
-export class FhirEditMessagingEventModalComponent implements OnInit {
+export class FhirMessagingEventModalComponent implements OnInit {
     @Input() event: EventComponent;
     public messageEventCodes: Coding[] = [];
 

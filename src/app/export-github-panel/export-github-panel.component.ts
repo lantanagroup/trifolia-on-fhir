@@ -3,7 +3,6 @@ import {Bundle, DomainResource, EntryComponent} from '../models/stu3/fhir';
 import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../services/github.service';
 import * as _ from 'underscore';
 import {NodeMenuItemAction, NodeSelectedEvent, TreeModel, TreeModelSettings} from 'ng2-tree';
-import {Globals} from '../globals';
 import {ImportService} from '../services/import.service';
 import {FhirService} from '../services/fhir.service';
 
@@ -31,8 +30,7 @@ export class ExportGithubPanelComponent implements OnInit {
     constructor(
         public githubService: GithubService,
         private importService: ImportService,
-        private fhirService: FhirService,
-        private globals: Globals) {
+        private fhirService: FhirService) {
     }
 
     public get isAllChecked(): boolean {

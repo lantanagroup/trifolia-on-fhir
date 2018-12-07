@@ -8,7 +8,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './multi-use-context.component.html',
     styleUrls: ['./multi-use-context.component.css']
 })
-export class MultiUseContextComponent implements OnInit {
+export class FhirMultiUseContextComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() tooltipKey: string;

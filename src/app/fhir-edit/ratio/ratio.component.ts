@@ -1,14 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditRatioModalComponent} from '../ratio-modal/ratio-modal.component';
+import {FhirRatioModalComponent} from '../ratio-modal/ratio-modal.component';
 
 @Component({
     selector: 'app-fhir-edit-ratio',
     templateUrl: './ratio.component.html',
     styleUrls: ['./ratio.component.css']
 })
-export class FhirEditRatioComponent implements OnInit {
+export class FhirRatioComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -104,12 +104,12 @@ export class FhirEditRatioComponent implements OnInit {
     }
 
     editRatio() {
-        const modalRef = this.modalService.open(FhirEditRatioModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirRatioModalComponent, { size: 'lg' });
         modalRef.componentInstance.ratio = this.parentObject[this.propertyName];
     }
 
     ngOnInit() {
-        if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
+        if (this.parentObject && this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.parentObject[this.propertyName] = {};
         }
     }

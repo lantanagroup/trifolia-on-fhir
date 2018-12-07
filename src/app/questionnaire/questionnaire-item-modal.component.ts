@@ -9,7 +9,7 @@ import * as _ from 'underscore';
     templateUrl: './questionnaire-item-modal.component.html',
     styleUrls: ['./questionnaire-item-modal.component.css']
 })
-export class FhirEditQuestionnaireItemModalComponent implements OnInit {
+export class QuestionnaireItemModalComponent implements OnInit {
     @Input() item: QuestionnaireItemComponent = new QuestionnaireItemComponent();
     @Input() questionnaire: Questionnaire = new Questionnaire();
     public allQuestions: QuestionnaireItemComponent[] = [];

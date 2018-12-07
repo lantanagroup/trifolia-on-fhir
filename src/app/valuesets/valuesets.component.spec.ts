@@ -14,8 +14,8 @@ import {CookieService} from 'angular2-cookie/core';
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
-import {StringComponent} from '../fhir-edit/string/string.component';
-import {SelectSingleCodeComponent} from '../fhir-edit/select-single-code/select-single-code.component';
+import {FhirStringComponent} from '../fhir-edit/string/string.component';
+import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/select-single-code.component';
 import {ValuesetConceptCardComponent} from '../valueset-concept-card/valueset-concept-card.component';
 
 describe('ValuesetsComponent', () => {
@@ -24,9 +24,31 @@ describe('ValuesetsComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ValuesetsComponent, TooltipIconComponent, ValidationResultsComponent, RawResourceComponent, FhirXmlPipe, StringComponent, SelectSingleCodeComponent, ValuesetConceptCardComponent],
-            imports: [NgbModule.forRoot(), RouterTestingModule, FormsModule],
-            providers: [ConfigService, Globals, ValueSetService, NgbModal, HttpClient, HttpHandler, FhirService, CookieService]
+            declarations: [
+                ValuesetsComponent,
+                TooltipIconComponent,
+                ValidationResultsComponent,
+                RawResourceComponent,
+                FhirXmlPipe,
+                FhirStringComponent,
+                FhirSelectSingleCodeComponent,
+                ValuesetConceptCardComponent
+            ],
+            imports: [
+                NgbModule.forRoot(),
+                RouterTestingModule,
+                FormsModule
+            ],
+            providers: [
+                ConfigService,
+                Globals,
+                ValueSetService,
+                NgbModal,
+                HttpClient,
+                HttpHandler,
+                FhirService,
+                CookieService
+            ]
         }).compileComponents();
     }));
 

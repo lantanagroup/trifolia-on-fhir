@@ -1,7 +1,7 @@
-<div class="badge badge-warning" *ngIf="!results.valid">Invalid</div>
-<div class="badge badge-success" *ngIf="results.valid">Valid!</div>
+<div class="badge badge-warning" *ngIf="results && !results.valid">Invalid</div>
+<div class="badge badge-success" *ngIf="results && results.valid">Valid!</div>
 
-<table class="table" *ngIf="results.messages.length > 0">
+<table class="table" *ngIf="results && results.messages.length > 0">
   <thead>
   <tr>
     <th>Severity</th>

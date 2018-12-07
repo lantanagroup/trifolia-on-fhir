@@ -2,14 +2,14 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {Attachment} from '../../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditAttachmentModalComponent} from '../attachment-modal/attachment-modal.component';
+import {FhirAttachmentModalComponent} from '../attachment-modal/attachment-modal.component';
 
 @Component({
   selector: 'app-fhir-attachment',
   templateUrl: './attachment.component.html',
   styleUrls: ['./attachment.component.css']
 })
-export class AttachmentComponent implements OnInit {
+export class FhirAttachmentComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -26,12 +26,12 @@ export class AttachmentComponent implements OnInit {
     }
 
     editAttachment() {
-        const modalRef = this.modalService.open(FhirEditAttachmentModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirAttachmentModalComponent, { size: 'lg' });
         modalRef.componentInstance.attachment = this.parentObject[this.propertyName];
     }
 
     getDisplay() {
-        if (!this.parentObject[this.propertyName]) {
+        if (!this.parentObject || !this.parentObject[this.propertyName]) {
             return 'No attachment';
         }
 

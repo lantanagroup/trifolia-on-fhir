@@ -12,6 +12,11 @@ export class FhirXmlPipe implements PipeTransform {
 
     transform(value: any): string {
         const fhirXml = this.fhirService.serialize(value);
-        return vkbeautify.xml(fhirXml);
+
+        if (fhirXml) {
+            return vkbeautify.xml(fhirXml);
+        }
+
+        return '';
     }
 }

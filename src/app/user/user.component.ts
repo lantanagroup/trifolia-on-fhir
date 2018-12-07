@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {PractitionerService} from '../services/practitioner.service';
-import {Identifier, Practitioner} from '../models/stu3/fhir';
+import {Practitioner} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {AuthService} from '../services/auth.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {IdentifierModalComponent} from '../fhir-edit/identifier-modal/identifier-modal.component';
 
 @Component({
     selector: 'app-user',
@@ -12,7 +11,7 @@ import {IdentifierModalComponent} from '../fhir-edit/identifier-modal/identifier
     styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-    public practitioner: Practitioner;
+    public practitioner = new Practitioner();
     public message: string;
 
     constructor(
@@ -20,11 +19,6 @@ export class UserComponent implements OnInit {
         private personService: PractitionerService,
         private authService: AuthService,
         private globals: Globals) { }
-
-    public editIdentifier(identifier: Identifier) {
-        const modalRef = this.modalService.open(IdentifierModalComponent, { size: 'lg' });
-        modalRef.componentInstance.identifier = identifier;
-    }
 
     public save() {
         this.message = 'Saving person...';

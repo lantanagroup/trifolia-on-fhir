@@ -1,4 +1,4 @@
-<div class="form-group" *ngIf="isFormGroup">
+<div class="form-group" *ngIf="isFormGroup && parentObject">
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
         {{ title || 'Period' }}
@@ -9,7 +9,7 @@
         <input type="datetime-local" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [ngModel]="parentObject[propertyName].end | date: 'yyyy-MM-ddTHH:mm'" (ngModelChange)="parentObject[propertyName].end = $event" placeholder="End date" />
     </div>
 </div>
-<div class="input-group" *ngIf="!isFormGroup">
+<div class="input-group" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="!required">
         <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})" />
         {{title || 'Period'}}

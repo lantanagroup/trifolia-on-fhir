@@ -4,7 +4,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body">
+<div class="modal-body" *ngIf="humanName">
     <app-fhir-string [parentObject]="humanName" propertyName="text" title="Text"></app-fhir-string>
     
     <app-fhir-select-single-code [parentObject]="humanName" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/name-use"></app-fhir-select-single-code>

@@ -1,4 +1,4 @@
-<div class="form-group" *ngIf="isFormGroup">
+<div class="form-group" *ngIf="isFormGroup && parentObject">
   <label>
     <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})"/>
     {{ title || 'Ratio' }}
@@ -14,7 +14,7 @@
     </div>
   </div>
 </div>
-<div class="input-group" *ngIf="!isFormGroup">
+<div class="input-group" *ngIf="!isFormGroup && parentObject">
   <div class="input-group-addon" *ngIf="!required">
     <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, {})"/>
     {{title || 'Ratio'}}

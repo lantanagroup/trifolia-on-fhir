@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConceptReferenceComponent} from '../models/stu3/fhir';
-import {FhirEditValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import {FhirValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {Globals} from '../globals';
@@ -53,7 +53,7 @@ export class ValuesetConceptCardComponent implements OnInit {
     }
 
     public editConcept(concept: ConceptReferenceComponent) {
-        const modalRef = this.modalService.open(FhirEditValueSetIncludeConceptModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirValueSetIncludeConceptModalComponent, { size: 'lg' });
         modalRef.componentInstance.concept = concept;
     }
 
@@ -84,6 +84,10 @@ export class ValuesetConceptCardComponent implements OnInit {
     }
 
     public refreshConcepts() {
+        if (!this.parentObject || !this.propertyName) {
+            return;
+        }
+
         const actualConcepts = <ConceptReferenceComponent[]> this.parentObject[this.propertyName];
         let filtered = [];
 

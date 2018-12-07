@@ -1,10 +1,12 @@
 import {inject, TestBed} from '@angular/core/testing';
 import {BinaryService} from './binary.service';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('BinaryService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [BinaryService]
+      providers: [BinaryService],
+      imports: [HttpClientModule]
     });
   });
 

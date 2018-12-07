@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 import {ConceptDefinitionComponent, ConceptPropertyComponent} from '../../models/stu3/fhir';
 
@@ -8,11 +8,10 @@ import {ConceptDefinitionComponent, ConceptPropertyComponent} from '../../models
     templateUrl: './codesystem-concept-modal.component.html',
     styleUrls: ['./codesystem-concept-modal.component.css']
 })
-export class FhirEditCodesystemConceptModalComponent implements OnInit {
+export class FhirCodesystemConceptModalComponent implements OnInit {
     @Input() concept: ConceptDefinitionComponent;
 
     constructor(
-        private modalService: NgbModal,
         public activeModal: NgbActiveModal,
         public globals: Globals) {
 

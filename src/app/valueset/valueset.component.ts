@@ -15,7 +15,7 @@ import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
-import {FhirEditValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import {FhirValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {ConfigService} from '../services/config.service';
 
 @Component({

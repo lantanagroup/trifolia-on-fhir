@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ElementDefinitionTypeModalComponent} from '../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
+import {FhirElementDefinitionTypeModalComponent} from '../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {
@@ -12,7 +12,7 @@ import {
 } from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {FhirService} from '../services/fhir.service';
-import {FhirEditReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 
 @Component({
@@ -39,7 +39,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     get element(): ElementDefinition {
-        return this.elementTreeModel.constrainedElement;
+        if (this.elementTreeModel) {
+            return this.elementTreeModel.constrainedElement;
+        }
     }
 
     editMappings() {
@@ -60,13 +62,13 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     openTypeModel(element, type) {
-        const modalRef = this.modalService.open(ElementDefinitionTypeModalComponent);
+        const modalRef = this.modalService.open(FhirElementDefinitionTypeModalComponent);
         modalRef.componentInstance.element = element;
         modalRef.componentInstance.type = type;
     }
 
     selectTypeProfile(type: TypeRefComponent) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'StructureDefinition';
         modalRef.componentInstance.hideResourceType = true;
 

@@ -8,7 +8,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './select-multi-coding.component.html',
     styleUrls: ['./select-multi-coding.component.css']
 })
-export class SelectMultiCodingComponent implements OnInit {
+export class FhirSelectMultiCodingComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() codes: Coding[];

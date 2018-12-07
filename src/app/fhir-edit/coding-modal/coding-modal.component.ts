@@ -8,7 +8,7 @@ import {Coding} from '../../models/stu3/fhir';
   templateUrl: './coding-modal.component.html',
   styleUrls: ['./coding-modal.component.css']
 })
-export class FhirEditCodingModalComponent implements OnInit {
+export class FhirCodingModalComponent implements OnInit {
   @Input() coding: Coding;
 
   constructor(

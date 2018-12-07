@@ -323,16 +323,28 @@ export class FhirService {
      * @return {any}
      */
     public validate(resource: Resource): ValidatorResponse {
+        if (!this.fhir) {
+            return;
+        }
+
         return this.fhir.validate(resource, {
             onBeforeValidateResource: (nextResource) => this.validateResource(nextResource)
         });
     }
 
     public serialize(resource: Resource) {
+        if (!this.fhir) {
+            return;
+        }
+
         return this.fhir.objToXml(resource);
     }
 
     public deserialize(resourceXml: string) {
+        if (!this.fhir) {
+            return;
+        }
+
         return this.fhir.xmlToObj(resourceXml);
     }
 
@@ -356,6 +368,10 @@ export class FhirService {
     public findResourceTypesWithSearchParam(searchParamName: string): string[] {
         const cs = <CapabilityStatement> this.configService.fhirConformance;
         const resourceTypes: string[] = [];
+
+        if (!cs) {
+            return resourceTypes;
+        }
 
         _.each(cs.rest, (rest: RestComponent) => {
             _.each(rest.resource, (resource: ResourceComponent) => {

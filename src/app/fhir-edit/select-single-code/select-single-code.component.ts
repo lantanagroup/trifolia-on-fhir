@@ -11,7 +11,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './select-single-code.component.html',
     styleUrls: ['./select-single-code.component.css']
 })
-export class SelectSingleCodeComponent implements OnInit {
+export class FhirSelectSingleCodeComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() codes: Coding[];

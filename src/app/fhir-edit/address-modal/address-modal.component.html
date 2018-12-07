@@ -1,63 +1,65 @@
 <div class="modal-header">
-  <h4 class="modal-title">Edit Address</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+    <h4 class="modal-title">Edit Address</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
-<div class="modal-body">
-  <app-fhir-string [parentObject]="address" propertyName="text" title="Text" [required]="isRequired()"></app-fhir-string>
+<div class="modal-body" *ngIf="address">
+    <app-fhir-string [parentObject]="address" propertyName="text" title="Text" [required]="isRequired()"></app-fhir-string>
 
-  <app-fhir-select-single-code [parentObject]="address" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/address-use"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="address" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/address-use"></app-fhir-select-single-code>
 
-  <app-fhir-select-single-code [parentObject]="address" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/address-type"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="address" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/address-type"></app-fhir-select-single-code>
 
-  <div class="card">
-    <div class="card-header">
-      <input type="checkbox" [ngModel]="address.hasOwnProperty('line')" (ngModelChange)="globals.toggleProperty(address, 'line', [''])" />
-      Line
+    <div class="card">
+        <div class="card-header">
+            <input type="checkbox" [ngModel]="address.hasOwnProperty('line')" (ngModelChange)="globals.toggleProperty(address, 'line', [''])"/>
+            Line
+        </div>
+        <table class="table table-striped" *ngIf="address.hasOwnProperty('line')">
+            <thead>
+            <tr>
+                <th>Value</th>
+                <th>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Add a line"
+                                (click)="addrses.push('')">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let l of address.line; let li = index; trackBy: globals.trackByFn">
+                <td>
+                    <input type="text" class="form-control" [(ngModel)]="address.line[li]"/>
+                </td>
+                <td>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default btn-sm" title="Remove this context"
+                                (click)="address.splice(li, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <table class="table table-striped" *ngIf="address.hasOwnProperty('line')">
-      <thead>
-      <tr>
-        <th>Value</th>
-        <th>
-          <div class="pull-right">
-            <button type="button" class="btn btn-default btn-sm" title="Add a line" (click)="addrses.push('')">
-              <i class="fa fa-plus"></i>
-            </button>
-          </div>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let l of address.line; let li = index; trackBy: globals.trackByFn">
-        <td>
-          <input type="text" class="form-control" [(ngModel)]="address.line[li]" />
-        </td>
-        <td>
-          <div class="pull-right">
-            <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="address.splice(li, 1)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
 
-  <app-fhir-string [parentObject]="address" propertyName="city" title="City"></app-fhir-string>
+    <app-fhir-string [parentObject]="address" propertyName="city" title="City"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="address" propertyName="district" title="District"></app-fhir-string>
+    <app-fhir-string [parentObject]="address" propertyName="district" title="District"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="address" propertyName="state" title="State"></app-fhir-string>
+    <app-fhir-string [parentObject]="address" propertyName="state" title="State"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="address" propertyName="postalCode" title="Postal Code"></app-fhir-string>
+    <app-fhir-string [parentObject]="address" propertyName="postalCode" title="Postal Code"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="address" propertyName="country" title="Country"></app-fhir-string>
+    <app-fhir-string [parentObject]="address" propertyName="country" title="Country"></app-fhir-string>
 
-  PERIOD
+    <!-- TODO: PERIOD -->
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

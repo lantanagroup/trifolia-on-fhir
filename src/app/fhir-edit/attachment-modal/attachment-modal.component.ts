@@ -8,7 +8,7 @@ import {Attachment} from '../../models/stu3/fhir';
     templateUrl: './attachment-modal.component.html',
     styleUrls: ['./attachment-modal.component.css']
 })
-export class FhirEditAttachmentModalComponent implements OnInit {
+export class FhirAttachmentModalComponent implements OnInit {
     @Input() attachment: Attachment;
 
     constructor(

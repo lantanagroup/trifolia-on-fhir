@@ -8,7 +8,7 @@ import {Globals} from '../../globals';
   templateUrl: './contact-modal.component.html',
   styleUrls: ['./contact-modal.component.css']
 })
-export class ContactModalComponent implements OnInit {
+export class FhirContactModalComponent implements OnInit {
   @Input() contact: ContactDetail;
 
   constructor(

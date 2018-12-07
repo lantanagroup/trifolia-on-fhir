@@ -4,14 +4,14 @@ import {Globals} from '../../globals';
 import {ResourceReference} from '../../models/stu3/fhir';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
-import {FhirEditReferenceModalComponent} from '../reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent} from '../reference-modal/reference-modal.component';
 
 @Component({
     selector: 'app-fhir-reference',
     templateUrl: './reference.component.html',
     styleUrls: ['./reference.component.css']
 })
-export class ReferenceComponent implements OnInit {
+export class FhirReferenceComponent implements OnInit {
     @Input() public parentObject: any;
     @Input() public propertyName: string;
     @Input() public isFormGroup = true;
@@ -57,7 +57,7 @@ export class ReferenceComponent implements OnInit {
     }
 
     open(content) {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = this.resourceType;
         modalRef.componentInstance.hideResourceType = this.hideResourceType;
 

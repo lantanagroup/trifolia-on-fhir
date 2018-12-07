@@ -8,7 +8,7 @@ import {Globals} from '../../globals';
     templateUrl: './human-name-modal.component.html',
     styleUrls: ['./human-name-modal.component.css']
 })
-export class FhirEditHumanNameModalComponent implements OnInit {
+export class FhirHumanNameModalComponent implements OnInit {
     @Input() humanName: HumanName;
 
     constructor(

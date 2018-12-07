@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditAddressModalComponent} from '../address-modal/address-modal.component';
-import {FhirEditCodeableConceptModalComponent} from '../codeable-concept-modal/codeable-concept-modal.component';
+import {FhirAddressModalComponent} from '../address-modal/address-modal.component';
+import {FhirCodeableConceptModalComponent} from '../codeable-concept-modal/codeable-concept-modal.component';
 import {CodeableConcept, Coding} from '../../models/stu3/fhir';
-import {FhirEditCodingModalComponent} from '../coding-modal/coding-modal.component';
-import {FhirEditContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
+import {FhirCodingModalComponent} from '../coding-modal/coding-modal.component';
+import {FhirContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
 import {FhirService} from '../../services/fhir.service';
 
 @Component({
@@ -13,7 +13,7 @@ import {FhirService} from '../../services/fhir.service';
     templateUrl: './choice.component.html',
     styleUrls: ['./choice.component.css']
 })
-export class ChoiceComponent implements OnInit {
+export class FhirChoiceComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() choices: string[];
@@ -159,7 +159,7 @@ export class ChoiceComponent implements OnInit {
     }
 
     editAddress() {
-        const modalRef = this.modalService.open(FhirEditAddressModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirAddressModalComponent, { size: 'lg' });
         modalRef.componentInstance.address = this.parentObject[this.getChoicePropertyName()];
     }
 
@@ -190,7 +190,7 @@ export class ChoiceComponent implements OnInit {
     }
 
     editCodeableConcept() {
-        const modalRef = this.modalService.open(FhirEditCodeableConceptModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirCodeableConceptModalComponent, { size: 'lg' });
         modalRef.componentInstance.codeableConcept = this.parentObject[this.getChoicePropertyName()];
     }
 
@@ -218,12 +218,12 @@ export class ChoiceComponent implements OnInit {
     }
 
     editCoding() {
-        const modalRef = this.modalService.open(FhirEditCodingModalComponent);
+        const modalRef = this.modalService.open(FhirCodingModalComponent);
         modalRef.componentInstance.coding = this.parentObject[this.getChoicePropertyName()];
     }
 
     editContactPoint() {
-        const modalRef = this.modalService.open(FhirEditContactPointModalComponent);
+        const modalRef = this.modalService.open(FhirContactPointModalComponent);
         modalRef.componentInstance.contactPoint = this.parentObject[this.getChoicePropertyName()];
     }
 

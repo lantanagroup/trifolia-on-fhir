@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group" *ngIf="parentObject">
   <label>
     <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, '')"/>
     {{title || propertyName}}

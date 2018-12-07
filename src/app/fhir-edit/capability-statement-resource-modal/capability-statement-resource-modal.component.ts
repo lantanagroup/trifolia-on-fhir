@@ -9,7 +9,7 @@ import * as _ from 'underscore';
     templateUrl: './capability-statement-resource-modal.component.html',
     styleUrls: ['./capability-statement-resource-modal.component.css']
 })
-export class FhirEditCapabilityStatementResourceModalComponent implements OnInit {
+export class FhirCapabilityStatementResourceModalComponent implements OnInit {
     @Input() resource: ResourceComponent;
 
     private readonly expectationUrl = 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation';

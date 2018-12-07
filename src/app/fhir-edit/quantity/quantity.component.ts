@@ -6,7 +6,7 @@ import {Globals} from '../../globals';
   templateUrl: './quantity.component.html',
   styleUrls: ['./quantity.component.css']
 })
-export class QuantityComponent implements OnInit {
+export class FhirQuantityComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;

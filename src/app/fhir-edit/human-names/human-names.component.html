@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" *ngIf="parentObject">
     <div class="card-header">
         {{title || 'Name(s)'}}
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ given: [''], family: '' }])"/>

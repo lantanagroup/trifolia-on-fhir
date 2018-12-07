@@ -8,7 +8,7 @@ import {Ratio} from '../../models/stu3/fhir';
     templateUrl: './ratio-modal.component.html',
     styleUrls: ['./ratio-modal.component.css']
 })
-export class FhirEditRatioModalComponent implements OnInit {
+export class FhirRatioModalComponent implements OnInit {
     @Input() ratio: Ratio;
 
     constructor(

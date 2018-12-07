@@ -4,7 +4,7 @@ import {Globals} from '../globals';
 import {StructureDefinitionService} from '../services/structure-definition.service';
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 
 @Component({
     selector: 'app-new-profile',
@@ -31,7 +31,7 @@ export class NewProfileComponent implements OnInit {
     }
 
     public selectBaseProfile() {
-        const modalRef = this.modalService.open(FhirEditReferenceModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
         modalRef.componentInstance.resourceType = 'StructureDefinition';
         modalRef.componentInstance.hideResourceType = true;
 

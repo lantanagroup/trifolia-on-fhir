@@ -6,7 +6,7 @@ import {CodeSystemService} from '../services/code-system.service';
 import {CodeSystem, ConceptDefinitionComponent} from '../models/stu3/fhir';
 import {FhirService} from '../services/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
+import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
 import * as _ from 'underscore';
@@ -105,7 +105,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public editConcept(concept: ConceptDefinitionComponent) {
-        const modalRef = this.modalService.open(FhirEditCodesystemConceptModalComponent, { size: 'lg' });
+        const modalRef = this.modalService.open(FhirCodesystemConceptModalComponent, { size: 'lg' });
         modalRef.componentInstance.concept = concept;
     }
 

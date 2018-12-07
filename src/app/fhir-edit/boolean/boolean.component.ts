@@ -6,7 +6,7 @@ import {Globals} from '../../globals';
     templateUrl: './boolean.component.html',
     styleUrls: ['./boolean.component.css']
 })
-export class BooleanComponent implements OnInit {
+export class FhirBooleanComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -29,7 +29,7 @@ export class BooleanComponent implements OnInit {
     }
 
     public set value(newValue: boolean) {
-        if (newValue !== true && newValue !== false && this.parentObject.hasOwnProperty(this.propertyName)) {
+        if (newValue !== true && newValue !== false && this.parentObject && this.parentObject.hasOwnProperty(this.propertyName)) {
             delete this.parentObject[this.propertyName];
         } else if (newValue === true || newValue === false) {
             this.parentObject[this.propertyName] = newValue;
@@ -37,7 +37,7 @@ export class BooleanComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.parentObject.hasOwnProperty(this.propertyName) && this.required) {
+        if (this.parentObject && !this.parentObject.hasOwnProperty(this.propertyName) && this.required) {
             this.parentObject[this.propertyName] = false;
         }
     }

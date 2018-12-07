@@ -1,14 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirEditRangeModalComponent} from '../range-modal/range-modal.component';
+import {FhirRangeModalComponent} from '../range-modal/range-modal.component';
 
 @Component({
     selector: 'app-fhir-edit-range',
     templateUrl: './range.component.html',
     styleUrls: ['./range.component.css']
 })
-export class FhirEditRangeComponent implements OnInit {
+export class FhirRangeComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -104,12 +104,12 @@ export class FhirEditRangeComponent implements OnInit {
     }
 
     editRange() {
-        const modalRef = this.modalService.open(FhirEditRangeModalComponent);
+        const modalRef = this.modalService.open(FhirRangeModalComponent);
         modalRef.componentInstance.range = this.parentObject[this.propertyName];
     }
 
     ngOnInit() {
-        if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
+        if (this.parentObject && this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
             this.parentObject[this.propertyName] = {};
         }
     }

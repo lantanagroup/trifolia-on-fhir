@@ -1,10 +1,14 @@
 import {inject, TestBed} from '@angular/core/testing';
 import {FhirService} from './fhir.service';
+import {HttpClientModule} from '@angular/common/http';
+import {Globals} from '../globals';
+import {ConfigService} from './config.service';
 
 describe('FhirService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [FhirService]
+      providers: [FhirService, Globals, ConfigService],
+      imports: [HttpClientModule]
     });
   });
 

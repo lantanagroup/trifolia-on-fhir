@@ -17,8 +17,8 @@ import {FhirService} from '../services/fhir.service';
     styleUrls: ['./select-choice-modal.component.css']
 })
 export class SelectChoiceModalComponent implements OnInit {
-    @Input() element: ElementTreeModel;
-    @Input() structureDefinition: StructureDefinition;
+    @Input() element = new ElementTreeModel();
+    @Input() structureDefinition = new StructureDefinition();
     public selectedType: string;
     public types: TypeRefComponent[];
     public definedTypeCodes: Coding[] = [];

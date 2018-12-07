@@ -1,4 +1,4 @@
-<div [class.form-group]="isFormGroup">
+<div [class.form-group]="isFormGroup" *ngIf="parentObject">
     <label *ngIf="isFormGroup && !hasChoice()">
         <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
         {{title || 'Choice'}}

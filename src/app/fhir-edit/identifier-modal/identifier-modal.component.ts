@@ -8,7 +8,7 @@ import {Globals} from '../../globals';
   templateUrl: './identifier-modal.component.html',
   styleUrls: ['./identifier-modal.component.css']
 })
-export class IdentifierModalComponent implements OnInit {
+export class FhirIdentifierModalComponent implements OnInit {
   @Input() identifier: Identifier;
 
   constructor(

@@ -4,7 +4,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body">
+<div class="modal-body" *ngIf="codeableConcept">
     <app-fhir-string [parentObject]="codeableConcept" propertyName="title" title="Title"></app-fhir-string>
 
     <div class="card">
