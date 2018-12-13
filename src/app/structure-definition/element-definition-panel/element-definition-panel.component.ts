@@ -1,18 +1,18 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirElementDefinitionTypeModalComponent} from '../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
-import {Globals} from '../globals';
-import {ElementTreeModel} from '../models/element-tree-model';
+import {FhirElementDefinitionTypeModalComponent} from '../../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
+import {Globals} from '../../globals';
+import {ElementTreeModel} from '../../models/element-tree-model';
 import {
     Coding,
     ElementDefinition,
     ElementDefinitionBindingComponent,
     StructureDefinition,
     TypeRefComponent
-} from '../models/stu3/fhir';
+} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
-import {FhirService} from '../services/fhir.service';
-import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {FhirService} from '../../services/fhir.service';
+import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 
 @Component({

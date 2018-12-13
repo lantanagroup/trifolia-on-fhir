@@ -1,15 +1,11 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {
-    OperationDefinition, OperationOutcome,
-    ParameterComponent
-} from '../models/stu3/fhir';
+import {OperationDefinition, OperationOutcome, ParameterComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {Observable} from 'rxjs';
 import {OperationDefinitionService} from '../services/operation-definition.service';
 import {RecentItemService} from '../services/recent-item.service';
 import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {OperationDefinitionParameterModalComponent} from '../operation-definition-parameter-modal/operation-definition-parameter-modal.component';
+import {ParameterModalComponent} from './parameter-modal/parameter-modal.component';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
@@ -44,7 +40,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public editParameter(parameter: ParameterComponent) {
-        const modalInstance = this.modal.open(OperationDefinitionParameterModalComponent, { size: 'lg' });
+        const modalInstance = this.modal.open(ParameterModalComponent, { size: 'lg' });
         modalInstance.componentInstance.operationDefinition = this.operationDefinition;
         modalInstance.componentInstance.parameter = parameter;
     }
