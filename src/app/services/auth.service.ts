@@ -99,7 +99,7 @@ export class AuthService {
 
     public login(): void {
         if (!this.auth0) {
-            throw new Error('Auth0 has not been initialized!');
+            return;
         }
 
         this.auth0.authorize();
@@ -162,7 +162,7 @@ export class AuthService {
 
     public getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
         if (!this.auth0) {
-            throw new Error('Auth0 has not been initialized!');
+            return Promise.resolve({ userProfile: null, practitioner: null });
         }
 
         const accessToken = localStorage.getItem('token');
@@ -200,7 +200,7 @@ export class AuthService {
 
     private setSessionTimer() {
         if (!this.auth0) {
-            throw new Error('Auth0 has not been initialized!');
+            return;
         }
 
         const expiresIn = (this.authExpiresAt - new Date().getTime()) / 1000;
