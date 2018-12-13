@@ -1,16 +1,16 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ConceptReferenceComponent} from '../models/stu3/fhir';
-import {FhirValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
+import {ConceptReferenceComponent} from '../../models/stu3/fhir';
+import {FhirValueSetIncludeConceptModalComponent} from '../../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
-import {Globals} from '../globals';
+import {Globals} from '../../globals';
 
 @Component({
     selector: 'app-valueset-concept-card',
-    templateUrl: './valueset-concept-card.component.html',
-    styleUrls: ['./valueset-concept-card.component.css']
+    templateUrl: './concept-card.component.html',
+    styleUrls: ['./concept-card.component.css']
 })
-export class ValuesetConceptCardComponent implements OnInit {
+export class ConceptCardComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     public filteredConcepts: ConceptReferenceComponent[] = [];

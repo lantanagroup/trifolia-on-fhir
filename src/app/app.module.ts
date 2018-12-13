@@ -30,7 +30,7 @@ import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HTTP_INTERCEPTORS,
 import {Observable} from 'rxjs';
 import {FhirStringComponent} from './fhir-edit/string/string.component';
 import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-modal.component';
-import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
+import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {FhirElementDefinitionTypeModalComponent} from './fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
 import {Globals} from './globals';
 import {MarkdownComponent} from './markdown/markdown.component';
@@ -51,7 +51,7 @@ import {FhirMultiContactComponent} from './fhir-edit/multi-contact/multi-contact
 import {FhirMultiUseContextComponent} from './fhir-edit/multi-use-context/multi-use-context.component';
 import {FhirMultiJurisdictionComponent} from './fhir-edit/multi-jurisdiction/multi-jurisdiction.component';
 import {FhirMaxCardinalityComponent} from './fhir-edit/max-cardinality/max-cardinality.component';
-import {OperationDefinitionParameterModalComponent} from './operation-definition-parameter-modal/operation-definition-parameter-modal.component';
+import {ParameterModalComponent} from './operation-definition/parameter-modal/parameter-modal.component';
 import {ValueSetService} from './services/value-set.service';
 import {CodeSystemService} from './services/code-system.service';
 import {FhirBooleanComponent} from './fhir-edit/boolean/boolean.component';
@@ -103,7 +103,7 @@ import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
 import {TooltipIconComponent} from './tooltip-icon/tooltip-icon.component';
 import {FhirValueSetIncludeConceptModalComponent} from './fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {RawResourceComponent} from './raw-resource/raw-resource.component';
-import {ValuesetConceptCardComponent} from './valueset-concept-card/valueset-concept-card.component';
+import {ConceptCardComponent} from './valueset/concept-card/concept-card.component';
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
 import {SafePipe} from './pipes/safe-pipe';
 import {OtherResourcesComponent} from './other-resources/other-resources.component';
@@ -116,7 +116,7 @@ import {ImplementationGuideWrapperComponent} from './implementation-guide-wrappe
 import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
 import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
-import {MappingModalComponent} from './element-definition-panel/mapping-modal/mapping-modal.component';
+import {MappingModalComponent} from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
@@ -201,7 +201,7 @@ export function getConfig(configService: ConfigService) {
         FhirElementDefinitionTypeModalComponent,
         STU3PageComponentModalComponent,
         R4PageComponentModalComponent,
-        OperationDefinitionParameterModalComponent,
+        ParameterModalComponent,
         FhirContactModalComponent,
         FhirIdentifierModalComponent,
         MarkdownModalComponent,
@@ -274,7 +274,7 @@ export function getConfig(configService: ConfigService) {
         FhirMultiUseContextComponent,
         FhirMultiJurisdictionComponent,
         FhirMaxCardinalityComponent,
-        OperationDefinitionParameterModalComponent,
+        ParameterModalComponent,
         FhirBooleanComponent,
         FhirDateComponent,
         ValuesetExpandComponent,
@@ -310,7 +310,7 @@ export function getConfig(configService: ConfigService) {
         TooltipIconComponent,
         FhirValueSetIncludeConceptModalComponent,
         RawResourceComponent,
-        ValuesetConceptCardComponent,
+        ConceptCardComponent,
         ImplementationGuideViewComponent,
         OtherResourcesComponent,
         QuestionnairesComponent,

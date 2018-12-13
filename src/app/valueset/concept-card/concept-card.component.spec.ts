@@ -1,25 +1,28 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {OperationDefinitionParameterModalComponent} from './operation-definition-parameter-modal.component';
+import {ConceptCardComponent} from './concept-card.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
-import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {FhirService} from '../services/fhir.service';
-import {Globals} from '../globals';
-import {FhirReferenceComponent} from '../fhir-edit/reference/reference.component';
-import {ConfigService} from '../services/config.service';
+import {Globals} from '../../globals';
+import {FhirService} from '../../services/fhir.service';
+import {CookieService} from 'angular2-cookie/core';
+import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {FhirStringComponent} from '../../fhir-edit/string/string.component';
+import {ConfigService} from '../../services/config.service';
 
-describe('OperationDefinitionParameterModalComponent', () => {
-    let component: OperationDefinitionParameterModalComponent;
-    let fixture: ComponentFixture<OperationDefinitionParameterModalComponent>;
+describe('ValuesetConceptCardComponent', () => {
+    let component: ConceptCardComponent;
+    let fixture: ComponentFixture<ConceptCardComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                OperationDefinitionParameterModalComponent,
-                FhirReferenceComponent
+                ConceptCardComponent,
+                TooltipIconComponent,
+                FhirStringComponent
             ],
             imports: [
                 BrowserModule,
@@ -29,16 +32,16 @@ describe('OperationDefinitionParameterModalComponent', () => {
                 FormsModule
             ],
             providers: [
-                FhirService,
                 Globals,
-                ConfigService,
-                NgbActiveModal
+                FhirService,
+                CookieService,
+                ConfigService
             ]
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(OperationDefinitionParameterModalComponent);
+        fixture = TestBed.createComponent(ConceptCardComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

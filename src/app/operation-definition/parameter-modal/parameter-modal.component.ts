@@ -1,15 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Coding, OperationDefinition, ParameterComponent} from '../models/stu3/fhir';
-import {Globals} from '../globals';
+import {Coding, OperationDefinition, ParameterComponent} from '../../models/stu3/fhir';
+import {Globals} from '../../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-operation-definition-parameter-modal',
-    templateUrl: './operation-definition-parameter-modal.component.html',
-    styleUrls: ['./operation-definition-parameter-modal.component.css']
+    templateUrl: './parameter-modal.component.html',
+    styleUrls: ['./parameter-modal.component.css']
 })
-export class OperationDefinitionParameterModalComponent implements OnInit {
+export class ParameterModalComponent implements OnInit {
     @Input() operationDefinition = new OperationDefinition();
     @Input() parameter = new ParameterComponent();
     public allTypeCodes: Coding[] = [];

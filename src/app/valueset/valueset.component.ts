@@ -1,21 +1,13 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {
-    ConceptReferenceComponent,
-    ConceptSetComponent,
-    OperationDefinition,
-    OperationOutcome,
-    ValueSet
-} from '../models/stu3/fhir';
+import {ConceptSetComponent, OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ValueSetService} from '../services/value-set.service';
-import {Observable} from 'rxjs';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
-import {FhirValueSetIncludeConceptModalComponent} from '../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {ConfigService} from '../services/config.service';
 
 @Component({
