@@ -207,6 +207,17 @@
                     <th><input type="text" class="form-control" placeholder="Search definition" [ngModel]="searchDefinition" (input)="searchDefinitionChanged($event.target.value)" /></th>
                     <th>&nbsp;</th>
                 </tr>
+                <tr *ngIf="filteredConcepts.length > 5">
+                    <td colspan="4">
+                        <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
+                                        [maxSize]="5"
+                                        [collectionSize]="filteredConcepts.length"
+                                        [(page)]="page"
+                                        [pageSize]="perPage"
+                                        [boundaryLinks]="true"
+                                        (pageChange)="refreshConcepts()"></ngb-pagination>
+                    </td>
+                </tr>
                 </thead>
                 <tbody>
                 <tr *ngFor="let c of pagedConcepts">
@@ -232,7 +243,7 @@
                 </tr>
                 </tbody>
                 <tfoot>
-                <tr>
+                <tr *ngIf="filteredConcepts.length > 5">
                     <td colspan="4">
                         <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
                                         [maxSize]="5"
