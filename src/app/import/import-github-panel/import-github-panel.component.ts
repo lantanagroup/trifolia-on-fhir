@@ -20,6 +20,7 @@ export class ImportGithubPanelComponent implements OnInit {
     public message: string;
     public tree: TreeModel;
     public selectedPaths: string[] = [];
+    public loadingRepositories = true;
 
     @ViewChild('treeComponent') treeComponent;
 
@@ -142,11 +143,13 @@ export class ImportGithubPanelComponent implements OnInit {
     }
 
     githubLogin() {
+        this.loadingRepositories = true;
         this.githubService.login()
             .subscribe(() => {
                 this.githubService.getRepositories()
                     .subscribe((repositories) => {
                         this.repositories = repositories;
+                        this.loadingRepositories = false;
                     }, (err) => {
                         this.message = err.message || err.data || err;
                     });
@@ -159,6 +162,7 @@ export class ImportGithubPanelComponent implements OnInit {
         this.githubService.getRepositories()
             .subscribe((repositories) => {
                 this.repositories = repositories;
+                this.loadingRepositories = false;
             }, (err) => {
                 this.message = err.message || err.data || err;
             });
