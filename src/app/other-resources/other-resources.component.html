@@ -52,7 +52,7 @@
         </ng-template>
     </ngb-tab>
     <ngb-tab *ngFor="let r of openedResources; let ri = index" id="resource-{{ri}}">
-        <ng-template ngbTabTitle>{{r.resourceType}} {{r.id}} <i class="fas fa-trash-alt" (click)="closeResource(ri, $event, tabSet)"></i></ng-template>
+        <ng-template ngbTabTitle>{{r.resourceType}} {{r.id}} <i class="fas fa-times" (click)="closeResource(ri, $event, tabSet)"></i></ng-template>
         <ng-template ngbTabContent>
             <ngb-tabset>
                 <ngb-tab>
