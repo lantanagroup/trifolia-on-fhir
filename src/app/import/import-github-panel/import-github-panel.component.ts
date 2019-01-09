@@ -72,7 +72,8 @@ export class ImportGithubPanelComponent implements OnInit {
                 this.githubService.getContents(this.ownerLogin, this.repositoryName, this.branchName, content.path)
                     .subscribe((childItems) => {
                         const childTreeModels = <TreeModel[]> _.chain(childItems)
-                            .sortBy((content: ContentModel) => content.type + content.name)
+                            .filter((childItem: ContentModel) => childItem.type === 'dir' || childItem.name.endsWith('.xml') || childItem.name.endsWith('.json'))
+                            .sortBy((childItem: ContentModel) => childItem.type + childItem.name)
                             .map((childItem: ContentModel) => {
                                 return this.mapContentToTreeModel(childItem);
                             })
@@ -97,6 +98,7 @@ export class ImportGithubPanelComponent implements OnInit {
                     value: this.branchName,
                     id: this.branchName,
                     children: _.chain(contents)
+                        .filter((content: ContentModel) => content.type === 'dir' || content.name.endsWith('.xml') || content.name.endsWith('.json'))
                         .sortBy((content: ContentModel) => content.type + content.name)
                         .map((content: ContentModel) => {
                             return this.mapContentToTreeModel(content);
