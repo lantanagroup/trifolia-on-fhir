@@ -300,7 +300,21 @@ export class ImportComponent implements OnInit {
     }
 
     public importGithub(tabSet: NgbTabset) {
-        const observables = _.map(this.importGithubPanel.selectedPaths, (selectedPath: string) => {
+        // Filter the paths so that we don't include duplicate paths, or paths for directories where
+        // child files are already selected.
+        const filteredPaths = _.filter(this.importGithubPanel.selectedPaths, (selectedPath: string) => {
+            if (selectedPath.startsWith('dir|')) {
+                const find1 = 'dir|' + selectedPath.substring(4) + '/';
+                const find2 = 'file|' + selectedPath.substring(4) + '/';
+                const foundChildren = _.find(this.importGithubPanel.selectedPaths, (next: string) => next.startsWith(find1) || next.startsWith(find2));
+
+                return !foundChildren;
+            }
+
+            return true;
+        });
+
+        const observables = _.map(filteredPaths, (selectedPath: string) => {
             return this.githubService.getAllContents(this.importGithubPanel.ownerLogin, this.importGithubPanel.repositoryName, this.importGithubPanel.branchName, selectedPath);
         });
 
@@ -327,6 +341,7 @@ export class ImportComponent implements OnInit {
                 bundle.entry = _.map(allFiles, (file: ContentModel) => {
                     const decodedContent = atob(file.content);
                     const entry = new EntryComponent();
+                    entry.request = new RequestComponent();
 
                     if (decodedContent.startsWith('{')) {
                         entry.resource = JSON.parse(decodedContent);
