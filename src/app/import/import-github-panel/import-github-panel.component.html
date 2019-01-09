@@ -5,7 +5,7 @@
 <div class="row" *ngIf="githubService.token">
     <div class="col-md-12">
         <div class="alert alert-info">When resources are imported from GitHub into Trifolia-on-FHIR, extensions are added to the resource to keep track of where (in GitHub) the resource came from so that you may easily export them back to GitHub.</div>
-        <div class="alert alert-warning">If the resource already exists in Trifolia-on-FHIR with the specified ID, it will overwrite the resource in Trifolia-on-FHIR with the resource from GitHub.</div>
+        <div class="alert alert-warning">If the resource already exists in Trifolia-on-FHIR with the specified ID, it will overwrite the resource in Trifolia-on-FHIR with the resource from GitHub.<br/>You should only select files that represent FHIR resources; the import will fail if you select an XML file that is not a FHIR resource.</div>
     </div>
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
         <div class="form-group" *ngIf="!loadingRepositories">
