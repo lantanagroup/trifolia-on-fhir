@@ -22,6 +22,10 @@
                     </div>
 
                     <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'fhirVersion', [])" />
@@ -37,11 +41,14 @@
                             </div>
                             <div class="input-group" *ngIf="implementationGuide.hasOwnProperty('fhirVersion')">
                                 <select class="form-control" [(ngModel)]="newFhirVersion">
-                                    <option>3.0.0</option>
-                                    <option>3.0.1</option>
-                                    <option>3.3.0</option>
-                                    <option>3.5.0</option>
+                                    <option>4.0.0</option>
                                     <option>3.6.0</option>
+                                    <option>3.5a.0</option>
+                                    <option>3.5.0</option>
+                                    <option>3.3.0</option>
+                                    <option>3.2.0</option>
+                                    <option>3.0.1</option>
+                                    <option>3.0.0</option>
                                 </select>
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
@@ -216,6 +223,8 @@
                             </div>
 
                             <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
+
+                            <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId"></app-fhir-string>
                         </div>
                     </div>
                 </fieldset>
