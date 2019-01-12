@@ -12,6 +12,16 @@ footer.footer {
     z-index: 2;
 }
 
+footer .btn {
+    color: black;
+    background-color: white;
+}
+
+footer .btn[disabled],
+footer .btn.disabled {
+    color: graytext;
+}
+
 footer.footer span.message {
     color: white;
     padding-left: 10px;
