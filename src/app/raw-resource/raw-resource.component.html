@@ -1,11 +1,23 @@
 <ngb-tabset [justify]="'fill'" [destroyOnHide]="false">
-    <ngb-tab title="Plain JSON">
+    <ngb-tab>
+        <ng-template ngbTabTitle>Plain JSON</ng-template>
         <ng-template ngbTabContent>
+            <p>
+                <button type="button" class="btn btn-default" (click)="downloadJson()">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </p>
             <pre>{{resource | json}}</pre>
         </ng-template>
     </ngb-tab>
-    <ngb-tab title="XML">
+    <ngb-tab>
+        <ng-template ngbTabTitle>XML</ng-template>
         <ng-template ngbTabContent>
+            <p>
+                <button type="button" class="btn btn-default" (click)="downloadXml()">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </p>
             <pre>{{resource | fhirXml}}</pre>
         </ng-template>
     </ngb-tab>
