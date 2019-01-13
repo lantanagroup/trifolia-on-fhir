@@ -26,6 +26,8 @@ const _ = require('underscore');
 const log4js = require('log4js');
 const rp = require('request-promise');
 const fs = require('fs');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
 const fhirStu3 = FhirHelper.getFhirStu3Instance();
 const fhirR4 = FhirHelper.getFhirR4Instance();
@@ -212,6 +214,17 @@ FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
 // Catch all other routes and return the index file
 app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
+
+app.use('/api-docs', swaggerUi.serve, function(req, res, next) {
+    const swaggerDocument = YAML.load('./swagger.yaml');
+    swaggerDocument.host = req.get('host') || swaggerDocument.host;
+    swaggerDocument.schemes = req.protocol ? [ req.protocol ] : swaggerDocument.schemes;
+    swaggerUi.setup(swaggerDocument)(req, res, next);
+});
+app.get('/swagger.yaml', function(req, res) {
+    res.contentType('text/yaml');
+    res.send(fs.readFileSync(path.join(__dirname, 'swagger.yaml')));
+});
 
 app.get('/github/callback', function(req, res) {
     const code = req.query.code;
