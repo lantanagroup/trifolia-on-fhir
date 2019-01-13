@@ -339,9 +339,13 @@ export class ImportComponent implements OnInit {
                 const bundle = new Bundle();
                 bundle.type = 'transaction';
                 bundle.entry = _.map(allFiles, (file: ContentModel) => {
-                    const decodedContent = atob(file.content);
+                    let decodedContent = atob(file.content);
                     const entry = new EntryComponent();
                     entry.request = new RequestComponent();
+
+                    if (decodedContent.startsWith('ï»¿')) {
+                        decodedContent = decodedContent.substring(3);
+                    }
 
                     if (decodedContent.startsWith('{')) {
                         entry.resource = JSON.parse(decodedContent);
