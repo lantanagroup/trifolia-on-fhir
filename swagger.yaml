@@ -1,6 +1,19 @@
 swagger: "2.0"
 info:
-  description: "Description yet to be provided... Note: This server DOES require authentication. Uses Auth0 for authentication."
+  description: >
+    <h2>Authentication</h2>
+    This server uses auth0.com for authentication.
+
+    <h2>Web Sockets</h2>
+    This server uses [socket.io](https://socket.io/) to communicate in real-time between the client and the server when performing lengthy requests, such as in the export process.
+
+    Each interaction is a type of "message" sent to the client from the server. The message is a JSON object that has the following properties:
+
+    **packageId**: The id of the package in which the status message is intended for; in case the same client has requested multiple exports simultaneously - which is not advised.
+
+    **status**: The status of the export (ex: "progress", "error", "complete")
+
+    **message**: A message associated with the status that should be displayed to the user or logged
   version: "1.0.0"
   title: "Trfiolia on FHIR"
   contact:
