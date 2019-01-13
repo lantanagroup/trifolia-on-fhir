@@ -1,0 +1,171 @@
+swagger: "2.0"
+info:
+  description: "Description yet to be provided... Note: This server DOES require authentication. Uses Auth0 for authentication."
+  version: "1.0.0"
+  title: "Trfiolia on FHIR"
+  contact:
+    email: "sean.mcilvenna@lantanagroup.com"
+host: "trifolia-fhir-dev.lantanagroup.com"
+basePath: "/api"
+schemes:
+  - "https"
+parameters:
+  fhirserver:
+    name: "fhirserver"
+    in: header
+    description: "The ID of the configured FHIR server to use for the request. Defaults to the first server in the list of fhir servers as returned by the /config endpoint."
+    required: false
+    schema:
+      type: string
+paths:
+  /config:
+    get:
+      summary: "Gets configuration information for this installation of the Trifolia-on-FHIR server. This includes a list of the FHIR servers that be used with the 'fhirserver' header."
+      tags:
+        - Config
+      responses:
+        200:
+          application/json:
+  /config/fhir:
+    get:
+      summary: "Gets the /metadata conformance for the FHIR server specified by the 'fhirserver' header."
+      tags:
+        - Config
+      responses:
+        200:
+          application/json:
+  /export/{implementationGuideId}:
+    post:
+      tags:
+        - Export
+      summary: requests that a new export be produced
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+        - name: implementationGuideId
+          in: path
+          description: ImplementationGuide.id
+          required: true
+          schema:
+            type: string
+        - name: exportFormat
+          in: query
+          description: "The type of export to produce (ex: bundle vs. ig publisher). 1 = bundle, 2 = ig publisher"
+          required: true
+          schema:
+            type: number
+        - name: _format
+          in: query
+          description: "The format that the resource(s) in the export. Can be either 'application/xml' or 'application/json'. Defaults to 'application/json'."
+          schema:
+            type: string
+            example: application/json
+        - name: executeIgPublisher
+          in: query
+          description: "*Only applies to ig publisher package exports (exportFormat = 2)*. Indicates whether to execute the IG publisher against the prepared package prior."
+          schema:
+            type: boolean
+        - name: useTerminologyServer
+          in: query
+          description: "*Only applies to ig publisher package exports (exportFormat = 2)*. Indicates whether to use the terminology server when executing the ig publisher."
+          schema:
+            type: boolean
+        - name: downloadOutput
+          in: query
+          description: "*Only applies to ig publisher package exports (exportFormat = 2)*. Indicates that you want to download the package after it is prepared. This ensures that the output is saved until the GET /export method is called for the package. Otherwise, the output/content is immediately published to the /igs location within ToF and the temporary files used to perform the export are immediately deleted."
+          schema:
+            type: boolean
+        - name: useLatest
+          in: query
+          description: "*Only applies to ig publisher package exports (exportFormat = 2)*. Indicates that the export should be executed using the latest version of the IG publisher from build.fhir.org."
+          schema:
+            type: boolean
+      responses:
+        '200-a':
+          description: When the request is to produce a bundle, the response content is a file download of the .xml or .json bundle
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: attachment; filename=ig-bundle.XXX
+        '200-b':
+          description: When the request is to produce an IG Publisher package, the response is a package id that can be used with a sockets connection to the server. The sockets connection reports the status of the export as it is being prepared, and reports the status using the package id in this response.
+          content:
+            application/json:
+              schema:
+                type: string
+  /export/{packageId}:
+    get:
+      tags:
+        - Export
+      summary: "Retrieves an export package requested using the packageId returned by the POST operation."
+      parameters:
+        - name: packageId
+          in: path
+          required: true
+          description: "The ID of the package. This ID is provided by the POST response."
+      responses:
+        '200':
+          description: "If the package has been successfully produced by the POST export request, this response is a file download representing the prepared ig publisher package (in the form of a zip file)"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: attachment; filename=ig-bundle.zip
+  /import:
+    post:
+      tags:
+        - Import
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+  /import/phinVads:
+    post:
+      summary: "TODO: Not yet implemented"
+      tags:
+        - Import
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+    get:
+      summary: "TODO: Not yet implemented"
+      tags:
+        - Import
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+  /import/excelValueSet:
+    post:
+      tags:
+        - Import
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+  /import/vsac/{resourceType}/{id}:
+    get:
+      tags:
+        - Import
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+  /fhir:
+    get:
+      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      tags:
+        - FHIR Proxy
+    post:
+      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      tags:
+        - FHIR Proxy
+    put:
+      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      tags:
+        - FHIR Proxy
+    delete:
+      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      tags:
+        - FHIR Proxy

@@ -57,10 +57,12 @@
     "simplemde": "^1.11.2",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
+    "swagger-ui-express": "^4.0.2",
     "tmp": "0.0.33",
     "underscore": "^1.8.3",
     "vkbeautify": "^0.99.3",
     "xlsx": "^0.14.0",
+    "yamljs": "^0.3.0",
     "zip-dir": "^1.0.2",
     "zone.js": "^0.8.26"
   },
