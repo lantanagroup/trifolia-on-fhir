@@ -36,7 +36,7 @@ function exportHtml(req, res) {
     const format = req.query._format;
     const executeIgPublisher = req.query.hasOwnProperty('executeIgPublisher') && req.query.executeIgPublisher.toLowerCase() === 'true';
     const useTerminologyServer = !req.query.hasOwnProperty('useTerminologyServer') || req.query.useTerminologyServer.toLowerCase() === 'true';
-    const useLatest = req.query.hasOwnProperty('downloadOutput') && req.query.downloadOutput.toLowerCase() === 'true';
+    const useLatest = req.query.hasOwnProperty('useLatest') && req.query.useLatest.toLowerCase() === 'true';
     const downloadOutput = !req.query.hasOwnProperty('downloadOutput') || req.query.downloadOutput.toLowerCase() === 'true';
 
     htmlExports.push(exporter);
@@ -71,8 +71,6 @@ router.post('/:implementationGuideId', checkJwt, (req, res) => {
 
 /**
  * @param req
- * @param req.query
- * @param req.query._format
  * @param req.params
  * @param req.params.packageId
  */
