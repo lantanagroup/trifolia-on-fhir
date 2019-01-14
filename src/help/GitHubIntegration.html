@@ -199,6 +199,12 @@
 <h2 class="rvps6"><span class="rvts0"><span class="rvts15">Extensions</span></span></h2>
 <p class="rvps3"><span class="rvts8">When importing resources, two extensions are added to each resource representing the location within GitHub for where the resource came from. This enables ToF to know where in GItHub to export the resources back to.</span></p>
 <p class="rvps3"><span class="rvts8">If you are exporting </span><span class="rvts18">new</span><span class="rvts8"> resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Limitations</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">Trifolia only exports the individual resources associated with the implementation guide, and does not include the entire IG Publication package. For example, the "framework" (html templates) folder is not included in the export.</span></li>
+<li class="rvps3"><span class="rvts8">Trifolia only allows importing FHIR resources. Trifolia-on-FHIR allows the user to select any JSON or XML file from GitHub. If the user selects an XML or JSON file that is not a FHIR resource, the import will fail.</span></li>
+<li class="rvps3"><span class="rvts8">GitHub does not allow retrieving/updating very large files. For example, if attempting to import/export a large ValueSet resource, GitHub may fail with a "Payload too large" error.</span></li>
+</ul>
 <p></p>
 
             </div>
