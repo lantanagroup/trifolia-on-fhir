@@ -18,10 +18,23 @@ info:
   title: "Trfiolia on FHIR"
   contact:
     email: "sean.mcilvenna@lantanagroup.com"
+externalDocs:
+  description: "The latest FHIR documentation is located here"
+  url: "http://build.fhir.org"
 host: "trifolia-fhir-dev.lantanagroup.com"
 basePath: "/api"
 schemes:
   - "https"
+  - "http"
+
+securityDefinitions:
+  auth0:
+    type: oauth2
+    flow: authorizationCode
+    authorizationUrl: https://trifolia.auth0.com/authorize
+    tokenUrl: https://trifolia.auth0.com/oauth/token
+    scopes: {}
+
 parameters:
   fhirserver:
     name: "fhirserver"
@@ -30,6 +43,40 @@ parameters:
     required: false
     schema:
       type: string
+
+components:
+  responses:
+    Unauthorized:
+      description: The request is not authorized
+
+definitions:
+  Coding:
+    type: object
+    description: See [FHIR/DataTypes#Coding](http://build.fhir.org/datatypes.html#Coding) for more details
+    properties:
+      code:
+        type: string
+      display:
+        type: string
+      system:
+        type: string
+  AuditEvent:
+    type: object
+    description: See [FHIR/AuditEvent](http://build.fhir.org/auditevent.html) for more details
+    properties:
+      type:
+        schema:
+          $ref: '#/definitions/Coding'
+      subtype:
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      action:
+        type: string
+  Binary:
+    type: object
+    description: See [FHIR/Binary](http://build.fhir.org/binary.html) for more details
+
 paths:
   /config:
     get:
@@ -49,9 +96,11 @@ paths:
           application/json:
   /export/{implementationGuideId}:
     post:
+      summary: requests that a new export be produced
+      security:
+        - auth0: []
       tags:
         - Export
-      summary: requests that a new export be produced
       parameters:
         - $ref: '#/parameters/fhirserver'
         - name: implementationGuideId
@@ -113,9 +162,11 @@ paths:
                 type: string
   /export/{packageId}:
     get:
+      summary: "Retrieves an export package requested using the packageId returned by the POST operation."
       tags:
         - Export
-      summary: "Retrieves an export package requested using the packageId returned by the POST operation."
+      security:
+        - auth0: []
       parameters:
         - name: packageId
           in: path
@@ -138,6 +189,8 @@ paths:
     post:
       tags:
         - Import
+      security:
+        - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
   /import/phinVads:
@@ -145,24 +198,32 @@ paths:
       summary: "TODO: Not yet implemented"
       tags:
         - Import
+      security:
+        - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
     get:
       summary: "TODO: Not yet implemented"
       tags:
         - Import
+      security:
+        - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
   /import/excelValueSet:
     post:
       tags:
         - Import
+      security:
+        - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
   /import/vsac/{resourceType}/{id}:
     get:
       tags:
         - Import
+      security:
+        - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
   /fhir:
@@ -170,15 +231,145 @@ paths:
       summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
       tags:
         - FHIR Proxy
+      security:
+        - auth0: []
+  /auditEvent:
+    get:
+      summary: "Retrieves all audit events from the FHIR server"
+      tags:
+        - Audit
+      security:
+        - auth0: []
+      responses:
+        '200':
+          description: "Success"
+          type: array
+          items:
+            $ref: '#/definitions/AuditEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
-      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      summary: "Creates a new audit event"
       tags:
-        - FHIR Proxy
+        - Audit
+      security:
+        - auth0: []
+      responses:
+        '200':
+          description: "Success"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auditEvent/{id}:
+    get:
+      summary: "Retrieves the details of a particular audit event"
+      tags:
+        - Audit
+      security:
+        - auth0: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: "Success"
+          schema:
+            $ref: '#/definitions/AuditEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /binary:
+    get:
+      summary: "Retrieves Binary resources from the FHIR server. Supports any query parameters supported by the FHIR server. See http://build.fhir.org/binary.html#search for possible query parameters."
+      descriptions:
+      tags:
+        - Binary
+      security:
+        - auth0: []
+      responses:
+        '200':
+          description: "Success"
+          type: array
+          items:
+            $ref: '#/definitions/Binary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: "Creates a new Binary resource on the FHIR server"
+      tags:
+        - Binary
+      security:
+        - auth0: []
+      parameters:
+        - in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Binary'
+      responses:
+        '200':
+          description: "Success. Binary resource is returned with the generated ID."
+          schema:
+            $ref: '#/definitions/Binary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /binary/{id}:
+    get:
+      summary: "Retrieves a specific Binary resource by ID from the FHIR server"
+      tags:
+        - Binary
+      security:
+        - auth0: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "The ID of the resource to retrieve"
+          type: string
+      responses:
+        '200':
+          description: "Success"
+          schema:
+            $ref: '#/definitions/Binary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
-      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      summary: "Updates a specific Binary resource or creates a Binary resource with a specific ID if it does not already exist (assuming the underlying FHIR server supports it)"
       tags:
-        - FHIR Proxy
+        - Binary
+      security:
+        - auth0: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "The ID of the resource to update or create"
+          type: string
+        - in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Binary'
+      responses:
+        '200':
+          description: "Success. The Binary resource was updated."
+          schema:
+            $ref: '#/definitions/Binary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     delete:
-      summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."
+      summary: "Deletes a specific Binary resource by ID from the FHIR server"
       tags:
-        - FHIR Proxy
+        - Binary
+      security:
+        - auth0: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "The ID of the resource to delete"
+          type: string
+      responses:
+        '200':
+          description: 'Success. Binary resource was deleted.'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
