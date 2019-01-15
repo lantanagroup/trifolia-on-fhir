@@ -185,99 +185,98 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">Release 1.0 on January 13, 2019</span></p>
+<p class="rvps3"><span class="rvts8">Release 1.0 on January 15, 2019</span></p>
 <h2 class="rvps6"><span class="rvts0"><span class="rvts15">Open-source</span></span></h2>
-<p class="rvps3"><span class="rvts8">After careful consideration, we have decided to make Trifolia-on-FHIR an open-source product. The source code can be found on GitHub: https://github.com/lantanagroup/trifolia-on-fhir</span></p>
-<p class="rvps3"><span class="rvts8">We hope to achieve two primary goals by open-sourcing the product:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Encourage other software developers to contribute to the product</span></li>
-<li class="rvps3"><span class="rvts8">Expand the group of people who can use the product</span></li>
+<p class="rvps3"><span class="rvts8">After careful consideration, Lantana has decided to make Trifolia-on-FHIR (ToF) an open-source product. The source code can be found on GitHub: https://github.com/lantanagroup/trifolia-on-fhir</span></p>
+<p class="rvps3"><span class="rvts8">We have two primary reasons for open-sourcing the product:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 42px; list-style-position: outside; list-style-type: disc;">
+<li style="margin-left: 0px" class="rvps7"><span class="rvts8">Encourage other software developers to contribute to the product</span></li>
+<li style="margin-left: 0px" class="rvps7"><span class="rvts8">Expand the group of people who can use the product</span></li>
 </ul>
 <h2 class="rvps6"><span class="rvts0"><span class="rvts15">Requesting Support</span></span></h2>
-<p class="rvps3"><span class="rvts8">Please be sure to provide your name and email address when submitting a support request. We use JIRA to capture the support requests, and it does not (at this time) require the user's name and email address. In the future, we hope to make these fields required. Until then, it is important that you provide your name and email address so that we know who to contact when a change has been made related to a request.</span></p>
+<p class="rvps3"><span class="rvts8">We use JIRA to capture the support requests, and it does not (at this time) require the user's name and email address. Therefore, you can submit a request without completing these fields, but we would not be able to follow-up on the request. In the future, we hope to make these fields required. Until then, it is important that you provide your name and email address so that we know who to contact when a change has been made related to a request.</span></p>
 <h2 class="rvps6"><span class="rvts0"><span class="rvts15">FHIR IG Publisher</span></span></h2>
-<p class="rvps3"><span class="rvts8">ToF uses an older version of the FHIR IG Publisher by default. The latest version of the FHIR IG Publisher has a number of issues which would prevent users from successfully publishing their implementation guide. Once these issues have been addressed/resolved, we will update ToF to use the newer version. Until then, you may encounter publishing issues with R4 implementation guides.</span></p>
+<p class="rvps3"><span class="rvts8">ToF uses an older version of the FHIR IG Publisher by default. The latest version of the FHIR IG Publisher has several issues which would prevent users from successfully publishing their implementation guide. Once these issues have been addressed or resolved, we will update ToF to use the newer version. Until then, you may encounter publishing issues with R4 implementation guides.</span></p>
 <h2 class="rvps6"><span class="rvts0"><span class="rvts15">Support for R4</span></span></h2>
-<p class="rvps3"><span class="rvts8">ToF has the official R4 FHIR models loaded for use within the UI's validation. ToF is dependent on other tools, such as the HAPI FHIR server, and the FHIR IG publisher for to provide end-to-end implementation guide design and publication. If the underlying FHIR Server (ex: HAPI) or the FHIR IG publisher does not support the published FHIR R4 models, you may encounter various issues in the application.</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts15">GitHub Integration</span></span></h2>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR has integrated with GitHub so that resources can be imported and exported between the two services. This integration does have some limitations, which are described in the help documentation's "GitHub Integration" page.</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Development log</span></span></h2>
-<p class="rvps3"><span class="rvts8">Only listing issues addressed after release 0.4.</span></p>
-<div class="rvps3"><table width="100%" border="1" cellpadding="1" cellspacing="2" style="border-color: #000000; border-style: solid; border-spacing: 2px;">
+<p class="rvps3"><span class="rvts8">ToF has the official R4 FHIR models loaded for use within the user interface’s validation. ToF is dependent on other tools, such as the HAPI FHIR server, and the FHIR IG publisher to provide end-to-end implementation guide design and publication. If the underlying FHIR Server (ex: HAPI) or the FHIR IG publisher does not support the published FHIR R4 models, you may encounter various issues in the application.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log</span></span></h2>
+<p class="rvps3"><span class="rvts8">This table only lists issues addressed after release 0.4. Changes were not tracked prior to version 0.4.</span></p>
+<div class="rvps9"><table width="100%" border="2" cellpadding="6" cellspacing="4" style="border-color: #000000; border-style: solid; border-spacing: 4px;">
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts16">Type</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts16">Type</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts16">Summary</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts16">Summary</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Popup for selecting a resource reference does not page</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
-</td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Add additional validations for ImplementationGuide</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Pop-up for selecting a resource reference does not page</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Remove checkmarks from optional fields</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
-</td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">GitHub Integration</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Add additional validations for implementation guides</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Page the concepts when editing a code system</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
-</td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Change "Response Format" to "Output Format"</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Remove checkmarks from optional fields</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Provide default values for IG fields</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
-</td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Make it easier to add multiple resources to an IG</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">GitHub Integration</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Add tooltip icons to Value Set Editing</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
-</td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Add tooltip icons to Code System Editing</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Allow user to page the concepts when editing a code system</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="178" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="1428" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Allow type-ahead searching for new profile "Type" field</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Change "Response Format" to "Output Format"</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Provide default values for implementation guide fields</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Make it easier to add multiple resources to an IG</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Add tooltip icons to Value Set Editing</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Add tooltip icons to Code System Editing</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Allow type-ahead searching for a new profile’s "Type" field</span></p>
 </td>
 </tr>
 </table>
 </div>
+<p class="rvps8"><span class="rvts17"><br/></span></p>
 <p></p>
 
             </div>
