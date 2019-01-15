@@ -36,6 +36,7 @@ const app = express();
 const fhirConfig = config.get('fhir');
 const serverConfig = config.get('server');
 const githubConfig = config.get('github');
+const authConfig = config.get('auth');
 
 log4js.configure('config/log4js.json');
 const log = log4js.getLogger();
@@ -219,7 +220,13 @@ app.use('/api-docs', swaggerUi.serve, function(req, res, next) {
     const swaggerDocument = YAML.load('./swagger.yaml');
     swaggerDocument.host = req.get('host') || swaggerDocument.host;
     swaggerDocument.schemes = req.protocol ? [ req.protocol ] : swaggerDocument.schemes;
-    swaggerUi.setup(swaggerDocument)(req, res, next);
+    const options = {
+        oauth: {
+            clientId: authConfig.clientId
+        },
+        oauth2RedirectUrl: req.protocol + '://' + swaggerDocument.host + '/api-docs/oauth2-redirect.html'
+    };
+    swaggerUi.setup(swaggerDocument, false, options)(req, res, next);
 });
 app.get('/swagger.yaml', function(req, res) {
     res.contentType('text/yaml');
