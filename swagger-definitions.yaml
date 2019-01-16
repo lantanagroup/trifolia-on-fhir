@@ -1,0 +1,5 @@
+definitions:
+  Binary:
+    description: "See [FHIR/Binary](http://build.fhir.org/binary.html) for more details"
+  AuditEvent:
+    description: "See [FHIR/AuditEvent](http://build.fhir.org/auditevent.html) for more details"

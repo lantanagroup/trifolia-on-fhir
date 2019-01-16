@@ -221,16 +221,23 @@ app.use('/api-docs', swaggerUi.serve, function(req, res, next) {
     swaggerDocument.host = req.get('host') || swaggerDocument.host;
     swaggerDocument.schemes = req.protocol ? [ req.protocol ] : swaggerDocument.schemes;
     const options = {
+        swaggerUrl: '/swagger.yaml',
         oauth: {
             clientId: authConfig.clientId
         },
         oauth2RedirectUrl: req.protocol + '://' + swaggerDocument.host + '/api-docs/oauth2-redirect.html'
     };
-    swaggerUi.setup(swaggerDocument, false, options)(req, res, next);
+    swaggerUi.setup(null, options)(req, res, next);
 });
+
 app.get('/swagger.yaml', function(req, res) {
+    let spec = fs.readFileSync(path.join(__dirname, 'swagger.yaml')).toString();
+    const definitionsSpec = fs.readFileSync(path.join(__dirname, 'swagger-definitions.yaml')).toString();
+
+    spec = spec.replace('##swagger-definitions.yaml##', definitionsSpec);
+
     res.contentType('text/yaml');
-    res.send(fs.readFileSync(path.join(__dirname, 'swagger.yaml')));
+    res.send(spec);
 });
 
 app.get('/github/callback', function(req, res) {

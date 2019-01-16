@@ -15,7 +15,7 @@ info:
 
     **message**: A message associated with the status that should be displayed to the user or logged
   version: "1.0.0"
-  title: "Trfiolia on FHIR"
+  title: "Trfiolia-on-FHIR"
   contact:
     email: "sean.mcilvenna@lantanagroup.com"
 externalDocs:
@@ -49,33 +49,7 @@ components:
     Unauthorized:
       description: The request is not authorized
 
-definitions:
-  Coding:
-    type: object
-    description: See [FHIR/DataTypes#Coding](http://build.fhir.org/datatypes.html#Coding) for more details
-    properties:
-      code:
-        type: string
-      display:
-        type: string
-      system:
-        type: string
-  AuditEvent:
-    type: object
-    description: See [FHIR/AuditEvent](http://build.fhir.org/auditevent.html) for more details
-    properties:
-      type:
-        schema:
-          $ref: '#/definitions/Coding'
-      subtype:
-        type: array
-        items:
-          $ref: '#/definitions/Coding'
-      action:
-        type: string
-  Binary:
-    type: object
-    description: See [FHIR/Binary](http://build.fhir.org/binary.html) for more details
+##swagger-definitions.yaml##
 
 paths:
   /config:
@@ -233,6 +207,11 @@ paths:
         - FHIR Proxy
       security:
         - auth0: []
+
+#
+# AUDIT EVENT
+#
+
   /auditEvent:
     get:
       summary: "Retrieves all audit events from the FHIR server"
@@ -279,6 +258,11 @@ paths:
             $ref: '#/definitions/AuditEvent'
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+#
+# BINARY
+#
+
   /binary:
     get:
       summary: "Retrieves Binary resources from the FHIR server. Supports any query parameters supported by the FHIR server. See http://build.fhir.org/binary.html#search for possible query parameters."
@@ -346,6 +330,7 @@ paths:
           description: "The ID of the resource to update or create"
           type: string
         - in: body
+          description: "The Binary resource to create/update the server with"
           required: true
           schema:
             $ref: '#/definitions/Binary'
