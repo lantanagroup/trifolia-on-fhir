@@ -240,7 +240,16 @@ app.get('/swagger.yaml', function(req, res) {
     res.send(spec);
 });
 
-app.get('/github/callback', function(req, res) {
+/**
+ * Handles an authentication redirect from GitHub. The user is initially redirected to GitHub, the user
+ * authenticates with GitHub, they are redirected from GitHub back to ToF to this operation, where the
+ * authentication token is redirected to the correct HTML page in ToF so that the browser can keep trackc of it.
+ * @param req
+ * @param req.query
+ * @param req.query.code The authenticated token representing the user's GitHub session
+ * @param res
+ */
+function handleAuthentication(req, res) {
     const code = req.query.code;
     const clientId = githubConfig.clientId;
     const secret = githubConfig.secret;
@@ -284,7 +293,9 @@ app.get('/github/callback', function(req, res) {
             templateContent = templateContent.replace('%ACCESS_TOKEN%', '');
             res.send(templateContent);
         });
-});
+}
+
+app.get('/github/callback', handleAuthentication);
 
 app.get('*', (req, res) => {
     if (req.originalUrl.startsWith('/igs/')) {

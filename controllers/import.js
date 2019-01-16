@@ -1,7 +1,6 @@
 const express = require('express');
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
-const _ = require('underscore');
 const Q = require('q');
 const log4js = require('log4js');
 const PhinVadsImporter = require('../import/phinVadsImporter');
@@ -10,6 +9,14 @@ const ExcelValueSetImporter = require('../import/excelValueSetImporter');
 const router = express.Router();
 const log = log4js.getLogger();
 
+/**
+ * Imports a FHIR resource. If the resource is a Bundle, it is treated as a transaction
+ * and POST'd to the FHIR server as a transaction. Otherwise, it is treated as an
+ * indivdiual resource and POST'd or PUT'd to the FHIR server according to the resource's type.
+ * @param resource
+ * @param getFhirServerUrl
+ * @return {Q.Promise<any>}
+ */
 function importResource(resource, getFhirServerUrl) {
     if (!resource) {
         return Q.reject('No resource specified');
@@ -48,8 +55,13 @@ function importResource(resource, getFhirServerUrl) {
     return deferred.promise;
 }
 
-/** EXCEL VALUESET **/
-router.post('/excelValueSet', (req, res) => {
+/**
+ * Imports a value set in excel (XLSX) format
+ * @param req
+ * @param req.body The XLSX binary contents
+ * @param res
+ */
+function importExcelValueSet(req, res) {
     const importer = new ExcelValueSetImporter();
     importer.import(req.body)
         .then((results) => {
@@ -59,10 +71,15 @@ router.post('/excelValueSet', (req, res) => {
             log.error(err);
             res.status(500).send(err);
         });
-});
+}
 
-/** PHIN VADS **/
-router.get('/phinVads', (req, res) => {
+/**
+ * Gets a list of value sets matching the criteria (search text) from PHIN VADS
+ * @param req
+ * @param req.query.searchText The criteria used to search PHIN VADS
+ * @param res
+ */
+function getPhinVadsValueSet(req, res) {
     const importer = new PhinVadsImporter();
     importer.search(req.query.searchText)
         .then((results) => {
@@ -72,14 +89,28 @@ router.get('/phinVads', (req, res) => {
             log.error(err);
             res.status(500).send(err);
         });
-});
+}
 
-router.post('/phinVads', (req, res) => {
+/**
+ * Imports a value set from PHIN VADS
+ * @param req
+ * @param res
+ */
+function importPhinVads(req, res) {
     res.send('todo');
-});
+}
 
-/** VSAC **/
-router.get('/vsac/:resourceType/:id', checkJwt, (req, res) => {
+/**
+ * Gets a value set from VSAC
+ * @param req
+ * @parma req.headers
+ * @param req.headers.vsacauthorization The authenticated token for the user accessing VSAC
+ * @param req.params
+ * @param req.params.resourceType The type of resource to retrieve from VSAC
+ * @parma req.params.id {string} The id of the resource to retrieve from VSAC
+ * @param res
+ */
+function getVsacResource(req, res) {
     const vsacAuthorization = req.headers['vsacauthorization'];
     const resourceType = req.params.resourceType;
     const id = req.params.id;
@@ -121,10 +152,15 @@ router.get('/vsac/:resourceType/:id', checkJwt, (req, res) => {
                 res.status(500).send(err);
             });
     })
-});
+}
 
-/** FHIR Transaction Bundles **/
-router.post('/', checkJwt, (req, res) => {
+/**
+ * Imports a transaction Bundle
+ * @param req
+ * @param req.body The resource to import (Bundle, Composition, ImplementationGuide, StructureDefinition, etc)
+ * @param res
+ */
+function importTransaction(req, res) {
     importResource(req.body, req.getFhirServerUrl)
         .then((results) => {
             res.send(results);
@@ -133,6 +169,12 @@ router.post('/', checkJwt, (req, res) => {
             log.error('An error occurred while importing the resource(s): ' + err);
             res.status(500).send(err);
         });
-});
+}
+
+router.post('/excelValueSet', checkJwt, importExcelValueSet);
+router.get('/phinVads', checkJwt, getPhinVadsValueSet);
+router.post('/phinVads', checkJwt, importPhinVads);
+router.get('/vsac/:resourceType/:id', checkJwt, getVsacResource);
+router.post('/', checkJwt, importTransaction);
 
 module.exports = router;
