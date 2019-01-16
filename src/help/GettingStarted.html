@@ -7,11 +7,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 5.9.0.711">
+  <meta name="generator" content="HelpNDoc Professional Edition 5.9.1.788">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Introduction</title>
+  <title>Getting Started</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Introduction">
+  <meta name="twitter:title" content="Getting Started">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Introduction" />
+  <meta property="og:title" content="Getting Started" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,9 +163,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Introduction"
-		  data-hnd-context="0"
-		  data-hnd-title="Introduction"
+		  data-hnd-id="GettingStarted"
+		  data-hnd-context="3"
+		  data-hnd-title="Getting Started"
 		>
             
                 <div class="navigation">
@@ -173,23 +173,54 @@
                         
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="GuidelinesandBestPractices.html" title="Guidelines and Best Practices" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="SystemRequirements.html" title="System Requirements" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Introduction</h2>
+            <h2>Getting Started</h2>
 
             <div class="main-content">
                 
 <p></p>
+<p class="rvps3"><span class="rvts8">The purpose of this guide is to guide new users through Trifolia on FHIR:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Create account and Login</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select FHIR Release version (gear icon in top right)</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Create new Implementation Guide</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Option A: Manually- Navigate to Browse Implementation Guides &gt; &nbsp;click ‘plus’ button above existing IGs (right)</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Option B: Import IG.xml from Github or locally (Import button at top)</span></li>
+</ol>
+<li value="4" class="rvps3"><span class="rvts8">Modify IG. Be sure to always </span><span class="rvts19">Save</span><span class="rvts8"> (bottom left)</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Create/import additional templates/profiles</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Option A: Manually- Navigate to Browse Templates/Profiles</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Option B: Import directories from Github or locally</span></li>
+</ol>
+<li value="6" class="rvps3"><span class="rvts8">Modify and constrain the templates/profiles to use case</span></li>
+<li value="7" class="rvps3"><span class="rvts8">Resolve all Validation errors and warnings on Validation (tab) within each profile </span></li>
+<li value="8" class="rvps3"><span class="rvts8">Export selected IG package. Suggested settings for initial export:</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Export Format: HTML (IG publisher) </span></li>
+<li value="2" class="rvps3"><span class="rvts8">Run the IG Publisher: Yes</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Run the latest version of the IG Publisher: Yes</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Use terminology server: Yes/No (Suggest No if IG uses large standard codesets)</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Selecting Yes will verify applicable codesets externally</span></li>
+</ol>
+<li value="5" class="rvps3"><span class="rvts8">Download: Yes</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Output format: Yes/No</span></li>
+</ol>
+<li value="9" class="rvps3"><span class="rvts8">Confirm build logs against CI-publisher on Zulip &gt; Notifications</span></li>
+</ol>
 <p></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2018 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2019 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
