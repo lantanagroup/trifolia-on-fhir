@@ -185,34 +185,35 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">The purpose of this guide is to guide new users through Trifolia on FHIR:</span></p>
+<p class="rvps3"><span class="rvts8">The purpose of this page is to guide new users through Trifolia-on-FHIR:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
 <li value="1" class="rvps3"><span class="rvts8">Create account and Login</span></li>
 <li value="2" class="rvps3"><span class="rvts8">Select FHIR Release version (gear icon in top right)</span></li>
 <li value="3" class="rvps3"><span class="rvts8">Create new Implementation Guide</span></li>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Option A: Manually- Navigate to Browse Implementation Guides &gt; &nbsp;click ‘plus’ button above existing IGs (right)</span></li>
-<li value="2" class="rvps3"><span class="rvts8">Option B: Import IG.xml from Github or locally (Import button at top)</span></li>
 </ol>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li class="rvps3"><span class="rvts8">Option A: Create IG from scratch. Navigate to Browse Implementation Guides &gt; &nbsp;click the "plus" + button at top IG list/table.</span></li>
+<li class="rvps3"><span class="rvts8">Option B: Import IG from a file. Import IG.xml from your computer ("Import" button at top and either drag-and-drop the IG.xml file into the "Files" tab or copy/paste the contents of IG.xml into the second tab).</span></li>
+</ul></ul>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
 <li value="4" class="rvps3"><span class="rvts8">Modify IG. Be sure to always </span><span class="rvts19">Save</span><span class="rvts8"> (bottom left)</span></li>
 <li value="5" class="rvps3"><span class="rvts8">Create/import additional templates/profiles</span></li>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Option A: Manually- Navigate to Browse Templates/Profiles</span></li>
-<li value="2" class="rvps3"><span class="rvts8">Option B: Import directories from Github or locally</span></li>
 </ol>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li class="rvps3"><span class="rvts8">Option A: Create Profile from scratch. Navigate to Browse Templates/Profiles &gt; click the "plus" + button at top of Profile list/table.</span></li>
+<li class="rvps3"><span class="rvts8">Option B: Import profiles from directories on computer</span></li>
+</ul></ul>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
 <li value="6" class="rvps3"><span class="rvts8">Modify and constrain the templates/profiles to use case</span></li>
 <li value="7" class="rvps3"><span class="rvts8">Resolve all Validation errors and warnings on Validation (tab) within each profile </span></li>
 <li value="8" class="rvps3"><span class="rvts8">Export selected IG package. Suggested settings for initial export:</span></li>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
 <li value="1" class="rvps3"><span class="rvts8">Export Format: HTML (IG publisher) </span></li>
 <li value="2" class="rvps3"><span class="rvts8">Run the IG Publisher: Yes</span></li>
-<li value="3" class="rvps3"><span class="rvts8">Run the latest version of the IG Publisher: Yes</span></li>
-<li value="4" class="rvps3"><span class="rvts8">Use terminology server: Yes/No (Suggest No if IG uses large standard codesets)</span></li>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Selecting Yes will verify applicable codesets externally</span></li>
-</ol>
+<li value="3" class="rvps3"><span class="rvts8">Run the latest version of the IG Publisher: No</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Use terminology server: Yes/No (Suggest No if IG uses large standard codesets)</span><br/><span class="rvts8">Selecting Yes will verify applicable value sets and code systems externally</span></li>
 <li value="5" class="rvps3"><span class="rvts8">Download: Yes</span></li>
-<li value="6" class="rvps3"><span class="rvts8">Output format: Yes/No</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Output format: XML</span></li>
 </ol>
 <li value="9" class="rvps3"><span class="rvts8">Confirm build logs against CI-publisher on Zulip &gt; Notifications</span></li>
 </ol>

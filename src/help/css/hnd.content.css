@@ -155,16 +155,12 @@ p,ul,ol /* Paragraph Style */
 }
 .rvps7
 {
- margin: 0px 0px 0px 42px;
-}
-.rvps8
-{
  line-height: 1.07;
  widows: 2;
  orphans: 2;
  margin: 0px 0px 19px 0px;
 }
-.rvps9
+.rvps8
 {
  margin: 0px 0px 0px 1px;
 }
@@ -173,9 +169,5 @@ p,ul,ol /* Paragraph Style */
 .list1 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;}
 .list2 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;}
 .list3 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
-.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 42px; list-style-position: outside; list-style-type: disc;}
-.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 84px; list-style-position: outside; list-style-type: circle;}
-.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 84px; list-style-position: outside; list-style-type: square;}
-.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 84px; list-style-position: outside; list-style-type: disc;}
-.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
-.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
+.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
+.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
