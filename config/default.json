@@ -3,11 +3,11 @@
     "port": 49366
   },
   "auth": {
-    "clientId": "***REMOVED***",
-    "domain": "trifolia.auth0.com",
-    "scope": "openid profile name nickname email",
-    "secret": "***REMOVED***",
-    "issuer": "https://trifolia.auth0.com/"
+    "clientId": "",
+    "domain": "",
+    "scope": "",
+    "secret": "",
+    "issuer": ""
   },
   "import": {
     "phinVadsUrl": "https://phinvads.cdc.gov/vocabService/v2"
