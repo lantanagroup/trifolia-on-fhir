@@ -3,10 +3,10 @@
     "port": 49366
   },
   "auth": {
-    "clientId": "***REMOVED***",
+    "clientId": "oT3O4eRAVq874bue0Uu85AxPjiiiFgp7",
     "domain": "trifolia.auth0.com",
     "scope": "openid profile name nickname email",
-    "secret": "***REMOVED***",
+    "secret": "2c5vExJczhV5hoJPNxjbUK8bQNpjXgDAHYBth49jgmjuKSbK",
     "issuer": "https://trifolia.auth0.com/"
   },
   "import": {
