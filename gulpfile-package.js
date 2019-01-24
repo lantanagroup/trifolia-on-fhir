@@ -6,7 +6,7 @@ var merge               = require('merge-stream');
 
 const allFiles = [
     'server.js',
-    'swagger.yaml',
+    '*.yaml',
     '*Helper.js',
     'package.json',
     'import/**',
