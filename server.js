@@ -217,15 +217,17 @@ app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxA
 app.use(express.static(path.join(__dirname, 'wwwroot')));
 
 app.use('/api-docs', swaggerUi.serve, function(req, res, next) {
-    const swaggerDocument = YAML.load('./swagger.yaml');
-    swaggerDocument.host = req.get('host') || swaggerDocument.host;
-    swaggerDocument.schemes = req.protocol ? [ req.protocol ] : swaggerDocument.schemes;
     const options = {
         swaggerUrl: '/swagger.yaml',
-        oauth: {
-            clientId: authConfig.clientId
-        },
-        oauth2RedirectUrl: req.protocol + '://' + swaggerDocument.host + '/api-docs/oauth2-redirect.html'
+        swaggerOptions: {
+            oauth: {
+                clientId: authConfig.clientId,
+                additionalQueryStringParams: {
+                    'response_type': 'token'
+                }
+            },
+            oauth2RedirectUrl: req.protocol + '://' + req.get('host') + '/api-docs/oauth2-redirect.html'
+        }
     };
     swaggerUi.setup(null, options)(req, res, next);
 });
@@ -234,7 +236,10 @@ app.get('/swagger.yaml', function(req, res) {
     let spec = fs.readFileSync(path.join(__dirname, 'swagger.yaml')).toString();
     const definitionsSpec = fs.readFileSync(path.join(__dirname, 'swagger-definitions.yaml')).toString();
 
-    spec = spec.replace('##swagger-definitions.yaml##', definitionsSpec);
+    spec = spec
+        .replace('##swagger-definitions.yaml##', definitionsSpec)
+        .replace('##host##', req.get('host') || 'trifolia-fhir-dev.lantanagroup.com')
+        .replace('##scheme##', req.protocol);
 
     res.contentType('text/yaml');
     res.send(spec);

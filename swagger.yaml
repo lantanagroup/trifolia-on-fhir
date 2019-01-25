@@ -21,11 +21,10 @@ info:
 externalDocs:
   description: "The latest FHIR documentation is located here"
   url: "http://build.fhir.org"
-host: "trifolia-fhir-dev.lantanagroup.com"
+host: "##host##"
 basePath: "/api"
 schemes:
-  - "https"
-  - "http"
+  - "##scheme##"
 
 securityDefinitions:
   auth0:
