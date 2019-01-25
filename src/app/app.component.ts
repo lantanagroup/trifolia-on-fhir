@@ -13,6 +13,7 @@ import {FhirService} from './services/fhir.service';
 import {SocketService} from './services/socket.service';
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {GithubService} from './services/github.service';
+import {CookieService} from 'angular2-cookie/core';
 
 @Component({
     selector: 'app-root',
@@ -35,7 +36,8 @@ export class AppComponent implements OnInit {
         public globals: Globals,
         private modalService: NgbModal,
         private fileService: FileService,
-        private router: Router) {
+        private router: Router,
+        private cookieService: CookieService) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.practitioner;
@@ -62,6 +64,15 @@ export class AppComponent implements OnInit {
 
     public editSettings() {
         const modalRef = this.modalService.open(SettingsModalComponent, { size: 'lg' });
+    }
+
+    public supportButtonClicked() {
+        const confirmedCookie = this.cookieService.get('atlassian_account_confirmed');
+
+        if (confirmedCookie || confirm('A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.')) {
+            this.cookieService.put('atlassian_account_confirmed', true);
+            window.open('https://trifolia.atlassian.net/servicedesk/customer/portal/3', 'tof-support');
+        }
     }
 
     ngOnInit() {
