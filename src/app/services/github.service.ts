@@ -2,7 +2,6 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import * as _ from 'underscore';
-import * as SHA from 'js-sha1';
 import {ConfigService} from './config.service';
 
 export interface RepositoryOwnerModel {
@@ -259,26 +258,30 @@ export class GithubService {
             this.login()
                 .subscribe(() => {
                     let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+                    const options = this.getOptions();
+                    const encoded = btoa(content);
 
-                    const sha = SHA(content);
+                    this.http.get<any>(url, options)
+                        .subscribe((res) => {
+                            const data = {
+                                content: encoded,
+                                sha: res.sha
+                            };
 
-                    const data = {
-                        content: btoa(content),
-                        sha: sha
-                    };
+                            if (branchName) {
+                                data['branch'] = branchName;
+                            }
 
-                    if (branchName) {
-                        data['branch'] = branchName;
-                    }
+                            if (message) {
+                                data['message'] = message;
+                            }
 
-                    if (message) {
-                        data['message'] = message;
-                    }
+                            this.http.put<any>(url, data, this.getOptions())
+                                .subscribe(() => {
+                                    observer.next();
+                                    observer.complete();
+                                }, (err) => this.handleError(err, observer));
 
-                    this.http.put<any>(url, data, this.getOptions())
-                        .subscribe(() => {
-                            observer.next();
-                            observer.complete();
                         }, (err) => this.handleError(err, observer));
                 }, (err) => this.handleError(err, observer));
         });
