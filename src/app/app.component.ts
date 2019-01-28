@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
         const confirmedCookie = this.cookieService.get('atlassian_account_confirmed');
 
         if (confirmedCookie || confirm('A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.')) {
-            this.cookieService.put('atlassian_account_confirmed', true);
+            this.cookieService.put('atlassian_account_confirmed', 'true');
             window.open('https://trifolia.atlassian.net/servicedesk/customer/portal/3', 'tof-support');
         }
     }
