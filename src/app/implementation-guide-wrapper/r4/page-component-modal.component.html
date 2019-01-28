@@ -6,7 +6,7 @@
 </div>
 <div class="modal-body" *ngIf="page">
     <div class="form-group" *ngIf="rootPage">
-        <label>Auto Generate Table of Contents?</label>
+        <label>Auto Generate Table of Contents? <app-tooltip-icon tooltipKey="implementationguide.page.auto-generate"></app-tooltip-icon></label>
         <select class="form-control" [(ngModel)]="autoGenerate">
             <option [ngValue]="false">No</option>
             <option [ngValue]="true">Yes</option>
