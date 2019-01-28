@@ -20,10 +20,11 @@ import 'rxjs/add/observable/forkJoin';
 import {Fhir} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
 import {Versions as FhirVersions} from 'fhir/fhir';
-import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 import {ValidatorMessage, ValidatorResponse} from 'fhir/validator';
 import {Globals} from '../globals';
+import * as _ from 'underscore';
+import * as vkbeautify from 'vkbeautify';
 
 export class ParsedUrlModel {
     public resourceType: string;
@@ -337,7 +338,8 @@ export class FhirService {
             return;
         }
 
-        return this.fhir.objToXml(resource);
+        const xml = this.fhir.objToXml(resource);
+        return vkbeautify.xml(xml);
     }
 
     public deserialize(resourceXml: string) {
