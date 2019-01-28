@@ -36,7 +36,7 @@
         <textarea class="form-control" [class.is-invalid]="!githubCommitMessage" [(ngModel)]="githubCommitMessage" placeholder="Required"></textarea>
     </div>
 
-    <app-export-github-panel [resourcesBundle]="githubResourcesBundle"></app-export-github-panel>
+    <app-export-github-panel [resourcesBundle]="githubResourcesBundle" #githubPanel></app-export-github-panel>
 </div>
 
 <div class="form-group" *ngIf="options.exportFormat !== 3">

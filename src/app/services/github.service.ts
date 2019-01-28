@@ -181,11 +181,22 @@ export class GithubService {
         return new Observable<RepositoryModel[]>((observer) => {
             this.login()
                 .subscribe(() => {
-                    this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100', this.getOptions())
-                        .subscribe((repositories) => {
-                            observer.next(repositories);
-                            observer.complete();
-                        }, (err) => this.handleError(err, observer));
+                    let repositories = [];
+
+                    const getNextRepositories = (page = 1) => {
+                        this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100&page=' + page, this.getOptions())
+                            .subscribe((next) => {
+                                repositories = repositories.concat(next);
+                                if (next.length === 100) {
+                                    getNextRepositories(page + 1);
+                                } else {
+                                    observer.next(repositories);
+                                    observer.complete();
+                                }
+                            }, (err) => this.handleError(err, observer));
+                    };
+
+                    getNextRepositories();
                 }, (err) => this.handleError(err, observer));
         });
     }
@@ -255,34 +266,51 @@ export class GithubService {
 
     public updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
         return new Observable<ContentModel[]>((observer) => {
+            const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+            const encoded = btoa(content);
+            const options = this.getOptions();
+            const update = (lastSha?: string) => {
+                const data = {
+                    content: encoded
+                };
+
+                if (lastSha) {
+                    data['sha'] = lastSha;
+                }
+
+                if (branchName) {
+                    data['branch'] = branchName;
+                }
+
+                if (message) {
+                    data['message'] = message;
+                }
+
+                this.http.put<any>(url, data, this.getOptions())
+                    .subscribe(() => {
+                        observer.next();
+                        observer.complete();
+                    }, (err) => this.handleError(err, observer));
+            };
+
             this.login()
                 .subscribe(() => {
-                    let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
-                    const options = this.getOptions();
-                    const encoded = btoa(content);
-
                     this.http.get<any>(url, options)
                         .subscribe((res) => {
-                            const data = {
-                                content: encoded,
-                                sha: res.sha
-                            };
-
-                            if (branchName) {
-                                data['branch'] = branchName;
+                            const cleanedResponseContent = res.content.replace(/\r/g, '').replace(/\n/g, '');
+                            if (cleanedResponseContent === encoded) {      // If the content hasn't changed, don't update in GitHub
+                                observer.next();
+                                observer.complete();
+                            } else {
+                                update(res.sha);
                             }
-
-                            if (message) {
-                                data['message'] = message;
+                        }, (err) => {
+                            if (err.status === 404) {
+                                update();
+                            } else {
+                                this.handleError(err, observer);
                             }
-
-                            this.http.put<any>(url, data, this.getOptions())
-                                .subscribe(() => {
-                                    observer.next();
-                                    observer.complete();
-                                }, (err) => this.handleError(err, observer));
-
-                        }, (err) => this.handleError(err, observer));
+                        });
                 }, (err) => this.handleError(err, observer));
         });
     }

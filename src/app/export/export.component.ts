@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../services/export.service';
@@ -12,6 +12,7 @@ import {Bundle, DomainResource, ImplementationGuide} from '../models/stu3/fhir';
 import {GithubService} from '../services/github.service';
 import {FhirService} from '../services/fhir.service';
 import {Observable} from 'rxjs';
+import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 
 @Component({
     selector: 'app-export',
@@ -25,6 +26,8 @@ export class ExportComponent implements OnInit {
     public implementationGuidesBundle: Bundle;
     public githubResourcesBundle: Bundle;
     public githubCommitMessage: string;
+
+    @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 
     public options = new ExportOptions();
 
@@ -111,6 +114,9 @@ export class ExportComponent implements OnInit {
             .filter((entry) => {
                 const details = this.fhirService.getResourceGithubDetails(entry.resource);
                 return !!(details.owner && details.repository && details.branch && details.path);
+            })
+            .filter((entry) => {
+                return !!_.find(this.githubPanel.checkedIds, (id) => id === entry.resource.id);
             })
             .map((entry) => entry.resource)
             .value();
