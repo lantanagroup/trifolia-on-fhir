@@ -24,7 +24,6 @@ import {
     FhirReferenceModalComponent,
     ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
-import {ImplementationGuideDefinitionComponent} from '../../models/r4/fhir';
 
 class PageDefinition {
     public page: PageComponent;
@@ -52,7 +51,6 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public currentResource: any;
     public validation: ValidatorResponse;
     public pages: PageDefinition[];
-    private unsavedBinaryAssociations: string[] = [];
     public resourceTypeCodes: Coding[] = [];
     private readonly dependencyExtensionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency';
     private readonly dependencyExtensionNameUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name';
@@ -95,6 +93,28 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     public removeDependency(dependency: Extension) {
         const index = this.implementationGuide.extension.indexOf(dependency);
         this.implementationGuide.extension.splice(index);
+    }
+
+    public pageKindChanged(page: PageComponent) {
+        let autoGenExtension = _.find(page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+
+        if (page.kind === 'toc') {
+            if (!page.extension) {
+                page.extension = [];
+            }
+
+            if (autoGenExtension && !autoGenExtension.valueBoolean) {
+                autoGenExtension.valueBoolean = true;
+            } else if (!autoGenExtension) {
+                autoGenExtension = new Extension();
+                autoGenExtension.url = this.globals.extensionIgPageAutoGenerateToc;
+                autoGenExtension.valueBoolean = true;
+                page.extension.push(autoGenExtension);
+            }
+        } else if (autoGenExtension) {
+            const extIndex = page.extension.indexOf(autoGenExtension);
+            page.extension.splice(extIndex, 1);
+        }
     }
 
     public addResources(destPackage?: PackageComponent) {

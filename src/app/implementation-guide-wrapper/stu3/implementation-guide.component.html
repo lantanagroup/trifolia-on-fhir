@@ -336,7 +336,7 @@
                                    [class.is-invalid]="!p.page.title"/>
                         </td>
                         <td>
-                            <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
+                            <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="pageKindChanged(p.page)">
                                 <option value="page">Page</option>
                                 <option value="example">Example</option>
                                 <option value="list">List</option>
