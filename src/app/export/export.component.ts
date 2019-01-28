@@ -13,6 +13,7 @@ import {GithubService} from '../services/github.service';
 import {FhirService} from '../services/fhir.service';
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
+import {FileModel} from '../services/github.service';
 
 @Component({
     selector: 'app-export',
@@ -110,6 +111,9 @@ export class ExportComponent implements OnInit {
     }
 
     private exportGithub() {
+        const implementationGuide = _.find(this.githubResourcesBundle.entry, (entry) => entry.resource.resourceType === 'ImplementationGuide').resource;
+        const implementationGuideDetails = this.fhirService.getResourceGithubDetails(implementationGuide);
+
         const queue = <DomainResource[]> _.chain(this.githubResourcesBundle.entry)
             .filter((entry) => {
                 const details = this.fhirService.getResourceGithubDetails(entry.resource);
@@ -121,41 +125,17 @@ export class ExportComponent implements OnInit {
             .map((entry) => entry.resource)
             .value();
 
-        const nextInQueue = () => {
-            return new Observable((observer) => {
-                if (queue.length === 0) {
-                    observer.next();
-                    observer.complete();
-                    return;
-                }
+        const files = _.map(queue, (resource) => {
+            const details = this.fhirService.getResourceGithubDetails(resource);
+            const content = details.path.endsWith('.xml') ? this.fhirService.serialize(resource) : JSON.stringify(resource, null, '\t');
 
-                const resource = queue.pop();
-                const details = this.fhirService.getResourceGithubDetails(resource);
+            return <FileModel> {
+                path: details.path,
+                content: content
+            };
+        });
 
-                let content = JSON.stringify(resource, null, '\t');
-
-                if (details.path.endsWith('.xml')) {
-                    content = this.fhirService.serialize(resource);
-                }
-
-                this.githubService.updateContent(details.owner, details.repository, details.path, content, this.githubCommitMessage, details.branch)
-                    .subscribe(() => {
-                        nextInQueue()
-                            .subscribe(() => {
-                                observer.next();
-                                observer.complete();
-                            }, (err) => {
-                                observer.error(err);
-                                observer.complete();
-                            });
-                    }, (err) => {
-                        observer.error(err);
-                        observer.complete();
-                    });
-            });
-        }
-
-        nextInQueue()
+        this.githubService.updateContents(implementationGuideDetails.owner, implementationGuideDetails.repository, this.githubCommitMessage, files, implementationGuideDetails.branch)
             .subscribe(() => {
                 this.message = 'Done exporting to GitHub';
             }, (err) => {
@@ -170,7 +150,11 @@ export class ExportComponent implements OnInit {
         this.cookieService.put(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
         if (this.options.exportFormat === ExportFormats.GitHub) {
-            this.exportGithub();
+            try {
+                this.exportGithub();
+            } catch (ex) {
+                this.message = ex.message;
+            }
         } else {
             this.exportService.export(this.options)
                 .subscribe((results: any) => {

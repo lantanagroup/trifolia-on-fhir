@@ -4,6 +4,83 @@ import {forkJoin, Observable} from 'rxjs';
 import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 
+export interface FileModel {
+    path: string;
+    content: string;
+    sha?: string;
+}
+
+interface CommitCreatedResponseModel {
+    sha: string;
+    node_id: string;
+    url: string;
+    author: {
+        date: string;
+        name: string;
+        email: string;
+    };
+    committer: {
+        date: string;
+        name: string;
+        email: string;
+    };
+    message: string;
+    tree: {
+        url: string;
+        sha: string;
+    };
+    parents: [{
+        url: string;
+        sha: string;
+    }];
+    verification: {
+        verified: boolean;
+        reason: string;
+        signature: string;
+        payload: string;
+    };
+}
+
+interface BlobCreatedResponseModel {
+    url: string;
+    sha: string;
+}
+
+interface ReferenceUpdatedModel {
+    ref: string;
+    node_id: string;
+    url: string;
+    object: {
+        type: string;
+        sha: string;
+        url: string;
+    };
+}
+
+interface RepositoryReferenceModel {
+    ref: string;
+    node_id: string;
+    url: string;
+    object: {
+        type: string;
+        sha: string;
+        url: string;
+    };
+}
+
+interface RepositoryTreeModel {
+    sha: string;
+    url: string;
+    tree: [{
+        path: string;
+        mode: string;
+        type: string;
+        size: number;
+        sha: string;
+        url: string;
+    }];
+}
+
 export interface RepositoryOwnerModel {
     login: string;
     id: string;
@@ -261,6 +338,114 @@ export class GithubService {
                             observer.complete();
                         }, (err) => this.handleError(err, observer));
                 }, (err) => this.handleError(err, observer));
+        });
+    }
+
+    public fetchHead(ownerLogin: string, repositoryName: string, branch = 'master') {
+        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+        return this.http.get<RepositoryReferenceModel>(url, this.getOptions());
+    }
+
+    public fetchTree(ownerLogin: string, repositoryName: string, branch = 'master'): Observable<RepositoryTreeModel> {
+        return new Observable((observer) => {
+            this.fetchHead(ownerLogin, repositoryName, branch)
+                .subscribe((reference) => {
+                    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${reference.object.sha}`;
+                    this.http.get<RepositoryTreeModel>(url, this.getOptions())
+                        .subscribe((tree) => {
+                            observer.next(tree);
+                            observer.complete();
+                        }, (err) => {
+                            observer.error(err);
+                            observer.complete();
+                        })
+                }, (err) => {
+                    observer.error(err);
+                    observer.complete();
+                })
+        });
+    }
+
+    public createTree(ownerLogin: string, repositoryName: string, baseTreeSha: string, files: FileModel[]) {
+        const body = {
+            base_tree: baseTreeSha,
+            tree: _.map(files, (file) => {
+                return {
+                    path: file.path,
+                    mode: '100644',
+                    type: 'blob',
+                    sha: file.sha
+                };
+            })
+        };
+        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees`;
+        return this.http.post<RepositoryTreeModel>(url, body, this.getOptions());
+    }
+
+    public createCommit(ownerLogin: string, repositoryName: string, message: string, treeSha: string, parentSha: string) {
+        const body = {
+            message: message,
+            tree: treeSha,
+            parents: [parentSha]
+        };
+        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/commits`;
+        return this.http.post<CommitCreatedResponseModel>(url, body, this.getOptions());
+    }
+
+    public updateHead(ownerLogin: string, repositoryName: string, sha: string, branch = 'master') {
+        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+        const body = {
+            sha: sha,
+            force: true
+        };
+        return this.http.patch<ReferenceUpdatedModel>(url, body, this.getOptions());
+    }
+
+    public updateContents(ownerLogin: string, repositoryName: string, message: string, files: FileModel[], branchName = 'master') {
+        return new Observable<any>((observer) => {
+            // Create a blob for each of the files
+            const blobPromises = _.map(files, (file) => {
+                const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/blobs`;
+                const body = {
+                    content: file.content,
+                    encoding: 'utf-8'
+                };
+                return this.http.post<BlobCreatedResponseModel>(url, body, this.getOptions()).toPromise();
+            });
+
+            let blobs;
+            let baseTree;
+
+            Promise.all(blobPromises)
+                .then((results) => {
+                    blobs = results;
+                    return this.fetchTree(ownerLogin, repositoryName, branchName).toPromise();
+                })
+                .then((results) => {
+                    baseTree = results;
+                    const filesWithSha = _.map(files, (file, index) => {
+                        return <FileModel> {
+                            path: file.path,
+                            sha: blobs[index].sha
+                        };
+                    });
+
+                    return this.createTree(ownerLogin, repositoryName, results.sha, filesWithSha).toPromise();
+                })
+                .then((newTree) => {
+                    return this.createCommit(ownerLogin, repositoryName, message, newTree.sha, baseTree.sha).toPromise();
+                })
+                .then((newCommit) => {
+                    return this.updateHead(ownerLogin, repositoryName, newCommit.sha, branchName).toPromise();
+                })
+                .then(() => {
+                    observer.next();
+                    observer.complete();
+                })
+                .catch((err) => {
+                    observer.error(err);
+                    observer.complete();
+                });
         });
     }
 
