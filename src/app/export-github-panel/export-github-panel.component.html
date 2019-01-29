@@ -3,18 +3,32 @@
 <button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubService.login()">Login to GitHub</button>
 
 <div class="row" *ngIf="githubService.token && resourcesBundle && !isChanging">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Repository</label>
+            <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()">
+                <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group" *ngIf="repository">
+            <label>Branch</label>
+            <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
+                <option *ngFor="let b of branches">{{b.name}}</option>
+            </select>
+        </div>
+    </div>
     <div class="col-md-12">
         <table class="table table-striped">
             <thead>
             <tr>
                 <th><input type="checkbox" [(ngModel)]="isAllChecked" /></th>
                 <th>Resource</th>
-                <th>Repository</th>
-                <th>Branch</th>
                 <th>Path</th>
-                <th>
+                <th class="actions-column-1">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-sm" [disabled]="checkedIds.length === 0" (click)="changeSelected()">Change Selected</button>
+                        <button type="button" class="btn btn-sm" [disabled]="checkedIds.length === 0 || !repository || !branch" (click)="changeSelected()">Change Selected</button>
                     </div>
                 </th>
             </tr>
@@ -23,11 +37,8 @@
             <tr *ngFor="let entry of resourcesBundle.entry">
                 <td><input type="checkbox" [ngModel]="isChecked(entry)" (ngModelChange)="setChecked(entry, $event)" /></td>
                 <td>{{entry.resource.resourceType}}: {{entry.resource.id}}</td>
-                <td>{{getRepositoryFromResource(entry.resource)}}</td>
-                <td>{{getBranchFromResource(entry.resource)}}</td>
                 <td>{{getPathFromResource(entry.resource)}}</td>
-                <td>
-                </td>
+                <td></td>
             </tr>
             </tbody>
         </table>
@@ -39,25 +50,13 @@
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group">
-                    <label>Select a repository</label>
-                    <select class="form-control" [(ngModel)]="newRepository" (change)="repositoryChanged()">
-                        <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}: {{repo.name}}</option>
-                    </select>
-                </div>
-                <div class="form-group" *ngIf="newRepository">
-                    <label>Select a branch</label>
-                    <select class="form-control" [(ngModel)]="newBranchName" (change)="branchChanged()">
-                        <option *ngFor="let b of branches">{{b.name}}</option>
-                    </select>
-                </div>
-                <div class="form-group" *ngIf="newBranchName">
                     <label>Select format</label>
                     <select class="form-control" [(ngModel)]="newType">
                         <option value="xml">XML</option>
                         <option value="json">JSON</option>
                     </select>
                 </div>
-                <div class="form-group" *ngIf="newBranchName">
+                <div class="form-group">
                     <label>Directory per resource type?</label>
                     <select class="form-control" [(ngModel)]="resourceTypeDir">
                         <option [ngValue]="true">Yes</option>

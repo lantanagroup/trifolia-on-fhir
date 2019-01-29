@@ -1,24 +1,22 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Bundle, DomainResource, EntryComponent} from '../models/stu3/fhir';
 import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../services/github.service';
 import * as _ from 'underscore';
 import {NodeMenuItemAction, NodeSelectedEvent, TreeModel, TreeModelSettings} from 'ng2-tree';
 import {ImportService} from '../services/import.service';
-import {FhirService} from '../services/fhir.service';
+import {FhirService, ResourceGithubDetails} from '../services/fhir.service';
 
 @Component({
     selector: 'app-export-github-panel',
     templateUrl: './export-github-panel.component.html',
     styleUrls: ['./export-github-panel.component.css']
 })
-export class ExportGithubPanelComponent implements OnInit {
+export class ExportGithubPanelComponent implements OnChanges {
     @Input() resourcesBundle: Bundle;
     @ViewChild('treeComponent') treeComponent;
     public message: string;
     public checkedIds: string[] = [];
     public isChanging: boolean;
-    public newRepository: RepositoryModel;
-    public newBranchName: string;
     public newPath: string;
     public newType: 'json' | 'xml' = 'json';
     public repositories: RepositoryModel[];
@@ -26,6 +24,8 @@ export class ExportGithubPanelComponent implements OnInit {
     public tree: TreeModel;
     public resourceTypeDir = true;
     public newFolderName: string;
+    public repository: RepositoryModel;
+    public branch: string;
 
     constructor(
         public githubService: GithubService,
@@ -80,76 +80,9 @@ export class ExportGithubPanelComponent implements OnInit {
     public changeSelected() {
         this.isChanging = true;
 
-        this.newRepository = null;
-        this.newBranchName = '';
+        this.message = null;
         this.newPath = '';
         this.newType = 'json';
-        this.tree = null;
-    }
-
-    public getBranchFromResource(resource: DomainResource): string {
-        return this.fhirService.getResourceGithubDetails(resource).branch;
-    }
-
-    public getRepositoryFromResource(resource: DomainResource): string {
-        const details = this.fhirService.getResourceGithubDetails(resource);
-
-        if (details.owner && details.repository) {
-            return details.owner + '/' + details.repository;
-        }
-    }
-
-    public getPathFromResource(resource: DomainResource): string {
-        return this.fhirService.getResourceGithubDetails(resource).path;
-    }
-
-    repositoryChanged() {
-        this.branches = [];
-        this.newBranchName = null;
-
-        this.githubService.getBranches(this.newRepository.owner.login, this.newRepository.name)
-            .subscribe((branches: BranchModel[]) => {
-                this.branches = branches;
-
-                if (this.branches.length === 0 && this.newRepository.default_branch) {
-                    this.branches.push({ name: this.newRepository.default_branch });
-                }
-
-                if (this.newRepository.default_branch) {
-                    this.newBranchName = this.newRepository.default_branch;
-                    this.branchChanged();
-                }
-            }, (err) => {
-                this.message = err;
-            });
-    }
-
-    private mapContentToTreeModel(content: ContentModel): TreeModel {
-        const newTreeModel: TreeModel = {
-            value: content.name,
-            id: '/' + content.path
-        };
-
-        newTreeModel.loadChildren = (callback) => {
-            this.githubService.getContents(this.newRepository.owner.login, this.newRepository.name, this.newBranchName, content.path)
-                .subscribe((childItems) => {
-                    const childTreeModels = <TreeModel[]> _.chain(childItems)
-                        .filter((next: ContentModel) => next.type === 'dir')
-                        .sortBy((next: ContentModel) => next.type + next.name)
-                        .map((childItem: ContentModel) => {
-                            return this.mapContentToTreeModel(childItem);
-                        })
-                        .value();
-                    callback(childTreeModels);
-                }, (err) => {
-                    this.message = err;
-                });
-        };
-
-        return newTreeModel;
-    }
-
-    branchChanged() {
         this.tree = null;
 
         const settings: TreeModelSettings = {
@@ -167,10 +100,10 @@ export class ExportGithubPanelComponent implements OnInit {
             leaf: '<i class="fa fa-file-o"></i>'
         };
 
-        this.githubService.getContents(this.newRepository.owner.login, this.newRepository.name, this.newBranchName)
+        this.githubService.getContents(this.repository.owner.login, this.repository.name, this.branch)
             .subscribe((contents) => {
                 this.tree = {
-                    value: this.newBranchName,
+                    value: this.branch,
                     id: '/',
                     children: _.chain(contents)
                         .filter((content: ContentModel) => content.type === 'dir')
@@ -185,7 +118,7 @@ export class ExportGithubPanelComponent implements OnInit {
             }, (err) => {
                 if (err && err.error && err.error.message === 'This repository is empty.') {
                     this.tree = {
-                        value: this.newBranchName || 'master',
+                        value: this.branch || 'master',
                         id: '/',
                         children: [],
                         settings: settings,
@@ -197,8 +130,109 @@ export class ExportGithubPanelComponent implements OnInit {
             });
     }
 
+    public getPathFromResource(resource: DomainResource): string {
+        return this.fhirService.getResourceGithubDetails(resource).path;
+    }
+
+    private mapContentToTreeModel(content: ContentModel): TreeModel {
+        const newTreeModel: TreeModel = {
+            value: content.name,
+            id: '/' + content.path
+        };
+
+        newTreeModel.loadChildren = (callback) => {
+            this.githubService.getContents(this.repository.owner.login, this.repository.name, this.branch, content.path)
+                .subscribe((childItems) => {
+                    const childTreeModels = <TreeModel[]> _.chain(childItems)
+                        .filter((next: ContentModel) => next.type === 'dir')
+                        .sortBy((next: ContentModel) => next.type + next.name)
+                        .map((childItem: ContentModel) => {
+                            return this.mapContentToTreeModel(childItem);
+                        })
+                        .value();
+                    callback(childTreeModels);
+                }, (err) => {
+                    this.message = err;
+                });
+        };
+
+        return newTreeModel;
+    }
+
+    private updateImplementationGuideDetails() {
+        const implementationGuideEntry = _.find(this.resourcesBundle.entry, (entry) => entry.resource.resourceType === 'ImplementationGuide');
+
+        if (implementationGuideEntry) {
+            let shouldSave = false;
+
+            const implementationGuideDetails = this.fhirService.getResourceGithubDetails(implementationGuideEntry.resource);
+            if (this.repository.name !== implementationGuideDetails.repository) {
+                implementationGuideDetails.repository = this.repository.name;
+                shouldSave = true;
+            }
+            if (this.repository.owner.login !== implementationGuideDetails.owner) {
+                implementationGuideDetails.owner = this.repository.owner.login;
+                shouldSave = true;
+            }
+            if (this.branch !== implementationGuideDetails.branch) {
+                implementationGuideDetails.branch = this.branch;
+                shouldSave = true;
+            }
+
+            this.fhirService.setResourceGithubDetails(implementationGuideEntry.resource, implementationGuideDetails);
+
+            if (shouldSave) {
+                this.saveResources([implementationGuideEntry.resource])
+                    .subscribe(() => this.message = 'Updated implementation guide\'s repository and branch', (err) => this.message = err.message || err.data || err);
+            }
+        }
+    }
+
+    repositoryChanged() {
+        this.branches = [];
+        this.branch = null;
+
+        this.githubService.getBranches(this.repository.owner.login, this.repository.name)
+            .subscribe((branches: BranchModel[]) => {
+                this.branches = branches;
+
+                if (this.branches.length === 0 && this.repository.default_branch) {
+                    this.branches.push({ name: this.repository.default_branch });
+                }
+
+                if (this.repository.default_branch) {
+                    this.branch = this.repository.default_branch;
+                }
+
+                this.branchChanged();
+            }, (err) => {
+                this.message = err;
+            });
+    }
+
+    branchChanged() {
+        this.tree = null;
+        this.updateImplementationGuideDetails();
+    }
+
     public nodeSelected(event: NodeSelectedEvent) {
         this.newPath = <string> event.node.id;
+    }
+
+    private saveResources(resources: DomainResource[]) {
+        const updateBundle = new Bundle();
+        updateBundle.type = 'transaction';
+        updateBundle.entry = _.map(resources, (resource) => {
+            return <EntryComponent> {
+                request: {
+                    method: 'PUT',
+                    url: resource.resourceType + '/' + resource.id
+                },
+                resource: resource
+            };
+        });
+
+        return this.importService.import('json', JSON.stringify(updateBundle));
     }
 
     public okChanging() {
@@ -216,26 +250,14 @@ export class ExportGithubPanelComponent implements OnInit {
             path += (!path.endsWith('/') ? '/' : '') + resource.id + '.' + this.newType;
 
             this.fhirService.setResourceGithubDetails(resource, {
-                owner: this.newRepository.owner.login,
-                repository: this.newRepository.name,
-                branch: this.newBranchName,
+                owner: this.repository.owner.login,
+                repository: this.repository.name,
+                branch: this.branch,
                 path: path
             });
         });
 
-        const updateBundle = new Bundle();
-        updateBundle.type = 'transaction';
-        updateBundle.entry = _.map(resources, (resource) => {
-            return <EntryComponent> {
-                request: {
-                    method: 'PUT',
-                    url: resource.resourceType + '/' + resource.id
-                },
-                resource: resource
-            };
-        });
-
-        this.importService.import('json', JSON.stringify(updateBundle))
+        this.saveResources(resources)
             .subscribe(() => {
                 this.message = 'Updated resources with GitHub repository and path.';
                 this.isChanging = false;
@@ -244,12 +266,23 @@ export class ExportGithubPanelComponent implements OnInit {
             });
     }
 
-    ngOnInit() {
-        this.githubService.getRepositories()
-            .subscribe((repositories) => {
-                this.repositories = repositories;
-            }, (err) => {
-                this.message = err.message || err.data || err;
-            });
+    ngOnChanges(changes: SimpleChanges) {
+        const implementationGuideEntry = _.find(this.resourcesBundle.entry, (entry) => entry.resource && entry.resource.resourceType === 'ImplementationGuide');
+        const implementationGuide = implementationGuideEntry ? implementationGuideEntry.resource : null;
+
+        if (implementationGuide) {
+            const implementationGuideDetails = this.fhirService.getResourceGithubDetails(implementationGuide);
+
+            this.githubService.getRepositories()
+                .subscribe((repositories) => {
+                    this.repositories = repositories;
+                    this.repository = _.find(repositories, (repo) => repo.full_name === implementationGuideDetails.owner + '/' + implementationGuideDetails.repository);
+                    this.repositoryChanged();
+                }, (err) => {
+                    this.message = err.message || err.data || err;
+                });
+        }
+
+        this.checkedIds = _.map(this.resourcesBundle.entry, (entry) => entry.resource.id);
     }
 }
