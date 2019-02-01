@@ -111,7 +111,13 @@ export class AuthService {
         }
 
         this.auth0.parseHash((err, authResult) => {
-            const path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
+            let path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
+
+            // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
+            if (path.startsWith('/login')) {
+                path = '/';
+            }
+
             if (authResult && authResult.idToken) {
                 window.location.hash = '';
                 this.setSession(authResult);

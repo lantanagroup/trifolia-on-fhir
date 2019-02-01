@@ -128,7 +128,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const token = localStorage.getItem('id_token');
+        const token = localStorage.getItem('token');
         const fhirServer = localStorage.getItem('fhirServer');
         const headers = {};
 

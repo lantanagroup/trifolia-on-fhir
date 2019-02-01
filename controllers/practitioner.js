@@ -48,7 +48,7 @@ function getMe(req) {
         }
 
         if (body.total > 1) {
-            return deferred.reject(`Expected a single ${thisResourceType} resource to be found`);
+            log.error(`Expected a single ${thisResourceType} resource to be found with identifier ${system}|${identifier}`)
         }
 
         deferred.resolve(body.entry[0].resource);

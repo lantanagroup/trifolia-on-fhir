@@ -190,6 +190,49 @@ app.use((req, res, next) => {
     next();
 });
 
+// cache for the codes passed in the authorization header and their associated JWT
+const authorizationCodes = {};
+
+app.use((req, res, next) => {
+    const header = req.headers['authorization'];
+
+    if (header && header.startsWith('Bearer ')) {
+        const bearer = header.substring('Bearer '.length);
+
+        if (authorizationCodes[bearer]) {
+            req.user = authorizationCodes[bearer];
+            next();
+        } else {
+            log.trace(`Authorization code not found in cache. Requesting from identity provider. Code: ${bearer}`);
+
+            const options = {
+                method: 'GET',
+                url: authConfig.userInfoUrl,
+                headers: {
+                    'Authorization': header
+                },
+                json: true
+            };
+
+            rp(options)
+                .then(function (results) {
+                    log.info(`Successfully retrieved user info for code ${bearer}`);
+
+                    authorizationCodes[bearer] = results;
+                    req.user = authorizationCodes[bearer];
+                    next();
+                })
+                .catch(function(err) {
+                    req.userError = err;
+                    log.error(`Error retrieving user info for code ${bearer}`);
+                    next();
+                });
+        }
+    } else {
+        next();
+    }
+});
+
 // Routes
 app.use('/help', express.static(path.join(__dirname, 'wwwroot/help')));
 app.use('/api/implementationGuide', implementationGuideController);
@@ -216,15 +259,13 @@ FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
 app.use('/assets', express.static(path.join(__dirname, 'wwwroot/assets'), { maxAge: 1000 * 60 * 60 * 24 }));     // 1 day (1 second * 60 seconds * 60 minutes * 24 hours)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
 
+// app.use('/api-docs', express.static(path.join(__dirname, 'swagger-ui'), { maxAge: 1000 * 60 * 60 * 24 }));
 app.use('/api-docs', swaggerUi.serve, function(req, res, next) {
     const options = {
         swaggerUrl: '/swagger.yaml',
         swaggerOptions: {
             oauth: {
-                clientId: authConfig.clientId,
-                additionalQueryStringParams: {
-                    'response_type': 'token'
-                }
+                clientId: authConfig.clientId
             },
             oauth2RedirectUrl: req.protocol + '://' + req.get('host') + '/api-docs/oauth2-redirect.html'
         }

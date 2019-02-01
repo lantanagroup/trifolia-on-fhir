@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const checkJwt = require('../authHelper').checkJwt;
 const request = require('request');
-const _ = require('underscore');
 const log4js = require('log4js');
 const log = log4js.getLogger();
 
