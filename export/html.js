@@ -554,7 +554,7 @@ HtmlExporter.prototype._getStu3PageContent = function(implementationGuide, page)
         if (reference.startsWith('#')) {
             const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
 
-            if (contained && contained.resourceType === 'Binary') {
+            if (contained && contained.resourceType === 'Binary' && contained.content) {
                 return {
                     fileName: page.source,
                     content: Buffer.from(contained.content, 'base64').toString()
