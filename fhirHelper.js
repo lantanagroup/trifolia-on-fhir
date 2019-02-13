@@ -215,6 +215,22 @@ function hostExtensions(app, fhirStu3, fhirR4) {
     });
 }
 
+function getErrorString(err, body, defaultMessage) {
+    if (err && err.message) {
+        return err.message;
+    } else if (err && err.data) {
+        return err.data;
+    } else if (typeof err === 'string') {
+        return err;
+    } else if (body && body.resourceType === 'OperationOutcome') {
+        if (body.issue && body.issue.length > 0 && body.issue[0].diagnostics) {
+            return body.issue[0].diagnostics;
+        }
+    }
+
+    return defaultMessage || 'An unknown error occurred';
+}
+
 module.exports = {
     buildUrl: buildUrl,
     parseUrl: parseUrl,
@@ -224,5 +240,6 @@ module.exports = {
     joinUrl: joinUrl,
     getResource: getResource,
     updateResource: updateResource,
-    hostExtensions: hostExtensions
+    hostExtensions: hostExtensions,
+    getErrorString: getErrorString
 };

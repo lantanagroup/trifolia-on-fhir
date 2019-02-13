@@ -440,7 +440,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
-                this.message = 'An error occured while saving the implementation guide';
+                this.message = 'An error occured while saving the implementation guide: ' + this.fhirService.getErrorString(err);
             });
     }
 

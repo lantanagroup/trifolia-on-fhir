@@ -4,6 +4,7 @@ import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from '
 import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement.component';
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../services/file.service';
+import * as compareVersions from 'compare-versions';
 
 /**
  * This class is responsible for determining which capability-statement component to render
@@ -27,13 +28,14 @@ export class CapabilityStatementWrapperComponent implements OnInit {
     versionChanged() {
         let componentFactory;
         let version = this.configService.fhirVersion;
+        const versionString = version.major + '.' + version.minor + '.' + version.patch;
         const id  = this.route.snapshot.paramMap.get('id');
 
         if (id === 'from-file' && this.fileService.file) {
             version = this.fileService.file.fhirVersion;
         }
 
-        if (version.major >= 3 && version.minor >= 4) {
+        if (compareVersions(versionString, '3.4.0') >= 0) {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4CapabilityStatementComponent);
         } else {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3CapabilityStatementComponent);

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {
     Bundle, CapabilityStatement,
     CodeSystem,
@@ -316,6 +316,24 @@ export class FhirService {
                 }
             }
         }
+    }
+
+    public getErrorString(err, body?, defaultMessage = 'An unknown error occurred') {
+        if (err && err.error) {
+            return err.error;
+        } else if (err && err.message) {
+            return err.message;
+        } else if (err && err.data) {
+            return err.data;
+        } else if (typeof err === 'string') {
+            return err;
+        } else if (body && body.resourceType === 'OperationOutcome') {
+            if (body.issue && body.issue.length > 0 && body.issue[0].diagnostics) {
+                return body.issue[0].diagnostics;
+            }
+        }
+
+        return defaultMessage;
     }
 
     /**

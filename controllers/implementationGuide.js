@@ -6,6 +6,7 @@ const _ = require('underscore');
 const config = require('config');
 const rp = require('request-promise');
 const log4js = require('log4js');
+const FhirHelper = require('../fhirHelper');
 
 const log = log4js.getLogger();
 const fhirConfig = config.get('fhir');
@@ -45,7 +46,7 @@ router.get('/', checkJwt, (req, res) => {
         queryParams['name:contains'] = req.query.name;
     }
 
-    if (req.query.page && parseInt(req.query.page) != 1) {
+    if (req.query.page && parseInt(req.query.page) !== 1) {
         queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * 10;
     }
 
@@ -61,7 +62,7 @@ router.get('/', checkJwt, (req, res) => {
 
     request(options, (error, results, body) => {
         if (error) {
-            console.log('Error retrieving implementation guides from FHIR server: ' + error);
+            log.error('Error retrieving implementation guides from FHIR server: ' + error);
             return res.status(500).send('Error retrieving implementation guides from FHIR server');
         }
 
@@ -72,10 +73,11 @@ router.get('/', checkJwt, (req, res) => {
 router.get('/:id', checkJwt, (req, res) => {
     const url = req.getFhirServerUrl(thisResourceType, req.params.id);
 
-    request(url, { json: true }, (error, results, body) => {
-        if (error) {
-            console.log('Error retrieving implementatoin guide from FHIR server: ' + error);
-            return res.status(500).send('Error retrieving implementation guide from FHIR server');
+    request(url, { json: true }, (err, results, body) => {
+        if (err || results.statusCode !== 200) {
+            const msg = FhirHelper.getErrorString(err, body);
+            log.error('Error from FHIR server while updating implementation guide: ' + msg);
+            return res.status(500).send(msg);
         }
 
         res.send(body);
@@ -91,9 +93,10 @@ router.post('/', checkJwt, (req, res) => {
     };
 
     request(options, (error, results, body) => {
-        if (error) {
-            console.log('Error from FHIR server while creating implementation guide: ' + error);
-            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+        if (err || results.statusCode !== 200) {
+            const msg = FhirHelper.getErrorString(err, body);
+            log.error('Error from FHIR server while creating implementation guide: ' + msg);
+            return res.status(500).send(msg);
         }
 
         const location = results.headers.location || results.headers['content-location'];
@@ -101,7 +104,7 @@ router.post('/', checkJwt, (req, res) => {
         if (location) {
             request(location, (error, results, body) => {
                 if (error) {
-                    console.log('Error from FHIR server while retrieving created implementation guide: ' + error);
+                    log.error('Error from FHIR server while retrieving created implementation guide: ' + error);
                     return res.send(500).send('Error from FHIR server while retrieving created implementation guide: ' + error);
                 }
 
@@ -120,9 +123,10 @@ router.delete('/:id', checkJwt, (req, res) => {
     };
 
     request(options, (error, results, body) => {
-        if (error) {
-            console.log('Error from FHIR server while creating implementation guide: ' + error);
-            return res.send(500).send('Error from FHIR server while creating implementation guide: ' + error);
+        if (err || results.statusCode !== 200) {
+            const msg = FhirHelper.getErrorString(err, body);
+            log.error('Error from FHIR server while deleting implementation guide: ' + msg);
+            return res.status(500).send(msg);
         }
 
         res.status(204).send();
@@ -141,9 +145,10 @@ router.put('/:id', checkJwt, (req, res) => {
     };
 
     request(options, (err, results, updateBody) => {
-        if (err) {
-            console.log('Error from FHIR server while updating implementation guide: ' + err);
-            return res.status(500).send('Error from FHIR server while updating implementation guide');
+        if (err || results.statusCode !== 200) {
+            const msg = FhirHelper.getErrorString(err, updateBody);
+            log.error('Error from FHIR server while updating implementation guide: ' + msg);
+            return res.status(500).send(msg);
         }
 
         const location = results.headers.location || results.headers['content-location'];
@@ -151,7 +156,7 @@ router.put('/:id', checkJwt, (req, res) => {
         if (location) {
             request(location, (err, results, retrieveBody) => {
                 if (err) {
-                    console.log('Error from FHIR server while retrieving recently updated implementation guide: ' + err);
+                    log.error('Error from FHIR server while retrieving recently updated implementation guide: ' + err);
                     return res.status(500).send('Error from FHIR server while retrieving recently updated implementation guide');
                 }
 

@@ -42,13 +42,12 @@
                             <div class="input-group" *ngIf="implementationGuide.hasOwnProperty('fhirVersion')">
                                 <select class="form-control" [(ngModel)]="newFhirVersion">
                                     <option>4.0.0</option>
-                                    <option>3.6.0</option>
-                                    <option>3.5a.0</option>
                                     <option>3.5.0</option>
                                     <option>3.3.0</option>
-                                    <option>3.2.0</option>
                                     <option>3.0.1</option>
                                     <option>3.0.0</option>
+                                    <option>1.8.0</option>
+                                    <option>1.6.0</option>
                                 </select>
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
