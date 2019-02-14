@@ -61,7 +61,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
 
         this.csService.save(this.capabilityStatement)
             .subscribe((results: CapabilityStatement) => {
-                if (!this.capabilityStatement.id) {
+                if (this.isNew) {
                     this.router.navigate(['/capability-statement/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCapabilityStatements, results.id, results.name);

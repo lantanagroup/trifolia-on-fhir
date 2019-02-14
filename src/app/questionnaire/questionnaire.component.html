@@ -17,6 +17,8 @@
                 </div>
 
                 <div class="col-md-4">
+                    <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+
                     <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
 
                     <app-fhir-select-single-code [parentObject]="questionnaire" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>

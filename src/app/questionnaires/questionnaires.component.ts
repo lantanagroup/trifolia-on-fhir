@@ -46,8 +46,9 @@ export class QuestionnairesComponent implements OnInit {
 
         this.questionnaireService.delete(questionnaire.id)
             .subscribe(() => {
-                const index = this.questionnaires.indexOf(questionnaire);
-                this.questionnaires.splice(index, 1);
+                const entry = _.find(this.questionnairesBundle.entry, (entry) => entry.resource.id === questionnaire.id);
+                const index = this.questionnairesBundle.entry.indexOf(entry);
+                this.questionnairesBundle.entry.splice(index, 1);
             }, (err) => {
                 this.configService.handleError(err, 'An error occurred while deleting the questionnaire');
             });

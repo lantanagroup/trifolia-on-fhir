@@ -46,8 +46,9 @@ export class CapabilityStatementsComponent implements OnInit {
 
         this.csService.delete(capabilityStatement.id)
             .subscribe(() => {
-                const index = this.capabilityStatements.indexOf(capabilityStatement);
-                this.capabilityStatements.splice(index, 1);
+                const entry = _.find(this.capabilityStatementsBundle.entry, (entry) => entry.resource.id === capabilityStatement.id);
+                const index = this.capabilityStatementsBundle.entry.indexOf(entry);
+                this.capabilityStatementsBundle.entry.splice(index, 1);
             }, (err) => {
                 this.configService.handleError(err, 'An error occurred while deleting the capability statement');
             });

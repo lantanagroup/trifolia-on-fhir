@@ -84,6 +84,8 @@
                 </div>
 
                 <div class="col-md-4">
+                    <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+
                     <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false"></app-fhir-date>
 
                     <div class="form-group">

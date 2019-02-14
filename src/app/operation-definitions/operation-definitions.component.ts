@@ -51,8 +51,9 @@ export class OperationDefinitionsComponent implements OnInit {
 
         this.opDefService.delete(operationDefinition.id)
             .subscribe(() => {
-                const index = this.operationDefinitions.indexOf(operationDefinition);
-                this.operationDefinitions.splice(index, 1);
+                const entry = _.find(this.operationDefinitionsBundle.entry, (entry) => entry.resource.id === operationDefinition.id);
+                const index = this.operationDefinitionsBundle.entry.indexOf(entry);
+                this.operationDefinitionsBundle.entry.splice(index, 1);
             }, (err) => {
                 this.configService.handleError(err, 'An error cocurred while deleting the operation definition');
             });

@@ -21,6 +21,8 @@
                     <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
                 </div>
                 <div class="col-md-4">
+                    <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+
                     <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
 
                     <div class="form-group">
