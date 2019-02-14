@@ -432,7 +432,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
 
         this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
             .subscribe((results: ImplementationGuide) => {
-                if (!this.implementationGuide.id) {
+                if (this.isNew) {
                     this.router.navigate(['/implementation-guide/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentImplementationGuides, results.id, results.name);

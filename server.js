@@ -4,7 +4,6 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const config = require('config');
-const implementationGuideController = require('./controllers/implementationGuide');
 const configController = require('./controllers/config');
 const practitionerController = require('./controllers/practitioner');
 const structureDefinitionController = require('./controllers/structureDefinition');
@@ -20,6 +19,8 @@ const questionnaireController = require('./controllers/questionnaire');
 const importController = require('./controllers/import');
 const fhirOperationsController = require('./controllers/fhirOperations');
 const manageController = require('./controllers/manage');
+const {FhirLogic} = require('./controllers/fhirLogic');
+const {ImplementationGuideLogic} = require('./controllers/implementationGuide');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
@@ -102,7 +103,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Parse XML into JSON
+// Accept and/or parse XML into JSON
 app.use((req, res, next) => {
     if (req.headers['content-type'] === 'application/xml') {
         let data = '';
@@ -112,12 +113,29 @@ app.use((req, res, next) => {
         });
 
         req.on('end', () => {
-            req.body = fhir.xmlToObj(data);
-            next();
+            try {
+                if (req.body) {
+                    req.body = req.fhir.xmlToObj(data);
+                }
+                next();
+            } catch (ex) {
+                res.status(400).send('Could not parse body as XML: ' + ex.message);
+            }
         });
     } else {
         next();
     }
+
+    const originalSend = res.send;
+
+    res.send = (data) => {
+        if (req.headers['accept'] === 'application/xml' && data) {
+            data = typeof data === 'string' ? req.fhir.jsonToXml(data) : req.fhir.objToXml(data);
+            res.contentType('application/xml');
+        }
+
+        originalSend.call(res, data);
+    };
 });
 
 /**
@@ -184,16 +202,13 @@ io.on('connection', (socket) => {
     });
 });
 
-app.use((req, res, next) => {
-    req.io = io;
-    req.ioConnections = connections;
-    next();
-});
-
 // cache for the codes passed in the authorization header and their associated JWT
 const authorizationCodes = {};
 
 app.use((req, res, next) => {
+    req.io = io;
+    req.ioConnections = connections;
+
     const header = req.headers['authorization'];
 
     if (header && header.startsWith('Bearer ')) {
@@ -235,7 +250,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/help', express.static(path.join(__dirname, 'wwwroot/help')));
-app.use('/api/implementationGuide', implementationGuideController);
+app.use('/api/implementationGuide', ImplementationGuideLogic.initRoutes('ImplementationGuide'));
 app.use('/api/config', configController);
 app.use('/api/practitioner', practitionerController);
 app.use('/api/structureDefinition', structureDefinitionController);

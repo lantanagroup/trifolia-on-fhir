@@ -216,7 +216,19 @@ function hostExtensions(app, fhirStu3, fhirR4) {
 }
 
 function getErrorString(err, body, defaultMessage) {
-    if (err && err.message) {
+    if (err && err.error) {
+        if (typeof err.error === 'string') {
+            return err.error;
+        } else if (typeof err.error === 'object') {
+            if (err.error.resourceType === 'OperationOutcome') {
+                if (err.error.issue && err.error.issue.length > 0 && err.error.issue[0].diagnostics) {
+                    return err.error.issue[0].diagnostics;
+                }
+            } else if (err.name === 'RequestError') {
+                return err.error.message;
+            }
+        }
+    } else if (err && err.message) {
         return err.message;
     } else if (err && err.data) {
         return err.data;
