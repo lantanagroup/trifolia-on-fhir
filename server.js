@@ -8,7 +8,6 @@ const structureDefinitionController = require('./controllers/structureDefinition
 const fhirController = require('./controllers/fhir');
 const exportController = require('./controllers/export');
 const importController = require('./controllers/import');
-const fhirOperationsController = require('./controllers/fhirOperations');
 const {AuditEventController} = require('./controllers/auditEvent');
 const {ConfigController} = require('./controllers/config');
 const {FhirLogic} = require('./controllers/fhirLogic');
@@ -259,7 +258,6 @@ app.use('/api/practitioner', PractitionerController.initRoutes());
 // TODO: Clean up remaining routes
 app.use('/api/structureDefinition', structureDefinitionController);
 app.use('/api/export', exportController);
-app.use('/api/fhirOps', fhirOperationsController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 
@@ -357,6 +355,8 @@ app.get('/github/callback', handleAuthentication);
 app.get('*', (req, res) => {
     if (req.originalUrl.startsWith('/igs/')) {
         res.status(404).send('The specified page could not be found');
+    } else if (req.originalUrl.startsWith('/api/')) {
+        res.status(404).send('The specified API method could not be found');
     } else {
         res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
     }
