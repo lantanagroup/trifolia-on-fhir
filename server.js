@@ -18,9 +18,9 @@ const codeSystemController = require('./controllers/codeSystem');
 const questionnaireController = require('./controllers/questionnaire');
 const importController = require('./controllers/import');
 const fhirOperationsController = require('./controllers/fhirOperations');
-const manageController = require('./controllers/manage');
 const {FhirLogic} = require('./controllers/fhirLogic');
 const {ImplementationGuideLogic} = require('./controllers/implementationGuide');
+const {ManageController} = require('./controllers/manage');
 const socketIO = require('socket.io');
 const FhirHelper = require('./fhirHelper');
 const _ = require('underscore');
@@ -250,7 +250,10 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/help', express.static(path.join(__dirname, 'wwwroot/help')));
-app.use('/api/implementationGuide', ImplementationGuideLogic.initRoutes('ImplementationGuide'));
+app.use('/api/implementationGuide', ImplementationGuideLogic.initRoutes());
+app.use('/api/manage', ManageController.initRoutes());
+
+// TODO: Clean up remaining routes
 app.use('/api/config', configController);
 app.use('/api/practitioner', practitionerController);
 app.use('/api/structureDefinition', structureDefinitionController);
@@ -265,7 +268,6 @@ app.use('/api/codeSystem', codeSystemController);
 app.use('/api/fhirOps', fhirOperationsController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
-app.use('/api/manage', manageController);
 
 // Host extensions at /stu3/StructureDefinition/XXX and /r4/StructureDefinition/XXX
 FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
