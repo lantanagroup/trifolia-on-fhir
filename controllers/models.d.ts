@@ -19,3 +19,10 @@ export interface IOConnection {
         email: string;
     };
 }
+
+export interface FhirConfig {
+    servers: [{
+        id: string;
+        name: string;
+    }];
+}

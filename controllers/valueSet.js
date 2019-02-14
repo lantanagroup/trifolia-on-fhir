@@ -1,189 +1,50 @@
-const express = require('express');
-const router = express.Router();
-const checkJwt = require('../authHelper').checkJwt;
-const request = require('request').defaults({ json: true });
-const config = require('config');
-const _ = require('underscore');
-const FhirHelper = require('../fhirHelper');
-const log4js = require('log4js');
-
-const thisResourceType = 'ValueSet';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const rp = require("request-promise");
+const FhirHelper = require("../fhirHelper");
+const config = require("config");
+const fhirLogic_1 = require("./fhirLogic");
 const fhirConfig = config.get('fhir');
-const log = log4js.getLogger();
-
-router.get('/', checkJwt, (req, res) => {
-    const countPerPage = 8;
-    const queryParams = { _summary: true, _count: countPerPage };
-
-    if (req.query.page && parseInt(req.query.page) != 1) {
-        queryParams._getpagesoffset = (parseInt(req.query.page) - 1) * countPerPage;
-    }
-
-    if (req.query.name) {
-        queryParams['name:contains'] = req.query.name;
-    }
-
-    if (req.query.url) {
-        queryParams.url = req.query.url;
-    }
-
-    const options = {
-        url: req.getFhirServerUrl(thisResourceType, null, null, queryParams),
-        json: true,
-        headers: {
-            'Cache-Control': 'no-cache'
-        }
-    };
-
-    request(options, (error, results, body) => {
-        if (error) {
-            log.error('Error retrieving audit events from FHIR server: ' + error);
-            return res.status(500).send('Error retrieving audit events from FHIR server');
-        }
-
-        res.send(body);
-    });
-});
-
-router.post('/', checkJwt, (req, res) => {
-   const createUrl = req.getFhirServerUrl(thisResourceType);
-
-   const options = {
-       url: createUrl,
-       method: 'POST',
-       json: true,
-       body: req.body
-   };
-
-   request(options, (err, results, createBody) => {
-       if (err) {
-           log.error('Error from FHIR server while creating value set: ' + err);
-           return res.status(500).send('Error from FHIR server while creating value set');
-       }
-
-       const location = results.headers.location || results.headers['content-location'];
-
-       if (location) {
-           request(location, (err, results, retrieveBody) => {
-               if (err) {
-                   log.error('Error from FHIR server while retrieving newly created value set: ' + err);
-                   return res.status(500).send('Error from FHIR server while retrieving newly created value set');
-               }
-
-               res.send(retrieveBody);
-           })
-       } else {
-           res.status(500).send('FHIR server did not respond with a location to the newly created value set');
-       }
-   });
-});
-
-
-router.put('/:id', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    const options = {
-        url: url,
-        method: 'PUT',
-        json: true,
-        body: req.body
-    };
-
-    request(options, (err, results, updateBody) => {
-        if (err) {
-            log.error('Error from FHIR server while updating value set: ' + err);
-            return res.status(500).send('Error from FHIR server while updating value set');
-        }
-
-        const location = results.headers.location || results.headers['content-location'];
-
-        if (location) {
-            request(location, (err, results, retrieveBody) => {
-                if (err) {
-                    log.error('Error from FHIR server while retrieving recently updated value set: ' + err);
-                    return res.status(500).send('Error from FHIR server while retrieving recently updated value set');
-                }
-
-                res.send(retrieveBody);
-            })
-        } else {
-            res.status(500).send('FHIR server did not respond with a location to the recently updated value set');
-        }
-    });
-});
-
-router.get('/:id', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    const options = {
-        url: url,
-        method: 'GET'
-    };
-
-    request(options, (err, results, body) => {
-        if (err) {
-            log.error('Error from FHIR server while retrieving value set: ' + err);
-            return res.status(500).send('Error from FHIR server while retrieving value set');
-        }
-
-        res.send(body);
-    });
-});
-
-router.get('/:id/expand', checkJwt, (req, res) => {
-    const valueSetUrl = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    const valueSetOptions = {
-        url: valueSetUrl,
-        method: 'GET'
-    };
-
-    request(valueSetOptions, (valueSetError, valueSetResults, valueSet) => {
-        if (valueSetError) {
-            log.error('Error from FHIR server while retrieving value set: ' + valueSetError);
-            return res.status(500).send('Error from FHIR server while retrieving value set');
-        }
-
-        const terminologyServerBase = fhirConfig.terminologyServer ? fhirConfig.terminologyServer.baseUrl : null;
-        let expandUrl = FhirHelper.buildUrl(terminologyServerBase, thisResourceType, null, '$expand');
-
-        if (!expandUrl) {
-            expandUrl = req.getFhirServerUrl(thisResourceType, null, '$expand');
-        }
-
-        const expandOptions = {
-            url: expandUrl,
-            method: 'POST',
-            body: valueSet
-        };
-
-        request(expandOptions, (expandError, expandResults, expandedValueSet) => {
-            if (expandError) {
-                log.error('Error from FHIR server while expanding value set: ' + expandError);
-                return res.status(500).send('Error from FHIR server while expanding value set');
-            }
-
-            res.send(expandedValueSet);
+class ValueSetController extends fhirLogic_1.FhirLogic {
+    static initRoutes() {
+        const router = express.Router();
+        router.get('/:id/expand', (req, res) => {
+            const controller = new ValueSetController('ValueSet', req.fhirServerBase);
+            controller.getExpanded(req.params.id)
+                .then((results) => res.send(results))
+                .catch((err) => ValueSetController.handleError(err, null, res));
         });
-    });
-});
-
-router.delete('/:id', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    const options = {
-        url: url,
-        method: 'DELETE'
-    };
-
-    request(options, (err, results, body) => {
-        if (err) {
-            log.error('Error from FHIR server while deleting value set: ' + err);
-            return res.status(500).send('Error from FHIR server while deleting value set');
-        }
-
-        res.status(204).send();
-    });
-});
-
-module.exports = router;
+        return super.initRoutes('ValueSet', router);
+    }
+    getExpanded(id) {
+        return new Promise((resolve, reject) => {
+            ValueSetController.log.trace(`Beginning request to expand value set ${id}`);
+            const getOptions = {
+                url: FhirHelper.buildUrl(this.baseUrl, 'ValueSet', id),
+                method: 'GET',
+                json: true
+            };
+            ValueSetController.log.debug(`Expand operation is requesting value set content for ${id}`);
+            rp(getOptions)
+                .then((valueSet) => {
+                ValueSetController.log.trace('Retrieved value set content for expand');
+                const expandOptions = {
+                    url: FhirHelper.buildUrl(fhirConfig.terminologyServer || this.baseUrl, 'ValueSet', null, '$expand'),
+                    method: 'POST',
+                    json: true,
+                    body: valueSet
+                };
+                ValueSetController.log.debug(`Asking the FHIR server to expand value set ${id}`);
+                return rp(expandOptions);
+            })
+                .then((expandedValueSet) => {
+                ValueSetController.log.trace('FHIR server responded with expanded value set');
+                resolve(expandedValueSet);
+            })
+                .catch((err) => reject(err));
+        });
+    }
+}
+exports.ValueSetController = ValueSetController;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidmFsdWVTZXQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJ2YWx1ZVNldC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLG1DQUFtQztBQUNuQyxzQ0FBc0M7QUFDdEMsNENBQTRDO0FBQzVDLGlDQUFpQztBQUNqQywyQ0FBc0M7QUFHdEMsTUFBTSxVQUFVLEdBQUcsTUFBTSxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsQ0FBQztBQVF0Qyx3QkFBZ0MsU0FBUSxxQkFBUztJQUN0QyxNQUFNLENBQUMsVUFBVTtRQUNwQixNQUFNLE1BQU0sR0FBRyxPQUFPLENBQUMsTUFBTSxFQUFFLENBQUM7UUFFaEMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxhQUFhLEVBQUUsQ0FBQyxHQUFrQixFQUFFLEdBQUcsRUFBRSxFQUFFO1lBQ2xELE1BQU0sVUFBVSxHQUFHLElBQUksa0JBQWtCLENBQUMsVUFBVSxFQUFFLEdBQUcsQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUMxRSxVQUFVLENBQUMsV0FBVyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDO2lCQUNoQyxJQUFJLENBQUMsQ0FBQyxPQUFPLEVBQUUsRUFBRSxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLENBQUM7aUJBQ3BDLEtBQUssQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsa0JBQWtCLENBQUMsV0FBVyxDQUFDLEdBQUcsRUFBRSxJQUFJLEVBQUUsR0FBRyxDQUFDLENBQUMsQ0FBQztRQUN4RSxDQUFDLENBQUMsQ0FBQztRQUVILE9BQU8sS0FBSyxDQUFDLFVBQVUsQ0FBQyxVQUFVLEVBQUUsTUFBTSxDQUFDLENBQUM7SUFDaEQsQ0FBQztJQUVNLFdBQVcsQ0FBQyxFQUFVO1FBQ3pCLE9BQU8sSUFBSSxPQUFPLENBQUMsQ0FBQyxPQUFPLEVBQUUsTUFBTSxFQUFFLEVBQUU7WUFDbkMsa0JBQWtCLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyx5Q0FBeUMsRUFBRSxFQUFFLENBQUMsQ0FBQztZQUU1RSxNQUFNLFVBQVUsR0FBRztnQkFDZixHQUFHLEVBQUUsVUFBVSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsT0FBTyxFQUFFLFVBQVUsRUFBRSxFQUFFLENBQUM7Z0JBQ3RELE1BQU0sRUFBRSxLQUFLO2dCQUNiLElBQUksRUFBRSxJQUFJO2FBQ2IsQ0FBQztZQUVGLGtCQUFrQixDQUFDLEdBQUcsQ0FBQyxLQUFLLENBQUMsd0RBQXdELEVBQUUsRUFBRSxDQUFDLENBQUM7WUFFM0YsRUFBRSxDQUFDLFVBQVUsQ0FBQztpQkFDVCxJQUFJLENBQUMsQ0FBQyxRQUFRLEVBQUUsRUFBRTtnQkFDZixrQkFBa0IsQ0FBQyxHQUFHLENBQUMsS0FBSyxDQUFDLHdDQUF3QyxDQUFDLENBQUM7Z0JBRXZFLE1BQU0sYUFBYSxHQUFHO29CQUNsQixHQUFHLEVBQUUsVUFBVSxDQUFDLFFBQVEsQ0FBQyxVQUFVLENBQUMsaUJBQWlCLElBQUksSUFBSSxDQUFDLE9BQU8sRUFBRSxVQUFVLEVBQUUsSUFBSSxFQUFFLFNBQVMsQ0FBQztvQkFDbkcsTUFBTSxFQUFFLE1BQU07b0JBQ2QsSUFBSSxFQUFFLElBQUk7b0JBQ1YsSUFBSSxFQUFFLFFBQVE7aUJBQ2pCLENBQUM7Z0JBRUYsa0JBQWtCLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyw4Q0FBOEMsRUFBRSxFQUFFLENBQUMsQ0FBQztnQkFDakYsT0FBTyxFQUFFLENBQUMsYUFBYSxDQUFDLENBQUM7WUFDN0IsQ0FBQyxDQUFDO2lCQUNELElBQUksQ0FBQyxDQUFDLGdCQUFnQixFQUFFLEVBQUU7Z0JBQ3ZCLGtCQUFrQixDQUFDLEdBQUcsQ0FBQyxLQUFLLENBQUMsK0NBQStDLENBQUMsQ0FBQztnQkFFOUUsT0FBTyxDQUFDLGdCQUFnQixDQUFDLENBQUM7WUFDOUIsQ0FBQyxDQUFDO2lCQUNELEtBQUssQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7UUFDckMsQ0FBQyxDQUFDLENBQUM7SUFDUCxDQUFDO0NBQ0o7QUFoREQsZ0RBZ0RDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICogYXMgZXhwcmVzcyBmcm9tICdleHByZXNzJztcclxuaW1wb3J0ICogYXMgcnAgZnJvbSAncmVxdWVzdC1wcm9taXNlJztcclxuaW1wb3J0ICogYXMgRmhpckhlbHBlciBmcm9tICcuLi9maGlySGVscGVyJztcclxuaW1wb3J0ICogYXMgY29uZmlnIGZyb20gJ2NvbmZpZyc7XHJcbmltcG9ydCB7RmhpckxvZ2ljfSBmcm9tICcuL2ZoaXJMb2dpYyc7XHJcbmltcG9ydCB7RXh0ZW5kZWRSZXF1ZXN0fSBmcm9tICcuL21vZGVscyc7XHJcblxyXG5jb25zdCBmaGlyQ29uZmlnID0gY29uZmlnLmdldCgnZmhpcicpO1xyXG5cclxuaW50ZXJmYWNlIEV4cGFuZFJlcXVlc3QgZXh0ZW5kcyBFeHRlbmRlZFJlcXVlc3Qge1xyXG4gICAgcGFyYW1zOiB7XHJcbiAgICAgICAgaWQ6IHN0cmluZztcclxuICAgIH07XHJcbn1cclxuXHJcbmV4cG9ydCBjbGFzcyBWYWx1ZVNldENvbnRyb2xsZXIgZXh0ZW5kcyBGaGlyTG9naWMge1xyXG4gICAgcHVibGljIHN0YXRpYyBpbml0Um91dGVzKCkge1xyXG4gICAgICAgIGNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7XHJcblxyXG4gICAgICAgIHJvdXRlci5nZXQoJy86aWQvZXhwYW5kJywgKHJlcTogRXhwYW5kUmVxdWVzdCwgcmVzKSA9PiB7XHJcbiAgICAgICAgICAgIGNvbnN0IGNvbnRyb2xsZXIgPSBuZXcgVmFsdWVTZXRDb250cm9sbGVyKCdWYWx1ZVNldCcsIHJlcS5maGlyU2VydmVyQmFzZSk7XHJcbiAgICAgICAgICAgIGNvbnRyb2xsZXIuZ2V0RXhwYW5kZWQocmVxLnBhcmFtcy5pZClcclxuICAgICAgICAgICAgICAgIC50aGVuKChyZXN1bHRzKSA9PiByZXMuc2VuZChyZXN1bHRzKSlcclxuICAgICAgICAgICAgICAgIC5jYXRjaCgoZXJyKSA9PiBWYWx1ZVNldENvbnRyb2xsZXIuaGFuZGxlRXJyb3IoZXJyLCBudWxsLCByZXMpKTtcclxuICAgICAgICB9KTtcclxuXHJcbiAgICAgICAgcmV0dXJuIHN1cGVyLmluaXRSb3V0ZXMoJ1ZhbHVlU2V0Jywgcm91dGVyKTtcclxuICAgIH1cclxuXHJcbiAgICBwdWJsaWMgZ2V0RXhwYW5kZWQoaWQ6IHN0cmluZykge1xyXG4gICAgICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7XHJcbiAgICAgICAgICAgIFZhbHVlU2V0Q29udHJvbGxlci5sb2cudHJhY2UoYEJlZ2lubmluZyByZXF1ZXN0IHRvIGV4cGFuZCB2YWx1ZSBzZXQgJHtpZH1gKTtcclxuXHJcbiAgICAgICAgICAgIGNvbnN0IGdldE9wdGlvbnMgPSB7XHJcbiAgICAgICAgICAgICAgICB1cmw6IEZoaXJIZWxwZXIuYnVpbGRVcmwodGhpcy5iYXNlVXJsLCAnVmFsdWVTZXQnLCBpZCksXHJcbiAgICAgICAgICAgICAgICBtZXRob2Q6ICdHRVQnLFxyXG4gICAgICAgICAgICAgICAganNvbjogdHJ1ZVxyXG4gICAgICAgICAgICB9O1xyXG5cclxuICAgICAgICAgICAgVmFsdWVTZXRDb250cm9sbGVyLmxvZy5kZWJ1ZyhgRXhwYW5kIG9wZXJhdGlvbiBpcyByZXF1ZXN0aW5nIHZhbHVlIHNldCBjb250ZW50IGZvciAke2lkfWApO1xyXG5cclxuICAgICAgICAgICAgcnAoZ2V0T3B0aW9ucylcclxuICAgICAgICAgICAgICAgIC50aGVuKCh2YWx1ZVNldCkgPT4ge1xyXG4gICAgICAgICAgICAgICAgICAgIFZhbHVlU2V0Q29udHJvbGxlci5sb2cudHJhY2UoJ1JldHJpZXZlZCB2YWx1ZSBzZXQgY29udGVudCBmb3IgZXhwYW5kJyk7XHJcblxyXG4gICAgICAgICAgICAgICAgICAgIGNvbnN0IGV4cGFuZE9wdGlvbnMgPSB7XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHVybDogRmhpckhlbHBlci5idWlsZFVybChmaGlyQ29uZmlnLnRlcm1pbm9sb2d5U2VydmVyIHx8IHRoaXMuYmFzZVVybCwgJ1ZhbHVlU2V0JywgbnVsbCwgJyRleHBhbmQnKSxcclxuICAgICAgICAgICAgICAgICAgICAgICAgbWV0aG9kOiAnUE9TVCcsXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGpzb246IHRydWUsXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGJvZHk6IHZhbHVlU2V0XHJcbiAgICAgICAgICAgICAgICAgICAgfTtcclxuXHJcbiAgICAgICAgICAgICAgICAgICAgVmFsdWVTZXRDb250cm9sbGVyLmxvZy5kZWJ1ZyhgQXNraW5nIHRoZSBGSElSIHNlcnZlciB0byBleHBhbmQgdmFsdWUgc2V0ICR7aWR9YCk7XHJcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJwKGV4cGFuZE9wdGlvbnMpO1xyXG4gICAgICAgICAgICAgICAgfSlcclxuICAgICAgICAgICAgICAgIC50aGVuKChleHBhbmRlZFZhbHVlU2V0KSA9PiB7XHJcbiAgICAgICAgICAgICAgICAgICAgVmFsdWVTZXRDb250cm9sbGVyLmxvZy50cmFjZSgnRkhJUiBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggZXhwYW5kZWQgdmFsdWUgc2V0Jyk7XHJcblxyXG4gICAgICAgICAgICAgICAgICAgIHJlc29sdmUoZXhwYW5kZWRWYWx1ZVNldCk7XHJcbiAgICAgICAgICAgICAgICB9KVxyXG4gICAgICAgICAgICAgICAgLmNhdGNoKChlcnIpID0+IHJlamVjdChlcnIpKTtcclxuICAgICAgICB9KTtcclxuICAgIH1cclxufSJdfQ==

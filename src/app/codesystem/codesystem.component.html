@@ -14,6 +14,8 @@
                     <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher" tooltipPath="CodeSystem.publisher"></app-fhir-string>
                 </div>
                 <div class="col-md-4">
+                    <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+
                     <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" tooltipPath="CodeSystem.status"></app-fhir-select-single-code>
 
                     <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode" tooltipPath="CodeSystem.content"></app-fhir-select-single-code>

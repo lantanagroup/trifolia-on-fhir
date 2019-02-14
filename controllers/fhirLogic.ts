@@ -2,32 +2,20 @@ import * as express from 'express';
 import * as FhirHelper from '../fhirHelper.js';
 import {checkJwt} from '../authHelper.js';
 import * as rp from 'request-promise';
-import * as log4js from 'log4js';
 import {ExtendedRequest} from './models';
 import {RequestHandler} from 'express';
 import * as nanoid from 'nanoid';
+import {BaseController} from './controller';
 
-const log = log4js.getLogger();
-
-export class FhirLogic {
+export class FhirLogic extends BaseController {
     readonly resourceType: string;
     readonly baseUrl: string;
-
-    protected static handleError(err, body?, res?, defaultMessage = 'An unknown error occurred') {
-        const msg = FhirHelper.getErrorString(err, body, defaultMessage);
-
-        log.error(msg);
-
-        if (res) {
-            res.status(500).send(msg);
-        }
-    }
 
     public static initRoutes<T extends FhirLogic>(this: new (resourceType: string, baseUrl: string) => T, resourceType: string, preRouter?: any) {
         const router = preRouter || express.Router();
 
         router.get('/', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            log.trace(`Searching for resource ${resourceType}`);
+            FhirLogic.log.trace(`Searching for resource ${resourceType}`);
 
             const fhirLogic = new this(resourceType, req.fhirServerBase);
             fhirLogic.search(req.query)
@@ -36,7 +24,7 @@ export class FhirLogic {
         });
 
         router.get('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            log.trace(`Retrieving resource ${resourceType}/${req.params.id}`);
+            FhirLogic.log.trace(`Retrieving resource ${resourceType}/${req.params.id}`);
 
             const fhirLogic = new this(resourceType, req.fhirServerBase);
             fhirLogic.get(req.params.id, req.query)
@@ -45,7 +33,7 @@ export class FhirLogic {
         });
 
         router.post('/', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            log.trace(`Creating resource ${resourceType}`);
+            FhirLogic.log.trace(`Creating resource ${resourceType}`);
 
             const fhirLogic = new this(resourceType, req.fhirServerBase);
             fhirLogic.create(req.body, req.query)
@@ -54,7 +42,7 @@ export class FhirLogic {
         });
 
         router.put('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            log.trace(`Updating resource ${resourceType}/${req.params.id}`);
+            FhirLogic.log.trace(`Updating resource ${resourceType}/${req.params.id}`);
 
             const fhirLogic = new this(resourceType, req.fhirServerBase);
             fhirLogic.update(req.params.id, req.body, req.query)
@@ -63,7 +51,7 @@ export class FhirLogic {
         });
 
         router.delete('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            log.trace(`Deleting resource ${resourceType}/${req.params.id}`);
+            FhirLogic.log.trace(`Deleting resource ${resourceType}/${req.params.id}`);
 
             const fhirLogic = new this(resourceType, req.fhirServerBase);
             fhirLogic.delete(req.params.id, req.query)
@@ -75,6 +63,8 @@ export class FhirLogic {
     }
 
     constructor(resourceType: string, baseUrl: string) {
+        super();
+
         this.resourceType = resourceType;
         this.baseUrl = baseUrl;
     }
@@ -137,13 +127,13 @@ export class FhirLogic {
             // Make sure the resource doesn't already exist with the same id
             rp(existsOptions)
                 .then(() => {
-                    log.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
+                    FhirLogic.log.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
                     reject(`A ${this.resourceType} already exists with the id ${data.id}`);
                 })
                 .catch((existsErr) => {
                     if (existsErr.statusCode !== 404) {
                         const msg = `An unexpected error code ${existsErr.statusCode} was returned when checking if a ${this.resourceType} already exists with the id ${data.id}`;
-                        log.error(msg);
+                        FhirLogic.log.error(msg);
                         return reject(msg);
                     }
 

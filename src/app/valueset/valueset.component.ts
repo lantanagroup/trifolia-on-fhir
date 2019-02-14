@@ -65,7 +65,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
         this.valueSetService.save(this.valueSet)
             .subscribe((results: ValueSet) => {
-                if (!this.valueSet.id) {
+                if (this.isNew) {
                     this.router.navigate(['/value-set/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentValueSets, results.id, results.name);

@@ -88,6 +88,8 @@
                     <app-fhir-markdown [parentObject]="valueSet" propertyName="copyright" title="Copyright" [isFormGroup]="true" tooltipPath="ValueSet.copyright"></app-fhir-markdown>
                 </div>
                 <div class="col-md-4">
+                    <app-fhir-string [parentObject]="valueSet" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+
                     <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version" tooltipPath="ValueSet.version"></app-fhir-string>
 
                     <app-fhir-select-single-code [parentObject]="valueSet" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" tooltipPath="ValueSet.status"></app-fhir-select-single-code>

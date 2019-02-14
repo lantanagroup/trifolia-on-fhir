@@ -132,7 +132,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
 
         this.codeSystemService.save(this.codeSystem)
             .subscribe((results: CodeSystem) => {
-                if (!this.codeSystem.id) {
+                if (this.isNew) {
                     this.router.navigate(['/code-system/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCodeSystems, results.id, results.name);

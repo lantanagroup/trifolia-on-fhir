@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as AuthHelper from '../authHelper';
 import {ExtendedRequest, IOConnection} from './models';
 import * as _ from 'underscore';
 
@@ -6,7 +7,7 @@ export class ManageController {
     public static initRoutes() {
         const router = express.Router();
 
-        router.get('/user/active', (req: ExtendedRequest, res) => {
+        router.get('/user/active', AuthHelper.checkJwt, (req: ExtendedRequest, res) => {
             const controller = new ManageController();
             controller.getActiveUsers(req.ioConnections)
                 .then((results) => res.send(results))

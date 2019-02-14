@@ -4,6 +4,7 @@ import {ValueSetService} from '../services/value-set.service';
 import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {FhirService} from '../services/fhir.service';
 
 interface ValueSetExpandCriteria {
     filter?: string;
@@ -36,6 +37,7 @@ export class ValuesetExpandComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private valueSetService: ValueSetService,
+        private fhirService: FhirService,
         public globals: Globals) {
     }
 
@@ -57,7 +59,7 @@ export class ValuesetExpandComponent implements OnInit {
                     resourceType: 'OperationOutcome',
                     text: {
                         status: 'generated',
-                        div: 'An error occurred while expanding the value set: ' + err
+                        div: 'An error occurred while expanding the value set: ' + this.fhirService.getErrorString(err)
                     },
                     issue: []
                 };

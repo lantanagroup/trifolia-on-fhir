@@ -243,6 +243,18 @@ function getErrorString(err, body, defaultMessage) {
     return defaultMessage || 'An unknown error occurred';
 }
 
+function handleError(err, log, body, res, defaultMessage = 'An unknown error occurred') {
+    const msg = getErrorString(err, body, defaultMessage);
+
+    if (log) {
+        log.error(msg);
+    }
+
+    if (res) {
+        res.status(500).send(msg);
+    }
+}
+
 module.exports = {
     buildUrl: buildUrl,
     parseUrl: parseUrl,
@@ -253,5 +265,6 @@ module.exports = {
     getResource: getResource,
     updateResource: updateResource,
     hostExtensions: hostExtensions,
-    getErrorString: getErrorString
+    getErrorString: getErrorString,
+    handleError: handleError
 };

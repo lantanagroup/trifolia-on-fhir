@@ -58,8 +58,9 @@ export class CodesystemsComponent implements OnInit {
 
         this.codeSystemService.delete(codeSystem.id)
             .subscribe(() => {
-                const index = this.codeSystems.indexOf(codeSystem);
-                this.codeSystems.splice(index, 1);
+                const entry = _.find(this.codeSystemsBundle.entry, (entry) => entry.resource.id === codeSystem.id);
+                const index = this.codeSystemsBundle.entry.indexOf(entry);
+                this.codeSystemsBundle.entry.splice(index, 1);
             }, (err) => {
                 this.configService.handleError(err, 'An error occurred while deleting the code system');
             });
