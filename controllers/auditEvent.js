@@ -1,61 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const checkJwt = require('../authHelper').checkJwt;
-const request = require('request');
-const log4js = require('log4js');
-const log = log4js.getLogger();
-
-const thisResourceType = 'AuditEvent';
-
-router.get('/', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, null, null, req.query);
-
-    request(url, { json: true }, (error, results, body) => {
-        if (error) {
-            log.error('Error retrieving audit events from FHIR server: ' + error);
-            return res.status(500).send('Error retrieving audit events from FHIR server');
-        }
-
-        res.send(body);
-    });
-});
-
-router.post('/', checkJwt, (req, res) => {
-   const url = req.getFhirServerUrl(thisResourceType);
-
-   const options = {
-       url: url,
-       method: 'POST',
-       json: true,
-       body: req.body
-   };
-
-   request(options, function(err, results, body) {
-       if (err) {
-           log.error('Error from FHIR server while creating audit event: ' + err);
-           return res.status(500).send('Error from FHIR server while creating audit event');
-       }
-
-       res.send(body);
-   });
-});
-
-router.get('/:id', checkJwt, (req, res) => {
-    const url = req.getFhirServerUrl(thisResourceType, req.params.id);
-
-    const options = {
-        url: url,
-        method: 'GET'
-    };
-
-    request(options, function(err, results, body) {
-        if (err) {
-            log.error('Error from FHIR server while retrieving binary: ' + err);
-            return res.status(500).send('Error from FHIR server while retrieving binary');
-        }
-
-        res.send(body);
-    });
-});
-
-module.exports = router;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const fhirLogic_1 = require("./fhirLogic");
+class AuditEventController extends fhirLogic_1.FhirLogic {
+    update(id, data, query) {
+        return Promise.reject({ statusCode: 400, message: 'Cannot update audit event records' });
+    }
+    delete(id) {
+        return Promise.reject({ statusCode: 400, message: 'Cannot delete audit event records' });
+    }
+}
+exports.AuditEventController = AuditEventController;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXVkaXRFdmVudC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImF1ZGl0RXZlbnQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSwyQ0FBc0M7QUFHdEMsMEJBQWtDLFNBQVEscUJBQVM7SUFDeEMsTUFBTSxDQUFDLEVBQVUsRUFBRSxJQUFTLEVBQUUsS0FBVztRQUM1QyxPQUFPLE9BQU8sQ0FBQyxNQUFNLENBQWlCLEVBQUUsVUFBVSxFQUFFLEdBQUcsRUFBRSxPQUFPLEVBQUUsbUNBQW1DLEVBQUUsQ0FBQyxDQUFDO0lBQzdHLENBQUM7SUFFTSxNQUFNLENBQUMsRUFBVTtRQUNwQixPQUFPLE9BQU8sQ0FBQyxNQUFNLENBQWlCLEVBQUUsVUFBVSxFQUFFLEdBQUcsRUFBRSxPQUFPLEVBQUUsbUNBQW1DLEVBQUUsQ0FBQyxDQUFDO0lBQzdHLENBQUM7Q0FDSjtBQVJELG9EQVFDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtGaGlyTG9naWN9IGZyb20gJy4vZmhpckxvZ2ljJztcclxuaW1wb3J0IHtSZXN0UmVqZWN0aW9ufSBmcm9tICcuL21vZGVscyc7XHJcblxyXG5leHBvcnQgY2xhc3MgQXVkaXRFdmVudENvbnRyb2xsZXIgZXh0ZW5kcyBGaGlyTG9naWMge1xyXG4gICAgcHVibGljIHVwZGF0ZShpZDogc3RyaW5nLCBkYXRhOiBhbnksIHF1ZXJ5PzogYW55KTogUHJvbWlzZTxhbnk+IHtcclxuICAgICAgICByZXR1cm4gUHJvbWlzZS5yZWplY3QoPFJlc3RSZWplY3Rpb24+IHsgc3RhdHVzQ29kZTogNDAwLCBtZXNzYWdlOiAnQ2Fubm90IHVwZGF0ZSBhdWRpdCBldmVudCByZWNvcmRzJyB9KTtcclxuICAgIH1cclxuXHJcbiAgICBwdWJsaWMgZGVsZXRlKGlkOiBzdHJpbmcpOiBQcm9taXNlPGFueT4ge1xyXG4gICAgICAgIHJldHVybiBQcm9taXNlLnJlamVjdCg8UmVzdFJlamVjdGlvbj4geyBzdGF0dXNDb2RlOiA0MDAsIG1lc3NhZ2U6ICdDYW5ub3QgZGVsZXRlIGF1ZGl0IGV2ZW50IHJlY29yZHMnIH0pO1xyXG4gICAgfVxyXG59Il19

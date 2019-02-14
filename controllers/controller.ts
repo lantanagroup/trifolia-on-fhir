@@ -10,7 +10,13 @@ export class BaseController {
         this.log.error(msg);
 
         if (res) {
-            res.status(500).send(msg);
+            if (err && err.statusCode) {
+                res.status(err.statusCode);
+            } else {
+                res.status(500);
+            }
+
+            res.send(msg);
         }
     }
 }

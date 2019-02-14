@@ -1,174 +1,119 @@
-const express = require('express');
-const router = express.Router();
-const checkJwt = require('../authHelper').checkJwt;
-const request = require('request');
-const url = require('url');
-const {URL, resolve} = require('url');
-const _ = require('underscore');
-var Q = require('q');
-const log4js = require('log4js');
-const log = log4js.getLogger();
-
-const thisResourceType = 'Practitioner';
-
-router.get('/', checkJwt, (req, res) => {
-    res.send([]);
-});
-
-function getMe(req) {
-    const deferred = Q.defer();
-    const authUser = req.user.sub;
-    let system = '';
-    let identifier = authUser;
-
-    if (authUser.startsWith('auth0|')) {
-        system =  'https://auth0.com';
-        identifier = authUser.substring(6);
-    }
-
-    const url = new URL(resolve(req.fhirServerBase, thisResourceType));
-    url.searchParams.set('identifier', system + '|' + identifier);
-
-    const options = {
-        url: url.toString(),
-        json: true,
-        headers: {
-            'Cache-Control': 'no-cache'
-        }
-    };
-
-    request(options, (error, response, body) => {
-        if (error) {
-            log.error(`Error occurred getting ${thisResourceType} for user: ` + error);
-            return deferred.reject(error);
-        }
-
-        if (body.total === 0) {
-            return deferred.reject(`No ${thisResourceType} found for the authenticated user`);
-        }
-
-        if (body.total > 1) {
-            log.error(`Expected a single ${thisResourceType} resource to be found with identifier ${system}|${identifier}`)
-        }
-
-        deferred.resolve(body.entry[0].resource);
-    });
-
-    return deferred.promise;
-}
-
-function updateMe(req, existingPractitioner) {
-    const deferred = Q.defer();
-    const practitioner = req.body;
-
-    if (!practitioner || practitioner.resourceType !== thisResourceType) {
-        throw new Error(`Expected there to be a ${thisResourceType} resource in the body of the request`);
-    }
-
-    const authUser = req.user.sub;
-    let system = '';
-    let value = authUser;
-
-    if (authUser.startsWith('auth0|')) {
-        system =  'https://auth0.com';
-        value = authUser.substring(6);
-    }
-
-    if (!practitioner.identifier) {
-        practitioner.identifier = [];
-    }
-
-    const foundIdentifier = _.find(practitioner.identifier, (identifier) => {
-        return identifier.system === system && identifier.value === value
-    });
-
-    if (!foundIdentifier) {
-        practitioner.identifier.push({
-            system: system,
-            value: value
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const AuthHelper = require("../authHelper");
+const FhirHelper = require("../fhirHelper");
+const rp = require("request-promise");
+const _ = require("underscore");
+const nanoid = require("nanoid");
+const fhirLogic_1 = require("./fhirLogic");
+class PractitionerController extends fhirLogic_1.FhirLogic {
+    static initRoutes() {
+        const router = express.Router();
+        router.get('/me', AuthHelper.checkJwt, (req, res) => {
+            const controller = new PractitionerController('Practitioner', req.fhirServerBase);
+            controller.getMyPractitioner(req.user)
+                .then((results) => res.send(results))
+                .catch((err) => PractitionerController.handleError(err, null, res));
         });
+        router.post('/me', AuthHelper.checkJwt, (req, res) => {
+            const controller = new PractitionerController('Practitioner', req.fhirServerBase);
+            controller.updateMyPractitioner(req.user, req.body)
+                .then((results) => res.send(results))
+                .catch((err) => PractitionerController.handleError(err, null, res));
+        });
+        return super.initRoutes('Practitioner', router);
     }
-
-    if (existingPractitioner && existingPractitioner.id) {
-        practitioner.id = existingPractitioner.id;
-    }
-
-    const practitionerRequest = {
-        url: req.getFhirServerUrl(thisResourceType, practitioner.id),
-        method: practitioner.id ? 'PUT' : 'POST',
-        body: practitioner,
-        json: true
-    };
-
-    request(practitionerRequest, (err, response, body) => {
-        if (err) {
-            return deferred.reject(err);
-        } else {
-            if (response.headers['content-location']) {
-                request(response.headers['content-location'], { json: true }, (err, response, body) => {
-                    if (err) {
-                        return deferred.reject(err);
-                    } else {
-                        deferred.resolve(body);
-                    }
-                });
-            } else {
-                deferred.resolve(practitioner);
-            }
-        }
-    });
-
-    return deferred.promise;
-}
-
-router.get('/me', checkJwt, (req, res) => {
-    getMe(req)
-        .then((practitioner) => {
-            res.send(practitioner);
-        })
-        .catch((err) => {
-            if (typeof err === 'string') {
-                if (err.indexOf(`No ${thisResourceType} found`) === 0) {
-                    return res.status(404).send(err.message);
+    updateMyPractitioner(userInfo, practitioner) {
+        return new Promise((resolve, reject) => {
+            this.getMyPractitioner(userInfo, true)
+                .then((existingPractitioner) => {
+                const authUser = userInfo.sub;
+                let system = '';
+                let value = authUser;
+                if (authUser.startsWith('auth0|')) {
+                    system = 'https://auth0.com';
+                    value = authUser.substring(6);
                 }
-
-                return res.status(500).send(err);
-            } else if (err.message) {
-                return res.status(500).send(err.message);
+                if (!practitioner.identifier) {
+                    practitioner.identifier = [];
+                }
+                const foundIdentifier = _.find(practitioner.identifier, (identifier) => {
+                    return identifier.system === system && identifier.value === value;
+                });
+                if (!foundIdentifier) {
+                    practitioner.identifier.push({
+                        system: system,
+                        value: value
+                    });
+                }
+                if (existingPractitioner && existingPractitioner.id) {
+                    practitioner.id = existingPractitioner.id;
+                }
+                else {
+                    practitioner.id = nanoid(8);
+                }
+                const practitionerRequest = {
+                    url: FhirHelper.buildUrl(this.baseUrl, this.resourceType, practitioner.id),
+                    method: 'PUT',
+                    body: practitioner,
+                    json: true,
+                    resolveWithFullResponse: true
+                };
+                return rp(practitionerRequest);
+            })
+                .then((results) => {
+                const location = results.headers.location || results.headers['content-location'];
+                if (!location) {
+                    throw new Error(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
+                }
+                return rp({
+                    url: location,
+                    method: 'GET',
+                    json: true
+                });
+            })
+                .then((results) => resolve(results))
+                .catch((err) => reject(err));
+        });
+    }
+    getMyPractitioner(userInfo, resolveIfNotFound = false) {
+        return new Promise((resolve, reject) => {
+            let system = '';
+            let identifier = userInfo.sub;
+            if (identifier.startsWith('auth0|')) {
+                system = 'https://auth0.com';
+                identifier = identifier.substring(6);
             }
-        });
-});
-
-router.post('/me', checkJwt, (req, res) => {
-    getMe(req)  // attempt to get the existing practitioner (if any) first
-        .then((practitioner) => {
-            // already exists, pass it along to updateMe()
-            updateMe(req, practitioner)
-                .then((updatedPractitioner) => {
-                    res.send(updatedPractitioner);
-                })
-                .catch((err) => {
-                    if (typeof err === 'string') {
-                        return res.status(500).send(err);
-                    } else if (err.message) {
-                        return res.status(500).send(err.message);
+            const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, null, null, { identifier: system + '|' + identifier });
+            const options = {
+                url: url,
+                json: true,
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            };
+            rp(options)
+                .then((bundle) => {
+                if (bundle.total === 0) {
+                    if (!resolveIfNotFound) {
+                        return reject({
+                            statusCode: 404,
+                            message: 'No practitioner was found associated with the authenticated user'
+                        });
                     }
-                });
-        })
-        .catch((err) => {
-            // does not already exist
-            updateMe(req)
-                .then((newPractitioner) => {
-                    res.send(newPractitioner);
-                })
-                .catch((err) => {
-                    if (typeof err === 'string') {
-                        return res.status(500).send(err);
-                    } else if (err.message) {
-                        return res.status(500).send(err.message);
+                    else {
+                        return resolve();
                     }
-                });
+                }
+                if (bundle.total > 1) {
+                    PractitionerController.log.warn(`Expected a single ${this.resourceType} resource to be found with identifier ${system}|${identifier}`);
+                }
+                resolve(bundle.entry[0].resource);
+            })
+                .catch((err) => reject(err));
         });
-});
-
-module.exports = router;
+    }
+}
+exports.PractitionerController = PractitionerController;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHJhY3RpdGlvbmVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsicHJhY3RpdGlvbmVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsbUNBQW1DO0FBQ25DLDRDQUE0QztBQUM1Qyw0Q0FBNEM7QUFDNUMsc0NBQXNDO0FBQ3RDLGdDQUFnQztBQUNoQyxpQ0FBaUM7QUFDakMsMkNBQXNDO0FBSXRDLDRCQUFvQyxTQUFRLHFCQUFTO0lBQzFDLE1BQU0sQ0FBQyxVQUFVO1FBQ3BCLE1BQU0sTUFBTSxHQUFHLE9BQU8sQ0FBQyxNQUFNLEVBQUUsQ0FBQztRQUVoQyxNQUFNLENBQUMsR0FBRyxDQUFDLEtBQUssRUFBbUIsVUFBVSxDQUFDLFFBQVEsRUFBRSxDQUFrQixHQUFvQixFQUFFLEdBQUcsRUFBRSxFQUFFO1lBQ25HLE1BQU0sVUFBVSxHQUFHLElBQUksc0JBQXNCLENBQUMsY0FBYyxFQUFFLEdBQUcsQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUNsRixVQUFVLENBQUMsaUJBQWlCLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQztpQkFDakMsSUFBSSxDQUFDLENBQUMsT0FBTyxFQUFFLEVBQUUsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxDQUFDO2lCQUNwQyxLQUFLLENBQUMsQ0FBQyxHQUFHLEVBQUUsRUFBRSxDQUFDLHNCQUFzQixDQUFDLFdBQVcsQ0FBQyxHQUFHLEVBQUUsSUFBSSxFQUFFLEdBQUcsQ0FBQyxDQUFDLENBQUM7UUFDNUUsQ0FBQyxDQUFDLENBQUM7UUFFSCxNQUFNLENBQUMsSUFBSSxDQUFDLEtBQUssRUFBbUIsVUFBVSxDQUFDLFFBQVEsRUFBRSxDQUFrQixHQUFvQixFQUFFLEdBQUcsRUFBRSxFQUFFO1lBQ3BHLE1BQU0sVUFBVSxHQUFHLElBQUksc0JBQXNCLENBQUMsY0FBYyxFQUFFLEdBQUcsQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUNsRixVQUFVLENBQUMsb0JBQW9CLENBQUMsR0FBRyxDQUFD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Q0FBQyxLQUFLLEtBQUssQ0FBQyxFQUFFO29CQUNwQixJQUFJLENBQUMsaUJBQWlCLEVBQUU7d0JBQ3BCLE9BQU8sTUFBTSxDQUFpQjs0QkFDMUIsVUFBVSxFQUFFLEdBQUc7NEJBQ2YsT0FBTyxFQUFFLGtFQUFrRTt5QkFDOUUsQ0FBQyxDQUFDO3FCQUNOO3lCQUFNO3dCQUNILE9BQU8sT0FBTyxFQUFFLENBQUM7cUJBQ3BCO2lCQUNKO2dCQUVELElBQUksTUFBTSxDQUFDLEtBQUssR0FBRyxDQUFDLEVBQUU7b0JBQ2xCLHNCQUFzQixDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMscUJBQXFCLElBQUksQ0FBQyxZQUFZLHlDQUF5QyxNQUFNLElBQUksVUFBVSxFQUFFLENBQUMsQ0FBQTtpQkFDekk7Z0JBRUQsT0FBTyxDQUFDLE1BQU0sQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDdEMsQ0FBQyxDQUFDO2lCQUNELEtBQUssQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7UUFDckMsQ0FBQyxDQUFDLENBQUM7SUFDUCxDQUFDO0NBQ0o7QUE1SEQsd0RBNEhDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICogYXMgZXhwcmVzcyBmcm9tICdleHByZXNzJztcbmltcG9ydCAqIGFzIEF1dGhIZWxwZXIgZnJvbSAnLi4vYXV0aEhlbHBlcic7XG5pbXBvcnQgKiBhcyBGaGlySGVscGVyIGZyb20gJy4uL2ZoaXJIZWxwZXInO1xuaW1wb3J0ICogYXMgcnAgZnJvbSAncmVxdWVzdC1wcm9taXNlJztcbmltcG9ydCAqIGFzIF8gZnJvbSAndW5kZXJzY29yZSc7XG5pbXBvcnQgKiBhcyBuYW5vaWQgZnJvbSAnbmFub2lkJztcbmltcG9ydCB7RmhpckxvZ2ljfSBmcm9tICcuL2ZoaXJMb2dpYyc7XG5pbXBvcnQge0V4dGVuZGVkUmVxdWVzdCwgRmhpciwgUmVzdFJlamVjdGlvbiwgVXNlckluZm99IGZyb20gJy4vbW9kZWxzJztcbmltcG9ydCB7UmVxdWVzdEhhbmRsZXJ9IGZyb20gJ2V4cHJlc3MnO1xuXG5leHBvcnQgY2xhc3MgUHJhY3RpdGlvbmVyQ29udHJvbGxlciBleHRlbmRzIEZoaXJMb2dpYyB7XG4gICAgcHVibGljIHN0YXRpYyBpbml0Um91dGVzKCkge1xuICAgICAgICBjb25zdCByb3V0ZXIgPSBleHByZXNzLlJvdXRlcigpO1xuXG4gICAgICAgIHJvdXRlci5nZXQoJy9tZScsIDxSZXF1ZXN0SGFuZGxlcj4gQXV0aEhlbHBlci5jaGVja0p3dCwgPFJlcXVlc3RIYW5kbGVyPiAocmVxOiBFeHRlbmRlZFJlcXVlc3QsIHJlcykgPT4ge1xuICAgICAgICAgICAgY29uc3QgY29udHJvbGxlciA9IG5ldyBQcmFjdGl0aW9uZXJDb250cm9sbGVyKCdQcmFjdGl0aW9uZXInLCByZXEuZmhpclNlcnZlckJhc2UpO1xuICAgICAgICAgICAgY29udHJvbGxlci5nZXRNeVByYWN0aXRpb25lcihyZXEudXNlcilcbiAgICAgICAgICAgICAgICAudGhlbigocmVzdWx0cykgPT4gcmVzLnNlbmQocmVzdWx0cykpXG4gICAgICAgICAgICAgICAgLmNhdGNoKChlcnIpID0+IFByYWN0aXRpb25lckNvbnRyb2xsZXIuaGFuZGxlRXJyb3IoZXJyLCBudWxsLCByZXMpKTtcbiAgICAgICAgfSk7XG5cbiAgICAgICAgcm91dGVyLnBvc3QoJy9tZScsIDxSZXF1ZXN0SGFuZGxlcj4gQXV0aEhlbHBlci5jaGVja0p3dCwgPFJlcXVlc3RIYW5kbGVyPiAocmVxOiBFeHRlbmRlZFJlcXVlc3QsIHJlcykgPT4ge1xuICAgICAgICAgICAgY29uc3QgY29udHJvbGxlciA9IG5ldyBQcmFjdGl0aW9uZXJDb250cm9sbGVyKCdQcmFjdGl0aW9uZXInLCByZXEuZmhpclNlcnZlckJhc2UpO1xuICAgICAgICAgICAgY29udHJvbGxlci51cGRhdGVNeVByYWN0aXRpb25lcihyZXEudXNlciwgPEZoaXIuUHJhY3RpdGlvbmVyPiByZXEuYm9keSlcbiAgICAgICAgICAgICAgICAudGhlbigocmVzdWx0cykgPT4gcmVzLnNlbmQocmVzdWx0cykpXG4gICAgICAgICAgICAgICAgLmNhdGNoKChlcnIpID0+IFByYWN0aXRpb25lckNvbnRyb2xsZXIuaGFuZGxlRXJyb3IoZXJyLCBudWxsLCByZXMpKTtcbiAgICAgICAgfSk7XG5cbiAgICAgICAgcmV0dXJuIHN1cGVyLmluaXRSb3V0ZXMoJ1ByYWN0aXRpb25lcicsIHJvdXRlcik7XG4gICAgfVxuXG4gICAgcHVibGljIHVwZGF0ZU15UHJhY3RpdGlvbmVyKHVzZXJJbmZvOiBVc2VySW5mbywgcHJhY3RpdGlvbmVyOiBGaGlyLlByYWN0aXRpb25lcik6IFByb21pc2U8YW55PiB7XG4gICAgICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7XG4gICAgICAgICAgICB0aGlzLmdldE15UHJhY3RpdGlvbmVyKHVzZXJJbmZvLCB0cnVlKVxuICAgICAgICAgICAgICAgIC50aGVuKChleGlzdGluZ1ByYWN0aXRpb25lcikgPT4ge1xuICAgICAgICAgICAgICAgICAgICBjb25zdCBhdXRoVXNlciA9IHVzZXJJbmZvLnN1YjtcbiAgICAgICAgICAgICAgICAgICAgbGV0IHN5c3RlbSA9ICcnO1xuICAgICAgICAgICAgICAgICAgICBsZXQgdmFsdWUgPSBhdXRoVXNlcjtcblxuICAgICAgICAgICAgICAgICAgICBpZiAoYXV0aFVzZXIuc3RhcnRzV2l0aCgnYXV0aDB8JykpIHtcbiAgICAgICAgICAgICAgICAgICAgICAgIHN5c3RlbSA9ICAnaHR0cHM6Ly9hdXRoMC5jb20nO1xuICAgICAgICAgICAgICAgICAgICAgICAgdmFsdWUgPSBhdXRoVXNlci5zdWJzdHJpbmcoNik7XG4gICAgICAgICAgICAgICAgICAgIH1cblxuICAgICAgICAgICAgICAgICAgICBpZiAoIXByYWN0aXRpb25lci5pZGVudGlmaWVyKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBwcmFjdGl0aW9uZXIuaWRlbnRpZmllciA9IFtdO1xuICAgICAgICAgICAgICAgICAgICB9XG5cbiAgICAgICAgICAgICAgICAgICAgY29uc3QgZm91bmRJZGVudGlmaWVyID0gXy5maW5kKHByYWN0aXRpb25lci5pZGVudGlmaWVyLCAoaWRlbnRpZmllcikgPT4ge1xuICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGlkZW50aWZpZXIuc3lzdGVtID09PSBzeXN0ZW0gJiYgaWRlbnRpZmllci52YWx1ZSA9PT0gdmFsdWU7XG4gICAgICAgICAgICAgICAgICAgIH0pO1xuXG4gICAgICAgICAgICAgICAgICAgIGlmICghZm91bmRJZGVudGlmaWVyKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBwcmFjdGl0aW9uZXIuaWRlbnRpZmllci5wdXNoKHtcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBzeXN0ZW06IHN5c3RlbSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZTogdmFsdWVcbiAgICAgICAgICAgICAgICAgICAgICAgIH0pO1xuICAgICAgICAgICAgICAgICAgICB9XG5cbiAgICAgICAgICAgICAgICAgICAgaWYgKGV4aXN0aW5nUHJhY3RpdGlvbmVyICYmIGV4aXN0aW5nUHJhY3RpdGlvbmVyLmlkKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBwcmFjdGl0aW9uZXIuaWQgPSBleGlzdGluZ1ByYWN0aXRpb25lci5pZDtcbiAgICAgICAgICAgICAgICAgICAgfSBlbHNlIHtcbiAgICAgICAgICAgICAgICAgICAgICAgIHByYWN0aXRpb25lci5pZCA9IG5hbm9pZCg4KTtcbiAgICAgICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgICAgIGNvbnN0IHByYWN0aXRpb25lclJlcXVlc3QgPSB7XG4gICAgICAgICAgICAgICAgICAgICAgICB1cmw6IEZoaXJIZWxwZXIuYnVpbGRVcmwodGhpcy5iYXNlVXJsLCB0aGlzLnJlc291cmNlVHlwZSwgcHJhY3RpdGlvbmVyLmlkKSxcbiAgICAgICAgICAgICAgICAgICAgICAgIG1ldGhvZDogJ1BVVCcsXG4gICAgICAgICAgICAgICAgICAgICAgICBib2R5OiBwcmFjdGl0aW9uZXIsXG4gICAgICAgICAgICAgICAgICAgICAgICBqc29uOiB0cnVlLFxuICAgICAgICAgICAgICAgICAgICAgICAgcmVzb2x2ZVdpdGhGdWxsUmVzcG9uc2U6IHRydWVcbiAgICAgICAgICAgICAgICAgICAgfTtcblxuICAgICAgICAgICAgICAgICAgICByZXR1cm4gcnAocHJhY3RpdGlvbmVyUmVxdWVzdCk7XG4gICAgICAgICAgICAgICAgfSlcbiAgICAgICAgICAgICAgICAudGhlbigocmVzdWx0cykgPT4ge1xuICAgICAgICAgICAgICAgICAgICBjb25zdCBsb2NhdGlvbiA9IHJlc3VsdHMuaGVhZGVycy5sb2NhdGlvbiB8fCByZXN1bHRzLmhlYWRlcnNbJ2NvbnRlbnQtbG9jYXRpb24nXTtcblxuICAgICAgICAgICAgICAgICAgICBpZiAoIWxvY2F0aW9uKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZISVIgc2VydmVyIGRpZCBub3QgcmVzcG9uZCB3aXRoIGEgbG9jYXRpb24gdG8gdGhlIG5ld2x5IGNyZWF0ZWQgJHt0aGlzLnJlc291cmNlVHlwZX1gKTtcbiAgICAgICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgICAgIHJldHVybiBycCh7XG4gICAgICAgICAgICAgICAgICAgICAgICB1cmw6IGxvY2F0aW9uLFxuICAgICAgICAgICAgICAgICAgICAgICAgbWV0aG9kOiAnR0VUJyxcbiAgICAgICAgICAgICAgICAgICAgICAgIGpzb246IHRydWVcbiAgICAgICAgICAgICAgICAgICAgfSk7XG4gICAgICAgICAgICAgICAgfSlcbiAgICAgICAgICAgICAgICAudGhlbigocmVzdWx0cykgPT4gcmVzb2x2ZShyZXN1bHRzKSlcbiAgICAgICAgICAgICAgICAuY2F0Y2goKGVycikgPT4gcmVqZWN0KGVycikpO1xuICAgICAgICB9KTtcbiAgICB9XG5cbiAgICBwdWJsaWMgZ2V0TXlQcmFjdGl0aW9uZXIodXNlckluZm86IFVzZXJJbmZvLCByZXNvbHZlSWZOb3RGb3VuZCA9IGZhbHNlKTogUHJvbWlzZTxhbnk+IHtcbiAgICAgICAgcmV0dXJuIG5ldyBQcm9taXNlKChyZXNvbHZlLCByZWplY3QpID0+IHtcbiAgICAgICAgICAgIGxldCBzeXN0ZW0gPSAnJztcbiAgICAgICAgICAgIGxldCBpZGVudGlmaWVyID0gdXNlckluZm8uc3ViO1xuXG4gICAgICAgICAgICBpZiAoaWRlbnRpZmllci5zdGFydHNXaXRoKCdhdXRoMHwnKSkge1xuICAgICAgICAgICAgICAgIHN5c3RlbSA9ICAnaHR0cHM6Ly9hdXRoMC5jb20nO1xuICAgICAgICAgICAgICAgIGlkZW50aWZpZXIgPSBpZGVudGlmaWVyLnN1YnN0cmluZyg2KTtcbiAgICAgICAgICAgIH1cblxuICAgICAgICAgICAgY29uc3QgdXJsID0gRmhpckhlbHBlci5idWlsZFVybCh0aGlzLmJhc2VVcmwsIHRoaXMucmVzb3VyY2VUeXBlLCBudWxsLCBudWxsLCB7IGlkZW50aWZpZXI6IHN5c3RlbSArICd8JyArIGlkZW50aWZpZXIgfSk7XG4gICAgICAgICAgICBjb25zdCBvcHRpb25zID0ge1xuICAgICAgICAgICAgICAgIHVybDogdXJsLFxuICAgICAgICAgICAgICAgIGpzb246IHRydWUsXG4gICAgICAgICAgICAgICAgaGVhZGVyczoge1xuICAgICAgICAgICAgICAgICAgICAnQ2FjaGUtQ29udHJvbCc6ICduby1jYWNoZSdcbiAgICAgICAgICAgICAgICB9XG4gICAgICAgICAgICB9O1xuXG4gICAgICAgICAgICBycChvcHRpb25zKVxuICAgICAgICAgICAgICAgIC50aGVuKChidW5kbGUpID0+IHtcbiAgICAgICAgICAgICAgICAgICAgaWYgKGJ1bmRsZS50b3RhbCA9PT0gMCkge1xuICAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFyZXNvbHZlSWZOb3RGb3VuZCkge1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZWplY3QoPFJlc3RSZWplY3Rpb24+IHtcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RhdHVzQ29kZTogNDA0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBtZXNzYWdlOiAnTm8gcHJhY3RpdGlvbmVyIHdhcyBmb3VuZCBhc3NvY2lhdGVkIHdpdGggdGhlIGF1dGhlbnRpY2F0ZWQgdXNlcidcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9KTtcbiAgICAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJlc29sdmUoKTtcbiAgICAgICAgICAgICAgICAgICAgICAgIH1cbiAgICAgICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgICAgIGlmIChidW5kbGUudG90YWwgPiAxKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBQcmFjdGl0aW9uZXJDb250cm9sbGVyLmxvZy53YXJuKGBFeHBlY3RlZCBhIHNpbmdsZSAke3RoaXMucmVzb3VyY2VUeXBlfSByZXNvdXJjZSB0byBiZSBmb3VuZCB3aXRoIGlkZW50aWZpZXIgJHtzeXN0ZW19fCR7aWRlbnRpZmllcn1gKVxuICAgICAgICAgICAgICAgICAgICB9XG5cbiAgICAgICAgICAgICAgICAgICAgcmVzb2x2ZShidW5kbGUuZW50cnlbMF0ucmVzb3VyY2UpO1xuICAgICAgICAgICAgICAgIH0pXG4gICAgICAgICAgICAgICAgLmNhdGNoKChlcnIpID0+IHJlamVjdChlcnIpKTtcbiAgICAgICAgfSk7XG4gICAgfVxufVxuIl19
