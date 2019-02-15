@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {StructureDefinitionService} from '../services/structure-definition.service';
-import {StructureDefinitionListItemModel} from '../models/structure-definition-list-item-model';
 import {ConfigService} from '../services/config.service';
-import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {Bundle, ImplementationGuide} from '../models/stu3/fhir';
+import {Bundle, ImplementationGuide, StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import 'rxjs/add/operator/debounceTime';
 
@@ -17,7 +15,7 @@ import 'rxjs/add/operator/debounceTime';
     styleUrls: ['./structure-definitions.component.css']
 })
 export class StructureDefinitionsComponent implements OnInit {
-    public response: StructureDefinitionListModel;
+    public response: Bundle;
     public message: string;
     public page = 1;
     public nameText: string;
@@ -39,6 +37,16 @@ export class StructureDefinitionsComponent implements OnInit {
             });
     }
 
+    public get structureDefinitions(): StructureDefinition[] {
+        if (!this.response) {
+            return [];
+        }
+
+        return _.map(this.response.entry, (entry) => {
+            return <StructureDefinition> entry.resource;
+        });
+    }
+
     public get implementationGuides() {
         if (!this.implementationGuidesBundle) {
             return [];
@@ -47,23 +55,24 @@ export class StructureDefinitionsComponent implements OnInit {
         return _.map(this.implementationGuidesBundle.entry, (entry) => <ImplementationGuide> entry.resource);
     }
 
-    public remove(structureDefinitionListItem: StructureDefinitionListItemModel) {
-        if (!confirm(`Are you sure you want to delete the structure definition ${structureDefinitionListItem.name}`)) {
+    public remove(structureDefinition: StructureDefinition) {
+        if (!confirm(`Are you sure you want to delete the structure definition ${structureDefinition.name}`)) {
             return;
         }
 
-        this.structureDefinitionService.delete(structureDefinitionListItem.id)
+        this.structureDefinitionService.delete(structureDefinition.id)
             .subscribe(() => {
-                this.message = `Successfully deleted structure definition ${structureDefinitionListItem.name} (${structureDefinitionListItem.id})`;
-                const index = this.response.items.indexOf(structureDefinitionListItem);
-                this.response.items.splice(index, 1);
+                this.message = `Successfully deleted structure definition ${structureDefinition.name} (${structureDefinition.id})`;
+                const entry = _.find(this.response.entry, (entry) => entry.resource.id === structureDefinition.id);
+                const index = this.response.entry.indexOf(entry);
+                this.response.entry.splice(index, 1);
                 setTimeout(() => this.message = '', 3000);
             }, (err) => {
                 this.message = err;
             });
     }
 
-    public changeId(structureDefinitionListItem: StructureDefinitionListItemModel) {
+    public changeId(structureDefinitionListItem: StructureDefinition) {
         const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
         modalRef.componentInstance.resourceType = 'StructureDefinition';
         modalRef.componentInstance.originalId = structureDefinitionListItem.id;
@@ -101,7 +110,7 @@ export class StructureDefinitionsComponent implements OnInit {
         this.configService.setStatusMessage('Loading structure definitions');
 
         this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.urlText, this.implementationGuideId)
-            .subscribe((response: StructureDefinitionListModel) => {
+            .subscribe((response: Bundle) => {
                 this.response = response;
                 this.configService.setStatusMessage('');
             }, (err) => {
@@ -116,6 +125,20 @@ export class StructureDefinitionsComponent implements OnInit {
             }, (err) => {
                 this.configService.handleError(err, 'Error loading implementation guides.');
             });
+    }
+
+    public getContactDisplay(structureDefinition: StructureDefinition) {
+        if (structureDefinition.contact && structureDefinition.contact.length > 0) {
+            const contact = structureDefinition.contact[0];
+
+            if (contact.name && contact.telecom && contact.telecom.length > 0) {
+                return `${contact.name} (${contact.telecom[0].value})`;
+            } else if (contact.name) {
+                return contact.name;
+            } else {
+                return contact.telecom[0].value;
+            }
+        }
     }
 
     private initData() {

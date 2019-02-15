@@ -4,10 +4,10 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const config = require('config');
-const structureDefinitionController = require('./controllers/structureDefinition');
 const fhirController = require('./controllers/fhir');
 const exportController = require('./controllers/export');
 const importController = require('./controllers/import');
+const {StructureDefinitionController} = require('./controllers/structureDefinition');
 const {AuditEventController} = require('./controllers/auditEvent');
 const {ConfigController} = require('./controllers/config');
 const {FhirLogic} = require('./controllers/fhirLogic');
@@ -254,9 +254,9 @@ app.use('/api/questionnaire', FhirLogic.initRoutes('Questionnaire'));
 app.use('/api/binary', FhirLogic.initRoutes('Binary'));
 app.use('/api/auditEvent', AuditEventController.initRoutes('AuditEvent'));
 app.use('/api/practitioner', PractitionerController.initRoutes());
+app.use('/api/structureDefinition', StructureDefinitionController.initRoutes());
 
 // TODO: Clean up remaining routes
-app.use('/api/structureDefinition', structureDefinitionController);
 app.use('/api/export', exportController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);

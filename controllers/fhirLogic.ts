@@ -79,34 +79,53 @@ export class FhirLogic extends BaseController {
         this.baseUrl = baseUrl;
     }
 
+    protected prepareSearchQuery(query?: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const preparedQuery = query || {};
+            preparedQuery['_summary'] = true;
+            preparedQuery['_count'] = 10;
+
+            if (preparedQuery.name) {
+                preparedQuery['name:contains'] = preparedQuery.name;
+                delete preparedQuery.name;
+            }
+
+            if (preparedQuery.urlText) {
+                preparedQuery.url = preparedQuery.urlText;
+                delete preparedQuery.urlText;
+            }
+
+            if (preparedQuery.page) {
+                if (parseInt(preparedQuery.page) !== 1) {
+                    preparedQuery._getpagesoffset = (parseInt(preparedQuery.page) - 1) * 10;
+                }
+
+                delete preparedQuery.page;
+            }
+
+            resolve(preparedQuery);
+        });
+    }
+
     public search(query?: any): Promise<any> {
-        query = query || {};
-        query['_summary'] = true;
-        query['_count'] = 10;
+        return new Promise((resolve, reject) => {
+            this.prepareSearchQuery(query)
+                .then((preparedQuery) => {
+                    const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, null, null, preparedQuery);
+                    const options = {
+                        url: url,
+                        method: 'GET',
+                        json: true,
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    };
 
-        if (query.name) {
-            query['name:contains'] = query.name;
-            delete query.name;
-        }
-
-        if (query.page) {
-            if (parseInt(query.page) !== 1) {
-                query._getpagesoffset = (parseInt(query.page) - 1) * 10;
-            }
-
-            delete query.page;
-        }
-
-        const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, null, null, query);
-        const options = {
-            url: url,
-            method: 'GET',
-            json: true,
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        };
-        return rp(options);
+                    return rp(options);
+                })
+                .then((results) => resolve(results))
+                .catch((err) => reject(err));
+        });
     }
 
     public get(id: string, query?: any): Promise<any> {

@@ -45,26 +45,26 @@
         </th>
     </tr>
     </thead>
-    <tbody *ngIf="response && response.items && response.items.length > 0">
-    <tr *ngFor="let p of response.items">
-        <td>{{p.id}}</td>
+    <tbody *ngIf="response && response.total > 0">
+    <tr *ngFor="let structureDefinition of structureDefinitions">
+        <td>{{structureDefinition.id}}</td>
         <td>
-            {{p.name}} <i class="fa fa-comment" *ngIf="p.description" [ngbTooltip]="p.description"></i>
+            {{structureDefinition.name}} <i class="fa fa-comment" *ngIf="structureDefinition.description" [ngbTooltip]="structureDefinition.description"></i>
             <br/>
-            <sub>{{p.url}}</sub>
+            <sub>{{structureDefinition.url}}</sub>
         </td>
-        <td class="experimental">{{p.experimental ? "Yes" : "No"}}</td>
-        <td>{{p.type}}</td>
-        <td class="contact">{{p.contact}}</td>
+        <td class="experimental">{{structureDefinition.experimental ? "Yes" : "No"}}</td>
+        <td>{{structureDefinition.type}}</td>
+        <td class="contact">{{getContactDisplay(structureDefinition)}}</td>
         <td>
             <div class="pull-right btn-group">
-                <a class="btn btn-default" [routerLink]="['/structure-definition', p.id]" title="Edit this resource">
+                <a class="btn btn-default" [routerLink]="['/structure-definition', structureDefinition.id]" title="Edit this resource">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(p)" title="Remove this resource">
+                <button type="button" class="btn btn-default" (click)="remove(structureDefinition)" title="Remove this resource">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(p)" title="Change this resource's ID">
+                <button type="button" class="btn btn-default" (click)="changeId(structureDefinition)" title="Change this resource's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>

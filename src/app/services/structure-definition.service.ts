@@ -2,9 +2,8 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
 import {HttpClient} from '@angular/common/http';
-import {StructureDefinition} from '../models/stu3/fhir';
+import {Bundle, StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
-import {StructureDefinitionListModel} from '../models/structure-definition-list-model';
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 
@@ -37,7 +36,7 @@ export class StructureDefinitionService {
         private fhirService: FhirService,
         private fileService: FileService) { }
 
-    public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string): Observable<StructureDefinitionListModel> {
+    public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string): Observable<Bundle> {
         let url = '/api/structureDefinition?';
 
         if (page) {
@@ -56,10 +55,7 @@ export class StructureDefinitionService {
             url += 'implementationGuideId=' + encodeURIComponent(implementationGuideId) + '&';
         }
 
-        return this.http.get(url)
-            .map(res => {
-                return <StructureDefinitionListModel>res;
-            });
+        return this.http.get<Bundle>(url);
     }
 
     public getStructureDefinition(id: string): Observable<GetStructureDefinitionModel> {

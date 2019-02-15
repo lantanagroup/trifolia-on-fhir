@@ -13,7 +13,7 @@
   "categories": {
     "default": {
       "appenders": [ "out", "file" ],
-      "level": "DEBUG"
+      "level": "TRACE"
     }
   }
 }

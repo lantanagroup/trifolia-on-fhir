@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as FhirHelper from '../fhirHelper';
 import * as rp from 'request-promise';
 import * as _ from 'underscore';
-import {ExtendedRequest, FhirConfig} from './models';
+import {ExtendedRequest, Fhir, FhirConfig} from './models';
 import {BaseController} from './controller';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
@@ -61,7 +61,7 @@ export class ConfigController extends BaseController {
         });
     }
 
-    public getFhirCapabilities() {
+    public getFhirCapabilities(): Promise<Fhir.CapabilityStatement> {
         if (ConfigController.serverMetadata[this.baseUrl]) {
             return Promise.resolve(ConfigController.serverMetadata[this.baseUrl]);
         }
