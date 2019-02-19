@@ -82,7 +82,7 @@ HtmlExporter.prototype._sendSocketMessage = function(status, message) {
     }
 
     if (this._io) {
-        this._io.to(this._socketId).emit('message', {
+        this._io.to(this._socketId).emit('html-export', {
             packageId: this._packageId,
             status: status,
             message: message

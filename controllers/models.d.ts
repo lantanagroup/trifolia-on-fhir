@@ -1,4 +1,5 @@
 import {Request} from 'express';
+import {Server} from 'socket.io';
 
 export interface UserInfo {
     sub: string;
@@ -7,9 +8,10 @@ export interface UserInfo {
 export interface ExtendedRequest extends Request {
     fhirServerBase: string;
     fhirServerVersion: string;
-    ioConnections: any[];
     user?: UserInfo;
     body?: any;
+    io: Server;
+    ioConnections: any[];
 }
 
 export interface IOConnection {
@@ -51,6 +53,13 @@ export interface RequestOptions {
     json?: boolean;
     body?: any;
     resolveWithFullResponse?: boolean;
+}
+
+export interface ConnectionModel {
+    socketId: string;
+    userId?: string;
+    email?: string;
+    practitionerReference?: string;
 }
 
 export namespace Fhir {

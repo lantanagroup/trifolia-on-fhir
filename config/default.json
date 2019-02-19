@@ -1,6 +1,7 @@
 {
   "server": {
-    "port": 49366
+    "port": 49366,
+    "admin-code": "t3st"
   },
   "auth": {
     "clientId": "",

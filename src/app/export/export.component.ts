@@ -4,7 +4,7 @@ import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../services/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
 import * as _ from 'underscore';
-import {SocketMessage, SocketService} from '../services/socket.service';
+import {HtmlExportStatus, SocketService} from '../services/socket.service';
 import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../services/config.service';
@@ -187,7 +187,7 @@ export class ExportComponent implements OnInit {
                 this.message = err;
             });
 
-        this.socketService.onMessage.subscribe((data: SocketMessage) => {
+        this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
             if (data.packageId === this.packageId) {
                 this.socketOutput += data.message;
 

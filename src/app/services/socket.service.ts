@@ -2,8 +2,9 @@ import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
 import * as io from 'socket.io-client';
 import {saveAs} from 'file-saver';
 import {Practitioner} from '../models/stu3/fhir';
+import {Socket} from 'socket.io';
 
-export class SocketMessage {
+export class HtmlExportStatus {
     public status: string;                  // when dealing with exports
     public packageId: string;               // when dealing with exports
     public message: string;
@@ -13,16 +14,21 @@ export class SocketMessage {
     providedIn: 'root'
 })
 export class SocketService implements OnDestroy {
-    private socket;
-    public onMessage = new EventEmitter<SocketMessage>();
+    private socket: Socket;
+    public onHtmlExport = new EventEmitter<HtmlExportStatus>();
+    public onMessage = new EventEmitter<string>();
     public onConnected = new EventEmitter<null>();
     public authInfoSent = false;
 
     constructor() {
         this.socket = io(location.origin);
 
-        this.socket.on('message', (data: SocketMessage) => {
-            this.onMessage.emit(data);
+        this.socket.on('html-export', (data: HtmlExportStatus) => {
+            this.onHtmlExport.emit(data);
+        });
+
+        this.socket.on('message', (message: string) => {
+            this.onMessage.emit(message);
         });
 
         this.socket.on('error', (err) => {

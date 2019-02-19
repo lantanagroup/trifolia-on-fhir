@@ -60,7 +60,7 @@ export class FileOpenModalComponent implements OnInit {
             return;
         }
 
-        this.file.fhirVersion = this.globals.parseFhirVersion(this.fhirVersion);
+        this.file.fhirVersion = this.fhirVersion;
         this.activeModal.close(this.file);
     }
 

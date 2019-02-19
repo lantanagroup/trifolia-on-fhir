@@ -14,6 +14,7 @@ import {SocketService} from './services/socket.service';
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {GithubService} from './services/github.service';
 import {CookieService} from 'angular2-cookie/core';
+import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
 
 @Component({
     selector: 'app-root',
@@ -37,7 +38,8 @@ export class AppComponent implements OnInit {
         private modalService: NgbModal,
         private fileService: FileService,
         private router: Router,
-        private cookieService: CookieService) {
+        private cookieService: CookieService,
+        private socketService: SocketService) {
         this.authService.authChanged.subscribe(() => {
             this.userProfile = this.authService.userProfile;
             this.person = this.authService.practitioner;
@@ -78,6 +80,11 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.router.events.subscribe(() => {
             this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
+        });
+
+        this.socketService.onMessage.subscribe((message) => {
+            const modalRef = this.modalService.open(AdminMessageModalComponent, { backdrop: 'static' });
+            modalRef.componentInstance.message = message;
         });
     }
 }

@@ -5,6 +5,9 @@ import {Globals} from '../globals';
 import {Title} from '@angular/platform-browser';
 import {CapabilityStatement as STU3CapabilityStatement} from '../models/stu3/fhir';
 import {CapabilityStatement as R4CapabilityStatement} from '../models/r4/fhir';
+import * as semver from 'semver';
+import {FhirVersion} from '../models/fhir-version';
+import {Versions} from 'fhir/fhir';
 
 @Injectable()
 export class ConfigService {
@@ -13,11 +16,6 @@ export class ConfigService {
     public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
     public statusMessage: string;
     public fhirConformance: STU3CapabilityStatement | R4CapabilityStatement;
-    public fhirVersion = {
-        major: 3,
-        minor: 0,
-        patch: 1
-    };
 
     constructor(
         private globals: Globals,
@@ -66,23 +64,28 @@ export class ConfigService {
         this.http.get('/api/config/fhir')
             .subscribe((res: any) => {
                 this.fhirConformance = res;
-                this.fhirVersion = this.globals.parseFhirVersion(res.fhirVersion);
                 this.fhirServerChanged.emit(this.fhirServer);
             }, error => {
 
             });
     }
 
-    public isFhirR4() {
-        return this.fhirVersion &&
-            this.fhirVersion.major >= 3 &&
-            this.fhirVersion.minor >= 2;
+    public static identifyRelease(fhirVersion: string): Versions {
+        if (!fhirVersion) {
+            return Versions.STU3;
+        } else if (semver.satisfies(fhirVersion, '>= 3.2.0 <= 4.0.0')) {
+            return Versions.R4;
+        } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.1')) {
+            return Versions.STU3;
+        } else {
+            throw new Error('Unexpected FHIR Version ' + fhirVersion);
+        }
     }
 
-    public isFhirDstu3() {
-        return !this.fhirVersion ||
-            (this.fhirVersion.major === 3 && this.fhirVersion.minor < 2) ||
-            this.fhirVersion.major < 3;
+    public get fhirConformanceVersion(): string {
+        if (this.fhirConformance) {
+            return this.fhirConformance.fhirVersion;
+        }
     }
 
     public setStatusMessage(message: string, timeout?: number) {

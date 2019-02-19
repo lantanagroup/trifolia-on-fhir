@@ -6,5 +6,5 @@ export class FileModel {
     content: string;
     resource: DomainResource;
     isXml: boolean;
-    fhirVersion: FhirVersion;
+    fhirVersion: string;
 }

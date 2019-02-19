@@ -122,6 +122,7 @@ import {ImportGithubPanelComponent} from './import/import-github-panel/import-gi
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
 import { NumberComponent } from './fhir-edit/number/number.component';
+import { AdminMessageModalComponent } from './admin-message-modal/admin-message-modal.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -198,6 +199,7 @@ export function getConfig(configService: ConfigService) {
 
 @NgModule({
     entryComponents: [
+        AdminMessageModalComponent,
         SelectChoiceModalComponent,
         FhirElementDefinitionTypeModalComponent,
         STU3PageComponentModalComponent,
@@ -326,7 +328,8 @@ export function getConfig(configService: ConfigService) {
         SettingsModalComponent,
         ImportGithubPanelComponent,
         ExportGithubPanelComponent,
-        NumberComponent
+        NumberComponent,
+        AdminMessageModalComponent
     ],
     imports: [
         RouterModule.forRoot(

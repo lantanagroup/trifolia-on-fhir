@@ -17,9 +17,8 @@ import {
 } from '../models/r4/fhir';
 import {Observable} from 'rxjs';
 import 'rxjs/add/observable/forkJoin';
-import {Fhir} from 'fhir/fhir';
+import {Fhir, Versions} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
-import {Versions as FhirVersions} from 'fhir/fhir';
 import {ConfigService} from './config.service';
 import {ValidatorMessage, ValidatorResponse} from 'fhir/validator';
 import {Globals} from '../globals';
@@ -70,7 +69,7 @@ export class FhirService {
         this.configService.fhirServerChanged.subscribe(() => {
             this.loadAssets();
 
-            if (this.configService.isFhirR4()) {
+            if (ConfigService.identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
                 this.customValidator = new CustomR4Validator(this);
             } else {            // Assume default of STU3
                 this.customValidator = new CustomSTU3Validator(this);
@@ -80,11 +79,9 @@ export class FhirService {
 
     private loadAssets() {
         this.loaded = false;
-        let loadDirectory = 'stu3';
-
-        if (this.configService.isFhirR4()) {
-            loadDirectory = 'r4';
-        }
+        const fhirVersion = ConfigService.identifyRelease(this.configService.fhirConformanceVersion);
+        const isFhirR4 = fhirVersion === Versions.R4;
+        const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 
         const assetPromises = [
             this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json'),
@@ -95,7 +92,7 @@ export class FhirService {
 
         Observable.forkJoin(assetPromises)
             .subscribe((allAssets) => {
-                const parser = new ParseConformance(false, FhirVersions.STU3);
+                const parser = new ParseConformance(false, fhirVersion);
                 parser.loadCodeSystem(allAssets[0]);
                 parser.parseBundle(allAssets[1]);
                 parser.parseBundle(allAssets[2]);

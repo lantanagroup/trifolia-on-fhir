@@ -4,7 +4,7 @@ import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
 import {ImplementationGuideComponent as STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
 import {ImplementationGuideComponent as R4ImplementationGuideComponent} from './r4/implementation-guide.component';
-import * as compareVersions from 'compare-versions';
+import {Versions} from 'fhir/fhir';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -27,15 +27,14 @@ export class ImplementationGuideWrapperComponent implements OnInit {
 
     versionChanged() {
         let componentFactory;
-        let version = this.configService.fhirVersion;
-        const versionString = version.major + '.' + version.minor + '.' + version.patch;
+        let version = this.configService.fhirConformanceVersion;
         const id = this.route.snapshot.paramMap.get('id');
 
         if (id === 'from-file' && this.fileService.file) {
             version = this.fileService.file.fhirVersion;
         }
 
-        if (compareVersions(versionString, '3.4.0') >= 0) {
+        if (ConfigService.identifyRelease(version) === Versions.R4) {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
         } else {
             componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);

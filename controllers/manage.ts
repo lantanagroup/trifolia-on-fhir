@@ -1,15 +1,44 @@
 import * as express from 'express';
 import * as AuthHelper from '../authHelper';
-import {ExtendedRequest, IOConnection} from './models';
+import {ConnectionModel, ExtendedRequest, IOConnection} from './models';
 import * as _ from 'underscore';
+import {Server} from 'socket.io';
+import {RequestHandler} from 'express';
+import * as config from 'config';
+import {Observable} from 'rxjs';
+
+const serverConfig = config.get('server');
 
 export class ManageController {
+    private io: Server;
+    private ioConnections: ConnectionModel[];
+
+    constructor(io: Server, ioConnections: ConnectionModel[]) {
+        this.io = io;
+        this.ioConnections = ioConnections;
+    }
+
     public static initRoutes() {
         const router = express.Router();
 
-        router.get('/user/active', AuthHelper.checkJwt, (req: ExtendedRequest, res) => {
-            const controller = new ManageController();
-            controller.getActiveUsers(req.ioConnections)
+        router.post('/user/active/message', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ExtendedRequest, res) => {
+            if (req.headers['admin-code'] !== serverConfig['admin-code']) {
+                return res.status(401).send('You have not authenticated request as an admin');
+            }
+
+            const controller = new ManageController(req.io, req.ioConnections);
+            controller.sendMessageToActiveUsers(req.body.message)
+                .then((results) => res.send(results))
+                .catch((err) => res.status(500).send(err));
+        });
+
+        router.get('/user/active', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ExtendedRequest, res) => {
+            if (req.headers['admin-code'] !== serverConfig['admin-code']) {
+                return res.status(401).send('You have not authenticated request as an admin');
+            }
+
+            const controller = new ManageController(req.io, req.ioConnections);
+            controller.getActiveUsers()
                 .then((results) => res.send(results))
                 .catch((err) => res.status(500).send(err));
         });
@@ -17,9 +46,9 @@ export class ManageController {
         return router;
     }
 
-    public getActiveUsers(ioConnections): Promise<any> {
+    public getActiveUsers(): Promise<any> {
         return new Promise((resolve) => {
-            const connections = _.map(ioConnections, (connection: IOConnection) => {
+            const connections = _.map(this.ioConnections, (connection: IOConnection) => {
                 let name;
 
                 if (connection.practitioner && connection.practitioner.name && connection.practitioner.name.length > 0) {
@@ -44,6 +73,13 @@ export class ManageController {
             });
 
             resolve(connections);
+        });
+    }
+
+    public sendMessageToActiveUsers(message: string): Promise<any> {
+        return new Promise((resolve) => {
+            this.io.emit('message', message);
+            resolve();
         });
     }
 }

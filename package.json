@@ -76,6 +76,7 @@
     "@types/jasmine": "~2.5.53",
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
+    "@types/socket.io": "^2.1.2",
     "@types/underscore": "^1.8.9",
     "codelyzer": "~3.1.1",
     "gulp": "^3.9.1",
