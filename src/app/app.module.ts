@@ -121,6 +121,7 @@ import {SettingsModalComponent} from './settings-modal/settings-modal.component'
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
+import { NumberComponent } from './fhir-edit/number/number.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -324,7 +325,8 @@ export function getConfig(configService: ConfigService) {
         MappingModalComponent,
         SettingsModalComponent,
         ImportGithubPanelComponent,
-        ExportGithubPanelComponent
+        ExportGithubPanelComponent,
+        NumberComponent
     ],
     imports: [
         RouterModule.forRoot(

@@ -1,0 +1,23 @@
+<div class="form-group" *ngIf="isFormGroup && parentObject">
+  <label>
+    <span>{{title || propertyName}} </span>
+    <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </label>
+
+  <input type="number" class="form-control"
+         [(ngModel)]="value"
+         [class.is-invalid]="required && !parentObject[propertyName]"
+         placeholder="{{placeholder}}"
+         (change)="onChanged()" />
+</div>
+<div [class.input-group]="title" *ngIf="!isFormGroup && parentObject">
+  <div class="input-group-addon" *ngIf="title">
+    <span>{{title}} </span>
+    <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </div>
+  <input type="number" class="form-control"
+         [(ngModel)]="value"
+         [class.is-invalid]="required && !parentObject[propertyName]"
+         placeholder="{{placeholder}}"
+         (change)="onChanged()" />
+</div>

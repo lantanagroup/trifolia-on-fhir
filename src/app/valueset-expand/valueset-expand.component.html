@@ -6,58 +6,34 @@
         <ng-template ngbTabContent>
             <div class="row" *ngIf="valueSet">
                 <div class="col-md-6">
-                    <app-fhir-string [parentObject]="criteria" propertyName="filter" title="Filter"></app-fhir-string>
+                    <app-fhir-string [parentObject]="this" propertyName="terminologyServer" placeholder="BUILT-IN" tooltipKey="external.terminology.server" cookieKey="terminology.server"></app-fhir-string>
 
-                    <app-fhir-string [parentObject]="criteria" propertyName="profile" title="Profile"></app-fhir-string>
+                    <app-fhir-string [parentObject]="criteria" propertyName="filter" title="Filter" cookieKey="expand.criteria.filter"></app-fhir-string>
 
-                    <app-fhir-date [parentObject]="criteria" propertyName="date" title="Date"></app-fhir-date>
+                    <app-fhir-string [parentObject]="criteria" propertyName="profile" title="Profile" cookieKey="expand.criteria.profile"></app-fhir-string>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="includeDesignations" title="Include Designations"></app-fhir-boolean>
+                    <app-fhir-date [parentObject]="criteria" propertyName="date" title="Date" cookieKey="expand.criteria.date"></app-fhir-date>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="includeDefinition" title="Include Definition"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="includeDesignations" title="Include Designations" cookieKey="expand.criteria.includeDesignations"></app-fhir-boolean>
 
-                    <div class="form-group">
-                        <label>Display Language</label>
-                        <div class="input-group">
-                            <div class="input-group-addon">
-                                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('displayLanguage')" (ngModelChange)="globals.toggleProperty(criteria, 'displayLanguage', false)"/>
-                            </div>
-                            <input type="text" class="form-control"
-                                   [disabled]="!criteria.hasOwnProperty('displayLanguage')"
-                                   [(ngModel)]="criteria.displayLanguage"/>
-                        </div>
-                    </div>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="includeDefinition" title="Include Definition" cookieKey="expand.criteria.includeDefinition"></app-fhir-boolean>
+
+                    <app-fhir-string [parentObject]="criteria" propertyName="displayLanguage" title="Display Language" cookieKey="expand.criteria.displayLanguage"></app-fhir-string>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Offset</label>
-                        <div class="input-group">
-                            <div class="input-group-addon">
-                                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('offset')" (ngModelChange)="globals.toggleProperty(criteria, 'offset', 0)"/>
-                            </div>
-                            <input type="number" class="form-control" [disabled]="!criteria.hasOwnProperty('offset')" [(ngModel)]="criteria.offset"/>
-                        </div>
-                    </div>
+                    <app-fhir-number [parentObject]="criteria" propertyName="offset" title="Offset" cookieKey="expand.criteria.offset"></app-fhir-number>
 
-                    <div class="form-group">
-                        <label>Count</label>
-                        <div class="input-group">
-                            <div class="input-group-addon">
-                                <input type="checkbox" [ngModel]="criteria.hasOwnProperty('count')" (ngModelChange)="globals.toggleProperty(criteria, 'count', 0)"/>
-                            </div>
-                            <input type="number" class="form-control" [disabled]="!criteria.hasOwnProperty('count')" [(ngModel)]="criteria.count"/>
-                        </div>
-                    </div>
+                    <app-fhir-number [parentObject]="criteria" propertyName="count" title="Count" cookieKey="expand.criteria.count"></app-fhir-number>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNested" title="Exclude Nested"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNested" title="Exclude Nested" cookieKey="expand.criteria.excludeNested"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNotForUI" title="Exlude Not For UI"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludeNotForUI" title="Exclude Not For UI" cookieKey="expand.criteria.excludeNotForUI"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludePostCoordinated" title="Exclude Post-coordinated"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="excludePostCoordinated" title="Exclude Post-coordinated" cookieKey="expand.criteria.excludePostCoordinated"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="activeOnly" title="Active Only"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="activeOnly" title="Active Only" cookieKey="expand.criteria.activeOnly"></app-fhir-boolean>
 
-                    <app-fhir-boolean [parentObject]="criteria" propertyName="limitedExpansion" title="Limited Expansion"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="criteria" propertyName="limitedExpansion" title="Limited Expansion" cookieKey="expand.criteria.limitedExpansion"></app-fhir-boolean>
                 </div>
             </div>
         </ng-template>
@@ -65,10 +41,12 @@
     <ngb-tab id="results" title="Results" [disabled]="!results">
         <ng-template ngbTabContent>
             <div *ngIf="results">
-                <div *ngIf="results.resourceType === 'OperationOutcome'">
+                <div *ngIf="isOperationOutcome">
                     <div *ngIf="results.text" [innerHTML]="results.text.div"></div>
                 </div>
-                <pre *ngIf="results.resourceType === 'ValueSet'">{{results | json}}</pre>
+                <div *ngIf="!hasError">
+                    <app-raw-resource [resource]="results"></app-raw-resource>
+                </div>
             </div>
         </ng-template>
     </ngb-tab>

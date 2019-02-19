@@ -5,10 +5,10 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <input type="date" class="form-control"
-           [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"
-           (ngModelChange)="parentObject[propertyName] = $event"
+           [ngModel]="value | date: 'yyyy-MM-dd'"
+           (ngModelChange)="value = $event"
            [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
-           [class.is-invalid]="required && !parentObject[propertyName]" />
+           [class.is-invalid]="required && !value" />
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="!required || title">
@@ -17,8 +17,8 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="date" class="form-control"
-           [ngModel]="parentObject[propertyName] | date: 'yyyy-MM-dd'"
-           (ngModelChange)="parentObject[propertyName] = $event"
+           [ngModel]="value | date: 'yyyy-MM-dd'"
+           (ngModelChange)="value = $event"
            [disabled]="!required && !parentObject.hasOwnProperty(propertyName)"
-           [class.is-invalid]="required && !parentObject[propertyName]" />
+           [class.is-invalid]="required && !value" />
 </div>

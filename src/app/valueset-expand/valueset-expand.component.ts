@@ -5,22 +5,7 @@ import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
-
-interface ValueSetExpandCriteria {
-    filter?: string;
-    profile?: string;
-    date?: string;
-    offset?: number;
-    count?: number;
-    includeDesignations?: boolean;
-    includeDefinition?: boolean;
-    activeOnly?: boolean;
-    excludeNested?: boolean;
-    excludeNotForUI?: boolean;
-    excludePostCoordinated?: boolean;
-    displayLanguage?: string;
-    limitedExpansion?: boolean;
-}
+import {ExpandOptions} from '../models/stu3/expandOptions';
 
 @Component({
     selector: 'app-valueset-expand',
@@ -30,9 +15,10 @@ interface ValueSetExpandCriteria {
 export class ValuesetExpandComponent implements OnInit {
     public valueSet: ValueSet;
     public results: ValueSet | OperationOutcome;
-    public criteria: ValueSetExpandCriteria = {};
+    public criteria: ExpandOptions = {};
     public message: string;
     public expanding = false;
+    public terminologyServer: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -41,12 +27,20 @@ export class ValuesetExpandComponent implements OnInit {
         public globals: Globals) {
     }
 
+    public get hasError(): boolean {
+        return !this.results || this.results.resourceType !== 'ValueSet';
+    }
+
+    public get isOperationOutcome(): boolean {
+        return this.results && this.results.resourceType === 'OperationOutcome';
+    }
+
     public expand(tabSet: NgbTabset) {
         this.expanding = true;
         this.message = 'Expanding... This may take a while.';
 
         const valueSetId = this.route.snapshot.paramMap.get('id');
-        this.valueSetService.expand(valueSetId)
+        this.valueSetService.expand(valueSetId, this.criteria, this.terminologyServer)
             .subscribe((results) => {
                 this.results = results;
                 setTimeout(() => {
@@ -81,7 +75,7 @@ export class ValuesetExpandComponent implements OnInit {
 
                 this.valueSet = <ValueSet> valueSet;
             }, (err) => {
-                this.message = 'An error occurred while loading the value set';
+                this.message = 'An error occurred while loading the value set: ' + this.fhirService.getErrorString(err);
             });
     }
 }

@@ -3,11 +3,11 @@ import {Globals} from '../../globals';
 import {CookieService} from 'angular2-cookie/core';
 
 @Component({
-    selector: 'app-fhir-string',
-    templateUrl: './string.component.html',
-    styleUrls: ['./string.component.css']
+    selector: 'app-fhir-number',
+    templateUrl: './number.component.html',
+    styleUrls: ['./number.component.css']
 })
-export class FhirStringComponent implements OnInit {
+export class NumberComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;
@@ -31,26 +31,26 @@ export class FhirStringComponent implements OnInit {
 
     }
 
-    public get value() {
+    public get value(): number {
         if (!this.parentObject[this.propertyName]) {
-            return '';
+            return;
         }
 
         return this.parentObject[this.propertyName];
     }
 
-    public set value(newValue: string) {
-        if (!newValue && this.parentObject[this.propertyName]) {
+    public set value(newValue: number) {
+        if ((newValue === undefined || newValue === null) && this.parentObject.hasOwnProperty(this.propertyName)) {
             delete this.parentObject[this.propertyName];
 
             if (this.cookieKey && this.cookieService.get(this.cookieKey)) {
                 this.cookieService.remove(this.cookieKey);
             }
-        } else if (newValue) {
+        } else if (newValue !== undefined && newValue !== null) {
             this.parentObject[this.propertyName] = newValue;
 
             if (this.cookieKey) {
-                this.cookieService.put(this.cookieKey, newValue);
+                this.cookieService.put(this.cookieKey, newValue.toString());
             }
         }
     }
@@ -61,7 +61,15 @@ export class FhirStringComponent implements OnInit {
 
     ngOnInit() {
         if (this.cookieKey) {
-            this.value = this.cookieService.get(this.cookieKey);
+            const valueString = this.cookieService.get(this.cookieKey);
+
+            if (valueString) {
+                if (valueString.indexOf('.')) {
+                    this.value = parseFloat(valueString);
+                } else {
+                    this.value = parseInt(valueString);
+                }
+            }
         }
     }
 }
