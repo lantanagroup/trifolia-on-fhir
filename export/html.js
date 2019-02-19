@@ -567,7 +567,7 @@ HtmlExporter.prototype._getStu3PageContent = function(implementationGuide, page)
 HtmlExporter.prototype._writeStu3Page = function(pagesPath, implementationGuide, page, level, tocEntries) {
     const pageContent = this._getStu3PageContent(implementationGuide, page);
 
-    if (page.kind !== 'toc' && pageContent) {
+    if (page.kind !== 'toc' && pageContent && pageContent.content) {
         const newPagePath = path.join(pagesPath, pageContent.fileName);
 
         const content = '---\n' +
@@ -594,7 +594,7 @@ HtmlExporter.prototype._writeR4Page = function(pagesPath, implementationGuide, p
         if (reference.startsWith('#')) {
             const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
 
-            if (contained && contained.resourceType === 'Binary') {
+            if (contained && contained.resourceType === 'Binary' && contained.data) {
                 fileName = page.title.replace(/ /g, '_');
 
                 if (fileName.indexOf('.') < 0) {
