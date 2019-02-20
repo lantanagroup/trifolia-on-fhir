@@ -21,7 +21,7 @@ export class ValueSetService {
         }
     }
 
-    public search(page = 1, name?: string, searchUrl?: string) {
+    public search(page = 1, name?: string, searchUrl?: string, id?: string) {
         let url = '/api/valueSet?page=' + page + '&';
 
         if (name) {
@@ -30,6 +30,10 @@ export class ValueSetService {
 
         if (searchUrl) {
             url += 'url=' + encodeURIComponent(searchUrl) + '&';
+        }
+
+        if (id) {
+            url += '_id=' + encodeURIComponent(id) + '&';
         }
 
         return this.http.get(url);

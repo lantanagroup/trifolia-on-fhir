@@ -2,7 +2,8 @@
 <app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group">
-    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+    <input type="text" class="form-control" [ngModel]="idText" (ngModelChange)="idTextChanged($event)" placeholder="Search ID" />
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete URL" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">

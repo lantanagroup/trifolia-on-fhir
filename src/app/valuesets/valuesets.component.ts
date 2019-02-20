@@ -16,6 +16,7 @@ import {ConfigService} from '../services/config.service';
 export class ValuesetsComponent implements OnInit {
     public results: Bundle;
     public nameText: string;
+    public idText: string;
     public page = 1;
     public urlText: string;
     public criteriaChangedEvent = new Subject();
@@ -44,6 +45,7 @@ export class ValuesetsComponent implements OnInit {
     public clearFilters() {
         this.nameText = null;
         this.urlText = null;
+        this.idText = null;
         this.page = 1;
         this.criteriaChanged();
     }
@@ -69,14 +71,20 @@ export class ValuesetsComponent implements OnInit {
         this.criteriaChangedEvent.next();
     }
 
-    public nameTextChanged(value: string) {
-        this.nameText = value;
+    public idTextChanged(value) {
+        this.idText = <string> value;
         this.page = 1;
         this.criteriaChanged();
     }
 
-    public urlTextChanged(value: string) {
-        this.urlText = value;
+    public nameTextChanged(value) {
+        this.nameText = <string> value;
+        this.page = 1;
+        this.criteriaChanged();
+    }
+
+    public urlTextChanged(value) {
+        this.urlText = <string> value;
         this.page = 1;
         this.criteriaChanged();
     }
@@ -94,7 +102,7 @@ export class ValuesetsComponent implements OnInit {
         this.results = null;
         this.message = 'Searching value sets...';
 
-        this.valueSetService.search(this.page, this.nameText, this.urlText)
+        this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText)
             .subscribe((results: Bundle) => {
                 this.results = results;
                 this.message = '';
