@@ -242,7 +242,7 @@ export class FhirService {
      * @param {string} id
      */
     public read(resourceType: string, id: string) {
-        let url = '/api/fhir/' + resourceType + '/' + id;
+        const url = '/api/fhir/' + resourceType + '/' + id;
         return this.http.get(url);
     }
 
@@ -252,7 +252,8 @@ export class FhirService {
      * @param {string} id
      */
     public history(resourceType: string, id: string) {
-        // TODO
+        const url = `/api/fhir/${resourceType}/${id}/_history`;
+        return this.http.get(url);
     }
 
     /**
@@ -262,7 +263,8 @@ export class FhirService {
      * @param {string} versionId
      */
     public vread(resourceType: string, id: string, versionId: string) {
-        // TODO
+        const url = `/api/fhir/${resourceType}/${id}/_history/${versionId}`;
+        return this.http.get(url);
     }
 
     /**
@@ -271,7 +273,8 @@ export class FhirService {
      * @param {string} id
      */
     public delete(resourceType: string, id: string) {
-        // TODO
+        const url = `/api/fhir/${resourceType}/${id}`;
+        return this.http.delete(url);
     }
 
     /**

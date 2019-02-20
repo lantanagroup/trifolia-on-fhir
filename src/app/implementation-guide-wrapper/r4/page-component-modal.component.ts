@@ -85,11 +85,11 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     public get pageContent() {
-        if (!this.pageBinary || !this.pageBinary.content) {
+        if (!this.pageBinary || !this.pageBinary.data) {
             return '';
         }
 
-        return atob(this.pageBinary.content);
+        return atob(this.pageBinary.data);
     }
 
     public set pageContent(value: string) {
@@ -97,7 +97,7 @@ export class PageComponentModalComponent implements OnInit {
             return;
         }
 
-        this.pageBinary.content = btoa(value);
+        this.pageBinary.data = btoa(value);
     }
 
     public importFile(file: File) {
@@ -113,7 +113,7 @@ export class PageComponentModalComponent implements OnInit {
             const newBinary = new Binary();
             newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
             newBinary.contentType = file.type;
-            newBinary.content = result.substring(5 + file.type.length + 8);
+            newBinary.data = result.substring(5 + file.type.length + 8);
             this.implementationGuide.contained.push(newBinary);
 
             if (!this.page.extension) {

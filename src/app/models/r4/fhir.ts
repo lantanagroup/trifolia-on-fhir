@@ -255,7 +255,7 @@ export class Binary extends Resource {
     public resourceType = 'Binary';
     public contentType: string;
     public securityContext?: ResourceReference;
-    public content?: string;
+    public data?: string;
     
     constructor(obj?: any) {
         super(obj);
@@ -266,8 +266,8 @@ export class Binary extends Resource {
             if (obj.hasOwnProperty('securityContext')) {
                 this.securityContext = new ResourceReference(obj.securityContext);
             }
-            if (obj.hasOwnProperty('content')) {
-                this.content = obj.content;
+            if (obj.hasOwnProperty('data')) {
+                this.data = obj.data;
             }
         }
     }

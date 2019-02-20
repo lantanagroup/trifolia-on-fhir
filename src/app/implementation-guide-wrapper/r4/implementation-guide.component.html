@@ -475,6 +475,12 @@
                 <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
             </ng-template>
         </ngb-tab>
+
+        <ngb-tab id="history" title="History" *ngIf="!isNew">
+            <ng-template ngbTabContent>
+                <app-resource-history [resource]="implementationGuide"></app-resource-history>
+            </ng-template>
+        </ngb-tab>
     </ngb-tabset>
 </div>
 
