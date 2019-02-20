@@ -79,41 +79,7 @@
                     <div class="col-md-6">
                         <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)" tooltipPath="StructureDefinition.keyword"></app-fhir-select-multi-coding>
 
-                        <div class="card context">
-                            <div class="card-header">
-                                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'context', [''])" />
-                                Context
-                                <app-tooltip-icon tooltipPath="StructureDefinition.context"></app-tooltip-icon>
-                            </div>
-                            <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
-                                <thead>
-                                <tr>
-                                    <th>Value</th>
-                                    <th>
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push('')">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: globals.trackByFn">
-                                    <td>
-                                        <input type="text" class="form-control" [(ngModel)]="structureDefinition.context[cii]" />
-                                    </td>
-                                    <td>
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
 
                         <div class="card context-invariant">
                             <div class="card-header">
@@ -124,8 +90,10 @@
                             <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('contextInvariant')">
                                 <thead>
                                 <tr>
-                                    <th>Value</th>
                                     <th>
+                                        Value <app-tooltip-icon tooltipKey="StructureDefinition.contextInvariant.value"></app-tooltip-icon>
+                                    </th>
+                                    <th class="actions-column-1">
                                         <div class="pull-right">
                                             <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push('')">
                                                 <i class="fa fa-plus"></i>

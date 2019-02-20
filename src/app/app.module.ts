@@ -124,6 +124,9 @@ import {ExportGithubPanelComponent} from './export-github-panel/export-github-pa
 import { NumberComponent } from './fhir-edit/number/number.component';
 import { AdminMessageModalComponent } from './admin-message-modal/admin-message-modal.component';
 import { ResourceHistoryComponent } from './resource-history/resource-history.component';
+import { ContextPanelWrapperComponent } from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
+import { ContextPanelR4Component } from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
+import { ContextPanelStu3Component } from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -232,7 +235,9 @@ export function getConfig(configService: ConfigService) {
         R4ImplementationGuideComponent,
         PublishedIgSelectModalComponent,
         MappingModalComponent,
-        SettingsModalComponent
+        SettingsModalComponent,
+        ContextPanelStu3Component,
+        ContextPanelR4Component
     ],
     declarations: [
         AppComponent,
@@ -331,7 +336,10 @@ export function getConfig(configService: ConfigService) {
         ExportGithubPanelComponent,
         NumberComponent,
         AdminMessageModalComponent,
-        ResourceHistoryComponent
+        ResourceHistoryComponent,
+        ContextPanelWrapperComponent,
+        ContextPanelR4Component,
+        ContextPanelStu3Component
     ],
     imports: [
         RouterModule.forRoot(

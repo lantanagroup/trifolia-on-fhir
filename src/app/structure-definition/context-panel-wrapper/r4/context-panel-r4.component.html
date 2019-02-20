@@ -1,0 +1,42 @@
+<div class="card context" *ngIf="structureDefinition">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'context', [{ type: '', expression: '' }])"/>
+        Context <app-tooltip-icon tooltipPath="StructureDefinition.context"></app-tooltip-icon>
+    </div>
+    <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
+        <thead>
+        <tr>
+            <th>
+                Type <app-tooltip-icon tooltipKey="StructureDefinition.context.type"></app-tooltip-icon>
+            </th>
+            <th>
+                Expression <app-tooltip-icon tooltipKey="StructureDefinition.context.expression"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push({ type: '', expression: '' })">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: globals.trackByFn">
+            <td>
+                <app-fhir-string [parentObject]="ci" propertyName="type" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                <app-fhir-string [parentObject]="ci" propertyName="expression" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.context.splice(cii, 1)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

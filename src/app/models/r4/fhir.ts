@@ -430,24 +430,6 @@ export class StructureDefinitionMappingComponent extends BackboneElement {
 
 }
 
-export class StructureDefinitionContextComponent extends BackboneElement {
-    public type: string;
-    public expression: string;
-    
-    constructor(obj?: any) {
-        super(obj);
-        if (obj) {
-            if (obj.hasOwnProperty('type')) {
-                this.type = obj.type;
-            }
-            if (obj.hasOwnProperty('expression')) {
-                this.expression = obj.expression;
-            }
-        }
-    }
-
-}
-
 export class ElementDefinitionDiscriminatorComponent extends Element {
     public type: string;
     public path: string;
@@ -824,6 +806,24 @@ export class StructureDefinitionDifferentialComponent extends BackboneElement {
             if (obj.hasOwnProperty('element')) {
                 this.element = [];
                 for (const o of obj.element || []) { this.element.push(new ElementDefinition(o)); }
+            }
+        }
+    }
+
+}
+
+export class StructureDefinitionContextComponent extends BackboneElement {
+    public type: string;
+    public expression: string;
+
+    constructor(obj?: any) {
+        super(obj);
+        if (obj) {
+            if (obj.hasOwnProperty('type')) {
+                this.type = obj.type;
+            }
+            if (obj.hasOwnProperty('expression')) {
+                this.expression = obj.expression;
             }
         }
     }
