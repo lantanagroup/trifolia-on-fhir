@@ -16,7 +16,7 @@ interface ManageRequest extends ExtendedRequest {
 
 export class ManageController {
     private io: Server;
-    private ioConnections: ConnectionModel[];
+    readonly ioConnections: ConnectionModel[];
 
     constructor(io: Server, ioConnections: ConnectionModel[]) {
         this.io = io;

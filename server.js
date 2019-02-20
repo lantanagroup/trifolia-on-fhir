@@ -358,7 +358,22 @@ app.get('*', (req, res) => {
     } else if (req.originalUrl.startsWith('/api/')) {
         res.status(404).send('The specified API method could not be found');
     } else {
-        res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
+        let content = fs.readFileSync(path.join(__dirname, 'wwwroot/index.html')).toString();
+
+        if (serverConfig.googleAnalyticsCode) {
+            const googleScripts = `<script async src="https://www.googletagmanager.com/gtag/js?id=${serverConfig.googleAnalyticsCode}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${serverConfig.googleAnalyticsCode}');
+</script>
+`;
+            content = content.replace('  <!-- Google Analytics Tracking Scripts -->', googleScripts);
+        }
+
+        res.contentType('text/html').send(content);
     }
 });
 
