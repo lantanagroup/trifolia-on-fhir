@@ -5,6 +5,7 @@ import * as rp from 'request-promise';
 import * as _ from 'underscore';
 import {ExtendedRequest, Fhir, FhirConfig} from './models';
 import {BaseController} from './controller';
+import {RequestHandler} from 'express';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
 const authConfig = config.get('auth');
@@ -26,14 +27,14 @@ export class ConfigController extends BaseController {
     public static initRoutes() {
         const router = express.Router();
 
-        router.get('/', (req: ExtendedRequest, res) => {
+        router.get('/', <RequestHandler> (req: ExtendedRequest, res) => {
             const controller = new ConfigController(req.fhirServerBase);
             controller.getConfig()
                 .then((results) => res.send(results))
                 .catch((err) => ConfigController.handleError(err, null, res));
         });
 
-        router.get('/fhir', (req: ExtendedRequest, res) => {
+        router.get('/fhir', <RequestHandler> (req: ExtendedRequest, res) => {
             const controller = new ConfigController(req.fhirServerBase);
             controller.getFhirCapabilities()
                 .then((results) => res.send(results))
@@ -46,7 +47,7 @@ export class ConfigController extends BaseController {
     public getConfig() {
         return new Promise((resolve, reject) => {
             const retConfig = {
-                fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name })),
+                fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name, short: server.short })),
                 auth: {
                     clientId: authConfig.clientId,
                     scope: authConfig.scope,

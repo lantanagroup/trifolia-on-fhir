@@ -6,7 +6,6 @@ import {Title} from '@angular/platform-browser';
 import {CapabilityStatement as STU3CapabilityStatement} from '../models/stu3/fhir';
 import {CapabilityStatement as R4CapabilityStatement} from '../models/r4/fhir';
 import * as semver from 'semver';
-import {FhirVersion} from '../models/fhir-version';
 import {Versions} from 'fhir/fhir';
 
 @Injectable()
@@ -56,7 +55,6 @@ export class ConfigService {
     }
 
     public changeFhirServer(fhirServer: string) {
-        const serverChanged = this.fhirServer !== fhirServer;
         this.fhirServer = fhirServer;
 
         localStorage.setItem('fhirServer', this.fhirServer);

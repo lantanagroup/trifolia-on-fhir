@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Event, NavigationEnd, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {AuthService} from './services/auth.service';
 import {PersonListModel} from './models/person-list-model';
 import {ConfigService} from './services/config.service';
@@ -15,6 +15,7 @@ import {SettingsModalComponent} from './settings-modal/settings-modal.component'
 import {GithubService} from './services/github.service';
 import {CookieService} from 'angular2-cookie/core';
 import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
+import * as _ from 'underscore';
 
 @Component({
     selector: 'app-root',
@@ -46,7 +47,17 @@ export class AppComponent implements OnInit {
         });
     }
 
-    public getDisplayName(): string {
+    public get fhirServerDisplay(): string {
+        if (this.configService.fhirServer) {
+            const found = _.find(this.configService.config.fhirServers, (fhirServer) => fhirServer.id === this.configService.fhirServer);
+
+            if (found) {
+                return found.short || found.name;
+            }
+        }
+    }
+
+    public get displayName(): string {
         if (this.person) {
             return this.person.getDisplayName();
         }

@@ -37,13 +37,18 @@
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
+                        <div class="badge badge-info">{{fhirServerDisplay}}</div>
+                    </a>
+                </li>
                 <li class="nav-item" *ngIf="!authService.isAuthenticated()">
                     <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
                 </li>
                 <li class="nav-item" *ngIf="authService.isAuthenticated()">
                     <a class="nav-link" routerLink="/users/me">
                         <img class="profile-picture" *ngIf="userProfile && userProfile.picture" src="{{userProfile.picture}}" />
-                        {{getDisplayName()}}
+                        {{displayName}}
                     </a>
                 </li>
                 <li class="nav-item nav-icons">
