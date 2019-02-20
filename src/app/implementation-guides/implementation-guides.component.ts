@@ -51,6 +51,10 @@ export class ImplementationGuidesComponent implements OnInit {
     }
 
     public remove(implementationGuide: ImplementationGuide) {
+        if (!confirm(`Are you sure you want to delete implementation guide "${implementationGuide.name || 'not named'}" with id ${implementationGuide.id}?`)) {
+            return;
+        }
+
         this.igService.removeImplementationGuide(implementationGuide.id)
             .subscribe(() => {
                 const foundEntry = _.find(this.results.entry, (entry) => entry.resource === implementationGuide);
