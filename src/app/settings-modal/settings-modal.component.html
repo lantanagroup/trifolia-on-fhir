@@ -5,6 +5,11 @@
     </button>
 </div>
 <div class="modal-body">
+    <div class="form-group" *ngIf="authCode">
+        <label>Authorization Code</label>
+        <input type="text" class="form-control" readonly="readonly" [ngModel]="authCode" />
+    </div>
+
     <div class="form-group">
         <label>FHIR Server</label>
         <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
