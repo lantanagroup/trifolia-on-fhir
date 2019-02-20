@@ -16,6 +16,7 @@ export class Extension {
     public extension?: Extension[];
     public url: string;
     public valueBoolean?: boolean;
+    public valueString?: string;
 
     constructor(obj?: any) {
         if (obj) {
@@ -31,6 +32,9 @@ export class Extension {
             }
             if (obj.hasOwnProperty('valueBoolean')) {
                 this.valueBoolean = obj.valueBoolean;
+            }
+            if (obj.hasOwnProperty('valueString')) {
+                this.valueString = obj.valueString;
             }
 
             // TODO: Add other properties as needed

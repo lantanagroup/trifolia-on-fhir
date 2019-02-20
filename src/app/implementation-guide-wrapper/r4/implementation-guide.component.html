@@ -492,7 +492,13 @@
                     URI <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
                 </th>
                 <th>
+                    Location <app-tooltip-icon tooltipKey="ig.dependsOn.location"></app-tooltip-icon>
+                </th>
+                <th>
                     Package ID <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
+                </th>
+                <th>
+                    Name <app-tooltip-icon tooltipKey="ig.dependsOn.name"></app-tooltip-icon>
                 </th>
                 <th>
                     Version <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
@@ -519,7 +525,13 @@
                     </div>
                 </td>
                 <td>
+                    <input type="text" class="form-control" [ngModel]="getDependsOnLocation(dependsOn)" (ngModelChange)="setDependsOnLocation(dependsOn, $event)" />
+                </td>
+                <td>
                     <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
+                </td>
+                <td>
+                    <input type="text" class="form-control" [ngModel]="getDependsOnName(dependsOn)" (ngModelChange)="setDependsOnName(dependsOn, $event)" />
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>

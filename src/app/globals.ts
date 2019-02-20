@@ -10,6 +10,11 @@ export class Globals {
     public readonly extensionGithubPath = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path';
     public readonly extensionGithubBranch = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch';
 
+    public readonly extensionUrls = {
+        'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
+        'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location'
+    };
+
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
         const keys = Object.keys(obj);
 
@@ -136,7 +141,9 @@ export class Globals {
         'ed.type.targetProfile': 'Profile (StructureDefinition) to apply to reference target (or IG). This field is a URI, and should be the StructureDefinition.url of the target profile. This is used to indicate that this type (typically a Reference) should be validated against the selected target profile',
         'ed.type.profile': 'Profile (StructureDefinition) to apply (or IG). This field is a URL, and should be the StructureDefinition.url of the profile selected',
         'implementationguide.page.auto-generate': 'When "Yes", Trifolia-on-FHIR will automatically populate this page with links to the other pages in the implementation guide.',
-        'external.terminology.server': 'When left unspecified, terminology services built into the selected FHIR server will be used. When specified, indicates an external terminology server to use for the expansion. Assumes the server is unsecured. The value of this field should be the base url of the FHIR terminology server (ex: "http://tx.fhir.org/r4").'
+        'external.terminology.server': 'When left unspecified, terminology services built into the selected FHIR server will be used. When specified, indicates an external terminology server to use for the expansion. Assumes the server is unsecured. The value of this field should be the base url of the FHIR terminology server (ex: "http://tx.fhir.org/r4").',
+        'ig.dependsOn.location': 'This is used to populate the IG publisher control file\'s dependencyList.location property',
+        'ig.dependsOn.name': 'This is used to populate the IG publisher control file\'s dependencyList.name property'
     };
 
     public hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]) {

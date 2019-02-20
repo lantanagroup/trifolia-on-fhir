@@ -1,10 +1,10 @@
 {
   "resourceType": "StructureDefinition",
   "id": "extension-ig-page-content",
-  "url": "https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-page-content",
-  "name": "Implementation Guide Page Content Extension",
+  "url": "https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location",
+  "name": "Implementation Guide Depends-On Location Extension",
   "status": "draft",
-  "description": "This extension allows an implementation guide's page to specify a resource reference to a Binary resource that contains the content of the page.",
+  "description": "This extension allows an implementation guide's dependency to indicate the location of the dependency for use with the ig publisher's control file.",
   "kind": "resource",
   "abstract": false,
   "type": "Extension",
@@ -19,7 +19,7 @@
       {
         "id": "Extension.url",
         "path": "Extension.url",
-        "fixedUri": "https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content"
+        "fixedUri": "https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location"
       },
       {
         "id": "Extension.value[x]",
@@ -27,7 +27,7 @@
         "type": [
           {
             "code": "Reference",
-            "profile": "http://hl7.org/fhir/StructureDefinition/Binary"
+            "profile": "http://hl7.org/fhir/StructureDefinition/string"
           }
         ]
       }

@@ -100,7 +100,7 @@ HtmlExporter.prototype._getIgPublisher = function(useLatest, executeIgPublisher)
     const defaultPath = path.join(__dirname, '../ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);
 
-    if (useLatest === 'true') {
+    if (useLatest === true) {
         log.debug('Request to get latest version of FHIR IG publisher. Retrieving from: ' + fhirConfig.latestPublisher);
 
         this._sendSocketMessage(this._packageId, 'progress', 'Downloading latest FHIR IG publisher');
@@ -518,9 +518,12 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
     }
 
     control.dependencyList = _.map(implementationGuide.dependsOn, (dependsOn) => {
+        const locationExtension = _.find(dependsOn.extension, (extension) => extension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
+        const nameExtension = _.find(dependsOn.extension, (extension) => extension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
+
         return {
-            location: dependsOn.uri,
-            name: dependsOn.packageId,
+            location: locationExtension ? locationExtension.valueString : '',
+            name: nameExtension ? nameExtension.valueString : '',
             version: dependsOn.version
         };
     });
@@ -764,22 +767,6 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
 
                         if (resourceType == 'ImplementationGuide' && id === this._implementationGuideId) {
                             implementationGuideResource = resource;
-                        }
-
-                        // TODO: HACK: HAPI R4 doesn't respect Binary.data... Need to convert Binary.content to Binary.data so that the IG Publisher runs.
-                        if (resourceType === 'ImplementationGuide' && fhirServerConfig.version !== 'stu3') {
-
-                            _.chain(resource.contained)
-                                .filter((contained) => contained.resourceType === 'Binary')
-                                .each((contained) => {
-                                    contained.data = contained.content;
-                                    delete contained.content;
-                                });
-
-                            // Convert a string fhirVersion to an array
-                            if (typeof resource.fhirVersion === 'string') {
-                                resource.fhirVersion = [resource.fhirVersion];
-                            }
                         }
 
                         // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.

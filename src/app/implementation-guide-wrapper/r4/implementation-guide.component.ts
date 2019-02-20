@@ -10,7 +10,7 @@ import {
     ImplementationGuideDefinitionComponent,
     ImplementationGuidePackageComponent,
     ImplementationGuideResourceComponent,
-    ImplementationGuideDependsOnComponent
+    ImplementationGuideDependsOnComponent, Extension
 } from '../../models/r4/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../services/implementation-guide.service';
@@ -27,6 +27,7 @@ import {
     FhirReferenceModalComponent,
     ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
+import {extendConfigurationFile} from 'tslint/lib/configuration';
 
 class PageDefinition {
     public page: ImplementationGuidePageComponent;
@@ -418,6 +419,64 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         this.initPages();
     }
 
+    public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
+        const extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-name']);
+
+        if (extension) {
+            return extension.valueString;
+        }
+    }
+
+    public setDependsOnName(dependsOn: ImplementationGuideDependsOnComponent, name: any) {
+        if (!dependsOn.extension) {
+            dependsOn.extension = [];
+        }
+
+        let extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-name']);
+
+        if (!extension && name) {
+            extension = <Extension> {
+                url: this.globals.extensionUrls['ig-depends-on-name'],
+                valueString: <string> name
+            };
+            dependsOn.extension.push(extension);
+        } else if (extension && !name) {
+            const index = dependsOn.extension.indexOf(extension);
+            dependsOn.extension.splice(index, 1);
+        } else if (extension && name) {
+            extension.valueString = <string> name;
+        }
+    }
+
+    public getDependsOnLocation(dependsOn: ImplementationGuideDependsOnComponent) {
+        const extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-location']);
+
+        if (extension) {
+            return extension.valueString;
+        }
+    }
+
+    public setDependsOnLocation(dependsOn: ImplementationGuideDependsOnComponent, location: any) {
+        if (!dependsOn.extension) {
+            dependsOn.extension = [];
+        }
+
+        let extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-location']);
+
+        if (!extension && location) {
+            extension = <Extension> {
+                url: this.globals.extensionUrls['ig-depends-on-location'],
+                valueString: <string> location
+            };
+            dependsOn.extension.push(extension);
+        } else if (extension && !location) {
+            const index = dependsOn.extension.indexOf(extension);
+            dependsOn.extension.splice(index, 1);
+        } else if (extension && location) {
+            extension.valueString = <string> location;
+        }
+    }
+
     public save() {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
@@ -460,13 +519,6 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                 this.initPage(page.page[i], level + 1, page);
             }
         }
-    }
-
-    public getDefaultPackageId() {
-        if (this.implementationGuide.definition && this.implementationGuide.definition.package && this.implementationGuide.definition.package.length > 0) {
-            return this.implementationGuide.definition.package[0].id;
-        }
-        return '';
     }
 
     private initPages() {
