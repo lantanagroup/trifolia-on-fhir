@@ -76,15 +76,15 @@ export class AppComponent implements OnInit {
     }
 
     public editSettings() {
-        const modalRef = this.modalService.open(SettingsModalComponent, { size: 'lg' });
+        this.modalService.open(SettingsModalComponent, { size: 'lg' });
     }
 
     public supportButtonClicked() {
-        const confirmedCookie = this.cookieService.get('atlassian_account_confirmed');
+        const confirmedCookie = this.cookieService.get(this.globals.cookieKeys.atlassianAccountConfirmed);
 
-        if (confirmedCookie || confirm('A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.')) {
-            this.cookieService.put('atlassian_account_confirmed', 'true');
-            window.open('https://trifolia.atlassian.net/servicedesk/customer/portal/3', 'tof-support');
+        if (confirmedCookie || confirm(this.globals.tooltips['support.button.clicked'])) {
+            this.cookieService.put(this.globals.cookieKeys.atlassianAccountConfirmed, 'true');
+            window.open(this.configService.config.supportUrl, 'tof-support');
         }
     }
 

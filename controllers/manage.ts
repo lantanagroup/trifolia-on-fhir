@@ -1,13 +1,18 @@
 import * as express from 'express';
 import * as AuthHelper from '../authHelper';
-import {ConnectionModel, ExtendedRequest, IOConnection} from './models';
+import {ConnectionModel, ExtendedRequest, IOConnection, ServerConfig} from './models';
 import * as _ from 'underscore';
 import {Server} from 'socket.io';
 import {RequestHandler} from 'express';
 import * as config from 'config';
-import {Observable} from 'rxjs';
 
-const serverConfig = config.get('server');
+const serverConfig = <ServerConfig> config.get('server');
+
+interface ManageRequest extends ExtendedRequest {
+    headers: {
+        'admin-code': string
+    };
+}
 
 export class ManageController {
     private io: Server;
@@ -21,8 +26,8 @@ export class ManageController {
     public static initRoutes() {
         const router = express.Router();
 
-        router.post('/user/active/message', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ExtendedRequest, res) => {
-            if (req.headers['admin-code'] !== serverConfig['admin-code']) {
+        router.post('/user/active/message', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ManageRequest, res) => {
+            if (req.headers['admin-code'] !== serverConfig.adminCode) {
                 return res.status(401).send('You have not authenticated request as an admin');
             }
 
@@ -32,8 +37,8 @@ export class ManageController {
                 .catch((err) => res.status(500).send(err));
         });
 
-        router.get('/user/active', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ExtendedRequest, res) => {
-            if (req.headers['admin-code'] !== serverConfig['admin-code']) {
+        router.get('/user/active', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ManageRequest, res) => {
+            if (req.headers['admin-code'] !== serverConfig.adminCode) {
                 return res.status(401).send('You have not authenticated request as an admin');
             }
 

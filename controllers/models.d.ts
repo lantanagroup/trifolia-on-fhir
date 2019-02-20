@@ -43,6 +43,12 @@ export interface FhirConfig {
     }];
 }
 
+export interface ServerConfig {
+    port: number;
+    adminCode: string;
+    supportUrl: string;
+}
+
 export interface RestRejection {
     statusCode: number;
     message: string;

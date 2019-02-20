@@ -55,7 +55,8 @@ export class Globals {
         recentValueSets: 'recentValueSets',
         recentCodeSystems: 'recentCodeSystems',
         recentQuestionnaires: 'recentQuestionnaires',
-        exportLastImplementationGuideId: 'exportLastImplementationGuideId'
+        exportLastImplementationGuideId: 'exportLastImplementationGuideId',
+        atlassianAccountConfirmed: 'atlassian_account_confirmed'
     };
 
     public readonly FHIRUrls = {
@@ -143,7 +144,8 @@ export class Globals {
         'implementationguide.page.auto-generate': 'When "Yes", Trifolia-on-FHIR will automatically populate this page with links to the other pages in the implementation guide.',
         'external.terminology.server': 'When left unspecified, terminology services built into the selected FHIR server will be used. When specified, indicates an external terminology server to use for the expansion. Assumes the server is unsecured. The value of this field should be the base url of the FHIR terminology server (ex: "http://tx.fhir.org/r4").',
         'ig.dependsOn.location': 'This is used to populate the IG publisher control file\'s dependencyList.location property',
-        'ig.dependsOn.name': 'This is used to populate the IG publisher control file\'s dependencyList.name property'
+        'ig.dependsOn.name': 'This is used to populate the IG publisher control file\'s dependencyList.name property',
+        'support.button.clicked': 'A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.'
     };
 
     public hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]) {

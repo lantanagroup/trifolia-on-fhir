@@ -3,10 +3,11 @@ import * as express from 'express';
 import * as FhirHelper from '../fhirHelper';
 import * as rp from 'request-promise';
 import * as _ from 'underscore';
-import {ExtendedRequest, Fhir, FhirConfig} from './models';
+import {ExtendedRequest, Fhir, FhirConfig, ServerConfig} from './models';
 import {BaseController} from './controller';
 import {RequestHandler} from 'express';
 
+const serverConfig = <ServerConfig> config.get('server');
 const fhirConfig = <FhirConfig> config.get('fhir');
 const authConfig = config.get('auth');
 const githubConfig = config.get('github');
@@ -47,6 +48,7 @@ export class ConfigController extends BaseController {
     public getConfig() {
         return new Promise((resolve, reject) => {
             const retConfig = {
+                supportUrl: serverConfig.supportUrl,
                 fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name, short: server.short })),
                 auth: {
                     clientId: authConfig.clientId,

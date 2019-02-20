@@ -1,7 +1,8 @@
 {
   "server": {
     "port": 49366,
-    "admin-code": "t3st"
+    "adminCode": "t3st",
+    "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3"
   },
   "auth": {
     "clientId": "",
