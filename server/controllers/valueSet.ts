@@ -4,7 +4,7 @@ import * as FhirHelper from '../fhirHelper';
 import * as config from 'config';
 import {FhirLogic} from './fhirLogic';
 import {ExtendedRequest} from './models';
-import {ExpandOptions} from '../src/app/models/stu3/expandOptions';
+import {ExpandOptions} from '../../src/app/models/stu3/expandOptions';
 
 const fhirConfig = config.get('fhir');
 

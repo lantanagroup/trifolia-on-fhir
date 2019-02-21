@@ -97,7 +97,7 @@ HtmlExporter.prototype._getIgPublisher = function(useLatest, executeIgPublisher)
 
     const deferred = Q.defer();
     const fileName = 'org.hl7.fhir.igpublisher.jar';
-    const defaultPath = path.join(__dirname, '../ig-publisher');
+    const defaultPath = path.join(__dirname, '../../ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);
 
     if (useLatest === true) {
@@ -139,7 +139,7 @@ HtmlExporter.prototype._getIgPublisher = function(useLatest, executeIgPublisher)
 };
 
 HtmlExporter.prototype._copyExtension = function(destExtensionsDir, extensionFileName, isXml, fhir) {
-    const sourceExtensionsDir = path.join(__dirname, '../src/assets/stu3/extensions');
+    const sourceExtensionsDir = path.join(__dirname, '../../src/assets/stu3/extensions');
     const sourceExtensionFileName = path.join(sourceExtensionsDir, extensionFileName);
     let destExtensionFileName = path.join(destExtensionsDir, extensionFileName);
 
@@ -796,7 +796,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                 })
                 .then(() => {
                     // Copy the contents of the ig-publisher-template folder to the export temporary folder
-                    const templatePath = path.join(__dirname, '..', 'ig-publisher-template');
+                    const templatePath = path.join(__dirname, '../../', 'ig-publisher-template');
                     fs.copySync(templatePath, rootPath);
 
                     // Write the ig.json file to the export temporary folder
@@ -829,7 +829,7 @@ HtmlExporter.prototype.export = function(format, executeIgPublisher, useTerminol
                         return;
                     }
 
-                    const deployDir = path.resolve(__dirname, '../wwwroot/igs', implementationGuideResource.id);
+                    const deployDir = path.resolve(__dirname, '../../wwwroot/igs', implementationGuideResource.id);
                     fs.ensureDirSync(deployDir);
 
                     const igPublisherVersion = useLatest ? 'latest' : 'default';

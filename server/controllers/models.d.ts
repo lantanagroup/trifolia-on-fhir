@@ -1,17 +1,22 @@
 import {Request} from 'express';
 import {Server} from 'socket.io';
+import {Fhir} from 'fhir/fhir';
 
 export interface UserInfo {
     sub: string;
 }
 
 export interface ExtendedRequest extends Request {
+    fhir: Fhir;
     fhirServerBase: string;
     fhirServerVersion: string;
     user?: UserInfo;
-    body?: any;
+    body: any;
     io: Server;
     ioConnections: any[];
+    headers: {
+        fhirserver: string
+    };
 }
 
 export interface IOConnection {
@@ -133,7 +138,7 @@ export namespace Fhir {
     export namespace R4 {
         export interface ImplementationGuideResource {
             reference: Fhir.Reference;
-            fhirVersion?: string[]
+            fhirVersion?: string[];
             name?: string;
             description?: string;
             exampleBoolean?: boolean;

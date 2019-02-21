@@ -78,7 +78,7 @@
     "@types/socket.io": "^2.1.2",
     "@types/underscore": "^1.8.9",
     "codelyzer": "~3.1.1",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-filter": "^5.1.0",
     "gulp-zip": "^4.2.0",
@@ -96,6 +96,7 @@
     "nock": "^9.6.1",
     "protractor": "^5.4.1",
     "puppeteer": "^1.11.0",
+    "through2": "^3.0.0",
     "ts-node": "~3.2.0",
     "tslint": "~5.3.2",
     "typescript": "2.9.2"

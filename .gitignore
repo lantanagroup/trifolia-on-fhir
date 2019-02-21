@@ -48,3 +48,4 @@ ig-publisher/latest/
 dist.zip
 *.log
 config/local.json
+manifest.txt

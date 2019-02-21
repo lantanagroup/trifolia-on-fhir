@@ -10,6 +10,7 @@ const serverConfig = <ServerConfig> config.get('server');
 
 interface ManageRequest extends ExtendedRequest {
     headers: {
+        fhirserver: string;
         'admin-code': string
     };
 }

@@ -4,19 +4,19 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const config = require('config');
-const fhirController = require('./controllers/fhir');
-const exportController = require('./controllers/export');
-const importController = require('./controllers/import');
-const {StructureDefinitionController} = require('./controllers/structureDefinition');
-const {AuditEventController} = require('./controllers/auditEvent');
-const {ConfigController} = require('./controllers/config');
-const {FhirLogic} = require('./controllers/fhirLogic');
-const {ImplementationGuideLogic} = require('./controllers/implementationGuide');
-const {ManageController} = require('./controllers/manage');
-const {ValueSetController} = require('./controllers/valueSet');
-const {PractitionerController} = require('./controllers/practitioner');
+const fhirController = require('./server/controllers/fhir');
+const importController = require('./server/controllers/import');
+const {ExportController} = require('./server/controllers/export');
+const {StructureDefinitionController} = require('./server/controllers/structureDefinition');
+const {AuditEventController} = require('./server/controllers/auditEvent');
+const {ConfigController} = require('./server/controllers/config');
+const {FhirLogic} = require('./server/controllers/fhirLogic');
+const {ImplementationGuideLogic} = require('./server/controllers/implementationGuide');
+const {ManageController} = require('./server/controllers/manage');
+const {ValueSetController} = require('./server/controllers/valueSet');
+const {PractitionerController} = require('./server/controllers/practitioner');
 const socketIO = require('socket.io');
-const FhirHelper = require('./fhirHelper');
+const FhirHelper = require('./server/fhirHelper');
 const _ = require('underscore');
 const log4js = require('log4js');
 const rp = require('request-promise');
@@ -187,7 +187,7 @@ io.on('connection', (socket) => {
     socket.on('exporting', (packageId) => {
         log.debug(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
 
-        const exporters = _.filter(exportController.htmlExporters, (exporter) => exporter._packageId === packageId);
+        const exporters = _.filter(ExportController.htmlExports, (exporter) => exporter._packageId === packageId);
 
         log.debug(`Found ${exporters.length} exporters to update socket id for`);
 
@@ -246,18 +246,18 @@ app.use('/help', express.static(path.join(__dirname, 'wwwroot/help')));
 app.use('/api/implementationGuide', ImplementationGuideLogic.initRoutes());
 app.use('/api/manage', ManageController.initRoutes());
 app.use('/api/config', ConfigController.initRoutes());
-app.use('/api/codeSystem', FhirLogic.initRoutes('CodeSystem'));
 app.use('/api/valueSet', ValueSetController.initRoutes());
+app.use('/api/practitioner', PractitionerController.initRoutes());
+app.use('/api/structureDefinition', StructureDefinitionController.initRoutes());
+app.use('/api/export', ExportController.initRoutes());
+app.use('/api/codeSystem', FhirLogic.initRoutes('CodeSystem'));
 app.use('/api/capabilityStatement', FhirLogic.initRoutes('CapabilityStatement'));
 app.use('/api/operationDefinition', FhirLogic.initRoutes('OperationDefinition'));
 app.use('/api/questionnaire', FhirLogic.initRoutes('Questionnaire'));
 app.use('/api/binary', FhirLogic.initRoutes('Binary'));
 app.use('/api/auditEvent', AuditEventController.initRoutes('AuditEvent'));
-app.use('/api/practitioner', PractitionerController.initRoutes());
-app.use('/api/structureDefinition', StructureDefinitionController.initRoutes());
 
 // TODO: Clean up remaining routes
-app.use('/api/export', exportController);
 app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 

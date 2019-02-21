@@ -1,5 +1,5 @@
 const assert = require('assert');
-const FhirHelper = require('../fhirHelper');
+const FhirHelper = require('../server/fhirHelper');
 
 describe('FhirHelper', () => {
     describe('joinUrl', () => {
