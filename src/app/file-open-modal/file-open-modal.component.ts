@@ -24,7 +24,7 @@ export class FileOpenModalComponent implements OnInit {
         const reader = new FileReader();
 
         reader.onload = () => {
-            const content = reader.result;
+            const content = <string> reader.result;
             let resource;
             let isXml = false;
 

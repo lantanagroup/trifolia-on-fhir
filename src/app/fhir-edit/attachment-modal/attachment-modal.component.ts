@@ -23,7 +23,8 @@ export class FhirAttachmentModalComponent implements OnInit {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
             reader.onload = () => {
-                this.attachment.data = reader.result.substring(reader.result.indexOf('base64,') + 7);
+                const resultString = <string> reader.result;
+                this.attachment.data = resultString.substring(resultString.indexOf('base64,') + 7);
                 this.attachment.contentType = file.type;
                 this.attachment.size = file.size;
                 this.attachment.title = file.name;

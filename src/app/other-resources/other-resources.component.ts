@@ -58,7 +58,7 @@ export class OtherResourcesComponent implements OnInit {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
             reader.onload = () => {
-                const content = reader.result;
+                const content = <string> reader.result;
                 let resource: DomainResource;
 
                 switch (type) {
