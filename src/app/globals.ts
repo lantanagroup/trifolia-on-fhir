@@ -7,12 +7,14 @@ import {FhirVersion} from './models/fhir-version';
 export class Globals {
     public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
     public readonly extensionIgPageAutoGenerateToc = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc';
-    public readonly extensionGithubPath = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path';
-    public readonly extensionGithubBranch = 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch';
 
     public readonly extensionUrls = {
         'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
-        'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location'
+        'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
+        'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
+        'stu3-github-branch': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
+        'r4-github-path': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-path',
+        'r4-github-branch': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-branch'
     };
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {

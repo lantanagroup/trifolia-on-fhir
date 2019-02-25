@@ -315,6 +315,8 @@ export class GithubService {
                             }, (err) => this.handleError(err, observer));
                     }, (err) => this.handleError(err, observer));
             });
+        } else {
+            throw new Error('Unexpected github import selected: ' + id);
         }
     }
 

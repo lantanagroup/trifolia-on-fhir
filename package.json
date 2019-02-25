@@ -61,6 +61,7 @@
     "swagger-ui-express": "^4.0.2",
     "tmp": "0.0.33",
     "underscore": "^1.8.3",
+    "uuid": "^3.3.2",
     "vkbeautify": "^0.99.3",
     "xlsx": "^0.14.0",
     "yamljs": "^0.3.0",

@@ -3,7 +3,7 @@ import {ImportService, VSACImportCriteria} from '../services/import.service';
 import {
     Bundle,
     DomainResource,
-    EntryComponent,
+    EntryComponent, IssueComponent,
     OperationOutcome,
     RequestComponent
 } from '../models/stu3/fhir';
@@ -16,6 +16,7 @@ import {CookieService} from 'angular2-cookie/core';
 import {ContentModel, GithubService} from '../services/github.service';
 import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
 import {forkJoin} from 'rxjs';
+import {v4 as uuidv4} from 'uuid';
 
 enum ContentTypes {
     Json = 0,
@@ -30,6 +31,12 @@ class ImportFileModel {
     public resource?: DomainResource;
     public vsBundle?: Bundle;
     public message: string;
+}
+
+class GitHubImportContent {
+    content: ContentModel;
+    resource?: DomainResource;
+    message?: string;
 }
 
 @Component({
@@ -303,6 +310,10 @@ export class ImportComponent implements OnInit {
         // Filter the paths so that we don't include duplicate paths, or paths for directories where
         // child files are already selected.
         const filteredPaths = _.filter(this.importGithubPanel.selectedPaths, (selectedPath: string) => {
+            if (!selectedPath.startsWith('dir|') && !selectedPath.startsWith('file|')) {
+                return false;
+            }
+
             if (selectedPath.startsWith('dir|')) {
                 const find1 = 'dir|' + selectedPath.substring(4) + '/';
                 const find2 = 'file|' + selectedPath.substring(4) + '/';
@@ -319,51 +330,89 @@ export class ImportComponent implements OnInit {
         });
 
         forkJoin(observables).subscribe((results) => {
-            let allFiles = [];
+            const allFiles: GitHubImportContent[] = _.chain(results)
+                .flatten(true)
+                .map((file: ContentModel) => {
+                    const importContent: GitHubImportContent = {
+                        content: file
+                    };
 
-            _.each(results, (files) => {
-                allFiles = allFiles.concat(files);
-            });
+                    if (file.name.endsWith('.xml') || file.name.endsWith('.json')) {
+                        let decodedContent = atob(file.content);
 
-            const notSupportedFiles = _.chain(allFiles)
-                .filter((file: ContentModel) => !file.name.endsWith('.xml') && !file.name.endsWith('.json'))
-                .map((file: ContentModel) => file.name)
+                        if (decodedContent.startsWith('ï»¿')) {
+                            decodedContent = decodedContent.substring(3);
+                        }
+
+                        if (decodedContent.startsWith('{')) {
+                            try {
+                                importContent.resource = <DomainResource>JSON.parse(decodedContent);
+                            } catch (ex) {
+                                importContent.message = `${file.path}: An error occurred while deserializing JSON: ${ex.message}`;
+                            }
+                        } else if (decodedContent.startsWith('<')) {
+                            try {
+                                importContent.resource = <DomainResource> this.fhirService.deserialize(decodedContent);
+                            } catch (ex) {
+                                importContent.message = `${file.path}: An error occurred while converting from XML to JSON: ${ex.message}`;
+                            }
+                        } else {
+                            importContent.message = `${file.path}: This file does not appear to be a valid JSON or XML file.`;
+                        }
+
+                        if (importContent.resource) {
+                            if (importContent.resource.resourceType === 'Bundle') {
+                                const bundle = <Bundle>importContent.resource;
+
+                                if (bundle.type === 'transaction') {
+                                    importContent.message = `${file.path}: Cannot import Bundle resources of type "transaction"`;
+                                    delete importContent.resource;
+                                }
+                            }
+                        }
+                    } else {
+                        importContent.message = `${file.path} is not a JSON or XML file and cannot be imported.`;
+                    }
+
+                    return importContent;
+                })
                 .value();
 
+            const notSupportedFiles = _.filter(allFiles, (file: GitHubImportContent) => !file.resource || !!file.message);
+
             if (notSupportedFiles.length > 0) {
-                this.message = `One or more files are not XML or JSON files. Please un-select them before continuing: ${notSupportedFiles.join(', ')}`;
+                const issues: IssueComponent[] = _.map(notSupportedFiles, (file: GitHubImportContent) => {
+                    return <IssueComponent> {
+                        severity: 'fatal',
+                        code: 'github-import-error',
+                        diagnostics: file.message || 'The resource could not be parsed.'
+                    };
+                });
+                this.outcome = <OperationOutcome> {
+                    resourceType: 'OperationOutcome',
+                    issue: issues
+                };
+                this.message = 'Errors occurred while importing';
+                setTimeout(() => {
+                    tabSet.select('results');
+                });
                 return;
             }
 
             try {
                 const bundle = new Bundle();
                 bundle.type = 'transaction';
-                bundle.entry = _.map(allFiles, (file: ContentModel) => {
-                    let decodedContent = atob(file.content);
+                bundle.entry = _.map(allFiles, (file: GitHubImportContent) => {
                     const entry = new EntryComponent();
+                    entry.fullUrl = 'urn:uuid:' + uuidv4();
+                    entry.resource = file.resource;
                     entry.request = new RequestComponent();
-
-                    if (decodedContent.startsWith('ï»¿')) {
-                        decodedContent = decodedContent.substring(3);
-                    }
-
-                    if (decodedContent.startsWith('{')) {
-                        entry.resource = JSON.parse(decodedContent);
-                    } else if (decodedContent.startsWith('<')) {
-                        try {
-                            entry.resource = this.fhirService.deserialize(decodedContent);
-                        } catch (ex) {
-                            throw new Error(`An error occurred while converting ${file.path} from XML to JSON: ${ex.message}`);
-                        }
-                    } else {
-                        throw new Error(`${file.path} does not appear to be a valid JSON or XML file.`);
-                    }
 
                     this.fhirService.setResourceGithubDetails(entry.resource, {
                         owner: this.importGithubPanel.ownerLogin,
                         repository: this.importGithubPanel.repositoryName,
                         branch: this.importGithubPanel.branchName,
-                        path: file.path
+                        path: file.content.path
                     });
 
                     entry.request.method = entry.resource.id ? 'PUT' : 'POST';

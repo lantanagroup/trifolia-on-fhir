@@ -80,6 +80,14 @@ export class ConfigService {
         }
     }
 
+    public identifyRelease(): Versions {
+        if (this.fhirConformanceVersion) {
+            return ConfigService.identifyRelease(this.fhirConformanceVersion);
+        }
+
+        return Versions.STU3;
+    }
+
     public get fhirConformanceVersion(): string {
         if (this.fhirConformance) {
             return this.fhirConformance.fhirVersion;
