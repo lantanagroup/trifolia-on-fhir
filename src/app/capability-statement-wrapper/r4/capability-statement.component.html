@@ -1,6 +1,6 @@
 <h1>Capability Statement (R4)</h1>
 
-<div class="alert alert-danger" *ngIf="igNotFound">Capability Statement with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+<div class="alert alert-danger" *ngIf="csNotFound">Capability Statement with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <ngb-tabset *ngIf="capabilityStatement" [destroyOnHide]="false">
     <ngb-tab title="General">
