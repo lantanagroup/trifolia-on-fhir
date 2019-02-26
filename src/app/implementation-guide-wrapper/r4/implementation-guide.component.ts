@@ -23,11 +23,7 @@ import {FhirService} from '../../services/fhir.service';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
-import {
-    FhirReferenceModalComponent,
-    ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {extendConfigurationFile} from 'tslint/lib/configuration';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 
 class PageDefinition {
     public page: ImplementationGuidePageComponent;
@@ -39,10 +35,9 @@ class PageDefinition {
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css']
 })
-export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public implementationGuide = new ImplementationGuide();
+export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
+    public implementationGuide = this.isNew ? new ImplementationGuide() : undefined;
     public message: string;
-    public currentResource: any;
     public validation: any;
     public pages: PageDefinition[];
     public resourceTypeCodes: Coding[] = [];
@@ -53,19 +48,20 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         example: true
     };
     public filterResourceQuery: string;
+    public igNotFound = false;
     private navSubscription: any;
 
     constructor(
         private modal: NgbModal,
-        private route: ActivatedRoute,
         private router: Router,
         private implementationGuideService: ImplementationGuideService,
         private authService: AuthService,
         private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
+        private fhirService: FhirService,
         public globals: Globals,
-        private fhirService: FhirService) {
+        public route: ActivatedRoute) {
     }
 
     public get resources(): ImplementationGuideResourceComponent[] {
@@ -239,6 +235,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                         this.implementationGuide.id,
                         this.implementationGuide.name);
                 }, (err) => {
+                    this.igNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading implementation guide';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });

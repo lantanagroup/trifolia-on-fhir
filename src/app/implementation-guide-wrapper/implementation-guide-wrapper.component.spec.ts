@@ -1,5 +1,4 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper.component';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {BrowserModule} from '@angular/platform-browser';

@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ImplementationGuideComponent} from './implementation-guide.component';
+import {STU3ImplementationGuideComponent} from './implementation-guide.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
@@ -28,13 +28,13 @@ import {RawResourceComponent} from '../../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../../pipes/fhir-xml-pipe';
 
 describe('STU3ImplementationGuideComponent', () => {
-    let component: ImplementationGuideComponent;
-    let fixture: ComponentFixture<ImplementationGuideComponent>;
+    let component: STU3ImplementationGuideComponent;
+    let fixture: ComponentFixture<STU3ImplementationGuideComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ImplementationGuideComponent,
+                STU3ImplementationGuideComponent,
                 FhirStringComponent,
                 FhirMarkdownComponent,
                 MarkdownComponent,
@@ -69,7 +69,7 @@ describe('STU3ImplementationGuideComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ImplementationGuideComponent);
+        fixture = TestBed.createComponent(STU3ImplementationGuideComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

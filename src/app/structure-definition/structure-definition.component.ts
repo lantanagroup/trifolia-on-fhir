@@ -34,18 +34,21 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public selectedElement: any;
     public validation: any;
     public message: string;
+    public sdNotFound = false;
     private navSubscription: any;
 
-    constructor(private route: ActivatedRoute,
-                private router: Router,
-                private configService: ConfigService,
-                private strucDefService: StructureDefinitionService,
-                private modalService: NgbModal,
-                public globals: Globals,
-                private recentItemService: RecentItemService,
-                private fhirService: FhirService,
-                private fileService: FileService,
-                @Inject(DOCUMENT) private document: Document) {
+    constructor(
+        public globals: Globals,
+        public route: ActivatedRoute,
+        private router: Router,
+        private configService: ConfigService,
+        private strucDefService: StructureDefinitionService,
+        private modalService: NgbModal,
+        private recentItemService: RecentItemService,
+        private fhirService: FhirService,
+        private fileService: FileService,
+        @Inject(DOCUMENT) private document: Document) {
+
         this.document.body.classList.add('structure-definition');
     }
 
@@ -251,8 +254,9 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     this.structureDefinition.id,
                     this.structureDefinition.name);
                 this.message = 'Done loading structure definition';
-            }, error => {
-                this.message = error && error.message ? error.message : 'Error loading structure definitions';
+            }, (err) => {
+                this.sdNotFound = err.status === 404;
+                this.message = err && err.message ? err.message : 'Error loading structure definitions';
                 this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, strucDefId);
             });
     }

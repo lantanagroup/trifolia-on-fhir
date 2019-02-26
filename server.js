@@ -4,8 +4,8 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const config = require('config');
-const fhirController = require('./server/controllers/fhir');
 const importController = require('./server/controllers/import');
+const {FhirAPIController} = require('./server/controllers/fhirAPI');
 const {ExportController} = require('./server/controllers/export');
 const {StructureDefinitionController} = require('./server/controllers/structureDefinition');
 const {AuditEventController} = require('./server/controllers/auditEvent');
@@ -256,9 +256,9 @@ app.use('/api/operationDefinition', FhirLogic.initRoutes('OperationDefinition'))
 app.use('/api/questionnaire', FhirLogic.initRoutes('Questionnaire'));
 app.use('/api/binary', FhirLogic.initRoutes('Binary'));
 app.use('/api/auditEvent', AuditEventController.initRoutes('AuditEvent'));
+app.use('/api/fhir', FhirAPIController.initRoutes());
 
 // TODO: Clean up remaining routes
-app.use('/api/fhir', fhirController);
 app.use('/api/import', importController);
 
 // Host extensions at /stu3/StructureDefinition/XXX and /r4/StructureDefinition/XXX

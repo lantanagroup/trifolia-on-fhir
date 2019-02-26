@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ImplementationGuideComponent} from './implementation-guide.component';
+import {R4ImplementationGuideComponent} from './implementation-guide.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
@@ -27,13 +27,13 @@ import {PractitionerService} from '../../services/practitioner.service';
 import {CookieService} from 'angular2-cookie/core';
 
 describe('R4ImplementationGuideComponent', () => {
-    let component: ImplementationGuideComponent;
-    let fixture: ComponentFixture<ImplementationGuideComponent>;
+    let component: R4ImplementationGuideComponent;
+    let fixture: ComponentFixture<R4ImplementationGuideComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ImplementationGuideComponent,
+                R4ImplementationGuideComponent,
                 FhirStringComponent,
                 FhirMarkdownComponent,
                 MarkdownComponent,
@@ -68,7 +68,7 @@ describe('R4ImplementationGuideComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ImplementationGuideComponent);
+        fixture = TestBed.createComponent(R4ImplementationGuideComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

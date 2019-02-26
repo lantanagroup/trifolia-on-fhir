@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {CapabilityStatementComponent} from './capability-statement.component';
+import {R4CapabilityStatementComponent} from './capability-statement.component';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FhirMarkdownComponent} from '../../fhir-edit/markdown/markdown.component';
@@ -27,13 +27,13 @@ import {RecentItemService} from '../../services/recent-item.service';
 import {CookieService} from 'angular2-cookie/core';
 
 describe('R4CapabilityStatementComponent', () => {
-    let component: CapabilityStatementComponent;
-    let fixture: ComponentFixture<CapabilityStatementComponent>;
+    let component: R4CapabilityStatementComponent;
+    let fixture: ComponentFixture<R4CapabilityStatementComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                CapabilityStatementComponent,
+                R4CapabilityStatementComponent,
                 FhirStringComponent,
                 TooltipIconComponent,
                 FhirMarkdownComponent,
@@ -68,7 +68,7 @@ describe('R4CapabilityStatementComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(CapabilityStatementComponent);
+        fixture = TestBed.createComponent(R4CapabilityStatementComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

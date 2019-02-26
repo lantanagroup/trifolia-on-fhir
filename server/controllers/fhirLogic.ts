@@ -59,16 +59,6 @@ export class FhirLogic extends BaseController {
                 .catch((err) => FhirLogic.handleError(err, null, res));
         });
 
-        // Note: Express.JS treats paths as a regular express. The dollar sign $ in the route must be treated specially because of this.
-        router.post('/:id/([\$])change-id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
-            FhirLogic.log.trace(`Changing id of resource ${resourceType}/${req.params.id} to ${req.query.newId}`);
-
-            const fhirLogic = new this(resourceType, req.fhirServerBase);
-            fhirLogic.changeId(req.params.id, req.query.newId)
-                .then((results) => res.send(results))
-                .catch((err) => FhirLogic.handleError(err, null, res));
-        });
-
         return router;
     }
 
@@ -218,61 +208,5 @@ export class FhirLogic extends BaseController {
             json: true
         };
         return rp(options);
-    }
-
-    public changeId(currentId: string, newId: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            if (!newId) {
-                return reject(<RestRejection> { statusCode: 400, message: 'You must specify a "newId" to change the id of the resource' });
-            }
-
-            const currentOptions = {
-                url: FhirHelper.buildUrl(this.baseUrl, this.resourceType, currentId),
-                method: 'GET',
-                json: true
-            };
-
-            FhirLogic.log.trace(`Request to change id for resource ${this.resourceType}/${currentId} to ${newId}`);
-
-            // Get the current state of the resource
-            rp(currentOptions)
-                .then((resource) => {
-                    if (!resource || !resource.id) {
-                        throw new Error(`No resource found for ${this.resourceType} with id ${currentId}`);
-                    }
-
-                    // Change the id of the resource
-                    resource.id = newId;
-
-                    const createOptions = {
-                        url: FhirHelper.buildUrl(this.baseUrl, this.resourceType, newId),
-                        method: 'PUT',
-                        json: true,
-                        body: resource
-                    };
-
-                    FhirLogic.log.trace('Sending PUT request to FHIR server with the new resource ID');
-
-                    // Create the new resource with the new id
-                    return rp(createOptions);
-                })
-                .then(() => {
-                    const deleteOptions = {
-                        url: FhirHelper.buildUrl(this.baseUrl, this.resourceType, currentId),
-                        method: 'DELETE',
-                        json: true
-                    };
-
-                    FhirLogic.log.trace('Sending DELETE request to FHIR server for original resource');
-
-                    // Delete the original resource with the original id
-                    return rp(deleteOptions);
-                })
-                .then(() => {
-                    FhirLogic.log.trace(`Successfully changed the id of ${this.resourceType}/${currentId} to ${this.resourceType}/${newId}`);
-                    resolve(`Successfully changed the id of ${this.resourceType}/${currentId} to ${this.resourceType}/${newId}`);
-                })
-                .catch((err) => reject(err));
-        });
     }
 }

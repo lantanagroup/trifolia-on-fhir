@@ -1,7 +1,7 @@
 import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@angular/core';
 import {ConfigService} from '../services/config.service';
-import {CapabilityStatementComponent as STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
-import {CapabilityStatementComponent as R4CapabilityStatementComponent} from './r4/capability-statement.component';
+import {STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
+import {R4CapabilityStatementComponent} from './r4/capability-statement.component';
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../services/file.service';
 import {Versions} from 'fhir/fhir';

@@ -1,5 +1,7 @@
 <h1>Implementation Guide (R4)</h1>
 
+<div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+
 <div class="ig-main" *ngIf="implementationGuide">
     <h2>{{implementationGuide.name || 'no-name'}}</h2>
 

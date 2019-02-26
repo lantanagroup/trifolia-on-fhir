@@ -45,17 +45,14 @@ class ImplementationGuideResource {
     templateUrl: './implementation-guide.component.html',
     styleUrls: ['./implementation-guide.component.css']
 })
-export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public implementationGuide = new ImplementationGuide();
+export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
+    public implementationGuide = this.isNew ? new ImplementationGuide() : undefined;
     public message: string;
     public currentResource: any;
     public validation: ValidatorResponse;
     public pages: PageDefinition[];
     public resourceTypeCodes: Coding[] = [];
-    private readonly dependencyExtensionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency';
-    private readonly dependencyExtensionNameUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name';
-    private readonly dependencyExtensionVersionUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version';
-    private readonly dependencyExtensionLocationUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location';
+    public igNotFound = false;
     private navSubscription: any;
     private resources: ImplementationGuideResource[] = [];
 
@@ -87,7 +84,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public get dependencies(): Extension[] {
-        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.dependencyExtensionUrl);
+        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency']);
     }
 
     public removeDependency(dependency: Extension) {
@@ -181,7 +178,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
         }
 
         const newDependency = new Extension();
-        newDependency.url = this.dependencyExtensionUrl;
+        newDependency.url = this.globals.extensionUrls['extension-ig-dependency'];
 
         this.implementationGuide.extension.push(newDependency);
 
@@ -189,7 +186,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public getDependencyLocation(dependency: Extension): string {
-        const locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionLocationUrl);
+        const locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-location']);
 
         if (locationExtension) {
             return locationExtension.valueUri;
@@ -197,11 +194,11 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public setDependencyLocation(dependency: Extension, name: string) {
-        let locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionLocationUrl);
+        let locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-location']);
 
         if (!locationExtension) {
             locationExtension = new Extension();
-            locationExtension.url = this.dependencyExtensionLocationUrl;
+            locationExtension.url = this.globals.extensionUrls['extension-ig-dependency-location'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -214,7 +211,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public getDependencyName(dependency: Extension): string {
-        const nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionNameUrl);
+        const nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-name']);
 
         if (nameExtension) {
             return nameExtension.valueString;
@@ -222,11 +219,11 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public setDependencyName(dependency: Extension, name: string) {
-        let nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionNameUrl);
+        let nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-name']);
 
         if (!nameExtension) {
             nameExtension = new Extension();
-            nameExtension.url = this.dependencyExtensionNameUrl;
+            nameExtension.url = this.globals.extensionUrls['extension-ig-dependency-name'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -239,7 +236,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public getDependencyVersion(dependency: Extension): string {
-        const versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionVersionUrl);
+        const versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-version']);
 
         if (versionExtension) {
             return versionExtension.valueString;
@@ -247,11 +244,11 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public setDependencyVersion(dependency: Extension, version: string) {
-        let versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.dependencyExtensionVersionUrl);
+        let versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-version']);
 
         if (!versionExtension) {
             versionExtension = new Extension();
-            versionExtension.url = this.dependencyExtensionVersionUrl;
+            versionExtension.url = this.globals.extensionUrls['extension-ig-dependency-version'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -309,6 +306,7 @@ export class ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck 
                         this.implementationGuide.id,
                         this.implementationGuide.name);
                 }, (err) => {
+                    this.igNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading implementation guide';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });

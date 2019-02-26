@@ -7,17 +7,18 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
+    "extendedDiagnostics": true,
+    "target": "es2018",
     "typeRoots": [
       "src/typings.d.ts",
       "node_modules/@types",
       "node_modules/fhir"
     ],
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
-    "module": "es2015",
+    "module": "es6",
     "paths": {
       "socket.io-client": ["../node_modules/socket.io-client/dist/socket.io.slim.js"]
     }

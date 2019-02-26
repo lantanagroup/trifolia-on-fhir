@@ -16,15 +16,16 @@ import {ConfigService} from '../services/config.service';
     styleUrls: ['./operation-definition.component.css']
 })
 export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public operationDefinition: OperationDefinition = new OperationDefinition();
+    public operationDefinition: OperationDefinition = this.isNew ? new OperationDefinition() : undefined;
     public message: string;
     public validation: any;
+    public odNotFound = false;
     private navSubscription: any;
 
     constructor(
         public globals: Globals,
+        public route: ActivatedRoute,
         private modal: NgbModal,
-        private route: ActivatedRoute,
         private router: Router,
         private configService: ConfigService,
         private opDefService: OperationDefinitionService,
@@ -105,6 +106,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                         this.operationDefinition.id,
                         this.operationDefinition.name);
                 }, (err) => {
+                    this.odNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading operation definition';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });

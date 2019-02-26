@@ -26,7 +26,10 @@ export class ChangeResourceIdModalComponent implements OnInit {
         this.fhirService.changeResourceId(this.resourceType, this.originalId, this.newId)
             .subscribe(() => {
                 const cookieKey = this.recentItemService.getCookieKey(this.resourceType);
-                this.recentItemService.changeId(cookieKey, this.originalId, this.newId);
+                if (cookieKey) {
+                    this.recentItemService.changeId(cookieKey, this.originalId, this.newId);
+                }
+
                 this.activeModal.close(this.newId);
             }, (err) => {
                 this.message = this.globals.getErrorMessage(err);

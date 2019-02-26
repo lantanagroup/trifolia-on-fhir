@@ -17,22 +17,23 @@ import {FileService} from '../../services/file.service';
     templateUrl: './capability-statement.component.html',
     styleUrls: ['./capability-statement.component.css']
 })
-export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public capabilityStatement = new CapabilityStatement();
+export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
+    @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
     public message: string;
     public validation: any;
     public messageEventCodes: Coding[] = [];
     public messageTransportCodes: Coding[] = [];
+    public csNotFound = false;
     private navSubscription: any;
 
     constructor(
         public globals: Globals,
         public fhirService: FhirService,
         public fileService: FileService,
+        public route: ActivatedRoute,
         private modalService: NgbModal,
         private csService: CapabilityStatementService,
         private configService: ConfigService,
-        private route: ActivatedRoute,
         private router: Router,
         private recentItemService: RecentItemService) {
 
@@ -156,6 +157,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
                         this.capabilityStatement.id,
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
+                    this.csNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading capability statement';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });

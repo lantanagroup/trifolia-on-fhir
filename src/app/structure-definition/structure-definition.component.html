@@ -1,4 +1,7 @@
 <h1>Structure Definition</h1>
+
+<div class="alert alert-danger" *ngIf="sdNotFound">Structure Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+
 <div class="sd-main" *ngIf="structureDefinition">
     <h2>{{structureDefinition.name || 'No name'}}</h2>
 

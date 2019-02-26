@@ -48,16 +48,17 @@ export class ItemModel {
     styleUrls: ['./questionnaire.component.css']
 })
 export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public questionnaire = new Questionnaire();
+    @Input() public questionnaire = this.isNew ? new Questionnaire() : undefined;
     public message: string;
     public validation: any;
-    private navSubscription: any;
     public flattenedItems: ItemModel[];
+    public qNotFound = false;
+    private navSubscription: any;
 
     constructor(
         public globals: Globals,
+        public route: ActivatedRoute,
         private questionnaireService: QuestionnaireService,
-        private route: ActivatedRoute,
         private router: Router,
         private configService: ConfigService,
         private modalService: NgbModal,
@@ -134,6 +135,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                         questionnaire.id,
                         this.questionnaire.name || this.questionnaire.title);
                 }, (err) => {
+                    this.qNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading questionnaire';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentQuestionnaires, questionnaireId);
                 });

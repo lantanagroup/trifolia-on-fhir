@@ -1,6 +1,8 @@
 <h1>Code System</h1>
 
-<ngb-tabset [destroyOnHide]="false">
+<div class="alert alert-danger" *ngIf="csNotFound">Code System with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+
+<ngb-tabset *ngIf="codeSystem" [destroyOnHide]="false">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">

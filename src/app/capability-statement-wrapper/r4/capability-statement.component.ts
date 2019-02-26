@@ -17,20 +17,21 @@ import {ConfigService} from '../../services/config.service';
     templateUrl: './capability-statement.component.html',
     styleUrls: ['./capability-statement.component.css']
 })
-export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public capabilityStatement = new CapabilityStatement();
+export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
+    @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
     public message: string;
     public validation: any;
     public messageEventCodes: Coding[] = [];
     public messageTransportCodes: Coding[] = [];
+    public csNotFound = false;
     private navSubscription: any;
 
     constructor(
         public globals: Globals,
+        public route: ActivatedRoute,
         private configService: ConfigService,
         private modalService: NgbModal,
         private csService: CapabilityStatementService,
-        private route: ActivatedRoute,
         private router: Router,
         private fileService: FileService,
         private recentItemService: RecentItemService,
@@ -147,6 +148,7 @@ export class CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck 
                         this.capabilityStatement.id,
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
+                    this.csNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading capability statement';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });

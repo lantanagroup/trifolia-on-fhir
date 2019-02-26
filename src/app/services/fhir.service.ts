@@ -232,8 +232,7 @@ export class FhirService {
     }
 
     public changeResourceId(resourceType: string, originalId: string, newId: string): Observable<string> {
-        const apiController = resourceType[0].toLowerCase() + resourceType.substring(1);
-        const url = `/api/${apiController}/${originalId}/$change-id?&newId=${newId}`;
+        const url = `/api/fhir/${resourceType}/${encodeURIComponent((originalId))}/$change-id?&newId=${encodeURIComponent(newId)}`;
         return this.http.post(url, null, { responseType: 'text' });
     }
 

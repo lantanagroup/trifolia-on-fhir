@@ -16,15 +16,16 @@ import {ConfigService} from '../services/config.service';
     styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public valueSet = new ValueSet();
+    public valueSet = this.isNew ? new ValueSet() : undefined;
     public message: string;
     public validation: any;
+    public vsNotFound = false;
     private navSubscription: any;
 
     constructor(
         public globals: Globals,
+        public route: ActivatedRoute,
         private valueSetService: ValueSetService,
-        private route: ActivatedRoute,
         private router: Router,
         private modalService: NgbModal,
         private configService: ConfigService,
@@ -118,6 +119,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                         this.valueSet.id,
                         this.valueSet.name || this.valueSet.title);
                 }, (err) => {
+                    this.vsNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading value set';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentValueSets, valueSetId);
                 });

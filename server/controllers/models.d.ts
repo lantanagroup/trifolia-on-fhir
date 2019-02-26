@@ -17,6 +17,8 @@ export interface ExtendedRequest extends Request {
     headers: {
         fhirserver: string
     };
+    url: string;
+    method: string;
 }
 
 export interface IOConnection {

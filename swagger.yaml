@@ -141,6 +141,7 @@ paths:
       security:
         - auth0: []
       parameters:
+        - $ref: '#/parameters/fhirserver'
         - name: packageId
           in: path
           required: true
@@ -206,6 +207,29 @@ paths:
         - FHIR Proxy
       security:
         - auth0: []
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+  /fhir/{resourceType}/{id}/$change-id:
+    post:
+      summary: 'A custom operation to change the id of a resource on the FHIR server'
+      tags:
+        - Custom FHIR Operations
+      security:
+        - auth0: []
+      parameters:
+        - $ref: '#/parameters/fhirserver'
+        - name: resourceType
+          description: 'The type of the FHIR resource'
+          in: path
+          schema:
+            type: string
+            example: DiagnosticReport
+        - name: id
+          description: 'The current ID of the resource that is going to be changed'
+          in: path
+        - name: newId
+          description: 'The new ID of the resource'
+          in: query
 
 #
 # AUDIT EVENT
@@ -218,6 +242,8 @@ paths:
         - Audit
       security:
         - auth0: []
+      parameters:
+        - $ref: '#/parameters/fhirserver'
       responses:
         '200':
           description: "Success"
@@ -232,6 +258,8 @@ paths:
         - Audit
       security:
         - auth0: []
+      parameters:
+        - $ref: '#/parameters/fhirserver'
       responses:
         '200':
           description: "Success"
@@ -245,6 +273,7 @@ paths:
       security:
         - auth0: []
       parameters:
+        - $ref: '#/parameters/fhirserver'
         - name: id
           in: path
           schema:
@@ -278,6 +307,8 @@ paths:
             $ref: '#/definitions/Binary'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      parameters:
+        - $ref: '#/parameters/fhirserver'
     post:
       summary: "Creates a new Binary resource on the FHIR server"
       tags:
@@ -285,6 +316,7 @@ paths:
       security:
         - auth0: []
       parameters:
+        - $ref: '#/parameters/fhirserver'
         - in: body
           required: true
           schema:
@@ -304,6 +336,7 @@ paths:
       security:
         - auth0: []
       parameters:
+        - $ref: '#/parameters/fhirserver'
         - in: path
           name: id
           required: true
@@ -323,6 +356,7 @@ paths:
       security:
         - auth0: []
       parameters:
+        - $ref: '#/parameters/fhirserver'
         - in: path
           name: id
           required: true

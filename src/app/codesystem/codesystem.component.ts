@@ -17,7 +17,7 @@ import * as _ from 'underscore';
     styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
-    @Input() public codeSystem = new CodeSystem();
+    public codeSystem = this.isNew ? new CodeSystem() : undefined;
     public filteredConcepts: ConceptDefinitionComponent[] = [];
     public pagedConcepts: ConceptDefinitionComponent[] = [];
     public message: string;
@@ -27,13 +27,14 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     public searchDefinition: string;
     public perPage = 10;
     public page = 1;
+    public csNotFound = false;
     private navSubscription: any;
 
     constructor(
         public globals: Globals,
+        public route: ActivatedRoute,
         private modalService: NgbModal,
         private codeSystemService: CodeSystemService,
-        private route: ActivatedRoute,
         private router: Router,
         private configService: ConfigService,
         private recentItemService: RecentItemService,
@@ -140,7 +141,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
-                this.message = 'An error occured while saving the code system';
+                this.message = 'An error occured while saving the code system: ' + this.fhirService.getErrorString(err);
             });
     }
 
@@ -176,6 +177,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                         this.codeSystem.id,
                         this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
+                    this.csNotFound = err.status === 404;
                     this.message = err && err.message ? err.message : 'Error loading code system';
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });

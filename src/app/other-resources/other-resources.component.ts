@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FhirService} from '../services/fhir.service';
-import {Coding, DomainResource, OperationOutcome, Resource} from '../models/stu3/fhir';
+import {Bundle, Coding, DomainResource, OperationOutcome, Resource} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {saveAs} from 'file-saver';
+import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-other-resources',
@@ -16,22 +18,53 @@ export class OtherResourcesComponent implements OnInit {
     public searchUrl: string;
     public message: string;
     public openedResources: DomainResource[] = [];
-    public results: any;
+    public results: Bundle;
 
-    constructor(private fhirService: FhirService) {
+    @ViewChild('tabSet')
+    public tabSet: NgbTabset;
+
+    constructor(
+        private fhirService: FhirService,
+        private modalService: NgbModal) {
     }
 
-    public search(tabSet) {
+    public search() {
         this.message = 'Searching...';
 
         this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl)
-            .subscribe((results) => {
+            .subscribe((results: Bundle) => {
                 this.results = results;
                 this.message = 'Done searching...';
-                tabSet.select('results');
+                this.tabSet.select('results');
             }, (err) => {
-                this.message = 'Error while searching for other resources';
+                this.message = 'Error while searching for other resources: ' + this.fhirService.getErrorString(err);
             });
+    }
+
+    public remove(resource: DomainResource) {
+        this.fhirService.delete(resource.resourceType, resource.id)
+            .subscribe(() => {
+                const index = this.openedResources.indexOf(resource);
+                this.closeResource(index);
+            }, (err) => {
+                this.message = 'Error while removing the resource: ' + this.fhirService.getErrorString(err);
+            });
+    }
+
+    public changeId(resource: DomainResource) {
+        const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+        modalRef.componentInstance.resourceType = resource.resourceType;
+        modalRef.componentInstance.originalId = resource.id;
+        modalRef.result.then((newId) => {
+            // Update the search results to reflect the new id
+            const foundEntry = _.find(this.results.entry, (entry) => entry.resource.id === resource.id);
+            if (foundEntry) {
+                foundEntry.resource.id = newId;
+            }
+
+            // Update the resource that's opened in a separate tab to reflect the new id
+            resource.id = newId;
+        });
     }
 
     public downloadFile(type: 'xml'|'json', openedResourcesIndex: number) {
@@ -100,10 +133,13 @@ export class OtherResourcesComponent implements OnInit {
         }
     }
 
-    public closeResource(index, event, tabSet) {
-        event.preventDefault();
-        event.stopPropagation();
-        tabSet.select('results');
+    public closeResource(index, event?) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        this.tabSet.select('results');
         this.openedResources.splice(index, 1);
     }
 
@@ -139,7 +175,7 @@ export class OtherResourcesComponent implements OnInit {
         }
     }
 
-    openResource(resource, tabSet) {
+    openResource(resource) {
         this.message = 'Opening resource';
 
         this.fhirService.read(resource.resourceType, resource.id)
@@ -155,10 +191,10 @@ export class OtherResourcesComponent implements OnInit {
 
                 setTimeout(() => {
                     this.message = 'Resource opened.';
-                    tabSet.select('resource-' + (this.openedResources.length - 1));
+                    this.tabSet.select('resource-' + (this.openedResources.length - 1));
                 }, 100);
             }, (err) => {
-                this.message = 'Error opening resource';
+                this.message = 'Error opening resource: ' + this.fhirService.getErrorString(err);
             });
     }
 

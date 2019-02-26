@@ -14,7 +14,11 @@ export class Globals {
         'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
         'stu3-github-branch': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
         'r4-github-path': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-path',
-        'r4-github-branch': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-branch'
+        'r4-github-branch': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-branch',
+        'extension-ig-dependency': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency',
+        'extension-ig-dependency-name': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
+        'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
+        'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location'
     };
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {

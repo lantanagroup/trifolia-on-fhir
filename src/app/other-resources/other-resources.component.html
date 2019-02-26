@@ -41,7 +41,7 @@
                     <td>{{getEntryName(entry)}}</td>
                     <td class="actions-column-1">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-default" title="View this resource" (click)="openResource(entry.resource, tabSet)">
+                            <button type="button" class="btn btn-default" title="View this resource" (click)="openResource(entry.resource)">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
@@ -52,7 +52,7 @@
         </ng-template>
     </ngb-tab>
     <ngb-tab *ngFor="let r of openedResources; let ri = index" id="resource-{{ri}}">
-        <ng-template ngbTabTitle>{{r.resourceType}} {{r.id}} <i class="fas fa-times" (click)="closeResource(ri, $event, tabSet)"></i></ng-template>
+        <ng-template ngbTabTitle>{{r.resourceType}} {{r.id}} <i class="fas fa-times" (click)="closeResource(ri, $event)"></i></ng-template>
         <ng-template ngbTabContent>
             <ngb-tabset>
                 <ngb-tab>
@@ -60,6 +60,12 @@
                     <ng-template ngbTabContent>
                         <input type="file" style="display: none;" #jsonFileUpload accept="application/json" (change)="uploadFile('json', ri, $event, jsonFileUpload)" />
                         <div class="btn-group">
+                            <button type="button" class="btn btn-default" title="Remove this resource" (click)="remove(r)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            <button type="button" class="btn btn-default" title="Change this resource's ID" (click)="changeId(r)">
+                                <i class="fa fa-id-badge"></i>
+                            </button>
                             <button type="button" class="btn btn-default" title="Download this resource as JSON" (click)="downloadFile('json', ri)">
                                 <i class="fa fa-download"></i>
                             </button>
@@ -91,6 +97,6 @@
 </ngb-tabset>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="search(tabSet)">Search</button>
+    <button type="button" class="btn btn-default" (click)="search()">Search</button>
     <span class="message">{{message}}</span>
 </footer>

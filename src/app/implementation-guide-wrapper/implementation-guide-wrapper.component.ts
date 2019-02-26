@@ -2,8 +2,8 @@ import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@an
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
-import {ImplementationGuideComponent as STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
-import {ImplementationGuideComponent as R4ImplementationGuideComponent} from './r4/implementation-guide.component';
+import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
+import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {Versions} from 'fhir/fhir';
 
 /**
