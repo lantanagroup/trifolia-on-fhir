@@ -6,6 +6,7 @@ import * as _ from 'underscore';
 import {ExtendedRequest, Fhir, FhirConfig, ServerConfig} from './models';
 import {BaseController} from './controller';
 import {RequestHandler} from 'express';
+import * as modulePackage from '../../package.json';
 
 const serverConfig = <ServerConfig> config.get('server');
 const fhirConfig = <FhirConfig> config.get('fhir');
@@ -48,6 +49,7 @@ export class ConfigController extends BaseController {
     public getConfig() {
         return new Promise((resolve, reject) => {
             const retConfig = {
+                version: modulePackage.version,
                 supportUrl: serverConfig.supportUrl,
                 fhirServers: _.map(fhirConfig.servers, (server) => ({ id: server.id, name: server.name, short: server.short })),
                 auth: {

@@ -4,17 +4,20 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body">
+<div class="modal-body" *ngIf="configService.config">
+    <p>Trifolia-on-FHIR Version <strong>{{configService.config.version}}</strong></p>
+
     <div class="form-group" *ngIf="authCode">
         <label>Authorization Code</label>
         <input type="text" class="form-control" readonly="readonly" [ngModel]="authCode" />
     </div>
 
     <div class="form-group">
-        <label>FHIR Server</label>
-        <select class="form-control" name="fhirServerSelect" *ngIf="configService.config" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
+        <label>Selected FHIR Server</label>
+        <select class="form-control" name="fhirServerSelect" [ngModel]="configService.fhirServer" (ngModelChange)="configService.changeFhirServer($event)">
             <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
         </select>
+        <div class="help-block">{{configService.fhirServer}}</div>
     </div>
 </div>
 <div class="modal-footer">

@@ -11,6 +11,7 @@ export class GithubConfigModel {
 }
 
 export class ConfigModel {
+    public version: string;
     public supportUrl: string;
     public fhirServers: ConfigFhirServerModel[];
     public auth: AuthConfigModel;
