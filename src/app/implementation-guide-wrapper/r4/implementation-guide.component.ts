@@ -322,6 +322,21 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
         }
     }
 
+    private getNewPageTitles(next = this.implementationGuide.definition.page, pageTitles: string[] = []) {
+        if (next.title && next.title.match(/New Page( \d+)?/)) {
+            pageTitles.push(next.title);
+        }
+
+        _.each(next.page, (childPage) => this.getNewPageTitles(childPage, pageTitles));
+
+        return pageTitles;
+    }
+
+    private getNewPageTitle() {
+        const titles = this.getNewPageTitles();
+        return 'New Page ' + (titles.length + 1).toString();
+    }
+
     public addChildPage(pageDef: PageDefinition) {
         if (!this.implementationGuide.contained) {
             this.implementationGuide.contained = [];
@@ -338,7 +353,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
         this.implementationGuide.contained.push(newBinary);
 
         const newPage = new ImplementationGuidePageComponent();
-        newPage.title = 'New Page';
+        newPage.title = this.getNewPageTitle();
         newPage.generation = 'markdown';
         newPage.nameReference = new ResourceReference();
         newPage.nameReference.reference = '#' + newBinary.id;

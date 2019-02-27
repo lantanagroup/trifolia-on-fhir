@@ -376,6 +376,21 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         modalRef.componentInstance.page = pageDef.page;
     }
 
+    private getNewPageSources(next = this.implementationGuide.page, pageSources: string[] = []) {
+        if (next.source && next.source.match(/newPage(\d+)?\.md/)) {
+            pageSources.push(next.source);
+        }
+
+        _.each(next.page, (childPage) => this.getNewPageSources(childPage, pageSources));
+
+        return pageSources;
+    }
+
+    private getNewPageSource() {
+        const sources = this.getNewPageSources();
+        return 'newPage' + (sources.length + 1).toString() + '.md';
+    }
+
     public addChildPage(pageDef: PageDefinition) {
         if (!this.implementationGuide.contained) {
             this.implementationGuide.contained = [];
@@ -401,7 +416,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
                 display: `Page content ${newBinary.id}`
             }
         }];
-        newPage.source = 'newPage.md';
+        newPage.source = this.getNewPageSource();
         pageDef.page.page.push(newPage);
 
         this.initPages();
