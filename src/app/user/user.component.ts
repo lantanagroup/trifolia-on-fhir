@@ -26,7 +26,7 @@ export class UserComponent implements OnInit {
         this.personService.updateMe(this.practitioner)
             .subscribe((updatedPractitioner) => {
                 this.practitioner = updatedPractitioner;
-                this.message = 'Successfully saved practitioner';
+                this.message = 'Your changes have been saved!';
             }, err => {
                 this.message = 'Error saving practitioner: ' + this.globals.getErrorMessage(err);
             });

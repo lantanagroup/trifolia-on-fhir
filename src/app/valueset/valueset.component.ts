@@ -70,7 +70,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                     this.router.navigate(['/value-set/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentValueSets, results.id, results.name);
-                    this.message = 'Successfully saved value set!';
+                    this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {

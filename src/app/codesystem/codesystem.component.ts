@@ -137,7 +137,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     this.router.navigate(['/code-system/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCodeSystems, results.id, results.name);
-                    this.message = 'Successfully saved code system!';
+                    this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {

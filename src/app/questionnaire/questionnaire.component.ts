@@ -97,7 +97,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                         this.globals.cookieKeys.recentQuestionnaires,
                         results.id,
                         results.name || results.title);
-                    this.message = 'Successfully saved questionnaire!';
+                    this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {

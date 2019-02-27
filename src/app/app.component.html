@@ -9,11 +9,31 @@
 
     <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" routerLink="/">Home <span class="sr-only">(current)</span></a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="homeMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    File <span class="sr-only">(current)</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="homeMenu">
+                    <a class="dropdown-item" routerLink="/">
+                        <i class="fa fa-home"></i> Home
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()">
+                        <i class="fa fa-upload"></i> Open from computer
+                    </a>
+                    <a class="dropdown-item" href="/help/index.html" target="tof-help">
+                        <i class="fa fa-book"></i> Documentation
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
+                        <i class="fa fa-question"></i> Request Support
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()">
+                        <i class="fa fa-cog"></i> Settings
+                    </a>
+                </div>
             </li>
             <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
-                <a class="nav-link dropdown-toggle" href="#" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Browse/Edit
                 </a>
                 <div class="dropdown-menu" aria-labelledby="browseMenu">
@@ -57,18 +77,6 @@
                     </a>
                     <a class="nav-link" href="javascript:void(0)" (click)="githubService.logout()" title="Logout of GitHub within ToF" *ngIf="githubService.token">
                         <i class="fab fa-github"></i>
-                    </a>
-                    <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="Edit settings">
-                        <i class="fa fa-cog"></i>
-                    </a>
-                    <a class="nav-link" href="javascript:void(0)" (click)="openFile()" title="Open from computer">
-                        <i class="fa fa-upload"></i>
-                    </a>
-                    <a class="nav-link" href="/help/index.html" target="tof-help" title="Product documentation">
-                        <i class="fa fa-book"></i>
-                    </a>
-                    <a class="nav-link" href="javascript:void(0)" (click)="supportButtonClicked()" title="Request support">
-                        <i class="fa fa-question"></i>
                     </a>
                 </li>
             </ul>

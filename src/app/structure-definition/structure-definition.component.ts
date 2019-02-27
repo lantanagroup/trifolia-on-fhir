@@ -449,7 +449,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     }
 
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
-                    this.message = 'Successfully saved structure definition!';
+                    this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {

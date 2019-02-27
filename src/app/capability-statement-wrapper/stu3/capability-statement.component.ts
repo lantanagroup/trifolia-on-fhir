@@ -66,7 +66,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
                     this.router.navigate(['/capability-statement/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
-                    this.message = 'Successfully saved capability statement!';
+                    this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
