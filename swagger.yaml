@@ -168,7 +168,7 @@ paths:
       parameters:
         - $ref: '#/parameters/fhirserver'
   /import/phinVads:
-    post:
+    get:
       summary: "TODO: Not yet implemented"
       tags:
         - Import
@@ -176,7 +176,12 @@ paths:
         - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
-    get:
+        - name: queryText
+          description: "Text that should be use to search phin vads for a value set"
+          in: query
+          schema:
+            type: string
+    post:
       summary: "TODO: Not yet implemented"
       tags:
         - Import
@@ -200,6 +205,26 @@ paths:
         - auth0: []
       parameters:
         - $ref: '#/parameters/fhirserver'
+        - name: vsacauthorization
+          description: "The authorization header to use when making a VSAC request"
+          in: header
+          schema:
+            type: string
+        - name: id
+          description: "The OID of the value set to import from vsac"
+          in: path
+          schema:
+            type: string
+        - name: resourceType
+          description: "The type of resource to get from VSAC's FHIR API"
+          in: path
+          schema:
+            type: string
+        - name: id
+          description: "The id of the resource to import from VSAC's FHIR API"
+          in: path
+          schema:
+            type: string
   /fhir:
     get:
       summary: "Proxy to underlying FHIR server. All query parameters, path, etc. are redirected to FHIR server specified by the 'fhirserver' header."

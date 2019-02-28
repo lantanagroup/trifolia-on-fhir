@@ -30,4 +30,8 @@ PhinVadsImporter.prototype.search = function(text) {
     return deferred.promise;
 }
 
+PhinVadsImporter.prototype.import = function(id) {
+    // TODO: Implement
+}
+
 module.exports = PhinVadsImporter;

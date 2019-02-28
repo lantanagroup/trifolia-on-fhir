@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const config = require('config');
-const importController = require('./server/controllers/import');
+const {ImportController} = require('./server/controllers/import');
 const {FhirAPIController} = require('./server/controllers/fhirAPI');
 const {ExportController} = require('./server/controllers/export');
 const {StructureDefinitionController} = require('./server/controllers/structureDefinition');
@@ -250,16 +250,14 @@ app.use('/api/valueSet', ValueSetController.initRoutes());
 app.use('/api/practitioner', PractitionerController.initRoutes());
 app.use('/api/structureDefinition', StructureDefinitionController.initRoutes());
 app.use('/api/export', ExportController.initRoutes());
+app.use('/api/fhir', FhirAPIController.initRoutes());
+app.use('/api/import', ImportController.initRoutes());
 app.use('/api/codeSystem', FhirLogic.initRoutes('CodeSystem'));
 app.use('/api/capabilityStatement', FhirLogic.initRoutes('CapabilityStatement'));
 app.use('/api/operationDefinition', FhirLogic.initRoutes('OperationDefinition'));
 app.use('/api/questionnaire', FhirLogic.initRoutes('Questionnaire'));
 app.use('/api/binary', FhirLogic.initRoutes('Binary'));
 app.use('/api/auditEvent', AuditEventController.initRoutes('AuditEvent'));
-app.use('/api/fhir', FhirAPIController.initRoutes());
-
-// TODO: Clean up remaining routes
-app.use('/api/import', importController);
 
 // Host extensions at /stu3/StructureDefinition/XXX and /r4/StructureDefinition/XXX
 FhirHelper.hostExtensions(app, fhirStu3, fhirR4);
