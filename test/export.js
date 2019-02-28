@@ -1,7 +1,8 @@
 const assert = require('assert');
 const FhirHelper = require('../server/fhirHelper');
 const HtmlExporter = require('../server/export/html');
-const Fhir = require('fhir');
+const {BundleExporter} = require('../server/export/bundle');
+const {Fhir, Versions, ParseConformance} = require('fhir');
 const Q = require('q');
 const nock = require('nock');
 const fs = require('fs-extra');
@@ -13,10 +14,19 @@ function emptySocketCallback(type, content) {
 }
 
 function getFhirStu3Instance() {
-    const parser = new Fhir.ParseConformance(false, Fhir.ParseConformance.VERSIONS.STU3);
+    const parser = new ParseConformance(false, Versions.STU3);
     parser.parseBundle(require('../src/assets/stu3/valuesets'));
     parser.parseBundle(require('../src/assets/stu3/profiles-types'));
     parser.parseBundle(require('../src/assets/stu3/profiles-resources'));
+    const fhir = new Fhir(parser);
+    return fhir;
+}
+
+function getFhirR4Instance() {
+    const parser = new ParseConformance(false, Versions.R4);
+    parser.parseBundle(require('../src/assets/r4/valuesets'));
+    parser.parseBundle(require('../src/assets/r4/profiles-types'));
+    parser.parseBundle(require('../src/assets/r4/profiles-resources'));
     const fhir = new Fhir(parser);
     return fhir;
 }
@@ -37,6 +47,77 @@ function createMockRequest(query, params, fhirServerBase, socketCallback) {
 }
 
 describe('export', () => {
+    describe('bundle', () => {
+        describe('r4', () => {
+            beforeEach(() => {
+                nock('http://test.com/fhir')
+                    .get("/ImplementationGuide/test")
+                    .reply(200, require('./data/r4/CCDA-on-FHIR-R4'));
+                nock('http://test.com/fhir')
+                    .get("/StructureDefinition/CCDA-on-FHIR-Care-Plan")
+                    .reply(200, require('./data/r4/CCDA-on-FHIR-Care-Plan'));
+                nock('http://test.com/fhir')
+                    .get("/StructureDefinition/CCDA-on-FHIR-Consent")
+                    .reply(200, require('./data/r4/CCDA-on-FHIR-Consent'));
+            });
+
+            it('should create a JSON bundle export for "test" ig', (done) => {
+                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', getFhirR4Instance(), 'test');
+                exporter.fhirConfig.servers.push({
+                    id: 'fhirserver1',
+                    version: 'r4',
+                    uri: 'urn:test',
+                    name: 'test fhir server',
+                    short: 'test'
+                });
+                exporter.export('json')
+                    .then((results) => {
+                        assert(results);
+                        assert.equal(results.resourceType, 'Bundle');
+                        assert.equal(results.type, 'collection');
+                        assert(results.entry);
+                        assert.equal(results.entry.length, 3);
+                        assert.equal(results.total, 3);
+                        assert(results.entry[0]);
+                        assert(results.entry[0].resource);
+                        assert.equal(results.entry[0].resource.resourceType, 'ImplementationGuide');
+                        assert(results.entry[1]);
+                        assert(results.entry[1].resource);
+                        assert.equal(results.entry[1].resource.resourceType, 'StructureDefinition');
+                        assert.equal(results.entry[1].fullUrl, 'http://test.com/fhir/StructureDefinition/CCDA-on-FHIR-Care-Plan/_history/2');
+                        assert(results.entry[2]);
+                        assert(results.entry[2].resource);
+                        assert.equal(results.entry[2].fullUrl, 'http://test.com/fhir/StructureDefinition/CCDA-on-FHIR-Consent/_history/1');
+                        assert.equal(results.entry[2].resource.resourceType, 'StructureDefinition');
+                        done();
+                    })
+                    .catch((err) => {
+                        done(err);
+                    });
+            });
+
+            it('should create a XML bundle export for "test" ig', (done) => {
+                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', getFhirR4Instance(), 'test');
+                exporter.fhirConfig.servers.push({
+                    id: 'fhirserver1',
+                    version: 'r4',
+                    uri: 'urn:test',
+                    name: 'test fhir server',
+                    short: 'test'
+                });
+                exporter.export('xml')
+                    .then((results) => {
+                        assert(results);
+                        assert(results.startsWith('<?xml version="1.0" encoding="UTF-8"?><Bundle xmlns="http://hl7.org/fhir">'));
+                        done();
+                    })
+                    .catch((err) => {
+                        done(err);
+                    });
+            });
+        });
+    });
+
     describe('stu3', () => {
         describe('html', () => {
             const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', getFhirStu3Instance(), null, null, 'CCDA-on-FHIR');
@@ -118,7 +199,7 @@ describe('export', () => {
 
     describe('r4', () => {
         describe('html', () => {
-            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', new Fhir(), null, null, 'CCDA-on-FHIR');
+            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', getFhirR4Instance(), null, null, 'CCDA-on-FHIR');
 
             beforeEach(() => {
                 nock('http://test.com')

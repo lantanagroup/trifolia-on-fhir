@@ -2,14 +2,13 @@ import * as express from 'express';
 import * as tmp from 'tmp';
 import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
-import * as BundleExporter from '../export/bundle';
 import * as HtmlExporter from '../export/html';
 import * as path from 'path';
 import {ExtendedRequest} from './models';
 import {BaseController, GenericResponse} from './controller';
 import {Fhir} from 'fhir/fhir';
 import {Server} from 'socket.io';
-import {Response} from 'express';
+import {BundleExporter} from '../export/bundle';
 
 interface ExportImplementationGuideRequest extends ExtendedRequest {
     params: {
@@ -40,7 +39,7 @@ class ExportOptions {
     public useTerminologyServer = false;
     public useLatest = false;
     public downloadOutput = true;
-    public format?: string;
+    public format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json';
     public exportFormat = ExportFormats.Bundle;
 
     constructor(query?: any) {
@@ -112,7 +111,7 @@ export class ExportController extends BaseController {
         return router;
     }
 
-    private exportBundle(implementationGuideId: string, format?: string) {
+    private exportBundle(implementationGuideId: string, format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json') {
         return new Promise<GenericResponse>((resolve, reject) => {
             const exporter = new BundleExporter(this.baseUrl, this.fhirServerId, this.fhir, implementationGuideId);
             exporter.export(format)

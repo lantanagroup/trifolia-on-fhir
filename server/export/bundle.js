@@ -1,184 +1,135 @@
-const FhirHelper = require('../fhirHelper');
-const Q = require('q');
-const rp = require('request-promise');
-const _ = require('underscore');
-const config = require('config');
-const log4js = require('log4js');
-
-const log = log4js.getLogger();
-const fhirConfig = config.get('fhir');
-
-function BundleExporter(fhirServerBase, fhirServerId, fhir, implementationGuideId) {
-    this._fhirServerBase = fhirServerBase;
-    this._fhirServerId = fhirServerId;
-    this._fhir = fhir;
-    this._implementationGuideId = implementationGuideId;
-}
-
-/*
-function getBundle(req, format) {
-    const deferred = Q.defer();
-    let query = {
-        '_id': req.params.implementationGuideId,
-        '_include': 'ImplementationGuide:resource',
-        '_format': format || format
-    };
-    const url = req.getFhirServerUrl('ImplementationGuide', null, null, query);
-
-    request(url, (error, results, body) => {
-        if (error) {
-            log.error('Error retrieving implementation guide bundle from FHIR server: ' + error);
-            return deferred.reject('Error retrieving implementation guide bundle from FHIR server');
-        }
-
-        deferred.resolve(body);
-    });
-
-    return deferred.promise;
-}
-*/
-
-BundleExporter.prototype._getStu3Resources = function(implementationGuide) {
-    const promises = [];
-
-    _.each(implementationGuide.package, (igPackage) => {
-        const references = _.chain(igPackage.resource)
-            .filter((resource) => resource.sourceReference && resource.sourceReference.reference)
-            .map((resource) => resource.sourceReference.reference)
-            .value();
-
-        _.each(references, (reference) => {
-            const parsed = FhirHelper.parseUrl(reference);
-            const resourceUrl = FhirHelper.buildUrl(this._fhirServerBase, parsed.resourceType, parsed.id);
-            const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
-            promises.push(resourcePromise);
-        });
-    });
-
-    return Q.all(promises);
-};
-
-BundleExporter.prototype._getR4Resources = function(implementationGuide) {
-    if (!implementationGuide.definition) {
-        return Q.resolve([]);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const _ = require("underscore");
+const rp = require("request-promise");
+const FhirHelper = require("../fhirHelper");
+const log4js = require("log4js");
+const config = require("config");
+class BundleExporter {
+    constructor(fhirServerBase, fhirServerId, fhir, implementationGuideId) {
+        this.log = log4js.getLogger();
+        this.fhirServerBase = fhirServerBase;
+        this.fhirServerId = fhirServerId;
+        this.fhir = fhir;
+        this.implementationGuideId = implementationGuideId;
+        this.fhirConfig = config.get('fhir');
     }
-
-    const promises = _.chain(implementationGuide.definition.resource)
-        .filter((resource) => !!resource.reference && !!resource.reference.reference)
-        .map((resource) => {
+    _getStu3Resources(implementationGuide) {
+        const promises = [];
+        _.each(implementationGuide.package, (igPackage) => {
+            const references = _.chain(igPackage.resource)
+                .filter((resource) => !!resource.sourceReference && !!resource.sourceReference.reference)
+                .map((resource) => resource.sourceReference.reference)
+                .value();
+            _.each(references, (reference) => {
+                const parsed = FhirHelper.parseUrl(reference);
+                const resourceUrl = FhirHelper.buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
+                const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
+                promises.push(resourcePromise);
+            });
+        });
+        return Promise.all(promises);
+    }
+    _getR4Resources(implementationGuide) {
+        if (!implementationGuide.definition) {
+            return Promise.resolve([]);
+        }
+        const promises = _.chain(implementationGuide.definition.resource)
+            .filter((resource) => !!resource.reference && !!resource.reference.reference)
+            .map((resource) => {
             const reference = resource.reference.reference;
             const parsed = FhirHelper.parseUrl(reference);
-            const resourceUrl = FhirHelper.buildUrl(this._fhirServerBase, parsed.resourceType, parsed.id);
+            const resourceUrl = FhirHelper.buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
             const resourcePromise = rp({ url: resourceUrl, json: true, resolveWithFullResponse: true });
             return resourcePromise;
         })
-        .value();
-
-    return Q.all(promises);
-};
-
-BundleExporter.prototype.getBundle = function() {
-    const deferred = Q.defer();
-    const igUrl = FhirHelper.buildUrl(this._fhirServerBase, 'ImplementationGuide', this._implementationGuideId);
-    const fhirServerConfig = _.find(fhirConfig.servers, (serverConfig) => {
-        return serverConfig.id === this._fhirServerId;
-    });
-    let implementationGuide;
-    let implementationGuideFullUrl;
-
-    rp({ url: igUrl, json: true, resolveWithFullResponse: true })
-        .then((response) => {
-            implementationGuide = response.body;
-            implementationGuideFullUrl = response.headers['content-location'];
-
-            if (fhirServerConfig.version === 'stu3') {
-                return this._getStu3Resources(implementationGuide);
-            }
-
-            return this._getR4Resources(implementationGuide);
-        })
-        .then((responses) => {
-            const badResponses = _.filter(responses, (response) => {
-                return !response.body || !response.body.resourceType;
+            .value();
+        return Promise.all(promises);
+    }
+    getBundle() {
+        return new Promise((resolve, reject) => {
+            const igUrl = FhirHelper.buildUrl(this.fhirServerBase, 'ImplementationGuide', this.implementationGuideId);
+            const fhirServerConfig = _.find(this.fhirConfig.servers, (serverConfig) => {
+                return serverConfig.id === this.fhirServerId;
             });
-            const resourceEntries = _.chain(responses)
-                .filter((response) => {
-                    return response.body && response.body.resourceType;
+            let implementationGuide;
+            let implementationGuideFullUrl;
+            rp({ url: igUrl, json: true, resolveWithFullResponse: true })
+                .then((response) => {
+                implementationGuide = response.body;
+                implementationGuideFullUrl = response.headers['content-location'];
+                if (fhirServerConfig.version === 'stu3') {
+                    return this._getStu3Resources(implementationGuide);
+                }
+                return this._getR4Resources(implementationGuide);
+            })
+                .then((responses) => {
+                const resourceEntries = _.chain(responses)
+                    .filter((response) => {
+                    return !!response.body && !!response.body.resourceType;
                 })
-                .map((response) => {
+                    .map((response) => {
                     let fullUrl = response.headers['content-location'];
-
                     if (!fullUrl) {
-                        fullUrl = FhirHelper.joinUrl(this._fhirServerBase, response.body.resourceType, response.body.id);
-
+                        fullUrl = FhirHelper.joinUrl(this.fhirServerBase, response.body.resourceType, response.body.id);
                         if (response.body.meta && response.body.meta.versionId) {
                             fullUrl = FhirHelper.joinUrl(fullUrl, '_history', response.body.meta.versionId);
                         }
                     }
-
                     return {
                         fullUrl: fullUrl,
                         resource: response.body
                     };
                 })
-                .value();
-
-            if (responses.length !== resourceEntries.length) {
-                log.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
-            }
-
-            const bundle = {
-                resourceType: 'Bundle',
-                type: 'collection',
-                total: resourceEntries.length + 1,
-                entry: [{ fullUrl: implementationGuideFullUrl, resource: implementationGuide }].concat(resourceEntries)
-            };
-
-            deferred.resolve(bundle);
-        })
-        .catch((err) => {
-            if (err && err.response && err.response.body) {
-                const errBody = err.response.body;
-                const issueTexts = _.map(errBody.issue, (issue) => issue.diagnostics);
-
-                if (issueTexts.length > 0) {
-                    deferred.reject(issueTexts.join(' & '));
-                } else if (errBody.text && errBody.text.div) {
-                    deferred.reject(errBody.text.div);
-                } else {
-                    log.error(errBody);
-                    deferred.reject('Unknown error returned by FHIR server when getting resources for implementation guide');
+                    .value();
+                if (responses.length !== resourceEntries.length) {
+                    this.log.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
                 }
-            } else {
-                log.error(err);
-                deferred.reject(err);
-            }
+                const bundle = {
+                    resourceType: 'Bundle',
+                    type: 'collection',
+                    total: resourceEntries.length + 1,
+                    entry: [{ fullUrl: implementationGuideFullUrl, resource: implementationGuide }].concat(resourceEntries)
+                };
+                resolve(bundle);
+            })
+                .catch((err) => {
+                if (err && err.response && err.response.body) {
+                    const errBody = err.response.body;
+                    const issueTexts = _.map(errBody.issue, (issue) => issue.diagnostics);
+                    if (issueTexts.length > 0) {
+                        reject(issueTexts.join(' & '));
+                    }
+                    else if (errBody.text && errBody.text.div) {
+                        reject(errBody.text.div);
+                    }
+                    else {
+                        this.log.error(errBody);
+                        reject('Unknown error returned by FHIR server when getting resources for implementation guide');
+                    }
+                }
+                else {
+                    this.log.error(err);
+                    reject(err);
+                }
+            });
         });
-
-    return deferred.promise;
-};
-
-/**
- * Exports the bundle in the specified format
- * @param format {'json'|'xml'|'application/json'|'application/xml'|'application/fhir+json'|'application/fhir+xml'} The format to return the bundle in
- * @return {Promise<Bundle|string>} A Bundle object or a string depending on the format specified
- */
-BundleExporter.prototype.export = function(format) {
-    const deferred = Q.defer();
-
-    this.getBundle()
-        .then((bundle) => {
-            let response = bundle;
-
-            if (format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml') {
-                response = this._fhir.objToXml(bundle);
-            }
-
-            deferred.resolve(response);
-        })
-        .catch(deferred.reject);
-
-    return deferred.promise;
-};
-
-module.exports = BundleExporter;
+    }
+    export(format = 'json') {
+        return new Promise((resolve, reject) => {
+            this.getBundle()
+                .then((results) => {
+                let response = results;
+                if (format === 'xml' || format === 'application/xml') {
+                    response = this.fhir.objToXml(results);
+                }
+                resolve(response);
+            })
+                .catch((err) => {
+                reject(err);
+            });
+        });
+    }
+}
+exports.BundleExporter = BundleExporter;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYnVuZGxlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYnVuZGxlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBR0EsZ0NBQWdDO0FBQ2hDLHNDQUFzQztBQUN0Qyw0Q0FBNEM7QUFDNUMsaUNBQWlDO0FBQ2pDLGlDQUFpQztBQUdqQyxNQUFhLGNBQWM7SUFTdkIsWUFBWSxjQUFzQixFQUFFLFlBQW9CLEVBQUUsSUFBVSxFQUFFLHFCQUE2QjtRQVIxRixRQUFHLEdBQUcsTUFBTSxDQUFDLFNBQVMsRUFBRSxDQUFDO1FBUzlCLElBQUksQ0FBQyxjQUFjLEdBQUcsY0FBYyxDQUFDO1FBQ3JDLElBQUksQ0FBQyxZQUFZLEdBQUcsWUFBWSxDQUFDO1FBQ2pDLElBQUksQ0FBQyxJQUFJLEdBQUcsSUFBSSxDQUFDO1FBQ2pCLElBQUksQ0FBQyxxQkFBcUIsR0FBRyxxQkFBcUIsQ0FBQztRQUNuRCxJQUFJLENBQUMsVUFBVSxHQUFnQixNQUFNLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQ3RELENBQUM7SUFFTyxpQkFBaUIsQ0FBQyxtQkFBNEM7UUFDbEUsTUFBTSxRQUFRLEdBQUcsRUFBRSxDQUFDO1FBRXBCLENBQUMsQ0FBQyxJQUFJLENBQUMsbUJBQW1CLENBQUMsT0FBTyxFQUFFLENBQUMsU0FBUyxFQUFFLEVBQUU7WUFDOUMsTUFBTSxVQUFVLEdBQUcsQ0FBQyxDQUFDLEtBQUssQ0FBQyxTQUFTLENBQUMsUUFBUSxDQUFDO2lCQUN6QyxNQUFNLENBQUMsQ0FBQyxRQUFRLEVBQUUsRUFBRSxDQUFDLENBQUMsQ0FBQyxRQUFRLENBQUMsZUFBZSxJQUFJLENBQUMsQ0FBQyxRQUFRLENBQUMsZUFBZSxDQUFDLFNBQVMsQ0FBQztpQkFDeEYsR0FBRyxDQUFDLENBQUMsUUFBUSxFQUFFLEVBQUUsQ0FBQyxRQUFRLENBQUMsZUFBZSxDQUFDLFNBQVMsQ0FBQztpQkFDckQsS0FBSyxFQUFFLENBQUM7WUFFYixDQUFDLENBQUMsSUFBSSxD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LEVBQUU7d0JBQ3pDLE1BQU0sQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO3FCQUM1Qjt5QkFBTTt3QkFDSCxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQzt3QkFDeEIsTUFBTSxDQUFDLHVGQUF1RixDQUFDLENBQUM7cUJBQ25HO2lCQUNKO3FCQUFNO29CQUNILElBQUksQ0FBQyxHQUFHLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDO29CQUNwQixNQUFNLENBQUMsR0FBRyxDQUFDLENBQUM7aUJBQ2Y7WUFDTCxDQUFDLENBQUMsQ0FBQztRQUNYLENBQUMsQ0FBQyxDQUFDO0lBQ1AsQ0FBQztJQUVNLE1BQU0sQ0FBQyxTQUEyRyxNQUFNO1FBQzNILE9BQU8sSUFBSSxPQUFPLENBQUMsQ0FBQyxPQUFPLEVBQUUsTUFBTSxFQUFFLEVBQUU7WUFDbkMsSUFBSSxDQUFDLFNBQVMsRUFBRTtpQkFDWCxJQUFJLENBQUMsQ0FBQyxPQUFPLEVBQUUsRUFBRTtnQkFDZCxJQUFJLFFBQVEsR0FBRyxPQUFPLENBQUM7Z0JBRXZCLElBQUksTUFBTSxLQUFLLEtBQUssSUFBSSxNQUFNLEtBQUssaUJBQWlCLEVBQUU7b0JBQ2xELFFBQVEsR0FBRyxJQUFJLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxPQUFPLENBQUMsQ0FBQztpQkFDMUM7Z0JBRUQsT0FBTyxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQ3RCLENBQUMsQ0FBQztpQkFDRCxLQUFLLENBQUMsQ0FBQyxHQUFHLEVBQUUsRUFBRTtnQkFDWCxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUM7WUFDaEIsQ0FBQyxDQUFDLENBQUM7UUFDWCxDQUFDLENBQUMsQ0FBQztJQUNQLENBQUM7Q0FDSjtBQXRKRCx3Q0FzSkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge0ZoaXJ9IGZyb20gJ2ZoaXIvZmhpcic7XG5pbXBvcnQge0ltcGxlbWVudGF0aW9uR3VpZGUgYXMgU1RVM0ltcGxlbWVudGF0aW9uR3VpZGUsIE9wZXJhdGlvbk91dGNvbWV9IGZyb20gJy4uLy4uL3NyYy9hcHAvbW9kZWxzL3N0dTMvZmhpcic7XG5pbXBvcnQge0ltcGxlbWVudGF0aW9uR3VpZGUgYXMgUjRJbXBsZW1lbnRhdGlvbkd1aWRlfSBmcm9tICcuLi8uLi9zcmMvYXBwL21vZGVscy9yNC9maGlyJztcbmltcG9ydCAqIGFzIF8gZnJvbSAndW5kZXJzY29yZSc7XG5pbXBvcnQgKiBhcyBycCBmcm9tICdyZXF1ZXN0LXByb21pc2UnO1xuaW1wb3J0ICogYXMgRmhpckhlbHBlciBmcm9tICcuLi9maGlySGVscGVyJztcbmltcG9ydCAqIGFzIGxvZzRqcyBmcm9tICdsb2c0anMnO1xuaW1wb3J0ICogYXMgY29uZmlnIGZyb20gJ2NvbmZpZyc7XG5pbXBvcnQge0ZoaXJDb25maWd9IGZyb20gJy4uL2NvbnRyb2xsZXJzL21vZGVscyc7XG5cbmV4cG9ydCBjbGFzcyBCdW5kbGVFeHBvcnRlciB7XG4gICAgcmVhZG9ubHkgbG9nID0gbG9nNGpzLmdldExvZ2dlcigpO1xuICAgIHJlYWRvbmx5IGZoaXJTZXJ2ZXJCYXNlOiBzdHJpbmc7XG4gICAgcmVhZG9ubHkgZmhpclNlcnZlcklkOiBzdHJpbmc7XG4gICAgcmVhZG9ubHkgZmhpcjogRmhpcjtcbiAgICByZWFkb25seSBpbXBsZW1lbnRhdGlvbkd1aWRlSWQ6IHN0cmluZztcblxuICAgIHB1YmxpYyBmaGlyQ29uZmlnOiBGaGlyQ29uZmlnO1xuXG4gICAgY29uc3RydWN0b3IoZmhpclNlcnZlckJhc2U6IHN0cmluZywgZmhpclNlcnZlcklkOiBzdHJpbmcsIGZoaXI6IEZoaXIsIGltcGxlbWVudGF0aW9uR3VpZGVJZDogc3RyaW5nKSB7XG4gICAgICAgIHRoaXMuZmhpclNlcnZlckJhc2UgPSBmaGlyU2VydmVyQmFzZTtcbiAgICAgICAgdGhpcy5maGlyU2VydmVySWQgPSBmaGlyU2VydmVySWQ7XG4gICAgICAgIHRoaXMuZmhpciA9IGZoaXI7XG4gICAgICAgIHRoaXMuaW1wbGVtZW50YXRpb25HdWlkZUlkID0gaW1wbGVtZW50YXRpb25HdWlkZUlkO1xuICAgICAgICB0aGlzLmZoaXJDb25maWcgPSA8RmhpckNvbmZpZz4gY29uZmlnLmdldCgnZmhpcicpO1xuICAgIH1cblxuICAgIHByaXZhdGUgX2dldFN0dTNSZXNvdXJjZXMoaW1wbGVtZW50YXRpb25HdWlkZTogU1RVM0ltcGxlbWVudGF0aW9uR3VpZGUpIHtcbiAgICAgICAgY29uc3QgcHJvbWlzZXMgPSBbXTtcblxuICAgICAgICBfLmVhY2goaW1wbGVtZW50YXRpb25HdWlkZS5wYWNrYWdlLCAoaWdQYWNrYWdlKSA9PiB7XG4gICAgICAgICAgICBjb25zdCByZWZlcmVuY2VzID0gXy5jaGFpbihpZ1BhY2thZ2UucmVzb3VyY2UpXG4gICAgICAgICAgICAgICAgLmZpbHRlcigocmVzb3VyY2UpID0+ICEhcmVzb3VyY2Uuc291cmNlUmVmZXJlbmNlICYmICEhcmVzb3VyY2Uuc291cmNlUmVmZXJlbmNlLnJlZmVyZW5jZSlcbiAgICAgICAgICAgICAgICAubWFwKChyZXNvdXJjZSkgPT4gcmVzb3VyY2Uuc291cmNlUmVmZXJlbmNlLnJlZmVyZW5jZSlcbiAgICAgICAgICAgICAgICAudmFsdWUoKTtcblxuICAgICAgICAgICAgXy5lYWNoKHJlZmVyZW5jZXMsIChyZWZlcmVuY2UpID0+IHtcbiAgICAgICAgICAgICAgICBjb25zdCBwYXJzZWQgPSBGaGlySGVscGVyLnBhcnNlVXJsKHJlZmVyZW5jZSk7XG4gICAgICAgICAgICAgICAgY29uc3QgcmVzb3VyY2VVcmwgPSBGaGlySGVscGVyLmJ1aWxkVXJsKHRoaXMuZmhpclNlcnZlckJhc2UsIHBhcnNlZC5yZXNvdXJjZVR5cGUsIHBhcnNlZC5pZCk7XG4gICAgICAgICAgICAgICAgY29uc3QgcmVzb3VyY2VQcm9taXNlID0gcnAoeyB1cmw6IHJlc291cmNlVXJsLCBqc29uOiB0cnVlLCByZXNvbHZlV2l0aEZ1bGxSZXNwb25zZTogdHJ1ZSB9KTtcbiAgICAgICAgICAgICAgICBwcm9taXNlcy5wdXNoKHJlc291cmNlUHJvbWlzZSk7XG4gICAgICAgICAgICB9KTtcbiAgICAgICAgfSk7XG5cbiAgICAgICAgcmV0dXJuIFByb21pc2UuYWxsKHByb21pc2VzKTtcbiAgICB9XG5cbiAgICBwcml2YXRlIF9nZXRSNFJlc291cmNlcyhpbXBsZW1lbnRhdGlvbkd1aWRlOiBSNEltcGxlbWVudGF0aW9uR3VpZGUpIHtcbiAgICAgICAgaWYgKCFpbXBsZW1lbnRhdGlvbkd1aWRlLmRlZmluaXRpb24pIHtcbiAgICAgICAgICAgIHJldHVybiBQcm9taXNlLnJlc29sdmUoW10pO1xuICAgICAgICB9XG5cbiAgICAgICAgY29uc3QgcHJvbWlzZXMgPSBfLmNoYWluKGltcGxlbWVudGF0aW9uR3VpZGUuZGVmaW5pdGlvbi5yZXNvdXJjZSlcbiAgICAgICAgICAgIC5maWx0ZXIoKHJlc291cmNlKSA9PiAhIXJlc291cmNlLnJlZmVyZW5jZSAmJiAhIXJlc291cmNlLnJlZmVyZW5jZS5yZWZlcmVuY2UpXG4gICAgICAgICAgICAubWFwKChyZXNvdXJjZSkgPT4ge1xuICAgICAgICAgICAgICAgIGNvbnN0IHJlZmVyZW5jZSA9IHJlc291cmNlLnJlZmVyZW5jZS5yZWZlcmVuY2U7XG4gICAgICAgICAgICAgICAgY29uc3QgcGFyc2VkID0gRmhpckhlbHBlci5wYXJzZVVybChyZWZlcmVuY2UpO1xuICAgICAgICAgICAgICAgIGNvbnN0IHJlc291cmNlVXJsID0gRmhpckhlbHBlci5idWlsZFVybCh0aGlzLmZoaXJTZXJ2ZXJCYXNlLCBwYXJzZWQucmVzb3VyY2VUeXBlLCBwYXJzZWQuaWQpO1xuICAgICAgICAgICAgICAgIGNvbnN0IHJlc291cmNlUHJvbWlzZSA9IHJwKHsgdXJsOiByZXNvdXJjZVVybCwganNvbjogdHJ1ZSwgcmVzb2x2ZVdpdGhGdWxsUmVzcG9uc2U6IHRydWUgfSk7XG4gICAgICAgICAgICAgICAgcmV0dXJuIHJlc291cmNlUHJvbWlzZTtcbiAgICAgICAgICAgIH0pXG4gICAgICAgICAgICAudmFsdWUoKTtcblxuICAgICAgICByZXR1cm4gUHJvbWlzZS5hbGwocHJvbWlzZXMpO1xuICAgIH1cblxuICAgIHB1YmxpYyBnZXRCdW5kbGUoKSB7XG4gICAgICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7XG4gICAgICAgICAgICBjb25zdCBpZ1VybCA9IEZoaXJIZWxwZXIuYnVpbGRVcmwodGhpcy5maGlyU2VydmVyQmFzZSwgJ0ltcGxlbWVudGF0aW9uR3VpZGUnLCB0aGlzLmltcGxlbWVudGF0aW9uR3VpZGVJZCk7XG4gICAgICAgICAgICBjb25zdCBmaGlyU2VydmVyQ29uZmlnID0gXy5maW5kKHRoaXMuZmhpckNvbmZpZy5zZXJ2ZXJzLCAoc2VydmVyQ29uZmlnKSA9PiB7XG4gICAgICAgICAgICAgICAgcmV0dXJuIHNlcnZlckNvbmZpZy5pZCA9PT0gdGhpcy5maGlyU2VydmVySWQ7XG4gICAgICAgICAgICB9KTtcbiAgICAgICAgICAgIGxldCBpbXBsZW1lbnRhdGlvbkd1aWRlO1xuICAgICAgICAgICAgbGV0IGltcGxlbWVudGF0aW9uR3VpZGVGdWxsVXJsO1xuXG4gICAgICAgICAgICBycCh7IHVybDogaWdVcmwsIGpzb246IHRydWUsIHJlc29sdmVXaXRoRnVsbFJlc3BvbnNlOiB0cnVlIH0pXG4gICAgICAgICAgICAgICAgLnRoZW4oKHJlc3BvbnNlKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgIGltcGxlbWVudGF0aW9uR3VpZGUgPSByZXNwb25zZS5ib2R5O1xuICAgICAgICAgICAgICAgICAgICBpbXBsZW1lbnRhdGlvbkd1aWRlRnVsbFVybCA9IHJlc3BvbnNlLmhlYWRlcnNbJ2NvbnRlbnQtbG9jYXRpb24nXTtcblxuICAgICAgICAgICAgICAgICAgICBpZiAoZmhpclNlcnZlckNvbmZpZy52ZXJzaW9uID09PSAnc3R1MycpIHtcbiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiB0aGlzLl9nZXRTdHUzUmVzb3VyY2VzKGltcGxlbWVudGF0aW9uR3VpZGUpO1xuICAgICAgICAgICAgICAgICAgICB9XG5cbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHRoaXMuX2dldFI0UmVzb3VyY2VzKGltcGxlbWVudGF0aW9uR3VpZGUpO1xuICAgICAgICAgICAgICAgIH0pXG4gICAgICAgICAgICAgICAgLnRoZW4oKHJlc3BvbnNlcykgPT4ge1xuICAgICAgICAgICAgICAgICAgICBjb25zdCByZXNvdXJjZUVudHJpZXMgPSBfLmNoYWluKHJlc3BvbnNlcylcbiAgICAgICAgICAgICAgICAgICAgICAgIC5maWx0ZXIoKHJlc3BvbnNlKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuICEhcmVzcG9uc2UuYm9keSAmJiAhIXJlc3BvbnNlLmJvZHkucmVzb3VyY2VUeXBlO1xuICAgICAgICAgICAgICAgICAgICAgICAgfSlcbiAgICAgICAgICAgICAgICAgICAgICAgIC5tYXAoKHJlc3BvbnNlKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV0IGZ1bGxVcmwgPSByZXNwb25zZS5oZWFkZXJzWydjb250ZW50LWxvY2F0aW9uJ107XG5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWZ1bGxVcmwpIHtcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZnVsbFVybCA9IEZoaXJIZWxwZXIuam9pblVybCh0aGlzLmZoaXJTZXJ2ZXJCYXNlLCByZXNwb25zZS5ib2R5LnJlc291cmNlVHlwZSwgcmVzcG9uc2UuYm9keS5pZCk7XG5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHJlc3BvbnNlLmJvZHkubWV0YSAmJiByZXNwb25zZS5ib2R5Lm1ldGEudmVyc2lvbklkKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmdWxsVXJsID0gRmhpckhlbHBlci5qb2luVXJsKGZ1bGxVcmwsICdfaGlzdG9yeScsIHJlc3BvbnNlLmJvZHkubWV0YS52ZXJzaW9uSWQpO1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHtcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZnVsbFVybDogZnVsbFVybCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVzb3VyY2U6IHJlc3BvbnNlLmJvZHlcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9O1xuICAgICAgICAgICAgICAgICAgICAgICAgfSlcbiAgICAgICAgICAgICAgICAgICAgICAgIC52YWx1ZSgpO1xuXG4gICAgICAgICAgICAgICAgICAgIGlmIChyZXNwb25zZXMubGVuZ3RoICE9PSByZXNvdXJjZUVudHJpZXMubGVuZ3RoKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICB0aGlzLmxvZy5lcnJvcihgRXhwZWN0ZWQgJHtyZXNwb25zZXMubGVuZ3RofSBlbnRyaWVzIGluIHRoZSBleHBvcnQgYnVuZGxlLCBidXQgb25seSByZXR1cm5pbmcgJHtyZXNvdXJjZUVudHJpZXMubGVuZ3RofS4gU29tZSByZXNvdXJjZXMgY291bGQgbm90IGJlIHJldHVybmVkIGluIHRoZSBidW5kbGUgZHVlIHRvIHRoZSByZXNwb25zZSBmcm9tIHRoZSBzZXJ2ZXIuYCk7XG4gICAgICAgICAgICAgICAgICAgIH1cblxuICAgICAgICAgICAgICAgICAgICBjb25zdCBidW5kbGUgPSB7XG4gICAgICAgICAgICAgICAgICAgICAgICByZXNvdXJjZVR5cGU6ICdCdW5kbGUnLFxuICAgICAgICAgICAgICAgICAgICAgICAgdHlwZTogJ2NvbGxlY3Rpb24nLFxuICAgICAgICAgICAgICAgICAgICAgICAgdG90YWw6IHJlc291cmNlRW50cmllcy5sZW5ndGggKyAxLFxuICAgICAgICAgICAgICAgICAgICAgICAgZW50cnk6IFt7IGZ1bGxVcmw6IGltcGxlbWVudGF0aW9uR3VpZGVGdWxsVXJsLCByZXNvdXJjZTogaW1wbGVtZW50YXRpb25HdWlkZSB9XS5jb25jYXQocmVzb3VyY2VFbnRyaWVzKVxuICAgICAgICAgICAgICAgICAgICB9O1xuXG4gICAgICAgICAgICAgICAgICAgIHJlc29sdmUoYnVuZGxlKTtcbiAgICAgICAgICAgICAgICB9KVxuICAgICAgICAgICAgICAgIC5jYXRjaCgoZXJyKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgIGlmIChlcnIgJiYgZXJyLnJlc3BvbnNlICYmIGVyci5yZXNwb25zZS5ib2R5KSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBlcnJCb2R5ID0gPE9wZXJhdGlvbk91dGNvbWU+IGVyci5yZXNwb25zZS5ib2R5O1xuICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgaXNzdWVUZXh0cyA9IF8ubWFwKGVyckJvZHkuaXNzdWUsIChpc3N1ZSkgPT4gaXNzdWUuZGlhZ25vc3RpY3MpO1xuXG4gICAgICAgICAgICAgICAgICAgICAgICBpZiAoaXNzdWVUZXh0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVqZWN0KGlzc3VlVGV4dHMuam9pbignICYgJykpO1xuICAgICAgICAgICAgICAgICAgICAgICAgfSBlbHNlIGlmIChlcnJCb2R5LnRleHQgJiYgZXJyQm9keS50ZXh0LmRpdikge1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlamVjdChlcnJCb2R5LnRleHQuZGl2KTtcbiAgICAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgdGhpcy5sb2cuZXJyb3IoZXJyQm9keSk7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVqZWN0KCdVbmtub3duIGVycm9yIHJldHVybmVkIGJ5IEZISVIgc2VydmVyIHdoZW4gZ2V0dGluZyByZXNvdXJjZXMgZm9yIGltcGxlbWVudGF0aW9uIGd1aWRlJyk7XG4gICAgICAgICAgICAgICAgICAgICAgICB9XG4gICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgICAgICAgICB0aGlzLmxvZy5lcnJvcihlcnIpO1xuICAgICAgICAgICAgICAgICAgICAgICAgcmVqZWN0KGVycik7XG4gICAgICAgICAgICAgICAgICAgIH1cbiAgICAgICAgICAgICAgICB9KTtcbiAgICAgICAgfSk7XG4gICAgfVxuXG4gICAgcHVibGljIGV4cG9ydChmb3JtYXQ6ICdqc29uJ3wneG1sJ3wnYXBwbGljYXRpb24vanNvbid8J2FwcGxpY2F0aW9uL2ZoaXIranNvbid8J2FwcGxpY2F0aW9uL3htbCd8J2FwcGxpY2F0aW9uL2ZoaXIreG1sJyA9ICdqc29uJykge1xuICAgICAgICByZXR1cm4gbmV3IFByb21pc2UoKHJlc29sdmUsIHJlamVjdCkgPT4ge1xuICAgICAgICAgICAgdGhpcy5nZXRCdW5kbGUoKVxuICAgICAgICAgICAgICAgIC50aGVuKChyZXN1bHRzKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgIGxldCByZXNwb25zZSA9IHJlc3VsdHM7XG5cbiAgICAgICAgICAgICAgICAgICAgaWYgKGZvcm1hdCA9PT0gJ3htbCcgfHwgZm9ybWF0ID09PSAnYXBwbGljYXRpb24veG1sJykge1xuICAgICAgICAgICAgICAgICAgICAgICAgcmVzcG9uc2UgPSB0aGlzLmZoaXIub2JqVG9YbWwocmVzdWx0cyk7XG4gICAgICAgICAgICAgICAgICAgIH1cblxuICAgICAgICAgICAgICAgICAgICByZXNvbHZlKHJlc3BvbnNlKTtcbiAgICAgICAgICAgICAgICB9KVxuICAgICAgICAgICAgICAgIC5jYXRjaCgoZXJyKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgIHJlamVjdChlcnIpO1xuICAgICAgICAgICAgICAgIH0pO1xuICAgICAgICB9KTtcbiAgICB9XG59Il19

@@ -42,6 +42,8 @@ export interface FhirConfig {
     servers: [{
         id: string;
         name: string;
+        uri: string;
+        version: string;
         short?: string;
     }];
     publishedVersions: [{
