@@ -120,9 +120,6 @@
                                value="{{globals.getShortString(t.profile, false, 30) || globals.getShortString(t.targetProfile, false, 30)}}"
                                title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default clickable" (click)="selectTypeProfile(t)" title="Select target profile">
-                                <i class="fa fa-hand-pointer-o"></i>
-                            </button>
                             <button type="button" class="btn btn-default clickable" (click)="openTypeModel(element, t)" title="Edit this type">
                                 <i class="fa fa-edit"></i>
                             </button>

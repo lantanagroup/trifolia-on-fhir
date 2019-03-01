@@ -4,7 +4,30 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body" *ngIf="type">
+
+<!-- FHIR R4 -->
+<div class="modal-body" *ngIf="type && configService.isFhirR4">
+    <div class="form-group">
+        <label>
+            Code <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
+        </label>
+        <select class="form-control" [(ngModel)]="type.code">
+            <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Profile <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
+        </label>
+        <p *ngFor="let p of type.profile">
+            <input type="text" class="form-control" />
+        </p>
+    </div>
+</div>
+
+<!-- FHIR STU3 -->
+<div class="modal-body" *ngIf="type && configService.isFhirSTU3">
     <div class="form-group">
         <label>
             Code

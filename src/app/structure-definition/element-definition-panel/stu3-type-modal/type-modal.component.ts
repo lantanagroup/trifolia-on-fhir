@@ -1,25 +1,26 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
-import {Coding, TypeRefComponent} from '../../models/stu3/fhir';
-import {FhirReferenceModalComponent} from '../reference-modal/reference-modal.component';
+import {Globals} from '../../../globals';
+import {FhirService} from '../../../services/fhir.service';
+import {Coding, TypeRefComponent} from '../../../models/stu3/fhir';
+import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
+import {ConfigService} from '../../../services/config.service';
 
 @Component({
-    selector: 'app-fhir-element-definition-type-modal',
-    templateUrl: './element-definition-type-modal.component.html',
-    styleUrls: ['./element-definition-type-modal.component.css']
+    templateUrl: './type-modal.component.html',
+    styleUrls: ['./type-modal.component.css']
 })
-export class FhirElementDefinitionTypeModalComponent implements OnInit {
+export class STU3TypeModalComponent implements OnInit {
     @Input() element: any;
     @Input() type: TypeRefComponent;
     public definedTypeCodes: Coding[] = [];
 
     constructor(
         public activeModal: NgbActiveModal,
+        public globals: Globals,
+        public configService: ConfigService,
         private modalService: NgbModal,
-        private fhirService: FhirService,
-        public globals: Globals) {
+        private fhirService: FhirService) {
     }
 
     selectProfile(dest: string) {

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirElementDefinitionTypeModalComponent} from '../../fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
+import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../globals';
 import {ElementTreeModel} from '../../models/element-tree-model';
 import {
@@ -14,6 +14,8 @@ import * as _ from 'underscore';
 import {FhirService} from '../../services/fhir.service';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
+import {ConfigService} from '../../services/config.service';
+import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
 
 @Component({
     selector: 'app-element-definition-panel',
@@ -34,6 +36,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     constructor(
         private modalService: NgbModal,
         private fhirService: FhirService,
+        private configService: ConfigService,
         public globals: Globals) {
 
     }
@@ -62,19 +65,18 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     openTypeModel(element, type) {
-        const modalRef = this.modalService.open(FhirElementDefinitionTypeModalComponent);
+        let modalRef;
+
+        if (this.configService.isFhirSTU3) {
+            modalRef = this.modalService.open(STU3TypeModalComponent);
+        } else if (this.configService.isFhirR4) {
+            modalRef = this.modalService.open(R4TypeModalComponent);
+        } else {
+            throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
+        }
+
         modalRef.componentInstance.element = element;
         modalRef.componentInstance.type = type;
-    }
-
-    selectTypeProfile(type: TypeRefComponent) {
-        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
-        modalRef.componentInstance.resourceType = 'StructureDefinition';
-        modalRef.componentInstance.hideResourceType = true;
-
-        modalRef.result.then((results) => {
-            type.targetProfile = results.resource.url;
-        });
     }
 
     toggleEditSliceName(commit?: boolean) {

@@ -31,7 +31,8 @@ import {Observable} from 'rxjs';
 import {FhirStringComponent} from './fhir-edit/string/string.component';
 import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-modal.component';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
-import {FhirElementDefinitionTypeModalComponent} from './fhir-edit/element-definition-type-modal/element-definition-type-modal.component';
+import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
+import {R4TypeModalComponent} from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
 import {Globals} from './globals';
 import {MarkdownComponent} from './markdown/markdown.component';
 import {AuditEventService} from './services/audit-event.service';
@@ -205,7 +206,8 @@ export function getConfig(configService: ConfigService) {
     entryComponents: [
         AdminMessageModalComponent,
         SelectChoiceModalComponent,
-        FhirElementDefinitionTypeModalComponent,
+        STU3TypeModalComponent,
+        R4TypeModalComponent,
         STU3PageComponentModalComponent,
         R4PageComponentModalComponent,
         ParameterModalComponent,
@@ -267,7 +269,8 @@ export function getConfig(configService: ConfigService) {
         FhirStringComponent,
         SelectChoiceModalComponent,
         ElementDefinitionPanelComponent,
-        FhirElementDefinitionTypeModalComponent,
+        STU3TypeModalComponent,
+        R4TypeModalComponent,
         MarkdownComponent,
         FhirMarkdownComponent,
         FhirReferenceComponent,

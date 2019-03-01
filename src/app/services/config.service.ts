@@ -24,6 +24,14 @@ export class ConfigService {
         this.fhirServer = localStorage.getItem('fhirServer');
     }
 
+    public get isFhirSTU3() {
+        return ConfigService.identifyRelease(this.fhirConformanceVersion) === Versions.STU3;
+    }
+
+    public get isFhirR4() {
+        return ConfigService.identifyRelease(this.fhirConformanceVersion) === Versions.R4;
+    }
+
     public setTitle(value: string) {
         const mainTitle = 'Trifolia-on-FHIR';
 

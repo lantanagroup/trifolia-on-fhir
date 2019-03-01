@@ -1,24 +1,24 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {FhirElementDefinitionTypeModalComponent} from './element-definition-type-modal.component';
+import {R4TypeModalComponent} from './type-modal.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
-import {ConfigService} from '../../services/config.service';
-import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {Globals} from '../../../globals';
+import {FhirService} from '../../../services/fhir.service';
+import {ConfigService} from '../../../services/config.service';
+import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
 import {CookieService} from 'angular2-cookie/core';
 
-describe('FhirElementDefinitionTypeModalComponent', () => {
-    let component: FhirElementDefinitionTypeModalComponent;
-    let fixture: ComponentFixture<FhirElementDefinitionTypeModalComponent>;
+describe('R4TypeModalComponent', () => {
+    let component: R4TypeModalComponent;
+    let fixture: ComponentFixture<R4TypeModalComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                FhirElementDefinitionTypeModalComponent,
+                R4TypeModalComponent,
                 TooltipIconComponent
             ],
             imports: [
@@ -39,7 +39,7 @@ describe('FhirElementDefinitionTypeModalComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(FhirElementDefinitionTypeModalComponent);
+        fixture = TestBed.createComponent(R4TypeModalComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
