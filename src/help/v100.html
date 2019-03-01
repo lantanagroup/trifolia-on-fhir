@@ -17,8 +17,6 @@
 
 
 
-  
-
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="v1.0.0">
@@ -50,12 +48,12 @@
   <link href="css/effects.min.css" rel="stylesheet" />
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
-  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded #main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
 
-  
+  <link rel="stylesheet" href="css/lantana-hnd.css" />
 
 
 
@@ -89,21 +87,21 @@
       
 	  
         <li role="presentation" class="tab active">
-            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
+            <a href="#contents" aria-controls="contents" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-list"></i>
                 Contents
             </a>
         </li>
       
         <li role="presentation" class="tab">
-            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
+            <a href="#index" aria-controls="index" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-asterisk"></i>
                 Index
             </a>
         </li>
       
         <li role="presentation" class="tab">
-            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
+            <a href="#search" aria-controls="search" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-search"></i>
                 Search
             </a>
@@ -173,7 +171,7 @@
                         <li>Version History</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="API.html" title="API" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="VersionHistory.html" title="Version History" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="VersionHistory.html" title="Version History" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v110.html" title="v1.1.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,7 +183,7 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.0 on January 15, 2019</span></p>
+<p class="rvps3"><span class="rvts16">Release 1.0.0 on January 15, 2019</span></p>
 <h2 class="rvps8"><span class="rvts0"><span class="rvts19">Open-source</span></span></h2>
 <p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is an open-source product. The source code can be found here: </span><a class="rvts13" href="https://github.com/lantanagroup/trifolia-on-fhir" target="_blank">https://github.com/lantanagroup/trifolia-on-fhir</a></p>
 <h2 class="rvps8"><span class="rvts0"><span class="rvts19">FHIR IG Publisher</span></span></h2>
@@ -278,35 +276,19 @@
         </div>  <!-- /#topic-content -->
     </article>
 
-    <footer></footer>
+    <footer>
+        
+    </footer>
 
   </div>  <!-- /#main -->
 
   <div class="mask" data-toggle="sm-nav-expanded"></div>
-  
-  <!-- Modal -->
-  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="hndModalLabel"></h4>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Scripts -->
   <script src="vendors/jquery-1.11.3/jquery.min.js"></script>
   <script src="vendors/bootstrap-3.3.6/js/bootstrap.min.js"></script>
   <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
   <script src="vendors/markjs-8.8.3/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.18.9/uri.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="vendors/bootstrap-3.3.6/js/ie10-viewport-bug-workaround.js"></script>
   
@@ -332,16 +314,10 @@
       var app = new Hnd.App();
       // Update translations
       hnd_ut(app);
-	  // Custom JS
-	  
       // Boot the app
       app.Boot();
     });
   </script>
 
-
-
-</body>
-
-</html>
+  
 

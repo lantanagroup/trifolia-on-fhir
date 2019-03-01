@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>What's New</title>
+  <title>v1.1.0</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="What's New">
+  <meta name="twitter:title" content="v1.1.0">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="What's New" />
+  <meta property="og:title" content="v1.1.0" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -161,31 +161,34 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="WhatsNew"
-		  data-hnd-context="2"
-		  data-hnd-title="What's New"
+		  data-hnd-id="v110"
+		  data-hnd-context="21"
+		  data-hnd-title="v1.1.0"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li>Introduction</li>
+                        <li>Version History</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Login.html" title="Login" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="VersionHistory.html" title="Version History" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="v100.html" title="v1.0.0" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>What's New</h2>
+            <h2>v1.1.0</h2>
 
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts17">Release 1.2.0 on March 1, 2019</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Navigation improvements</span></span></h3>
-<p class="rvps3"><span class="rvts8">Most of the individual icons in the top-right navigation bar have been moved to a new "File" menu, which replaces the "Home" button. The "Home" button is now a menu item within the "File" menu.</span></p>
+<p class="rvps3"><span class="rvts17">Release 1.1.0 on February 20, 2019</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Improved support for R4</span></span></h3>
+<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is tested with the HAPI FHIR server. Until recently, HAPI has been using an old version of the FHIR R4 specification. To work with HAPI, Trifolia-on-FHIR has had to implement some work-arounds to accommodate an old version of FHIR R4 in HAPI while supporting a newer version of the FHIR IG Publisher.</span></p>
+<p class="rvps3"><span class="rvts8">Recently HAPI released updates to its R4 support. We have cleaned up the R4 logic in Trifolia-on-FHIR and have upgraded our free-to-use installation of Trifolia to include the latest version of the HAPI R4 server.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Version history</span></span></h3>
+<p class="rvps3"><span class="rvts8">The implementation guide edit screen has a new tab for "History" which allows you to see the version history of the resource, and even load one of the historical versions into the current editor. This is being tested out on the implementation guide editing screen first. Once the functionality is refined, it will be added to the other editing screens.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log</span></span></h3>
 <div class="rvps3"><table width="100%" border="2" cellpadding="6" cellspacing="4" style="border-color: #000000; border-style: solid; border-spacing: 4px;">
 <tr valign="top">
@@ -197,59 +200,83 @@
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-131" target="_blank">TRIFFHIR-131</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-32" target="_blank">TRIFFHIR-32</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Pages should create unique page names</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Value set expansion limitations and use of terminology server</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-132" target="_blank">TRIFFHIR-132</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="Allow%20specifying%20the%20ID%20of%20a%20resource%20upon%20creation" target="_blank">TRIFFHIR-46</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Add additional guidance for the ID on VSAC import page</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Allow specifying the ID of a resource upon creation</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-139" target="_blank">TRIFFHIR-139</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-85" target="_blank">TRIFFHIR-85</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Allow users to change the id of "other" resources</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Profiles/Extensions page - put a label on the third search dropdown "Implementation Guide"</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-152" target="_blank">TRIFFHIR-152</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Adding a StructureDefinition to an IG via the "Edit Structure Definition" screen does not work</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-151" target="_blank">TRIFFHIR-151</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-140" target="_blank">TRIFFHIR-140</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Re-arrange navigation bar's individual icons into a File menu</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Display the currently selected FHIR server on all screens</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-150" target="_blank">TRIFFHIR-150</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-107" target="_blank">TRIFFHIR-107</a></p>
 </td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Exported ig publisher package's ig.json file has incorrect specification property</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Prompt user to confirm when removing an implementation guide</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-149" target="_blank">TRIFFHIR-149</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-141" target="_blank">TRIFFHIR-141</a></p>
 </td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Editing a profile's ElementDefinition.type is incorrect for R4</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Add support for google analytics</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-118" target="_blank">TRIFFHIR-118</a></p>
+</td>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Task</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">PackageID and FHIRVersion fields not saving</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-135" target="_blank">TRIFFHIR-135</a></p>
+</td>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Task</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Authentication framework improvements</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-142" target="_blank">TRIFFHIR-142</a></p>
+</td>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Display version history on implementation guide editing screen</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-77" target="_blank">TRIFFHIR-77</a></p>
+</td>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Task</span></p>
+</td>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Tech-editing review changes</span></p>
 </td>
 </tr>
 </table>
