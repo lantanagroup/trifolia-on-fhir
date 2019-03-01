@@ -465,7 +465,7 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
             temp: "generated_output/temp",
             output: "output",
             txCache: "generated_output/txCache",
-            specification: "http://hl7.org/fhir/STU3",
+            specification: "http://hl7.org/fhir/R4/",
             pages: [
                 "framework",
                 "source/pages"
