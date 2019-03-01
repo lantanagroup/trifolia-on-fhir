@@ -1,4 +1,4 @@
-const BundleExporter = require('./bundle');
+const {BundleExporter} = require('./bundle');
 const config = require('config');
 const tmp = require('tmp');
 const rp = require('request-promise');
@@ -453,7 +453,6 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
         canonicalBase = canonicalBaseMatch[1];
     }
 
-    // TODO: Extract npm-name from IG extension.
     // currently, IG resource has to be in XML format for the IG Publisher
     const control = {
         tool: 'jekyll',
