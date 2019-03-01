@@ -10,6 +10,7 @@ import {FhirLogic} from './fhirLogic';
 import {RequestHandler} from 'express';
 import {ExtendedRequest, Fhir, FhirConfig, RequestOptions, RestRejection} from './models';
 import {ConfigController} from './config';
+import {checkJwt} from '../authHelper';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
 
@@ -32,6 +33,51 @@ export class StructureDefinitionController extends FhirLogic {
     public static initRoutes() {
         const router = express.Router();
 
+        router.get('/', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
+            FhirLogic.log.trace(`Searching for resource StructureDefinition`);
+
+            const fhirLogic = new this('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
+            fhirLogic.search(req.query)
+                .then((results) => res.send(results))
+                .catch((err) => FhirLogic.handleError(err, null, res));
+        });
+
+        router.get('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
+            FhirLogic.log.trace(`Retrieving resource StructureDefinition/${req.params.id}`);
+
+            const fhirLogic = new this('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
+            fhirLogic.get(req.params.id, req.query)
+                .then((results) => res.send(results))
+                .catch((err) => FhirLogic.handleError(err, null, res));
+        });
+
+        router.post('/', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
+            FhirLogic.log.trace(`Creating resource StructureDefinition`);
+
+            const fhirLogic = new this('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
+            fhirLogic.create(req.body, req.query)
+                .then((results) => res.send(results))
+                .catch((err) => FhirLogic.handleError(err, null, res));
+        });
+
+        router.put('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
+            FhirLogic.log.trace(`Updating resource StructureDefinition/${req.params.id}`);
+
+            const fhirLogic = new this('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
+            fhirLogic.update(req.params.id, req.body, req.query)
+                .then((results) => res.send(results))
+                .catch((err) => FhirLogic.handleError(err, null, res));
+        });
+
+        router.delete('/:id', <RequestHandler> checkJwt, (req: ExtendedRequest, res) => {
+            FhirLogic.log.trace(`Deleting resource StructureDefinition/${req.params.id}`);
+
+            const fhirLogic = new this('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
+            fhirLogic.delete(req.params.id, req.query)
+                .then((results) => res.send(results))
+                .catch((err) => FhirLogic.handleError(err, null, res));
+        });
+
         router.get('/base/:id', <RequestHandler> AuthHelper.checkJwt, <RequestHandler> (req: ExtendedRequest, res) => {
             const controller = new StructureDefinitionController('StructureDefinition', req.fhirServerBase, req.fhirServerVersion);
             controller.getBaseStructureDefinition(req.params.id)
@@ -39,7 +85,7 @@ export class StructureDefinitionController extends FhirLogic {
                 .catch((err) => StructureDefinitionController.handleError(err, null, res));
         });
 
-        return super.initRoutes('StructureDefinition', router);
+        return router;
     }
 
     constructor(resourceType: string, baseUrl: string, fhirServerVersion: string) {
