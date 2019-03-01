@@ -122,7 +122,7 @@ import {SettingsModalComponent} from './settings-modal/settings-modal.component'
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
-import { NumberComponent } from './fhir-edit/number/number.component';
+import { FhirEditNumberComponent } from './fhir-edit/number/number.component';
 import { AdminMessageModalComponent } from './admin-message-modal/admin-message-modal.component';
 import { ResourceHistoryComponent } from './resource-history/resource-history.component';
 import { ContextPanelWrapperComponent } from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
@@ -337,7 +337,7 @@ export function getConfig(configService: ConfigService) {
         SettingsModalComponent,
         ImportGithubPanelComponent,
         ExportGithubPanelComponent,
-        NumberComponent,
+        FhirEditNumberComponent,
         AdminMessageModalComponent,
         ResourceHistoryComponent,
         ContextPanelWrapperComponent,

@@ -1,6 +1,17 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ContextPanelR4Component} from './context-panel-r4.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientModule} from '@angular/common/http';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule} from '@angular/forms';
+import {FhirService} from '../../../services/fhir.service';
+import {Globals} from '../../../globals';
+import {ConfigService} from '../../../services/config.service';
+import {CookieService} from 'angular2-cookie/core';
+import {FhirStringComponent} from '../../../fhir-edit/string/string.component';
+import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
 
 describe('ContextPanelR4Component', () => {
     let component: ContextPanelR4Component;
@@ -8,9 +19,25 @@ describe('ContextPanelR4Component', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ContextPanelR4Component]
-        })
-            .compileComponents();
+            declarations: [
+                ContextPanelR4Component,
+                FhirStringComponent,
+                TooltipIconComponent
+            ],
+            imports: [
+                BrowserModule,
+                RouterTestingModule,
+                HttpClientModule,
+                NgbModule.forRoot(),
+                FormsModule
+            ],
+            providers: [
+                FhirService,
+                Globals,
+                ConfigService,
+                CookieService
+            ]
+        }).compileComponents();
     }));
 
     beforeEach(() => {

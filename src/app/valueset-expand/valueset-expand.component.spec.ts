@@ -15,6 +15,9 @@ import {FhirService} from '../services/fhir.service';
 import {ConfigService} from '../services/config.service';
 import {CookieService} from 'angular2-cookie/core';
 import {FhirDateComponent} from '../fhir-edit/date/date.component';
+import {FhirEditNumberComponent} from '../fhir-edit/number/number.component';
+import {RawResourceComponent} from '../raw-resource/raw-resource.component';
+import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
 
 describe('ValuesetExpandComponent', () => {
     let component: ValuesetExpandComponent;
@@ -27,7 +30,10 @@ describe('ValuesetExpandComponent', () => {
                 FhirStringComponent,
                 FhirBooleanComponent,
                 TooltipIconComponent,
-                FhirDateComponent
+                FhirDateComponent,
+                FhirEditNumberComponent,
+                RawResourceComponent,
+                FhirXmlPipe
             ],
             imports: [
                 BrowserModule,

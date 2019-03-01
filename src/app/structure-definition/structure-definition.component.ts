@@ -129,18 +129,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             const elementTreeModel = elementTreeModels[i];
             const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
             const thisId = parentId ? parentId + '.' + elementTreeModel.leafPath : elementTreeModel.leafPath;
-
-            const constrainedElements = _.filter(this.structureDefinition.differential.element, (element) => {
-                if (element.id.startsWith(thisId)) {
-                    const remaining = element.id.substring(thisId.length);
-                    if (remaining.indexOf('.') >= 0) {
-                        return false;
-                    }
-                    return true;
-                }
-
-                return false;
-            });
+            const constrainedElements = _.filter(this.structureDefinition.differential.element, (element) => element.id === thisId);
 
             for (let x = 0; x < constrainedElements.length; x++) {
                 let newElementTreeModel = elementTreeModel;

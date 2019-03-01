@@ -16,7 +16,7 @@ import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/select-single-code.component';
-import {ValuesetConceptCardComponent} from '../valueset-concept-card/valueset-concept-card.component';
+import {ConceptCardComponent} from '../valueset/concept-card/concept-card.component';
 
 describe('ValuesetsComponent', () => {
     let component: ValuesetsComponent;
@@ -32,7 +32,7 @@ describe('ValuesetsComponent', () => {
                 FhirXmlPipe,
                 FhirStringComponent,
                 FhirSelectSingleCodeComponent,
-                ValuesetConceptCardComponent
+                ConceptCardComponent
             ],
             imports: [
                 NgbModule.forRoot(),

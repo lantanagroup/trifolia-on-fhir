@@ -12,8 +12,7 @@ export class SettingsModalComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        public configService: ConfigService,
-        private authService: AuthService) {
+        public configService: ConfigService) {
 
     }
 

@@ -7,7 +7,7 @@ import {CookieService} from 'angular2-cookie/core';
     templateUrl: './number.component.html',
     styleUrls: ['./number.component.css']
 })
-export class NumberComponent implements OnInit {
+export class FhirEditNumberComponent implements OnInit {
     @Input() parentObject: any;
     @Input() propertyName: string;
     @Input() title: string;

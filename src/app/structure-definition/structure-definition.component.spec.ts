@@ -28,7 +28,7 @@ import {FhirSelectMultiCodingComponent} from '../fhir-edit/select-multi-coding/s
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
-import {ElementDefinitionPanelComponent} from '../element-definition-panel/element-definition-panel.component';
+import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
 import {FhirReferenceComponent} from '../fhir-edit/reference/reference.component';
 import {FhirChoiceComponent} from '../fhir-edit/choice/choice.component';
@@ -39,6 +39,7 @@ import {FhirHumanNameComponent} from '../fhir-edit/human-name/human-name.compone
 import {FhirPeriodComponent} from '../fhir-edit/period/period.component';
 import {FhirRatioComponent} from '../fhir-edit/ratio/ratio.component';
 import {FhirRangeComponent} from '../fhir-edit/range/range.component';
+import {ContextPanelWrapperComponent} from './context-panel-wrapper/context-panel-wrapper.component';
 
 describe('StructureDefinitionComponent', () => {
     let component: StructureDefinitionComponent;
@@ -73,7 +74,8 @@ describe('StructureDefinitionComponent', () => {
                 FhirHumanNameComponent,
                 FhirPeriodComponent,
                 FhirRatioComponent,
-                FhirRangeComponent
+                FhirRangeComponent,
+                ContextPanelWrapperComponent
             ],
             imports: [
                 BrowserModule,

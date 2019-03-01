@@ -6,7 +6,8 @@ import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
 import {FhirService} from '../services/fhir.service';
 import {Globals} from '../globals';
-import {CapabilityStatementComponent} from './stu3/capability-statement.component';
+import {STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
+import {R4CapabilityStatementComponent} from './r4/capability-statement.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
@@ -52,7 +53,8 @@ describe('CapabilityStatementWrapperComponent', () => {
 
 @NgModule({
     declarations: [
-        CapabilityStatementComponent,
+        STU3CapabilityStatementComponent,
+        R4CapabilityStatementComponent,
         FhirStringComponent,
         TooltipIconComponent,
         FhirMarkdownComponent,
@@ -67,7 +69,10 @@ describe('CapabilityStatementWrapperComponent', () => {
         RawResourceComponent,
         FhirXmlPipe
     ],
-    entryComponents: [CapabilityStatementComponent],
+    entryComponents: [
+        STU3CapabilityStatementComponent,
+        R4CapabilityStatementComponent
+    ],
     imports: [
         BrowserModule,
         RouterTestingModule,

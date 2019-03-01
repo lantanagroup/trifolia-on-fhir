@@ -5,7 +5,8 @@ import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
-import {ImplementationGuideComponent} from './stu3/implementation-guide.component';
+import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
+import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {FhirMarkdownComponent} from '../fhir-edit/markdown/markdown.component';
 import {MarkdownComponent} from '../markdown/markdown.component';
@@ -27,6 +28,7 @@ import {FhirService} from '../services/fhir.service';
 import {PractitionerService} from '../services/practitioner.service';
 import {CookieService} from 'angular2-cookie/core';
 import {NgModule} from '@angular/core';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
 
 describe('ImplementationGuideWrapperComponent', () => {
     let component: ImplementationGuideWrapperComponent;
@@ -52,7 +54,8 @@ describe('ImplementationGuideWrapperComponent', () => {
 
 @NgModule({
     declarations: [
-        ImplementationGuideComponent,
+        STU3ImplementationGuideComponent,
+        R4ImplementationGuideComponent,
         FhirStringComponent,
         FhirMarkdownComponent,
         MarkdownComponent,
@@ -63,9 +66,13 @@ describe('ImplementationGuideWrapperComponent', () => {
         FhirMultiContactComponent,
         ValidationResultsComponent,
         RawResourceComponent,
-        FhirXmlPipe
+        FhirXmlPipe,
+        ResourceHistoryComponent
     ],
-    entryComponents: [ImplementationGuideComponent],
+    entryComponents: [
+        STU3ImplementationGuideComponent,
+        R4ImplementationGuideComponent
+    ],
     imports: [
         BrowserModule,
         RouterTestingModule,

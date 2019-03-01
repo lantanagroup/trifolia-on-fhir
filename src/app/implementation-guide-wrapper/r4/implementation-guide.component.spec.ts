@@ -25,6 +25,7 @@ import {RawResourceComponent} from '../../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../../pipes/fhir-xml-pipe';
 import {PractitionerService} from '../../services/practitioner.service';
 import {CookieService} from 'angular2-cookie/core';
+import {ResourceHistoryComponent} from '../../resource-history/resource-history.component';
 
 describe('R4ImplementationGuideComponent', () => {
     let component: R4ImplementationGuideComponent;
@@ -44,7 +45,8 @@ describe('R4ImplementationGuideComponent', () => {
                 FhirMultiContactComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent
             ],
             imports: [
                 BrowserModule,

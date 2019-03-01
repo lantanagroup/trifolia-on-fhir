@@ -10,6 +10,7 @@ import {FhirService} from '../../../services/fhir.service';
 import {ConfigService} from '../../../services/config.service';
 import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
 import {CookieService} from 'angular2-cookie/core';
+import {FhirSelectSingleCodeComponent} from '../../../fhir-edit/select-single-code/select-single-code.component';
 
 describe('R4TypeModalComponent', () => {
     let component: R4TypeModalComponent;
@@ -19,7 +20,8 @@ describe('R4TypeModalComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 R4TypeModalComponent,
-                TooltipIconComponent
+                TooltipIconComponent,
+                FhirSelectSingleCodeComponent
             ],
             imports: [
                 BrowserModule,

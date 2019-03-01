@@ -21,7 +21,7 @@ import {MarkdownComponent} from '../markdown/markdown.component';
 import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/select-single-code.component';
 import {FhirDateComponent} from '../fhir-edit/date/date.component';
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
-import {ValuesetConceptCardComponent} from '../valueset-concept-card/valueset-concept-card.component';
+import {ConceptCardComponent} from './concept-card/concept-card.component';
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
@@ -42,7 +42,7 @@ describe('ValuesetComponent', () => {
                 FhirSelectSingleCodeComponent,
                 FhirDateComponent,
                 FhirBooleanComponent,
-                ValuesetConceptCardComponent,
+                ConceptCardComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
                 FhirXmlPipe
