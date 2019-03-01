@@ -458,8 +458,8 @@ HtmlExporter.prototype._getR4Control = function(extension, implementationGuide, 
     const control = {
         tool: 'jekyll',
         source: 'implementationguide/' + implementationGuide.id + '.xml',
-        'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
-        license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
+        'npm-name': implementationGuide.packageId || implementationGuide.id + '-npm',
+        license: 'CC0-1.0',                                                                 // R4: ImplementationGuide.license
         paths: {
             qa: "generated_output/qa",
             temp: "generated_output/temp",
