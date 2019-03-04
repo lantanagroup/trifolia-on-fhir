@@ -1,1 +1,2 @@
-<p>You are being logged into Trifolia-on-FHIR...</p>
+<p *ngIf="loggingIn">You are being logged into Trifolia-on-FHIR...</p>
+<div class="alert alert-danger" *ngIf="errorMessage">{{errorMessage}}</div>
