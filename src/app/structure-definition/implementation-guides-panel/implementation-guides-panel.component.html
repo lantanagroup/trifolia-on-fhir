@@ -32,7 +32,7 @@
             <select class="form-control" [ngModel]="newImplementationGuide.id" (ngModelChange)="setNewImplementationGuide($event)">
                 <option *ngFor="let ig of getUnusedImplementationGuides()" [ngValue]="ig.id">{{ig.name}}</option>
             </select>
-            <span class="help-block">This profile will not be saved to the IG until the "Done" (check-mark) button is pressed and the profile has been saved.</span>
+            <span class="help-block" style="color: red;"><strong>This profile will not be saved to the IG until the "Done" (check-mark) button is pressed and the profile has been saved.</strong></span>
         </td>
         <td>
             <div class="btn-group pull-right">
