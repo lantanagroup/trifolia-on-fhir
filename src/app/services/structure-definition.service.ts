@@ -69,7 +69,8 @@ export class StructureDefinitionService {
             }
         }
 
-        return this.http.get<GetStructureDefinitionModel>('/api/structureDefinition/' + id);
+        const url = '/api/structureDefinition/' + encodeURIComponent(id);
+        return this.http.get<GetStructureDefinitionModel>(url);
     }
 
     public getBaseStructureDefinition(resourceType: string): Observable<StructureDefinition> {

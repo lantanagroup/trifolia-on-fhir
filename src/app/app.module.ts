@@ -147,6 +147,8 @@ export class AddHeaderInterceptor implements HttpInterceptor {
             if (fhirServer) {
                 headers['fhirServer'] = fhirServer;
             }
+
+            headers['Cache-Control'] = 'no-cache';
         }
 
         const clonedRequest = req.clone({

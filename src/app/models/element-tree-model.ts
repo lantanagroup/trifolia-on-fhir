@@ -3,13 +3,13 @@ import {Globals} from '../globals';
 import * as _ from 'underscore';
 
 export class ElementTreeModel {
-    public constrainedElement: ElementDefinition;
+    public constrainedElement?: ElementDefinition;
     public baseElement: ElementDefinition;
     public depth: number;
-    public expanded: boolean;
-    public hasChildren: boolean;
+    public expanded = false;
+    public hasChildren = false;
     public position: number;
-    public parent: ElementTreeModel;
+    public parent?: ElementTreeModel;
 
     constructor() {
     }
