@@ -120,7 +120,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                         this.valueSet.name || this.valueSet.title);
                 }, (err) => {
                     this.vsNotFound = err.status === 404;
-                    this.message = err && err.message ? err.message : 'Error loading value set';
+                    this.message = this.fhirService.getErrorString(err);
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentValueSets, valueSetId);
                 });
         }

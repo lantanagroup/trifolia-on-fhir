@@ -131,7 +131,7 @@ export class FhirReferenceModalComponent implements OnInit {
                     this.results = results;
                 }
             }, (err) => {
-                this.message = err.message || err.data || err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

@@ -6,6 +6,7 @@ import {
     NodeUncheckedEvent,
     TreeModel
 } from 'ng2-tree';
+import {FhirService} from '../../services/fhir.service';
 
 @Component({
     selector: 'app-import-github-panel',
@@ -23,6 +24,11 @@ export class ImportGithubPanelComponent implements OnInit {
     public loadingRepositories = true;
 
     @ViewChild('treeComponent') treeComponent;
+
+    constructor(
+        private fhirService: FhirService,
+        public githubService: GithubService) {
+    }
 
     public handleSelected(event: NodeCheckedEvent) {
         if (this.selectedPaths.indexOf(<string> event.node.id) < 0) {
@@ -53,9 +59,6 @@ export class ImportGithubPanelComponent implements OnInit {
         }
     }
 
-    constructor(public githubService: GithubService) {
-    }
-
     private mapContentToTreeModel(content: ContentModel): TreeModel {
         const newTreeModel: TreeModel = {
             value: content.name,
@@ -80,7 +83,7 @@ export class ImportGithubPanelComponent implements OnInit {
                             .value();
                         callback(childTreeModels);
                     }, (err) => {
-                        this.message = err;
+                        this.message = this.fhirService.getErrorString(err);
                     });
             };
         }
@@ -119,7 +122,7 @@ export class ImportGithubPanelComponent implements OnInit {
                     }
                 };
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -140,7 +143,7 @@ export class ImportGithubPanelComponent implements OnInit {
                     this.branchChanged();
                 }
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -153,10 +156,10 @@ export class ImportGithubPanelComponent implements OnInit {
                         this.repositories = repositories;
                         this.loadingRepositories = false;
                     }, (err) => {
-                        this.message = err.message || err.data || err;
+                        this.message = this.fhirService.getErrorString(err);
                     });
             }, (err) => {
-                this.message = err.message || err.data || err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -166,7 +169,7 @@ export class ImportGithubPanelComponent implements OnInit {
                 this.repositories = repositories;
                 this.loadingRepositories = false;
             }, (err) => {
-                this.message = err.message || err.data || err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 }

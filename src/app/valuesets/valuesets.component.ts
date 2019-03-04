@@ -7,6 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 import {ConfigService} from '../services/config.service';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-valuesets',
@@ -23,6 +24,7 @@ export class ValuesetsComponent implements OnInit {
     public message: string;
 
     constructor(
+        private fhirService: FhirService,
         private configService: ConfigService,
         private valueSetService: ValueSetService,
         private modalService: NgbModal) {
@@ -63,7 +65,7 @@ export class ValuesetsComponent implements OnInit {
                 this.results.entry.splice(index, 1);
                 setTimeout(() => this.message = '', 3000);
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

@@ -105,7 +105,7 @@ export class ExportComponent implements OnInit {
 
                     reader.readAsText(response.body);
                 }, (err) => {
-                    this.message = err.message || err.data || err;
+                    this.message = this.fhirService.getErrorString(err);
                 });
         }
     }
@@ -139,7 +139,7 @@ export class ExportComponent implements OnInit {
             .subscribe(() => {
                 this.message = 'Done exporting to GitHub';
             }, (err) => {
-                this.message = err.message || err.data || err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -174,7 +174,7 @@ export class ExportComponent implements OnInit {
                         reader.readAsText(results.body);
                     }
                 }, (err) => {
-                    this.message = err;
+                    this.message = this.fhirService.getErrorString(err);
                 });
         }
     }
@@ -184,7 +184,7 @@ export class ExportComponent implements OnInit {
             .subscribe((results) => {
                 this.implementationGuidesBundle = results;
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
 
         this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {

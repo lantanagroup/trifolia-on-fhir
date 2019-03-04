@@ -178,7 +178,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                         this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
-                    this.message = err && err.message ? err.message : 'Error loading code system';
+                    this.message = this.fhirService.getErrorString(err);
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }

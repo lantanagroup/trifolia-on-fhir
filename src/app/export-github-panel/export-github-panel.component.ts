@@ -125,7 +125,7 @@ export class ExportGithubPanelComponent implements OnChanges {
                         templates: templates
                     };
                 } else {
-                    this.message = err.message || err.data || err;
+                    this.message = this.fhirService.getErrorString(err);
                 }
             });
     }
@@ -152,7 +152,7 @@ export class ExportGithubPanelComponent implements OnChanges {
                         .value();
                     callback(childTreeModels);
                 }, (err) => {
-                    this.message = err;
+                    this.message = this.fhirService.getErrorString(err);
                 });
         };
 
@@ -183,7 +183,11 @@ export class ExportGithubPanelComponent implements OnChanges {
 
             if (shouldSave) {
                 this.saveResources([implementationGuideEntry.resource])
-                    .subscribe(() => this.message = 'Updated implementation guide\'s repository and branch', (err) => this.message = err.message || err.data || err);
+                    .subscribe(() => {
+                        this.message = 'Updated implementation guide\'s repository and branch';
+                    }, (err) => {
+                        this.message = this.fhirService.getErrorString(err);
+                    });
             }
         }
     }
@@ -206,7 +210,7 @@ export class ExportGithubPanelComponent implements OnChanges {
 
                 this.branchChanged();
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -262,7 +266,7 @@ export class ExportGithubPanelComponent implements OnChanges {
                 this.message = 'Updated resources with GitHub repository and path.';
                 this.isChanging = false;
             }, (err) => {
-                this.message = err.message || err.data || err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 
@@ -279,7 +283,7 @@ export class ExportGithubPanelComponent implements OnChanges {
                     this.repository = _.find(repositories, (repo) => repo.full_name === implementationGuideDetails.owner + '/' + implementationGuideDetails.repository);
                     this.repositoryChanged();
                 }, (err) => {
-                    this.message = err.message || err.data || err;
+                    this.message = this.fhirService.getErrorString(err);
                 });
         }
 

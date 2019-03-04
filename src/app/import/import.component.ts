@@ -266,7 +266,7 @@ export class ImportComponent implements OnInit {
                 if (err && err.message) {
                     this.message = 'Error while importing: ' + err.message;
                 } else {
-                    this.message = err;
+                    this.message = this.fhirService.getErrorString(err);
                 }
             });
     }
@@ -301,7 +301,7 @@ export class ImportComponent implements OnInit {
                 } else if (err && err.message) {
                     this.message = 'Error while importing: ' + err.message;
                 } else {
-                    this.message = err;
+                    this.message = this.fhirService.getErrorString(err);
                 }
             });
     }
@@ -436,17 +436,13 @@ export class ImportComponent implements OnInit {
                             tabSet.select('results');
                         });
                     }, (err) => {
-                        if (err && err.message) {
-                            this.message = 'Error while importing: ' + err.message;
-                        } else {
-                            this.message = err;
-                        }
+                        this.message = this.fhirService.getErrorString(err);
                     });
             } catch (ex) {
                 this.message = ex.message;
             }
         }, (err) => {
-            this.message = err.message || err;
+            this.message = this.fhirService.getErrorString(err);
         });
     }
 

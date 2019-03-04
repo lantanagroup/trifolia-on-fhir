@@ -149,7 +149,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
-                    this.message = err && err.message ? err.message : 'Error loading capability statement';
+                    this.message = this.fhirService.getErrorString(err);
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }

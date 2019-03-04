@@ -107,7 +107,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                         this.operationDefinition.name);
                 }, (err) => {
                     this.odNotFound = err.status === 404;
-                    this.message = err && err.message ? err.message : 'Error loading operation definition';
+                    this.message = this.fhirService.getErrorString(err);
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });
         }

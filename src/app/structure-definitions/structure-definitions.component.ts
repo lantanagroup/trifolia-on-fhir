@@ -8,6 +8,7 @@ import {ImplementationGuideService} from '../services/implementation-guide.servi
 import {Bundle, ImplementationGuide, StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import 'rxjs/add/operator/debounceTime';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-profiles',
@@ -25,6 +26,7 @@ export class StructureDefinitionsComponent implements OnInit {
     public implementationGuideId: string = null;
 
     constructor(
+        private fhirService: FhirService,
         private implementationGuideService: ImplementationGuideService,
         private structureDefinitionService: StructureDefinitionService,
         private configService: ConfigService,
@@ -68,7 +70,7 @@ export class StructureDefinitionsComponent implements OnInit {
                 this.response.entry.splice(index, 1);
                 setTimeout(() => this.message = '', 3000);
             }, (err) => {
-                this.message = err;
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

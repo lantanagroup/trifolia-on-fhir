@@ -136,7 +136,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                         this.questionnaire.name || this.questionnaire.title);
                 }, (err) => {
                     this.qNotFound = err.status === 404;
-                    this.message = err && err.message ? err.message : 'Error loading questionnaire';
+                    this.message = this.fhirService.getErrorString(err);
                     this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentQuestionnaires, questionnaireId);
                 });
         }
