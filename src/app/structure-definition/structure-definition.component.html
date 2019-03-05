@@ -5,8 +5,11 @@
 <div class="sd-main" *ngIf="structureDefinition">
     <h2>{{structureDefinition.name || 'No name'}}</h2>
 
-    <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false" [class.has-element-definition]="selectedElement && selectedElement.constrainedElement">
-        <ngb-tab id="general" title="General">
+    <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false" [class.has-element-definition]="selectedElement && selectedElement.constrainedElement" #sdTabs>
+        <ngb-tab id="general">
+            <ng-template ngbTabTitle>
+                <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.general-tab'] : undefined">General</span>
+            </ng-template>
             <ng-template ngbTabContent>
                 <fieldset>
                     <div class="row">
@@ -17,7 +20,7 @@
 
                             <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
 
-                            <app-implementation-guides-panel [options]="options"></app-implementation-guides-panel>
+                            <app-implementation-guides-panel [showIntro]="sdTabs.activeId === 'general'" [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.general.implementation-guides'] : undefined" [options]="options"></app-implementation-guides-panel>
                         </div>
 
                         <div class="col-md-3">
@@ -57,7 +60,10 @@
             </ng-template>
         </ngb-tab>
 
-        <ngb-tab id="narrative" title="Narrative">
+        <ngb-tab id="narrative">
+            <ng-template ngbTabTitle>
+                <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
+            </ng-template>
             <ng-template ngbTabContent>
                 <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
 
@@ -67,7 +73,10 @@
             </ng-template>
         </ngb-tab>
 
-        <ngb-tab id="additional" title="Additional">
+        <ngb-tab id="additional">
+            <ng-template ngbTabTitle>
+                <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.additional-tab'] : undefined">Additional</span>
+            </ng-template>
             <ng-template ngbTabContent>
                 <div class="row">
                     <div class="col-md-6">
@@ -125,7 +134,11 @@
                 </div>
             </ng-template>
         </ngb-tab>
-        <ngb-tab id="mapping" title="Mapping(s)">
+
+        <ngb-tab id="mapping">
+            <ng-template ngbTabTitle>
+                <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
+            </ng-template>
             <ng-template ngbTabContent>
                 <p>
                     <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'mapping', [{ identity: '' }])" />
@@ -187,7 +200,11 @@
                 </table>
             </ng-template>
         </ngb-tab>
-        <ngb-tab id="elements" title="Elements">
+
+        <ngb-tab id="elements">
+            <ng-template ngbTabTitle>
+                <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.elements-tab'] : undefined">Elements</span>
+            </ng-template>
             <ng-template ngbTabContent>
                 <div class="elements">
                     <div class="element" *ngFor="let e of elements">
@@ -225,7 +242,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="clickable" *ngFor="let e of elements" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement" (click)="toggleSelectedElement(e)">
+                    <tr class="clickable" *ngFor="let e of elements; let ei = index" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement" (click)="toggleSelectedElement(e)" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '2' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? globals.introText['sd.elements.row-constrained'] : undefined">
                         <td class="element-name" [class.has-children]="e.hasChildren">
                             <div>
                                 <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
@@ -248,9 +265,9 @@
                         <td class="element-binding">{{e.binding}}</td>
                         <td class="element-actions">
                             <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-default btn-sm" title="Constrain this element" (click)="constrainElement(e, $event)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fas fa-trash-alt"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '1' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? globals.introText['sd.elements.constrain'] : undefined" title="Constrain this element" (click)="constrainElement(e, $event)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '3' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? globals.introText['sd.elements.slice'] : undefined" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '4' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? globals.introText['sd.elements.remove'] : undefined" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </td>
                     </tr>

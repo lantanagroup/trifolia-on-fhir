@@ -1,9 +1,8 @@
-import {Component, DoCheck, Inject, Input, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, ParamMap, Router} from '@angular/router';
+import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {GetStructureDefinitionModel, StructureDefinitionOptions, StructureDefinitionService} from '../services/structure-definition.service';
 import * as _ from 'underscore';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../models/stu3/fhir';
@@ -29,6 +28,9 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public message: string;
     public sdNotFound = false;
     private navSubscription: any;
+
+    @ViewChild('sdTabs')
+    public sdTabs: NgbTabset;
 
     constructor(
         public globals: Globals,

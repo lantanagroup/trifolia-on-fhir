@@ -8,6 +8,7 @@ import {ImplementationGuideListItemModel} from '../../models/implementation-guid
 import {ConfigService} from '../../services/config.service';
 import * as _ from 'underscore';
 import {Bundle, ImplementationGuide} from '../../models/stu3/fhir';
+import {Globals} from '../../globals';
 
 @Component({
     selector: 'app-implementation-guides-panel',
@@ -16,10 +17,12 @@ import {Bundle, ImplementationGuide} from '../../models/stu3/fhir';
 })
 export class ImplementationGuidesPanelComponent implements OnInit {
     @Input() options = new StructureDefinitionOptions();
+    @Input() showIntro = true;
     public implementationGuidesBundle: Bundle;
     public newImplementationGuide: StructureDefinitionImplementationnGuide;
 
     constructor(
+        public globals: Globals,
         private implementationGuideService: ImplementationGuideService,
         private configService: ConfigService) {
     }

@@ -21,6 +21,25 @@ export class Globals {
         'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location'
     };
 
+    public readonly introText = {
+        'sd.general-tab': 'The general tab contains the basic meta data of the profile/extension, such as the canonical URL, name and any implementation guide(s) that the profile belongs to.',
+        'sd.narrative-tab': 'The narrative tab contains rich-text enabled fields that contain narrative content, such as the description, purpose and copyright.',
+        'sd.additional-tab': 'The additional tab contains properties that are less commonly used in profiles, such as identifiers and use context.',
+        'sd.mappings-tab': 'The mappings tab includes fields that indicate external specifications that the content is mapped to.',
+        'sd.elements-tab': 'The elements tab is where you define the elements that are to be constrained by the profile.',
+        'sd.general.implementation-guides': 'This is where you can specify what implementation guide you profile/extension belongs to.',
+        'sd.general.implementation-guides.add': 'Click the add (plus) button to add this profile/extension to an implementation guide. When adding, don\'t forget to click the "Done" (check-mark) icon to confirm your selection, prior to saving the profile/extension.',
+        'sd.elements.constrain': 'Click this button to constrain the element.',
+        'sd.elements.slice': 'If the element can be repeated, you can slice the element using this icon.',
+        'sd.elements.remove': 'Click this button to remove the constraint from the element.',
+        'sd.elements.row-constrained': 'Constrained elements will show as bold.',
+        'sd.element-panel.narrative-tab': 'The narrative tab has properties that have narrative in them, such as the \'definition\' of the element, or the \'short\' name for the element.',
+        'sd.element-panel.binding-tab': 'The binding tab includes properties related to bindings, such as a value set binding.',
+        'sd.element-panel.json-tab': 'The JSON tab shows the current selected element\'s raw JSON representation.',
+        'sd.element-panel.slicing-tab': 'The Slicing tab includes properties related to slicing. It is only available when having selected a sliced element.',
+        'sd.element-panel.general-tab': 'The general tab has properties that are commonly modified for elements, such as cardinality, type and max length.'
+    };
+
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
         const keys = Object.keys(obj);
 

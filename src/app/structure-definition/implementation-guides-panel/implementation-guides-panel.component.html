@@ -4,7 +4,7 @@
         <th>Implementation Guides</th>
         <th class="actions-column-1">
             <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add this structure definition to an implementation guide" (click)="addImplementationGuide()" [disabled]="newImplementationGuide">
+                <button type="button" class="btn btn-default" [attr.data-intro]="showIntro ? globals.introText['sd.general.implementation-guides.add'] : undefined" title="Add this structure definition to an implementation guide" (click)="addImplementationGuide()" [disabled]="newImplementationGuide">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
