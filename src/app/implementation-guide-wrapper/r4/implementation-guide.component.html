@@ -478,9 +478,10 @@
             </ng-template>
         </ngb-tab>
 
+        <!-- Version History -->
         <ngb-tab id="history" title="History" *ngIf="!isNew">
             <ng-template ngbTabContent>
-                <app-resource-history [resource]="implementationGuide"></app-resource-history>
+                <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
             </ng-template>
         </ngb-tab>
     </ngb-tabset>

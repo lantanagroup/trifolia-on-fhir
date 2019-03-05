@@ -132,6 +132,13 @@
             <app-raw-resource [resource]="questionnaire"></app-raw-resource>
         </ng-template>
     </ngb-tab>
+
+    <!-- Version History -->
+    <ngb-tab id="history" title="History" *ngIf="!isNew">
+        <ng-template ngbTabContent>
+            <app-resource-history [(resource)]="questionnaire"></app-resource-history>
+        </ng-template>
+    </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">

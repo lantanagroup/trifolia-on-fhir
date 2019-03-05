@@ -1,25 +1,18 @@
 import {Component, DoCheck, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, ParamMap, Router} from '@angular/router';
-import {
-    GetStructureDefinitionModel, StructureDefinitionImplementationnGuide, StructureDefinitionOptions,
-    StructureDefinitionService
-} from '../services/structure-definition.service';
+import {GetStructureDefinitionModel, StructureDefinitionOptions, StructureDefinitionService} from '../services/structure-definition.service';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SelectChoiceModalComponent} from '../select-choice-modal/select-choice-modal.component';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {
-    DifferentialComponent,
-    ElementDefinition, OperationOutcome,
-    StructureDefinition
-} from '../models/stu3/fhir';
+import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../models/stu3/fhir';
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {DOCUMENT} from '@angular/common';
-import 'rxjs-compat/add/operator/mergeMap';
 import {ConfigService} from '../services/config.service';
+import 'rxjs-compat/add/operator/mergeMap';
 
 @Component({
     selector: 'app-profile',
@@ -60,9 +53,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.configService.setTitle(null);
     }
 
-    public get isNew() {
-        const id = this.route.snapshot.paramMap.get('id');
-        return !id || id === 'new';
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
     }
 
     public toggleSelectedElement(element?: ElementTreeModel) {
@@ -104,16 +96,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             this.populateBaseElements(target);
             target.expanded = true;
         }
-    }
-
-    public selectChoice(element: ElementTreeModel) {
-        const modalRef = this.modalService.open(SelectChoiceModalComponent);
-        modalRef.componentInstance.structureDefinition = this.baseStructureDefinition;
-        modalRef.componentInstance.element = element;
-
-        modalRef.result.then((selectedType) => {
-
-        });
     }
 
     public populateElement(element: ElementTreeModel) {
@@ -205,13 +187,13 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     private getStructureDefinition() {
-        const strucDefId = this.route.snapshot.paramMap.get('id');
+        const sdId = this.route.snapshot.paramMap.get('id');
 
         this.message = 'Loading structure definition...';
         this.structureDefinition = null;
         this.elements = [];
 
-        this.strucDefService.getStructureDefinition(strucDefId)
+        this.strucDefService.getStructureDefinition(sdId)
             .mergeMap((results: GetStructureDefinitionModel) => {
                 if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
                     throw new Error('The requested StructureDefinition either does not exist or has been deleted');
@@ -246,7 +228,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             }, (err) => {
                 this.sdNotFound = err.status === 404;
                 this.message = this.fhirService.getErrorString(err);
-                this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, strucDefId);
+                this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, sdId);
             });
     }
 
@@ -412,13 +394,11 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public save() {
-        const strucDefId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This structure definition is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (strucDefId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -442,7 +422,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
-                this.message = 'An error occured while saving the structure definition';
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

@@ -44,18 +44,20 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public revert() {
         this.getCapabilityStatement();
     }
 
     public save() {
-        const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This capability statement is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (capabilityStatementId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -130,7 +132,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     private getCapabilityStatement() {
         const capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 
-        if (capabilityStatementId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.capabilityStatement = <CapabilityStatement> this.fileService.file.resource;
                 this.nameChanged();
@@ -140,7 +142,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
             }
         }
 
-        if (capabilityStatementId !== 'new' && capabilityStatementId) {
+        if (!this.isNew) {
             this.capabilityStatement = null;
 
             this.csService.get(capabilityStatementId)

@@ -72,18 +72,20 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public revert() {
         this.getQuestionnaire();
     }
 
     public save() {
-        const questionnaireId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This questionnaire is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (questionnaireId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -108,7 +110,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     private getQuestionnaire() {
         const questionnaireId  = this.route.snapshot.paramMap.get('id');
 
-        if (questionnaireId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.questionnaire = <Questionnaire> this.fileService.file.resource;
                 this.nameChanged();
@@ -118,7 +120,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
             }
         }
 
-        if (questionnaireId !== 'new' && questionnaireId) {
+        if (!this.isNew) {
             this.questionnaireService.get(questionnaireId)
                 .subscribe((questionnaire: Questionnaire | OperationOutcome) => {
                     if (questionnaire.resourceType !== 'Questionnaire') {

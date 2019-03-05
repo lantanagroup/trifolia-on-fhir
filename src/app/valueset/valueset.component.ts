@@ -39,6 +39,10 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public addIncludeEntry(includeTabSet) {
         this.valueSet.compose.include.push({ });
         setTimeout(() => {
@@ -53,13 +57,11 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public save() {
-        const valueSetId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This value set is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (valueSetId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -92,7 +94,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     private getValueSet() {
         const valueSetId  = this.route.snapshot.paramMap.get('id');
 
-        if (valueSetId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.valueSet = <ValueSet> this.fileService.file.resource;
                 this.nameChanged();
@@ -102,7 +104,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
             }
         }
 
-        if (valueSetId !== 'new' && valueSetId) {
+        if (!this.isNew) {
             this.valueSet = null;
 
             this.valueSetService.get(valueSetId)

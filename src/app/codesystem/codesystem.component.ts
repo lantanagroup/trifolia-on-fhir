@@ -47,6 +47,10 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public revert() {
         this.getCodeSystem();
     }
@@ -126,7 +130,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
             return;
         }
 
-        if (codeSystemId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -148,7 +152,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     private getCodeSystem() {
         const codeSystemId  = this.route.snapshot.paramMap.get('id');
 
-        if (codeSystemId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.codeSystem = <CodeSystem> this.fileService.file.resource;
                 this.nameChanged();
@@ -159,7 +163,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
             }
         }
 
-        if (codeSystemId !== 'new' && codeSystemId) {
+        if (!this.isNew) {
             this.codeSystem = null;
 
             this.codeSystemService.get(codeSystemId)

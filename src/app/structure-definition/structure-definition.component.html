@@ -275,6 +275,13 @@
                 <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
             </ng-template>
         </ngb-tab>
+
+        <!-- Version History -->
+        <ngb-tab id="history" title="History">
+            <ng-template ngbTabContent>
+                <app-resource-history [(resource)]="structureDefinition"></app-resource-history>
+            </ng-template>
+        </ngb-tab>
     </ngb-tabset>
 
     <div class="element-definition card" *ngIf="selectedElement && selectedElement.constrainedElement">

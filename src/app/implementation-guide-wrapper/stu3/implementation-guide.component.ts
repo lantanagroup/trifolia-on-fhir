@@ -74,6 +74,10 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public selectPublishedIg(dependency: Extension) {
         const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg' });
         modalRef.result.then((guide: PublishedGuideModel) => {
@@ -277,7 +281,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     private getImplementationGuide() {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
-        if (implementationGuideId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
                 this.nameChanged();
@@ -288,7 +292,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
             }
         }
 
-        if (implementationGuideId !== 'new' && implementationGuideId) {
+        if (!this.isNew) {
             this.implementationGuide = null;
 
             this.implementationGuideService.getImplementationGuide(implementationGuideId)
@@ -493,13 +497,11 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public save() {
-        const implementationGuideId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (implementationGuideId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }

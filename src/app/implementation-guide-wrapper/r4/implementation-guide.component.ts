@@ -116,6 +116,10 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public get isFilterResourceTypeAll() {
         return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
     }
@@ -206,7 +210,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     private getImplementationGuide() {
         const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
-        if (implementationGuideId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.implementationGuide = <ImplementationGuide> this.fileService.file.resource;
                 this.nameChanged();
@@ -217,7 +221,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
             }
         }
 
-        if (implementationGuideId !== 'new' && implementationGuideId) {
+        if (!this.isNew) {
             this.implementationGuide = null;
 
             this.implementationGuideService.getImplementationGuide(implementationGuideId)
@@ -490,13 +494,11 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     }
 
     public save() {
-        const implementationGuideId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (implementationGuideId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }

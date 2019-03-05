@@ -122,12 +122,13 @@ import {SettingsModalComponent} from './settings-modal/settings-modal.component'
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
-import { FhirEditNumberComponent } from './fhir-edit/number/number.component';
-import { AdminMessageModalComponent } from './admin-message-modal/admin-message-modal.component';
-import { ResourceHistoryComponent } from './resource-history/resource-history.component';
-import { ContextPanelWrapperComponent } from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
-import { ContextPanelR4Component } from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
-import { ContextPanelStu3Component } from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
+import {FhirEditNumberComponent} from './fhir-edit/number/number.component';
+import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
+import {ResourceHistoryComponent} from './resource-history/resource-history.component';
+import {ContextPanelWrapperComponent} from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
+import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
+import {ContextPanelStu3Component} from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -359,7 +360,8 @@ export function getConfig(configService: ConfigService) {
         HttpModule,
         NgbModule.forRoot(),
         FileDropModule,
-        TreeModule
+        TreeModule,
+        DiffMatchPatchModule
     ],
     providers: [
         ConfigService,

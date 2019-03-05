@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../services/fhir.service';
 import {Bundle} from '../models/stu3/fhir';
 
@@ -8,18 +8,24 @@ import {Bundle} from '../models/stu3/fhir';
     styleUrls: ['./resource-history.component.css']
 })
 export class ResourceHistoryComponent implements OnInit {
+    @Input() public resource: any;
+    @Output() public resourceChange = new EventEmitter<any>();
 
-    @Input()
-    public resource: any;
     public historyBundle: Bundle;
+    public message: string;
+    public compareResource: any;
 
     constructor(private fhirService: FhirService) {
     }
 
     public loadHistory(resource: any) {
-        if (confirm('Loading the history will overwrite any changes you have made to the resource that are not saved. Save to confirm reverting to the selected historical item. Are you sure want to continue?')) {
-            Object.assign(this.resource, resource);
+        if (!confirm('Loading the history will overwrite any changes you have made to the resource that are not saved. Save to confirm reverting to the selected historical item. Are you sure want to continue?')) {
+            return;
         }
+
+        this.compareResource = null;
+        this.resourceChange.emit(resource);
+        this.message = `Done loading version ${this.compareResource.meta.versionId}`;
     }
 
     ngOnInit() {
@@ -28,7 +34,7 @@ export class ResourceHistoryComponent implements OnInit {
                 .subscribe((bundle: Bundle) => {
                     this.historyBundle = bundle;
                 }, (err) => {
-                    console.log('An error occurred');
+                    this.message = this.fhirService.getErrorString(err);
                 });
         }
     }

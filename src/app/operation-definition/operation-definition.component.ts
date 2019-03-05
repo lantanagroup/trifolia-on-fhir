@@ -40,6 +40,10 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         return !id || id === 'new';
     }
 
+    public get isFile(): boolean {
+        return this.route.snapshot.paramMap.get('id') === 'from-file';
+    }
+
     public editParameter(parameter: ParameterComponent) {
         const modalInstance = this.modal.open(ParameterModalComponent, { size: 'lg' });
         modalInstance.componentInstance.operationDefinition = this.operationDefinition;
@@ -51,13 +55,11 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public save() {
-        const operationDefinitionId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This operation definition is not valid, are you sure you want to save?')) {
             return;
         }
 
-        if (operationDefinitionId === 'from-file') {
+        if (this.isFile) {
             this.fileService.saveFile();
             return;
         }
@@ -79,7 +81,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     private getOperationDefinition() {
         const operationDefinitionId = this.route.snapshot.paramMap.get('id');
 
-        if (operationDefinitionId === 'from-file') {
+        if (this.isFile) {
             if (this.fileService.file) {
                 this.operationDefinition = <OperationDefinition> this.fileService.file.resource;
                 this.nameChanged();
@@ -89,7 +91,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             }
         }
 
-        if (operationDefinitionId !== 'new' && operationDefinitionId) {
+        if (!this.isNew) {
             this.operationDefinition = null;
 
             this.opDefService.get(operationDefinitionId)

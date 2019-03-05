@@ -22,12 +22,22 @@ export class RawResourceComponent implements OnInit {
         return 'resource';
     }
 
-    public downloadJson() {
+    public downloadJson(event?) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
         const blob = new Blob([JSON.stringify(this.resource, null, '\t')], { type: 'application/json; charset=utf-8' });
         saveAs(blob, this.baseFileName + '.json');
     }
 
-    public downloadXml() {
+    public downloadXml(event?) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
         const resourceXml = this.fhirService.serialize(this.resource);
         const blob = new Blob([resourceXml], { type: 'text/xml; charset=utf-8' });
         saveAs(blob, this.baseFileName + '.xml');
