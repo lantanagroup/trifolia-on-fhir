@@ -14,6 +14,8 @@ import {FhirService} from '../services/fhir.service';
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {FileModel} from '../services/github.service';
+import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {AuthService} from '../services/auth.service';
 
 @Component({
     selector: 'app-export',
@@ -24,15 +26,17 @@ export class ExportComponent implements OnInit {
     public message: string;
     public socketOutput = '';
     private packageId;
-    public implementationGuidesBundle: Bundle;
     public githubResourcesBundle: Bundle;
     public githubCommitMessage: string;
+    public searching = false;
 
     @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 
     public options = new ExportOptions();
+    public selectedImplementationGuide: ImplementationGuide;
 
     constructor(
+        private authService: AuthService,
         private implementationGuideService: ImplementationGuideService,
         private socketService: SocketService,
         private exportService: ExportService,
@@ -50,6 +54,49 @@ export class ExportComponent implements OnInit {
                 this.socketService.notifyExporting(this.packageId);
             }
         });
+    }
+
+    public implementationGuideChanged(implementationGuide: ImplementationGuide) {
+        this.selectedImplementationGuide = implementationGuide;
+        this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
+
+        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+
+        if (implementationGuide && implementationGuide.id) {
+            this.cookieService.put(cookieKey, implementationGuide.id);
+        } else if (this.cookieService.get(cookieKey)) {
+            this.cookieService.remove(cookieKey);
+        }
+    }
+
+    public searchImplementationGuide = (text$: Observable<string>) => {
+        return text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            tap(() => this.searching = true),
+            switchMap((term) => {
+                return this.implementationGuideService.getImplementationGuides(1, term)
+                    .map((bundle) => {
+                        return _.map(bundle.entry, (entry) => <ImplementationGuide> entry.resource);
+                    });
+            }),
+            tap(() => this.searching = false)
+        );
+    }
+
+    public searchFormatter = (ig: ImplementationGuide) => {
+        return ig.name;
+    }
+
+    public clearImplementationGuide() {
+        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+
+        this.selectedImplementationGuide =
+            this.options.implementationGuideId = null;
+
+        if (this.cookieService.get(cookieKey)) {
+            this.cookieService.remove(cookieKey);
+        }
     }
 
     public get exportDisabled(): boolean {
@@ -74,14 +121,6 @@ export class ExportComponent implements OnInit {
         }
 
         return !this.options.responseFormat;
-    }
-
-    public get implementationGuides() {
-        if (!this.implementationGuidesBundle) {
-            return [];
-        }
-
-        return _.map(this.implementationGuidesBundle.entry, (entry) => <ImplementationGuide> entry.resource);
     }
 
     public exportFormatChanged() {
@@ -159,8 +198,7 @@ export class ExportComponent implements OnInit {
             this.exportService.export(this.options)
                 .subscribe((results: any) => {
                     if (this.options.exportFormat === ExportFormats.Bundle) {
-                        const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
-                        const igName = ig.name.replace(/\s/g, '_');
+                        const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
                         const extension = (this.options.responseFormat === 'application/xml' ? '.xml' : '.json');
 
                         this.message = 'Done exporting';
@@ -180,12 +218,12 @@ export class ExportComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.implementationGuideService.getImplementationGuides()
-            .subscribe((results) => {
-                this.implementationGuidesBundle = results;
-            }, (err) => {
-                this.message = this.fhirService.getErrorString(err);
-            });
+        if (this.options.implementationGuideId) {
+            this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
+                .subscribe((implementationGuide: ImplementationGuide) => {
+                    this.selectedImplementationGuide = implementationGuide;
+                }, (err) => this.message = this.fhirService.getErrorString(err));
+        }
 
         this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
             if (data.packageId === this.packageId) {
@@ -199,8 +237,7 @@ export class ExportComponent implements OnInit {
                     this.message = 'Done exporting';
 
                     if (this.options.downloadOutput) {
-                        const ig = _.find(this.implementationGuides, (next) => next.id === this.options.implementationGuideId);
-                        const igName = ig.name.replace(/\s/g, '_');
+                        const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 
                         this.exportService.getPackage(this.packageId)
                             .subscribe((results: any) => {
