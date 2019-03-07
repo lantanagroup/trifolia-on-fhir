@@ -31,7 +31,7 @@ import 'rxjs/add/observable/forkJoin';
 import {Fhir, Versions} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ConfigService} from './config.service';
-import {ValidatorMessage, ValidatorResponse} from 'fhir/validator';
+import {Severities, ValidatorMessage, ValidatorResponse} from 'fhir/validator';
 import {Globals} from '../globals';
 import * as _ from 'underscore';
 import * as vkbeautify from 'vkbeautify';
@@ -371,9 +371,14 @@ export class FhirService {
             return;
         }
 
-        return this.fhir.validate(resource, {
+        const results = this.fhir.validate(resource, {
             onBeforeValidateResource: (nextResource) => this.validateResource(nextResource)
         });
+
+        // Remove any messages that are only information
+        results.messages = _.filter(results.messages, (message) => message.severity !== Severities.Information);
+
+        return results;
     }
 
     public serialize(resource: Resource) {
