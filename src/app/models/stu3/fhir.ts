@@ -180,7 +180,7 @@ export class Narrative extends Element {
 export class DomainResource extends Resource {
     public resourceType = 'DomainResource';
     public text?: Narrative;
-    public contained?: Resource[];
+    public contained?: DomainResource[];
     public extension?: Extension[];
     public modifierExtension?: Extension[];
     
@@ -192,7 +192,7 @@ export class DomainResource extends Resource {
             }
             if (obj.contained) {
                 this.contained = [];
-                for (let o of obj.contained || []) { this.contained.push(new Resource(o)); }
+                for (let o of obj.contained || []) { this.contained.push(new DomainResource(o)); }
             }
             if (obj.extension) {
                 this.extension = [];

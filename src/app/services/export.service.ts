@@ -44,7 +44,8 @@ export class ExportService {
             url += 'useLatest=true&';
         }
 
-        if (options.downloadOutput === false) {
+        // Only allow preventing downloads when executing the IG publisher
+        if (options.exportFormat === ExportFormats.HTML && !options.executeIgPublisher && options.downloadOutput === false) {
             url += 'downloadOutput=false&';
         }
 

@@ -36,16 +36,18 @@ export interface IOConnection {
     };
 }
 
+export interface FhirConfigServer {
+    id: string;
+    name: string;
+    uri: string;
+    version: string;
+    short?: string;
+}
+
 export interface FhirConfig {
     publishedGuides: string;
     latestPublisher: string;
-    servers: [{
-        id: string;
-        name: string;
-        uri: string;
-        version: string;
-        short?: string;
-    }];
+    servers: FhirConfigServer[];
     publishedVersions: [{
         version: string;
         url: string;
@@ -56,6 +58,7 @@ export interface ServerConfig {
     port: number;
     adminCode: string;
     supportUrl: string;
+    javaLocation?: string;
 }
 
 export interface RestRejection {
@@ -78,8 +81,55 @@ export interface ConnectionModel {
     practitionerReference?: string;
 }
 
+export interface FhirControlDependency {
+    location: string;
+    name: string;
+    version: string;
+}
+
+export interface FhirControl {
+    tool: string;
+    source: string;
+    'npm-name': string;
+    license: string;
+    paths: {
+        qa: string;
+        temp: string;
+        output: string;
+        txCache: string;
+        specification: string;
+        pages: string[];
+        resources: string[];
+    };
+    version?: string;
+    pages: string[];
+    'extension-domains': string[];
+    'allowed-domains': string[];
+    'sct-edition': string;
+    canonicalBase: string;
+    defaults?: {
+        [key: string]: {
+            'template-base'?: string;
+            'template-mappings'?: string;
+            'template-defns'?: string;
+            'template-format'?: string;
+            content?: boolean;
+            script?: boolean;
+            profiles?: boolean;
+        };
+    };
+    dependencyList?: FhirControlDependency[];
+    resources?: {
+        [key: string]: {
+            base?: string;
+            defns?: string;
+        };
+    };
+}
+
 export namespace Fhir {
     export interface DomainResource {
+        resourceType: string;
         id?: string;
     }
 

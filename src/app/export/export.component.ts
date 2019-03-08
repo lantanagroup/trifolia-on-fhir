@@ -9,11 +9,10 @@ import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../services/config.service';
 import {Bundle, DomainResource, ImplementationGuide} from '../models/stu3/fhir';
-import {GithubService} from '../services/github.service';
+import {FileModel, GithubService} from '../services/github.service';
 import {FhirService} from '../services/fhir.service';
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
-import {FileModel} from '../services/github.service';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '../services/auth.service';
 
@@ -236,7 +235,13 @@ export class ExportComponent implements OnInit {
                 if (data.status === 'complete') {
                     this.message = 'Done exporting';
 
-                    if (this.options.downloadOutput) {
+                    let shouldDownload = this.options.downloadOutput;
+
+                    if (this.options.exportFormat === ExportFormats.HTML && !this.options.executeIgPublisher) {
+                        shouldDownload = true;
+                    }
+
+                    if (shouldDownload) {
                         const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 
                         this.exportService.getPackage(this.packageId)

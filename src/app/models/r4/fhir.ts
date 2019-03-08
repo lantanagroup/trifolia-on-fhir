@@ -295,7 +295,7 @@ export class Narrative extends Element {
 export class DomainResource extends Resource {
     public resourceType = 'DomainResource';
     public text?: Narrative;
-    public contained?: Resource[];
+    public contained?: DomainResource[];
     public extension?: Extension[];
     public modifierExtension?: Extension[];
     
@@ -307,7 +307,7 @@ export class DomainResource extends Resource {
             }
             if (obj.hasOwnProperty('contained')) {
                 this.contained = [];
-                for (const o of obj.contained || []) { this.contained.push(new Resource(o)); }
+                for (const o of obj.contained || []) { this.contained.push(new DomainResource(o)); }
             }
             if (obj.hasOwnProperty('extension')) {
                 this.extension = [];
@@ -1412,7 +1412,7 @@ export class BundleResponseComponent extends BackboneElement {
 export class BundleEntryComponent extends BackboneElement {
     public link?: BundleLinkComponent[];
     public fullUrl?: string;
-    public resource?: Resource;
+    public resource?: DomainResource;
     public search?: BundleSearchComponent;
     public request?: BundleRequestComponent;
     public response?: BundleResponseComponent;
@@ -1428,7 +1428,7 @@ export class BundleEntryComponent extends BackboneElement {
                 this.fullUrl = obj.fullUrl;
             }
             if (obj.hasOwnProperty('resource')) {
-                this.resource = new Resource(obj.resource);
+                this.resource = new DomainResource(obj.resource);
             }
             if (obj.hasOwnProperty('search')) {
                 this.search = new BundleSearchComponent(obj.search);

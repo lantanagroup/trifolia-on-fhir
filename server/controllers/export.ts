@@ -1,14 +1,13 @@
 import * as express from 'express';
 import * as tmp from 'tmp';
-import * as zipdir from 'zip-dir';
-import * as fs from 'fs-extra';
-import * as HtmlExporter from '../export/html';
 import * as path from 'path';
+import {HtmlExporter} from '../export/html';
 import {ExtendedRequest} from './models';
 import {BaseController, GenericResponse} from './controller';
 import {Fhir} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {BundleExporter} from '../export/bundle';
+import {emptydir, rmdir, zip} from '../promiseHelper';
 
 interface ExportImplementationGuideRequest extends ExtendedRequest {
     params: {
@@ -143,9 +142,15 @@ export class ExportController extends BaseController {
                     resolve({
                         content: response
                     });
+
+                    // Should be moved to a .finally() block when moving to ES2018
+                    const index = ExportController.htmlExports.indexOf(exporter);
+                    ExportController.htmlExports.splice(index);
                 })
-                .catch((err) => reject(err))
-                .finally(() => {
+                .catch((err) => {
+                    reject(err);
+
+                    // Should be moved to a .finally() block when moving to ES2018
                     const index = ExportController.htmlExports.indexOf(exporter);
                     ExportController.htmlExports.splice(index);
                 });
@@ -169,22 +174,23 @@ export class ExportController extends BaseController {
         return new Promise((resolve, reject) => {
             const rootPath = path.join(tmp.tmpdir, packageId);
 
-            zipdir(rootPath, (err, buffer) => {
-                if (err) {
+            zip(rootPath)
+                .then((buffer) => {
+                    resolve({
+                        contentType: 'application/octet-stream',
+                        contentDisposition: 'attachment; filename=ig-package.zip',
+                        content: buffer
+                    });
+
+                    return emptydir(rootPath);
+                })
+                .then(() => {
+                    return rmdir(rootPath);
+                })
+                .catch((err) => {
                     ExportController.log.error(err);
-                    fs.emptyDir(rootPath);             // Asynchronously removes the temporary folder
-                    return reject('An error occurred while zipping the package');
-                }
-
-                resolve({
-                    contentType: 'application/octet-stream',
-                    contentDisposition: 'attachment; filename=ig-package.zip',
-                    content: buffer
+                    reject(err);
                 });
-
-                fs.emptyDir(rootPath);
-                fs.rmdir(rootPath);
-            });
         });
     }
 }
