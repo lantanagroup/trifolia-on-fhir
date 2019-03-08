@@ -11,7 +11,7 @@ export class ExportOptions {
     public executeIgPublisher? = true;
     public useLatest? = false;
     public downloadOutput? = true;       // Only applies to HTML exports
-    public includeIgPublisherJar = false;
+    public includeIgPublisherJar? = false;
 }
 
 @Injectable()
