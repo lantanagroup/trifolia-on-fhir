@@ -11,6 +11,7 @@ export class ExportOptions {
     public executeIgPublisher? = true;
     public useLatest? = false;
     public downloadOutput? = true;       // Only applies to HTML exports
+    public includeIgPublisherJar = false;
 }
 
 @Injectable()
@@ -42,6 +43,10 @@ export class ExportService {
 
         if (options.useLatest === true) {
             url += 'useLatest=true&';
+        }
+
+        if (options.includeIgPublisherJar === true) {
+            url += 'includeIgPublisherJar=true&';
         }
 
         // Only allow preventing downloads when executing the IG publisher

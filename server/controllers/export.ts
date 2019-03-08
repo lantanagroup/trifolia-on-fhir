@@ -40,6 +40,7 @@ class ExportOptions {
     public downloadOutput = true;
     public format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json';
     public exportFormat = ExportFormats.Bundle;
+    public includeIgPublisherJar = false;
 
     constructor(query?: any) {
         if (query) {
@@ -69,6 +70,10 @@ class ExportOptions {
 
             if (query.hasOwnProperty('exportFormat')) {
                 this.exportFormat = query.exportFormat;
+            }
+
+            if (query.hasOwnProperty('includeIgPublisherJar')) {
+                this.includeIgPublisherJar = query.includeIgPublisherJar.toLowerCase() === 'true';
             }
         }
     }
@@ -137,7 +142,7 @@ export class ExportController extends BaseController {
 
             ExportController.htmlExports.push(exporter);
 
-            exporter.export(options.format, options.executeIgPublisher, options.useTerminologyServer, options.useLatest, options.downloadOutput)
+            exporter.export(options.format, options.executeIgPublisher, options.useTerminologyServer, options.useLatest, options.downloadOutput, options.includeIgPublisherJar)
                 .then((response) => {
                     resolve({
                         content: response

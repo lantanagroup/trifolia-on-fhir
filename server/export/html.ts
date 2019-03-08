@@ -32,6 +32,7 @@ import {
 } from '../controllers/models';
 import {BundleExporter} from './bundle';
 import Bundle = Fhir.Bundle;
+import {root} from 'rxjs/internal-compatibility';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
 const serverConfig = <ServerConfig> config.get('server');
@@ -758,7 +759,7 @@ export class HtmlExporter {
         this.generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, { fileName: rootPageFileName, content: rootPageContent });
     }
     
-    public export(format: string, executeIgPublisher: boolean, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, testCallback?: (message, err?) => void) {
+    public export(format: string, executeIgPublisher: boolean, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
         return new Promise((resolve, reject) => {
             const bundleExporter = new BundleExporter(this.fhirServerBase, this.fhirServerId, this.fhir, this.implementationGuideId);
             const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
@@ -864,7 +865,7 @@ export class HtmlExporter {
                                 return;
                             }
 
-                            const deployDir = path.resolve(__dirname, '../../wwwroot/igs', implementationGuideResource.id);
+                            const deployDir = path.resolve(__dirname, '../../wwwroot/igs', this.fhirServerId, implementationGuideResource.id);
                             fs.ensureDirSync(deployDir);
 
                             const igPublisherVersion = useLatest ? 'latest' : 'default';
@@ -924,6 +925,13 @@ export class HtmlExporter {
                                             this.log.error(err);
                                         }
                                     });
+
+                                    if (includeIgPublisherJar) {
+                                        this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.');
+                                        const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
+                                        const destJarPath = path.join(rootPath, jarFileName);
+                                        fs.copySync(igPublisherLocation, destJarPath);
+                                    }
 
                                     this.log.debug(`Copying output from ${outputPath} to ${deployDir}`);
 

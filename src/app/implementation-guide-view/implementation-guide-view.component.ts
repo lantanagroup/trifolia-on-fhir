@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {ConfigService} from '../services/config.service';
 
 @Component({
     selector: 'app-implementation-guide-view',
@@ -12,12 +13,13 @@ export class ImplementationGuideViewComponent implements OnInit {
     public implementationGuideQAUrl: string;
 
     constructor(
+        private configService: ConfigService,
         private route: ActivatedRoute) {
     }
 
     ngOnInit() {
         this.implementationGuideId = this.route.snapshot.paramMap.get('id');
-        this.implementationGuideOutputUrl = '/igs/' + this.implementationGuideId + '/index.html';
-        this.implementationGuideQAUrl = '/igs/' + this.implementationGuideId + '/qa.html';
+        this.implementationGuideOutputUrl = `/igs/${this.configService.fhirServer}/${this.implementationGuideId}/index.html`;
+        this.implementationGuideQAUrl = `/igs/${this.configService.fhirServer}/${this.implementationGuideId}/qa.html`;
     }
 }
