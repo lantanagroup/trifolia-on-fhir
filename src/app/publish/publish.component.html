@@ -1,0 +1,71 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Implementation Guide</label>
+            <div class="input-group">
+                <input type="text" class="form-control"
+                       [ngModel]="selectedImplementationGuide"
+                       (ngModelChange)="implementationGuideChanged($event)"
+                       [ngbTypeahead]="searchImplementationGuide"
+                       [resultFormatter]="searchFormatter"
+                       [inputFormatter]="searchFormatter"
+                       autocomplete="off"/>
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default" title="Clear the selection"
+                            (click)="clearImplementationGuide()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group" *ngIf="options.executeIgPublisher">
+            <label>Use latest FHIR IG Publisher</label>
+            <select class="form-control" [(ngModel)]="options.useLatest">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+            </select>
+            <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group" *ngIf="options.executeIgPublisher">
+            <label>Use terminology server</label>
+            <select class="form-control" [(ngModel)]="options.useTerminologyServer">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Include FHIR IG Publisher JAR?</label>
+            <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group" *ngIf="options.executeIgPublisher">
+            <label>Download?</label>
+            <select class="form-control" [(ngModel)]="options.downloadOutput">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+            </select>
+            <div class="help-block">Selecting "Yes" will prompt you to download the entire contents of the build package after the FHIR IG publisher has finished executing.</div>
+        </div>
+    </div>
+</div>
+
+<pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer></pre>
+
+<footer class="footer">
+    <button type="button" class="btn btn-default" (click)="publish()" [disabled]="publishDisabled">Publish</button>
+    <span class="message">{{message}}</span>
+</footer>

@@ -129,6 +129,7 @@ import {ContextPanelWrapperComponent} from './structure-definition/context-panel
 import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
 import {ContextPanelStu3Component} from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import { PublishComponent } from './publish/publish.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -189,6 +190,7 @@ const appRoutes: Routes = [
     {path: 'questionnaire/new', component: QuestionnaireComponent},
     {path: 'questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
     {path: 'other-resources', component: OtherResourcesComponent},
+    {path: 'publish', component: PublishComponent},
     {path: 'export', component: ExportComponent},
     {path: 'import', component: ImportComponent},
     {path: 'users', component: UsersComponent},
@@ -247,7 +249,7 @@ export function getConfig(configService: ConfigService) {
         PublishedIgSelectModalComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
         MappingModalComponent, SettingsModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent,
         FhirEditNumberComponent, AdminMessageModalComponent, ResourceHistoryComponent, ContextPanelWrapperComponent,
-        ContextPanelR4Component, ContextPanelStu3Component
+        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent
     ],
     imports: [
         RouterModule.forRoot(
