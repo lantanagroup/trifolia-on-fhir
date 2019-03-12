@@ -33,6 +33,7 @@ import {
 } from '../controllers/models';
 import {BundleExporter} from './bundle';
 import Bundle = Fhir.Bundle;
+import {Globals} from '../../src/app/globals';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
 const serverConfig = <ServerConfig> config.get('server');
@@ -373,6 +374,7 @@ export class HtmlExporter {
     private getStu3Control(extension, implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
         const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
         const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+        const packageIdExtension = _.find(implementationGuide.extension, (extension) => extension.url === new Globals().extensionUrls['extension-ig-package-id']);
         let canonicalBase;
 
         if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
@@ -386,7 +388,7 @@ export class HtmlExporter {
         const control = <FhirControl> {
             tool: 'jekyll',
             source: 'implementationguide/' + implementationGuide.id + '.xml',
-            'npm-name': implementationGuide.id + '-npm',                                // R4: ImplementationGuide.packageId
+            'npm-name': packageIdExtension && packageIdExtension.valueString ? packageIdExtension.valueString : implementationGuide.id + '-npm',
             license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
             paths: {
                 qa: 'generated_output/qa',

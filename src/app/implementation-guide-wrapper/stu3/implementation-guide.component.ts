@@ -78,6 +78,37 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         return this.route.snapshot.paramMap.get('id') === 'from-file';
     }
 
+    public get dependencies(): Extension[] {
+        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency']);
+    }
+
+    public get packageId(): string {
+        const foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-package-id']);
+
+        if (foundExtension) {
+            return foundExtension.valueString;
+        }
+    }
+
+    public set packageId(value: string) {
+        this.implementationGuide.extension = this.implementationGuide.extension || [];
+        let foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-package-id']);
+
+        if (value) {
+            if (!foundExtension) {
+                foundExtension = {
+                    url: this.globals.extensionUrls['extension-ig-package-id']
+                };
+                this.implementationGuide.extension.push(foundExtension);
+            }
+
+            foundExtension.valueString = value;
+        } else if (!value && foundExtension) {
+            const index = this.implementationGuide.extension.indexOf(foundExtension);
+            this.implementationGuide.extension.splice(index, 1);
+        }
+    }
+
     public selectPublishedIg(dependency: Extension) {
         const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg' });
         modalRef.result.then((guide: PublishedGuideModel) => {
@@ -85,10 +116,6 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
             this.setDependencyName(dependency, guide['npm-name']);
             this.setDependencyVersion(dependency, guide.version);
         });
-    }
-
-    public get dependencies(): Extension[] {
-        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency']);
     }
 
     public removeDependency(dependency: Extension) {

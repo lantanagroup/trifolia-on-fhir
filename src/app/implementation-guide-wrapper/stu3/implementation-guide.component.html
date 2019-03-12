@@ -71,6 +71,11 @@
                             </div>
                         </div>
                         <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Package ID</label>
+                                <input type="text" class="form-control" [(ngModel)]="packageId" />
+                            </div>
+
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
 
                             <div class="form-group">
