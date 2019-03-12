@@ -23,7 +23,7 @@
                     <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
                 </div>
                 <div class="col-md-4">
-                    <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/defined-types" [isTypeahead]="true" [required]="true" tooltipPath="StructureDefinition.type" (change)="typeChanged()"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/defined-types" [isTypeahead]="true" [required]="true" tooltipPath="StructureDefinition.type" (change)="typeChanged()" [defaultCode]="null"></app-fhir-select-single-code>
                 </div>
                 <div class="col-md-4">
                     <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule" tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>

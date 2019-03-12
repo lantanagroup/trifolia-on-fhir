@@ -51,6 +51,10 @@ export class FhirSelectSingleCodeComponent implements OnInit {
     }
 
     public getDefaultCode(): string {
+        if (this.defaultCode === null) {
+            return;
+        }
+
         if (this.defaultCode) {
             return this.defaultCode;
         }

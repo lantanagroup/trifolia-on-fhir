@@ -823,7 +823,7 @@ export class StructureDefinition extends DomainResource {
     public contextType?: string;
     public context?: string[];
     public contextInvariant?: string[];
-    public type = 'Account';
+    public type: string;
     public baseDefinition?: string;
     public derivation = 'constraint';
     public snapshot?: SnapshotComponent;

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ResourceReference, StructureDefinition} from '../models/stu3/fhir';
+import {StructureDefinition} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {StructureDefinitionService} from '../services/structure-definition.service';
 import {Router} from '@angular/router';
