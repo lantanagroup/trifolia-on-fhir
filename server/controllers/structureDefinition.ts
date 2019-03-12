@@ -109,6 +109,8 @@ export class StructureDefinitionController extends FhirLogic {
 
             rp(options)
                 .then((implementationGuide: Fhir.ImplementationGuide) => {
+                    this.assertEditingAllowed(implementationGuide);
+
                     if (this.fhirServerVersion !== 'stu3') {        // r4+
                         const r4 = <Fhir.R4.ImplementationGuide> implementationGuide;
 
@@ -198,6 +200,8 @@ export class StructureDefinitionController extends FhirLogic {
 
             rp(options)
                 .then((implementationGuide: Fhir.ImplementationGuide) => {
+                    this.assertEditingAllowed(implementationGuide);
+
                     if (this.fhirServerVersion !== 'stu3') {                // r4+
                         const r4 = <Fhir.R4.ImplementationGuide> implementationGuide;
 
@@ -252,6 +256,8 @@ export class StructureDefinitionController extends FhirLogic {
 
     private saveStructureDefinition(id: string, structureDefinition: Fhir.StructureDefinition, options?: StructureDefinitionOptions) {
         return new Promise((resolve, reject) => {
+            this.assertEditingAllowed(structureDefinition);
+
             if (!structureDefinition) {
                 throw <RestRejection> { statusCode: 400, message: 'A structureDefinition property is required' };
             }

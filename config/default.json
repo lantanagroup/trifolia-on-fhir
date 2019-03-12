@@ -21,6 +21,12 @@
     "secret": ""
   },
   "fhir": {
+    "nonEditableResources": {
+      "codeSystems": [
+        "http://loinc.org",
+        "http://snomed.info/sct"
+      ]
+    },
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
     "latestPublisher": "http://build.fhir.org/org.hl7.fhir.igpublisher.jar",
     "publishedVersions": [{

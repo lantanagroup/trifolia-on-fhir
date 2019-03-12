@@ -52,6 +52,23 @@ export interface FhirConfig {
         version: string;
         url: string;
     }];
+    nonEditableResources: {
+        codeSystems: string[];
+    };
+}
+
+export interface AuthConfig {
+    clientId: string;
+    domain: string;
+    scope: string;
+    secret: string;
+    issuer: string;
+    userInfoUrl: string;
+}
+
+export interface GithubConfig {
+    clientId: string;
+    secret: string;
 }
 
 export interface ServerConfig {

@@ -1,11 +1,14 @@
 import * as express from 'express';
 import * as FhirHelper from '../fhirHelper.js';
-import {checkJwt} from '../authHelper.js';
 import * as rp from 'request-promise';
-import {ExtendedRequest, RestRejection} from './models';
-import {RequestHandler} from 'express';
 import * as nanoid from 'nanoid';
+import * as config from 'config';
+import {checkJwt} from '../authHelper.js';
+import {ExtendedRequest, FhirConfig, RestRejection} from './models';
+import {RequestHandler} from 'express';
 import {BaseController} from './controller';
+
+const fhirConfig = <FhirConfig> config.get('fhir');
 
 export class FhirLogic extends BaseController {
     readonly resourceType: string;
@@ -67,6 +70,24 @@ export class FhirLogic extends BaseController {
 
         this.resourceType = resourceType;
         this.baseUrl = baseUrl;
+    }
+
+    protected assertEditingAllowed(resource: any) {
+        if (!resource || !fhirConfig.nonEditableResources) {
+            return;
+        }
+
+        switch (resource.resourceType) {
+            case 'CodeSystem':
+                if (!fhirConfig.nonEditableResources.codeSystems) {
+                    return;
+                }
+
+                if (fhirConfig.nonEditableResources.codeSystems.indexOf(resource.url) >= 0) {
+                    throw new Error(`CodeSystem with URL ${resource.url} cannot be modified.`);
+                }
+                break;
+        }
     }
 
     protected prepareSearchQuery(query?: any): Promise<any> {
@@ -137,11 +158,13 @@ export class FhirLogic extends BaseController {
     }
 
     public create(data: any, query?: any) {
-        if (!data.id) {
-            data.id = nanoid(8);
-        }
-
         return new Promise((resolve, reject) => {
+            this.assertEditingAllowed(data);
+
+            if (!data.id) {
+                data.id = nanoid(8);
+            }
+
             const existsOptions = {
                 url: FhirHelper.buildUrl(this.baseUrl, this.resourceType, data.id, null, { _summary: true }),
                 method: 'GET',
@@ -196,6 +219,8 @@ export class FhirLogic extends BaseController {
 
     public update(id: string, data: any, query?: any): Promise<any> {
         return new Promise((resolve, reject) => {
+            this.assertEditingAllowed(data);
+
             const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
             const options = {
                 url: url,
@@ -212,14 +237,21 @@ export class FhirLogic extends BaseController {
 
     public delete(id: string, query?: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
-            const options = {
-                url: url,
-                method: 'DELETE',
-                json: true
-            };
+            const getUrl = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id);
 
-            rp(options)
+            rp(getUrl)
+                .then((resource) => {
+                    this.assertEditingAllowed(resource);
+
+                    const deleteUrl = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
+                    const options = {
+                        url: deleteUrl,
+                        method: 'DELETE',
+                        json: true
+                    };
+
+                    return rp(options);
+                })
                 .then((results) => resolve(results))
                 .catch((err) => reject(err));
         });

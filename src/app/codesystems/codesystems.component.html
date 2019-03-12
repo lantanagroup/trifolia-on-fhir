@@ -44,12 +44,15 @@
         <td>{{cs.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/code-system/{{cs.id}}" title="Edit this resource"><i
-                        class="fa fa-edit"></i></a>
-                <button type="button" class="btn btn-default" (click)="remove(cs)" title="Remove this resource"><i
-                        class="fas fa-trash-alt"></i></button>
-                <button type="button" class="btn btn-default" (click)="changeId(cs)" title="Change this resource's ID">
-                    <i class="fa fa-id-badge"></i></button>
+                <a class="btn btn-default" routerLink="/code-system/{{cs.id}}" [class.disabled]="isEditDisabled(cs)" title="Edit this resource">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-default" (click)="remove(cs)" [disabled]="isEditDisabled(cs)" title="Remove this resource">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="changeId(cs)" [disabled]="isEditDisabled(cs)" title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
             </div>
         </td>
     </tr>

@@ -39,6 +39,14 @@ export class CodesystemsComponent implements OnInit {
         return _.map(this.codeSystemsBundle.entry, (entry) => <CodeSystem> entry.resource);
     }
 
+    public isEditDisabled(codeSystem: CodeSystem) {
+        if (!this.configService.config || !this.configService.config.nonEditableResources || !this.configService.config.nonEditableResources.codeSystems) {
+            return false;
+        }
+
+        return this.configService.config.nonEditableResources.codeSystems.indexOf(codeSystem.url) >= 0;
+    }
+
     public nameTextChanged(value: string) {
         this.nameText = value;
         this.page = 1;

@@ -3,15 +3,14 @@ import * as express from 'express';
 import * as FhirHelper from '../fhirHelper';
 import * as rp from 'request-promise';
 import * as _ from 'underscore';
-import {ExtendedRequest, Fhir, FhirConfig, ServerConfig} from './models';
+import {AuthConfig, ExtendedRequest, Fhir, FhirConfig, GithubConfig, ServerConfig} from './models';
 import {BaseController} from './controller';
-import {RequestHandler} from 'express';
 import * as modulePackage from '../../package.json';
 
 const serverConfig = <ServerConfig> config.get('server');
 const fhirConfig = <FhirConfig> config.get('fhir');
-const authConfig = config.get('auth');
-const githubConfig = config.get('github');
+const authConfig = <AuthConfig> config.get('auth');
+const githubConfig = <GithubConfig> config.get('github');
 
 export class ConfigController extends BaseController {
     /**
@@ -59,7 +58,8 @@ export class ConfigController extends BaseController {
                 },
                 github: {
                     clientId: githubConfig.clientId
-                }
+                },
+                nonEditableResources: fhirConfig.nonEditableResources
             };
 
             resolve(retConfig);

@@ -27,6 +27,19 @@ footer.footer span.message {
     padding-left: 10px;
 }
 
+a.btn > i.fa {
+    color: black;
+}
+
+a.disabled > i.fa,
+a.disabled > i.fas {
+    color: graytext;
+}
+
+.btn[disabled] {
+    cursor: default;
+}
+
 .tab-pane {
     padding-top: 5px;
 }
@@ -119,10 +132,6 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
 
 ngb-tabset > ul > li > a > button {
     margin-top: -6px;
-}
-
-a.btn > i.fa {
-    color: black;
 }
 
 button {
