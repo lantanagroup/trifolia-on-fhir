@@ -129,7 +129,17 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             const elementTreeModel = elementTreeModels[i];
             const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
             const thisId = parentId ? parentId + '.' + elementTreeModel.leafPath : elementTreeModel.leafPath;
-            const constrainedElements = _.filter(this.structureDefinition.differential.element, (element) => element.id === thisId);
+            const constrainedElements = _.filter(this.structureDefinition.differential.element,(element) => {
+                if (element.id === thisId) {
+                    // The element is constrained
+                    return true;
+                } else if (element.id.startsWith(thisId + ':')) {
+                    // the element is constrained with a slice, but we need to make sure the path doesn't represent a child of the slice
+                    const after = element.id.substring(thisId.length + 2);
+                    return after.indexOf('.') < 0;
+                }
+                return false;
+            });
 
             for (let x = 0; x < constrainedElements.length; x++) {
                 let newElementTreeModel = elementTreeModel;

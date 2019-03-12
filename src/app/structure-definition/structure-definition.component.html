@@ -280,11 +280,9 @@
     <div class="element-definition card" *ngIf="selectedElement && selectedElement.constrainedElement">
         <div class="card-header">
             <span>Element Definition</span>
-            <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" (click)="toggleSelectedElement()" title="Close the definition for this element">
-                    <i class="fa fa-close"></i>
-                </button>
-            </div>
+            <button type="button" class="btn btn-default btn-sm" (click)="toggleSelectedElement()" title="Close the definition for this element" style="float: right">
+                <i class="fa fa-close"></i>
+            </button>
 
             <!--div class="btn-group pull-right">
                 <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
