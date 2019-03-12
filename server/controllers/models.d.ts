@@ -128,8 +128,13 @@ export interface FhirControl {
 }
 
 export namespace Fhir {
+    export interface Extension {
+        url: string;
+    }
+
     export interface DomainResource {
         resourceType: string;
+        extension?: Extension[];
         id?: string;
     }
 

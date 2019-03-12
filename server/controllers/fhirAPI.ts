@@ -23,6 +23,10 @@ interface ChangeIdRequest extends ExtendedRequest {
     };
 }
 
+/**
+ * This controller is responsible for acting as a proxy to the underlying FHIR server's API.
+ * It enforces additional logic (potentially), such as authentication, auditing, and custom operations.
+ */
 export class FhirAPIController extends BaseController {
 
     private baseUrl: string;
@@ -86,11 +90,13 @@ export class FhirAPIController extends BaseController {
             headers: proxyHeaders,
             body: undefined,
             encoding: 'utf8',
-            gzip: false
+            gzip: false,
+            json: false
         };
 
         if (method !== 'GET' && method !== 'DELETE') {
             options.body = body;
+            options.json = typeof body === 'object';
         }
 
         if (proxyHeaders['accept-encoding'] && proxyHeaders['accept-encoding'].indexOf('gzip') >= 0) {
@@ -98,10 +104,10 @@ export class FhirAPIController extends BaseController {
         }
 
         return new Promise<ProxyResponse>((resolve, reject) => {
-            request(options, (err, response, body) => {
+            request(options, (err, response, responseBody) => {
                 resolve({
                     status: response.statusCode,
-                    body: body,
+                    body: responseBody,
                     contentType: response.headers ? response.headers['content-type'] : undefined
                 });
             });

@@ -303,7 +303,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
             newPage.nameUrl = 'toc.md';
 
             newPage.extension = [{
-                url: this.globals.extensionIgPageAutoGenerateToc,
+                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: true
             }];
 

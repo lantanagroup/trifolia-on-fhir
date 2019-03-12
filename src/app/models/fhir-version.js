@@ -1,0 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class FhirVersion {
+}
+exports.FhirVersion = FhirVersion;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmhpci12ZXJzaW9uLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZmhpci12ZXJzaW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsTUFBYSxXQUFXO0NBSXZCO0FBSkQsa0NBSUMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY2xhc3MgRmhpclZlcnNpb24ge1xuICAgIG1ham9yOiBudW1iZXI7XG4gICAgbWlub3I6IG51bWJlcjtcbiAgICBwYXRjaDogbnVtYmVyO1xufVxuIl19

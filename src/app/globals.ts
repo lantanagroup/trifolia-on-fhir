@@ -5,9 +5,6 @@ import {FhirVersion} from './models/fhir-version';
 
 @Injectable()
 export class Globals {
-    public readonly extensionIgPageContentUrl = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content';
-    public readonly extensionIgPageAutoGenerateToc = 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc';
-
     public readonly extensionUrls = {
         'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
         'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
@@ -18,7 +15,9 @@ export class Globals {
         'extension-ig-dependency': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency',
         'extension-ig-dependency-name': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
         'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
-        'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location'
+        'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
+        'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
+        'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc'
     };
 
     public readonly introText = {
@@ -40,38 +39,6 @@ export class Globals {
         'sd.element-panel.general-tab': 'The general tab has properties that are commonly modified for elements, such as cardinality, type and max length.'
     };
 
-    static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
-        const keys = Object.keys(obj);
-
-        if (choices) {
-            const foundProperties = _.filter(keys, (key: string) => {
-                const foundChoice = _.find(choices, (choice: Coding) => {
-                    return choice.code === propertyName + key;
-                });
-                return !!foundChoice;
-            });
-
-            if (foundProperties.length > 0) {
-                return foundProperties[0];
-            } else {
-                return;
-            }
-        }
-
-        const foundProperties = _.filter(keys, (key: string) => key.startsWith(propertyName));
-
-        if (foundProperties.length > 0) {
-            return foundProperties[0];
-        } else {
-            return;
-        }
-    }
-
-    static hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]): boolean {
-        const choiceName = Globals.getChoiceSelectionName(obj, propertyName, choices);
-        return !!choiceName;
-    }
-
     public readonly cookieKeys = {
         recentImplementationGuides: 'recentImplementationGuides',
         recentStructureDefinitions: 'recentStructureDefinitions',
@@ -81,7 +48,12 @@ export class Globals {
         recentCodeSystems: 'recentCodeSystems',
         recentQuestionnaires: 'recentQuestionnaires',
         exportLastImplementationGuideId: 'exportLastImplementationGuideId',
-        atlassianAccountConfirmed: 'atlassian_account_confirmed'
+        exportLastUseTerminologyServer: 'exportLastUseTerminologyServer',
+        exportLastIncludeFhirIgPublisher: 'exportLastIncludeFhirIgPublisher',
+        exportLastDownloadOutput: 'exportLastDownloadOutput',
+        exportLastUseLatestIgPublisher: 'exportLastUseLatestIgPublisher',
+        atlassianAccountConfirmed: 'atlassian_account_confirmed',
+        lastResponseFormat: 'lastResponseFormat'
     };
 
     public readonly FHIRUrls = {
@@ -308,5 +280,37 @@ export class Globals {
         }
 
         return 'An unspecified error occurred';
+    }
+
+    static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
+        const keys = Object.keys(obj);
+
+        if (choices) {
+            const foundProperties = _.filter(keys, (key: string) => {
+                const foundChoice = _.find(choices, (choice: Coding) => {
+                    return choice.code === propertyName + key;
+                });
+                return !!foundChoice;
+            });
+
+            if (foundProperties.length > 0) {
+                return foundProperties[0];
+            } else {
+                return;
+            }
+        }
+
+        const foundProperties = _.filter(keys, (key: string) => key.startsWith(propertyName));
+
+        if (foundProperties.length > 0) {
+            return foundProperties[0];
+        } else {
+            return;
+        }
+    }
+
+    static hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]): boolean {
+        const choiceName = Globals.getChoiceSelectionName(obj, propertyName, choices);
+        return !!choiceName;
     }
 }

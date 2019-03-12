@@ -21,7 +21,7 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     public get autoGenerate(): boolean {
-        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (autoGenerateExtension) {
             return autoGenerateExtension.valueBoolean === true;
@@ -35,11 +35,11 @@ export class PageComponentModalComponent implements OnInit {
             this.page.extension = [];
         }
 
-        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (!autoGenerateExtension) {
             autoGenerateExtension = {
-                url: this.globals.extensionIgPageAutoGenerateToc,
+                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: false
             };
             this.page.extension.push(autoGenerateExtension);
@@ -47,7 +47,7 @@ export class PageComponentModalComponent implements OnInit {
 
         autoGenerateExtension.valueBoolean = value;
 
-        const foundIgPageContentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
+        const foundIgPageContentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
 
         if (value && foundIgPageContentExtension && foundIgPageContentExtension.valueReference && foundIgPageContentExtension.valueReference.reference && foundIgPageContentExtension.valueReference.reference.startsWith('#')) {
             const foundBinary = _.find(this.implementationGuide.contained, (contained) => contained.id === foundIgPageContentExtension.valueReference.reference.substring(1));
@@ -99,11 +99,11 @@ export class PageComponentModalComponent implements OnInit {
                 this.page.extension = [];
             }
 
-            let contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
+            let contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
 
             if (!contentExtension) {
                 contentExtension = {
-                    url: this.globals.extensionIgPageContentUrl,
+                    url: this.globals.extensionUrls['extension-ig-page-content'],
                     valueReference: {
                         reference: '#' + newBinary.id,
                         display: 'Page content ' + newBinary.id
@@ -125,7 +125,7 @@ export class PageComponentModalComponent implements OnInit {
 
     ngOnInit() {
         if (this.page && this.page.source) {
-            const contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageContentUrl);
+            const contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
 
             if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
                 const reference = contentExtension.valueReference.reference;

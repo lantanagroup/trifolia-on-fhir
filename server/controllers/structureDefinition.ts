@@ -344,7 +344,7 @@ export class StructureDefinitionController extends FhirLogic {
         });
     }
 
-    public get(id: string, query?: any): Promise<any> {
+    public get(id: string, query?: any) {
         return new Promise((resolve, reject) => {
             const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
             const requestOptions = {

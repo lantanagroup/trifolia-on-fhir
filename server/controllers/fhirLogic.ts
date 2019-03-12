@@ -119,19 +119,24 @@ export class FhirLogic extends BaseController {
     }
 
     public get(id: string, query?: any): Promise<any> {
-        const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
-        const options = {
-            url: url,
-            method: 'GET',
-            json: true,
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        };
-        return rp(options);
+        return new Promise((resolve, reject) => {
+            const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
+            const options = {
+                url: url,
+                method: 'GET',
+                json: true,
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            };
+
+            rp(options)
+                .then((results) => resolve(results))
+                .catch((err) => reject(err));
+        });
     }
 
-    public create(data: any, query?: any): Promise<any> {
+    public create(data: any, query?: any) {
         if (!data.id) {
             data.id = nanoid(8);
         }
@@ -190,23 +195,33 @@ export class FhirLogic extends BaseController {
     }
 
     public update(id: string, data: any, query?: any): Promise<any> {
-        const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
-        const options = {
-            url: url,
-            method: 'PUT',
-            json: true,
-            body: data
-        };
-        return rp(options);
+        return new Promise((resolve, reject) => {
+            const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
+            const options = {
+                url: url,
+                method: 'PUT',
+                json: true,
+                body: data
+            };
+
+            rp(options)
+                .then((results) => resolve(results))
+                .catch((err) => reject(err));
+        });
     }
 
     public delete(id: string, query?: any): Promise<any> {
-        const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
-        const options = {
-            url: url,
-            method: 'DELETE',
-            json: true
-        };
-        return rp(options);
+        return new Promise((resolve, reject) => {
+            const url = FhirHelper.buildUrl(this.baseUrl, this.resourceType, id, null, query);
+            const options = {
+                url: url,
+                method: 'DELETE',
+                json: true
+            };
+
+            rp(options)
+                .then((results) => resolve(results))
+                .catch((err) => reject(err));
+        });
     }
 }

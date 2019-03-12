@@ -321,6 +321,11 @@ export class FhirService {
         // TODO
     }
 
+    public validateOnServer(resource: DomainResource): Observable<OperationOutcome> {
+        const url = `/api/fhir/${encodeURIComponent(resource.resourceType)}/$validate`;
+        return this.http.post<OperationOutcome>(url, resource);
+    }
+
     public getFhirTooltip(fhirPath: string) {
         if (!fhirPath || fhirPath.indexOf('.') < 0 || !this.profiles) {
             return '';
@@ -352,6 +357,8 @@ export class FhirService {
             return err.data;
         } else if (typeof err === 'string') {
             return err;
+        } else if (err.name === 'HttpErrorResponse' && err.message) {
+            return err.message;
         } else if (body && body.resourceType === 'OperationOutcome') {
             if (body.issue && body.issue.length > 0 && body.issue[0].diagnostics) {
                 return body.issue[0].diagnostics;
@@ -377,6 +384,9 @@ export class FhirService {
 
         // Remove any messages that are only information
         results.messages = _.filter(results.messages, (message) => message.severity !== Severities.Information);
+
+        // Update the "valid" property to account for custom validations
+        results.valid = !_.find(results.messages, (message) => message.severity === Severities.Error);
 
         return results;
     }
@@ -478,12 +488,21 @@ class CustomSTU3Validator extends CustomValidator {
     }
 
     public validateImplementationGuide(implementationGuide: ImplementationGuide): ValidatorMessage[] {
-        const messages = [];
+        const messages: ValidatorMessage[] = [];
         const allResources = _.flatten(_.map(implementationGuide.package, (nextPackage: PackageComponent) => nextPackage.resource));
         const groupedResources = _.groupBy(allResources, (resource: PackageResourceComponent) => resource.sourceReference ? resource.sourceReference.reference : resource.sourceUri);
         const allPages = this.getAllPages(implementationGuide);
         const groupedPageTitles = _.groupBy(allPages, (page: PageComponent) => page.title);
         const groupedPageFileNames = _.groupBy(allPages, (page: PageComponent) => page.source);
+
+        if (implementationGuide.url && !implementationGuide.url.endsWith('/' + implementationGuide.id)) {
+            messages.push({
+                location: 'ImplementationGuide.url',
+                resourceId: implementationGuide.id,
+                severity: Severities.Error,
+                message: `The url of the implementation guide should end with the ID of the implementation guide. If not, the publishing process will result in a "URL Mismatch" error.`
+            });
+        }
 
         const exampleTypeResources = _.filter(allResources, (resource: PackageResourceComponent) => {
             const parsedReference = resource.sourceReference && resource.sourceReference.reference ?
@@ -499,7 +518,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.package.resource',
                     resourceId: resource.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: 'Resource with reference "' + resource.sourceReference.reference + '" should be flagged as an example.'
                 });
             }
@@ -510,7 +529,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.package.resource',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Multiple resources found with reference ${reference || '""'}`
                 });
             }
@@ -520,7 +539,7 @@ class CustomSTU3Validator extends CustomValidator {
             messages.push({
                 location: 'ImplementationGuide.page+',
                 resourceId: implementationGuide.id,
-                severity: 'warning',
+                severity: Severities.Warning,
                 message: 'One more more pages does not have a title'
             });
         }
@@ -530,7 +549,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Multiple pages found with the same title ${title || '""'}`
                 });
             }
@@ -541,7 +560,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Multiple pages found with the same source (file name) ${fileName || '""'}`
                 });
             }
@@ -554,7 +573,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `The page with title ${page.title} does not specify content.`
                 });
             }
@@ -565,7 +584,7 @@ class CustomSTU3Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.package.resource',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `A resource within a package uses a URI ${resource.sourceUri} instead of a relative reference. This resource will not export correctly.`
                 });
             }
@@ -598,19 +617,28 @@ class CustomR4Validator extends CustomValidator {
             return [];
         }
 
-        const messages = [];
+        const messages: ValidatorMessage[] = [];
         const allResources = implementationGuide.definition.resource;
         const groupedResources = _.groupBy(allResources, (resource: ImplementationGuideResourceComponent) => resource.reference ? resource.reference.reference : null);
         const allPages = this.getAllPages(implementationGuide);
         const groupedPageTitles = _.groupBy(allPages, (page: ImplementationGuidePageComponent) => page.title);
         const allProfileTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
 
+        if (implementationGuide.url && !implementationGuide.url.endsWith('/' + implementationGuide.id)) {
+            messages.push({
+                location: 'ImplementationGuide.url',
+                resourceId: implementationGuide.id,
+                severity: Severities.Error,
+                message: `The url of the implementation guide should end with the ID of the implementation guide. If not, the publishing process will result in a "URL Mismatch" error.`
+            });
+        }
+
         _.each(allResources, (resource: ImplementationGuideResourceComponent, index) => {
             if (!resource.reference || !resource.reference.reference) {
                 messages.push({
                     location: 'ImplementationGuide.definition.resource',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Resource #${index + 1} does not have a reference`
                 });
             } else {
@@ -621,7 +649,7 @@ class CustomR4Validator extends CustomValidator {
                         messages.push({
                             location: 'ImplementationGuide.definition.resource',
                             resourceId: implementationGuide.id,
-                            severity: 'warning',
+                            severity: Severities.Warning,
                             message: `Resource with reference ${resource.reference.reference} may incorrectly be flagged as an example`
                         });
                     }
@@ -630,7 +658,7 @@ class CustomR4Validator extends CustomValidator {
                         messages.push({
                             location: 'ImplementationGuide.definition.resource',
                             resourceId: implementationGuide.id,
-                            severity: 'warning',
+                            severity: Severities.Warning,
                             message: `Resource with reference ${resource.reference.reference} should be flagged as an example`
                         });
                     }
@@ -643,7 +671,7 @@ class CustomR4Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.definition.resource',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Multiple resources found with reference ${reference || '""'}`
                 });
             }
@@ -654,7 +682,7 @@ class CustomR4Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.definition.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `One or more pages does not have a title. It will not be exported.`
                 });
             }
@@ -663,7 +691,7 @@ class CustomR4Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.definition.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Multiple pages found with the same title ${title || '""'}`
                 });
             }
@@ -674,14 +702,14 @@ class CustomR4Validator extends CustomValidator {
                 messages.push({
                     location: 'ImplementationGuide.definition.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `Page with title ${page.title} does not specify a reference to the content of the page`
                 });
             } else if (!page.nameReference.reference.startsWith('#')) {
                 messages.push({
                     location: 'ImplementationGuide.definition.page+',
                     resourceId: implementationGuide.id,
-                    severity: 'warning',
+                    severity: Severities.Warning,
                     message: `The reference for the page with the title ${page.title} should be a Binary resource contained within the ImplementationGuide so that ToF knows how to export it`
                 });
             }

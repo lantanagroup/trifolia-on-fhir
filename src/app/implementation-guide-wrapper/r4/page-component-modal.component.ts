@@ -22,7 +22,7 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     public get autoGenerate(): boolean {
-        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (autoGenerateExtension) {
             return autoGenerateExtension.valueBoolean === true;
@@ -36,11 +36,11 @@ export class PageComponentModalComponent implements OnInit {
             this.page.extension = [];
         }
 
-        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (!autoGenerateExtension) {
             autoGenerateExtension = {
-                url: this.globals.extensionIgPageAutoGenerateToc,
+                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: false
             };
             this.page.extension.push(autoGenerateExtension);

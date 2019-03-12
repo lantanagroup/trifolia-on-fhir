@@ -1,25 +1,30 @@
 import {Fhir} from 'fhir/fhir';
-import {ImplementationGuide as STU3ImplementationGuide, OperationOutcome} from '../../src/app/models/stu3/fhir';
+import {Bundle, ImplementationGuide as STU3ImplementationGuide, OperationOutcome} from '../../src/app/models/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../src/app/models/r4/fhir';
 import * as _ from 'underscore';
 import * as rp from 'request-promise';
 import * as FhirHelper from '../fhirHelper';
 import * as log4js from 'log4js';
 import * as config from 'config';
-import {FhirConfig} from '../controllers/models';
+import {Fhir as FhirModel, FhirConfig} from '../controllers/models';
+import {Globals} from '../../src/app/globals';
+import Extension = FhirModel.Extension;
 
 export class BundleExporter {
     readonly log = log4js.getLogger();
     readonly fhirServerBase: string;
     readonly fhirServerId: string;
+    readonly fhirVersion: string;
     readonly fhir: Fhir;
     readonly implementationGuideId: string;
+    readonly extensionUrls = _.map(new Globals().extensionUrls, (extUrl) => extUrl);
 
     public fhirConfig: FhirConfig;
 
-    constructor(fhirServerBase: string, fhirServerId: string, fhir: Fhir, implementationGuideId: string) {
+    constructor(fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: Fhir, implementationGuideId: string) {
         this.fhirServerBase = fhirServerBase;
         this.fhirServerId = fhirServerId;
+        this.fhirVersion = fhirVersion;
         this.fhir = fhir;
         this.implementationGuideId = implementationGuideId;
         this.fhirConfig = <FhirConfig> config.get('fhir');
@@ -64,7 +69,27 @@ export class BundleExporter {
         return Promise.all(promises);
     }
 
-    public getBundle() {
+    private removeExtensions(object: any) {
+        if (object) {
+            const keys = _.allKeys(object);
+            _.each(keys, (key) => {
+                if (key === 'extension') {
+                    const extensions: Extension[] = object[key];
+                    const removeExtensions = _.filter(extensions, (extension) => this.extensionUrls.indexOf(extension.url) >= 0);
+
+                    // Remove any extensions from the resource that are for Trifolia
+                    _.each(removeExtensions, (removeExtension) => {
+                        const index = extensions.indexOf(removeExtension);
+                        extensions.splice(index, 1);
+                    });
+                } else if (typeof object[key] === 'object') {
+                    this.removeExtensions(object[key]);
+                }
+            });
+        }
+    }
+
+    public getBundle(removeExtensions = false): Promise<Bundle> {
         return new Promise((resolve, reject) => {
             const igUrl = FhirHelper.buildUrl(this.fhirServerBase, 'ImplementationGuide', this.implementationGuideId);
             const fhirServerConfig = _.find(this.fhirConfig.servers, (serverConfig) => {
@@ -111,12 +136,16 @@ export class BundleExporter {
                         this.log.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
                     }
 
-                    const bundle = {
+                    const bundle = <Bundle> {
                         resourceType: 'Bundle',
                         type: 'collection',
                         total: resourceEntries.length + 1,
                         entry: [{ fullUrl: implementationGuideFullUrl, resource: implementationGuide }].concat(resourceEntries)
                     };
+
+                    if (removeExtensions) {
+                        this.removeExtensions(bundle);
+                    }
 
                     resolve(bundle);
                 })
@@ -141,11 +170,11 @@ export class BundleExporter {
         });
     }
 
-    public export(format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json') {
+    public export(format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json', removeExtensions = false) {
         return new Promise((resolve, reject) => {
-            this.getBundle()
+            this.getBundle(removeExtensions)
                 .then((results) => {
-                    let response = results;
+                    let response: Bundle | string = results;
 
                     if (format === 'xml' || format === 'application/xml') {
                         response = this.fhir.objToXml(results);

@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {ImplementationGuide} from '../models/stu3/fhir';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Bundle, ImplementationGuide, OperationOutcome} from '../models/stu3/fhir';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {ExportOptions, ExportService} from '../services/export.service';
@@ -12,6 +12,8 @@ import {ExportFormats} from '../models/export-formats.enum';
 import {FhirService} from '../services/fhir.service';
 import {HtmlExportStatus, SocketService} from '../services/socket.service';
 import {saveAs} from 'file-saver';
+import {ServerValidationResult} from '../models/server-validation-result';
+import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-publish',
@@ -23,8 +25,12 @@ export class PublishComponent implements OnInit {
     public options = new ExportOptions();
     public searching = false;
     public message: string;
+    public validation: ServerValidationResult[];
     public socketOutput = '';
     private packageId;
+
+    @ViewChild('tabs')
+    private tabs: NgbTabset;
 
     constructor(
         private socketService: SocketService,
@@ -38,6 +44,7 @@ export class PublishComponent implements OnInit {
         this.options.exportFormat = ExportFormats.HTML;
         this.options.executeIgPublisher = true;
         this.options.implementationGuideId = this.cookieService.get(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+        this.options.responseFormat = <any> this.cookieService.get(this.globals.cookieKeys.lastResponseFormat) || 'application/json';
 
         // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
         this.socketService.onConnected.subscribe(() => {
@@ -58,6 +65,14 @@ export class PublishComponent implements OnInit {
         } else if (this.cookieService.get(cookieKey)) {
             this.cookieService.remove(cookieKey);
         }
+
+        this.exportService.validate(implementationGuide.id)
+            .subscribe(
+                (results) => {
+                    this.validation = results;
+                },
+                (err) => this.message = this.fhirService.getErrorString(err)
+            );
     }
 
     public searchImplementationGuide = (text$: Observable<string>) => {
@@ -76,7 +91,7 @@ export class PublishComponent implements OnInit {
     }
 
     public searchFormatter = (ig: ImplementationGuide) => {
-        return ig.name;
+        return `${ig.name} (id: ${ig.id})`;
     }
 
     public clearImplementationGuide() {
@@ -94,7 +109,14 @@ export class PublishComponent implements OnInit {
         return !this.options.implementationGuideId || !this.options.responseFormat;
     }
 
+    public responseFormatChanged() {
+        this.cookieService.put(this.globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+    }
+
     public publish() {
+        this.socketOutput = '';
+        this.tabs.select('status');
+
         this.exportService.export(this.options)
             .subscribe((results: any) => {
                 const reader = new FileReader();
@@ -111,10 +133,9 @@ export class PublishComponent implements OnInit {
         if (this.options.implementationGuideId) {
             this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
                 .subscribe((implementationGuide: ImplementationGuide) => {
-                    this.selectedImplementationGuide = implementationGuide;
+                    this.implementationGuideChanged(implementationGuide);
                 }, (err) => this.message = this.fhirService.getErrorString(err));
         }
-
 
         this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
             if (data.packageId === this.packageId) {

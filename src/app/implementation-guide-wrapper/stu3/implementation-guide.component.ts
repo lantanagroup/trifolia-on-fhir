@@ -97,7 +97,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public pageKindChanged(page: PageComponent) {
-        let autoGenExtension = _.find(page.extension, (extension) => extension.url === this.globals.extensionIgPageAutoGenerateToc);
+        let autoGenExtension = _.find(page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (page.kind === 'toc') {
             if (!page.extension) {
@@ -108,7 +108,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
                 autoGenExtension.valueBoolean = true;
             } else if (!autoGenExtension) {
                 autoGenExtension = new Extension();
-                autoGenExtension.url = this.globals.extensionIgPageAutoGenerateToc;
+                autoGenExtension.url = this.globals.extensionUrls['extension-ig-page-auto-generate-toc'];
                 autoGenExtension.valueBoolean = true;
                 page.extension.push(autoGenExtension);
             }
@@ -361,7 +361,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
             newPage.title = 'Table of Contents';
             newPage.format = 'markdown';
             newPage.extension = [{
-                url: this.globals.extensionIgPageAutoGenerateToc,
+                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: true
             }];
             newPage.source = 'toc.md';
@@ -414,7 +414,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         newPage.kind = 'page';
         newPage.format = 'markdown';
         newPage.extension = [{
-            url: this.globals.extensionIgPageContentUrl,
+            url: this.globals.extensionUrls['extension-ig-page-content'],
             valueReference: {
                 reference: '#' + newBinary.id,
                 display: `Page content ${newBinary.id}`

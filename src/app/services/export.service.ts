@@ -2,11 +2,12 @@ import {Injectable} from '@angular/core';
 import {ExportFormats} from '../models/export-formats.enum';
 import {HttpClient} from '@angular/common/http';
 import {SocketService} from './socket.service';
+import {ServerValidationResult} from '../models/server-validation-result';
 
 export class ExportOptions {
     public implementationGuideId: string;
     public exportFormat = ExportFormats.HTML;
-    public responseFormat? = 'application/json';
+    public responseFormat?: 'application/json' | 'application/xml' = 'application/json';
     public useTerminologyServer? = true;
     public executeIgPublisher? = true;
     public useLatest? = false;
@@ -20,6 +21,11 @@ export class ExportService {
     constructor(
         private socketService: SocketService,
         private http: HttpClient) {
+    }
+
+    public validate(implementationGuideId: string) {
+        const url = `/api/export/${implementationGuideId}/$validate`;
+        return this.http.get<ServerValidationResult[]>(url);
     }
 
     public export(options: ExportOptions) {

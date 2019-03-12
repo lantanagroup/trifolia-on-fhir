@@ -22,6 +22,7 @@ import * as rp from 'request-promise';
 import * as fs from 'fs-extra';
 import * as config from 'config';
 import * as tmp from 'tmp';
+import * as vkbeautify from 'vkbeautify';
 import {
     Fhir,
     FhirConfig,
@@ -32,7 +33,6 @@ import {
 } from '../controllers/models';
 import {BundleExporter} from './bundle';
 import Bundle = Fhir.Bundle;
-import {root} from 'rxjs/internal-compatibility';
 
 const fhirConfig = <FhirConfig> config.get('fhir');
 const serverConfig = <ServerConfig> config.get('server');
@@ -47,6 +47,7 @@ export class HtmlExporter {
     readonly log = log4js.getLogger();
     readonly fhirServerBase: string;
     readonly fhirServerId: string;
+    readonly fhirVersion: string;
     readonly fhir: FhirModule;
     readonly io: Server;
     readonly socketId: string;
@@ -54,9 +55,10 @@ export class HtmlExporter {
 
     private packageId: string;
 
-    constructor(fhirServerBase: string, fhirServerId: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
+    constructor(fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
         this.fhirServerBase = fhirServerBase;
         this.fhirServerId = fhirServerId;
+        this.fhirVersion = fhirVersion;
         this.fhir = fhir;
         this.io = io;
         this.socketId = socketId;
@@ -238,7 +240,7 @@ export class HtmlExporter {
     }
     
     private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide) {
-        const mainResourceTypes = ['ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
+        const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
         const distinctResources = _.chain(bundle.entry)
             .map((entry) => entry.resource)
             .uniq((resource) => resource.id)
@@ -335,7 +337,7 @@ export class HtmlExporter {
                 })
                 .map((resource) => {
                     let name = resource.title || this.getDisplayName(resource.name) || resource.id;
-                    return [resource.resourceType, `<a href="CapabilityStatement-${resource.id}.html">${name}</a>`];
+                    return [resource.resourceType, `<a href="${resource.resourceType}-${resource.id}.html">${name}</a>`];
                 })
                 .value();
             const oContent = this.createTableFromArray(['Type', 'Name'], oData);
@@ -761,7 +763,7 @@ export class HtmlExporter {
     
     public export(format: string, executeIgPublisher: boolean, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
         return new Promise((resolve, reject) => {
-            const bundleExporter = new BundleExporter(this.fhirServerBase, this.fhirServerId, this.fhir, this.implementationGuideId);
+            const bundleExporter = new BundleExporter(this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
             const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
             const extension = (!isXml ? '.json' : '.xml');
             const homedir = require('os').homedir();
@@ -785,9 +787,9 @@ export class HtmlExporter {
                     this.sendSocketMessage('progress', 'Created temp directory. Retrieving resources for implementation guide.');
 
                     // Prepare IG Publisher package
-                    bundleExporter.getBundle()
-                        .then((results: Bundle) => {
-                            bundle = results;
+                    bundleExporter.getBundle(false)
+                        .then((results: any) => {
+                            bundle = <Bundle> results;
                             const resourcesDir = path.join(rootPath, 'source/resources');
 
                             this.sendSocketMessage('progress', 'Resources retrieved. Packaging.');
@@ -811,6 +813,7 @@ export class HtmlExporter {
                                     resourcePath = path.join(resourceDir, id + '.json');
                                 } else {
                                     resourceContent = this.fhir.objToXml(bundle.entry[i].resource);
+                                    resourceContent = vkbeautify.xml(resourceContent);
                                     resourcePath = path.join(resourceDir, id + '.xml');
                                 }
 
@@ -855,6 +858,13 @@ export class HtmlExporter {
                             return this.getIgPublisher(useLatest, executeIgPublisher);
                         })
                         .then((igPublisherLocation) => {
+                            if (includeIgPublisherJar) {
+                                this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.');
+                                const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
+                                const destJarPath = path.join(rootPath, jarFileName);
+                                fs.copySync(igPublisherLocation, destJarPath);
+                            }
+
                             if (!executeIgPublisher || !igPublisherLocation) {
                                 this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
 
@@ -925,13 +935,6 @@ export class HtmlExporter {
                                             this.log.error(err);
                                         }
                                     });
-
-                                    if (includeIgPublisherJar) {
-                                        this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.');
-                                        const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
-                                        const destJarPath = path.join(rootPath, jarFileName);
-                                        fs.copySync(igPublisherLocation, destJarPath);
-                                    }
 
                                     this.log.debug(`Copying output from ${outputPath} to ${deployDir}`);
 

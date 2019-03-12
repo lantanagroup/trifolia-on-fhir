@@ -1,69 +1,113 @@
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group">
-            <label>Implementation Guide</label>
-            <div class="input-group">
-                <input type="text" class="form-control"
-                       [ngModel]="selectedImplementationGuide"
-                       (ngModelChange)="implementationGuideChanged($event)"
-                       [ngbTypeahead]="searchImplementationGuide"
-                       [resultFormatter]="searchFormatter"
-                       [inputFormatter]="searchFormatter"
-                       autocomplete="off"/>
-                <div class="input-group-btn">
-                    <button type="button" class="btn btn-default" title="Clear the selection"
-                            (click)="clearImplementationGuide()">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="form-group" *ngIf="options.executeIgPublisher">
-            <label>Use latest FHIR IG Publisher</label>
-            <select class="form-control" [(ngModel)]="options.useLatest">
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-            </select>
-            <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="form-group" *ngIf="options.executeIgPublisher">
-            <label>Use terminology server</label>
-            <select class="form-control" [(ngModel)]="options.useTerminologyServer">
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="form-group">
-            <label>Include FHIR IG Publisher JAR?</label>
-            <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="form-group" *ngIf="options.executeIgPublisher">
-            <label>Download?</label>
-            <select class="form-control" [(ngModel)]="options.downloadOutput">
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-            </select>
-            <div class="help-block">Selecting "Yes" will prompt you to download the entire contents of the build package after the FHIR IG publisher has finished executing.</div>
+<div class="form-group">
+    <label>Implementation Guide</label>
+    <div class="input-group">
+        <input type="text" class="form-control"
+               [ngModel]="selectedImplementationGuide"
+               (ngModelChange)="implementationGuideChanged($event)"
+               [ngbTypeahead]="searchImplementationGuide"
+               [resultFormatter]="searchFormatter"
+               [inputFormatter]="searchFormatter"
+               autocomplete="off"/>
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" title="Clear the selection"
+                    (click)="clearImplementationGuide()">
+                <i class="fa fa-times"></i>
+            </button>
         </div>
     </div>
 </div>
 
-<pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer></pre>
+<ngb-tabset #tabs>
+    <ngb-tab title="Options" id="options">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-6">
+                    <app-fhir-boolean
+                            [parentObject]="options"
+                            propertyName="useLatest"
+                            [required]="true"
+                            [cookieKey]="globals.cookieKeys.exportLastUseLatestIgPublisher"
+                            title="Use latest FHIR IG Publisher?">
+                    </app-fhir-boolean>
+                    <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <app-fhir-boolean
+                            [parentObject]="options"
+                            [required]="true"
+                            propertyName="useTerminologyServer"
+                            [cookieKey]="globals.cookieKeys.exportLastUseTerminologyServer"
+                            title="Use terminology server?">
+                    </app-fhir-boolean>
+                </div>
+
+                <div class="col-md-6">
+                    <app-fhir-boolean
+                            [parentObject]="options"
+                            [required]="true"
+                            propertyName="includeIgPublisherJar"
+                            [cookieKey]="globals.cookieKeys.exportLastIncludeFhirIgPublisher"
+                            title="Include FHIR IG Publisher JAR?">
+                    </app-fhir-boolean>
+                </div>
+
+                <div class="col-md-6">
+                    <app-fhir-boolean
+                            [parentObject]="options"
+                            [required]="true"
+                            propertyName="downloadOutput"
+                            [cookieKey]="globals.cookieKeys.exportLastDownloadOutput"
+                            title="Download?">
+                    </app-fhir-boolean>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Output Format</label>
+                        <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+                            <option value="application/json">JSON</option>
+                            <option value="application/xml">XML</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab *ngIf="validation" id="validation">
+        <ng-template ngbTabTitle>
+            Validation ({{validation.length}})
+        </ng-template>
+        <ng-template ngbTabContent>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Resource</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let issue of validation">
+                    <td>{{issue.severity}}</td>
+                    <td>{{issue.resourceReference}}</td>
+                    <td>{{issue.details}}</td>
+                </tr>
+                </tbody>
+                <tfoot *ngIf="validation.length === 0">
+                <tr>
+                    <td colspan="3">No validation issues found!</td>
+                </tr>
+                </tfoot>
+            </table>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Status" id="status">
+        <ng-template ngbTabContent>
+            <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer></pre>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
 
 <footer class="footer">
     <button type="button" class="btn btn-default" (click)="publish()" [disabled]="publishDisabled">Publish</button>
