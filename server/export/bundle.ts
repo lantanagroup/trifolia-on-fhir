@@ -17,7 +17,6 @@ export class BundleExporter {
     readonly fhirVersion: string;
     readonly fhir: Fhir;
     readonly implementationGuideId: string;
-    readonly extensionUrls = _.map(new Globals().extensionUrls, (extUrl) => extUrl);
 
     public fhirConfig: FhirConfig;
 
@@ -28,6 +27,34 @@ export class BundleExporter {
         this.fhir = fhir;
         this.implementationGuideId = implementationGuideId;
         this.fhirConfig = <FhirConfig> config.get('fhir');
+    }
+
+    public static removeExtensions(object: any, clone = true) {
+        if (clone) {
+            object = JSON.parse(JSON.stringify(object));
+        }
+
+        if (object) {
+            const extensionUrls = _.map(new Globals().extensionUrls, (extUrl) => extUrl);
+            const keys = _.allKeys(object);
+
+            _.each(keys, (key) => {
+                if (key === 'extension') {
+                    const extensions: Extension[] = object[key];
+                    const removeExtensions = _.filter(extensions, (extension) => extensionUrls.indexOf(extension.url) >= 0);
+
+                    // Remove any extensions from the resource that are for Trifolia
+                    _.each(removeExtensions, (removeExtension) => {
+                        const index = extensions.indexOf(removeExtension);
+                        extensions.splice(index, 1);
+                    });
+                } else if (typeof object[key] === 'object') {
+                    this.removeExtensions(object[key], false);
+                }
+            });
+        }
+
+        return object;
     }
 
     private _getStu3Resources(implementationGuide: STU3ImplementationGuide) {
@@ -67,26 +94,6 @@ export class BundleExporter {
             .value();
 
         return Promise.all(promises);
-    }
-
-    private removeExtensions(object: any) {
-        if (object) {
-            const keys = _.allKeys(object);
-            _.each(keys, (key) => {
-                if (key === 'extension') {
-                    const extensions: Extension[] = object[key];
-                    const removeExtensions = _.filter(extensions, (extension) => this.extensionUrls.indexOf(extension.url) >= 0);
-
-                    // Remove any extensions from the resource that are for Trifolia
-                    _.each(removeExtensions, (removeExtension) => {
-                        const index = extensions.indexOf(removeExtension);
-                        extensions.splice(index, 1);
-                    });
-                } else if (typeof object[key] === 'object') {
-                    this.removeExtensions(object[key]);
-                }
-            });
-        }
     }
 
     public getBundle(removeExtensions = false): Promise<Bundle> {
@@ -144,7 +151,7 @@ export class BundleExporter {
                     };
 
                     if (removeExtensions) {
-                        this.removeExtensions(bundle);
+                        BundleExporter.removeExtensions(bundle, false);
                     }
 
                     resolve(bundle);

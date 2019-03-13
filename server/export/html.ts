@@ -798,23 +798,24 @@ export class HtmlExporter {
 
                             for (let i = 0; i < bundle.entry.length; i++) {
                                 const resource = bundle.entry[i].resource;
+                                const extensionlessResource = BundleExporter.removeExtensions(resource);
                                 const resourceType = resource.resourceType;
-                                const id = bundle.entry[i].resource.id;
+                                const id = resource.id;
                                 const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
                                 let resourcePath;
 
                                 let resourceContent = null;
 
-                                if (resourceType == 'ImplementationGuide' && id === this.implementationGuideId) {
+                                if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
                                     implementationGuideResource = resource;
                                 }
 
                                 // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
                                 if (!isXml && resourceType !== 'ImplementationGuide') {
-                                    resourceContent = JSON.stringify(bundle.entry[i].resource, null, '\t');
+                                    resourceContent = JSON.stringify(extensionlessResource, null, '\t');
                                     resourcePath = path.join(resourceDir, id + '.json');
                                 } else {
-                                    resourceContent = this.fhir.objToXml(bundle.entry[i].resource);
+                                    resourceContent = this.fhir.objToXml(extensionlessResource);
                                     resourceContent = vkbeautify.xml(resourceContent);
                                     resourcePath = path.join(resourceDir, id + '.xml');
                                 }
