@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {ConceptSetComponent, OperationOutcome, ValueSet} from '../models/stu3/fhir';
+import {ConceptReferenceComponent, ConceptSetComponent, OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -9,6 +9,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {ConfigService} from '../services/config.service';
+import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {FileOpenModalComponent} from '../file-open-modal/file-open-modal.component';
+import {FileModel} from '../models/file-model';
 
 @Component({
     selector: 'app-valueset',
@@ -43,6 +46,16 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         return this.route.snapshot.paramMap.get('id') === 'from-file';
     }
 
+    public selectIncludeValueSet(include: ConceptSetComponent, index) {
+        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
+        modalRef.componentInstance.resourceType = 'ValueSet';
+        modalRef.componentInstance.hideResourceType = true;
+
+        modalRef.result.then((results) => {
+            include.valueSet[index] = results.resource.url;
+        });
+    }
+
     public addIncludeEntry(includeTabSet) {
         this.valueSet.compose.include.push({ });
         setTimeout(() => {
@@ -52,7 +65,93 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         }, 50);
     }
 
+    public enumerateFromValueSetFile() {
+        if (!this.valueSet.compose) {
+            return;
+        }
+
+        const modalRef = this.modalService.open(FileOpenModalComponent, { size: 'lg' });
+        modalRef.componentInstance.captureVersion = false;
+
+        modalRef.result.then((file: FileModel) => {
+            if (!file.resource || file.resource.resourceType !== 'ValueSet') {
+                alert('The selected file must be a ValueSet resource in either XML or JSON format');
+                return;
+            }
+
+            const valueSet = <ValueSet> file.resource;
+            let addedCodes = 0;
+            this.valueSet.compose.include = this.valueSet.compose.include || [];
+
+            if (valueSet.expansion) {
+                _.each(valueSet.expansion.contains, (contains) => {
+                    const alreadyExists = !!_.find(this.valueSet.compose.include, (include) => {
+                        if (include.system !== contains.system) {
+                            return false;
+                        }
+
+                        return !!_.find(include.concept, (concept) => concept.code === contains.code);
+                    });
+
+                    if (!alreadyExists) {
+                        let foundInclude = _.find(this.valueSet.compose.include, (include) => include.system === contains.system);
+
+                        if (!foundInclude) {
+                            foundInclude = {
+                                system: contains.system,
+                                concept: []
+                            };
+                            this.valueSet.compose.include.push(foundInclude);
+                        }
+
+                        foundInclude.concept.push({
+                            code: contains.code,
+                            display: contains.display
+                        });
+                        addedCodes++;
+                    }
+                });
+            } else if (valueSet.compose) {
+                _.each(valueSet.compose.include, (sourceInclude) => {
+                    let foundInclude = _.find(this.valueSet.compose.include, (next) => next.system === sourceInclude.system);
+
+                    if (!foundInclude) {
+                        foundInclude = {
+                            system: sourceInclude.system,
+                            concept: []
+                        };
+                        this.valueSet.compose.include.push(foundInclude);
+                    }
+
+                    _.each(sourceInclude.concept, (concept) => {
+                        const foundConcept = _.find(foundInclude.concept, (next) => next.code === concept.code);
+
+                        if (!foundConcept) {
+                            foundInclude.concept.push({
+                                code: concept.code,
+                                display: concept.display
+                            });
+                            addedCodes++;
+                        }
+                    });
+                });
+            } else {
+                alert('ValueSet does not contain a compose or include. Nothing to do.');
+            }
+
+            if (addedCodes > 0) {
+                alert(`Added ${addedCodes} codes to the value set.`);
+            } else {
+                alert(`No codes were added to the value set`);
+            }
+        });
+    }
+
     public revert() {
+        if (!confirm('Are you sure you want to revert any changes you made to the value set and return to the last saved version?')) {
+            return;
+        }
+
         this.getValueSet();
     }
 

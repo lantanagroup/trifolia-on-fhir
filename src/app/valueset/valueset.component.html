@@ -111,8 +111,17 @@
                 <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive" tooltipPath="ValueSet.compose.inactive"></app-fhir-boolean>
 
                 <p>
-                    <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries  tooltipPath="ValueSet.compose.include"
+                    <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries
                 </p>
+
+                <div class="enumerate dropdown" *ngIf="valueSet.compose.hasOwnProperty('include')">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="enumerateFromButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Enumerate from...
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="enumerateFromButton">
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="enumerateFromValueSetFile()">Other ValueSet resource/file</a>
+                    </div>
+                </div>
 
                 <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
                     <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
@@ -126,6 +135,49 @@
                             <app-fhir-string [parentObject]="include" propertyName="version" title="Version" tooltipPath="ValueSet.compose.include.version"></app-fhir-string>
 
                             <app-valueset-concept-card [parentObject]="include" propertyName="concept"></app-valueset-concept-card>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <input type="checkbox" [ngModel]="include.hasOwnProperty('valueSet')" (ngModelChange)="globals.toggleProperty(include, 'valueSet', [''])" />
+                                    Value Sets
+                                    <app-tooltip-icon tooltipPath="ValueSet.compose.include.valueSet"></app-tooltip-icon>
+                                </div>
+                                <table class="table table-striped" *ngIf="include.hasOwnProperty('valueSet')">
+                                    <thead>
+                                    <tr>
+                                        <th>Value Set URL</th>
+                                        <th class="actions-column-1">
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" (click)="include.valueSet.push('')">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let vs of include.valueSet; let vsi = index; trackBy: globals.trackByFn">
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" [(ngModel)]="include.valueSet[vsi]" />
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" (click)="selectIncludeValueSet(include, vsi)">
+                                                        <i class="fa fa-hand-pointer-o"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-default" title="Remove this value set" (click)="globals.promptForRemove(include.valueSet, vsi)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <div class="card">
                                 <div class="card-header">

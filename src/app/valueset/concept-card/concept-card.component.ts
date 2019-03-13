@@ -1,9 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ConceptReferenceComponent} from '../../models/stu3/fhir';
+import {ConceptReferenceComponent, ValueSet} from '../../models/stu3/fhir';
 import {FhirValueSetIncludeConceptModalComponent} from '../../fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {Globals} from '../../globals';
+import {FileOpenModalComponent} from '../../file-open-modal/file-open-modal.component';
+import {FileModel} from '../../models/file-model';
 
 @Component({
     selector: 'app-valueset-concept-card',

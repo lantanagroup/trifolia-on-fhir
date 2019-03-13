@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../globals';
 import {FhirService} from '../services/fhir.service';
@@ -10,6 +10,7 @@ import {FileModel} from '../models/file-model';
     styleUrls: ['./file-open-modal.component.css']
 })
 export class FileOpenModalComponent implements OnInit {
+    @Input() captureVersion = true;
     public fhirVersion = '3.0.1';
     public file: FileModel;
 
