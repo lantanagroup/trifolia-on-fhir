@@ -16,6 +16,7 @@ const allFiles = [
     'ig-publisher-template/**',         // The FHIR IG Publisher template
     'ig-publisher/**',                  // The built-in FHIR IG Publisher
     'src/assets/**',                    // Assets needed for both server and client/UI
+    'src/app/**/*.js',                  // Any compiled JS shared between the server and the client
     'wwwroot/**',                       // All compiled files for the client/UI
     '!ig-publisher/latest/**',          // Exclude the latest version of the FHIR IG Publisher from packaging
     '!wwwroot/igs/**',                  // Exclude published implementation guides from dev/test environments
