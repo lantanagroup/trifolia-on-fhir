@@ -25,6 +25,7 @@ export class FhirReferenceModalComponent implements OnInit {
     @Input() public resourceType?: string;
     @Input() public hideResourceType?: boolean;
     @Input() public selectMultiple = false;
+    public idSearch?: string;
     public contentSearch?: string;
     public criteriaChangedEvent: Subject<string> = new Subject<string>();
     public nameSearch?: string;
@@ -116,11 +117,15 @@ export class FhirReferenceModalComponent implements OnInit {
         }
 
         if (this.nameSearch && this.nameSearchTypes.indexOf(this.resourceType) >= 0) {
-            url += 'name:contains=' + encodeURIComponent(this.nameSearch);
+            url += 'name:contains=' + encodeURIComponent(this.nameSearch) + '&';
         }
 
         if (this.titleSearch && this.titleSearchTypes.indexOf(this.resourceType) >= 0) {
-            url += 'title:contains=' + encodeURIComponent(this.titleSearch);
+            url += 'title:contains=' + encodeURIComponent(this.titleSearch) + '&';
+        }
+
+        if (this.idSearch) {
+            url += '_id=' + encodeURIComponent(this.idSearch) + '&';
         }
 
         this.http.get(url)

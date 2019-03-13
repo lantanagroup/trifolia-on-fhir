@@ -5,26 +5,31 @@
     </button>
 </div>
 <div class="modal-body">
-    <div class="input-group" *ngIf="!resourceType || !hideResourceType">
-        <div class="input-group-addon">Type</div>
-        <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
-            <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-        </select>
+    <div class="form-group">
+        <div class="input-group" *ngIf="!resourceType || !hideResourceType">
+            <div class="input-group-addon">Type</div>
+            <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
+                <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+            </select>
+        </div>
     </div>
 
-    <div class="input-group" *ngIf="showContentSearch">
-        <div class="input-group-addon">Search</div>
-        <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
-    </div>
+    <div class="row">
+        <div class="col-md-6" *ngIf="showContentSearch">
+            <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Search" />
+        </div>
 
-    <div class="input-group" *ngIf="showNameSearch">
-        <div class="input-group-addon">Name</div>
-        <input class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
-    </div>
+        <div class="col-md-6" *ngIf="showNameSearch">
+            <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter name" />
+        </div>
 
-    <div class="input-group" *ngIf="showTitleSearch">
-        <div class="input-group-addon">Title</div>
-        <input class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <div class="col-md-6" *ngIf="showTitleSearch">
+            <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by title" />
+        </div>
+
+        <div class="col-md-6" *ngIf="!!resourceType">
+            <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by ID" />
+        </div>
     </div>
 
     <div class="alert alert-info" *ngIf="message">{{message}}</div>
