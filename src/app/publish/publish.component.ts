@@ -57,6 +57,7 @@ export class PublishComponent implements OnInit {
     public implementationGuideChanged(implementationGuide: ImplementationGuide) {
         this.selectedImplementationGuide = implementationGuide;
         this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
+        this.validation = null;
 
         const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
@@ -66,13 +67,15 @@ export class PublishComponent implements OnInit {
             this.cookieService.remove(cookieKey);
         }
 
-        this.exportService.validate(implementationGuide.id)
-            .subscribe(
-                (results) => {
-                    this.validation = results;
-                },
-                (err) => this.message = this.fhirService.getErrorString(err)
-            );
+        if (implementationGuide && implementationGuide.id) {
+            this.exportService.validate(implementationGuide.id)
+                .subscribe(
+                    (results) => {
+                        this.validation = results;
+                    },
+                    (err) => this.message = this.fhirService.getErrorString(err)
+                );
+        }
     }
 
     public searchImplementationGuide = (text$: Observable<string>) => {
