@@ -490,7 +490,7 @@
 <ng-template #dependsOn>
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ uri: '' }])" />
+            <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ version: 'current' }])" />
             Dependencies
             <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
         </div>
@@ -514,7 +514,7 @@
                 </th>
                 <th class="actions-column-1">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '' })">
+                        <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ version: 'current' })">
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
@@ -534,13 +534,13 @@
                     </div>
                 </td>
                 <td>
-                    <input type="text" class="form-control" [ngModel]="getDependsOnLocation(dependsOn)" (ngModelChange)="setDependsOnLocation(dependsOn, $event)" />
+                    <input type="text" class="form-control" [class.is-invalid]="!getDependsOnLocation(dependsOn)" [ngModel]="getDependsOnLocation(dependsOn)" (ngModelChange)="setDependsOnLocation(dependsOn, $event)" />
                 </td>
                 <td>
-                    <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [isFormGroup]="false"></app-fhir-string>
+                    <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" [isFormGroup]="false"></app-fhir-string>
                 </td>
                 <td>
-                    <input type="text" class="form-control" [ngModel]="getDependsOnName(dependsOn)" (ngModelChange)="setDependsOnName(dependsOn, $event)" />
+                    <input type="text" class="form-control" [class.is-invalid]="!getDependsOnName(dependsOn)" [ngModel]="getDependsOnName(dependsOn)" (ngModelChange)="setDependsOnName(dependsOn, $event)" />
                 </td>
                 <td>
                     <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>

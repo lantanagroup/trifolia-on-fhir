@@ -7,7 +7,7 @@ import {
     Bundle as STU3Bundle,
     Binary as STU3Binary,
     ImplementationGuide as STU3ImplementationGuide,
-    PageComponent
+    PageComponent, Extension
 } from '../../src/app/models/stu3/fhir';
 import {
     Binary as R4Binary,
@@ -451,17 +451,25 @@ export class HtmlExporter {
         const dependencyExtensions = _.filter(implementationGuide.extension, (extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency');
 
         // R4 ImplementationGuide.dependsOn
-        control.dependencyList = _.map(dependencyExtensions, (dependencyExtension) => {
-            const locationExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
-            const nameExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
-            const versionExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version');
+        control.dependencyList = _.chain(dependencyExtensions)
+            .filter((dependencyExtension) => {
+                const locationExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
+                const nameExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
 
-            return <FhirControlDependency> {
-                location: locationExtension ? locationExtension.valueUri : '',
-                name: nameExtension ? nameExtension.valueString : '',
-                version: versionExtension ? versionExtension.valueString : ''
-            };
-        });
+                return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
+            })
+            .map((dependencyExtension) => {
+                const locationExtension = <Extension> _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
+                const nameExtension = <Extension> _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
+                const versionExtension = <Extension> _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version');
+
+                return <FhirControlDependency> {
+                    location: locationExtension ? locationExtension.valueUri : '',
+                    name: nameExtension ? nameExtension.valueString : '',
+                    version: versionExtension ? versionExtension.valueString : ''
+                };
+            })
+            .value();
 
         // Define the resources in the control and what templates they should use
         if (bundle && bundle.entry) {
@@ -557,16 +565,24 @@ export class HtmlExporter {
             control.version = version;
         }
 
-        control.dependencyList = _.map(implementationGuide.dependsOn, (dependsOn) => {
-            const locationExtension = _.find(dependsOn.extension, (extension) => extension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
-            const nameExtension = _.find(dependsOn.extension, (extension) => extension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
+        control.dependencyList = _.chain(implementationGuide.dependsOn)
+            .filter((dependsOn) => {
+                const locationExtension = _.find(dependsOn.extension, (dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
+                const nameExtension = _.find(dependsOn.extension, (dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
 
-            return {
-                location: locationExtension ? locationExtension.valueString : '',
-                name: nameExtension ? nameExtension.valueString : '',
-                version: dependsOn.version
-            };
-        });
+                return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
+            })
+            .map((dependsOn) => {
+                const locationExtension = _.find(dependsOn.extension, (dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
+                const nameExtension = _.find(dependsOn.extension, (dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
+
+                return {
+                    location: locationExtension ? locationExtension.valueString : '',
+                    name: nameExtension ? nameExtension.valueString : '',
+                    version: dependsOn.version
+                };
+            })
+            .value();
 
         // Define the resources in the control and what templates they should use
         if (bundle && bundle.entry) {

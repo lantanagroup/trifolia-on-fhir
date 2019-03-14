@@ -210,6 +210,10 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
 
         const newDependency = new Extension();
         newDependency.url = this.globals.extensionUrls['extension-ig-dependency'];
+        newDependency.extension = [{
+            url: this.globals.extensionUrls['extension-ig-dependency-version'],
+            valueString: 'current'
+        }];
 
         this.implementationGuide.extension.push(newDependency);
 

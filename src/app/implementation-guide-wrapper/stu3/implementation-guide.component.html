@@ -44,7 +44,7 @@
                                     <tr *ngFor="let dependency of dependencies">
                                         <td>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
+                                                <input type="text" class="form-control" [class.is-invalid]="!getDependencyName(dependency)" [ngModel]="getDependencyName(dependency)" (ngModelChange)="setDependencyName(dependency, $event)" />
                                                 <div class="input-group-btn">
                                                     <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependency)">
                                                         <i class="fa fa-hand-pointer-o"></i>
@@ -53,10 +53,10 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyLocation(dependency)" (ngModelChange)="setDependencyLocation(dependency, $event)" />
+                                            <input type="text" class="form-control" [class.is-invalid]="!getDependencyLocation(dependency)" [ngModel]="getDependencyLocation(dependency)" (ngModelChange)="setDependencyLocation(dependency, $event)" />
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" [ngModel]="getDependencyVersion(dependency)" (ngModelChange)="setDependencyVersion(dependency, $event)" />
+                                            <input type="text" class="form-control" [class.is-invalid]="!getDependencyVersion(dependency)" [ngModel]="getDependencyVersion(dependency)" (ngModelChange)="setDependencyVersion(dependency, $event)" />
                                         </td>
                                         <td>
                                             <div class="pull-right">
