@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Guidelines and Best Practices</title>
+  <title>Value sets</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Guidelines and Best Practices">
+  <meta name="twitter:title" content="Value sets">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Guidelines and Best Practices" />
+  <meta property="og:title" content="Value sets" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -161,9 +161,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="GuidelinesandBestPractices"
-		  data-hnd-context="11"
-		  data-hnd-title="Guidelines and Best Practices"
+		  data-hnd-id="AuthoringValuesets"
+		  data-hnd-context="22"
+		  data-hnd-title="Value sets"
 		>
             
                 <div class="navigation">
@@ -171,30 +171,36 @@
                         <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Authoring.html" title="Authoring" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Process.html" title="Process" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="AuthoringValuesets.html" title="Value sets" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Authoring.html" title="Authoring" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="GuidelinesandBestPractices.html" title="Guidelines and Best Practices" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="GettingStarted.html" title="Getting Started" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Guidelines and Best Practices</h2>
+            <h2>Value sets</h2>
 
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps7"><span class="rvts0"><span class="rvts21">Guidelines and Best Practices</span></span></h1>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR has the functionality to allow users to completely customize resources. By following these guidelines, users can ensure the FHIR publisher successfully processes the Implementation Guide. </span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts19">Implementation Guide</span></span></h2>
+<p class="rvps3"><span class="rvts8">Value sets used by an implementation guide </span><span class="rvts20">should</span><span class="rvts8"> have a "compose" defined which asserts either the enumerated codes that should be included in the value sets, or asserts other value sets that should be included (making the value set a "wrapper" of sorts).</span></p>
+<p class="rvps3"><span class="rvts8">Enumerated codes are shown/edited in the "Compose" tab's "Concepts" section. This section is paged, showing five (5) codes at a time. You may search for a concept by either the code or display values by entering text in the "Code (search)" and "Display (search)" fields shown at the top of the table.</span></p>
+<p class="rvps3"><span class="rvts8">Additional fields (such as the "Designations") may be modified for each concept by clicking the "Edit" button.</span></p>
+<p class="rvps3"><span class="rvts8">Below the table of (at most) five (5) concepts is a set of buttons which allow you to control which page you are viewing/editing.</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">The URL of the Implementation Guide must be in the format of </span><span class="rvts22">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts8">. For example: </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
-<li class="rvps3"><span class="rvts8">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8">, the id must be "</span><span class="rvts22">myproject-ig</span><span class="rvts8">". Users can select the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
-<li class="rvps3"><span class="rvts8">The Implementation Guide should have a description. The main screen of the FHIR IG Publisher export displays the description.</span></li>
-<li class="rvps3"><span class="rvts8">All contacts in the Implementation Guide appear as authors in the FHIR IG Publisher export.</span></li>
-<li class="rvps3"><span class="rvts8">ToF only exports resources referenced directly within the Implementation Guide resource. Confirm the Implementation Guide resource references all resources.</span></li>
+<li class="rvps3"><span class="rvts8">The &lt;&lt; button returns you to the first page of concepts</span></li>
+<li class="rvps3"><span class="rvts8">The &gt;&gt; button moves you to the last page of concepts</span></li>
+<li class="rvps3"><span class="rvts8">The &lt; button moves you one page backward</span></li>
+<li class="rvps3"><span class="rvts8">The &gt; button moves you one page forward</span></li>
+<li class="rvps3"><span class="rvts8">Selecting a number will bring you to that specific page number</span></li>
 </ul>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts19">All Resources</span></span></h2>
-<p class="rvps3"><span class="rvts8">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8"> then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><span class="rvts22">http://myproject.com/someRoot/StructureDefinition/</span><span class="rvts8">.</span></p>
+<p class="rvps3"><span class="rvts8">The "Value Sets" section allows you to indicate what value sets should be included in this value set. Each entry in the "Value Sets" section represents the canonical URL of the value set (ValueSet.url).</span></p>
+<p class="rvps3"><span class="rvts8">When publishing an implementation guide which has a value set that references other value sets, those </span><span class="rvts20">other </span><span class="rvts8">value sets must be available to the FHIR IG Publisher via one of the following methods:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">Included in the implementation guide itself (via a resource referenced in the ImplementationGuide resource)</span></li>
+<li class="rvps3"><span class="rvts8">The ValueSet is publicly available by the URL of the value set (e.x. putting the URL of the value set in a browser should return the ValueSet in either XML or JSON format)</span></li>
+<li class="rvps3"><span class="rvts8">The terminology server used by the FHIR IG Publisher (tx.fhir.org) has the value set pre-loaded</span></li>
+</ul>
 <p></p>
 
             </div>
