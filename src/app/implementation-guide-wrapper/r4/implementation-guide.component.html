@@ -238,6 +238,8 @@
 
         <ngb-tab id="narrative" title="Narrative">
             <ng-template ngbTabContent>
+                <app-fhir-narrative [resource]="implementationGuide"></app-fhir-narrative>
+
                 <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
 
                 <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>

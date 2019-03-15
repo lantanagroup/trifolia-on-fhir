@@ -237,6 +237,8 @@ export class HtmlExporter {
         switch (configVersion) {
             case 'stu3':
                 return '3.0.1';
+            default:
+                return '4.0.0';
         }
     }
     
@@ -371,7 +373,7 @@ export class HtmlExporter {
         fs.writeFileSync(summaryPath, 'TODO - Summary');
     }
     
-    private getStu3Control(extension, implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
+    private getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
         const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
         const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
         const packageIdExtension = _.find(implementationGuide.extension, (extension) => extension.url === new Globals().extensionUrls['extension-ig-package-id']);
@@ -491,7 +493,7 @@ export class HtmlExporter {
         return control;
     }
     
-    private getR4Control(extension, implementationGuide: R4ImplementationGuide, bundle: R4Bundle, version: string) {
+    private getR4Control(implementationGuide: R4ImplementationGuide, bundle: R4Bundle, version: string) {
         const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
         const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
         let canonicalBase;
@@ -563,6 +565,10 @@ export class HtmlExporter {
 
         if (version) {
             control.version = version;
+        }
+
+        if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
+            control['fixed-business-version'] = implementationGuide.fhirVersion[0];
         }
 
         control.dependencyList = _.chain(implementationGuide.dependsOn)
@@ -845,9 +851,9 @@ export class HtmlExporter {
                             }
 
                             if (fhirServerConfig.version === 'stu3') {
-                                control = this.getStu3Control(extension, implementationGuideResource, <STU3Bundle><any> bundle, this.getFhirControlVersion(fhirServerConfig));
+                                control = this.getStu3Control(implementationGuideResource, <STU3Bundle><any> bundle, this.getFhirControlVersion(fhirServerConfig));
                             } else {
-                                control = this.getR4Control(extension, implementationGuideResource, <R4Bundle><any> bundle, this.getFhirControlVersion(fhirServerConfig));
+                                control = this.getR4Control(implementationGuideResource, <R4Bundle><any> bundle, this.getFhirControlVersion(fhirServerConfig));
                             }
 
                             return this.getDependencies(control, isXml, resourcesDir, this.fhir, fhirServerConfig);

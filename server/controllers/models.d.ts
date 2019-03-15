@@ -119,6 +119,7 @@ export interface FhirControl {
         resources: string[];
     };
     version?: string;
+    'fixed-business-version'?: string;
     pages: string[];
     'extension-domains': string[];
     'allowed-domains': string[];

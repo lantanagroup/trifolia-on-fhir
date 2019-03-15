@@ -1,0 +1,42 @@
+<h2>Overview</h2>
+{{#resource.name}}
+    <p><strong>Name:</strong> {{resource.name}}</p>
+{{/resource.name}}
+{{#resource.title}}
+    <p><strong>Name:</strong> {{resource.title}}</p>
+{{/resource.title}}
+{{#resource.url}}
+    <p><strong>URL:</strong> {{resource.url}}</p>
+{{/resource.url}}
+{{#resource.publisher}}
+    <p><strong>Publisher:</strong> {{resource.publisher}}</p>
+{{/resource.publisher}}
+
+{{#hasPages}}
+    <h2>Pages</h2>
+    <ul>
+        {{#pages}}<li>{{title}}</li>{{/pages}}
+    </ul>
+{{/hasPages}}
+
+{{#hasResources}}
+    <h2>Resources</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Display/Name</th>
+            <th>Reference</th>
+            <th>Package</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#resources}}
+                <tr>
+                    <td>{{display}}</td>
+                    <td>{{reference}}</td>
+                    <td>{{package}}</td>
+                </tr>
+            {{/resources}}
+        </tbody>
+    </table>
+{{/hasResources}}

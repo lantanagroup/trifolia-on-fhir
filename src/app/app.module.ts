@@ -129,7 +129,9 @@ import {ContextPanelWrapperComponent} from './structure-definition/context-panel
 import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
 import {ContextPanelStu3Component} from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
-import { PublishComponent } from './publish/publish.component';
+import {PublishComponent} from './publish/publish.component';
+import {NarrativeComponent} from './fhir-edit/narrative/narrative.component';
+import {AngularEditorModule} from '@kolkov/angular-editor';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -249,7 +251,7 @@ export function getConfig(configService: ConfigService) {
         PublishedIgSelectModalComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
         MappingModalComponent, SettingsModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent,
         FhirEditNumberComponent, AdminMessageModalComponent, ResourceHistoryComponent, ContextPanelWrapperComponent,
-        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent
+        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent, NarrativeComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -265,7 +267,8 @@ export function getConfig(configService: ConfigService) {
         NgbModule.forRoot(),
         FileDropModule,
         TreeModule,
-        DiffMatchPatchModule
+        DiffMatchPatchModule,
+        AngularEditorModule
     ],
     providers: [
         ConfigService,
