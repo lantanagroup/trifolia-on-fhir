@@ -59,6 +59,13 @@ export class BundleExporter {
                 };
 
                 fixPage(object.definition.page);
+
+                // Remove any contained binary resources. The IG publisher produces errors when there is a contained binary resource on the IG.
+                const containedBinary = _.filter(object.contained, (contained) => contained.resourceType === 'Binary');
+                _.each(containedBinary, (contained) => {
+                    const index = object.contained.indexOf(contained);
+                    object.contained.splice(index, 1);
+                });
             }
 
             // Remove ToF-specific extensions

@@ -820,7 +820,7 @@ export class HtmlExporter {
 
                             for (let i = 0; i < bundle.entry.length; i++) {
                                 const resource = bundle.entry[i].resource;
-                                const extensionlessResource = BundleExporter.cleanupResource(resource);
+                                const cleanResource = BundleExporter.cleanupResource(resource);
                                 const resourceType = resource.resourceType;
                                 const id = resource.id;
                                 const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
@@ -834,10 +834,10 @@ export class HtmlExporter {
 
                                 // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
                                 if (!isXml && resourceType !== 'ImplementationGuide') {
-                                    resourceContent = JSON.stringify(extensionlessResource, null, '\t');
+                                    resourceContent = JSON.stringify(cleanResource, null, '\t');
                                     resourcePath = path.join(resourceDir, id + '.json');
                                 } else {
-                                    resourceContent = this.fhir.objToXml(extensionlessResource);
+                                    resourceContent = this.fhir.objToXml(cleanResource);
                                     resourceContent = vkbeautify.xml(resourceContent);
                                     resourcePath = path.join(resourceDir, id + '.xml');
                                 }
