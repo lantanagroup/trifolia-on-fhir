@@ -1,6 +1,9 @@
 import {Fhir} from 'fhir/fhir';
 import {Bundle, ImplementationGuide as STU3ImplementationGuide, OperationOutcome} from '../../src/app/models/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../../src/app/models/r4/fhir';
+import {
+    ImplementationGuide as R4ImplementationGuide,
+    ImplementationGuidePageComponent
+} from '../../src/app/models/r4/fhir';
 import * as _ from 'underscore';
 import * as rp from 'request-promise';
 import * as FhirHelper from '../fhirHelper';
@@ -29,15 +32,36 @@ export class BundleExporter {
         this.fhirConfig = <FhirConfig> config.get('fhir');
     }
 
-    public static removeExtensions(object: any, clone = true) {
-        if (clone) {
-            object = JSON.parse(JSON.stringify(object));
-        }
-
+    /**
+     * Performs any fixes to the resources that are being exported, such as removing ToF-specific extensions from the resource
+     * and converting ImplementationGuide.definition.page.nameReference to nameUrl
+     * @param object The resource to cleanup
+     * @param clone
+     */
+    public static cleanupResource(object: any, clone = true) {
         if (object) {
+            if (clone) {
+                object = JSON.parse(JSON.stringify(object));
+            }
+
             const extensionUrls = _.map(new Globals().extensionUrls, (extUrl) => extUrl);
             const keys = _.allKeys(object);
 
+            // Convert page.nameReference to page.nameTitle
+            if (object.resourceType === 'ImplementationGuide' && object.definition && object.definition.page) {
+                const fixPage = (page: ImplementationGuidePageComponent) => {
+                    if (page.nameReference && page.title) {
+                        delete page.nameReference;
+                        page.nameUrl = page.title.replace(/ /g, '_') + '.html';
+                    }
+
+                    _.each(page.page, (next) => fixPage(next));
+                };
+
+                fixPage(object.definition.page);
+            }
+
+            // Remove ToF-specific extensions
             _.each(keys, (key) => {
                 if (key === 'extension') {
                     const extensions: Extension[] = object[key];
@@ -49,7 +73,7 @@ export class BundleExporter {
                         extensions.splice(index, 1);
                     });
                 } else if (typeof object[key] === 'object') {
-                    this.removeExtensions(object[key], false);
+                    this.cleanupResource(object[key], false);
                 }
             });
         }
@@ -151,7 +175,7 @@ export class BundleExporter {
                     };
 
                     if (removeExtensions) {
-                        BundleExporter.removeExtensions(bundle, false);
+                        BundleExporter.cleanupResource(bundle, false);
                     }
 
                     resolve(bundle);

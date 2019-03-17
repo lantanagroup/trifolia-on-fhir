@@ -820,7 +820,7 @@ export class HtmlExporter {
 
                             for (let i = 0; i < bundle.entry.length; i++) {
                                 const resource = bundle.entry[i].resource;
-                                const extensionlessResource = BundleExporter.removeExtensions(resource);
+                                const extensionlessResource = BundleExporter.cleanupResource(resource);
                                 const resourceType = resource.resourceType;
                                 const id = resource.id;
                                 const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
