@@ -8,10 +8,11 @@ import {ImplementationGuide as STU3ImplementationGuide} from '../../models/stu3/
 import {ImplementationGuide as R4ImplementationGuide} from '../../models/r4/fhir';
 import {AngularEditorConfig} from '@kolkov/angular-editor';
 
-interface ImplementationGuideView {
-    name?: string;
-    title?: string;
-    url?: string;
+interface ResourceView {
+    resource: any;
+}
+
+interface ImplementationGuideView extends ResourceView {
     hasPages?: boolean;
     pages?: [{
         title: string;
@@ -22,6 +23,11 @@ interface ImplementationGuideView {
         display?: string;
         package?: string;
     }];
+}
+
+interface StructureDefinitionView extends ResourceView {
+    status?: string;
+    hasElements?: boolean;
 }
 
 @Component({
@@ -60,6 +66,14 @@ export class NarrativeComponent implements OnInit {
         }
 
         this.resource.text.div = '<div>' + value + '</div>';
+    }
+
+    private populateStructureDefinitionView(view: StructureDefinitionView, resource: any) {
+        if (resource.status) {
+            view.status = resource.status.substring(0, 1).toUpperCase() + resource.status.substring(1);
+        }
+
+        view.hasElements = resource.differential && resource.differential.element && resource.differential.element.length > 0;
     }
 
     private populateImplementationGuideView(view: ImplementationGuideView, resource: any) {
@@ -121,6 +135,9 @@ export class NarrativeComponent implements OnInit {
         switch (resource.resourceType) {
             case 'ImplementationGuide':
                 this.populateImplementationGuideView(view, resource);
+                break;
+            case 'StructureDefinition':
+                this.populateStructureDefinitionView(view, resource);
                 break;
         }
 

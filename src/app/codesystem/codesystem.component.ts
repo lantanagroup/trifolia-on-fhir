@@ -52,6 +52,10 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the code system?')) {
+            return;
+        }
+
         this.getCodeSystem();
     }
 

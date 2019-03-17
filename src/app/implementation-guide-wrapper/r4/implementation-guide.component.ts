@@ -204,6 +204,10 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the implementation guide?')) {
+            return;
+        }
+
         this.getImplementationGuide();
     }
 

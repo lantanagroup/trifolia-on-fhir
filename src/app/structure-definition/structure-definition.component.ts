@@ -402,6 +402,10 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the profile?')) {
+            return;
+        }
+
         this.getStructureDefinition();
     }
 

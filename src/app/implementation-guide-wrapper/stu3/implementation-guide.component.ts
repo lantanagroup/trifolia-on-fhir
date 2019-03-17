@@ -306,6 +306,10 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the implementation guide?')) {
+            return;
+        }
+
         this.getImplementationGuide();
     }
 

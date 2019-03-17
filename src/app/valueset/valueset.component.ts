@@ -148,7 +148,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public revert() {
-        if (!confirm('Are you sure you want to revert any changes you made to the value set and return to the last saved version?')) {
+        if (!confirm('Are you sure you want to revert your changes to the value set?')) {
             return;
         }
 

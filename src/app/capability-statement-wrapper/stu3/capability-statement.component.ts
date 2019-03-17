@@ -49,6 +49,10 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the capability statement?')) {
+            return;
+        }
+
         this.getCapabilityStatement();
     }
 

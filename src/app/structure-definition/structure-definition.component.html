@@ -65,6 +65,8 @@
                 <span [attr.data-intro]="sdTabs.activeId === 'general' ? globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
             </ng-template>
             <ng-template ngbTabContent>
+                <app-fhir-narrative [resource]="structureDefinition"></app-fhir-narrative>
+
                 <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
 
                 <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>

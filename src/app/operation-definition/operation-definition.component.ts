@@ -51,6 +51,10 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public revert() {
+        if (!confirm('Are you sure you want to revert your changes to the operation definition?')) {
+            return;
+        }
+
         this.getOperationDefinition();
     }
 

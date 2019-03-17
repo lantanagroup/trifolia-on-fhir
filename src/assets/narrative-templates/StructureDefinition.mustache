@@ -1,0 +1,40 @@
+<h2>Overview</h2>
+{{#resource.name}}
+    <p><strong>Name:</strong> {{resource.name}}</p>
+{{/resource.name}}
+{{#resource.title}}
+    <p><strong>Name:</strong> {{resource.title}}</p>
+{{/resource.title}}
+{{#status}}
+    <p><strong>Status:</strong> {{status}}</p>
+{{/status}}
+{{#resource.url}}
+    <p><strong>URL:</strong> {{resource.url}}</p>
+{{/resource.url}}
+{{#resource.publisher}}
+    <p><strong>Publisher:</strong> {{resource.publisher}}</p>
+{{/resource.publisher}}
+
+<h2>Elements</h2>
+{{#hasElements}}
+<table>
+    <thead>
+    <tr>
+        <th>Path</th>
+        <th>Slice</th>
+        <th>Min</th>
+        <th>Max</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#resource.differential.element}}
+    <tr>
+        <td>{{path}}</td>
+        <td>{{sliceName}}</td>
+        <td>{{min}}</td>
+        <td>{{max}}</td>
+    </tr>
+    {{/resource.differential.element}}
+    </tbody>
+</table>
+{{/hasElements}}
