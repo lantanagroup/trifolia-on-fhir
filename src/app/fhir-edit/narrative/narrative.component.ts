@@ -12,6 +12,30 @@ interface ResourceView {
     resource: any;
 }
 
+interface CapabilityStatementView extends ResourceView {
+
+}
+
+interface OperationDefinitionView extends ResourceView {
+
+}
+
+interface QuestionnaireView extends ResourceView {
+
+}
+
+interface CodeSystemView extends ResourceView {
+
+}
+
+interface ValueSetView extends ResourceView {
+    hasIdentifiers: boolean;
+    hasIncludes: boolean;
+    hasExcludes: boolean;
+    includeSummaries: string[];
+    excludeSummaries: string[];
+}
+
 interface ImplementationGuideView extends ResourceView {
     hasPages?: boolean;
     pages?: [{
@@ -66,6 +90,64 @@ export class NarrativeComponent implements OnInit {
         }
 
         this.resource.text.div = '<div>' + value + '</div>';
+    }
+
+    private populateCodeSystemView(view: CodeSystemView, resource: any) {
+
+    }
+
+    private populateCapabilityStatementView(view: CapabilityStatementView, resource: any) {
+
+    }
+
+    private populateOperationDefinitionView(view: OperationDefinitionView, resource: any) {
+
+    }
+
+    private populateQuestionnaireView(view: QuestionnaireView, resource: any) {
+
+    }
+
+    private populateValueSetView(view: ValueSetView, resource: any) {
+        view.hasIdentifiers = resource.identifier && resource.identifier.length > 0;
+        view.hasIncludes = resource.compose && resource.compose.include && resource.compose.include.length > 0;
+        view.hasExcludes = resource.compose && resource.compose.exclude && resource.compose.exclude.length > 0;
+
+        const getSummary = (item: any) => {
+            let summary;
+
+            if (item.system && item.concept && item.concept.length > 0) {
+                summary = `Includes ${item.concept.length} codes from system ${item.system}`;
+
+                if (item.version) {
+                    summary += ` and version ${item.version}`;
+                }
+            } else if (item.valueSet && item.valueSet.length > 0) {
+                summary = `Includes codes from value sets ${item.valueSet.join(', ')}`;
+            }
+
+            _.each(item.filter, (filter: any, index: number) => {
+                if (summary && index === 0) {
+                    summary += ' with filter ';
+                } else if (!summary && index === 0) {
+                    summary += 'Filter ';
+                } else if (summary && index >= 0) {
+                    summary += ' and ';
+                }
+
+                summary += `[${filter.property} ${filter.op} ${filter.value}]`;
+            });
+
+            return summary;
+        };
+
+        if (view.hasIncludes) {
+            view.includeSummaries = _.map(resource.compose.include, (include: any) => getSummary(include));
+        }
+
+        if (view.hasExcludes) {
+            view.excludeSummaries = _.map(resource.compose.exclude, (exclude: any) => getSummary(exclude));
+        }
     }
 
     private populateStructureDefinitionView(view: StructureDefinitionView, resource: any) {
@@ -132,13 +214,32 @@ export class NarrativeComponent implements OnInit {
             resource: resource
         };
 
-        switch (resource.resourceType) {
-            case 'ImplementationGuide':
-                this.populateImplementationGuideView(view, resource);
-                break;
-            case 'StructureDefinition':
-                this.populateStructureDefinitionView(view, resource);
-                break;
+        try {
+            switch (resource.resourceType) {
+                case 'ImplementationGuide':
+                    this.populateImplementationGuideView(view, resource);
+                    break;
+                case 'StructureDefinition':
+                    this.populateStructureDefinitionView(view, resource);
+                    break;
+                case 'ValueSet':
+                    this.populateValueSetView(view, resource);
+                    break;
+                case 'CodeSystem':
+                    this.populateCodeSystemView(view, resource);
+                    break;
+                case 'OperationDefinition':
+                    this.populateOperationDefinitionView(view, resource);
+                    break;
+                case 'CapabilityStatement':
+                    this.populateCapabilityStatementView(view, resource);
+                    break;
+                case 'Questionnaire':
+                    this.populateQuestionnaireView(view, resource);
+                    break;
+            }
+        } catch (ex) {
+            console.error(`Error while populating narrative view: ${ex}`);
         }
 
         return view;

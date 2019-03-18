@@ -1,0 +1,92 @@
+<app-fhir-string [parentObject]="include" propertyName="system" title="System" tooltipPath="ValueSet.compose.include.system"></app-fhir-string>
+
+<app-fhir-string [parentObject]="include" propertyName="version" title="Version" tooltipPath="ValueSet.compose.include.version"></app-fhir-string>
+
+<app-valueset-concept-card [parentObject]="include" propertyName="concept"></app-valueset-concept-card>
+
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="include.hasOwnProperty('valueSet')" (ngModelChange)="globals.toggleProperty(include, 'valueSet', [''])" />
+        Value Sets
+        <app-tooltip-icon tooltipPath="ValueSet.compose.include.valueSet"></app-tooltip-icon>
+    </div>
+    <table class="table table-striped" *ngIf="include.hasOwnProperty('valueSet')">
+        <thead>
+        <tr>
+            <th>Value Set URL</th>
+            <th class="actions-column-1">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" (click)="include.valueSet.push('')">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let vs of include.valueSet; let vsi = index; trackBy: globals.trackByFn">
+            <td>
+                <div class="input-group">
+                    <input type="text" class="form-control" [(ngModel)]="include.valueSet[vsi]" />
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" (click)="selectIncludeValueSet(include, vsi)">
+                            <i class="fa fa-hand-pointer-o"></i>
+                        </button>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" title="Remove this value set" (click)="globals.promptForRemove(include.valueSet, vsi)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <input type="checkbox" [ngModel]="include.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(include, 'filter', [{ property: '', op: '=', value: '' }])"/>
+        Filters
+        <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter"></app-tooltip-icon>
+    </div>
+    <table class="table table-striped" *ngIf="include.hasOwnProperty('filter')">
+        <thead>
+        <tr>
+            <th>Property <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.property"></app-tooltip-icon></th>
+            <th>Operator <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.op"></app-tooltip-icon></th>
+            <th>Value <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter.value"></app-tooltip-icon></th>
+            <th class="actions-column-1">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" (click)="include.filter.push({ property: '', op: '=', value: '' })">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let filter of include.filter; let fi = index">
+            <td>
+                <app-fhir-string [parentObject]="filter" propertyName="property" [isFormGroup]="false" [required]="true"></app-fhir-string>
+            </td>
+            <td>
+                <app-fhir-select-single-code [parentObject]="filter" propertyName="op" [isFormGroup]="false" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/filter-operator"></app-fhir-select-single-code>
+            </td>
+            <td>
+                <app-fhir-string [parentObject]="filter" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+            </td>
+            <td>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" title="Remove this filter" (click)="globals.promptForRemove(include.filter, fi)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

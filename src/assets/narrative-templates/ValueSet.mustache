@@ -1,0 +1,77 @@
+<h2>Overview</h2>
+{{#resource.name}}
+    <p><strong>Name:</strong> {{resource.name}}</p>
+{{/resource.name}}
+{{#resource.title}}
+    <p><strong>Title:</strong> {{resource.title}}</p>
+{{/resource.title}}
+{{#resource.url}}
+    <p><strong>URL:</strong> {{resource.url}}</p>
+{{/resource.url}}
+{{#resource.publisher}}
+    <p><strong>Publisher:</strong> {{resource.publisher}}</p>
+{{/resource.publisher}}
+{{#resource.version}}
+    <p><strong>Version:</strong> {{resource.version}}</p>
+{{/resource.version}}
+{{#resource.status}}
+    <p><strong>Status:</strong> {{resource.status}}</p>
+{{/resource.status}}
+{{#resource.immutable}}
+    <p><strong>Immutable:</strong> {{resource.immutable}}</p>
+{{/resource.immutable}}
+
+{{#resource.description}}
+    <h2>Description</h2>
+    {{resource.description}}
+{{/resource.description}}
+
+{{#resource.purpose}}
+    <h2>Purpose</h2>
+    {{resource.purpose}}
+{{/resource.purpose}}
+
+{{#resource.copyright}}
+    <h2>Copyright</h2>
+    {{resource.copyright}}
+{{/resource.copyright}}
+
+{{#hasIdentifiers}}
+    <h2>Identifiers</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Use</th>
+            <th>System</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#resource.identifier}}
+            <tr>
+                <td>{{use}}</td>
+                <td>{{system}}</td>
+                <td>{{value}}</td>
+            </tr>
+        {{/resource.identifier}}
+        </tbody>
+    </table>
+{{/hasIdentifiers}}
+
+{{#hasIncludes}}
+    <h2>Includes</h2>
+    <ul>
+        {{#includeSummaries}}
+            <li>{{.}}</li>
+        {{/includeSummaries}}
+    </ul>
+{{/hasIncludes}}
+
+{{#hasExcludes}}
+    <h2>Excludes</h2>
+    <ul>
+        {{#excludeSummaries}}
+            <li>{{.}}</li>
+        {{/excludeSummaries}}
+    </ul>
+{{/hasExcludes}}
