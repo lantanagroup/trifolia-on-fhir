@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConceptSetComponent} from '../../models/stu3/fhir';
+import {Globals} from '../../globals';
 
 @Component({
     selector: 'app-valueset-include-panel',
@@ -9,7 +10,7 @@ import {ConceptSetComponent} from '../../models/stu3/fhir';
 export class IncludePanelComponent implements OnInit {
     @Input() include: ConceptSetComponent;
 
-    constructor() {
+    constructor(public globals: Globals) {
     }
 
     ngOnInit() {
