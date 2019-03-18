@@ -130,11 +130,7 @@ export class HtmlExporter {
         }
     }
 
-    private getIgPublisher(useLatest: boolean, executeIgPublisher: boolean): Promise<string> {
-        if (!executeIgPublisher) {
-            return Promise.resolve(undefined);
-        }
-
+    private getIgPublisher(useLatest: boolean): Promise<string> {
         return new Promise((resolve) => {
             const fileName = 'org.hl7.fhir.igpublisher.jar';
             const defaultPath = path.join(__dirname, '../../ig-publisher');
@@ -880,10 +876,10 @@ export class HtmlExporter {
 
                             this.sendSocketMessage('progress', 'Done building package');
 
-                            return this.getIgPublisher(useLatest, executeIgPublisher);
+                            return this.getIgPublisher(useLatest);
                         })
                         .then((igPublisherLocation) => {
-                            if (includeIgPublisherJar) {
+                            if (includeIgPublisherJar && igPublisherLocation) {
                                 this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.');
                                 const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
                                 const destJarPath = path.join(rootPath, jarFileName);
