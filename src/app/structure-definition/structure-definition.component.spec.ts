@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
 import {StructureDefinitionService} from '../services/structure-definition.service';
-import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
@@ -40,6 +39,10 @@ import {FhirPeriodComponent} from '../fhir-edit/period/period.component';
 import {FhirRatioComponent} from '../fhir-edit/ratio/ratio.component';
 import {FhirRangeComponent} from '../fhir-edit/range/range.component';
 import {ContextPanelWrapperComponent} from './context-panel-wrapper/context-panel-wrapper.component';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
+import {NarrativeComponent} from '../fhir-edit/narrative/narrative.component';
+import {AngularEditorModule} from '@kolkov/angular-editor';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('StructureDefinitionComponent', () => {
     let component: StructureDefinitionComponent;
@@ -75,9 +78,13 @@ describe('StructureDefinitionComponent', () => {
                 FhirPeriodComponent,
                 FhirRatioComponent,
                 FhirRangeComponent,
-                ContextPanelWrapperComponent
+                ContextPanelWrapperComponent,
+                ResourceHistoryComponent,
+                NarrativeComponent
             ],
             imports: [
+                DiffMatchPatchModule,
+                AngularEditorModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -87,7 +94,6 @@ describe('StructureDefinitionComponent', () => {
             providers: [
                 ConfigService,
                 StructureDefinitionService,
-                Globals,
                 RecentItemService,
                 FhirService,
                 FileService,

@@ -16,8 +16,7 @@ export class FileOpenModalComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private fhirService: FhirService,
-        public globals: Globals) {
+        private fhirService: FhirService) {
 
     }
 

@@ -9,7 +9,6 @@ import {FormsModule} from '@angular/forms';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {StructureDefinitionService} from '../services/structure-definition.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
@@ -36,7 +35,6 @@ describe('StructureDefinitionsComponent', () => {
                 ImplementationGuideService,
                 StructureDefinitionService,
                 ConfigService,
-                Globals,
                 FhirService,
                 FileService,
                 CookieService

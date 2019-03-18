@@ -3,7 +3,6 @@ import {FhirBooleanComponent} from './boolean.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
-import {Globals} from '../../globals';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../services/fhir.service';
 import {ConfigService} from '../../services/config.service';
@@ -29,7 +28,6 @@ describe('FhirBooleanComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 FhirService,
                 ConfigService,
                 CookieService

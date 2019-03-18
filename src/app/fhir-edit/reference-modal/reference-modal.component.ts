@@ -40,8 +40,7 @@ export class FhirReferenceModalComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private http: HttpClient,
-        private fhirService: FhirService,
-        public globals: Globals) {
+        private fhirService: FhirService) {
 
         this.criteriaChangedEvent
             .debounceTime(500)

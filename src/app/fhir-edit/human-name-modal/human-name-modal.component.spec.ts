@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FhirStringComponent} from '../string/string.component';
 import {ConfigService} from '../../services/config.service';
@@ -34,7 +33,6 @@ describe('FhirHumanNameModalComponent', () => {
             ],
             providers: [
                 NgbActiveModal,
-                Globals,
                 ConfigService,
                 FhirService,
                 CookieService

@@ -6,7 +6,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {SocketService} from './socket.service';
 import {ConfigService} from './config.service';
 import {PractitionerService} from './practitioner.service';
-import {Globals} from '../globals';
 
 describe('AuthService', () => {
     beforeEach(() => {
@@ -17,7 +16,6 @@ describe('AuthService', () => {
                 NgbModule.forRoot()
             ],
             providers: [
-                Globals,
                 AuthService,
                 SocketService,
                 ConfigService,

@@ -26,7 +26,6 @@ export class FhirSelectSingleCodeComponent implements OnInit {
     @Output() change = new EventEmitter<Coding>();
 
     constructor(
-        public globals: Globals,
         private fhirService: FhirService) {
     }
 
@@ -107,7 +106,7 @@ export class FhirSelectSingleCodeComponent implements OnInit {
         }
 
         if (this.required && !this.parentObject.hasOwnProperty(this.propertyName)) {
-            this.globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
+            Globals.toggleProperty(this.parentObject, this.propertyName, this.getDefaultCode());
         }
     }
 }

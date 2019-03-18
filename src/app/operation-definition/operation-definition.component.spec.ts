@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {ConfigService} from '../services/config.service';
 import {OperationDefinitionService} from '../services/operation-definition.service';
 import {RecentItemService} from '../services/recent-item.service';
@@ -26,6 +25,8 @@ import {FhirMaxCardinalityComponent} from '../fhir-edit/max-cardinality/max-card
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('OperationDefinitionComponent', () => {
     let component: OperationDefinitionComponent;
@@ -47,9 +48,11 @@ describe('OperationDefinitionComponent', () => {
                 FhirMaxCardinalityComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent
             ],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -57,7 +60,6 @@ describe('OperationDefinitionComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 ConfigService,
                 OperationDefinitionService,
                 RecentItemService,

@@ -7,7 +7,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
 import {CodeSystemService} from '../services/code-system.service';
-import {Globals} from '../globals';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 import {SocketService} from '../services/socket.service';
@@ -16,6 +15,8 @@ import {GithubService} from '../services/github.service';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
+import {AuthService} from '../services/auth.service';
+import {PractitionerService} from '../services/practitioner.service';
 
 describe('ExportComponent', () => {
     let component: ExportComponent;
@@ -36,15 +37,16 @@ describe('ExportComponent', () => {
                 TreeModule
             ],
             providers: [
+                AuthService,
                 ConfigService,
                 CodeSystemService,
-                Globals,
                 FhirService,
                 CookieService,
                 SocketService,
                 ExportService,
                 GithubService,
-                ImplementationGuideService
+                ImplementationGuideService,
+                PractitionerService
             ]
         }).compileComponents();
     }));

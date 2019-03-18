@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ValueSetService} from '../services/value-set.service';
 import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
-import {Globals} from '../globals';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../services/fhir.service';
 import {ExpandOptions} from '../models/stu3/expandOptions';
@@ -23,8 +22,7 @@ export class ValuesetExpandComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private valueSetService: ValueSetService,
-        private fhirService: FhirService,
-        public globals: Globals) {
+        private fhirService: FhirService) {
     }
 
     public get hasError(): boolean {

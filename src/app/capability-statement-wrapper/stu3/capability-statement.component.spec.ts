@@ -21,10 +21,11 @@ import {FormsModule} from '@angular/forms';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
 import {FhirService} from '../../services/fhir.service';
-import {Globals} from '../../globals';
 import {CapabilityStatementService} from '../../services/capability-statement.service';
 import {RecentItemService} from '../../services/recent-item.service';
 import {CookieService} from 'angular2-cookie/core';
+import {ResourceHistoryComponent} from '../../resource-history/resource-history.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('STU3CapabilityStatementComponent', () => {
     let component: STU3CapabilityStatementComponent;
@@ -46,9 +47,11 @@ describe('STU3CapabilityStatementComponent', () => {
                 FhirSelectSingleCodeComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent
             ],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -59,7 +62,6 @@ describe('STU3CapabilityStatementComponent', () => {
                 FileService,
                 ConfigService,
                 FhirService,
-                Globals,
                 CapabilityStatementService,
                 RecentItemService,
                 CookieService

@@ -1,9 +1,6 @@
-import {Injectable} from '@angular/core';
 import {Coding} from './models/stu3/fhir';
 import * as _ from 'underscore';
-import {FhirVersion} from './models/fhir-version';
 
-@Injectable()
 export class Globals {
     static readonly extensionUrls = {
         'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
@@ -242,26 +239,7 @@ export class Globals {
         }
     }
 
-    public toggleProperty(parent, propertyName, defaultValue, callback?: any, caller?: any) {
-        return Globals.toggleProperty(parent, propertyName, defaultValue, callback, caller);
-    }
-
-    public getChoiceProperty(parent, propertyName, choices) {
-        return Globals.getChoiceProperty(parent, propertyName, choices);
-    }
-
-    public toggleChoiceProperty(parent, property, choices, defaultValue) {
-        const foundChoice = this.getChoiceProperty(parent, property, choices);
-
-        if (foundChoice) {
-            delete parent[property + foundChoice];
-        } else {
-            const defaultChoice = choices[0].substring(0, 1).toUpperCase() + choices[0].substring(1);
-            parent[property + defaultChoice] = defaultValue;
-        }
-    }
-
-    public getShortString(theString: string, pre: boolean = true, length: number = 20): string {
+    static getShortString(theString: string, pre: boolean = true, length: number = 20): string {
         if (theString && theString.length > length) {
             if (pre) {
                 return theString.substring(0, length) + '...';
@@ -273,19 +251,18 @@ export class Globals {
         return theString;
     }
 
-    public promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?', event = null) {
-        Globals.promptForRemove(array, index, message, event);
-    }
+    static toggleChoiceProperty(parent, property, choices, defaultValue) {
+        const foundChoice = this.getChoiceProperty(parent, property, choices);
 
-    public getSelectCoding(code: Coding, options: Coding[], matchSystem = true, matchCode = true) {
-        return Globals.getSelectCoding(code, options, matchSystem, matchCode);
+        if (foundChoice) {
+            delete parent[property + foundChoice];
+        } else {
+            const defaultChoice = choices[0].substring(0, 1).toUpperCase() + choices[0].substring(1);
+            parent[property + defaultChoice] = defaultValue;
+        }
     }
 
     static trackByFn(index, item) {
         return index;
-    }
-
-    public trackByFn(index, item) {
-        return index; // or item.id
     }
 }

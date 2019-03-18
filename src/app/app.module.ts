@@ -33,7 +33,6 @@ import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-mo
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
 import {R4TypeModalComponent} from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
-import {Globals} from './globals';
 import {MarkdownComponent} from './markdown/markdown.component';
 import {AuditEventService} from './services/audit-event.service';
 import {KeysPipe} from './pipes/keys-pipe';
@@ -296,7 +295,6 @@ export function getConfig(configService: ConfigService) {
         CodeSystemService,
         FhirService,
         FileService,
-        Globals,
         ImportService,
         ExportService,
         CapabilityStatementService,

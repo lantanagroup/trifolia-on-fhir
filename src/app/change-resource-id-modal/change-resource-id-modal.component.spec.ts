@@ -6,7 +6,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
-import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ConfigService} from '../services/config.service';
 import {CookieService} from 'angular2-cookie/core';
@@ -28,7 +27,6 @@ describe('ChangeResourceIdModalComponent', () => {
             providers: [
                 NgbActiveModal,
                 FhirService,
-                Globals,
                 RecentItemService,
                 ConfigService,
                 CookieService

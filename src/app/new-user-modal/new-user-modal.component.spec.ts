@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {PractitionerService} from '../services/practitioner.service';
 import {FhirPractitionerComponent} from '../fhir-edit/practitioner/practitioner.component';
 import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/select-single-code.component';
@@ -15,6 +14,7 @@ import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
+import {ConfigService} from '../services/config.service';
 
 describe('NewUserModalComponent', () => {
     let component: NewUserModalComponent;
@@ -39,10 +39,10 @@ describe('NewUserModalComponent', () => {
             ],
             providers: [
                 NgbActiveModal,
-                Globals,
                 PractitionerService,
                 FhirService,
-                CookieService
+                CookieService,
+                ConfigService
             ]
         }).compileComponents();
     }));

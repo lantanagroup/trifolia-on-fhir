@@ -6,7 +6,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../services/fhir.service';
-import {Globals} from '../../globals';
 import {ConfigService} from '../../services/config.service';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
@@ -58,7 +57,6 @@ describe('ElementDefinitionPanelComponent', () => {
             ],
             providers: [
                 FhirService,
-                Globals,
                 ConfigService,
                 CookieService
             ]

@@ -7,7 +7,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
-import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../services/config.service';
 
@@ -28,7 +27,6 @@ describe('TooltipIconComponent', () => {
             providers: [
                 FhirService,
                 ConfigService,
-                Globals,
                 CookieService
             ]
         }).compileComponents();

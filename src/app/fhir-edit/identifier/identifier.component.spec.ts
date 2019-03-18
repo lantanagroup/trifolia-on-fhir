@@ -1,6 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FhirIdentifierComponent} from './identifier.component';
-import {Globals} from '../../globals';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
@@ -22,7 +21,6 @@ describe('FhirIdentifierComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals
             ]
         }).compileComponents();
     }));

@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {SocketService} from '../services/socket.service';
 import {PractitionerService} from '../services/practitioner.service';
 
@@ -31,7 +30,6 @@ describe('LoginComponent', () => {
             providers: [
                 AuthService,
                 ConfigService,
-                Globals,
                 SocketService,
                 PractitionerService
             ]

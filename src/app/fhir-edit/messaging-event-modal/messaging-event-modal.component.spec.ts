@@ -8,7 +8,6 @@ import {FormsModule} from '@angular/forms';
 import {FhirReferenceComponent} from '../reference/reference.component';
 import {FhirSelectSingleCodeComponent} from '../select-single-code/select-single-code.component';
 import {FhirStringComponent} from '../string/string.component';
-import {Globals} from '../../globals';
 import {FhirService} from '../../services/fhir.service';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {ConfigService} from '../../services/config.service';
@@ -35,7 +34,6 @@ describe('FhirMessagingEventModalComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 NgbActiveModal,
                 FhirService,
                 ConfigService,

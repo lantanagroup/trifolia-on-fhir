@@ -25,9 +25,7 @@ export class FhirEditNumberComponent implements OnInit {
     @Input() cookieKey?: string;
     @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
-    constructor(
-        public globals: Globals,
-        private cookieService: CookieService) {
+    constructor(private cookieService: CookieService) {
 
     }
 

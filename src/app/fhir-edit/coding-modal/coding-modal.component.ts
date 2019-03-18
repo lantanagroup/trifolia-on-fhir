@@ -12,8 +12,7 @@ export class FhirCodingModalComponent implements OnInit {
   @Input() coding: Coding;
 
   constructor(
-      public activeModal: NgbActiveModal,
-      public globals: Globals) {
+      public activeModal: NgbActiveModal) {
 
   }
 

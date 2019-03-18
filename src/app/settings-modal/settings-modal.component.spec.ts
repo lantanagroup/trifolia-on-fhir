@@ -7,7 +7,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 
 describe('SettingsModalComponent', () => {
     let component: SettingsModalComponent;
@@ -28,7 +27,6 @@ describe('SettingsModalComponent', () => {
             providers: [
                 NgbActiveModal,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 
 describe('FhirReferenceComponent', () => {
     let component: FhirReferenceComponent;
@@ -24,7 +23,6 @@ describe('FhirReferenceComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals
             ]
         }).compileComponents();
     }));

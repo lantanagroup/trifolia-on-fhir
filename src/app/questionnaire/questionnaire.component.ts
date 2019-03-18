@@ -56,7 +56,6 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private questionnaireService: QuestionnaireService,
         private router: Router,
@@ -161,7 +160,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         const newItems = [{
             linkId: Math.floor(1000 + Math.random() * 9000).toString()
         }];
-        this.globals.toggleProperty(this.questionnaire, 'item', newItems, () => {
+        Globals.toggleProperty(this.questionnaire, 'item', newItems, () => {
             this.initFlattenedItems();
         });
     }

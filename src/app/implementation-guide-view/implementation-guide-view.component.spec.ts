@@ -7,6 +7,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {SafePipe} from '../pipes/safe-pipe';
+import {ConfigService} from '../services/config.service';
 
 describe('ImplementationguideViewComponent', () => {
     let component: ImplementationGuideViewComponent;
@@ -24,6 +25,9 @@ describe('ImplementationguideViewComponent', () => {
                 HttpClientModule,
                 NgbModule.forRoot(),
                 FormsModule
+            ],
+            providers: [
+                ConfigService
             ]
         }).compileComponents();
     }));

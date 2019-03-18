@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 
 describe('FhirQuantityComponent', () => {
     let component: FhirQuantityComponent;
@@ -24,7 +23,6 @@ describe('FhirQuantityComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals
             ]
         }).compileComponents();
     }));

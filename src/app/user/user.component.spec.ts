@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {PractitionerService} from '../services/practitioner.service';
 import {AuthService} from '../services/auth.service';
-import {Globals} from '../globals';
 import {SocketService} from '../services/socket.service';
 import {ConfigService} from '../services/config.service';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
@@ -18,6 +17,7 @@ import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/sel
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {FhirHumanNamesComponent} from '../fhir-edit/human-names/human-names.component';
+import {FhirService} from '../services/fhir.service';
 
 describe('UserComponent', () => {
     let component: UserComponent;
@@ -47,7 +47,7 @@ describe('UserComponent', () => {
                 AuthService,
                 SocketService,
                 ConfigService,
-                Globals
+                FhirService
             ]
         }).compileComponents();
     }));

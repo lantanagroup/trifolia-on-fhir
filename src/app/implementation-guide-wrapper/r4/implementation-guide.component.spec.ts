@@ -10,7 +10,6 @@ import {AuthService} from '../../services/auth.service';
 import {ConfigService} from '../../services/config.service';
 import {RecentItemService} from '../../services/recent-item.service';
 import {FileService} from '../../services/file.service';
-import {Globals} from '../../globals';
 import {FhirService} from '../../services/fhir.service';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {FhirMarkdownComponent} from '../../fhir-edit/markdown/markdown.component';
@@ -26,6 +25,9 @@ import {FhirXmlPipe} from '../../pipes/fhir-xml-pipe';
 import {PractitionerService} from '../../services/practitioner.service';
 import {CookieService} from 'angular2-cookie/core';
 import {ResourceHistoryComponent} from '../../resource-history/resource-history.component';
+import {AngularEditorModule} from '@kolkov/angular-editor';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import {NarrativeComponent} from '../../fhir-edit/narrative/narrative.component';
 
 describe('R4ImplementationGuideComponent', () => {
     let component: R4ImplementationGuideComponent;
@@ -46,9 +48,12 @@ describe('R4ImplementationGuideComponent', () => {
                 ValidationResultsComponent,
                 RawResourceComponent,
                 FhirXmlPipe,
-                ResourceHistoryComponent
+                ResourceHistoryComponent,
+                NarrativeComponent
             ],
             imports: [
+                DiffMatchPatchModule,
+                AngularEditorModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -61,7 +66,6 @@ describe('R4ImplementationGuideComponent', () => {
                 ConfigService,
                 RecentItemService,
                 FileService,
-                Globals,
                 FhirService,
                 PractitionerService,
                 CookieService

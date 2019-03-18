@@ -7,7 +7,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
 import {CodeSystemService} from '../services/code-system.service';
-import {Globals} from '../globals';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
@@ -32,7 +31,6 @@ describe('CodesystemsComponent', () => {
             providers: [
                 ConfigService,
                 CodeSystemService,
-                Globals,
                 FhirService,
                 CookieService
             ]

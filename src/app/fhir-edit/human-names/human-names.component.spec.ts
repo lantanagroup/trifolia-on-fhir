@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 
 describe('FhirHumanNamesComponent', () => {
     let component: FhirHumanNamesComponent;
@@ -22,7 +21,6 @@ describe('FhirHumanNamesComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals
             ]
         }).compileComponents();
     }));

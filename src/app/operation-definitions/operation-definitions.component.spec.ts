@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
 import {OperationDefinitionService} from '../services/operation-definition.service';
-import {Globals} from '../globals';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
@@ -33,7 +32,6 @@ describe('OperationDefinitionsComponent', () => {
             providers: [
                 ConfigService,
                 OperationDefinitionService,
-                Globals,
                 FhirService,
                 CookieService
             ]

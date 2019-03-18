@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {ValueSetService} from '../services/value-set.service';
 import {HttpClient, HttpHandler} from '@angular/common/http';
 import {FhirService} from '../services/fhir.service';
@@ -41,7 +40,6 @@ describe('ValuesetsComponent', () => {
             ],
             providers: [
                 ConfigService,
-                Globals,
                 ValueSetService,
                 NgbModal,
                 HttpClient,

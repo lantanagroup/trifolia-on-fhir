@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {FhirReferenceComponent} from '../../fhir-edit/reference/reference.component';
 import {FhirSelectSingleCodeComponent} from '../../fhir-edit/select-single-code/select-single-code.component';
@@ -36,7 +35,6 @@ describe('STU3PageComponentModalComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 NgbActiveModal,
                 FhirService,
                 ConfigService

@@ -7,7 +7,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ValueSetService} from '../services/value-set.service';
-import {Globals} from '../globals';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
@@ -44,7 +43,6 @@ describe('ValuesetExpandComponent', () => {
             ],
             providers: [
                 ValueSetService,
-                Globals,
                 FhirService,
                 ConfigService,
                 CookieService

@@ -9,7 +9,6 @@ import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../services/config.service';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import {FhirService} from '../services/fhir.service';
-import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 
@@ -34,7 +33,6 @@ describe('QuestionnairesComponent', () => {
                 ConfigService,
                 QuestionnaireService,
                 FhirService,
-                Globals,
                 CookieService
             ]
         }).compileComponents();

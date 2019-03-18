@@ -15,9 +15,7 @@ export class PageComponentModalComponent implements OnInit {
     @Input() rootPage: boolean;
     public pageBinary: Binary;
 
-    constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+    constructor(public activeModal: NgbActiveModal) {
 
     }
 

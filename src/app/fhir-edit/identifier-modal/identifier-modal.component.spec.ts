@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FhirSelectSingleCodeComponent} from '../select-single-code/select-single-code.component';
 import {FhirStringComponent} from '../string/string.component';
@@ -33,7 +32,6 @@ describe('FhirIdentifierModalComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 NgbActiveModal,
                 ConfigService,
                 FhirService,

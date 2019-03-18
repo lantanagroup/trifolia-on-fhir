@@ -11,7 +11,6 @@ import {AuthService} from '../../services/auth.service';
 import {ConfigService} from '../../services/config.service';
 import {RecentItemService} from '../../services/recent-item.service';
 import {FileService} from '../../services/file.service';
-import {Globals} from '../../globals';
 import {FhirService} from '../../services/fhir.service';
 import {PractitionerService} from '../../services/practitioner.service';
 import {CookieService} from 'angular2-cookie/core';
@@ -26,6 +25,8 @@ import {FhirMultiContactComponent} from '../../fhir-edit/multi-contact/multi-con
 import {ValidationResultsComponent} from '../../validation-results/validation-results.component';
 import {RawResourceComponent} from '../../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../../pipes/fhir-xml-pipe';
+import {ResourceHistoryComponent} from '../../resource-history/resource-history.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('STU3ImplementationGuideComponent', () => {
     let component: STU3ImplementationGuideComponent;
@@ -45,9 +46,11 @@ describe('STU3ImplementationGuideComponent', () => {
                 FhirMultiContactComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent
             ],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -60,7 +63,6 @@ describe('STU3ImplementationGuideComponent', () => {
                 ConfigService,
                 RecentItemService,
                 FileService,
-                Globals,
                 FhirService,
                 PractitionerService,
                 CookieService

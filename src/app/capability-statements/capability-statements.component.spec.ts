@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {CapabilityStatementService} from '../services/capability-statement.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {FhirService} from '../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 
@@ -32,7 +31,6 @@ describe('CapabilityStatementsComponent', () => {
             providers: [
                 CapabilityStatementService,
                 ConfigService,
-                Globals,
                 FhirService,
                 CookieService
             ]

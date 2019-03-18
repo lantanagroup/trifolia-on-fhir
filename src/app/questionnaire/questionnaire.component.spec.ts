@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {QuestionnaireService} from '../services/questionnaire.service';
 import {ConfigService} from '../services/config.service';
 import {RecentItemService} from '../services/recent-item.service';
@@ -26,6 +25,8 @@ import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('QuestionnaireComponent', () => {
     let component: QuestionnaireComponent;
@@ -47,9 +48,11 @@ describe('QuestionnaireComponent', () => {
                 RawResourceComponent,
                 TooltipIconComponent,
                 FhirBooleanComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent
             ],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -57,7 +60,6 @@ describe('QuestionnaireComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 QuestionnaireService,
                 ConfigService,
                 RecentItemService,

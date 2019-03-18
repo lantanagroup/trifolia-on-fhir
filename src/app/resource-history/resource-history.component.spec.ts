@@ -8,7 +8,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('ResourceHistoryComponent', () => {
     let component: ResourceHistoryComponent;
@@ -18,6 +18,7 @@ describe('ResourceHistoryComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ResourceHistoryComponent],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -27,7 +28,6 @@ describe('ResourceHistoryComponent', () => {
             providers: [
                 FhirService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

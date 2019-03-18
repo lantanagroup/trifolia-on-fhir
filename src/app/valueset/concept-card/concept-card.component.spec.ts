@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 import {FhirService} from '../../services/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
@@ -32,7 +31,6 @@ describe('ValuesetConceptCardComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 FhirService,
                 CookieService,
                 ConfigService

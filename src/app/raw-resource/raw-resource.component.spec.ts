@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 
 describe('RawResourceComponent', () => {
     let component: RawResourceComponent;
@@ -30,7 +29,6 @@ describe('RawResourceComponent', () => {
             providers: [
                 FhirService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

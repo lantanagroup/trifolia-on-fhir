@@ -22,9 +22,7 @@ export class FhirBooleanComponent implements OnInit {
      */
     @Input() cookieKey?: string;
 
-    constructor(
-        public globals: Globals,
-        private cookieService: CookieService) {
+    constructor(private cookieService: CookieService) {
     }
 
     public get value(): boolean {

@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {StructureDefinitionService} from '../services/structure-definition.service';
 import {FhirService} from '../services/fhir.service';
 import {FileService} from '../services/file.service';
@@ -42,7 +41,6 @@ describe('NewProfileComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 StructureDefinitionService,
                 FhirService,
                 ConfigService,

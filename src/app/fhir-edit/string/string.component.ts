@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Globals} from '../../globals';
 import {CookieService} from 'angular2-cookie/core';
 
 @Component({
@@ -26,7 +25,6 @@ export class FhirStringComponent implements OnInit {
     @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(
-        public globals: Globals,
         private cookieService: CookieService) {
 
     }

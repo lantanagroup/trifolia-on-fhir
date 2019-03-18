@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {CodeSystemService} from '../services/code-system.service';
 import {ConfigService} from '../services/config.service';
 import {RecentItemService} from '../services/recent-item.service';
@@ -25,6 +24,8 @@ import {FhirMultiUseContextComponent} from '../fhir-edit/multi-use-context/multi
 import {FhirMultiJurisdictionComponent} from '../fhir-edit/multi-jurisdiction/multi-jurisdiction.component';
 import {FhirMultiContactComponent} from '../fhir-edit/multi-contact/multi-contact.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('CodesystemComponent', () => {
     let component: CodesystemComponent;
@@ -46,9 +47,11 @@ describe('CodesystemComponent', () => {
                 MarkdownComponent,
                 FhirMultiUseContextComponent,
                 FhirMultiJurisdictionComponent,
-                FhirMultiContactComponent
+                FhirMultiContactComponent,
+                ResourceHistoryComponent
             ],
             imports: [
+                DiffMatchPatchModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -56,7 +59,6 @@ describe('CodesystemComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 CodeSystemService,
                 ConfigService,
                 RecentItemService,

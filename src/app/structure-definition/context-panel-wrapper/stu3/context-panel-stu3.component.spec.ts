@@ -7,7 +7,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../../services/fhir.service';
-import {Globals} from '../../../globals';
 import {ConfigService} from '../../../services/config.service';
 import {CookieService} from 'angular2-cookie/core';
 import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
@@ -31,7 +30,6 @@ describe('ContextPanelStu3Component', () => {
             ],
             providers: [
                 FhirService,
-                Globals,
                 ConfigService,
                 CookieService
             ]

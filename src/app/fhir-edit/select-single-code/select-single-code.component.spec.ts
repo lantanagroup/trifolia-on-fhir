@@ -4,7 +4,6 @@ import {FhirSelectSingleCodeComponent} from './select-single-code.component';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../globals';
 import {FhirService} from '../../services/fhir.service';
 import {HttpClientModule} from '@angular/common/http';
 import {ConfigService} from '../../services/config.service';
@@ -26,7 +25,6 @@ describe('FhirSelectSingleCodeComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 FhirService,
                 ConfigService,
                 CookieService

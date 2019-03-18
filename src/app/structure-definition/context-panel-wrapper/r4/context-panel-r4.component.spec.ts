@@ -7,7 +7,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../../services/fhir.service';
-import {Globals} from '../../../globals';
 import {ConfigService} from '../../../services/config.service';
 import {CookieService} from 'angular2-cookie/core';
 import {FhirStringComponent} from '../../../fhir-edit/string/string.component';
@@ -33,7 +32,6 @@ describe('ContextPanelR4Component', () => {
             ],
             providers: [
                 FhirService,
-                Globals,
                 ConfigService,
                 CookieService
             ]

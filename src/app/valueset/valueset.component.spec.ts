@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {ValueSetService} from '../services/value-set.service';
 import {ConfigService} from '../services/config.service';
 import {RecentItemService} from '../services/recent-item.service';
@@ -25,6 +24,11 @@ import {ConceptCardComponent} from './concept-card/concept-card.component';
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
+import {ResourceHistoryComponent} from '../resource-history/resource-history.component';
+import {IncludePanelComponent} from './include-panel/include-panel.component';
+import {NarrativeComponent} from '../fhir-edit/narrative/narrative.component';
+import {AngularEditorModule} from '@kolkov/angular-editor';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 describe('ValuesetComponent', () => {
     let component: ValuesetComponent;
@@ -45,9 +49,14 @@ describe('ValuesetComponent', () => {
                 ConceptCardComponent,
                 ValidationResultsComponent,
                 RawResourceComponent,
-                FhirXmlPipe
+                FhirXmlPipe,
+                ResourceHistoryComponent,
+                IncludePanelComponent,
+                NarrativeComponent
             ],
             imports: [
+                DiffMatchPatchModule,
+                AngularEditorModule,
                 BrowserModule,
                 RouterTestingModule,
                 HttpClientModule,
@@ -55,7 +64,6 @@ describe('ValuesetComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 ValueSetService,
                 ConfigService,
                 RecentItemService,

@@ -10,7 +10,7 @@ import {FileDropModule} from 'ngx-file-drop';
 import {TreeModule} from 'ng2-tree';
 import {GithubService} from '../../services/github.service';
 import {ConfigService} from '../../services/config.service';
-import {Globals} from '../../globals';
+import {FhirService} from '../../services/fhir.service';
 
 describe('ImportGithubPanelComponent', () => {
     let component: ImportGithubPanelComponent;
@@ -30,8 +30,8 @@ describe('ImportGithubPanelComponent', () => {
             ],
             providers: [
                 GithubService,
+                FhirService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

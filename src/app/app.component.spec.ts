@@ -6,7 +6,6 @@ import {GithubService} from './services/github.service';
 import {ConfigService} from './services/config.service';
 import {RecentItemService} from './services/recent-item.service';
 import {FhirService} from './services/fhir.service';
-import {Globals} from './globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileService} from './services/file.service';
 import {HttpClientModule} from '@angular/common/http';
@@ -29,7 +28,6 @@ describe('AppComponent', () => {
                 ConfigService,
                 RecentItemService,
                 FhirService,
-                Globals,
                 NgbModal,
                 FileService,
                 PractitionerService,

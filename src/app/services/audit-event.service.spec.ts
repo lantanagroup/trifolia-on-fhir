@@ -2,7 +2,6 @@ import {inject, TestBed} from '@angular/core/testing';
 import {AuditEventService} from './audit-event.service';
 import {HttpClientModule} from '@angular/common/http';
 import {AuthService} from './auth.service';
-import {Globals} from '../globals';
 import {SocketService} from './socket.service';
 import {ConfigService} from './config.service';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -20,7 +19,6 @@ describe('AuditEventService', () => {
             providers: [
                 AuditEventService,
                 AuthService,
-                Globals,
                 SocketService,
                 ConfigService,
                 PractitionerService

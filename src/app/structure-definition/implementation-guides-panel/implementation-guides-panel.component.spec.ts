@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ImplementationGuideService} from '../../services/implementation-guide.service';
 import {ConfigService} from '../../services/config.service';
-import {Globals} from '../../globals';
 
 describe('ImplementationGuidesPanelComponent', () => {
     let component: ImplementationGuidesPanelComponent;
@@ -27,7 +26,6 @@ describe('ImplementationGuidesPanelComponent', () => {
             providers: [
                 ImplementationGuideService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

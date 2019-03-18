@@ -8,7 +8,6 @@ import {FormsModule} from '@angular/forms';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {FhirReferenceComponent} from '../../fhir-edit/reference/reference.component';
 import {FhirSelectSingleCodeComponent} from '../../fhir-edit/select-single-code/select-single-code.component';
-import {Globals} from '../../globals';
 import {MarkdownComponent} from '../../markdown/markdown.component';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {FhirService} from '../../services/fhir.service';
@@ -36,7 +35,6 @@ describe('R4PageComponentModalComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 NgbActiveModal,
                 FhirService,
                 ConfigService

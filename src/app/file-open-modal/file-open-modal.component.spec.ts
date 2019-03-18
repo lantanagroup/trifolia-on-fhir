@@ -6,7 +6,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
-import {Globals} from '../globals';
 import {ConfigService} from '../services/config.service';
 
 describe('FileOpenModalComponent', () => {
@@ -27,7 +26,6 @@ describe('FileOpenModalComponent', () => {
             ],
             providers: [
                 FhirService,
-                Globals,
                 NgbActiveModal,
                 ConfigService
             ]

@@ -12,8 +12,7 @@ export class FhirIdentifierModalComponent implements OnInit {
   @Input() identifier: Identifier;
 
   constructor(
-      public activeModal: NgbActiveModal,
-      public globals: Globals) {
+      public activeModal: NgbActiveModal) {
 
   }
 

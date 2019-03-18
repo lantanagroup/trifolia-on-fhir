@@ -5,7 +5,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../../globals';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
 import {ConfigService} from '../../services/config.service';
 import {FhirService} from '../../services/fhir.service';
@@ -29,7 +28,6 @@ describe('FhirRangeComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 ConfigService,
                 FhirService,
                 CookieService

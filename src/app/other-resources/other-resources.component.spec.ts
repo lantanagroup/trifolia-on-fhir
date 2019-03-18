@@ -8,7 +8,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../services/fhir.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
 
 describe('OtherResourcesComponent', () => {
@@ -31,7 +30,6 @@ describe('OtherResourcesComponent', () => {
             providers: [
                 FhirService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {Globals} from '../globals';
 import {ConfigService} from '../services/config.service';
 import {ImplementationGuideService} from '../services/implementation-guide.service';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
@@ -31,7 +30,6 @@ describe('ImplementationGuidesComponent', () => {
                 FormsModule
             ],
             providers: [
-                Globals,
                 ConfigService,
                 ImplementationGuideService,
                 FhirService,

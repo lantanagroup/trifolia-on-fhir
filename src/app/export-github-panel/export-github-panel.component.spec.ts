@@ -10,7 +10,6 @@ import {GithubService} from '../services/github.service';
 import {ImportService} from '../services/import.service';
 import {FhirService} from '../services/fhir.service';
 import {ConfigService} from '../services/config.service';
-import {Globals} from '../globals';
 import {TreeModule} from 'ng2-tree';
 
 describe('ExportGithubPanelComponent', () => {
@@ -35,7 +34,6 @@ describe('ExportGithubPanelComponent', () => {
                 ImportService,
                 FhirService,
                 ConfigService,
-                Globals
             ]
         }).compileComponents();
     }));

@@ -62,7 +62,6 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService,
-        public globals: Globals,
         public route: ActivatedRoute) {
     }
 
