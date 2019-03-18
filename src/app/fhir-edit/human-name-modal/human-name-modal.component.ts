@@ -11,9 +11,9 @@ import {Globals} from '../../globals';
 export class FhirHumanNameModalComponent implements OnInit {
     @Input() humanName: HumanName;
 
-    constructor(
-        public globals: Globals,
-        public activeModal: NgbActiveModal) {
+    public Globals = Globals;
+
+    constructor(public activeModal: NgbActiveModal) {
 
     }
 

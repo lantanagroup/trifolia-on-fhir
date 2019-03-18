@@ -5,6 +5,7 @@ import {Globals} from '../globals';
 import {PractitionerService} from '../services/practitioner.service';
 import {AuthService} from '../services/auth.service';
 import {Route, Router} from '@angular/router';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-new-user-modal',
@@ -18,7 +19,7 @@ export class NewUserModalComponent implements OnInit {
     constructor(
         private router: Router,
         private activeModal: NgbActiveModal,
-        public globals: Globals,
+        private fhirService: FhirService,
         private practitionerService: PractitionerService) {
         this.practitioner.name = [new HumanName()];
     }
@@ -29,7 +30,7 @@ export class NewUserModalComponent implements OnInit {
                 this.activeModal.close(newPractitioner);
                 this.router.navigate(['/home']);
             }, (err) => {
-                this.message = this.globals.getErrorMessage(err);
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

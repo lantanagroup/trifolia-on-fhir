@@ -24,7 +24,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('interaction')" (ngModelChange)="globals.toggleProperty(resource, 'interaction', [{ code: 'read' }])" />
+            <input type="checkbox" [ngModel]="resource.hasOwnProperty('interaction')" (ngModelChange)="Globals.toggleProperty(resource, 'interaction', [{ code: 'read' }])" />
             Interaction(s)
         </div>
         <table class="table table-striped" *ngIf="resource.hasOwnProperty('interaction')">
@@ -90,7 +90,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('referencePolicy')" (ngModelChange)="globals.toggleProperty(resource, 'referencePolicy', ['literal'])" />
+            <input type="checkbox" [ngModel]="resource.hasOwnProperty('referencePolicy')" (ngModelChange)="Globals.toggleProperty(resource, 'referencePolicy', ['literal'])" />
             Reference Policy
         </div>
         <table class="table table-striped" *ngIf="resource.hasOwnProperty('referencePolicy')">
@@ -125,7 +125,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchInclude')" (ngModelChange)="globals.toggleProperty(resource, 'searchInclude', [''])" />
+            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchInclude')" (ngModelChange)="Globals.toggleProperty(resource, 'searchInclude', [''])" />
             Search Include(s)
         </div>
         <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchInclude')">
@@ -142,7 +142,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let si of resource.searchInclude; let sii = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let si of resource.searchInclude; let sii = index; trackBy: Globals.trackByFn">
                 <td>
                     <app-fhir-string [parentObject]="resource.searchInclude" [propertyName]="sii" [isFormGroup]="false" [required]="false"></app-fhir-string>
                 </td>
@@ -160,7 +160,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchRevInclude')" (ngModelChange)="globals.toggleProperty(resource, 'searchRevInclude', [''])" />
+            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchRevInclude')" (ngModelChange)="Globals.toggleProperty(resource, 'searchRevInclude', [''])" />
             Search Reverse Include(s)
         </div>
         <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchRevInclude')">
@@ -177,7 +177,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let si of resource.searchRevInclude; let sii = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let si of resource.searchRevInclude; let sii = index; trackBy: Globals.trackByFn">
                 <td>
                     <app-fhir-string [parentObject]="resource.searchRevInclude" [propertyName]="sii" [isFormGroup]="false" [required]="false"></app-fhir-string>
                 </td>
@@ -195,7 +195,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchParam')" (ngModelChange)="globals.toggleProperty(resource, 'searchParam', [{}])" />
+            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchParam')" (ngModelChange)="Globals.toggleProperty(resource, 'searchParam', [{}])" />
             Search Params
         </div>
         <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchParam')">
@@ -215,7 +215,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let si of resource.searchParam; let sii = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let si of resource.searchParam; let sii = index; trackBy: Globals.trackByFn">
                 <td>
                     <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
                 </td>

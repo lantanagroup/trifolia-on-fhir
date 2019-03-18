@@ -18,8 +18,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private fhirService: FhirService,
-        private recentItemService: RecentItemService,
-        private globals: Globals) {
+        private recentItemService: RecentItemService) {
     }
 
     public ok() {
@@ -32,7 +31,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
                 this.activeModal.close(this.newId);
             }, (err) => {
-                this.message = this.globals.getErrorMessage(err);
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

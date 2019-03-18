@@ -28,7 +28,7 @@
                             [parentObject]="options"
                             propertyName="useLatest"
                             [required]="true"
-                            [cookieKey]="globals.cookieKeys.exportLastUseLatestIgPublisher"
+                            [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
                             title="Use latest FHIR IG Publisher?">
                     </app-fhir-boolean>
                     <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
@@ -39,7 +39,7 @@
                             [parentObject]="options"
                             [required]="true"
                             propertyName="useTerminologyServer"
-                            [cookieKey]="globals.cookieKeys.exportLastUseTerminologyServer"
+                            [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
                             title="Use terminology server?">
                     </app-fhir-boolean>
                 </div>
@@ -49,7 +49,7 @@
                             [parentObject]="options"
                             [required]="true"
                             propertyName="includeIgPublisherJar"
-                            [cookieKey]="globals.cookieKeys.exportLastIncludeFhirIgPublisher"
+                            [cookieKey]="Globals.cookieKeys.exportLastIncludeFhirIgPublisher"
                             title="Include FHIR IG Publisher JAR?">
                     </app-fhir-boolean>
                 </div>
@@ -59,7 +59,7 @@
                             [parentObject]="options"
                             [required]="true"
                             propertyName="downloadOutput"
-                            [cookieKey]="globals.cookieKeys.exportLastDownloadOutput"
+                            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
                             title="Download?">
                     </app-fhir-boolean>
                 </div>

@@ -12,8 +12,7 @@ export class AuditEventService {
 
     constructor(
         private http: HttpClient,
-        private authService: AuthService,
-        private globals: Globals) {
+        private authService: AuthService) {
 
         // Wait for authentication to initialize
         this.authService.authChanged
@@ -28,7 +27,7 @@ export class AuditEventService {
                                 .filter((entry) => {
                                     return !!_.find((<AuditEvent>entry.resource).entity, (entity) =>
                                         entity.identifier &&
-                                        entity.identifier.system === this.globals.FHIRUrls.ImplementationGuide);
+                                        entity.identifier.system === Globals.FHIRUrls.ImplementationGuide);
                                 })
                                 .uniq((entry: EntryComponent) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .first(5)
@@ -40,7 +39,7 @@ export class AuditEventService {
                                 .filter((entry) => {
                                     return !!_.find((<AuditEvent>entry.resource).entity, (entity) =>
                                         entity.identifier &&
-                                        entity.identifier.system === this.globals.FHIRUrls.StructureDefinition);
+                                        entity.identifier.system === Globals.FHIRUrls.StructureDefinition);
                                 })
                                 .uniq((entry) => (<AuditEvent>entry.resource).entity[0].identifier.value)
                                 .first(5)
@@ -140,14 +139,14 @@ export class AuditEventService {
             // If an entity has been specified on the AuditEvent, it may be an ImplementationGuide
             // or an StructureDefinition, and we would want to add that to the list of recent IGs and SDs
             if (auditEvent.entity && auditEvent.entity.length > 0) {
-                if (auditEvent.entity[0].identifier.system === this.globals.FHIRUrls.ImplementationGuide) {
+                if (auditEvent.entity[0].identifier.system === Globals.FHIRUrls.ImplementationGuide) {
                     const igId = auditEvent.entity[0].identifier.value;
                     if (this.recentImplementationGuides.indexOf(igId) < 0) {
                         this.recentImplementationGuides.push(igId);
                     }
                 }
 
-                if (auditEvent.entity[0].identifier.system === this.globals.FHIRUrls.StructureDefinition) {
+                if (auditEvent.entity[0].identifier.system === Globals.FHIRUrls.StructureDefinition) {
                     const sdId = auditEvent.entity[0].identifier.value;
                     if (this.recentStructureDefinitions.indexOf(sdId) < 0) {
                         this.recentStructureDefinitions.push(sdId);

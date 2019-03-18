@@ -5,7 +5,7 @@ import {FhirVersion} from './models/fhir-version';
 
 @Injectable()
 export class Globals {
-    public readonly extensionUrls = {
+    static readonly extensionUrls = {
         'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
         'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
         'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
@@ -21,7 +21,7 @@ export class Globals {
         'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id'
     };
 
-    public readonly introText = {
+    static readonly introText = {
         'sd.general-tab': 'The general tab contains the basic meta data of the profile/extension, such as the canonical URL, name and any implementation guide(s) that the profile belongs to.',
         'sd.narrative-tab': 'The narrative tab contains rich-text enabled fields that contain narrative content, such as the description, purpose and copyright.',
         'sd.additional-tab': 'The additional tab contains properties that are less commonly used in profiles, such as identifiers and use context.',
@@ -40,7 +40,7 @@ export class Globals {
         'sd.element-panel.general-tab': 'The general tab has properties that are commonly modified for elements, such as cardinality, type and max length.'
     };
 
-    public readonly cookieKeys = {
+    static readonly cookieKeys = {
         recentImplementationGuides: 'recentImplementationGuides',
         recentStructureDefinitions: 'recentStructureDefinitions',
         recentCapabilityStatements: 'recentCapabilityStatements',
@@ -57,25 +57,25 @@ export class Globals {
         lastResponseFormat: 'lastResponseFormat'
     };
 
-    public readonly FHIRUrls = {
+    static readonly FHIRUrls = {
         ImplementationGuide: 'http://hl7.org/fhir/StructureDefinition/ImplementationGuide',
         StructureDefinition: 'http://hl7.org/fhir/StructureDefinition/StructureDefinition'
     };
 
-    public readonly designationUseCodes: Coding[] = [
+    static readonly designationUseCodes: Coding[] = [
         { code: '900000000000003001', display: 'Fully specified name', system: 'http://snomed.info/sct' },
         { code: '900000000000013009', display: 'Synonym', system: 'http://snomed.info/sct' },
         { code: '900000000000550004', display: 'Definition', system: 'http://snomed.info/sct' }
     ];
 
-    public readonly codeSystemHierarchyMeaningCodes: Coding[] = [
+    static readonly codeSystemHierarchyMeaningCodes: Coding[] = [
         { code: 'grouped-by', display: 'Grouped By', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
         { code: 'is-a', display: 'Is-A', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
         { code: 'part-of', display: 'Part Of', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' },
         { code: 'classified-with', display: 'Classified With', system: 'http://hl7.org/fhir/codesystem-hierarchy-meaning' }
     ];
 
-    public readonly mimeTypeCodes: Coding[] = [
+    static readonly mimeTypeCodes: Coding[] = [
         { code: 'application/json', display: 'JSON', system: 'http://www.rfc-editor.org/bcp/bcp13.txt' },
         { code: 'application/fhir+json', display: 'FHIR JSON', system: 'http://www.rfc-editor.org/bcp/bcp13.txt' },
         { code: 'application/xml', display: 'XML', system: 'http://www.rfc-editor.org/bcp/bcp13.txt' },
@@ -89,7 +89,7 @@ export class Globals {
         { code: 'application/octet-stream', display: 'Octet Stream', system: 'http://www.rfc-editor.org/bcp/bcp13.txt' }
     ];
 
-    public readonly dataTypes = [
+    static readonly dataTypes = [
         'instant',
         'time',
         'date',
@@ -129,7 +129,7 @@ export class Globals {
         'Timing'
     ];
 
-    public tooltips = {
+    static readonly tooltips = {
         'implementationguide.description': 'An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher.\nThe ImplementationGuide resource is a single resource that defines the logical content of the IG, along with the important entry pages into the publication, so that the logical package that the IG represents, so that the contents are computable.\nIn particular, validators are able to use the ImplementationGuide resource to validate content against the implementation guide as a whole. The significant conformance expectation introduced by the ImplementationGuide resource is the idea of Default Profiles. Implementations may conform to multiple implementation guides at once, but this requires that the implementation guides are compatible.',
         'structuredefinition.description': 'A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.\nThe StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation.',
         'operationdefinition.description': 'A formal computable definition of an operation (on the RESTful interface) or a named query (using the search interaction).\nOperationDefinitions are published to define operations that servers can implement in a common fashion. The FHIR specification itself describes some (see below), and other organizations (including IHE, national programs, jurisdictions and vendors) are able to publish additional OperationDefinitions.',
@@ -146,28 +146,7 @@ export class Globals {
         'support.button.clicked': 'A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.'
     };
 
-    public hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]) {
-        return Globals.hasChoiceSelection(obj, propertyName, choices);
-    }
-
-    public parseFhirUrl(url: string) {
-        const regex = /((http|https):\/\/([A-Za-z0-9\\\.\:\%\$]\/)*\/)?(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestReport|TestScript|ValueSet|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
-        const match = regex.exec(url);
-
-        if (match) {
-            return {
-                resourceType: match[4],
-                id: match[6],
-                historyId: match[8]
-            };
-        }
-    }
-
-    public generateRandomNumber(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    public toggleProperty(parent, propertyName, defaultValue, callback?: any, caller?: any) {
+    static toggleProperty(parent, propertyName, defaultValue, callback?: any, caller?: any) {
         if (!parent) {
             return;
         }
@@ -187,7 +166,7 @@ export class Globals {
         }
     }
 
-    public getChoiceProperty(parent, propertyName, choices) {
+    static getChoiceProperty(parent, propertyName, choices) {
         let foundChoice;
 
         if (propertyName.lastIndexOf('[x]') === propertyName.length - 4) {
@@ -204,36 +183,6 @@ export class Globals {
         return foundChoice;
     }
 
-    public toggleChoiceProperty(parent, property, choices, defaultValue) {
-        const foundChoice = this.getChoiceProperty(parent, property, choices);
-
-        if (foundChoice) {
-            delete parent[property + foundChoice];
-        } else {
-            const defaultChoice = choices[0].substring(0, 1).toUpperCase() + choices[0].substring(1);
-            parent[property + defaultChoice] = defaultValue;
-        }
-    }
-
-    public getShortString(theString: string, pre: boolean = true, length: number = 20): string {
-        if (theString && theString.length > length) {
-            if (pre) {
-                return theString.substring(0, length) + '...';
-            } else {
-                return '...' + theString.substring(theString.length - length);
-            }
-        }
-
-        return theString;
-    }
-
-    public promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?', event = null) {
-        if (confirm(message)) {
-            array.splice(index, 1);
-            event.preventDefault();
-        }
-    }
-
     /**
      * Returns a code from the options that matches the code
      * For use within select/drop-downs when it has to match an object in the options by reference
@@ -243,7 +192,7 @@ export class Globals {
      * @param {boolean} matchCode Whether to match based on the code
      * @returns {any}
      */
-    public getSelectCoding(code: Coding, options: Coding[], matchSystem = true, matchCode = true) {
+    static getSelectCoding(code: Coding, options: Coding[], matchSystem = true, matchCode = true) {
         if (!matchSystem && !matchCode) {
             throw new Error('At least one of matchSystem or matchCode must be true');
         }
@@ -253,34 +202,6 @@ export class Globals {
             const isCodeMatch = !matchCode || code.code === next.code;
             return isSystemMatch && isCodeMatch;
         });
-    }
-
-    public trackByFn(index, item) {
-        return index; // or item.id
-    }
-
-    public parseFhirVersion(fhirVersion: string): FhirVersion {
-        const fhirVersionRegex = /^(\d+)\.(\d+)\.(\d+)$/g;
-        const versionMatch = fhirVersionRegex.exec(fhirVersion);
-
-        if (versionMatch) {
-            const parsedVersion: FhirVersion = {
-                major: parseInt(versionMatch[1]),
-                minor: parseInt(versionMatch[2]),
-                patch: parseInt(versionMatch[3])
-            };
-            return parsedVersion;
-        }
-    }
-
-    public getErrorMessage(err: any): string {
-        if (err && err.message) {
-            return err.message;
-        } else if (typeof err === 'string') {
-            return err;
-        }
-
-        return 'An unspecified error occurred';
     }
 
     static getChoiceSelectionName(obj: any, propertyName: string, choices?: Coding[]): string {
@@ -310,8 +231,61 @@ export class Globals {
         }
     }
 
-    static hasChoiceSelection(obj: any, propertyName: string, choices?: Coding[]): boolean {
-        const choiceName = Globals.getChoiceSelectionName(obj, propertyName, choices);
-        return !!choiceName;
+    static generateRandomNumber(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    static promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?', event = null) {
+        if (confirm(message)) {
+            array.splice(index, 1);
+            event.preventDefault();
+        }
+    }
+
+    public toggleProperty(parent, propertyName, defaultValue, callback?: any, caller?: any) {
+        return Globals.toggleProperty(parent, propertyName, defaultValue, callback, caller);
+    }
+
+    public getChoiceProperty(parent, propertyName, choices) {
+        return Globals.getChoiceProperty(parent, propertyName, choices);
+    }
+
+    public toggleChoiceProperty(parent, property, choices, defaultValue) {
+        const foundChoice = this.getChoiceProperty(parent, property, choices);
+
+        if (foundChoice) {
+            delete parent[property + foundChoice];
+        } else {
+            const defaultChoice = choices[0].substring(0, 1).toUpperCase() + choices[0].substring(1);
+            parent[property + defaultChoice] = defaultValue;
+        }
+    }
+
+    public getShortString(theString: string, pre: boolean = true, length: number = 20): string {
+        if (theString && theString.length > length) {
+            if (pre) {
+                return theString.substring(0, length) + '...';
+            } else {
+                return '...' + theString.substring(theString.length - length);
+            }
+        }
+
+        return theString;
+    }
+
+    public promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?', event = null) {
+        Globals.promptForRemove(array, index, message, event);
+    }
+
+    public getSelectCoding(code: Coding, options: Coding[], matchSystem = true, matchCode = true) {
+        return Globals.getSelectCoding(code, options, matchSystem, matchCode);
+    }
+
+    static trackByFn(index, item) {
+        return index;
+    }
+
+    public trackByFn(index, item) {
+        return index; // or item.id
     }
 }

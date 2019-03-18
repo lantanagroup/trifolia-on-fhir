@@ -11,9 +11,10 @@ import {Globals} from '../../globals';
 export class FhirAddressModalComponent implements OnInit, DoCheck {
     @Input() address: Address;
 
+    public Globals = Globals;
+
     constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+        public activeModal: NgbActiveModal) {
 
     }
 

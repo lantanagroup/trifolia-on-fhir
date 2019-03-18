@@ -1,6 +1,6 @@
 <div class="card context" *ngIf="structureDefinition">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="globals.toggleProperty(structureDefinition, 'context', [{ type: '', expression: '' }])"/>
+        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'context', [{ type: '', expression: '' }])"/>
         Context <app-tooltip-icon tooltipPath="StructureDefinition.context"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
@@ -22,7 +22,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: globals.trackByFn">
+        <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn">
             <td>
                 <app-fhir-string [parentObject]="ci" propertyName="type" [isFormGroup]="false"></app-fhir-string>
             </td>

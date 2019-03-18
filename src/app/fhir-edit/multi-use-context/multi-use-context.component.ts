@@ -13,11 +13,12 @@ export class FhirMultiUseContextComponent implements OnInit {
     @Input() propertyName: string;
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
+
     public tooltip: string;
     public usageContextTypeCodes: Coding[] = [];
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         private fhirService: FhirService) {
     }
 
@@ -69,7 +70,7 @@ export class FhirMultiUseContextComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

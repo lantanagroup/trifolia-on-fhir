@@ -1,6 +1,6 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
   <label>
-    <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
+    <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
     {{title || 'Reference'}}
   </label>
   <div class="input-group">
@@ -15,7 +15,7 @@
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
   <div class="input-group-addon" *ngIf="!required">
-    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
     {{title}}
   </div>
   <input type="text" class="form-control" [class.is-invalid]="required && parentObject[propertyName] && !parentObject[propertyName].reference" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />

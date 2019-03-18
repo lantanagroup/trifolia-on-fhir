@@ -32,12 +32,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
     public editedSliceName: string;
     public valueSetChoices = ['Uri', 'Reference'];
     public definedTypeCodes: Coding[] = [];
+    public Globals = Globals;
 
     constructor(
         private modalService: NgbModal,
         private fhirService: FhirService,
-        private configService: ConfigService,
-        public globals: Globals) {
+        private configService: ConfigService) {
 
     }
 
@@ -107,7 +107,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     setValueSetChoice(elementBinding: any, choice: string) {
-        const foundChoice = this.globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
+        const foundChoice = Globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
 
         if (foundChoice !== choice) {
             delete elementBinding['valueSet' + foundChoice];

@@ -11,9 +11,9 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 export class FhirRangeModalComponent implements OnInit {
     @Input() range: Range;
 
-    constructor(
-        public globals: Globals,
-        public activeModal: NgbActiveModal) {
+    public Globals = Globals;
+
+    constructor(public activeModal: NgbActiveModal) {
 
     }
 

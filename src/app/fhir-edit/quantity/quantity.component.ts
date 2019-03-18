@@ -2,9 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 
 @Component({
-  selector: 'app-fhir-quantity',
-  templateUrl: './quantity.component.html',
-  styleUrls: ['./quantity.component.css']
+    selector: 'app-fhir-quantity',
+    templateUrl: './quantity.component.html',
+    styleUrls: ['./quantity.component.css']
 })
 export class FhirQuantityComponent implements OnInit {
     @Input() parentObject: any;
@@ -12,18 +12,19 @@ export class FhirQuantityComponent implements OnInit {
     @Input() title: string;
     @Input() required = false;
     @Input() isFormGroup = true;
-    @Input() defaultValue = { };
+    @Input() defaultValue = {};
     @Input() tooltip: string;
     @Input() tooltipKey: string;
 
-  constructor(
-      public globals: Globals) {
+    public Globals = Globals;
 
-  }
+    constructor() {
 
-  ngOnInit() {
-      if (this.tooltipKey) {
-          this.tooltip = this.globals.tooltips[this.tooltipKey];
-      }
-  }
+    }
+
+    ngOnInit() {
+        if (this.tooltipKey) {
+            this.tooltip = Globals.tooltips[this.tooltipKey];
+        }
+    }
 }

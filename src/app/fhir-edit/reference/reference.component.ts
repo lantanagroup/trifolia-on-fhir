@@ -21,9 +21,10 @@ export class FhirReferenceComponent implements OnInit {
     @Input() public hideResourceType?: boolean;
     @Input() public disabled: boolean;
 
+    public Globals = Globals;
+
     constructor(
-        private modalService: NgbModal,
-        public globals: Globals) {
+        private modalService: NgbModal) {
     }
     
     get reference(): string {

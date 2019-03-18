@@ -19,15 +19,17 @@ import {FileService} from '../../services/file.service';
 })
 export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
+
     public message: string;
     public validation: any;
     public messageEventCodes: Coding[] = [];
     public messageTransportCodes: Coding[] = [];
     public csNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public fhirService: FhirService,
         public fileService: FileService,
         public route: ActivatedRoute,
@@ -71,7 +73,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
                 if (this.isNew) {
                     this.router.navigate(['/capability-statement/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -159,13 +161,13 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
                     this.capabilityStatement = <CapabilityStatement> cs;
                     this.nameChanged();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentCapabilityStatements,
+                        Globals.cookieKeys.recentCapabilityStatements,
                         this.capabilityStatement.id,
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }
     }

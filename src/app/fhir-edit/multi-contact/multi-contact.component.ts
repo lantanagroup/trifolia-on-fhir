@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {ContactDetail} from '../../models/stu3/fhir';
-import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirContactModalComponent} from '../contact-modal/contact-modal.component';
 import {FhirService} from '../../services/fhir.service';
@@ -17,11 +16,12 @@ export class FhirMultiContactComponent implements OnInit {
     @Input() title: string;
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
+
     public tooltip: string;
+    public Globals = Globals;
 
     constructor(
         private modalService: NgbModal,
-        public globals: Globals,
         private fhirService: FhirService) {
 
     }
@@ -33,7 +33,7 @@ export class FhirMultiContactComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

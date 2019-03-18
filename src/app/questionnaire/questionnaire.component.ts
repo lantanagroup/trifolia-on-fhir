@@ -100,7 +100,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                     this.router.navigate(['/questionnaire/' + results.id]);
                 } else {
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentQuestionnaires,
+                        Globals.cookieKeys.recentQuestionnaires,
                         results.id,
                         results.name || results.title);
                     this.message = 'Your changes have been saved!';
@@ -137,13 +137,13 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
                     this.initFlattenedItems();
 
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentQuestionnaires,
+                        Globals.cookieKeys.recentQuestionnaires,
                         questionnaire.id,
                         this.questionnaire.name || this.questionnaire.title);
                 }, (err) => {
                     this.qNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentQuestionnaires, questionnaireId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, questionnaireId);
                 });
         }
     }

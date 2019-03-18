@@ -5,6 +5,7 @@ import {StructureDefinitionService} from '../services/structure-definition.servi
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-new-profile',
@@ -17,7 +18,7 @@ export class NewProfileComponent implements OnInit {
     public message: string;
 
     constructor(
-        public globals: Globals,
+        private fhirService: FhirService,
         private route: Router,
         private modalService: NgbModal,
         private strucDefService: StructureDefinitionService) {
@@ -62,7 +63,7 @@ export class NewProfileComponent implements OnInit {
             .subscribe((results) => {
                 this.route.navigate(['/structure-definition/' + results.id]);
             }, (err) => {
-                this.message = this.globals.getErrorMessage(err);
+                this.message = this.fhirService.getErrorString(err);
             });
     }
 

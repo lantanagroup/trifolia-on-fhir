@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../models/config-model';
-import {Globals} from '../globals';
 import {Title} from '@angular/platform-browser';
 import {CapabilityStatement as STU3CapabilityStatement} from '../models/stu3/fhir';
 import {CapabilityStatement as R4CapabilityStatement} from '../models/r4/fhir';
@@ -17,7 +16,6 @@ export class ConfigService {
     public fhirConformance: STU3CapabilityStatement | R4CapabilityStatement;
 
     constructor(
-        private globals: Globals,
         private titleService: Title,
         private http: HttpClient) {
 

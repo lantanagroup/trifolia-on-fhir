@@ -12,10 +12,11 @@ import * as _ from 'underscore';
 export class QuestionnaireItemModalComponent implements OnInit {
     @Input() item: QuestionnaireItemComponent = new QuestionnaireItemComponent();
     @Input() questionnaire: Questionnaire = new Questionnaire();
+
     public allQuestions: QuestionnaireItemComponent[] = [];
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         public activeModal: NgbActiveModal) {
 
     }

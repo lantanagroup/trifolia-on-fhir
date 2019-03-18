@@ -12,7 +12,9 @@ export class ContextPanelStu3Component implements OnInit, IContextPanelComponent
     @Input()
     public structureDefinition: StructureDefinition;
 
-    constructor(public globals: Globals) {
+    public Globals = Globals;
+
+    constructor() {
     }
 
     ngOnInit() {

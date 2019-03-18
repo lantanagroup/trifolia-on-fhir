@@ -19,15 +19,17 @@ import {ConfigService} from '../../services/config.service';
 })
 export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
     @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
+
     public message: string;
     public validation: any;
     public messageEventCodes: Coding[] = [];
     public messageTransportCodes: Coding[] = [];
     public csNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private configService: ConfigService,
         private modalService: NgbModal,
@@ -71,7 +73,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
                 if (this.isNew) {
                     this.router.navigate(['/capability-statement/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -150,13 +152,13 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
                     this.capabilityStatement = <CapabilityStatement> cs;
                     this.nameChanged();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentCapabilityStatements,
+                        Globals.cookieKeys.recentCapabilityStatements,
                         this.capabilityStatement.id,
                         this.capabilityStatement.name || this.capabilityStatement.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
                 });
         }
     }

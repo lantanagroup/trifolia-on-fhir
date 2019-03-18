@@ -11,9 +11,10 @@ import {ConceptReferenceComponent} from '../../models/stu3/fhir';
 export class FhirValueSetIncludeConceptModalComponent implements OnInit {
     @Input() concept: ConceptReferenceComponent;
 
+    public Globals = Globals;
+
     constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+        public activeModal: NgbActiveModal) {
     }
 
     ngOnInit() {

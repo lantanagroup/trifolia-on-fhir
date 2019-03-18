@@ -53,6 +53,8 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     public pages: PageDefinition[];
     public resourceTypeCodes: Coding[] = [];
     public igNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
     private resources: ImplementationGuideResource[] = [];
 
@@ -65,7 +67,6 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
-        public globals: Globals,
         private fhirService: FhirService) {
     }
 
@@ -79,11 +80,11 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public get dependencies(): Extension[] {
-        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency']);
+        return _.filter(this.implementationGuide.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
     }
 
     public get packageId(): string {
-        const foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-package-id']);
+        const foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
 
         if (foundExtension) {
             return foundExtension.valueString;
@@ -92,12 +93,12 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
 
     public set packageId(value: string) {
         this.implementationGuide.extension = this.implementationGuide.extension || [];
-        let foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-package-id']);
+        let foundExtension = _.find(this.implementationGuide.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
 
         if (value) {
             if (!foundExtension) {
                 foundExtension = {
-                    url: this.globals.extensionUrls['extension-ig-package-id']
+                    url: Globals.extensionUrls['extension-ig-package-id']
                 };
                 this.implementationGuide.extension.push(foundExtension);
             }
@@ -124,7 +125,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public pageKindChanged(page: PageComponent) {
-        let autoGenExtension = _.find(page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
+        let autoGenExtension = _.find(page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (page.kind === 'toc') {
             if (!page.extension) {
@@ -135,7 +136,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
                 autoGenExtension.valueBoolean = true;
             } else if (!autoGenExtension) {
                 autoGenExtension = new Extension();
-                autoGenExtension.url = this.globals.extensionUrls['extension-ig-page-auto-generate-toc'];
+                autoGenExtension.url = Globals.extensionUrls['extension-ig-page-auto-generate-toc'];
                 autoGenExtension.valueBoolean = true;
                 page.extension.push(autoGenExtension);
             }
@@ -209,9 +210,9 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         }
 
         const newDependency = new Extension();
-        newDependency.url = this.globals.extensionUrls['extension-ig-dependency'];
+        newDependency.url = Globals.extensionUrls['extension-ig-dependency'];
         newDependency.extension = [{
-            url: this.globals.extensionUrls['extension-ig-dependency-version'],
+            url: Globals.extensionUrls['extension-ig-dependency-version'],
             valueString: 'current'
         }];
 
@@ -221,7 +222,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public getDependencyLocation(dependency: Extension): string {
-        const locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-location']);
+        const locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-location']);
 
         if (locationExtension) {
             return locationExtension.valueUri;
@@ -229,11 +230,11 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public setDependencyLocation(dependency: Extension, name: string) {
-        let locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-location']);
+        let locationExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-location']);
 
         if (!locationExtension) {
             locationExtension = new Extension();
-            locationExtension.url = this.globals.extensionUrls['extension-ig-dependency-location'];
+            locationExtension.url = Globals.extensionUrls['extension-ig-dependency-location'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -246,7 +247,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public getDependencyName(dependency: Extension): string {
-        const nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-name']);
+        const nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-name']);
 
         if (nameExtension) {
             return nameExtension.valueString;
@@ -254,11 +255,11 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public setDependencyName(dependency: Extension, name: string) {
-        let nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-name']);
+        let nameExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-name']);
 
         if (!nameExtension) {
             nameExtension = new Extension();
-            nameExtension.url = this.globals.extensionUrls['extension-ig-dependency-name'];
+            nameExtension.url = Globals.extensionUrls['extension-ig-dependency-name'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -271,7 +272,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public getDependencyVersion(dependency: Extension): string {
-        const versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-version']);
+        const versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-version']);
 
         if (versionExtension) {
             return versionExtension.valueString;
@@ -279,11 +280,11 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     }
 
     public setDependencyVersion(dependency: Extension, version: string) {
-        let versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === this.globals.extensionUrls['extension-ig-dependency-version']);
+        let versionExtension = _.find(dependency.extension, (extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-version']);
 
         if (!versionExtension) {
             versionExtension = new Extension();
-            versionExtension.url = this.globals.extensionUrls['extension-ig-dependency-version'];
+            versionExtension.url = Globals.extensionUrls['extension-ig-dependency-version'];
 
             if (!dependency.extension) {
                 dependency.extension = [];
@@ -341,13 +342,13 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
                     this.nameChanged();
                     this.initPages();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentImplementationGuides,
+                        Globals.cookieKeys.recentImplementationGuides,
                         this.implementationGuide.id,
                         this.implementationGuide.name);
                 }, (err) => {
                     this.igNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });
         }
     }
@@ -396,7 +397,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
             newPage.title = 'Table of Contents';
             newPage.format = 'markdown';
             newPage.extension = [{
-                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
+                url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: true
             }];
             newPage.source = 'toc.md';
@@ -442,14 +443,14 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
         const newBinary = new Binary();
         newBinary.contentType = 'text/markdown';
         newBinary.content = btoa('No page content yet');
-        newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+        newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
         this.implementationGuide.contained.push(newBinary);
 
         const newPage = new PageComponent();
         newPage.kind = 'page';
         newPage.format = 'markdown';
         newPage.extension = [{
-            url: this.globals.extensionUrls['extension-ig-page-content'],
+            url: Globals.extensionUrls['extension-ig-page-content'],
             valueReference: {
                 reference: '#' + newBinary.id,
                 display: `Page content ${newBinary.id}`
@@ -476,8 +477,6 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
 
         // If a contained Binary resource is associated with the page, remove it
         if (pageDef.page.source) {
-            const parsedSourceUrl = this.globals.parseFhirUrl(pageDef.page.source);
-
             if (pageDef.page.source.startsWith('#')) {
                 const foundBinary = _.find(this.implementationGuide.contained, (contained) =>
                     contained.id === pageDef.page.source.substring(1));
@@ -546,7 +545,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
                 if (!this.implementationGuide.id) {
                     this.router.navigate(['/implementation-guide/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentImplementationGuides, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }

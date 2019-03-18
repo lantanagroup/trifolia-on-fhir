@@ -20,9 +20,9 @@ export class ImplementationGuidesPanelComponent implements OnInit {
     @Input() showIntro = true;
     public implementationGuidesBundle: Bundle;
     public newImplementationGuide: StructureDefinitionImplementationnGuide;
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         private implementationGuideService: ImplementationGuideService,
         private configService: ConfigService) {
     }

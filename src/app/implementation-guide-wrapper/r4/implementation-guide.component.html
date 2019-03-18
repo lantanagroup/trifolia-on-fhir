@@ -34,10 +34,10 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
-                                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'fhirVersion', [])" />
+                                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'fhirVersion', [])" />
                                 FHIR Version
                             </label>
-                            <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: globals.trackByFn">
+                            <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: Globals.trackByFn">
                                 <input type="text" class="form-control" [ngModel]="fhirVersion" readonly="readonly" />
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
@@ -253,7 +253,7 @@
         <ngb-tab id="globals" title="Globals">
             <ng-template ngbTabContent>
                 <p>
-                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/> Allow globals
+                    <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/> Allow globals
                 </p>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
@@ -493,7 +493,7 @@
 <ng-template #dependsOn>
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'dependsOn', [{ version: 'current' }])" />
+            <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'dependsOn', [{ version: 'current' }])" />
             Dependencies
             <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
         </div>

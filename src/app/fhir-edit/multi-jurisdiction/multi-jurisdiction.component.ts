@@ -12,16 +12,17 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     @Input() propertyName: string;
     @Input() tooltipPath: string;
     @Input() tooltipKey: string;
+
     public tooltip: string;
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         private fhirService: FhirService) {
     }
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

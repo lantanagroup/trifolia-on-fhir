@@ -12,11 +12,12 @@ import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/re
 export class R4TypeModalComponent implements OnInit {
     @Input() element: any;
     @Input() type: ElementDefinitionTypeRefComponent;
+
     public definedTypeCodes: Coding[] = [];
+    public Globals = Globals;
 
     constructor(
         public activeModal: NgbActiveModal,
-        public globals: Globals,
         private modalService: NgbModal,
         private fhirService: FhirService) {
     }

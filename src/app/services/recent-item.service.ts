@@ -17,7 +17,6 @@ export class RecentItemService {
 
     constructor(
         private cookieService: CookieService,
-        private globals: Globals,
         private configService: ConfigService) {
 
         this.configService.fhirServerChanged.subscribe(() => this.loadRecentItems());
@@ -26,13 +25,13 @@ export class RecentItemService {
     private loadRecentItems() {
         const fhirServer = this.configService.fhirServer;
 
-        const recentImplementationGuidesKey = this.globals.cookieKeys.recentImplementationGuides + '-' + fhirServer;
-        const recentStructureDefinitionsKey = this.globals.cookieKeys.recentStructureDefinitions + '-' + fhirServer;
-        const recentCapabilityStatementsKey = this.globals.cookieKeys.recentCapabilityStatements + '-' + fhirServer;
-        const recentOperationDefinitionsKey = this.globals.cookieKeys.recentOperationDefinitions + '-' + fhirServer;
-        const recentValueSetsKey = this.globals.cookieKeys.recentValueSets + '-' + fhirServer;
-        const recentCodeSystemsKey = this.globals.cookieKeys.recentCodeSystems + '-' + fhirServer;
-        const recentQuestionnairesKey = this.globals.cookieKeys.recentQuestionnaires + '-' + fhirServer;
+        const recentImplementationGuidesKey = Globals.cookieKeys.recentImplementationGuides + '-' + fhirServer;
+        const recentStructureDefinitionsKey = Globals.cookieKeys.recentStructureDefinitions + '-' + fhirServer;
+        const recentCapabilityStatementsKey = Globals.cookieKeys.recentCapabilityStatements + '-' + fhirServer;
+        const recentOperationDefinitionsKey = Globals.cookieKeys.recentOperationDefinitions + '-' + fhirServer;
+        const recentValueSetsKey = Globals.cookieKeys.recentValueSets + '-' + fhirServer;
+        const recentCodeSystemsKey = Globals.cookieKeys.recentCodeSystems + '-' + fhirServer;
+        const recentQuestionnairesKey = Globals.cookieKeys.recentQuestionnaires + '-' + fhirServer;
 
         this.recentImplementationGuides = <RecentItemModel[]> this.cookieService.getObject(recentImplementationGuidesKey) || [];
         this.recentStructureDefinitions = <RecentItemModel[]> this.cookieService.getObject(recentStructureDefinitionsKey) || [];
@@ -72,25 +71,25 @@ export class RecentItemService {
         this.cookieService.putObject(cookieKey, items);
 
         switch (requestedCookieKey) {
-            case this.globals.cookieKeys.recentImplementationGuides:
+            case Globals.cookieKeys.recentImplementationGuides:
                 this.recentImplementationGuides = items;
                 break;
-            case this.globals.cookieKeys.recentStructureDefinitions:
+            case Globals.cookieKeys.recentStructureDefinitions:
                 this.recentStructureDefinitions = items;
                 break;
-            case this.globals.cookieKeys.recentCapabilityStatements:
+            case Globals.cookieKeys.recentCapabilityStatements:
                 this.recentCapabilityStatements = items;
                 break;
-            case this.globals.cookieKeys.recentOperationDefinitions:
+            case Globals.cookieKeys.recentOperationDefinitions:
                 this.recentOperationDefinitions = items;
                 break;
-            case this.globals.cookieKeys.recentValueSets:
+            case Globals.cookieKeys.recentValueSets:
                 this.recentValueSets = items;
                 break;
-            case this.globals.cookieKeys.recentCodeSystems:
+            case Globals.cookieKeys.recentCodeSystems:
                 this.recentCodeSystems = items;
                 break;
-            case this.globals.cookieKeys.recentQuestionnaires:
+            case Globals.cookieKeys.recentQuestionnaires:
                 this.recentQuestionnaires = items;
                 break;
         }
@@ -126,19 +125,19 @@ export class RecentItemService {
     public getCookieKey(resourceType: string): string {
         switch (resourceType) {
             case 'StructureDefinition':
-                return this.globals.cookieKeys.recentStructureDefinitions;
+                return Globals.cookieKeys.recentStructureDefinitions;
             case 'ImplementationGuide':
-                return this.globals.cookieKeys.recentImplementationGuides;
+                return Globals.cookieKeys.recentImplementationGuides;
             case 'OperationDefinition':
-                return this.globals.cookieKeys.recentOperationDefinitions;
+                return Globals.cookieKeys.recentOperationDefinitions;
             case 'CapabilityStatement':
-                return this.globals.cookieKeys.recentCapabilityStatements;
+                return Globals.cookieKeys.recentCapabilityStatements;
             case 'ValueSet':
-                return this.globals.cookieKeys.recentValueSets;
+                return Globals.cookieKeys.recentValueSets;
             case 'CodeSystem':
-                return this.globals.cookieKeys.recentCodeSystems;
+                return Globals.cookieKeys.recentCodeSystems;
             case 'Questionnaire':
-                return this.globals.cookieKeys.recentQuestionnaires;
+                return Globals.cookieKeys.recentQuestionnaires;
         }
     }
 
@@ -155,19 +154,19 @@ export class RecentItemService {
         const fhirServer = this.configService.fhirServer;
 
         switch (cookieKey) {
-            case this.globals.cookieKeys.recentImplementationGuides + '-' + fhirServer:
+            case Globals.cookieKeys.recentImplementationGuides + '-' + fhirServer:
                 return this.recentImplementationGuides;
-            case this.globals.cookieKeys.recentStructureDefinitions + '-' + fhirServer:
+            case Globals.cookieKeys.recentStructureDefinitions + '-' + fhirServer:
                 return this.recentStructureDefinitions;
-            case this.globals.cookieKeys.recentCapabilityStatements + '-' + fhirServer:
+            case Globals.cookieKeys.recentCapabilityStatements + '-' + fhirServer:
                 return this.recentCapabilityStatements;
-            case this.globals.cookieKeys.recentOperationDefinitions + '-' + fhirServer:
+            case Globals.cookieKeys.recentOperationDefinitions + '-' + fhirServer:
                 return this.recentOperationDefinitions;
-            case this.globals.cookieKeys.recentValueSets + '-' + fhirServer:
+            case Globals.cookieKeys.recentValueSets + '-' + fhirServer:
                 return this.recentValueSets;
-            case this.globals.cookieKeys.recentCodeSystems + '-' + fhirServer:
+            case Globals.cookieKeys.recentCodeSystems + '-' + fhirServer:
                 return this.recentCodeSystems;
-            case this.globals.cookieKeys.recentQuestionnaires + '-' + fhirServer:
+            case Globals.cookieKeys.recentQuestionnaires + '-' + fhirServer:
                 return this.recentQuestionnaires;
             default:
                 throw new Error('Unexpected cookieKey value');

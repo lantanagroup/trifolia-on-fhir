@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="page.hasOwnProperty('format')" (ngModelChange)="globals.toggleProperty(page, 'format', 'markdown')" />
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('format')" (ngModelChange)="Globals.toggleProperty(page, 'format', 'markdown')" />
             Format
         </label>
         <input type="text" class="form-control" [disabled]="!page.hasOwnProperty('format')" [(ngModel)]="page.format" />
@@ -44,7 +44,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="page.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(page, 'type', ['Account'])" />
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('type')" (ngModelChange)="Globals.toggleProperty(page, 'type', ['Account'])" />
             <span> Types </span>
             <app-tooltip-icon tooltipPath="ImplementationGuide.page.type"></app-tooltip-icon>
         </div>
@@ -80,7 +80,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="page.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(page, 'package', [''])" />
+            <input type="checkbox" [ngModel]="page.hasOwnProperty('package')" (ngModelChange)="Globals.toggleProperty(page, 'package', [''])" />
             <span> Packages </span>
             <app-tooltip-icon tooltipPath="ImplementationGuide.page.package"></app-tooltip-icon>
         </div>
@@ -98,7 +98,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let package of page.package; let pi = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let package of page.package; let pi = index; trackBy: Globals.trackByFn">
                 <td>
                     <input type="text" class="form-control" [class.is-invalid]="!page.package[pi]" [(ngModel)]="page.package[pi]" />
                 </td>

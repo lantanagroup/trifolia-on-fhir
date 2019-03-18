@@ -4,6 +4,7 @@ import {Practitioner} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {AuthService} from '../services/auth.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FhirService} from '../services/fhir.service';
 
 @Component({
     selector: 'app-user',
@@ -18,7 +19,7 @@ export class UserComponent implements OnInit {
         private modalService: NgbModal,
         private personService: PractitionerService,
         private authService: AuthService,
-        private globals: Globals) { }
+        private fhirService: FhirService) { }
 
     public save() {
         this.message = 'Saving person...';
@@ -28,7 +29,7 @@ export class UserComponent implements OnInit {
                 this.practitioner = updatedPractitioner;
                 this.message = 'Your changes have been saved!';
             }, err => {
-                this.message = 'Error saving practitioner: ' + this.globals.getErrorMessage(err);
+                this.message = 'Error saving practitioner: ' + this.fhirService.getErrorString(err);
             });
     }
 

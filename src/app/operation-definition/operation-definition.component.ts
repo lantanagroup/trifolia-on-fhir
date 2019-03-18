@@ -20,10 +20,11 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public message: string;
     public validation: any;
     public odNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private modal: NgbModal,
         private router: Router,
@@ -73,7 +74,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 if (this.isNew) {
                     this.router.navigate(['/operation-definition/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -108,13 +109,13 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                     this.operationDefinition = <OperationDefinition> opDef;
                     this.nameChanged();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentOperationDefinitions,
+                        Globals.cookieKeys.recentOperationDefinitions,
                         this.operationDefinition.id,
                         this.operationDefinition.name);
                 }, (err) => {
                     this.odNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
                 });
         }
     }

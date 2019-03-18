@@ -12,16 +12,16 @@ import {Globals} from '../../globals';
 export class PageComponentModalComponent implements OnInit {
     @Input() page: PageComponent;
     @Input() implementationGuide: ImplementationGuide;
-    public pageBinary: Binary;
 
-    constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+    public pageBinary: Binary;
+    public Globals = Globals;
+
+    constructor(public activeModal: NgbActiveModal) {
 
     }
 
     public get autoGenerate(): boolean {
-        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (autoGenerateExtension) {
             return autoGenerateExtension.valueBoolean === true;
@@ -35,11 +35,11 @@ export class PageComponentModalComponent implements OnInit {
             this.page.extension = [];
         }
 
-        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (!autoGenerateExtension) {
             autoGenerateExtension = {
-                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
+                url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: false
             };
             this.page.extension.push(autoGenerateExtension);
@@ -47,7 +47,7 @@ export class PageComponentModalComponent implements OnInit {
 
         autoGenerateExtension.valueBoolean = value;
 
-        const foundIgPageContentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
+        const foundIgPageContentExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
 
         if (value && foundIgPageContentExtension && foundIgPageContentExtension.valueReference && foundIgPageContentExtension.valueReference.reference && foundIgPageContentExtension.valueReference.reference.startsWith('#')) {
             const foundBinary = _.find(this.implementationGuide.contained, (contained) => contained.id === foundIgPageContentExtension.valueReference.reference.substring(1));
@@ -90,7 +90,7 @@ export class PageComponentModalComponent implements OnInit {
             }
 
             const newBinary = new Binary();
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+            newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
             newBinary.contentType = file.type;
             newBinary.content = result.substring(5 + file.type.length + 8);
             this.implementationGuide.contained.push(newBinary);
@@ -99,11 +99,11 @@ export class PageComponentModalComponent implements OnInit {
                 this.page.extension = [];
             }
 
-            let contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
+            let contentExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
 
             if (!contentExtension) {
                 contentExtension = {
-                    url: this.globals.extensionUrls['extension-ig-page-content'],
+                    url: Globals.extensionUrls['extension-ig-page-content'],
                     valueReference: {
                         reference: '#' + newBinary.id,
                         display: 'Page content ' + newBinary.id
@@ -125,11 +125,10 @@ export class PageComponentModalComponent implements OnInit {
 
     ngOnInit() {
         if (this.page && this.page.source) {
-            const contentExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-content']);
+            const contentExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
 
             if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
                 const reference = contentExtension.valueReference.reference;
-                const parsedSourceUrl = this.globals.parseFhirUrl(reference);
 
                 if (reference.startsWith('#')) {
                     // Find the Binary in the contained resources

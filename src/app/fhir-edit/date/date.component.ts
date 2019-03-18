@@ -22,6 +22,12 @@ export class FhirDateComponent implements OnInit {
      */
     @Input() cookieKey?: string;
 
+    public Globals = Globals;
+
+    constructor(
+        private cookieService: CookieService) {
+    }
+
     public get value(): any {
         if (!this.parentObject) {
             return;
@@ -44,11 +50,6 @@ export class FhirDateComponent implements OnInit {
                 this.cookieService.put(this.cookieKey, newValue);
             }
         }
-    }
-
-    constructor(
-        public globals: Globals,
-        private cookieService: CookieService) {
     }
 
     ngOnInit() {

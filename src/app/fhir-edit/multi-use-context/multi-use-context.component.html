@@ -1,6 +1,6 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }}])"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ code: usageContextTypeCodes, valueQuantity: { unit: '', value: '' }}])"/>
         Use Context
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
@@ -29,7 +29,7 @@
         <tbody>
         <tr *ngFor="let uc of parentObject[propertyName]; let uci = index">
             <td>
-                <select class="form-control" [ngModel]="globals.getSelectCoding(uc.code, usageContextTypeCodes)"
+                <select class="form-control" [ngModel]="Globals.getSelectCoding(uc.code, usageContextTypeCodes)"
                         (ngModelChange)="uc.code = $event">
                     <option *ngFor="let c of usageContextTypeCodes" [ngValue]="c">{{c.display}}</option>
                 </select>
@@ -46,7 +46,7 @@
                 <div class="input-group">
                     <div class="input-group-addon">
                         <input type="checkbox" [ngModel]="uc.valueCodeableConcept.hasOwnProperty('text')"
-                               (ngModelChange)="globals.toggleProperty(uc.valueCodeableConcept, 'text', '')"/>
+                               (ngModelChange)="Globals.toggleProperty(uc.valueCodeableConcept, 'text', '')"/>
                     </div>
                     <input type="text" class="form-control" placeholder="Text"
                            [(ngModel)]="uc.valueCodeableConcept.text"
@@ -54,15 +54,15 @@
                 </div>
                 <div class="input-group" *ngFor="let c of uc.valueCodeableConcept.coding; let ci = index">
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="globals.toggleProperty(c, 'code', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="Globals.toggleProperty(c, 'code', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" [disabled]="!c.hasOwnProperty('code')" />
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="globals.toggleProperty(c, 'display', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="Globals.toggleProperty(c, 'display', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" [disabled]="!c.hasOwnProperty('display')" />
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(c, 'system', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(c, 'system', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
                     <div class="input-group-btn">
@@ -74,9 +74,9 @@
                 <div *ngIf="uc.valueCodeableConcept.hasOwnProperty('coding')">
                     <a href="javascript:void(0)" (click)="uc.valueCodeableConcept.coding.push({ code: '', display: '', system: ''})">Add a code</a>
                     <br />
-                    <a href="javascript:void(0)" (click)="globals.toggleProperty(uc.valueCodeableConcept, 'coding', [])">Remove all codes</a>
+                    <a href="javascript:void(0)" (click)="Globals.toggleProperty(uc.valueCodeableConcept, 'coding', [])">Remove all codes</a>
                 </div>
-                <a href="javascript:void(0)" *ngIf="!uc.valueCodeableConcept.hasOwnProperty('coding')" (click)="globals.toggleProperty(uc.valueCodeableConcept, 'coding', [{ code: '', display: '', system: ''}])">Add a code</a>
+                <a href="javascript:void(0)" *ngIf="!uc.valueCodeableConcept.hasOwnProperty('coding')" (click)="Globals.toggleProperty(uc.valueCodeableConcept, 'coding', [{ code: '', display: '', system: ''}])">Add a code</a>
             </td>
             <td *ngIf="uc.hasOwnProperty('valueQuantity')">
                 <div class="input-group">
@@ -88,7 +88,7 @@
                 <div class="input-group">
                     <div class="input-group-addon">Low&nbsp;<input type="checkbox"
                                                                    [ngModel]="uc.valueRange.hasOwnProperty('low')"
-                                                                   (ngModelChange)="globals.toggleProperty(uc.valueRange, 'low', { unit: '', value: '' })"/>
+                                                                   (ngModelChange)="Globals.toggleProperty(uc.valueRange, 'low', { unit: '', value: '' })"/>
                     </div>
                     <input type="text" class="form-control" *ngIf="uc.valueRange.hasOwnProperty('low')"
                            [(ngModel)]="uc.valueRange.low.unit" placeholder="Unit"/>
@@ -102,7 +102,7 @@
                 <div class="input-group">
                     <div class="input-group-addon">High&nbsp;<input type="checkbox"
                                                                     [ngModel]="uc.valueRange.hasOwnProperty('high')"
-                                                                    (ngModelChange)="globals.toggleProperty(uc.valueRange, 'high', { unit: '', value: '' })"/>
+                                                                    (ngModelChange)="Globals.toggleProperty(uc.valueRange, 'high', { unit: '', value: '' })"/>
                     </div>
                     <input type="text" class="form-control" *ngIf="uc.valueRange.hasOwnProperty('high')"
                            [(ngModel)]="uc.valueRange.high.unit" placeholder="Unit"/>

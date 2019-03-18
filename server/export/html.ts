@@ -372,7 +372,7 @@ export class HtmlExporter {
     private getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
         const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
         const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
-        const packageIdExtension = _.find(implementationGuide.extension, (extension) => extension.url === new Globals().extensionUrls['extension-ig-package-id']);
+        const packageIdExtension = _.find(implementationGuide.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
         let canonicalBase;
 
         if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {

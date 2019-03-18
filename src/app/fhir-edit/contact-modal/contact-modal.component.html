@@ -9,7 +9,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="contact.hasOwnProperty('telecom')" (ngModelChange)="globals.toggleProperty(contact, 'telecom', [{ system: 'phone', value: '' }])"/>
+            <input type="checkbox" [ngModel]="contact.hasOwnProperty('telecom')" (ngModelChange)="Globals.toggleProperty(contact, 'telecom', [{ system: 'phone', value: '' }])"/>
             Telecom(s)
         </div>
         <table class="table table-striped" *ngIf="contact.hasOwnProperty('telecom')">

@@ -1,16 +1,16 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
         {{title || 'Name(s)'}}
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ given: [''], family: '' }])"/>
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ given: [''], family: '' }])"/>
     </div>
     <div class="card-body" *ngFor="let name of parentObject[propertyName]; let ni = index">
         <div class="form-group">
             <label>
-                <input type="checkbox" *ngIf="!required" [ngModel]="name.hasOwnProperty('given')" (ngModelChange)="globals.toggleProperty(name, 'given', [''])"/>
+                <input type="checkbox" *ngIf="!required" [ngModel]="name.hasOwnProperty('given')" (ngModelChange)="Globals.toggleProperty(name, 'given', [''])"/>
                 Given
             </label>
             <div *ngIf="name.hasOwnProperty('given')">
-                <div class="input-group" *ngFor="let given of name.given; let gi = index; trackBy: globals.trackByFn">
+                <div class="input-group" *ngFor="let given of name.given; let gi = index; trackBy: Globals.trackByFn">
                     <input type="text" class="form-control" [(ngModel)]="name.given[gi]" [class.is-invalid]="!name.given[gi]" />
                     <div class="input-group-btn btn-group">
                         <button type="button" class="btn btn-default" title="Remove this given name" [disabled]="required && name.given.length === 1" (click)="name.given.splice(gi, 1)">

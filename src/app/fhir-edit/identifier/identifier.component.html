@@ -1,12 +1,12 @@
 <div class="form-group" *ngIf="parentObject && isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="identifier && identifier.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, defaultValue)"/>
+        <input type="checkbox" *ngIf="!required" [ngModel]="identifier && identifier.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue)"/>
         {{title || 'Identifier'}}
     </label>
     <div class="input-group">
         <!-- use -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(identifier, 'use', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', '')"/>
         </div>
         <select class="form-control" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
             <option value="usual">Usual</option>
@@ -16,12 +16,12 @@
         </select>
         <!-- system -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(identifier, 'system', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', '')"/>
         </div>
         <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
         <!-- value -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(identifier, 'value', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')"/>
         </div>
         <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
     </div>
@@ -29,7 +29,7 @@
 <div class="input-group" *ngIf="parentObject && !isFormGroup">
     <!-- use -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(identifier, 'use', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', '')"/>
     </div>
     <select class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
         <option value="usual">Usual</option>
@@ -39,12 +39,12 @@
     </select>
     <!-- system -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(identifier, 'system', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', '')"/>
     </div>
     <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
     <!-- value -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(identifier, 'value', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')"/>
     </div>
     <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
 </div>

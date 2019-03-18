@@ -17,9 +17,9 @@ export class FhirPeriodComponent implements OnInit {
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
 
-    constructor(
-        public modalService: NgbModal,
-        public globals: Globals) {
+    public Globals = Globals;
+
+    constructor(public modalService: NgbModal) {
     }
 
     ngOnInit() {

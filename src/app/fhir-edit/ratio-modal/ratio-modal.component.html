@@ -10,7 +10,7 @@
             <!-- numerator -->
             <div class="card">
                 <div class="card-header">
-                    <input type="checkbox" [ngModel]="ratio.hasOwnProperty('numerator')" (ngModelChange)="globals.toggleProperty(ratio, 'numerator', {})"/>
+                    <input type="checkbox" [ngModel]="ratio.hasOwnProperty('numerator')" (ngModelChange)="Globals.toggleProperty(ratio, 'numerator', {})"/>
                     Numerator
                 </div>
                 <div class="card-body" *ngIf="ratio.hasOwnProperty('numerator')">
@@ -18,7 +18,7 @@
 
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(ratio.numerator, 'value', 0)"/>
+                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(ratio.numerator, 'value', 0)"/>
                             Value
                         </label>
                         <input type="number" class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('value')" [(ngModel)]="ratio.numerator.value"/>
@@ -26,7 +26,7 @@
 
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(ratio.numerator, 'comparator', '<')"/>
+                            <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(ratio.numerator, 'comparator', '<')"/>
                             Comparator
                         </label>
                         <select class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('comparator')" [(ngModel)]="ratio.numerator.comparator">
@@ -49,7 +49,7 @@
             <div class="card">
                 <div class="card-header">
                     <input type="checkbox" [ngModel]="ratio.hasOwnProperty('denominator')"
-                           (ngModelChange)="globals.toggleProperty(ratio, 'denominator', {})"/>
+                           (ngModelChange)="Globals.toggleProperty(ratio, 'denominator', {})"/>
                     Denominator
                 </div>
                 <div class="card-body" *ngIf="ratio.hasOwnProperty('denominator')">
@@ -57,7 +57,7 @@
 
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(ratio.denominator, 'value', 0)"/>
+                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(ratio.denominator, 'value', 0)"/>
                             Value
                         </label>
                         <input type="number" class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('value')" [(ngModel)]="ratio.denominator.value"/>
@@ -65,7 +65,7 @@
 
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(ratio.denominator, 'comparator', '<')"/>
+                            <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(ratio.denominator, 'comparator', '<')"/>
                             Comparator
                         </label>
                         <select class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('comparator')" [(ngModel)]="ratio.denominator.comparator">

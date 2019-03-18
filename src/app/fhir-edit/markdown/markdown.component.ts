@@ -21,8 +21,9 @@ export class FhirMarkdownComponent implements OnInit {
     @Input() tooltipPath: string;
     @Input() displayOnly = false;
 
+    public Globals = Globals;
+
     constructor(
-        public globals: Globals,
         private modalService: NgbModal,
         private fhirService: FhirService) {
     }
@@ -35,7 +36,7 @@ export class FhirMarkdownComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

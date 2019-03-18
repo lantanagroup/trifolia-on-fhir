@@ -10,10 +10,10 @@ import {Attachment} from '../../models/stu3/fhir';
 })
 export class FhirAttachmentModalComponent implements OnInit {
     @Input() attachment: Attachment;
+    public Globals = Globals;
 
     constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+        public activeModal: NgbActiveModal) {
 
     }
 

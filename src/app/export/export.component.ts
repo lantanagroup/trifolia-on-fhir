@@ -41,14 +41,13 @@ export class ExportComponent implements OnInit {
         private implementationGuideService: ImplementationGuideService,
         private socketService: SocketService,
         private exportService: ExportService,
-        private globals: Globals,
         private cookieService: CookieService,
         private githubService: GithubService,
         private fhirService: FhirService,
         private configService: ConfigService) {
 
-        this.options.implementationGuideId = this.cookieService.get(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
-        this.options.responseFormat = <any> this.cookieService.get(this.globals.cookieKeys.lastResponseFormat) || 'application/json';
+        this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+        this.options.responseFormat = <any> this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
         this.options.executeIgPublisher = false;            // Never execute the ig publisher. This is only for exporting.
         this.options.downloadOutput = true;
 
@@ -109,7 +108,7 @@ export class ExportComponent implements OnInit {
         this.githubResourcesBundle = null;
         this.githubCommitMessage = null;
 
-        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+        const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
         if (implementationGuide && implementationGuide.id) {
             this.cookieService.put(cookieKey, implementationGuide.id);
@@ -142,7 +141,7 @@ export class ExportComponent implements OnInit {
     }
 
     public clearImplementationGuide() {
-        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+        const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
         this.selectedImplementationGuide =
             this.options.implementationGuideId = null;
@@ -153,7 +152,7 @@ export class ExportComponent implements OnInit {
     }
 
     public responseFormatChanged() {
-        this.cookieService.put(this.globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+        this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
     }
 
     public get exportDisabled(): boolean {
@@ -217,7 +216,7 @@ export class ExportComponent implements OnInit {
         this.socketOutput = '';
         this.message = 'Exporting...';
 
-        this.cookieService.put(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
+        this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
         if (this.options.exportFormat === ExportFormats.GitHub) {
             try {

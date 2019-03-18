@@ -1,6 +1,6 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{}])"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{}])"/>
         Jurisdiction
         <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
     </div>
@@ -23,7 +23,7 @@
             <td>
                 <div class="input-group">
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="j.hasOwnProperty('text')" (ngModelChange)="globals.toggleProperty(j, 'text', '')" />
+                        <input type="checkbox" [ngModel]="j.hasOwnProperty('text')" (ngModelChange)="Globals.toggleProperty(j, 'text', '')" />
                     </div>
                     <input type="text" class="form-control" [(ngModel)]="j.text" [disabled]="!j.hasOwnProperty('text')" />
                 </div>
@@ -31,15 +31,15 @@
             <td>
                 <div class="input-group" *ngFor="let c of j.coding; let ci = index">
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="globals.toggleProperty(c, 'code', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="Globals.toggleProperty(c, 'code', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" [disabled]="!c.hasOwnProperty('code')" />
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="globals.toggleProperty(c, 'display', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="Globals.toggleProperty(c, 'display', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" [disabled]="!c.hasOwnProperty('display')" />
                     <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="globals.toggleProperty(c, 'system', '')" />
+                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(c, 'system', '')" />
                     </div>
                     <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
                     <div class="input-group-btn">
@@ -51,9 +51,9 @@
                 <div *ngIf="j.hasOwnProperty('coding')">
                     <a href="javascript:void(0)" (click)="j.coding.push({ code: '', display: '', system: '' })">Add a code</a>
                     <br />
-                    <a href="javascript:void(0)" (click)="globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Remove all codes</a>
+                    <a href="javascript:void(0)" (click)="Globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Remove all codes</a>
                 </div>
-                <a href="javascript:void(0)" *ngIf="!j.hasOwnProperty('coding')" (click)="globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Add a code</a>
+                <a href="javascript:void(0)" *ngIf="!j.hasOwnProperty('coding')" (click)="Globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Add a code</a>
             </td>
             <td>
                 <div class="pull-right">

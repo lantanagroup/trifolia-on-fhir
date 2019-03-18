@@ -28,7 +28,7 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" [ngModel]="item.hasOwnProperty('maxLength')" (ngModelChange)="globals.toggleProperty(item, 'maxLength', 1)" />
+                    <input type="checkbox" [ngModel]="item.hasOwnProperty('maxLength')" (ngModelChange)="Globals.toggleProperty(item, 'maxLength', 1)" />
                     Max length
                 </label>
                 <input type="number" class="form-control" [(ngModel)]="item.maxLength" [disabled]="!item.hasOwnProperty('maxLength')" />
@@ -44,7 +44,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="item.hasOwnProperty('enableWhen')" (ngModelChange)="globals.toggleProperty(item, 'enableWhen', [{ question: questionnaire.item[0].linkId }])" />
+            <input type="checkbox" [ngModel]="item.hasOwnProperty('enableWhen')" (ngModelChange)="Globals.toggleProperty(item, 'enableWhen', [{ question: questionnaire.item[0].linkId }])" />
             Enable when
         </div>
         <table class="table table-striped" *ngIf="item.enableWhen">

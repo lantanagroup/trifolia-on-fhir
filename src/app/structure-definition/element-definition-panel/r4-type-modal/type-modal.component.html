@@ -18,7 +18,7 @@
         <label>
             Profile <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
         </label>
-        <div class="input-group" *ngFor="let p of type.profile; let pi = index; trackBy: globals.trackByFn">
+        <div class="input-group" *ngFor="let p of type.profile; let pi = index; trackBy: Globals.trackByFn">
             <input type="text" class="form-control" [(ngModel)]="type.profile[pi]" />
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default" title="Select a profile" (click)="selectProfile(type.profile, pi)">
@@ -38,7 +38,7 @@
         <label>
             Target Profile <app-tooltip-icon tooltipPath="ElementDefinition.type.targetProfile"></app-tooltip-icon>
         </label>
-        <div class="input-group" *ngFor="let p of type.targetProfile; let tpi = index; trackBy: globals.trackByFn">
+        <div class="input-group" *ngFor="let p of type.targetProfile; let tpi = index; trackBy: Globals.trackByFn">
             <input type="text" class="form-control" [(ngModel)]="type.targetProfile[tpi]" />
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default" title="Select a target profile" (click)="selectProfile(type.targetProfile, tpi)">
@@ -58,7 +58,7 @@
         <label>
             Aggregation <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
         </label>
-        <div class="input-group" *ngFor="let a of type.aggregation; let ai = index; trackBy: globals.trackByFn">
+        <div class="input-group" *ngFor="let a of type.aggregation; let ai = index; trackBy: Globals.trackByFn">
             <select class="form-control" [(ngModel)]="type.aggregation[ai]">
                 <option value="contained">Contained</option>
                 <option value="referenced">Referenced</option>

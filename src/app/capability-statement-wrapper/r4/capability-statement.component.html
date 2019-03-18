@@ -27,7 +27,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            <tr *ngFor="let f of capabilityStatement.format; let i = index; trackBy: globals.trackByFn">
+                            <tr *ngFor="let f of capabilityStatement.format; let i = index; trackBy: Globals.trackByFn">
                                 <td>
                                     <input type="text" class="form-control"
                                            [(ngModel)]="capabilityStatement.format[i]"/>
@@ -49,7 +49,7 @@
                         <div class="card-header">
                             Patch Formats
                             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('patchFormat')"
-                                   (ngModelChange)="globals.toggleProperty(capabilityStatement, 'patchFormat', [''])"/>
+                                   (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'patchFormat', [''])"/>
                             <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" title="Add a format"
                                         [disabled]="!capabilityStatement.hasOwnProperty('patchFormat')"
@@ -60,7 +60,7 @@
                         </div>
                         <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('patchFormat')">
                             <tbody>
-                            <tr *ngFor="let f of capabilityStatement.patchFormat; let i = index; trackBy: globals.trackByFn">
+                            <tr *ngFor="let f of capabilityStatement.patchFormat; let i = index; trackBy: Globals.trackByFn">
                                 <td>
                                     <input type="text" class="form-control"
                                            [(ngModel)]="capabilityStatement.patchFormat[i]"/>
@@ -168,13 +168,13 @@
     <ngb-tab>
         <ng-template ngbTabTitle>REST</ng-template>
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')" (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This capability statement includes REST entries
 
             <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
                     <ng-template ngbTabTitle>
                         <span>REST {{ri + 1}} </span>
-                        <i class="fas fa-trash-alt" title="Remove this REST entry" (click)="globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this REST entry" (click)="Globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true"></app-fhir-select-single-code>
@@ -184,7 +184,7 @@
                         <!-- Security -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="globals.toggleProperty(r, 'security', [{}])"/>
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
                                 Security
                             </div>
                             <div class="card-body" *ngIf="r.hasOwnProperty('security')">
@@ -194,7 +194,7 @@
 
                                 <div class="card">
                                     <div class="card-header">
-                                        <input type="checkbox" [ngModel]="r.security.hasOwnProperty('certificate')" (ngModelChange)="globals.toggleProperty(r.security, 'certificate', [{}])"/>
+                                        <input type="checkbox" [ngModel]="r.security.hasOwnProperty('certificate')" (ngModelChange)="Globals.toggleProperty(r.security, 'certificate', [{}])"/>
                                         Certificate
                                     </div>
                                     <table class="table table-striped" *ngIf="r.security.hasOwnProperty('certificate')">
@@ -240,7 +240,7 @@
                         <!-- Resources -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')" (ngModelChange)="globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')" (ngModelChange)="Globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
                                 Resource(s)
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
@@ -290,7 +290,7 @@
                         <!-- Interactions -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')" (ngModelChange)="globals.toggleProperty(r, 'interaction', [{ code: 'transaction' }])"/>
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')" (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'transaction' }])"/>
                                 Interaction(s)
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
@@ -330,7 +330,7 @@
                         <!-- Search Params -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')" (ngModelChange)="globals.toggleProperty(r, 'searchParam', [{}])" />
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')" (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{}])" />
                                 Search Params
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('searchParam')">
@@ -378,7 +378,7 @@
                         <!-- Operations -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')" (ngModelChange)="globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])" />
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')" (ngModelChange)="Globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])" />
                                 Operations
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('operation')">
@@ -418,7 +418,7 @@
                         <!-- Compartments -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')" (ngModelChange)="globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])" />
+                                <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')" (ngModelChange)="Globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])" />
                                 Compartments
                             </div>
                             <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
@@ -435,7 +435,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr *ngFor="let si of r.compartment; let sii = index; trackBy: globals.trackByFn">
+                                <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
                                     <td>
                                         <app-fhir-string [parentObject]="r.compartment" [propertyName]="sii" [isFormGroup]="false" [required]="true"></app-fhir-string>
                                     </td>
@@ -464,19 +464,19 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Messaging</ng-template>
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries
+            <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')" (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability statement includes messaging entries
 
             <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet [destroyOnHide]="false">
                 <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
                     <ng-template ngbTabTitle>
                         <span>Messaging {{mi+1}} </span>
-                        <i class="fas fa-trash-alt" title="Remove this messaging entry" (click)="globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this messaging entry" (click)="Globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <!-- Endpoints -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')" (ngModelChange)="Globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
                                 Endpoints
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
@@ -496,7 +496,7 @@
                                 <tbody>
                                 <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
                                     <td>
-                                        <select class="form-control" [ngModel]="globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)" (ngModelChange)="endpoint.protocol = $event">
+                                        <select class="form-control" [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)" (ngModelChange)="endpoint.protocol = $event">
                                             <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
                                         </select>
                                     </td>
@@ -517,7 +517,7 @@
 
                         <div class="form-group">
                             <label>
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('reliableCache')" (ngModelChange)="globals.toggleProperty(messaging, 'reliableCache', 1)" />
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('reliableCache')" (ngModelChange)="Globals.toggleProperty(messaging, 'reliableCache', 1)" />
                                 Reliable Cache
                             </label>
                             <input type="number" class="form-control" [disabled]="!messaging.hasOwnProperty('reliableCache')" [(ngModel)]="messaging.reliableCache" />
@@ -528,7 +528,7 @@
                         <!-- Supported Messages -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')" (ngModelChange)="globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])" />
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')" (ngModelChange)="Globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])" />
                                 Supported Messages
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('supportedMessage')">
@@ -568,7 +568,7 @@
                         <!-- Events -->
                         <div class="card">
                             <div class="card-header">
-                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('event')" (ngModelChange)="globals.toggleProperty(messaging, 'event', [getDefaultMessagingEvent()])" />
+                                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('event')" (ngModelChange)="Globals.toggleProperty(messaging, 'event', [getDefaultMessagingEvent()])" />
                                 Events
                             </div>
                             <table class="table table-striped" *ngIf="messaging.hasOwnProperty('event')">
@@ -591,7 +591,7 @@
                                 <tbody>
                                 <tr *ngFor="let event of messaging.event; let eventi = index">
                                     <td>
-                                        <select class="form-control" [ngModel]="globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
+                                        <select class="form-control" [ngModel]="Globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
                                             <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
                                         </select>
                                     </td>
@@ -636,7 +636,7 @@
         <ng-template ngbTabContent>
             <p>
                 <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('document')"
-                       (ngModelChange)="globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
+                       (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
                 Capability statement has document(s)
             </p>
 

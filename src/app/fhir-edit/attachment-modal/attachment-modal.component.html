@@ -11,13 +11,13 @@
         <span class="help-block">Select a file to override this attachment data.</span>
     </div>
 
-    <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" title="Content Type" [isTypeahead]="true" [codes]="globals.mimeTypeCodes"></app-fhir-select-single-code>
+    <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" title="Content Type" [isTypeahead]="true" [codes]="Globals.mimeTypeCodes"></app-fhir-select-single-code>
 
     <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" title="Language" [isTypeahead]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/all-languages" defaultCode="en-US"></app-fhir-select-single-code>
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="attachment.hasOwnProperty('data')" (ngModelChange)="globals.toggleProperty(attachment, 'data', '')"/>
+            <input type="checkbox" [ngModel]="attachment.hasOwnProperty('data')" (ngModelChange)="Globals.toggleProperty(attachment, 'data', '')"/>
             Data
         </label>
         <textarea class="form-control" *ngIf="!attachment.data || attachment.data.length < 10000" [disabled]="!attachment.hasOwnProperty('data')" [(ngModel)]="attachment.data"></textarea>
@@ -28,7 +28,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="attachment.hasOwnProperty('size')" (ngModelChange)="globals.toggleProperty(attachment, 'size', '')"/>
+            <input type="checkbox" [ngModel]="attachment.hasOwnProperty('size')" (ngModelChange)="Globals.toggleProperty(attachment, 'size', '')"/>
             Size
         </label>
         <input type="number" class="form-control" [disabled]="!attachment.hasOwnProperty('size')" [(ngModel)]="attachment.size"/>

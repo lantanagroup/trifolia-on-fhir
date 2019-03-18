@@ -18,9 +18,10 @@ export class FhirRatioComponent implements OnInit {
     @Input() tooltipPath: string;
     @Input() tooltipKey: string;
 
+    public Globals = Globals;
+
     constructor(
-        public modalService: NgbModal,
-        public globals: Globals) {
+        public modalService: NgbModal) {
     }
 
     private checkRemoveProperty(propertyName: string) {

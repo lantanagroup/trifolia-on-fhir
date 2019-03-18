@@ -13,7 +13,7 @@
     
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('given')" (ngModelChange)="globals.toggleProperty(humanName, 'given', [''])" />
+            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('given')" (ngModelChange)="Globals.toggleProperty(humanName, 'given', [''])" />
             Given
         </div>
         <table class="table table-striped" *ngIf="humanName.hasOwnProperty('given')">
@@ -30,7 +30,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let g of humanName.given; let gi = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let g of humanName.given; let gi = index; trackBy: Globals.trackByFn">
                 <td>
                     <input type="text" class="form-control" [(ngModel)]="humanName.given[gi]" />
                 </td>
@@ -48,7 +48,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('prefix')" (ngModelChange)="globals.toggleProperty(humanName, 'prefix', [''])" />
+            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('prefix')" (ngModelChange)="Globals.toggleProperty(humanName, 'prefix', [''])" />
             Prefix
         </div>
         <table class="table table-striped" *ngIf="humanName.hasOwnProperty('prefix')">
@@ -65,7 +65,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let g of humanName.prefix; let gi = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let g of humanName.prefix; let gi = index; trackBy: Globals.trackByFn">
                 <td>
                     <input type="text" class="form-control" [(ngModel)]="humanName.prefix[gi]" />
                 </td>
@@ -83,7 +83,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('suffix')" (ngModelChange)="globals.toggleProperty(humanName, 'suffix', [''])" />
+            <input type="checkbox" [ngModel]="humanName.hasOwnProperty('suffix')" (ngModelChange)="Globals.toggleProperty(humanName, 'suffix', [''])" />
             Suffix
         </div>
         <table class="table table-striped" *ngIf="humanName.hasOwnProperty('suffix')">
@@ -100,7 +100,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let g of humanName.suffix; let gi = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let g of humanName.suffix; let gi = index; trackBy: Globals.trackByFn">
                 <td>
                     <input type="text" class="form-control" [(ngModel)]="humanName.suffix[gi]" />
                 </td>

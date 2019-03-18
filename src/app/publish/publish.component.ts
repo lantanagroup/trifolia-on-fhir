@@ -27,6 +27,8 @@ export class PublishComponent implements OnInit {
     public message: string;
     public validation: ServerValidationResult[];
     public socketOutput = '';
+    public Globals = Globals;
+
     private packageId;
 
     @ViewChild('tabs')
@@ -38,13 +40,12 @@ export class PublishComponent implements OnInit {
         private implementationGuideService: ImplementationGuideService,
         private cookieService: CookieService,
         private configService: ConfigService,
-        private exportService: ExportService,
-        public globals: Globals) {
+        private exportService: ExportService) {
 
         this.options.exportFormat = ExportFormats.HTML;
         this.options.executeIgPublisher = true;
-        this.options.implementationGuideId = this.cookieService.get(this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
-        this.options.responseFormat = <any> this.cookieService.get(this.globals.cookieKeys.lastResponseFormat) || 'application/json';
+        this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+        this.options.responseFormat = <any> this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
 
         // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
         this.socketService.onConnected.subscribe(() => {
@@ -59,7 +60,7 @@ export class PublishComponent implements OnInit {
         this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
         this.validation = null;
 
-        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+        const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
         if (implementationGuide && implementationGuide.id) {
             this.cookieService.put(cookieKey, implementationGuide.id);
@@ -98,7 +99,7 @@ export class PublishComponent implements OnInit {
     }
 
     public clearImplementationGuide() {
-        const cookieKey = this.globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+        const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
         this.selectedImplementationGuide =
             this.options.implementationGuideId = null;
@@ -113,7 +114,7 @@ export class PublishComponent implements OnInit {
     }
 
     public responseFormatChanged() {
-        this.cookieService.put(this.globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+        this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
     }
 
     public publish() {

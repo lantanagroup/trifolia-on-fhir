@@ -102,7 +102,7 @@
             <ng-template ngbTabContent>
                 <p>
                     <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
-                           (ngModelChange)="globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: { reference: '' }}])"/> Allow globals <app-tooltip-icon tooltipPath="ImplementationGuide.global"></app-tooltip-icon>
+                           (ngModelChange)="Globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: { reference: '' }}])"/> Allow globals <app-tooltip-icon tooltipPath="ImplementationGuide.global"></app-tooltip-icon>
                 </p>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
@@ -198,12 +198,12 @@
         <ngb-tab id="packages">
             <ng-template ngbTabTitle>Packages</ng-template>
             <ng-template ngbTabContent>
-                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"/> This implementation guide has packages <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"/> This implementation guide has packages <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
                 <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
                     <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
-                            <i class="fas fa-trash-alt" title="Remove this package" (click)="globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this package" (click)="Globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <div class="form-group">
@@ -214,7 +214,7 @@
                             <div class="form-group">
                                 <label>
                                     <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
-                                           (ngModelChange)="globals.toggleProperty(p, 'description', '')"/>
+                                           (ngModelChange)="Globals.toggleProperty(p, 'description', '')"/>
                                     Description <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
                                 </label>
                                 <app-markdown [(ngModel)]="p.description"
@@ -243,7 +243,7 @@
                                         <div class="input-group">
                                             <div class="input-group-addon">
                                                 <input type="checkbox" [ngModel]="r.hasOwnProperty('name')"
-                                                       (ngModelChange)="globals.toggleProperty(r, 'name', '')"/>
+                                                       (ngModelChange)="Globals.toggleProperty(r, 'name', '')"/>
                                             </div>
                                             <input type="text" class="form-control" [(ngModel)]="r.name"
                                                    [disabled]="!r.hasOwnProperty('name')"/>
@@ -267,7 +267,7 @@
                                             <button type="button" class="btn btn-default" (click)="editPackageResourceModal(r, packageResourceModal)" title="Edit additional properties for this package resource">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1" (click)="globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
+                                            <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1" (click)="Globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
@@ -290,7 +290,7 @@
         <!-- Binary -->
         <ngb-tab id="binary" title="Binary">
             <ng-template ngbTabContent>
-                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="globals.toggleProperty(implementationGuide, 'binary', [''])" />
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'binary', [''])" />
                 Implementation guide has binary URIs <app-tooltip-icon tooltipPath="ImplementationGuide.binary"></app-tooltip-icon>
 
                 <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
@@ -305,7 +305,7 @@
                     </th>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: globals.trackByFn">
+                    <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: Globals.trackByFn">
                         <td>
                             <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
                         </td>

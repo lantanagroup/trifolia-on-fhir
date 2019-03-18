@@ -8,7 +8,7 @@
     <!-- low -->
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="range.hasOwnProperty('low')" (ngModelChange)="globals.toggleProperty(range, 'low', {})"/>
+            <input type="checkbox" [ngModel]="range.hasOwnProperty('low')" (ngModelChange)="Globals.toggleProperty(range, 'low', {})"/>
             Low
         </div>
         <div class="card-body" *ngIf="range.hasOwnProperty('low')">
@@ -16,7 +16,7 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(range.low, 'value', 0)"/>
+                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(range.low, 'value', 0)"/>
                     Value
                 </label>
                 <input type="number" class="form-control" [disabled]="!range.low.hasOwnProperty('value')" [(ngModel)]="range.low.value" />
@@ -24,7 +24,7 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(range.low, 'comparator', '<')"/>
+                    <input type="checkbox" [ngModel]="range.low.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.low, 'comparator', '<')"/>
                     Comparator
                 </label>
                 <select class="form-control" [disabled]="!range.low.hasOwnProperty('comparator')" [(ngModel)]="range.low.comparator">
@@ -44,7 +44,7 @@
     <!-- high -->
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="range.hasOwnProperty('high')" (ngModelChange)="globals.toggleProperty(range, 'high', {})"/>
+            <input type="checkbox" [ngModel]="range.hasOwnProperty('high')" (ngModelChange)="Globals.toggleProperty(range, 'high', {})"/>
             High
         </div>
         <div class="card-body" *ngIf="range.hasOwnProperty('high')">
@@ -52,7 +52,7 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('value')" (ngModelChange)="globals.toggleProperty(range.high, 'value', 0)"/>
+                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(range.high, 'value', 0)"/>
                     Value
                 </label>
                 <input type="number" class="form-control" [disabled]="!range.high.hasOwnProperty('value')" [(ngModel)]="range.high.value" />
@@ -60,7 +60,7 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('comparator')" (ngModelChange)="globals.toggleProperty(range.high, 'comparator', '<')"/>
+                    <input type="checkbox" [ngModel]="range.high.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.high, 'comparator', '<')"/>
                     Comparator
                 </label>
                 <select class="form-control" [disabled]="!range.high.hasOwnProperty('comparator')" [(ngModel)]="range.high.comparator">

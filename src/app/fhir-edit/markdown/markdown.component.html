@@ -1,6 +1,6 @@
 <div class="form-group" *ngIf="parentObject">
   <label>
-    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, '')"/>
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, '')"/>
     {{title || propertyName}}
     <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
   </label>

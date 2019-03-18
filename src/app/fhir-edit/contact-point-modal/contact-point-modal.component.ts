@@ -11,9 +11,10 @@ import {ContactPoint} from '../../models/stu3/fhir';
 export class FhirContactPointModalComponent implements OnInit {
     @Input() contactPoint: ContactPoint;
 
+    public Globals = Globals;
+
     constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+        public activeModal: NgbActiveModal) {
 
     }
 

@@ -6,7 +6,7 @@
 
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="include.hasOwnProperty('valueSet')" (ngModelChange)="globals.toggleProperty(include, 'valueSet', [''])" />
+        <input type="checkbox" [ngModel]="include.hasOwnProperty('valueSet')" (ngModelChange)="Globals.toggleProperty(include, 'valueSet', [''])" />
         Value Sets
         <app-tooltip-icon tooltipPath="ValueSet.compose.include.valueSet"></app-tooltip-icon>
     </div>
@@ -24,7 +24,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let vs of include.valueSet; let vsi = index; trackBy: globals.trackByFn">
+        <tr *ngFor="let vs of include.valueSet; let vsi = index; trackBy: Globals.trackByFn">
             <td>
                 <div class="input-group">
                     <input type="text" class="form-control" [(ngModel)]="include.valueSet[vsi]" />
@@ -37,7 +37,7 @@
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Remove this value set" (click)="globals.promptForRemove(include.valueSet, vsi)">
+                    <button type="button" class="btn btn-default" title="Remove this value set" (click)="Globals.promptForRemove(include.valueSet, vsi)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -49,7 +49,7 @@
 
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="include.hasOwnProperty('filter')" (ngModelChange)="globals.toggleProperty(include, 'filter', [{ property: '', op: '=', value: '' }])"/>
+        <input type="checkbox" [ngModel]="include.hasOwnProperty('filter')" (ngModelChange)="Globals.toggleProperty(include, 'filter', [{ property: '', op: '=', value: '' }])"/>
         Filters
         <app-tooltip-icon tooltipPath="ValueSet.compose.include.filter"></app-tooltip-icon>
     </div>
@@ -81,7 +81,7 @@
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Remove this filter" (click)="globals.promptForRemove(include.filter, fi)">
+                    <button type="button" class="btn btn-default" title="Remove this filter" (click)="Globals.promptForRemove(include.filter, fi)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>

@@ -40,7 +40,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(type, 'profile', '')"/>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="Globals.toggleProperty(type, 'profile', '')"/>
             Profile
             <app-tooltip-icon tooltipKey="ed.type.profile"></app-tooltip-icon>
         </label>
@@ -56,7 +56,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="globals.toggleProperty(type, 'targetProfile', '')"/>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="Globals.toggleProperty(type, 'targetProfile', '')"/>
             Target Profile
             <app-tooltip-icon tooltipKey="ed.type.targetProfile"></app-tooltip-icon>
         </label>
@@ -72,7 +72,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('aggregation')" (ngModelChange)="globals.toggleProperty(type, 'aggregation', 'contained')"/>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('aggregation')" (ngModelChange)="Globals.toggleProperty(type, 'aggregation', 'contained')"/>
             Aggregation
             <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
         </label>
@@ -87,7 +87,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('versioning')" (ngModelChange)="globals.toggleProperty(type, 'versioning', 'either')"/>
+            <input type="checkbox" [ngModel]="type.hasOwnProperty('versioning')" (ngModelChange)="Globals.toggleProperty(type, 'versioning', 'either')"/>
             Versioning
             <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
         </label>

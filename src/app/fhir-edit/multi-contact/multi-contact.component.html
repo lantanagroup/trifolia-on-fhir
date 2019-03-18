@@ -1,6 +1,6 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="globals.toggleProperty(parentObject, propertyName, [{ name: '' }])" />
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ name: '' }])" />
         {{title || 'Contacts'}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>

@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="globals.toggleProperty(concept, 'designation', [{ value: '' }])" />
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="Globals.toggleProperty(concept, 'designation', [{ value: '' }])" />
             Designation
             <app-tooltip-icon tooltipPath="CodeSystem.concept.designation"></app-tooltip-icon>
         </div>
@@ -40,11 +40,11 @@
                 <td>
                     <div class="input-group">
                         <div class="input-group-addon">
-                            <input type="checkbox" [ngModel]="c.hasOwnProperty('use')" (ngModelChange)="globals.toggleProperty(c, 'use', globals.designationUseCodes[0])" />
+                            <input type="checkbox" [ngModel]="c.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(c, 'use', Globals.designationUseCodes[0])" />
                         </div>
                         <select class="form-control" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
-                        <select class="form-control" *ngIf="c.hasOwnProperty('use')" [ngModel]="globals.getSelectCoding(c.use, globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
-                            <option *ngFor="let duc of globals.designationUseCodes" [ngValue]="duc">{{duc.display || duc.code}}</option>
+                        <select class="form-control" *ngIf="c.hasOwnProperty('use')" [ngModel]="Globals.getSelectCoding(c.use, Globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
+                            <option *ngFor="let duc of Globals.designationUseCodes" [ngValue]="duc">{{duc.display || duc.code}}</option>
                         </select>
                     </div>
                 </td>
@@ -65,7 +65,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="concept.hasOwnProperty('property')" (ngModelChange)="globals.toggleProperty(concept, 'property', [{ code: '' }])" />
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('property')" (ngModelChange)="Globals.toggleProperty(concept, 'property', [{ code: '' }])" />
             Property
             <app-tooltip-icon tooltipPath="CodeSystem.concept.property"></app-tooltip-icon>
         </div>

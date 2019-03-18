@@ -54,7 +54,7 @@
 
 <div class="card">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="practitioner.hasOwnProperty('telecom')" (ngModelChange)="globals.toggleProperty(practitioner, 'telecom', [{ system: 'phone', value: '' }])"/>
+        <input type="checkbox" [ngModel]="practitioner.hasOwnProperty('telecom')" (ngModelChange)="Globals.toggleProperty(practitioner, 'telecom', [{ system: 'phone', value: '' }])"/>
         Telecom(s)
     </div>
     <table class="table table-striped" *ngIf="practitioner.hasOwnProperty('telecom')">

@@ -2,7 +2,7 @@
     <ngb-tabset justify="fill" *ngIf="element">
         <ngb-tab>
             <ng-template ngbTabTitle>
-                <span [attr.data-intro]="globals.introText['sd.element-panel.general-tab']">General</span>
+                <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
             </ng-template>
             <ng-template ngbTabContent>
                 <div class="form-group">
@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label>
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
-                               (ngModelChange)="globals.toggleProperty(element, 'code', [])"/>
+                               (ngModelChange)="Globals.toggleProperty(element, 'code', [])"/>
                         Code
                         <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
                     </label>
@@ -53,19 +53,19 @@
                     <div class="input-group" *ngFor="let c of element.code; let i = index" [attr.data-index]="i">
                         <div class="input-group-addon">
                             <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
-                                   (ngModelChange)="globals.toggleProperty(c, 'system', '')"/>
+                                   (ngModelChange)="Globals.toggleProperty(c, 'system', '')"/>
                         </div>
                         <input type="text" class="form-control" placeholder="system"
                                [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system"/>
                         <div class="input-group-addon">
                             <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
-                                   (ngModelChange)="globals.toggleProperty(c, 'code', '')"/>
+                                   (ngModelChange)="Globals.toggleProperty(c, 'code', '')"/>
                         </div>
                         <input type="text" class="form-control" placeholder="code"
                                [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code"/>
                         <div class="input-group-addon">
                             <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
-                                   (ngModelChange)="globals.toggleProperty(c, 'display', '')"/>
+                                   (ngModelChange)="Globals.toggleProperty(c, 'display', '')"/>
                         </div>
                         <input type="text" class="form-control" placeholder="display"
                                [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display"/>
@@ -80,7 +80,7 @@
                 <!-- Min -->
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('min')" (ngModelChange)="globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('min')" (ngModelChange)="Globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
                         Min
                         <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
                     </label>
@@ -90,7 +90,7 @@
                 <!-- Max -->
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('max')" (ngModelChange)="globals.toggleProperty(element, 'max', elementTreeModel.max)"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('max')" (ngModelChange)="Globals.toggleProperty(element, 'max', elementTreeModel.max)"/>
                         Max
                         <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
                     </label>
@@ -107,7 +107,7 @@
                 <div class="form-group">
                     <label>
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('type')"
-                               (ngModelChange)="globals.toggleProperty(element, 'type', [{ code: getDefaultType() }])"/>
+                               (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }])"/>
                         Type
                         <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
                     </label>
@@ -120,7 +120,7 @@
                             <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{o.code}}</option>
                         </select>
                         <input type="text" class="form-control" readonly
-                               value="{{globals.getShortString(t.profile, false, 30) || globals.getShortString(t.targetProfile, false, 30)}}"
+                               value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
                                title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default clickable" (click)="openTypeModel(element, t)" title="Edit this type">
@@ -138,7 +138,7 @@
                 <div class="form-group">
                     <label>
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
-                               (ngModelChange)="globals.toggleProperty(element, 'representation', ['xmlAttr'])"/>
+                               (ngModelChange)="Globals.toggleProperty(element, 'representation', ['xmlAttr'])"/>
                         Representation
                         <app-tooltip-icon tooltipPath="ElementDefinition.representation"></app-tooltip-icon>
                     </label>
@@ -164,7 +164,7 @@
                 <div class="form-group">
                     <label>
                         <input type="checkbox" [ngModel]="element.hasOwnProperty('maxLength')"
-                               (ngModelChange)="globals.toggleProperty(element, 'maxLength', 0)"/>
+                               (ngModelChange)="Globals.toggleProperty(element, 'maxLength', 0)"/>
                         Max Length
                         <app-tooltip-icon tooltipPath="ElementDefinition.maxLength"></app-tooltip-icon>
                     </label>
@@ -176,7 +176,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')" (ngModelChange)="globals.toggleProperty(element, 'condition', [''])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')" (ngModelChange)="Globals.toggleProperty(element, 'condition', [''])"/>
                         Condition
                         <app-tooltip-icon tooltipPath="ElementDefinition.condition"></app-tooltip-icon>
                     </div>
@@ -195,7 +195,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr *ngFor="let c of element.condition; let ci = index; trackBy: globals.trackByFn">
+                        <tr *ngFor="let c of element.condition; let ci = index; trackBy: Globals.trackByFn">
                             <td>
                                 <input type="text" class="form-control" [(ngModel)]="element.condition[ci]"/>
                             </td>
@@ -238,7 +238,7 @@
 
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
                         Constraint
                         <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
                     </label>
@@ -248,7 +248,7 @@
 
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
                         Mapping
                         <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
                     </label>
@@ -259,7 +259,7 @@
         </ngb-tab>
         <ngb-tab *ngIf="element.slicing">
             <ng-template ngbTabTitle>
-                <span [attr.data-intro]="globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
+                <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
             </ng-template>
             <ng-template ngbTabContent>
                 <app-fhir-select-single-code [parentObject]="element.slicing"
@@ -271,7 +271,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')" (ngModelChange)="globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }])"/>
+                        <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')" (ngModelChange)="Globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }])"/>
                         Discriminator
                         <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator"></app-tooltip-icon>
                     </div>
@@ -328,7 +328,7 @@
         </ngb-tab>
         <ngb-tab>
             <ng-template ngbTabTitle>
-                <span [attr.data-intro]="globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
+                <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
             </ng-template>
             <ng-template ngbTabContent>
                 <app-fhir-string [parentObject]="element" propertyName="short" title="Short" tooltipPath="ElementDefinition.short"></app-fhir-string>
@@ -350,12 +350,12 @@
         </ngb-tab>
         <ngb-tab>
             <ng-template ngbTabTitle>
-                <span [attr.data-intro]="globals.introText['sd.element-panel.binding-tab']">Binding</span>
+                <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
             </ng-template>
             <ng-template ngbTabContent>
                 <div class="card">
                     <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="globals.toggleProperty(element, 'binding', getDefaultBinding())"/>
+                        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(element, 'binding', getDefaultBinding())"/>
                         Binding
                         <app-tooltip-icon tooltipPath="ElementDefinition.binding"></app-tooltip-icon>
                     </div>
@@ -370,25 +370,25 @@
                         <div class="form-group">
                             <label>
                                 <input type="checkbox"
-                                       [ngModel]="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                                       (ngModelChange)="globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, '')"/>
+                                       [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                                       (ngModelChange)="Globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, '')"/>
                                 Value Set
                                 <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
                             </label>
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <select class="form-control"
-                                            [disabled]="!globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                                            [ngModel]="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                                            [disabled]="!Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                                            [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
                                             (ngModelChange)="setValueSetChoice(element.binding, $event)">
                                         <option value="Uri">URI</option>
                                         <option value="Reference">Reference</option>
                                     </select>
                                     <input type="text" class="form-control"
-                                           *ngIf="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
+                                           *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
                                            [(ngModel)]="element.binding.valueSetUri"/>
                                     <app-fhir-reference
-                                            *ngIf="globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
+                                            *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
                                             [parentObject]="element.binding"
                                             propertyName="valueSetReference"
                                             resourceType="ValueSet"></app-fhir-reference>
@@ -415,7 +415,7 @@
         </ngb-tab>
         <ngb-tab>
             <ng-template ngbTabTitle>
-                <span [attr.data-intro]="globals.introText['sd.element-panel.json-tab']">JSON</span>
+                <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
             </ng-template>
             <ng-template ngbTabContent>
                 <pre>{{element | json}}</pre>

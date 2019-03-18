@@ -68,7 +68,6 @@ export class FhirService {
 
     constructor(
         private http: HttpClient,
-        private globals: Globals,
         private configService: ConfigService) {
 
         this.customValidator = new CustomSTU3Validator(this);
@@ -130,11 +129,11 @@ export class FhirService {
 
     public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails  {
         const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-            this.globals.extensionUrls['r4-github-branch'] :
-            this.globals.extensionUrls['stu3-github-branch'];
+            Globals.extensionUrls['r4-github-branch'] :
+            Globals.extensionUrls['stu3-github-branch'];
         const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-            this.globals.extensionUrls['r4-github-path'] :
-            this.globals.extensionUrls['stu3-github-path'];
+            Globals.extensionUrls['r4-github-path'] :
+            Globals.extensionUrls['stu3-github-path'];
 
         const branchExtension = _.find(resource.extension, (extension) => extension.url === branchExtensionUrl);
         const pathExtension = _.find(resource.extension, (extension) => extension.url === pathExtensionUrl);
@@ -155,11 +154,11 @@ export class FhirService {
         }
 
         const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-            this.globals.extensionUrls['r4-github-branch'] :
-            this.globals.extensionUrls['stu3-github-branch'];
+            Globals.extensionUrls['r4-github-branch'] :
+            Globals.extensionUrls['stu3-github-branch'];
         const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-            this.globals.extensionUrls['r4-github-path'] :
-            this.globals.extensionUrls['stu3-github-path'];
+            Globals.extensionUrls['r4-github-path'] :
+            Globals.extensionUrls['stu3-github-path'];
 
         let branchExtension = _.find(resource.extension, (extension) => extension.url === branchExtensionUrl);
         let pathExtension = _.find(resource.extension, (extension) => extension.url === pathExtensionUrl);

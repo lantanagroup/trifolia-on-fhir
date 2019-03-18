@@ -10,7 +10,9 @@ import {Globals} from '../../globals';
 export class FhirPractitionerComponent implements OnInit {
     @Input() practitioner = new Practitioner();
 
-    constructor(public globals: Globals) {
+    public Globals = Globals;
+
+    constructor() {
     }
 
     ngOnInit() {

@@ -18,10 +18,11 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     @Input() title: string;
     @Input() matchSystem = true;
     @Input() matchCode = true;
+
     public tooltip: string;
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         private fhirService: FhirService) {
     }
 
@@ -38,7 +39,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
             return 'custom';
         }
 
-        const foundOption = this.globals.getSelectCoding(code, this.codes, this.matchSystem, this.matchCode);
+        const foundOption = Globals.getSelectCoding(code, this.codes, this.matchSystem, this.matchCode);
 
         if (foundOption) {
             return 'pre';
@@ -65,7 +66,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
 
     public getCoding(codeIndex): Coding {
         const code = this.coding[codeIndex];
-        const foundOption = this.globals.getSelectCoding(code, this.codes, this.matchSystem, this.matchCode);
+        const foundOption = Globals.getSelectCoding(code, this.codes, this.matchSystem, this.matchCode);
 
         if (foundOption) {
             return foundOption;
@@ -139,7 +140,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

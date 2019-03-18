@@ -10,7 +10,9 @@ import {Globals} from '../../globals';
 export class IncludePanelComponent implements OnInit {
     @Input() include: ConceptSetComponent;
 
-    constructor(public globals: Globals) {
+    public Globals = Globals;
+
+    constructor() {
     }
 
     ngOnInit() {

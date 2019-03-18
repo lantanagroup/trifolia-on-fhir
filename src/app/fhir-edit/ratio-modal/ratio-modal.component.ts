@@ -11,8 +11,9 @@ import {Ratio} from '../../models/stu3/fhir';
 export class FhirRatioModalComponent implements OnInit {
     @Input() ratio: Ratio;
 
+    public Globals = Globals;
+
     constructor(
-        public globals: Globals,
         public activeModal: NgbActiveModal) {
 
     }

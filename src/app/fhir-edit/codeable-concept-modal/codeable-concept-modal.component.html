@@ -9,7 +9,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="codeableConcept.hasOwnProperty('coding')" (ngModelChange)="globals.toggleProperty(codeableConcept, 'coding', [{ }])" />
+            <input type="checkbox" [ngModel]="codeableConcept.hasOwnProperty('coding')" (ngModelChange)="Globals.toggleProperty(codeableConcept, 'coding', [{ }])" />
             Coding
         </div>
         <table class="table table-striped" *ngIf="codeableConcept.hasOwnProperty('coding')">

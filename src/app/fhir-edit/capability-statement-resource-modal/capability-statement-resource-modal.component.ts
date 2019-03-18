@@ -12,11 +12,12 @@ import * as _ from 'underscore';
 export class FhirCapabilityStatementResourceModalComponent implements OnInit {
     @Input() resource: ResourceComponent;
 
+    public Globals = Globals;
+
     private readonly expectationUrl = 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation';
 
     constructor(
-        public activeModal: NgbActiveModal,
-        public globals: Globals) {
+        public activeModal: NgbActiveModal) {
 
     }
 

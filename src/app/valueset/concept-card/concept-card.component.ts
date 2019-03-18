@@ -4,8 +4,6 @@ import {FhirValueSetIncludeConceptModalComponent} from '../../fhir-edit/value-se
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {Globals} from '../../globals';
-import {FileOpenModalComponent} from '../../file-open-modal/file-open-modal.component';
-import {FileModel} from '../../models/file-model';
 
 @Component({
     selector: 'app-valueset-concept-card',
@@ -24,7 +22,6 @@ export class ConceptCardComponent implements OnInit {
     public readonly perPage = 5;
 
     constructor(
-        private globals: Globals,
         private modalService: NgbModal) {
     }
 
@@ -49,7 +46,7 @@ export class ConceptCardComponent implements OnInit {
     }
 
     public toggleConcepts() {
-        this.globals.toggleProperty(this.parentObject, this.propertyName, [{ code: '' }]);
+        Globals.toggleProperty(this.parentObject, this.propertyName, [{ code: '' }]);
         this.page = 1;
         this.refreshConcepts();
     }

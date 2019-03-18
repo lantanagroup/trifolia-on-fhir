@@ -49,6 +49,8 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     };
     public filterResourceQuery: string;
     public igNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
@@ -239,13 +241,13 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
                     this.nameChanged();
                     this.initPages();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentImplementationGuides,
+                        Globals.cookieKeys.recentImplementationGuides,
                         this.implementationGuide.id,
                         this.implementationGuide.name);
                 }, (err) => {
                     this.igNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentImplementationGuides, implementationGuideId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
                 });
         }
     }
@@ -307,7 +309,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
             newPage.nameUrl = 'toc.md';
 
             newPage.extension = [{
-                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
+                url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: true
             }];
 
@@ -357,7 +359,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
         const newBinary = new Binary();
         newBinary.contentType = 'text/markdown';
         newBinary.data = btoa('No page content yet');
-        newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+        newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
         this.implementationGuide.contained.push(newBinary);
 
         const newPage = new ImplementationGuidePageComponent();
@@ -440,7 +442,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     }
 
     public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
-        const extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-name']);
+        const extension = _.find(dependsOn.extension, (extension) => extension.url === Globals.extensionUrls['ig-depends-on-name']);
 
         if (extension) {
             return extension.valueString;
@@ -452,11 +454,11 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
             dependsOn.extension = [];
         }
 
-        let extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-name']);
+        let extension = _.find(dependsOn.extension, (extension) => extension.url === Globals.extensionUrls['ig-depends-on-name']);
 
         if (!extension && name) {
             extension = <Extension> {
-                url: this.globals.extensionUrls['ig-depends-on-name'],
+                url: Globals.extensionUrls['ig-depends-on-name'],
                 valueString: <string> name
             };
             dependsOn.extension.push(extension);
@@ -469,7 +471,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     }
 
     public getDependsOnLocation(dependsOn: ImplementationGuideDependsOnComponent) {
-        const extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-location']);
+        const extension = _.find(dependsOn.extension, (extension) => extension.url === Globals.extensionUrls['ig-depends-on-location']);
 
         if (extension) {
             return extension.valueString;
@@ -481,11 +483,11 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
             dependsOn.extension = [];
         }
 
-        let extension = _.find(dependsOn.extension, (extension) => extension.url === this.globals.extensionUrls['ig-depends-on-location']);
+        let extension = _.find(dependsOn.extension, (extension) => extension.url === Globals.extensionUrls['ig-depends-on-location']);
 
         if (!extension && location) {
             extension = <Extension> {
-                url: this.globals.extensionUrls['ig-depends-on-location'],
+                url: Globals.extensionUrls['ig-depends-on-location'],
                 valueString: <string> location
             };
             dependsOn.extension.push(extension);
@@ -512,7 +514,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
                 if (this.isNew) {
                     this.router.navigate(['/implementation-guide/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentImplementationGuides, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }

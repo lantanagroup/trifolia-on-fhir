@@ -15,9 +15,10 @@ export class STU3TypeModalComponent implements OnInit {
     @Input() type: TypeRefComponent;
     public definedTypeCodes: Coding[] = [];
 
+    public Globals = Globals;
+
     constructor(
         public activeModal: NgbActiveModal,
-        public globals: Globals,
         public configService: ConfigService,
         private modalService: NgbModal,
         private fhirService: FhirService) {

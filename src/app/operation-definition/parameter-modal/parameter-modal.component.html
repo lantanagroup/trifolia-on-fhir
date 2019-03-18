@@ -8,7 +8,7 @@
     <div class="form-group">
         <label>
             Documentation
-            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('documentation')" (ngModelChange)="globals.toggleProperty(parameter, 'type', 'documentation')" />
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('documentation')" (ngModelChange)="Globals.toggleProperty(parameter, 'type', 'documentation')" />
         </label>
         <input type="text" class="form-control" [disabled]="!parameter.hasOwnProperty('documentation')" [(ngModel)]="parameter.documentation"/>
     </div>
@@ -16,7 +16,7 @@
     <div class="form-group">
         <label>
             Type
-            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('type')" (ngModelChange)="globals.toggleProperty(parameter, 'type', '')" />
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('type')" (ngModelChange)="Globals.toggleProperty(parameter, 'type', '')" />
         </label>
         <select class="form-control" [disabled]="!parameter.hasOwnProperty('type')" [(ngModel)]="parameter.type">
             <option *ngFor="let o of allTypeCodes" [ngValue]="o.code">{{o.display}}</option>
@@ -26,7 +26,7 @@
     <div class="form-group">
         <label>
             Search Type
-            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('searchType')" (ngModelChange)="globals.toggleProperty(parameter, 'searchType', 'number')" />
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('searchType')" (ngModelChange)="Globals.toggleProperty(parameter, 'searchType', 'number')" />
         </label>
         <select class="form-control" [disabled]="!parameter.hasOwnProperty('searchType')" [(ngModel)]="parameter.searchType">
             <option value="number">Number</option>
@@ -43,7 +43,7 @@
     <div class="form-group">
         <label>
             Profile
-            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('profile')" (ngModelChange)="globals.toggleProperty(parameter, 'profile', { reference: '', display: '' })" />
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('profile')" (ngModelChange)="Globals.toggleProperty(parameter, 'profile', { reference: '', display: '' })" />
         </label>
         <app-fhir-reference
                 [disabled]="!parameter.hasOwnProperty('profile')"
@@ -55,7 +55,7 @@
     <div class="card">
         <div class="card-header">
             Binding
-            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('binding')" (ngModelChange)="globals.toggleProperty(parameter, 'binding', { strength: 'required', valueSetUri: '' })" />
+            <input type="checkbox" [ngModel]="parameter.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(parameter, 'binding', { strength: 'required', valueSetUri: '' })" />
         </div>
         <div class="card-body" *ngIf="parameter.hasOwnProperty('binding')">
             <div class="form-group">

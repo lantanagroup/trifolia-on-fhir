@@ -76,7 +76,7 @@
     <!-- Parameters -->
     <ngb-tab title="Parameters">
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'parameter', [])" />
+            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'parameter', [])" />
             Operation definition has parameters <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
 
             <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('parameter')">
@@ -131,7 +131,7 @@
     <!-- Overload -->
     <ngb-tab title="Overload">
         <ng-template ngbTabContent>
-            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="globals.toggleProperty(operationDefinition, 'overload', [])" />
+            <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'overload', [])" />
             Operation definition has overload <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
 
             <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('overload')">
@@ -152,7 +152,7 @@
                 <tr *ngFor="let o of operationDefinition.overload; let oi = index">
                     <td>
                         <a href="javascript:void(0)" *ngIf="!o.hasOwnProperty('parameterName')" (click)="o.parameterName = ['']">Add a name</a>
-                        <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: globals.trackByFn">
+                        <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: Globals.trackByFn">
                             <input type="text" class="form-control" [(ngModel)]="o.parameterName[pni]" />
                             <div class="input-group-btn">
                                 <button type="button" class="btn btn-default" title="Remove this name" (click)="o.parameterName.splice(pni, 1)">
@@ -163,13 +163,13 @@
                         <p *ngIf="o.hasOwnProperty('parameterName')">
                             <a href="javascript:void(0)" (click)="o.parameterName.push('')">Add a name</a>
                             <br/>
-                            <a href="javascript:void(0)" (click)="globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
+                            <a href="javascript:void(0)" (click)="Globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
                         </p>
                     </td>
                     <td>
                         <div class="input-group">
                             <div class="input-group-addon">
-                                <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="globals.toggleProperty(o, 'comment', '')" />
+                                <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="Globals.toggleProperty(o, 'comment', '')" />
                             </div>
                             <input type="text" class="form-control" [disabled]="!o.hasOwnProperty('comment')" [(ngModel)]="o.comment" />
                         </div>

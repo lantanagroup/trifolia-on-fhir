@@ -27,13 +27,14 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public validation: any;
     public message: string;
     public sdNotFound = false;
-    private navSubscription: any;
+    public Globals = Globals;
 
     @ViewChild('sdTabs')
     public sdTabs: NgbTabset;
 
+    private navSubscription: any;
+
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private router: Router,
         private configService: ConfigService,
@@ -233,14 +234,14 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                 this.baseStructureDefinition = baseStructureDefinition;
                 this.populateBaseElements();
                 this.recentItemService.ensureRecentItem(
-                    this.globals.cookieKeys.recentStructureDefinitions,
+                    Globals.cookieKeys.recentStructureDefinitions,
                     this.structureDefinition.id,
                     this.structureDefinition.name);
                 this.message = 'Done loading structure definition';
             }, (err) => {
                 this.sdNotFound = err.status === 404;
                 this.message = this.fhirService.getErrorString(err);
-                this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentStructureDefinitions, sdId);
+                this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
             });
     }
 
@@ -433,7 +434,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
                         _.each(this.options.implementationGuides, (implementationGuide) => implementationGuide.isNew = false);
                     }
 
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }

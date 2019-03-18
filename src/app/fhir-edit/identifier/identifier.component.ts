@@ -17,8 +17,9 @@ export class FhirIdentifierComponent implements OnInit {
     @Input() tooltip: string;
     @Input() tooltipKey: string;
 
-    constructor(
-        public globals: Globals) {
+    public Globals = Globals;
+
+    constructor() {
 
     }
 
@@ -72,7 +73,7 @@ export class FhirIdentifierComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         }
 
         if (this.required && this.parentObject && !this.parentObject[this.propertyName]) {

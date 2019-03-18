@@ -1,5 +1,5 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {ConceptReferenceComponent, ConceptSetComponent, OperationOutcome, ValueSet} from '../models/stu3/fhir';
+import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
+import {ConceptSetComponent, OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {Globals} from '../globals';
 import {RecentItemService} from '../services/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -23,10 +23,11 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     public message: string;
     public validation: any;
     public vsNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private valueSetService: ValueSetService,
         private router: Router,
@@ -170,7 +171,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                 if (this.isNew) {
                     this.router.navigate(['/value-set/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentValueSets, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -216,13 +217,13 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
                     this.valueSet = <ValueSet> results;
                     this.nameChanged();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentValueSets,
+                        Globals.cookieKeys.recentValueSets,
                         this.valueSet.id,
                         this.valueSet.name || this.valueSet.title);
                 }, (err) => {
                     this.vsNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentValueSets, valueSetId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentValueSets, valueSetId);
                 });
         }
     }

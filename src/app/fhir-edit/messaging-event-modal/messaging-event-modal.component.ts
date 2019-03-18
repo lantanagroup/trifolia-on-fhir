@@ -13,9 +13,10 @@ export class FhirMessagingEventModalComponent implements OnInit {
     @Input() event: EventComponent;
     public messageEventCodes: Coding[] = [];
 
+    public Globals = Globals;
+
     constructor(
         public activeModal: NgbActiveModal,
-        public globals: Globals,
         private fhirService: FhirService) {
 
     }

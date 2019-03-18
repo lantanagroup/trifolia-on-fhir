@@ -22,11 +22,12 @@ export class FhirChoiceComponent implements OnInit {
     @Input() isFormGroup = true;
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
+
     public tooltip: string;
     public contactPointSystemCodes: Coding[] = [];
+    public Globals = Globals;
 
     constructor(
-        public globals: Globals,
         private fhirService: FhirService,
         private modalService: NgbModal) {
     }
@@ -229,13 +230,13 @@ export class FhirChoiceComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }
 
         if (!this.choices) {
-            this.choices = this.globals.dataTypes;
+            this.choices = Globals.dataTypes;
         }
 
         this.choices.sort();

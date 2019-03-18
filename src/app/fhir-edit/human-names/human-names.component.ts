@@ -14,7 +14,9 @@ export class FhirHumanNamesComponent implements OnChanges, OnInit {
     @Input() propertyName: string;
     @Input() required = false;
 
-    constructor(public globals: Globals) { }
+    public Globals = Globals;
+
+    constructor() { }
 
     ngOnChanges(changes) {
 

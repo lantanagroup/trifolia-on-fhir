@@ -28,10 +28,11 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     public perPage = 10;
     public page = 1;
     public csNotFound = false;
+    public Globals = Globals;
+
     private navSubscription: any;
 
     constructor(
-        public globals: Globals,
         public route: ActivatedRoute,
         private modalService: NgbModal,
         private codeSystemService: CodeSystemService,
@@ -144,7 +145,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                 if (this.isNew) {
                     this.router.navigate(['/code-system/' + results.id]);
                 } else {
-                    this.recentItemService.ensureRecentItem(this.globals.cookieKeys.recentCodeSystems, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, results.id, results.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
@@ -181,13 +182,13 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     this.nameChanged();
                     this.refreshConcepts();
                     this.recentItemService.ensureRecentItem(
-                        this.globals.cookieKeys.recentCodeSystems,
+                        Globals.cookieKeys.recentCodeSystems,
                         this.codeSystem.id,
                         this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
                     this.message = this.fhirService.getErrorString(err);
-                    this.recentItemService.removeRecentItem(this.globals.cookieKeys.recentCodeSystems, codeSystemId);
+                    this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }
     }

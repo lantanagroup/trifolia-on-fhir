@@ -12,12 +12,13 @@ import {FhirService} from '../../services/fhir.service';
 export class ParameterModalComponent implements OnInit {
     @Input() operationDefinition = new OperationDefinition();
     @Input() parameter = new ParameterComponent();
+
     public allTypeCodes: Coding[] = [];
+    public Globals = Globals;
 
     constructor(
         public activeModal: NgbActiveModal,
-        private fhirService: FhirService,
-        public globals: Globals) {
+        private fhirService: FhirService) {
 
     }
 

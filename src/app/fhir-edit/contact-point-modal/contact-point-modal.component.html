@@ -13,7 +13,7 @@
 
     <div class="form-group">
         <label>
-            <input type="checkbox" [ngModel]="contactPoint.hasOwnProperty('rank')" (ngModelChange)="globals.toggleProperty(contactPoint, 'rank', 1)" />
+            <input type="checkbox" [ngModel]="contactPoint.hasOwnProperty('rank')" (ngModelChange)="Globals.toggleProperty(contactPoint, 'rank', 1)" />
             Rank
         </label>
         <input type="number" class="form-control" [disabled]="!contactPoint.hasOwnProperty('rank')" [(ngModel)]="contactPoint.rank" />

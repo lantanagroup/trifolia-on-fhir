@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="address.hasOwnProperty('line')" (ngModelChange)="globals.toggleProperty(address, 'line', [''])"/>
+            <input type="checkbox" [ngModel]="address.hasOwnProperty('line')" (ngModelChange)="Globals.toggleProperty(address, 'line', [''])"/>
             Line
         </div>
         <table class="table table-striped" *ngIf="address.hasOwnProperty('line')">
@@ -31,7 +31,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let l of address.line; let li = index; trackBy: globals.trackByFn">
+            <tr *ngFor="let l of address.line; let li = index; trackBy: Globals.trackByFn">
                 <td>
                     <input type="text" class="form-control" [(ngModel)]="address.line[li]"/>
                 </td>

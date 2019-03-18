@@ -12,10 +12,11 @@ import {FhirCodingModalComponent} from '../coding-modal/coding-modal.component';
 export class FhirCodeableConceptModalComponent implements OnInit {
   @Input() codeableConcept: CodeableConcept;
 
+  public Globals = Globals;
+
   constructor(
       private modalService: NgbModal,
-      public activeModal: NgbActiveModal,
-      public globals: Globals) {
+      public activeModal: NgbActiveModal) {
 
   }
 

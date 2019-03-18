@@ -13,13 +13,13 @@ export class TooltipIconComponent implements OnInit {
     @Input() tooltipPath: string;
     @Input() showAsAlert = false;
     @Input() alertTitle: string;
+
     public tooltip: string;
     public tooltipPlacement = 'top';
     public hidden = false;
 
     constructor(
         private fhirService: FhirService,
-        private globals: Globals,
         private el: ElementRef,
         private cookieService: CookieService) {
     }
@@ -41,7 +41,7 @@ export class TooltipIconComponent implements OnInit {
         }
 
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

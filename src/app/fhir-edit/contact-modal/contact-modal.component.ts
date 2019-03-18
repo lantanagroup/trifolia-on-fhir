@@ -11,9 +11,10 @@ import {Globals} from '../../globals';
 export class FhirContactModalComponent implements OnInit {
   @Input() contact: ContactDetail;
 
+  public Globals = Globals;
+
   constructor(
-      public activeModal: NgbActiveModal,
-      public globals: Globals) {
+      public activeModal: NgbActiveModal) {
 
   }
 

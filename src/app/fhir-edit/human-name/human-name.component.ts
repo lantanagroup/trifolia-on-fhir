@@ -18,9 +18,10 @@ export class FhirHumanNameComponent implements OnInit {
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
 
+    public Globals = Globals;
+
     constructor(
-        public modalService: NgbModal,
-        public globals: Globals) {
+        public modalService: NgbModal) {
     }
 
     get humanNameGiven(): string {

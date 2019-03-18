@@ -9,11 +9,11 @@ import {Globals} from '../../../globals';
     styleUrls: ['./context-panel-r4.component.css']
 })
 export class ContextPanelR4Component implements OnInit, IContextPanelComponent {
+    @Input() public structureDefinition: StructureDefinition;
 
-    @Input()
-    public structureDefinition: StructureDefinition;
+    public Globals = Globals;
 
-    constructor(public globals: Globals) {
+    constructor() {
     }
 
     ngOnInit() {

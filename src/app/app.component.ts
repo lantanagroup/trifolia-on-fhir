@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
         public configService: ConfigService,
         public recentItemService: RecentItemService,
         public fhirService: FhirService,
-        public globals: Globals,
         private modalService: NgbModal,
         private fileService: FileService,
         private router: Router,
@@ -87,10 +86,10 @@ export class AppComponent implements OnInit {
     }
 
     public supportButtonClicked() {
-        const confirmedCookie = this.cookieService.get(this.globals.cookieKeys.atlassianAccountConfirmed);
+        const confirmedCookie = this.cookieService.get(Globals.cookieKeys.atlassianAccountConfirmed);
 
-        if (confirmedCookie || confirm(this.globals.tooltips['support.button.clicked'])) {
-            this.cookieService.put(this.globals.cookieKeys.atlassianAccountConfirmed, 'true');
+        if (confirmedCookie || confirm(Globals.tooltips['support.button.clicked'])) {
+            this.cookieService.put(Globals.cookieKeys.atlassianAccountConfirmed, 'true');
             window.open(this.configService.config.supportUrl, 'tof-support');
         }
     }

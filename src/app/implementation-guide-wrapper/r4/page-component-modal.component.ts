@@ -22,7 +22,7 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     public get autoGenerate(): boolean {
-        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
+        const autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (autoGenerateExtension) {
             return autoGenerateExtension.valueBoolean === true;
@@ -36,11 +36,11 @@ export class PageComponentModalComponent implements OnInit {
             this.page.extension = [];
         }
 
-        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === this.globals.extensionUrls['extension-ig-page-auto-generate-toc']);
+        let autoGenerateExtension = _.find(this.page.extension, (extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
 
         if (!autoGenerateExtension) {
             autoGenerateExtension = {
-                url: this.globals.extensionUrls['extension-ig-page-auto-generate-toc'],
+                url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
                 valueBoolean: false
             };
             this.page.extension.push(autoGenerateExtension);
@@ -111,7 +111,7 @@ export class PageComponentModalComponent implements OnInit {
             }
 
             const newBinary = new Binary();
-            newBinary.id = this.globals.generateRandomNumber(5000, 10000).toString();
+            newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
             newBinary.contentType = file.type;
             newBinary.data = result.substring(5 + file.type.length + 8);
             this.implementationGuide.contained.push(newBinary);

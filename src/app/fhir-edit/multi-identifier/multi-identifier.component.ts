@@ -16,10 +16,11 @@ export class FhirMultiIdentifierComponent implements OnInit {
     @Input() title: string;
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
-    public tooltip: string;
 
-    constructor(public globals: Globals,
-                private modalService: NgbModal,
+    public tooltip: string;
+    public Globals = Globals;
+
+    constructor(private modalService: NgbModal,
                 private fhirService: FhirService) {
 
     }
@@ -31,7 +32,7 @@ export class FhirMultiIdentifierComponent implements OnInit {
 
     ngOnInit() {
         if (this.tooltipKey) {
-            this.tooltip = this.globals.tooltips[this.tooltipKey];
+            this.tooltip = Globals.tooltips[this.tooltipKey];
         } else if (this.tooltipPath) {
             this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
         }

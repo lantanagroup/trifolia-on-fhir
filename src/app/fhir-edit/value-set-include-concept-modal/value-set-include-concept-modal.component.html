@@ -11,7 +11,7 @@
 
     <div class="card">
         <div class="card-header">
-            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="globals.toggleProperty(concept, 'designation', [{ value: '' }])"/>
+            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="Globals.toggleProperty(concept, 'designation', [{ value: '' }])"/>
             Designations
         </div>
         <table class="table table-striped" *ngIf="concept.hasOwnProperty('designation')">
@@ -42,7 +42,7 @@
                 </td>
                 <td>
                     <div class="pull-right">
-                        <button type="button" class="btn btn-default" title="Remove this designation" (click)="globals.promptForRemove(concept.designation, di)">
+                        <button type="button" class="btn btn-default" title="Remove this designation" (click)="Globals.promptForRemove(concept.designation, di)">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
