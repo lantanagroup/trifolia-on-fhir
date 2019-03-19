@@ -1,5 +1,7 @@
 # Trifolia-on-FHIR
 
+[![Build Status](https://travis-ci.org/lantanagroup/trifolia-on-fhir.svg?branch=master)](https://travis-ci.org/lantanagroup/trifolia-on-fhir)
+
 ## Running
 1. Run npm install
 2. Modify configuration to specify server port and authentication
