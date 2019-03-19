@@ -12,6 +12,7 @@ import {ConfigService} from '../services/config.service';
 import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 import {FileOpenModalComponent} from '../file-open-modal/file-open-modal.component';
 import {FileModel} from '../models/file-model';
+import {ClientHelper} from '../clientHelper';
 
 @Component({
     selector: 'app-valueset',
@@ -24,6 +25,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     public validation: any;
     public vsNotFound = false;
     public Globals = Globals;
+    public ClientHelper = ClientHelper;
 
     private navSubscription: any;
 

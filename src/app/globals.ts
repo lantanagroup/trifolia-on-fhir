@@ -232,13 +232,6 @@ export class Globals {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    static promptForRemove(array: any[], index: number, message = 'Are you sure you want to remove this item?', event = null) {
-        if (confirm(message)) {
-            array.splice(index, 1);
-            event.preventDefault();
-        }
-    }
-
     static getShortString(theString: string, pre: boolean = true, length: number = 20): string {
         if (theString && theString.length > length) {
             if (pre) {

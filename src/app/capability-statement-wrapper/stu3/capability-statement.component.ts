@@ -11,6 +11,7 @@ import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ConfigService} from '../../services/config.service';
 import {FileService} from '../../services/file.service';
+import {ClientHelper} from '../../clientHelper';
 
 @Component({
     selector: 'app-stu3-capability-statement',
@@ -26,6 +27,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     public messageTransportCodes: Coding[] = [];
     public csNotFound = false;
     public Globals = Globals;
+    public ClientHelper = ClientHelper;
 
     private navSubscription: any;
 

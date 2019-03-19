@@ -203,7 +203,7 @@
                     <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
                         <ng-template ngbTabTitle>
                             <span title="{{p.name}}">#{{pi+1}}</span>
-                            <i class="fas fa-trash-alt" title="Remove this package" (click)="Globals.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this package" (click)="ClientHelper.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <div class="form-group">
@@ -267,7 +267,7 @@
                                             <button type="button" class="btn btn-default" (click)="editPackageResourceModal(r, packageResourceModal)" title="Edit additional properties for this package resource">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1" (click)="Globals.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
+                                            <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1" (click)="ClientHelper.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>

@@ -133,7 +133,7 @@
                     <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
                         <ng-template ngbTabTitle>
                             Include {{ii+1}}
-                            <i class="fas fa-trash-alt" title="Remove this include" (click)="Globals.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this include" (click)="ClientHelper.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <app-valueset-include-panel [include]="include"></app-valueset-include-panel>
@@ -155,7 +155,7 @@
                     <ngb-tab *ngFor="let exclude of valueSet.compose.exclude; let ei = index" id="exclude-{{ei}}">
                         <ng-template ngbTabTitle>
                             Exclude {{ei+1}}
-                            <i class="fas fa-trash-alt" title="Remove this exclude" (click)="Globals.promptForRemove(valueSet.compose.exclude, ei, 'Are you sure you want to remove this item?', $event)"></i>
+                            <i class="fas fa-trash-alt" title="Remove this exclude" (click)="ClientHelper.promptForRemove(valueSet.compose.exclude, ei, 'Are you sure you want to remove this item?', $event)"></i>
                         </ng-template>
                         <ng-template ngbTabContent>
                             <app-valueset-include-panel [include]="exclude"></app-valueset-include-panel>

@@ -253,7 +253,7 @@
                 <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
                     <ng-template ngbTabTitle>
                         <span>REST {{ri + 1}} </span>
-                        <i class="fas fa-trash-alt" title="Remove this REST entry" (click)="Globals.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this REST entry" (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode" valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode" [required]="true" tooltipPath="CapabilityStatement.rest.mode"></app-fhir-select-single-code>
@@ -555,7 +555,7 @@
                 <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
                     <ng-template ngbTabTitle>
                         <span>Messaging {{mi+1}} </span>
-                        <i class="fas fa-trash-alt" title="Remove this messaging entry" (click)="Globals.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
+                        <i class="fas fa-trash-alt" title="Remove this messaging entry" (click)="ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
                     </ng-template>
                     <ng-template ngbTabContent>
                         <!-- Endpoints -->

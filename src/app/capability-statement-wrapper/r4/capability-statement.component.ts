@@ -11,6 +11,7 @@ import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/cap
 import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {FileService} from '../../services/file.service';
 import {ConfigService} from '../../services/config.service';
+import {ClientHelper} from '../../clientHelper';
 
 @Component({
     selector: 'app-r4-capability-statement',
@@ -26,6 +27,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
     public messageTransportCodes: Coding[] = [];
     public csNotFound = false;
     public Globals = Globals;
+    public ClientHelper = ClientHelper;
 
     private navSubscription: any;
 

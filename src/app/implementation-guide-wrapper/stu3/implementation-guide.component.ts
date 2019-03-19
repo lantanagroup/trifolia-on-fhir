@@ -24,6 +24,7 @@ import {
     FhirReferenceModalComponent,
     ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
+import {ClientHelper} from '../../clientHelper';
 
 class PageDefinition {
     public page: PageComponent;
@@ -54,6 +55,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     public resourceTypeCodes: Coding[] = [];
     public igNotFound = false;
     public Globals = Globals;
+    public ClientHelper = ClientHelper;
 
     private navSubscription: any;
     private resources: ImplementationGuideResource[] = [];

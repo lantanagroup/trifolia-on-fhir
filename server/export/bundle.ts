@@ -12,6 +12,7 @@ import * as config from 'config';
 import {Fhir as FhirModel, FhirConfig} from '../controllers/models';
 import {Globals} from '../../src/app/globals';
 import Extension = FhirModel.Extension;
+import DomainResource = FhirModel.DomainResource;
 
 export class BundleExporter {
     readonly log = log4js.getLogger();
@@ -44,7 +45,7 @@ export class BundleExporter {
                 object = JSON.parse(JSON.stringify(object));
             }
 
-            const extensionUrls = _.map(new Globals().extensionUrls, (extUrl) => extUrl);
+            const extensionUrls = _.map(Globals.extensionUrls, (extUrl) => extUrl);
             const keys = _.allKeys(object);
 
             // Convert page.nameReference to page.nameTitle
@@ -61,7 +62,7 @@ export class BundleExporter {
                 fixPage(object.definition.page);
 
                 // Remove any contained binary resources. The IG publisher produces errors when there is a contained binary resource on the IG.
-                const containedBinary = _.filter(object.contained, (contained) => contained.resourceType === 'Binary');
+                const containedBinary = _.filter(object.contained, (contained: DomainResource) => contained.resourceType === 'Binary');
                 _.each(containedBinary, (contained) => {
                     const index = object.contained.indexOf(contained);
                     object.contained.splice(index, 1);

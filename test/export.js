@@ -1,6 +1,6 @@
 const assert = require('assert');
 const FhirHelper = require('../server/fhirHelper');
-const HtmlExporter = require('../server/export/html');
+const {HtmlExporter} = require('../server/export/html');
 const {BundleExporter} = require('../server/export/bundle');
 const {Fhir, Versions, ParseConformance} = require('fhir');
 const Q = require('q');
@@ -62,7 +62,7 @@ describe('export', () => {
             });
 
             it('should create a JSON bundle export for "test" ig', (done) => {
-                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', getFhirR4Instance(), 'test');
+                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', 'r4', getFhirR4Instance(), 'test');
                 exporter.fhirConfig.servers.push({
                     id: 'fhirserver1',
                     version: 'r4',
@@ -97,7 +97,7 @@ describe('export', () => {
             });
 
             it('should create a XML bundle export for "test" ig', (done) => {
-                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', getFhirR4Instance(), 'test');
+                const exporter = new BundleExporter('http://test.com/fhir', 'fhirserver1', 'r4', getFhirR4Instance(), 'test');
                 exporter.fhirConfig.servers.push({
                     id: 'fhirserver1',
                     version: 'r4',
@@ -120,7 +120,7 @@ describe('export', () => {
 
     describe('stu3', () => {
         describe('html', () => {
-            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', getFhirStu3Instance(), null, null, 'CCDA-on-FHIR');
+            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', 'stu3', getFhirStu3Instance(), null, null, 'CCDA-on-FHIR');
 
             beforeEach(() => {
                 nock('http://test.com')
@@ -139,7 +139,7 @@ describe('export', () => {
                     fs.ensureDirSync(path.join(rootPath, 'source/pages/'));
                     fs.writeFileSync(tocPath, '# Table of Contents\n\n');
 
-                    exporter._writeStu3Pages(rootPath, implementationGuide);
+                    exporter.writeStu3Pages(rootPath, implementationGuide);
 
                     const page1Path = path.join(rootPath, 'source/pages/page1.md');
                     const page2Path = path.join(rootPath, 'source/pages/page2.md');
@@ -183,7 +183,7 @@ describe('export', () => {
                     fs.ensureDirSync(path.join(rootPath, 'source/pages/'));
                     fs.writeFileSync(tocPath, '# Table of Contents\n\n');
 
-                    exporter._writeStu3Pages(rootPath, implementationGuide);
+                    exporter.writeStu3Pages(rootPath, implementationGuide);
 
                     const tocContent = fs.readFileSync(tocPath).toString();
                     assert.equal(tocContent, '# Table of Contents\n\nthis is the table of contents');
@@ -199,7 +199,7 @@ describe('export', () => {
 
     describe('r4', () => {
         describe('html', () => {
-            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', getFhirR4Instance(), null, null, 'CCDA-on-FHIR');
+            const exporter = new HtmlExporter('http://test.com/', 'fhirserver1', 'r4', getFhirR4Instance(), null, null, 'CCDA-on-FHIR');
 
             beforeEach(() => {
                 nock('http://test.com')
@@ -218,7 +218,7 @@ describe('export', () => {
                     fs.ensureDirSync(path.join(rootPath, 'source/pages/'));
                     fs.writeFileSync(tocPath, '# Table of Contents\n\n');
 
-                    exporter._writeR4Pages(rootPath, implementationGuide);
+                    exporter.writeR4Pages(rootPath, implementationGuide);
 
                     const page1Path = path.join(rootPath, 'source/pages/Some_page_1.md');
                     const page2Path = path.join(rootPath, 'source/pages/Some_page_2.md');
@@ -262,7 +262,7 @@ describe('export', () => {
                     fs.ensureDirSync(path.join(rootPath, 'source/pages/'));
                     fs.writeFileSync(tocPath, '# Table of Contents\n\n');
 
-                    exporter._writeR4Pages(rootPath, implementationGuide);
+                    exporter.writeR4Pages(rootPath, implementationGuide);
 
                     const tocContent = fs.readFileSync(tocPath).toString();
                     assert.equal(tocContent, '# Table of Contents\n\nthis is the table of contents');
