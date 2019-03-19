@@ -205,6 +205,12 @@ pre del {
     background: #ffbbbb;
 }
 
+@media (min-width: 992px) {
+    .modal-lg {
+        max-width: 80%;
+    }
+}
+
 /*** BEGIN INTRO.JS STYLES ***/
 .introjs-overlay {
     position: absolute;
