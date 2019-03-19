@@ -33,6 +33,10 @@
                     </div>
 
                     <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
                         <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
                     </div>
 
@@ -213,7 +217,16 @@
                         <div class="col-md-8">
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="implementationGuide" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="ImplementationGuide.name"></app-fhir-string>
+                            <app-fhir-string
+                                    [parentObject]="implementationGuide"
+                                    [required]="true"
+                                    (change)="nameChanged()"
+                                    pattern="^[A-Z][A-Za-z0-9_]+$"
+                                    patternMessage="Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter."
+                                    propertyName="name"
+                                    title="Name"
+                                    tooltipPath="ImplementationGuide.name">
+                            </app-fhir-string>
 
                             <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
 

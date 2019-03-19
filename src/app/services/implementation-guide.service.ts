@@ -38,11 +38,15 @@ export class ImplementationGuideService {
         return this.http.get<PublishedGuideModel[]>('/api/implementationGuide/published');
     }
 
-    public getImplementationGuides(page = 1, name?: string) {
+    public getImplementationGuides(page = 1, name?: string, title?: string) {
         let url = '/api/implementationGuide?page=' + page + '&';
 
         if (name) {
             url += 'name=' + encodeURIComponent(name) + '&';
+        }
+
+        if (title) {
+            url += 'title=' + encodeURIComponent(title) + '&';
         }
 
         return this.http.get<Bundle>(url);

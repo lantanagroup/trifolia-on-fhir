@@ -17,6 +17,7 @@ export class ImplementationGuidesComponent implements OnInit {
     public results: Bundle = null;
     public page = 1;
     public nameText: string;
+    public titleText: string;
     public criteriaChangedEvent = new Subject();
 
     constructor(
@@ -33,15 +34,16 @@ export class ImplementationGuidesComponent implements OnInit {
 
     public clearFilters() {
         this.nameText = null;
+        this.titleText = null;
         this.page = 1;
-        this.criteriaChanged();
+        this.criteriaChangedEvent.next();
     }
 
     public getImplementationGuides() {
         this.results = null;
         this.configService.setStatusMessage('Loading implementation guides');
 
-        this.igService.getImplementationGuides(this.page, this.nameText)
+        this.igService.getImplementationGuides(this.page, this.nameText, this.titleText)
             .subscribe((res: Bundle) => {
                 this.results = res;
                 this.configService.setStatusMessage('');
@@ -85,10 +87,12 @@ export class ImplementationGuidesComponent implements OnInit {
     public nameTextChanged(value: string) {
         this.nameText = value;
         this.page = 1;
-        this.criteriaChanged();
+        this.criteriaChangedEvent.next();
     }
 
-    public criteriaChanged() {
+    public titleTextChanged(value: string) {
+        this.titleText = value;
+        this.page = 1;
         this.criteriaChangedEvent.next();
     }
 

@@ -3,6 +3,7 @@
 
 <div class="input-group">
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+    <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
             <i class="fa fa-times"></i>
@@ -15,13 +16,14 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center" *ngIf="results && results.total > 0" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+<ngb-pagination class="d-flex justify-content-center" *ngIf="results && results.total > 0" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
 
 <table class="table table-striped" *ngIf="results">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Title</th>
         <th class="actions-column-4">
             <div class="pull-right">
                 <button type="button" class="btn btn-default" routerLink="/implementation-guide/new" title="Create a new implementation guide">
@@ -35,6 +37,7 @@
     <tr *ngFor="let ig of implementationGuides">
         <td>{{ig.id}}</td>
         <td>{{ig.name}}</td>
+        <td>{{ig.title}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}" title="Edit this resource"><i class="fa fa-edit"></i></a>
@@ -51,7 +54,7 @@
     </tr>
     <tr *ngIf="results && results.total > 0">
         <td colspan="3">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

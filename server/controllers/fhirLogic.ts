@@ -101,6 +101,11 @@ export class FhirLogic extends BaseController {
                 delete preparedQuery.name;
             }
 
+            if (preparedQuery.title) {
+                preparedQuery['title:contains'] = preparedQuery.title;
+                delete preparedQuery.title;
+            }
+
             if (preparedQuery.urlText) {
                 preparedQuery.url = preparedQuery.urlText;
                 delete preparedQuery.urlText;
