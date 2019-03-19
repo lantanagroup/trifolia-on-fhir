@@ -5,9 +5,9 @@
   "scripts": {
     "dist": "./node_modules/.bin/gulp",
     "build:server": "./node_modules/.bin/tsc --project ./server/tsconfig.json --resolveJsonModule",
-    "build:client": "./node_modules/.bin/ng build",
-    "e2e": "./node_modules/ng e2e",
-    "test": "./node_modules/ng test"
+    "build:client": "./node_modules/.bin/ng build --prod",
+    "e2e": "./node_modules/.bin/ng e2e",
+    "test": "./node_modules/.bin/ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {
