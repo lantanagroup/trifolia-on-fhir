@@ -36,23 +36,27 @@ export class StructureDefinitionService {
         private fhirService: FhirService,
         private fileService: FileService) { }
 
-    public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string): Observable<Bundle> {
+    public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string, titleText?: string): Observable<Bundle> {
         let url = '/api/structureDefinition?';
 
         if (page) {
-            url += 'page=' + page.toString() + '&';
+            url += `page=${page.toString()}&`;
         }
 
         if (nameText) {
-            url += 'name=' + encodeURIComponent(nameText) + '&';
+            url += `name=${encodeURIComponent(nameText)}&`;
         }
 
         if (urlText) {
-            url += 'urlText=' + encodeURIComponent(urlText) + '&';
+            url += `urlText=${encodeURIComponent(urlText)}&`;
         }
 
         if (implementationGuideId) {
-            url += 'implementationGuideId=' + encodeURIComponent(implementationGuideId) + '&';
+            url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+        }
+
+        if (titleText) {
+            url += `title=${encodeURIComponent(titleText)}&`;
         }
 
         return this.http.get<Bundle>(url);

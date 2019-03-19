@@ -23,6 +23,22 @@ export abstract class CustomValidator {
 
         return messages;
     }
+    
+    private validateGenericStructureDefinition(structureDefinition: any): ValidatorMessage[] {
+        const messages: ValidatorMessage[] = [];
+        const nameRegex = /^[A-Z][A-Za-z0-9_]+$/g;
+
+        if (structureDefinition.name && !nameRegex.test(structureDefinition.name)) {
+            messages.push({
+                severity: Severities.Error,
+                location: 'StructureDefinition.name',
+                resourceId: structureDefinition.id,
+                message: 'Name should be usable as an identifier for the module by machine processing applications such as code generation. name.matches(\'[A-Z]([A-Za-z0-9_]){0,254}\')'
+            });
+        }
+
+        return messages;    
+    }
 
     public validateResource(resource: any): ValidatorMessage[] {
         if (!resource) {
@@ -31,6 +47,8 @@ export abstract class CustomValidator {
 
         if (resource.resourceType === 'ImplementationGuide') {
             return this.validateGenerateImplementationGuide(resource);
+        } else if (resource.resourceType === 'StructureDefinition') {
+            return this.validateGenericStructureDefinition(resource);
         }
     }
 

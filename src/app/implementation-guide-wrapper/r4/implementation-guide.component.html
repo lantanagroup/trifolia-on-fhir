@@ -37,6 +37,10 @@
                     </div>
 
                     <div class="col-md-6">
+                        <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
+                    </div>
+
+                    <div class="col-md-6">
                         <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
                     </div>
 
@@ -264,8 +268,6 @@
                 <app-fhir-narrative [resource]="implementationGuide"></app-fhir-narrative>
 
                 <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
-
-                <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
 
                 <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
             </ng-template>

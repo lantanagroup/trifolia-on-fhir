@@ -21,9 +21,11 @@ export class StructureDefinitionsComponent implements OnInit {
     public page = 1;
     public nameText: string;
     public urlText: string;
+    public titleText: string;
     public criteriaChangedEvent = new Subject();
     public implementationGuidesBundle: Bundle;
     public implementationGuideId: string = null;
+    public showMoreSearch = false;
 
     constructor(
         private fhirService: FhirService,
@@ -83,20 +85,32 @@ export class StructureDefinitionsComponent implements OnInit {
         });
     }
 
-    public criteriaChanged() {
-        this.criteriaChangedEvent.next();
-    }
-
     public nameTextChanged(value: string) {
         this.nameText = value;
         this.page = 1;
-        this.criteriaChanged();
+        this.criteriaChangedEvent.next();
     }
 
     public urlTextChanged(value: string) {
         this.urlText = value;
         this.page = 1;
-        this.criteriaChanged();
+        this.criteriaChangedEvent.next();
+    }
+
+    public titleTextChanged(value: string) {
+        this.titleText = value;
+        this.page = 1;
+        this.criteriaChangedEvent.next();
+    }
+
+    public toggleSearchOptions() {
+        this.showMoreSearch = !this.showMoreSearch;
+
+        if (!this.showMoreSearch && (this.titleText || this.urlText)) {
+            this.nameText = null;
+            this.urlText = null;
+            this.criteriaChangedEvent.next();
+        }
     }
 
     public clearFilters() {
@@ -104,7 +118,7 @@ export class StructureDefinitionsComponent implements OnInit {
         this.urlText = null;
         this.implementationGuideId = null;
         this.page = 1;
-        this.criteriaChanged();
+        this.criteriaChangedEvent.next();
     }
 
     public getStructureDefinitions() {
