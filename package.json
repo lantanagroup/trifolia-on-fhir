@@ -5,7 +5,7 @@
   "scripts": {
     "dist": "./node_modules/.bin/gulp",
     "build:server": "./node_modules/.bin/tsc --project ./server/tsconfig.json --resolveJsonModule",
-    "build:client": "./node_modules/.bin/ng build --prod",
+    "build:client": "node --max_old_space_size=8192 ./node_modules/.bin/ng build --prod",
     "e2e": "./node_modules/.bin/ng e2e",
     "test": "./node_modules/.bin/ng test --watch=false --browsers=ChromeHeadless"
   },
