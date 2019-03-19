@@ -5,10 +5,14 @@
     </label>
 
     <input type="text" class="form-control"
-           [(ngModel)]="value"
-           [class.is-invalid]="required && !parentObject[propertyName]"
+           #formGroupModel="ngModel"
            placeholder="{{placeholder}}"
-           (change)="onChanged()" />
+           [pattern]="pattern"
+           [(ngModel)]="value"
+           (change)="onChanged()"
+           [class.is-invalid]="!isValid" />
+
+    <span class="help-block" *ngIf="value && patternMessage && formGroupModel.errors?.pattern">{{patternMessage}}</span>
 </div>
 <div [class.input-group]="title" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="title">
@@ -16,8 +20,12 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
     <input type="text" class="form-control"
-           [(ngModel)]="value"
-           [class.is-invalid]="required && !parentObject[propertyName]"
+           #model="ngModel"
            placeholder="{{placeholder}}"
-           (change)="onChanged()" />
+           [pattern]="pattern"
+           [(ngModel)]="value"
+           (change)="onChanged()"
+           [class.is-invalid]="!isValid" />
+
+    <span class="help-block" *ngIf="value && patternMessage && model.errors?.pattern">{{patternMessage}}</span>
 </div>

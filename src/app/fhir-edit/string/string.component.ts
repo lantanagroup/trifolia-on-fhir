@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CookieService} from 'angular2-cookie/core';
+import {NgModel} from '@angular/forms';
 
 @Component({
     selector: 'app-fhir-string',
@@ -17,6 +18,14 @@ export class FhirStringComponent implements OnInit {
     @Input() tooltipPath: string;
     @Input() placeholder: string;
     @Input() disabled: boolean;
+    @Input() pattern: string | RegExp;
+    @Input() patternMessage: string;
+
+    @ViewChild('formGroupModel')
+    private formGroupModel: NgModel;
+
+    @ViewChild('model')
+    private model: NgModel;
 
     /**
      * Indicates that the value of the component should be remembered in cookies
@@ -35,6 +44,20 @@ export class FhirStringComponent implements OnInit {
         }
 
         return this.parentObject[this.propertyName];
+    }
+
+    public get isValid() {
+        if (this.required && !this.value) {
+            return false;
+        }
+
+        if (this.isFormGroup && this.formGroupModel && this.formGroupModel.invalid) {
+            return false;
+        } else if (!this.isFormGroup && this.model && this.model.invalid) {
+            return false;
+        }
+
+        return true;
     }
 
     public set value(newValue: string) {

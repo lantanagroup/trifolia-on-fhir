@@ -450,10 +450,14 @@ export class FhirService {
             return;
         }
 
+        let additionalMessages = this.customValidator.validateResource(resource) || [];
+
         switch (resource.resourceType) {
             case 'ImplementationGuide':
-                return this.customValidator.validateImplementationGuide(resource);
-            // TODO: add more custom logic per each resource
+                additionalMessages = additionalMessages.concat(
+                    this.customValidator.validateImplementationGuide(resource));
         }
+
+        return additionalMessages;
     }
 }
