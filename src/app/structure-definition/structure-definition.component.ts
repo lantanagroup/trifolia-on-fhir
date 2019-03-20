@@ -246,14 +246,12 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     public constrainElement(elementTreeModel: ElementTreeModel, event?: any) {
-        const parentSliceName = elementTreeModel.parent.constrainedElement.sliceName;
+        const leafElementName = elementTreeModel.baseElement.id.substring(elementTreeModel.baseElement.id.lastIndexOf('.') + 1);
         const constrainedElement = new ElementDefinition();
-        constrainedElement.id = elementTreeModel.baseElement.path;
+        constrainedElement.id = elementTreeModel.parent ?
+            `${elementTreeModel.parent.id}.${leafElementName}` :
+            elementTreeModel.baseElement.path;
         constrainedElement.path = elementTreeModel.baseElement.path;
-
-        if (parentSliceName) {
-            constrainedElement.id += ':' + parentSliceName;
-        }
 
         // Set the constrainedElement on the treeModel
         elementTreeModel.constrainedElement = constrainedElement;
