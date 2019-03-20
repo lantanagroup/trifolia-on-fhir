@@ -24,8 +24,8 @@
                                 [parentObject]="implementationGuide"
                                 [required]="true"
                                 (change)="nameChanged()"
-                                pattern="^[A-Z][A-Za-z0-9_]+$"
-                                patternMessage="Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter."
+                                [pattern]="Globals.regexPatterns.namePattern"
+                                [patternMessage]="Globals.tooltips['name.validation.failed']"
                                 propertyName="name"
                                 title="Name"
                                 tooltipPath="ImplementationGuide.name">
