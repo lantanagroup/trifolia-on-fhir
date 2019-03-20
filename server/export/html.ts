@@ -441,8 +441,15 @@ export class HtmlExporter {
             resources: {}
         };
 
-        if (version) {
+
+        if (implementationGuide.fhirVersion) {
+            control.version = implementationGuide.fhirVersion;
+        } else if (version) {                       // Use the version of the FHIR server the resources are coming from
             control.version = version;
+        }
+
+        if (implementationGuide.version) {
+            control['fixed-business-version'] = implementationGuide.version;
         }
 
         // Set the dependencyList based on the extensions in the IG
@@ -559,12 +566,14 @@ export class HtmlExporter {
             resources: {}
         };
 
-        if (version) {
+        if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
+            control.version = implementationGuide.fhirVersion[0];
+        } else if (version) {                       // Use the version of the FHIR server the resources are coming from
             control.version = version;
         }
 
-        if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
-            control['fixed-business-version'] = implementationGuide.fhirVersion[0];
+        if (implementationGuide.version) {
+            control['fixed-business-version'] = implementationGuide.version;
         }
 
         control.dependencyList = _.chain(implementationGuide.dependsOn)
@@ -613,7 +622,7 @@ export class HtmlExporter {
             const reference = contentExtension.valueReference.reference;
 
             if (reference.startsWith('#')) {
-                const contained = _.find(implementationGuide.contained, (contained) => contained.id === reference.substring(1));
+                const contained = _.find(implementationGuide.contained, (next: DomainResource) => next.id === reference.substring(1));
                 const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary> contained : undefined;
 
                 if (binary) {
