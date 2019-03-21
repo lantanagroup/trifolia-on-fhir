@@ -800,6 +800,8 @@ export class HtmlExporter {
             let control;
             let implementationGuideResource;
 
+            this.log.info(`Starting export of HTML package. Home directory is ${homedir}`);
+
             tmp.dir((tmpDirErr, rootPath) => {
                 if (tmpDirErr) {
                     this.log.error(tmpDirErr);
