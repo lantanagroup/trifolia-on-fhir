@@ -23,6 +23,7 @@ import {FhirPeriodComponent} from '../../fhir-edit/period/period.component';
 import {FhirRangeComponent} from '../../fhir-edit/range/range.component';
 import {FhirRatioComponent} from '../../fhir-edit/ratio/ratio.component';
 import {CookieService} from 'angular2-cookie/core';
+import {BindingPanelComponent} from './binding-panel/binding-panel.component';
 
 describe('ElementDefinitionPanelComponent', () => {
     let component: ElementDefinitionPanelComponent;
@@ -46,7 +47,8 @@ describe('ElementDefinitionPanelComponent', () => {
                 FhirHumanNameComponent,
                 FhirPeriodComponent,
                 FhirRangeComponent,
-                FhirRatioComponent
+                FhirRatioComponent,
+                BindingPanelComponent
             ],
             imports: [
                 BrowserModule,

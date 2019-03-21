@@ -43,6 +43,7 @@ import {ResourceHistoryComponent} from '../resource-history/resource-history.com
 import {NarrativeComponent} from '../fhir-edit/narrative/narrative.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import {BindingPanelComponent} from './element-definition-panel/binding-panel/binding-panel.component';
 
 describe('StructureDefinitionComponent', () => {
     let component: StructureDefinitionComponent;
@@ -80,7 +81,8 @@ describe('StructureDefinitionComponent', () => {
                 FhirRangeComponent,
                 ContextPanelWrapperComponent,
                 ResourceHistoryComponent,
-                NarrativeComponent
+                NarrativeComponent,
+                BindingPanelComponent
             ],
             imports: [
                 DiffMatchPatchModule,

@@ -12,7 +12,6 @@ import {
 } from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import {FhirService} from '../../services/fhir.service';
-import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../services/config.service';
 import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
@@ -30,14 +29,13 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     public editingSliceName: boolean;
     public editedSliceName: string;
-    public valueSetChoices = ['Uri', 'Reference'];
     public definedTypeCodes: Coding[] = [];
     public Globals = Globals;
 
     constructor(
         private modalService: NgbModal,
         private fhirService: FhirService,
-        private configService: ConfigService) {
+        public configService: ConfigService) {
 
     }
 
@@ -106,26 +104,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
         }
     }
 
-    setValueSetChoice(elementBinding: any, choice: string) {
-        const foundChoice = Globals.getChoiceProperty(elementBinding, 'valueSet', ['Uri', 'Reference']);
-
-        if (foundChoice !== choice) {
-            delete elementBinding['valueSet' + foundChoice];
-        }
-
-        switch (choice) {
-            case 'Uri':
-                elementBinding['valueSetUri'] = '';
-                break;
-            case 'Reference':
-                elementBinding['valueSetReference'] = {
-                    reference: '',
-                    display: ''
-                };
-                break;
-        }
-    }
-
     private getTypes(): Coding[] {
         const baseTypes = this.elementTreeModel.baseElement.type;
         const elementTreeModelTypes = this.element.type ? this.element.type : [];
@@ -150,10 +128,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     addType() {
         this.element.type.push({code: this.getDefaultType()});
-    }
-
-    getDefaultBinding(): ElementDefinitionBindingComponent {
-        return new ElementDefinitionBindingComponent({strength: 'required'});
     }
 
     ngOnInit() {

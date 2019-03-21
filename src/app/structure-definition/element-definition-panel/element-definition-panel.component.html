@@ -353,50 +353,7 @@
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
             </ng-template>
             <ng-template ngbTabContent>
-                <div class="card">
-                    <div class="card-header">
-                        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(element, 'binding', getDefaultBinding())"/>
-                        Binding
-                        <app-tooltip-icon tooltipPath="ElementDefinition.binding"></app-tooltip-icon>
-                    </div>
-                    <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
-                        <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength"
-                                                     valueSetUrl="http://hl7.org/fhir/ValueSet/binding-strength"
-                                                     title="Strength" tooltipPath="ElementDefinition.binding.strength"
-                                                     [required]="true"></app-fhir-select-single-code>
-
-                        <app-fhir-string [parentObject]="element.binding" propertyName="description" title="Description" tooltipPath="ElementDefinition.binding.description"></app-fhir-string>
-
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox"
-                                       [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                                       (ngModelChange)="Globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, '')"/>
-                                Value Set
-                                <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
-                            </label>
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <select class="form-control"
-                                            [disabled]="!Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                                            [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                                            (ngModelChange)="setValueSetChoice(element.binding, $event)">
-                                        <option value="Uri">URI</option>
-                                        <option value="Reference">Reference</option>
-                                    </select>
-                                    <input type="text" class="form-control"
-                                           *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
-                                           [(ngModel)]="element.binding.valueSetUri"/>
-                                    <app-fhir-reference
-                                            *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
-                                            [parentObject]="element.binding"
-                                            propertyName="valueSetReference"
-                                            resourceType="ValueSet"></app-fhir-reference>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <app-element-definition-binding [element]="element"></app-element-definition-binding>
 
                 <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed" tooltipPath="ElementDefinition.fixed[x]"></app-fhir-choice>
 

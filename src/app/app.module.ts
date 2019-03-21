@@ -131,7 +131,8 @@ import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {PublishComponent} from './publish/publish.component';
 import {NarrativeComponent} from './fhir-edit/narrative/narrative.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
-import { IncludePanelComponent } from './valueset/include-panel/include-panel.component';
+import {IncludePanelComponent} from './valueset/include-panel/include-panel.component';
+import {BindingPanelComponent} from './structure-definition/element-definition-panel/binding-panel/binding-panel.component';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -251,7 +252,7 @@ export function getConfig(configService: ConfigService) {
         PublishedIgSelectModalComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
         MappingModalComponent, SettingsModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent,
         FhirEditNumberComponent, AdminMessageModalComponent, ResourceHistoryComponent, ContextPanelWrapperComponent,
-        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent, NarrativeComponent, IncludePanelComponent
+        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent, NarrativeComponent, IncludePanelComponent, BindingPanelComponent
     ],
     imports: [
         RouterModule.forRoot(
