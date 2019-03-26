@@ -1,7 +1,7 @@
 <h1>Value Sets</h1>
 <app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
-<div class="input-group">
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
     <input type="text" class="form-control" [ngModel]="idText" (ngModelChange)="idTextChanged($event)" placeholder="Search ID" />
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete URL" />
@@ -17,13 +17,15 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center" *ngIf="results && results.total > 0"
-                [maxSize]="5"
-                [collectionSize]="results.total"
-                [(page)]="page"
-                [pageSize]="8"
-                [boundaryLinks]="true"
-                (pageChange)="criteriaChanged()"></ngb-pagination>
+<div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+    <ngb-pagination class="d-flex justify-content-center"
+                    [maxSize]="5"
+                    [collectionSize]="results.total"
+                    [(page)]="page"
+                    [pageSize]="8"
+                    [boundaryLinks]="true"
+                    (pageChange)="criteriaChanged()"></ngb-pagination>
+</div>
 
 <table class="table table-striped" *ngIf="results">
     <thead>
@@ -33,14 +35,14 @@
         <th>URL</th>
         <th class="actions-column-4">
             <div class="pull-right">
-                <button type="button" class="btn btn-default" routerLink="/value-set/new" title="Create a new value set">
+                <button type="button" class="btn btn-default" routerLink="/value-set/new" title="Create a new value set" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
         </th>
     </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let vs of valueSets">
         <td>{{vs.id}}</td>
         <td>{{vs.name}}</td>
@@ -57,6 +59,29 @@
                     <i class="fas fa-trash-alt"></i>
                 </button>
                 <button type="button" class="btn btn-default" (click)="changeId(vs)" title="Change this value set's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="configService.showingIntroduction">
+    <tr>
+        <td>DEMO-ID</td>
+        <td>Demo Name</td>
+        <td>http://some.url/for/the/valueset</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" href="#" title="Edit this value set" [attr.data-intro]="Globals.introText['browse.edit']">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-default" href="#" title="Expand this value set" [attr.data-intro]="Globals.introText['browse.vs.expand']">
+                    <i class="fa fa-expand"></i>
+                </a>
+                <button type="button" class="btn btn-default" title="Remove this value set" [attr.data-intro]="Globals.introText['browse.remove']">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-default" title="Change this value set's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>

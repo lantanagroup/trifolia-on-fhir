@@ -4,7 +4,7 @@
     "outDir": "../wwwroot/app",
     "baseUrl": "./",
     "module": "es2015",
-    "types": []
+    "types": ["intro.js"]
   },
   "exclude": [
     "test.ts",

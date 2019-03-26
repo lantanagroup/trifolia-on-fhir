@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
 import {Bundle, OperationDefinition} from '../models/stu3/fhir';
-import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
+import {Globals} from '../globals';
 import 'rxjs/add/operator/debounceTime';
+import * as _ from 'underscore';
 
 @Component({
     selector: 'app-operation-definitions',
@@ -18,9 +19,10 @@ export class OperationDefinitionsComponent implements OnInit {
     public nameText: string;
     public criteriaChangedEvent = new Subject();
     public page = 1;
+    public Globals = Globals;
 
     constructor(
-        private configService: ConfigService,
+        public configService: ConfigService,
         private opDefService: OperationDefinitionService,
         private modalService: NgbModal) {
 

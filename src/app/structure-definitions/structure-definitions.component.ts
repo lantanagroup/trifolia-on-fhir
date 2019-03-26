@@ -9,6 +9,7 @@ import {Bundle, ImplementationGuide, StructureDefinition} from '../models/stu3/f
 import * as _ from 'underscore';
 import 'rxjs/add/operator/debounceTime';
 import {FhirService} from '../shared/fhir.service';
+import {Globals} from '../globals';
 
 @Component({
     selector: 'app-profiles',
@@ -26,12 +27,13 @@ export class StructureDefinitionsComponent implements OnInit {
     public implementationGuidesBundle: Bundle;
     public implementationGuideId: string = null;
     public showMoreSearch = false;
+    public Globals = Globals;
 
     constructor(
+        public configService: ConfigService,
         private fhirService: FhirService,
         private implementationGuideService: ImplementationGuideService,
         private structureDefinitionService: StructureDefinitionService,
-        private configService: ConfigService,
         private modalService: NgbModal) {
 
         this.criteriaChangedEvent

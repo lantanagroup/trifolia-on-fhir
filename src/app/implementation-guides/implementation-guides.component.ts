@@ -20,10 +20,11 @@ export class ImplementationGuidesComponent implements OnInit {
     public nameText: string;
     public titleText: string;
     public criteriaChangedEvent = new Subject();
+    public Globals = Globals;
 
     constructor(
+        public configService: ConfigService,
         private igService: ImplementationGuideService,
-        private configService: ConfigService,
         private modalService: NgbModal) {
 
         this.criteriaChangedEvent

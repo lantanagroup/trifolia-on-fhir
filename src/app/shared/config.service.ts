@@ -14,6 +14,7 @@ export class ConfigService {
     public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
     public statusMessage: string;
     public fhirConformance: STU3CapabilityStatement | R4CapabilityStatement;
+    public showingIntroduction = false;
 
     constructor(
         private titleService: Title,

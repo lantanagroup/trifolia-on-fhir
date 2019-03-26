@@ -16,7 +16,7 @@ import {GithubService} from './shared/github.service';
 import {CookieService} from 'angular2-cookie/core';
 import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
 import * as _ from 'underscore';
-import * as introJs from 'intro.js';
+import introJs from 'intro.js/intro.js';
 
 @Component({
     selector: 'app-root',
@@ -48,9 +48,18 @@ export class AppComponent implements OnInit {
     }
 
     public startIntro() {
-        const intro = introJs();
+        const intro = introJs.introJs();
         intro.setOption('overlayOpacity', 0);
-        intro.start();
+
+        intro.onexit(() => {
+            this.configService.showingIntroduction = false;
+        });
+
+        this.configService.showingIntroduction = true;
+
+        setTimeout(() => {
+            intro.start();
+        }, 200);
     }
 
     public get fhirServerDisplay(): string {

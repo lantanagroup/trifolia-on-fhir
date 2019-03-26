@@ -38,7 +38,15 @@ export class Globals {
         'sd.element-panel.binding-tab': 'The binding tab includes properties related to bindings, such as a value set binding.',
         'sd.element-panel.json-tab': 'The JSON tab shows the current selected element\'s raw JSON representation.',
         'sd.element-panel.slicing-tab': 'The Slicing tab includes properties related to slicing. It is only available when having selected a sliced element.',
-        'sd.element-panel.general-tab': 'The general tab has properties that are commonly modified for elements, such as cardinality, type and max length.'
+        'sd.element-panel.general-tab': 'The general tab has properties that are commonly modified for elements, such as cardinality, type and max length.',
+        'browse.edit': 'Click here to edit the resource.',
+        'browse.ig.view': 'Click here to view the most recently published version of the implementation guide.',
+        'browse.remove': 'Click here to remove the resource. You will be prompted to confirm your decision before it is deleted.',
+        'browse.changeid': 'Click here to change the ID of the resource.',
+        'browse.paging': 'A limited number of items are shown on this screen. Here you can navigate between multiple pages of items.',
+        'browse.search': 'Here you can search for items based on specific criteria.',
+        'browse.add': 'Click this button to create a new resource.',
+        'browse.vs.expand': 'Click here to expand the value set to see the calculated/enumerated list of codes.'
     };
 
     static readonly tooltips = {

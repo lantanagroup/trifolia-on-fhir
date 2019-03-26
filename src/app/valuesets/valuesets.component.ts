@@ -8,6 +8,7 @@ import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 import {ConfigService} from '../shared/config.service';
 import {FhirService} from '../shared/fhir.service';
+import {Globals} from '../globals';
 
 @Component({
     selector: 'app-valuesets',
@@ -22,10 +23,11 @@ export class ValuesetsComponent implements OnInit {
     public urlText: string;
     public criteriaChangedEvent = new Subject();
     public message: string;
+    public Globals = Globals;
 
     constructor(
+        public configService: ConfigService,
         private fhirService: FhirService,
-        private configService: ConfigService,
         private valueSetService: ValueSetService,
         private modalService: NgbModal) {
 

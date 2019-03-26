@@ -7,6 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
+import {Globals} from '../globals';
 
 @Component({
     selector: 'app-codesystems',
@@ -18,9 +19,10 @@ export class CodesystemsComponent implements OnInit {
     public nameText: string;
     public page = 1;
     public criteriaChangedEvent = new Subject();
+    public Globals = Globals;
 
     constructor(
-        private configService: ConfigService,
+        public configService: ConfigService,
         private codeSystemService: CodeSystemService,
         private modalService: NgbModal) {
 

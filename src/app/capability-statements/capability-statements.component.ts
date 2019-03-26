@@ -7,6 +7,7 @@ import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
+import {Globals} from '../globals';
 
 @Component({
     selector: 'app-capability-statements',
@@ -18,9 +19,10 @@ export class CapabilityStatementsComponent implements OnInit {
     public nameText: string;
     public criteriaChangedEvent = new Subject();
     public page = 1;
+    public Globals = Globals;
 
     constructor(
-        private configService: ConfigService,
+        public configService: ConfigService,
         private csService: CapabilityStatementService,
         private modalService: NgbModal) {
 

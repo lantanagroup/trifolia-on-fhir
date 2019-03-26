@@ -1,7 +1,7 @@
 <h1>Questionnaires</h1>
 <app-tooltip-icon tooltipKey="questionnaire.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
-<div class="input-group">
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
@@ -15,45 +15,61 @@
 
 <br />
 
-<ngb-pagination class="d-flex justify-content-center"
-                *ngIf="questionnairesBundle && questionnairesBundle.total > 0"
-                [maxSize]="5"
-                [collectionSize]="questionnairesBundle.total"
-                [(page)]="page"
-                [boundaryLinks]="true"
-                (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+<div *ngIf="questionnairesBundle && questionnairesBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+    <ngb-pagination class="d-flex justify-content-center"
+                    [maxSize]="5"
+                    [collectionSize]="questionnairesBundle.total"
+                    [(page)]="page"
+                    [boundaryLinks]="true"
+                    (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+</div>
 
-<table class="table table-striped">
+<table class="table table-striped" *ngIf="questionnairesBundle">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th class="actions-column-3">
             <div class="pull-right">
-                <button type="button" class="btn btn-default" routerLink="/questionnaire/new"
-                        title="Create a new questionnaire">
+                <button type="button" class="btn btn-default" routerLink="/questionnaire/new" title="Create a new questionnaire" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
         </th>
     </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let questionnaire of questionnaires">
         <td>{{questionnaire.id}}</td>
         <td>{{questionnaire.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/questionnaire/{{questionnaire.id}}"
-                   title="Edit this questionnaire">
+                <a class="btn btn-default" routerLink="/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(questionnaire)"
-                        title="Remove this questionnaire">
+                <button type="button" class="btn btn-default" (click)="remove(questionnaire)" title="Remove this questionnaire">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(questionnaire)"
-                        title="Change this questionnaire's ID">
+                <button type="button" class="btn btn-default" (click)="changeId(questionnaire)" title="Change this questionnaire's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="configService.showingIntroduction">
+    <tr>
+        <td>DEMO-ID</td>
+        <td>Demo Name</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" href="#" title="Edit this questionnaire" [attr.data-intro]="Globals.introText['browse.edit']">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-default" title="Remove this questionnaire" [attr.data-intro]="Globals.introText['browse.remove']">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-default" title="Change this questionnaire's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>

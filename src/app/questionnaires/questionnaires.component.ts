@@ -7,6 +7,7 @@ import * as _ from 'underscore';
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
+import {Globals} from '../globals';
 
 @Component({
   selector: 'app-questionnaires',
@@ -18,9 +19,10 @@ export class QuestionnairesComponent implements OnInit {
     public nameText: string;
     public criteriaChangedEvent = new Subject();
     public page = 1;
+    public Globals = Globals;
 
     constructor(
-        private configService: ConfigService,
+        public configService: ConfigService,
         private questionnaireService: QuestionnaireService,
         private modalService: NgbModal) {
 
