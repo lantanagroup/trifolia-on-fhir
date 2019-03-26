@@ -365,8 +365,8 @@ export class HtmlExporter {
         }
 
         fs.writeFileSync(introPath, intro);
-        fs.writeFileSync(searchPath, 'TODO - Search');
-        fs.writeFileSync(summaryPath, 'TODO - Summary');
+        fs.writeFileSync(searchPath, '');
+        fs.writeFileSync(summaryPath, '');
     }
     
     private getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
