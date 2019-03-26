@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Globals} from '../../globals';
 import {CookieService} from 'angular2-cookie/core';
 
 @Component({
