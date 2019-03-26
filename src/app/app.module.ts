@@ -133,6 +133,7 @@ import {NarrativeComponent} from './fhir-edit/narrative/narrative.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {IncludePanelComponent} from './valueset/include-panel/include-panel.component';
 import {BindingPanelComponent} from './structure-definition/element-definition-panel/binding-panel/binding-panel.component';
+import {SharedModule} from './services/shared.module';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -269,10 +270,10 @@ export function getConfig(configService: ConfigService) {
         FileDropModule,
         TreeModule,
         DiffMatchPatchModule,
-        AngularEditorModule
+        AngularEditorModule,
+        SharedModule
     ],
     providers: [
-        ConfigService,
         {
             provide: APP_INITIALIZER,
             useFactory: getConfig,
@@ -286,23 +287,7 @@ export function getConfig(configService: ConfigService) {
         }, {
             provide: CookieService,
             useFactory: cookieServiceFactory
-        },
-        AuthService,
-        PractitionerService,
-        AuditEventService,
-        RecentItemService,
-        BinaryService,
-        ValueSetService,
-        CodeSystemService,
-        FhirService,
-        FileService,
-        ImportService,
-        ExportService,
-        CapabilityStatementService,
-        OperationDefinitionService,
-        ImplementationGuideService,
-        StructureDefinitionService,
-        SocketService
+        }
     ],
     bootstrap: [AppComponent]
 })
