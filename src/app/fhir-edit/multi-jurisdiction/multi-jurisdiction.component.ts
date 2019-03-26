@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-multi-jurisdiction',

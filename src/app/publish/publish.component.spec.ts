@@ -7,12 +7,12 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {TreeModule} from 'ng2-tree';
-import {ConfigService} from '../services/config.service';
-import {FhirService} from '../services/fhir.service';
+import {ConfigService} from '../shared/config.service';
+import {FhirService} from '../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
-import {SocketService} from '../services/socket.service';
-import {ExportService} from '../services/export.service';
-import {ImplementationGuideService} from '../services/implementation-guide.service';
+import {SocketService} from '../shared/socket.service';
+import {ExportService} from '../shared/export.service';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
 import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
 

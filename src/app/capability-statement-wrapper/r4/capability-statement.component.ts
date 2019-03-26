@@ -1,16 +1,16 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {CapabilityStatementService} from '../../services/capability-statement.service';
+import {CapabilityStatementService} from '../../shared/capability-statement.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {Observable} from 'rxjs';
-import {RecentItemService} from '../../services/recent-item.service';
-import {FhirService} from '../../services/fhir.service';
+import {RecentItemService} from '../../shared/recent-item.service';
+import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
-import {FileService} from '../../services/file.service';
-import {ConfigService} from '../../services/config.service';
+import {FileService} from '../../shared/file.service';
+import {ConfigService} from '../../shared/config.service';
 import {ClientHelper} from '../../clientHelper';
 
 @Component({

@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Coding, OperationDefinition, ParameterComponent} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-operation-definition-parameter-modal',

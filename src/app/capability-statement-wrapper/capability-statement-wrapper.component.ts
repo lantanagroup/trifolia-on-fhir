@@ -1,9 +1,9 @@
 import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@angular/core';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 import {STU3CapabilityStatementComponent} from './stu3/capability-statement.component';
 import {R4CapabilityStatementComponent} from './r4/capability-statement.component';
 import {ActivatedRoute} from '@angular/router';
-import {FileService} from '../services/file.service';
+import {FileService} from '../shared/file.service';
 import {Versions} from 'fhir/fhir';
 
 /**

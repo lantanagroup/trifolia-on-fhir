@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 import {Bundle} from '../models/stu3/fhir';
 
 @Component({

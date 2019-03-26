@@ -3,7 +3,7 @@ import {Globals} from '../../globals';
 import {ContactDetail} from '../../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirContactModalComponent} from '../contact-modal/contact-modal.component';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-multi-contact',

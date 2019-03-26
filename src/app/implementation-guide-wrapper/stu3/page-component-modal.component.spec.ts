@@ -10,8 +10,8 @@ import {FhirReferenceComponent} from '../../fhir-edit/reference/reference.compon
 import {FhirSelectSingleCodeComponent} from '../../fhir-edit/select-single-code/select-single-code.component';
 import {MarkdownComponent} from '../../markdown/markdown.component';
 import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
-import {FhirService} from '../../services/fhir.service';
-import {ConfigService} from '../../services/config.service';
+import {FhirService} from '../../shared/fhir.service';
+import {ConfigService} from '../../shared/config.service';
 
 describe('STU3PageComponentModalComponent', () => {
     let component: PageComponentModalComponent;

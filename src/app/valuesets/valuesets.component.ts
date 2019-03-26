@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ValueSetService} from '../services/value-set.service';
+import {ValueSetService} from '../shared/value-set.service';
 import {Bundle, ValueSet} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
-import {ConfigService} from '../services/config.service';
-import {FhirService} from '../services/fhir.service';
+import {ConfigService} from '../shared/config.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-valuesets',

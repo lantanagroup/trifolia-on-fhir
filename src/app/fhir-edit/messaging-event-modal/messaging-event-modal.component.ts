@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Coding, EventComponent} from '../../models/stu3/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-messaging-event-modal',

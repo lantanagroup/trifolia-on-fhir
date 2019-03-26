@@ -7,11 +7,11 @@ import {
 import {Globals} from '../globals';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {RecentItemService} from '../services/recent-item.service';
-import {FileService} from '../services/file.service';
-import {FhirService} from '../services/fhir.service';
-import {QuestionnaireService} from '../services/questionnaire.service';
-import {ConfigService} from '../services/config.service';
+import {RecentItemService} from '../shared/recent-item.service';
+import {FileService} from '../shared/file.service';
+import {FhirService} from '../shared/fhir.service';
+import {QuestionnaireService} from '../shared/questionnaire.service';
+import {ConfigService} from '../shared/config.service';
 import * as _ from 'underscore';
 import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
 

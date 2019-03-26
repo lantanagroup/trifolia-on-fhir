@@ -6,7 +6,7 @@ import {FhirCodeableConceptModalComponent} from '../codeable-concept-modal/codea
 import {CodeableConcept, Coding} from '../../models/stu3/fhir';
 import {FhirCodingModalComponent} from '../coding-modal/coding-modal.component';
 import {FhirContactPointModalComponent} from '../contact-point-modal/contact-point-modal.component';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-choice',

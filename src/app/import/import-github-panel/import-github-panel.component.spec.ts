@@ -8,9 +8,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FileDropModule} from 'ngx-file-drop';
 import {TreeModule} from 'ng2-tree';
-import {GithubService} from '../../services/github.service';
-import {ConfigService} from '../../services/config.service';
-import {FhirService} from '../../services/fhir.service';
+import {GithubService} from '../../shared/github.service';
+import {ConfigService} from '../../shared/config.service';
+import {FhirService} from '../../shared/fhir.service';
 
 describe('ImportGithubPanelComponent', () => {
     let component: ImportGithubPanelComponent;

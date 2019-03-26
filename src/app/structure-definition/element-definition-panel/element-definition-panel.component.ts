@@ -11,9 +11,9 @@ import {
     TypeRefComponent
 } from '../../models/stu3/fhir';
 import * as _ from 'underscore';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
-import {ConfigService} from '../../services/config.service';
+import {ConfigService} from '../../shared/config.service';
 import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
 
 @Component({

@@ -4,7 +4,7 @@ import {Globals} from '../../globals';
 import {Observable} from 'rxjs';
 import * as _ from 'underscore';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-select-single-code',

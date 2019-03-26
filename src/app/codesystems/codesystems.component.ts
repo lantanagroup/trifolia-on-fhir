@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {CodeSystemService} from '../services/code-system.service';
+import {CodeSystemService} from '../shared/code-system.service';
 import {Bundle, CodeSystem} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 

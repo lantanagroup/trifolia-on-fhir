@@ -1,14 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {StructureDefinitionService} from '../services/structure-definition.service';
-import {ConfigService} from '../services/config.service';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ImplementationGuideService} from '../services/implementation-guide.service';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {Bundle, ImplementationGuide, StructureDefinition} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import 'rxjs/add/operator/debounceTime';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-profiles',

@@ -1,6 +1,6 @@
 import * as vkbeautify from 'vkbeautify';
 import { Pipe, PipeTransform } from '@angular/core';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Pipe({
     name: 'fhirXml'

@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {StructureDefinition} from '../models/stu3/fhir';
 import {Globals} from '../globals';
-import {StructureDefinitionService} from '../services/structure-definition.service';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-new-profile',

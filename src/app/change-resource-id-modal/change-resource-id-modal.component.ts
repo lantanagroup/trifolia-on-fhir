@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../globals';
-import {RecentItemService} from '../services/recent-item.service';
+import {RecentItemService} from '../shared/recent-item.service';
 
 @Component({
     selector: 'app-change-resource-id-modal',

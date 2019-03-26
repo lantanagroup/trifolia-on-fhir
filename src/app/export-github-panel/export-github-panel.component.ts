@@ -1,10 +1,10 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Bundle, DomainResource, EntryComponent} from '../models/stu3/fhir';
-import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../services/github.service';
+import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../shared/github.service';
 import * as _ from 'underscore';
 import {NodeMenuItemAction, NodeSelectedEvent, TreeModel, TreeModelSettings} from 'ng2-tree';
-import {ImportService} from '../services/import.service';
-import {FhirService, ResourceGithubDetails} from '../services/fhir.service';
+import {ImportService} from '../shared/import.service';
+import {FhirService, ResourceGithubDetails} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-export-github-panel',

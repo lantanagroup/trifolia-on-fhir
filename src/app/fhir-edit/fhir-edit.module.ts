@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {SharedModule} from '../services/shared.module';
+import {SharedModule} from '../shared/shared.module';
 import {FhirAddressModalComponent} from './address-modal/address-modal.component';
 import {FhirAttachmentComponent} from './attachment/attachment.component';
 import {FhirAttachmentModalComponent} from './attachment-modal/attachment-modal.component';

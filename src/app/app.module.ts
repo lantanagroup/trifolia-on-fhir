@@ -43,7 +43,7 @@ import {STU3CapabilityStatementComponent} from './capability-statement-wrapper/s
 import {R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/capability-statement.component';
 import {XmlPipe} from './pipes/xml-pipe';
 import {FileDropModule} from 'ngx-file-drop';
-import {ConfigService} from './services/config.service';
+import {ConfigService} from './shared/config.service';
 import {FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
 import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
 import {ChangeResourceIdModalComponent} from './change-resource-id-modal/change-resource-id-modal.component';
@@ -74,7 +74,7 @@ import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {PublishComponent} from './publish/publish.component';
 import {IncludePanelComponent} from './valueset/include-panel/include-panel.component';
 import {BindingPanelComponent} from './structure-definition/element-definition-panel/binding-panel/binding-panel.component';
-import {SharedModule} from './services/shared.module';
+import {SharedModule} from './shared/shared.module';
 import {FhirEditModule} from './fhir-edit/fhir-edit.module';
 
 export class AddHeaderInterceptor implements HttpInterceptor {

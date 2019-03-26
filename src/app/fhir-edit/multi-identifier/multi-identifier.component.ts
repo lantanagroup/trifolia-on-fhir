@@ -3,7 +3,7 @@ import {Globals} from '../../globals';
 import {Identifier} from '../../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirIdentifierModalComponent} from '../identifier-modal/identifier-modal.component';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-multi-identifier',

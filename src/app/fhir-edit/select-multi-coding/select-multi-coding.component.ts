@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Coding} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-select-multi-coding',

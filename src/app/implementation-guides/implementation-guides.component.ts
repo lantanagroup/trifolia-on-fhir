@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ImplementationGuideService} from '../services/implementation-guide.service';
-import {ConfigService} from '../services/config.service';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {ConfigService} from '../shared/config.service';
 import {Bundle, ImplementationGuide} from '../models/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {Subject} from 'rxjs';
+import {Globals} from '../globals';
 import 'rxjs/add/operator/debounceTime';
 
 @Component({

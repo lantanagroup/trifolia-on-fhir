@@ -7,7 +7,7 @@ import {
     SimpleChanges,
     ViewContainerRef
 } from '@angular/core';
-import {ConfigService} from '../../services/config.service';
+import {ConfigService} from '../../shared/config.service';
 import {Versions} from 'fhir/fhir';
 import {ActivatedRoute} from '@angular/router';
 import {ContextPanelR4Component} from './r4/context-panel-r4.component';

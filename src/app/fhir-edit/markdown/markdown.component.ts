@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MarkdownModalComponent} from '../../markdown-modal/markdown-modal.component';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-fhir-markdown',

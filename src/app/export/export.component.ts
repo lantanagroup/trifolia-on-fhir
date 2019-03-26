@@ -1,20 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuideService} from '../services/implementation-guide.service';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {saveAs} from 'file-saver';
-import {ExportOptions, ExportService} from '../services/export.service';
+import {ExportOptions, ExportService} from '../shared/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
 import * as _ from 'underscore';
-import {HtmlExportStatus, SocketService} from '../services/socket.service';
+import {HtmlExportStatus, SocketService} from '../shared/socket.service';
 import {Globals} from '../globals';
 import {CookieService} from 'angular2-cookie/core';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 import {Bundle, DomainResource, ImplementationGuide} from '../models/stu3/fhir';
-import {FileModel, GithubService} from '../services/github.service';
-import {FhirService} from '../services/fhir.service';
+import {FileModel, GithubService} from '../shared/github.service';
+import {FhirService} from '../shared/fhir.service';
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../shared/auth.service';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({

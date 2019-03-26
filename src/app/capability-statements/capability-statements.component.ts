@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {CapabilityStatementService} from '../services/capability-statement.service';
+import {CapabilityStatementService} from '../shared/capability-statement.service';
 import {Bundle, CapabilityStatement} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 

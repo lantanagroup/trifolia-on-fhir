@@ -6,11 +6,11 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {ConfigService} from '../services/config.service';
-import {StructureDefinitionService} from '../services/structure-definition.service';
-import {RecentItemService} from '../services/recent-item.service';
-import {FhirService} from '../services/fhir.service';
-import {FileService} from '../services/file.service';
+import {ConfigService} from '../shared/config.service';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {RecentItemService} from '../shared/recent-item.service';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
 import {CookieService} from 'angular2-cookie/core';
 import {FhirStringComponent} from '../fhir-edit/string/string.component';
 import {ImplementationGuidesPanelComponent} from './implementation-guides-panel/implementation-guides-panel.component';
@@ -112,5 +112,6 @@ describe('StructureDefinitionComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+
     });
 });

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent} from '../../../models/stu3/fhir';
 import {ElementDefinition as R4ElementDefinition} from '../../../models/r4/fhir';
-import {ConfigService} from '../../../services/config.service';
+import {ConfigService} from '../../../shared/config.service';
 import {Globals} from '../../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';

@@ -5,7 +5,7 @@ import {Bundle, Coding, EntryComponent} from '../../models/stu3/fhir';
 import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
 import {Subject} from 'rxjs/Subject';
 import {HttpClient} from '@angular/common/http';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 import * as _ from 'underscore';
 
 export interface ResourceSelection {

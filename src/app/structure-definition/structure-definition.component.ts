@@ -1,16 +1,16 @@
 import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {GetStructureDefinitionModel, StructureDefinitionOptions, StructureDefinitionService} from '../services/structure-definition.service';
+import {GetStructureDefinitionModel, StructureDefinitionOptions, StructureDefinitionService} from '../shared/structure-definition.service';
 import * as _ from 'underscore';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../models/stu3/fhir';
-import {RecentItemService} from '../services/recent-item.service';
-import {FhirService} from '../services/fhir.service';
-import {FileService} from '../services/file.service';
+import {RecentItemService} from '../shared/recent-item.service';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
 import {DOCUMENT} from '@angular/common';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 import 'rxjs-compat/add/operator/mergeMap';
 
 @Component({

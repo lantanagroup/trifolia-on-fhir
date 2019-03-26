@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ConfigService} from '../services/config.service';
+import {ConfigService} from '../shared/config.service';
 
 @Component({
     selector: 'app-implementation-guide-view',

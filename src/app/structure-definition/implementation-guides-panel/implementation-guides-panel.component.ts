@@ -2,10 +2,10 @@ import {Component, Input, OnInit} from '@angular/core';
 import {
     StructureDefinitionImplementationnGuide,
     StructureDefinitionOptions
-} from '../../services/structure-definition.service';
-import {ImplementationGuideService} from '../../services/implementation-guide.service';
+} from '../../shared/structure-definition.service';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import {ImplementationGuideListItemModel} from '../../models/implementation-guide-list-item-model';
-import {ConfigService} from '../../services/config.service';
+import {ConfigService} from '../../shared/config.service';
 import * as _ from 'underscore';
 import {Bundle, ImplementationGuide} from '../../models/stu3/fhir';
 import {Globals} from '../../globals';

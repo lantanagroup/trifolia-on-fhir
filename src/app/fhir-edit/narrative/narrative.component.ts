@@ -3,7 +3,7 @@ import {DomainResource} from '../../models/stu3/fhir';
 import * as _ from 'underscore';
 import * as Mustache from 'mustache';
 import {HttpClient} from '@angular/common/http';
-import {ConfigService} from '../../services/config.service';
+import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuide as STU3ImplementationGuide} from '../../models/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../models/r4/fhir';
 import {AngularEditorConfig} from '@kolkov/angular-editor';

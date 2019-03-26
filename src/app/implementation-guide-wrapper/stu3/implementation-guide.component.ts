@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../../services/auth.service';
+import {AuthService} from '../../shared/auth.service';
 import {
     Binary,
     Coding,
@@ -9,15 +9,15 @@ import {
     PageComponent
 } from '../../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ImplementationGuideService, PublishedGuideModel} from '../../services/implementation-guide.service';
+import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {PageComponentModalComponent} from './page-component-modal.component';
-import {RecentItemService} from '../../services/recent-item.service';
-import {FhirService} from '../../services/fhir.service';
-import {FileService} from '../../services/file.service';
-import {ConfigService} from '../../services/config.service';
+import {RecentItemService} from '../../shared/recent-item.service';
+import {FhirService} from '../../shared/fhir.service';
+import {FileService} from '../../shared/file.service';
+import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
 import {ValidatorResponse} from 'fhir/validator';
 import {

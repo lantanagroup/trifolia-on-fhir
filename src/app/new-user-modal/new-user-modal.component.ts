@@ -2,10 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {HumanName, Practitioner} from '../models/stu3/fhir';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../globals';
-import {PractitionerService} from '../services/practitioner.service';
-import {AuthService} from '../services/auth.service';
+import {PractitionerService} from '../shared/practitioner.service';
+import {AuthService} from '../shared/auth.service';
 import {Route, Router} from '@angular/router';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-new-user-modal',

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {PractitionerService} from '../services/practitioner.service';
+import {PractitionerService} from '../shared/practitioner.service';
 import {Practitioner} from '../models/stu3/fhir';
 import {Globals} from '../globals';
-import {AuthService} from '../services/auth.service';
+import {AuthService} from '../shared/auth.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
     selector: 'app-user',

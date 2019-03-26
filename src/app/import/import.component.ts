@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ImportService, VSACImportCriteria} from '../services/import.service';
+import {ImportService, VSACImportCriteria} from '../shared/import.service';
 import {
     Bundle,
     DomainResource,
@@ -11,9 +11,9 @@ import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
-import {ContentModel, GithubService} from '../services/github.service';
+import {ContentModel, GithubService} from '../shared/github.service';
 import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
 import {forkJoin} from 'rxjs';
 import {v4 as uuidv4} from 'uuid';

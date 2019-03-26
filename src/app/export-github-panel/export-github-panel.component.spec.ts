@@ -6,10 +6,10 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {GithubService} from '../services/github.service';
-import {ImportService} from '../services/import.service';
-import {FhirService} from '../services/fhir.service';
-import {ConfigService} from '../services/config.service';
+import {GithubService} from '../shared/github.service';
+import {ImportService} from '../shared/import.service';
+import {FhirService} from '../shared/fhir.service';
+import {ConfigService} from '../shared/config.service';
 import {TreeModule} from 'ng2-tree';
 
 describe('ExportGithubPanelComponent', () => {

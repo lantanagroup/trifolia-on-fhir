@@ -6,8 +6,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {FhirService} from '../../../services/fhir.service';
-import {ConfigService} from '../../../services/config.service';
+import {FhirService} from '../../../shared/fhir.service';
+import {ConfigService} from '../../../shared/config.service';
 import {CookieService} from 'angular2-cookie/core';
 import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
 

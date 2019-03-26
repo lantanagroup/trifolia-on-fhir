@@ -3,7 +3,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {Coding, StructureDefinition, TypeRefComponent} from '../models/stu3/fhir';
 import * as _ from 'underscore';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 
 /**
  * This component represents a modal window that can instantiated using NgbModal.

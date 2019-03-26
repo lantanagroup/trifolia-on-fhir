@@ -1,14 +1,14 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {OperationDefinition, OperationOutcome, ParameterComponent} from '../models/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {OperationDefinitionService} from '../services/operation-definition.service';
-import {RecentItemService} from '../services/recent-item.service';
+import {OperationDefinitionService} from '../shared/operation-definition.service';
+import {RecentItemService} from '../shared/recent-item.service';
 import {Globals} from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ParameterModalComponent} from './parameter-modal/parameter-modal.component';
-import {FhirService} from '../services/fhir.service';
-import {FileService} from '../services/file.service';
-import {ConfigService} from '../services/config.service';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
+import {ConfigService} from '../shared/config.service';
 
 @Component({
     selector: 'app-operation-definition',

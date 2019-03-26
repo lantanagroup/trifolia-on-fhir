@@ -1,14 +1,14 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {Globals} from '../globals';
-import {RecentItemService} from '../services/recent-item.service';
+import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CodeSystemService} from '../services/code-system.service';
+import {CodeSystemService} from '../shared/code-system.service';
 import {CodeSystem, ConceptDefinitionComponent} from '../models/stu3/fhir';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
-import {FileService} from '../services/file.service';
-import {ConfigService} from '../services/config.service';
+import {FileService} from '../shared/file.service';
+import {ConfigService} from '../shared/config.service';
 import * as _ from 'underscore';
 
 @Component({

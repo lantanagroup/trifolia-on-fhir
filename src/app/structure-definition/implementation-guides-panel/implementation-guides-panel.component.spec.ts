@@ -6,8 +6,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {ImplementationGuideService} from '../../services/implementation-guide.service';
-import {ConfigService} from '../../services/config.service';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
+import {ConfigService} from '../../shared/config.service';
 
 describe('ImplementationGuidesPanelComponent', () => {
     let component: ImplementationGuidesPanelComponent;

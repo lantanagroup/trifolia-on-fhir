@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ValueSetService} from '../services/value-set.service';
+import {ValueSetService} from '../shared/value-set.service';
 import {OperationOutcome, ValueSet} from '../models/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../services/fhir.service';
+import {FhirService} from '../shared/fhir.service';
 import {ExpandOptions} from '../models/stu3/expandOptions';
 
 @Component({

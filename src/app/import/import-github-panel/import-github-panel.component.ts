@@ -1,12 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../../services/github.service';
+import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../../shared/github.service';
 import * as _ from 'underscore';
 import {
     NodeCheckedEvent,
     NodeUncheckedEvent,
     TreeModel
 } from 'ng2-tree';
-import {FhirService} from '../../services/fhir.service';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
     selector: 'app-import-github-panel',
