@@ -1,0 +1,1 @@
+Only modal window components go in this module.

@@ -1,0 +1,1 @@
+These are UI-specific components that are re-used by multiple pages/components within the application.

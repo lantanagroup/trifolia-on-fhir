@@ -1,5 +1,4 @@
 import {DomainResource} from './stu3/fhir';
-import {FhirVersion} from './fhir-version';
 
 export class FileModel {
     name: string;
