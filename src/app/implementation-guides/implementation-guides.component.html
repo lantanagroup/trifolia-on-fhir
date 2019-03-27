@@ -1,16 +1,35 @@
 <h1>Implementation Guides</h1>
 <app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
-<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
-    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
-    <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title" />
-    <div class="input-group-btn">
-        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
-            <i class="fa fa-times"></i>
-        </button>
-        <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
-            <i class="fa fa-search"></i>
-        </button>
+<div class="card" [attr.data-intro]="Globals.introText['browse.search']">
+    <div class="card-header">Search</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+                </div>
+            </div>
+
+            <div class="col-md-6" *ngIf="configService.isFhirR4">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title" />
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+                        <i class="fa fa-times"></i> Clear
+                    </button>
+                    <button type="button" class="btn btn-default" title="Refresh" (click)="getImplementationGuides()">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -32,7 +51,7 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Title</th>
+        <th *ngIf="configService.isFhirR4">Title</th>
         <th class="actions-column-4">
             <div class="pull-right">
                 <button type="button" class="btn btn-default" routerLink="/implementation-guide/new" title="Create a new implementation guide" [attr.data-intro]="Globals.introText['browse.add']">
@@ -46,7 +65,7 @@
     <tr *ngFor="let ig of implementationGuides">
         <td>{{ig.id}}</td>
         <td>{{ig.name}}</td>
-        <td>{{ig.title}}</td>
+        <td *ngIf="configService.isFhirR4">{{ig.title}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default" routerLink="/implementation-guide/{{ig.id}}" title="Edit this resource">

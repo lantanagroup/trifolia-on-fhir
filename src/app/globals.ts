@@ -64,7 +64,8 @@ export class Globals {
         'ig.dependsOn.location': 'This is used to populate the IG publisher control file\'s dependencyList.location property',
         'ig.dependsOn.name': 'This is used to populate the IG publisher control file\'s dependencyList.name property',
         'support.button.clicked': 'A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.',
-        'name.validation.failed': 'Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.'
+        'name.validation.failed': 'Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.',
+        'resource.move': 'To change the ID of this resource, go back to the browse screen for the resource and click the "Change ID" button.'
     };
 
     static readonly cookieKeys = {

@@ -46,14 +46,19 @@
                         </div>
 
                         <div class="col-md-3">
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
+                            <div class="form-group">
+                                <label>ID <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon></label>
+                                <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id" />
+                            </div>
 
                             <div class="form-group">
-                                <label>Type</label>
+                                <label>Type <app-tooltip-icon tooltipPath="StructureDefinition.type"></app-tooltip-icon></label>
                                 <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true" title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type.">
                                     <option>{{structureDefinition.type}}</option>
                                 </select>
                             </div>
+
+                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
 
                             <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
 

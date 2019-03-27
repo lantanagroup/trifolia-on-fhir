@@ -81,6 +81,11 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                <label>ID <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon></label>
+                                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+                            </div>
+
+                            <div class="form-group">
                                 <label>Package ID</label>
                                 <input type="text" class="form-control" [(ngModel)]="packageId" />
                             </div>
