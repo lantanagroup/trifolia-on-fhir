@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../globals';
 import {Bundle, Coding, EntryComponent} from '../../models/stu3/fhir';
-import {FhirDisplayPipe} from '../../pipes/fhir-display-pipe';
+import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
 import {Subject} from 'rxjs/Subject';
 import {HttpClient} from '@angular/common/http';
 import {FhirService} from '../../shared/fhir.service';

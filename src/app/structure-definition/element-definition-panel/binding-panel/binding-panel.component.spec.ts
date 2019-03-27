@@ -8,7 +8,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {ConfigService} from '../../../shared/config.service';
 import {FhirReferenceComponent} from '../../../fhir-edit/reference/reference.component';
-import {TooltipIconComponent} from '../../../shared/tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../../../shared-ui/tooltip-icon/tooltip-icon.component';
 import {FhirSelectSingleCodeComponent} from '../../../fhir-edit/select-single-code/select-single-code.component';
 import {FhirStringComponent} from '../../../fhir-edit/string/string.component';
 import {FhirService} from '../../../shared/fhir.service';

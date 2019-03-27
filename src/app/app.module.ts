@@ -27,7 +27,6 @@ import {Observable} from 'rxjs';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
 import {R4TypeModalComponent} from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
-import {KeysPipe} from './pipes/keys-pipe';
 import {PageComponentModalComponent as STU3PageComponentModalComponent} from './implementation-guide-wrapper/stu3/page-component-modal.component';
 import {PageComponentModalComponent as R4PageComponentModalComponent} from './implementation-guide-wrapper/r4/page-component-modal.component';
 import {CapabilityStatementsComponent} from './capability-statements/capability-statements.component';
@@ -35,18 +34,13 @@ import {OperationDefinitionsComponent} from './operation-definitions/operation-d
 import {OperationDefinitionComponent} from './operation-definition/operation-definition.component';
 import {ParameterModalComponent} from './operation-definition/parameter-modal/parameter-modal.component';
 import {ValuesetExpandComponent} from './valueset-expand/valueset-expand.component';
-import {ValidationResultsComponent} from './validation-results/validation-results.component';
 import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
 import {STU3CapabilityStatementComponent} from './capability-statement-wrapper/stu3/capability-statement.component';
 import {R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/capability-statement.component';
-import {XmlPipe} from './pipes/xml-pipe';
 import {FileDropModule} from 'ngx-file-drop';
 import {ConfigService} from './shared/config.service';
-import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
-import {RawResourceComponent} from './raw-resource/raw-resource.component';
 import {ConceptCardComponent} from './valueset/concept-card/concept-card.component';
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
-import {SafePipe} from './pipes/safe-pipe';
 import {OtherResourcesComponent} from './other-resources/other-resources.component';
 import {QuestionnairesComponent} from './questionnaires/questionnaires.component';
 import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
@@ -58,17 +52,16 @@ import {MappingModalComponent} from './structure-definition/element-definition-p
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
-import {ResourceHistoryComponent} from './resource-history/resource-history.component';
 import {ContextPanelWrapperComponent} from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
 import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
 import {ContextPanelStu3Component} from './structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component';
-import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {PublishComponent} from './publish/publish.component';
 import {IncludePanelComponent} from './valueset/include-panel/include-panel.component';
 import {BindingPanelComponent} from './structure-definition/element-definition-panel/binding-panel/binding-panel.component';
 import {SharedModule} from './shared/shared.module';
 import {FhirEditModule} from './fhir-edit/fhir-edit.module';
 import {ModalsModule} from './modals/modals.module';
+import {SharedUiModule} from './shared-ui/shared-ui.module';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -155,7 +148,7 @@ export function getConfig(configService: ConfigService) {
         MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
     ],
     declarations: [
-        AppComponent, KeysPipe, FhirXmlPipe, SafePipe, XmlPipe, ImplementationGuidesComponent,
+        AppComponent, ImplementationGuidesComponent,
         HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
         ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
         CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
@@ -163,12 +156,11 @@ export function getConfig(configService: ConfigService) {
         STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
         CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
         OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-        ValidationResultsComponent, RawResourceComponent, ConceptCardComponent, ImplementationGuideViewComponent,
+        ConceptCardComponent, ImplementationGuideViewComponent,
         OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
         ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
-        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ResourceHistoryComponent,
-        ContextPanelWrapperComponent, ContextPanelR4Component, ContextPanelStu3Component, PublishComponent,
-        IncludePanelComponent, BindingPanelComponent
+        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
+        ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -184,8 +176,8 @@ export function getConfig(configService: ConfigService) {
         NgbModule.forRoot(),
         FileDropModule,
         TreeModule,
-        DiffMatchPatchModule,
         SharedModule,
+        SharedUiModule,
         FhirEditModule,
         ModalsModule
     ],

@@ -12,6 +12,7 @@ import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-mo
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {SharedModule} from '../shared/shared.module';
 import {FormsModule} from '@angular/forms';
+import {SharedUiModule} from '../shared-ui/shared-ui.module';
 
 const modalComponents = [
     AdminMessageModalComponent,
@@ -32,6 +33,7 @@ const modalComponents = [
         CommonModule,
         FormsModule,
         SharedModule,
+        SharedUiModule,
         FhirEditModule,
         NgbModule.forRoot()
     ]

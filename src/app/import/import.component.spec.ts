@@ -13,7 +13,7 @@ import {GithubService} from '../shared/github.service';
 import {ConfigService} from '../shared/config.service';
 import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
 import {FileDropModule} from 'ngx-file-drop';
-import {FhirXmlPipe} from '../pipes/fhir-xml-pipe';
+import {FhirXmlPipe} from '../shared-ui/fhir-xml-pipe';
 import {TreeModule} from 'ng2-tree';
 
 describe('ImportComponent', () => {

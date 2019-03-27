@@ -1,0 +1,19 @@
+<div class="badge badge-warning" *ngIf="results && !results.valid">Invalid</div>
+<div class="badge badge-success" *ngIf="results && results.valid">Valid!</div>
+
+<table class="table" *ngIf="results && results.messages.length > 0">
+    <thead>
+    <tr>
+        <th>Severity</th>
+        <th>Location</th>
+        <th>Message</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let m of results.messages">
+        <td>{{m.severity}}</td>
+        <td>{{m.location}}</td>
+        <td>{{m.message}}</td>
+    </tr>
+    </tbody>
+</table>

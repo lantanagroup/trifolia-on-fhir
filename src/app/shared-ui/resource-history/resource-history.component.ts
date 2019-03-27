@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FhirService} from '../shared/fhir.service';
-import {Bundle} from '../models/stu3/fhir';
+import {FhirService} from '../../shared/fhir.service';
+import {Bundle} from '../../models/stu3/fhir';
 
 @Component({
     selector: 'app-resource-history',

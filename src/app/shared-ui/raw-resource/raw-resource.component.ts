@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Resource} from '../models/stu3/fhir';
-import {FhirService} from '../shared/fhir.service';
+import {Resource} from '../../models/stu3/fhir';
+import {FhirService} from '../../shared/fhir.service';
 import {saveAs} from 'file-saver';
 
 @Component({
