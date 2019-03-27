@@ -20,11 +20,18 @@ import {StructureDefinitionService} from './structure-definition.service';
 import {UserService} from './user.service';
 import {ValueSetService} from './value-set.service';
 import {FileService} from './file.service';
+import {MarkdownComponent} from './markdown/markdown.component';
+import {TooltipIconComponent} from './tooltip-icon/tooltip-icon.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-    declarations: [],
+    declarations: [
+        MarkdownComponent,
+        TooltipIconComponent
+    ],
     imports: [
-        CommonModule
+        CommonModule,
+        NgbModule.forRoot()
     ],
     providers: [
         AuditEventService,
@@ -47,6 +54,10 @@ import {FileService} from './file.service';
         StructureDefinitionService,
         UserService,
         ValueSetService
+    ],
+    exports: [
+        MarkdownComponent,
+        TooltipIconComponent
     ]
 })
 export class SharedModule {

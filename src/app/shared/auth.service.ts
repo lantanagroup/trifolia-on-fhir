@@ -5,7 +5,7 @@ import {PractitionerService} from './practitioner.service';
 import {HumanName, Identifier, Practitioner} from '../models/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
-import {NewUserModalComponent} from '../new-user-modal/new-user-modal.component';
+import {NewUserModalComponent} from '../modals/new-user-modal/new-user-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable()

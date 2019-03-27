@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ConfigService} from '../shared/config.service';
+import {ConfigService} from '../../shared/config.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {AuthService} from '../shared/auth.service';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
     selector: 'app-settings-modal',

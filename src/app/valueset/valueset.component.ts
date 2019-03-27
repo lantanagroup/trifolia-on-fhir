@@ -10,7 +10,7 @@ import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
 import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
-import {FileOpenModalComponent} from '../file-open-modal/file-open-modal.component';
+import {FileOpenModalComponent} from '../modals/file-open-modal/file-open-modal.component';
 import {FileModel} from '../models/file-model';
 import {ClientHelper} from '../clientHelper';
 

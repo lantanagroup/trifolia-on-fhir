@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
 import {Bundle, OperationDefinition} from '../models/stu3/fhir';
-import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';

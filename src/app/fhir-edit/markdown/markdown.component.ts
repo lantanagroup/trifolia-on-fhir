@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {MarkdownModalComponent} from '../../markdown-modal/markdown-modal.component';
+import {MarkdownModalComponent} from '../../modals/markdown-modal/markdown-modal.component';
 import {FhirService} from '../../shared/fhir.service';
 
 @Component({

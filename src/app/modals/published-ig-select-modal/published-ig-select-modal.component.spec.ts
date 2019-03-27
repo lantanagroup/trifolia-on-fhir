@@ -6,7 +6,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 
 describe('PublishedIgSelectModalComponent', () => {
     let component: PublishedIgSelectModalComponent;

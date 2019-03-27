@@ -8,7 +8,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
-import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../../shared/tooltip-icon/tooltip-icon.component';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {ConfigService} from '../../shared/config.service';
 

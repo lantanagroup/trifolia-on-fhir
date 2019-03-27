@@ -3,7 +3,7 @@ import {FhirService} from '../shared/fhir.service';
 import {Bundle, Coding, DomainResource, OperationOutcome, Resource} from '../models/stu3/fhir';
 import * as _ from 'underscore';
 import {saveAs} from 'file-saver';
-import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({

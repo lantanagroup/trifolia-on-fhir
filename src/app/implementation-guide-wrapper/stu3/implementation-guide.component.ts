@@ -18,7 +18,7 @@ import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
-import {PublishedIgSelectModalComponent} from '../../published-ig-select-modal/published-ig-select-modal.component';
+import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {ValidatorResponse} from 'fhir/validator';
 import {
     FhirReferenceModalComponent,

@@ -10,7 +10,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../../shared/config.service';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
-import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../../shared/tooltip-icon/tooltip-icon.component';
 import {ConceptCardComponent} from '../concept-card/concept-card.component';
 import {FhirSelectSingleCodeComponent} from '../../fhir-edit/select-single-code/select-single-code.component';
 

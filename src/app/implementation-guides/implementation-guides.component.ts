@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
 import {Bundle, ImplementationGuide} from '../models/stu3/fhir';
-import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'underscore';
 import {Subject} from 'rxjs';

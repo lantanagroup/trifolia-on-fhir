@@ -42,8 +42,6 @@ import {FhirStringComponent} from './string/string.component';
 import {FhirValueSetIncludeConceptModalComponent} from './value-set-include-concept-modal/value-set-include-concept-modal.component';
 import {FhirEditNumberComponent} from './number/number.component';
 import {NarrativeComponent} from './narrative/narrative.component';
-import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
-import {MarkdownComponent} from '../markdown/markdown.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {FhirDisplayPipe} from '../pipes/fhir-display-pipe';
 
@@ -68,8 +66,6 @@ import {FhirDisplayPipe} from '../pipes/fhir-display-pipe';
     ],
     declarations: [
         FhirDisplayPipe,
-        MarkdownComponent,
-        TooltipIconComponent,
         FhirAddressModalComponent,
         FhirAttachmentComponent,
         FhirAttachmentModalComponent,
@@ -119,8 +115,6 @@ import {FhirDisplayPipe} from '../pipes/fhir-display-pipe';
     ],
     exports: [
         FhirDisplayPipe,
-        MarkdownComponent,
-        TooltipIconComponent,
         FhirAddressModalComponent,
         FhirAttachmentComponent,
         FhirAttachmentModalComponent,

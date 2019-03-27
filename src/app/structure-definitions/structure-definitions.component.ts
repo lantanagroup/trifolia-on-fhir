@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
-import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {Bundle, ImplementationGuide, StructureDefinition} from '../models/stu3/fhir';

@@ -7,7 +7,7 @@ import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../../shared/fhir.service';
 import {ConfigService} from '../../../shared/config.service';
-import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../../../shared/tooltip-icon/tooltip-icon.component';
 import {CookieService} from 'angular2-cookie/core';
 
 describe('STU3TypeModalComponent', () => {

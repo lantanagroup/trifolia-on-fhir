@@ -9,7 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {FhirService} from '../../../shared/fhir.service';
 import {ConfigService} from '../../../shared/config.service';
 import {CookieService} from 'angular2-cookie/core';
-import {TooltipIconComponent} from '../../../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../../../shared/tooltip-icon/tooltip-icon.component';
 
 describe('ContextPanelStu3Component', () => {
     let component: ContextPanelStu3Component;

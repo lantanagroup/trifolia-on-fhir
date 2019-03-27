@@ -7,14 +7,14 @@ import {RecentItemService} from './shared/recent-item.service';
 import {Globals} from './globals';
 import {FileService} from './shared/file.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
+import {FileOpenModalComponent} from './modals/file-open-modal/file-open-modal.component';
 import {FileModel} from './models/file-model';
 import {FhirService} from './shared/fhir.service';
 import {SocketService} from './shared/socket.service';
-import {SettingsModalComponent} from './settings-modal/settings-modal.component';
+import {SettingsModalComponent} from './modals/settings-modal/settings-modal.component';
 import {GithubService} from './shared/github.service';
 import {CookieService} from 'angular2-cookie/core';
-import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
+import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import * as _ from 'underscore';
 import introJs from 'intro.js/intro.js';
 

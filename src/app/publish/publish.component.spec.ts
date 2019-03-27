@@ -14,7 +14,7 @@ import {SocketService} from '../shared/socket.service';
 import {ExportService} from '../shared/export.service';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
-import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../shared/tooltip-icon/tooltip-icon.component';
 
 describe('PublishComponent', () => {
     let component: PublishComponent;

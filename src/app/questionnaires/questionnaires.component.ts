@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Bundle, Questionnaire} from '../models/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ChangeResourceIdModalComponent} from '../change-resource-id-modal/change-resource-id-modal.component';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {QuestionnaireService} from '../shared/questionnaire.service';
 import * as _ from 'underscore';
 import {ConfigService} from '../shared/config.service';

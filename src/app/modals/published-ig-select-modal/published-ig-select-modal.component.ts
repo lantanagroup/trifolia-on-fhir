@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClient} from '@angular/common/http';
-import {ImplementationGuideService, PublishedGuideModel} from '../shared/implementation-guide.service';
+import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
 
 @Component({
     selector: 'app-published-ig-select-modal',

@@ -24,7 +24,6 @@ import {NewProfileComponent} from './new-profile/new-profile.component';
 import {CookieService} from 'angular2-cookie/core';
 import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-modal.component';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
 import {R4TypeModalComponent} from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
@@ -36,7 +35,6 @@ import {OperationDefinitionsComponent} from './operation-definitions/operation-d
 import {OperationDefinitionComponent} from './operation-definition/operation-definition.component';
 import {ParameterModalComponent} from './operation-definition/parameter-modal/parameter-modal.component';
 import {ValuesetExpandComponent} from './valueset-expand/valueset-expand.component';
-import {MarkdownModalComponent} from './markdown-modal/markdown-modal.component';
 import {ValidationResultsComponent} from './validation-results/validation-results.component';
 import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
 import {STU3CapabilityStatementComponent} from './capability-statement-wrapper/stu3/capability-statement.component';
@@ -44,9 +42,6 @@ import {R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/
 import {XmlPipe} from './pipes/xml-pipe';
 import {FileDropModule} from 'ngx-file-drop';
 import {ConfigService} from './shared/config.service';
-import {FileOpenModalComponent} from './file-open-modal/file-open-modal.component';
-import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
-import {ChangeResourceIdModalComponent} from './change-resource-id-modal/change-resource-id-modal.component';
 import {FhirXmlPipe} from './pipes/fhir-xml-pipe';
 import {RawResourceComponent} from './raw-resource/raw-resource.component';
 import {ConceptCardComponent} from './valueset/concept-card/concept-card.component';
@@ -57,15 +52,12 @@ import {QuestionnairesComponent} from './questionnaires/questionnaires.component
 import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {QuestionnaireItemModalComponent} from './questionnaire/questionnaire-item-modal.component';
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
-import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
 import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 import {MappingModalComponent} from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
-import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
-import {AdminMessageModalComponent} from './admin-message-modal/admin-message-modal.component';
 import {ResourceHistoryComponent} from './resource-history/resource-history.component';
 import {ContextPanelWrapperComponent} from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
 import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
@@ -76,6 +68,7 @@ import {IncludePanelComponent} from './valueset/include-panel/include-panel.comp
 import {BindingPanelComponent} from './structure-definition/element-definition-panel/binding-panel/binding-panel.component';
 import {SharedModule} from './shared/shared.module';
 import {FhirEditModule} from './fhir-edit/fhir-edit.module';
+import {ModalsModule} from './modals/modals.module';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
     constructor() {
@@ -156,32 +149,26 @@ export function getConfig(configService: ConfigService) {
 
 @NgModule({
     entryComponents: [
-        AdminMessageModalComponent, SelectChoiceModalComponent, STU3TypeModalComponent, R4TypeModalComponent,
-        STU3PageComponentModalComponent, R4PageComponentModalComponent, ParameterModalComponent,
-        MarkdownModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-        FileOpenModalComponent, NewUserModalComponent, ChangeResourceIdModalComponent,
-        QuestionnaireItemModalComponent, STU3ImplementationGuideComponent,
-        R4ImplementationGuideComponent, PublishedIgSelectModalComponent, MappingModalComponent, SettingsModalComponent,
-        ContextPanelStu3Component, ContextPanelR4Component
+        STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
+        ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
+        QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
+        MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
     ],
     declarations: [
         AppComponent, KeysPipe, FhirXmlPipe, SafePipe, XmlPipe, ImplementationGuidesComponent,
         HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
         ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
         CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
-        NewProfileComponent, SelectChoiceModalComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
-        STU3PageComponentModalComponent,
-        R4PageComponentModalComponent, CapabilityStatementsComponent, CapabilityStatementWrapperComponent,
-        STU3CapabilityStatementComponent, R4CapabilityStatementComponent, OperationDefinitionsComponent,
-        OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-        MarkdownModalComponent, ValidationResultsComponent,
-        FileOpenModalComponent, NewUserModalComponent, ChangeResourceIdModalComponent, RawResourceComponent, ConceptCardComponent,
-        ImplementationGuideViewComponent, OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent,
-        QuestionnaireItemModalComponent, ImplementationGuideWrapperComponent,
-        PublishedIgSelectModalComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
-        MappingModalComponent, SettingsModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent,
-        AdminMessageModalComponent, ResourceHistoryComponent, ContextPanelWrapperComponent,
-        ContextPanelR4Component, ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
+        NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
+        STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
+        CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
+        OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
+        ValidationResultsComponent, RawResourceComponent, ConceptCardComponent, ImplementationGuideViewComponent,
+        OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
+        ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
+        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ResourceHistoryComponent,
+        ContextPanelWrapperComponent, ContextPanelR4Component, ContextPanelStu3Component, PublishComponent,
+        IncludePanelComponent, BindingPanelComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -199,7 +186,8 @@ export function getConfig(configService: ConfigService) {
         TreeModule,
         DiffMatchPatchModule,
         SharedModule,
-        FhirEditModule
+        FhirEditModule,
+        ModalsModule
     ],
     providers: [
         {

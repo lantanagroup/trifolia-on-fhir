@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../globals';
-import {FhirService} from '../shared/fhir.service';
-import {FileModel} from '../models/file-model';
+import {Globals} from '../../globals';
+import {FhirService} from '../../shared/fhir.service';
+import {FileModel} from '../../models/file-model';
 
 @Component({
     selector: 'app-file-open-modal',

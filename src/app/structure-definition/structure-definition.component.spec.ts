@@ -18,13 +18,13 @@ import {FhirSelectSingleCodeComponent} from '../fhir-edit/select-single-code/sel
 import {FhirBooleanComponent} from '../fhir-edit/boolean/boolean.component';
 import {FhirDateComponent} from '../fhir-edit/date/date.component';
 import {FhirMarkdownComponent} from '../fhir-edit/markdown/markdown.component';
-import {MarkdownComponent} from '../markdown/markdown.component';
+import {MarkdownComponent} from '../shared/markdown/markdown.component';
 import {FhirMultiIdentifierComponent} from '../fhir-edit/multi-identifier/multi-identifier.component';
 import {FhirMultiUseContextComponent} from '../fhir-edit/multi-use-context/multi-use-context.component';
 import {FhirMultiJurisdictionComponent} from '../fhir-edit/multi-jurisdiction/multi-jurisdiction.component';
 import {FhirMultiContactComponent} from '../fhir-edit/multi-contact/multi-contact.component';
 import {FhirSelectMultiCodingComponent} from '../fhir-edit/select-multi-coding/select-multi-coding.component';
-import {TooltipIconComponent} from '../tooltip-icon/tooltip-icon.component';
+import {TooltipIconComponent} from '../shared/tooltip-icon/tooltip-icon.component';
 import {ValidationResultsComponent} from '../validation-results/validation-results.component';
 import {RawResourceComponent} from '../raw-resource/raw-resource.component';
 import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';

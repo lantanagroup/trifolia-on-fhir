@@ -8,8 +8,8 @@ import {FormsModule} from '@angular/forms';
 import {FhirStringComponent} from '../../fhir-edit/string/string.component';
 import {FhirReferenceComponent} from '../../fhir-edit/reference/reference.component';
 import {FhirSelectSingleCodeComponent} from '../../fhir-edit/select-single-code/select-single-code.component';
-import {MarkdownComponent} from '../../markdown/markdown.component';
-import {TooltipIconComponent} from '../../tooltip-icon/tooltip-icon.component';
+import {MarkdownComponent} from '../../shared/markdown/markdown.component';
+import {TooltipIconComponent} from '../../shared/tooltip-icon/tooltip-icon.component';
 import {FhirService} from '../../shared/fhir.service';
 import {ConfigService} from '../../shared/config.service';
 
