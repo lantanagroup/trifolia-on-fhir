@@ -172,6 +172,10 @@ export namespace Fhir {
 
     export interface Bundle {
         total?: number;
+        link?: [{
+            relation: 'self'|'next'|'last';
+            url: string;
+        }];
         entry: [{
             fullUrl: string;
             resource?: DomainResource;
@@ -188,6 +192,14 @@ export namespace Fhir {
 
     export interface CapabilityStatement extends DomainResource {
         fhirVersion: string;
+        rest?: [{
+            mode?: string;
+            resource?: [{
+                type: string;
+                profile?: string;
+                interaction?: string[]
+            }];
+        }];
     }
 
     export namespace STU3 {
