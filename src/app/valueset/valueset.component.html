@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="vsNotFound">Value Set with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="valueSet" [destroyOnHide]="false">
+<ngb-tabset *ngIf="valueSet" [destroyOnHide]="false" #vsTabs="ngbTabset">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -179,10 +179,10 @@
         </ng-template>
     </ngb-tab>
 
-    <!-- JSON -->
-    <ngb-tab title="RAW">
+    <!-- RAW JSON/XML -->
+    <ngb-tab id="raw" title="RAW">
         <ng-template ngbTabContent>
-            <app-raw-resource [resource]="valueSet"></app-raw-resource>
+            <app-raw-resource [resource]="valueSet" [shown]="vsTabs.activeId === 'raw'"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 

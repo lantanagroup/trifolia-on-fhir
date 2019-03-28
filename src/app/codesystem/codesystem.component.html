@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="csNotFound">Code System with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="codeSystem" [destroyOnHide]="false">
+<ngb-tabset *ngIf="codeSystem" [destroyOnHide]="false" #csTabs="ngbTabset">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -271,9 +271,9 @@
     </ngb-tab>
 
     <!-- JSON -->
-    <ngb-tab title="RAW">
+    <ngb-tab id="raw" title="RAW">
         <ng-template ngbTabContent>
-            <app-raw-resource [resource]="codeSystem"></app-raw-resource>
+            <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 

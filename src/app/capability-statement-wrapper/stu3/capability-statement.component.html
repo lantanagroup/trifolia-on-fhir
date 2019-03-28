@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="csNotFound">Capability Statement with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="capabilityStatement" [destroyOnHide]="false">
+<ngb-tabset *ngIf="capabilityStatement" [destroyOnHide]="false" #csTabs="ngbTabset">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -780,9 +780,9 @@
     </ngb-tab>
 
     <!-- RAW -->
-    <ngb-tab title="RAW">
+    <ngb-tab id="raw" title="RAW">
         <ng-template ngbTabContent>
-            <app-raw-resource [resource]="capabilityStatement"></app-raw-resource>
+            <app-raw-resource [resource]="capabilityStatement" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 

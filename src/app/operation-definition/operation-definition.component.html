@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="odNotFound">Operation Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="operationDefinition" [destroyOnHide]="false">
+<ngb-tabset *ngIf="operationDefinition" [destroyOnHide]="false" #odTabs="ngbTabset">
     <!-- General -->
     <ngb-tab title="General">
         <ng-template ngbTabContent>
@@ -194,10 +194,10 @@
         </ng-template>
     </ngb-tab>
 
-    <!-- JSON -->
-    <ngb-tab title="RAW">
+    <!-- RAW JSON/XML -->
+    <ngb-tab id="raw" title="RAW">
         <ng-template ngbTabContent>
-            <app-raw-resource [resource]="operationDefinition"></app-raw-resource>
+            <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 

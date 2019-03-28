@@ -5,7 +5,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
     <h2>{{implementationGuide.name || 'no-name'}}</h2>
 
-    <ngb-tabset (tabChange)="tabChange($event)">
+    <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
         <ngb-tab id="quick" title="Quick">
             <ng-template ngbTabContent>
                 <div class="alert alert-info">These fields are the key fields used to develop and publish an implementation guide package. Use the other tabs to access more details.</div>
@@ -503,10 +503,10 @@
             </ng-template>
         </ngb-tab>
 
-        <!-- JSON -->
-        <ngb-tab id="json" title="RAW">
+        <!-- RAW JSON/XML -->
+        <ngb-tab id="raw" title="RAW">
             <ng-template ngbTabContent>
-                <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
+                <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
             </ng-template>
         </ngb-tab>
 

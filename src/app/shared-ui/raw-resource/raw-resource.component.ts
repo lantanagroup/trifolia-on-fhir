@@ -1,15 +1,19 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Resource} from '../../models/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {saveAs} from 'file-saver';
+import * as vkbeautify from 'vkbeautify';
 
 @Component({
     selector: 'app-raw-resource',
     templateUrl: './raw-resource.component.html',
     styleUrls: ['./raw-resource.component.css']
 })
-export class RawResourceComponent implements OnInit {
+export class RawResourceComponent implements OnInit, OnChanges {
+    @Input() shown?: boolean;
     @Input() resource: Resource;
+
+    public xml: string;
 
     constructor(private fhirService: FhirService) {
     }
@@ -43,6 +47,25 @@ export class RawResourceComponent implements OnInit {
         saveAs(blob, this.baseFileName + '.xml');
     }
 
+    private serialize() {
+        if (!this.resource) {
+            return;
+        }
+
+        const xml = this.fhirService.serialize(this.resource);
+
+        if (xml) {
+            this.xml = vkbeautify.xml(xml);
+        } else {
+            this.xml = '';
+        }
+    }
+
     ngOnInit() {
+        this.serialize();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.serialize();
     }
 }

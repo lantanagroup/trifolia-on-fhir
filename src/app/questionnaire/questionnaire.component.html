@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="qNotFound">Questionnaire with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="questionnaire" [destroyOnHide]="false">
+<ngb-tabset *ngIf="questionnaire" [destroyOnHide]="false" #qTabs="ngbTabset">
     <ngb-tab title="General">
         <ng-template ngbTabContent>
             <div class="row">
@@ -127,9 +127,9 @@
     </ngb-tab>
 
     <!-- JSON -->
-    <ngb-tab title="RAW">
+    <ngb-tab id="raw" title="RAW">
         <ng-template ngbTabContent>
-            <app-raw-resource [resource]="questionnaire"></app-raw-resource>
+            <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
         </ng-template>
     </ngb-tab>
 

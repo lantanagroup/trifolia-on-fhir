@@ -45,7 +45,7 @@
                     <div *ngIf="results.text" [innerHTML]="results.text.div"></div>
                 </div>
                 <div *ngIf="!hasError">
-                    <app-raw-resource [resource]="results"></app-raw-resource>
+                    <app-raw-resource [resource]="results" [shown]="t.activeId === 'results'"></app-raw-resource>
                 </div>
             </div>
         </ng-template>

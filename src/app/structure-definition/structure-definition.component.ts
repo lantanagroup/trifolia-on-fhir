@@ -29,9 +29,6 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     public sdNotFound = false;
     public Globals = Globals;
 
-    @ViewChild('sdTabs')
-    public sdTabs: NgbTabset;
-
     private navSubscription: any;
 
     constructor(

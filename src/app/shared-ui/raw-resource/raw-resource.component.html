@@ -1,4 +1,4 @@
-<ngb-tabset [justify]="'fill'" [destroyOnHide]="false">
+<ngb-tabset [justify]="'fill'" [destroyOnHide]="true">
     <ngb-tab id="json">
         <ng-template ngbTabTitle>
             Plain JSON
@@ -18,7 +18,7 @@
             </button>
         </ng-template>
         <ng-template ngbTabContent>
-            <pre>{{resource | fhirXml}}</pre>
+            <pre>{{xml}}</pre>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
