@@ -49,7 +49,9 @@
 <table class="table table-striped" *ngIf="results">
     <thead>
     <tr>
-        <th>ID</th>
+        <th>
+            ID <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
+        </th>
         <th>Name</th>
         <th *ngIf="configService.isFhirR4">Title</th>
         <th class="actions-column-4">

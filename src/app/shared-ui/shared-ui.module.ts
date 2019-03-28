@@ -13,6 +13,7 @@ import {KeysPipe} from './keys-pipe';
 import {SafePipe} from './safe-pipe';
 import {XmlPipe} from './xml-pipe';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import {FormsModule} from '@angular/forms';
 
 const components = [
     MarkdownComponent,
@@ -33,6 +34,7 @@ const components = [
     imports: [
         CommonModule,
         NgbModule.forRoot(),
+        FormsModule,
         SharedModule,
         DiffMatchPatchModule
     ]
