@@ -94,27 +94,63 @@ span.rvts17
 }
 span.rvts18
 {
- font-size: 14pt;
- font-weight: bold;
+ font-size: 11pt;
+ font-family: 'Calibri';
+ color: #000000;
 }
-span.rvts19
+a.rvts19, span.rvts19
 {
- font-size: 14pt;
- font-style: italic;
+ font-size: 11pt;
+ font-family: 'Calibri';
  font-weight: bold;
+ color: #0000ff;
+ text-decoration: underline;
 }
 span.rvts20
 {
- font-style: italic;
+ font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts21
 {
- font-size: 16pt;
+ font-size: 14pt;
  font-weight: bold;
 }
 span.rvts22
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts23
+{
+ font-style: italic;
+}
+span.rvts24
+{
+ font-size: 16pt;
+ font-weight: bold;
+}
+span.rvts25
+{
+}
+span.rvts26
+{
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts27
+{
+ font-weight: bold;
+}
+a.rvts28, span.rvts28
+{
+ color: #0000ff;
+ text-decoration: underline;
+}
+span.rvts29
+{
+ font-style: italic;
 }
 /* ========== Para Styles ========== */
 p,ul,ol /* Paragraph Style */
@@ -179,6 +215,9 @@ p,ul,ol /* Paragraph Style */
 }
 .rvps9
 {
+}
+.rvps10
+{
  margin: 0px 0px 0px 1px;
 }
 /* ========== Lists ========== */
@@ -188,3 +227,6 @@ p,ul,ol /* Paragraph Style */
 .list3 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
 .list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
 .list5 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
+.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
+.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
+.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
