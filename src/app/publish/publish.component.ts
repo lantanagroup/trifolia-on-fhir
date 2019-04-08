@@ -14,6 +14,7 @@ import {HtmlExportStatus, SocketService} from '../shared/socket.service';
 import {saveAs} from 'file-saver';
 import {ServerValidationResult} from '../models/server-validation-result';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-publish',
@@ -35,6 +36,7 @@ export class PublishComponent implements OnInit {
     private tabs: NgbTabset;
 
     constructor(
+        public route: ActivatedRoute,
         private socketService: SocketService,
         private fhirService: FhirService,
         private implementationGuideService: ImplementationGuideService,
@@ -44,7 +46,7 @@ export class PublishComponent implements OnInit {
 
         this.options.exportFormat = ExportFormats.HTML;
         this.options.executeIgPublisher = true;
-        this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+        this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ? this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) : this.route.snapshot.paramMap.get('id');
         this.options.responseFormat = <any> this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
 
         // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId

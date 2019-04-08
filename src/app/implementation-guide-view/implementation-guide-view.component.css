@@ -2,3 +2,7 @@ iframe {
     height: 85vh;
     width: 100%;
 }
+
+a {
+    display: inline-block;
+}
