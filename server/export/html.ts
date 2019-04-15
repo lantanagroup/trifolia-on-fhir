@@ -461,7 +461,7 @@ export class HtmlExporter {
                 const locationExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
                 const nameExtension = _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
 
-                return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
+                return !!locationExtension && !!locationExtension.valueUri && !!nameExtension && !!nameExtension.valueString;
             })
             .map((dependencyExtension) => {
                 const locationExtension = <Extension> _.find(dependencyExtension.extension, (next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
