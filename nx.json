@@ -13,6 +13,12 @@
     },
     "tof-lib": {
       "tags": []
+    },
+    "client": {
+      "tags": []
+    },
+    "client-e2e": {
+      "tags": []
     }
   }
 }

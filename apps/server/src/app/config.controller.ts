@@ -1,6 +1,5 @@
 import {Controller, Get, HttpService, Req} from '@nestjs/common';
 import {BaseController} from './base.controller';
-import * as modulePackage from '../../../../package.json';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -9,7 +8,9 @@ import {IFhirConfig} from './models/fhir-config';
 import {IAuthConfig} from './models/auth-config';
 import {IGithubConfig} from './models/github-config';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import * as config from 'config';
+import * as modulePackage from '../../../../package.json';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
@@ -30,7 +31,7 @@ export class ConfigController extends BaseController {
       throw new InvalidModuleConfigException('FHIR servers have not been configured on this server');
     }
 
-    const retConfig = {
+    const retConfig: ConfigModel = {
       version: modulePackage.version,
       supportUrl: serverConfig.supportUrl,
       fhirServers: fhirConfig.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),

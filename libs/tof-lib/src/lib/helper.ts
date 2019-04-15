@@ -26,3 +26,39 @@ export function getErrorString(err: any, body?: any, defaultMessage?: string) {
 
   return defaultMessage || 'An unknown error occurred';
 }
+
+export function reduceFlatten<T>(callback: (next: T) => any[]) {
+  const internalFlatten = (previous: T[], children: T[]) => {
+    if (children) {
+      children.forEach((child) => {
+        previous.push(child);
+        internalFlatten(previous, callback(child));
+      });
+    }
+  };
+
+  return (previous: any[], current: T): any[] => {
+    internalFlatten(previous, callback(current));
+    return previous;
+  };
+}
+
+export function groupBy(items: any[], callback: (next: any) => any): { [key: string]: any} {
+  const groups = {};
+
+  items.forEach((next) => {
+    let key = callback(next);
+
+    if (key) {
+      key = key.toString();
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(next);
+    }
+  });
+
+  return groups;
+}
