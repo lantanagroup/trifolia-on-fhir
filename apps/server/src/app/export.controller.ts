@@ -1,5 +1,5 @@
 import {BaseController, GenericResponse} from './base.controller';
-import {Controller, Get, HttpService, Logger, Param, Post, Req} from '@nestjs/common';
+import {Controller, Get, Header, HttpService, Logger, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
 import {HtmlExporter} from './export/html';
 import {ITofRequest} from './models/tof-request';
@@ -10,10 +10,13 @@ import {Fhir} from 'fhir/fhir';
 import {emptydir, rmdir, zip} from './helper';
 import {ExportFormats} from './models/export-formats';
 import {ExportOptions} from './models/export-options';
+import {AuthGuard} from '@nestjs/passport';
+import {Response} from 'express';
 import * as path from "path";
 import * as tmp from 'tmp';
 
 @Controller('export')
+@UseGuards(AuthGuard('bearer'))
 export class ExportController extends BaseController {
   static htmlExports = [];
 
@@ -131,7 +134,7 @@ export class ExportController extends BaseController {
   }
 
   @Post(':implementationGuideId')
-  public exportImplementationGuide(@Req() request: ITofRequest, implementationGuideId: string): Promise<GenericResponse> {
+  public exportImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string): Promise<GenericResponse> {
     const options = new ExportOptions(request.query);
 
     switch (options.exportFormat) {
@@ -147,27 +150,20 @@ export class ExportController extends BaseController {
   }
 
   @Get(':packageId')
-  public getExportedPackage(@Param('packageId') packageId: string): Promise<GenericResponse> {
-    return new Promise((resolve, reject) => {
-      const rootPath = path.join(tmp.tmpdir, packageId);
+  public async getExportedPackage(@Param('packageId') packageId: string, @Res() res: Response) {
+    const rootPath = path.join(tmp.tmpdir, packageId);
 
-      zip(rootPath)
-        .then((buffer) => {
-          resolve({
-            contentType: 'application/octet-stream',
-            contentDisposition: 'attachment; filename=ig-package.zip',
-            content: buffer
-          });
+    const buffer = await zip(rootPath);
 
-          return emptydir(rootPath);
-        })
-        .then(() => {
-          return rmdir(rootPath);
-        })
-        .catch((err) => {
-          this.logger.error(err);
-          reject(err);
-        });
-    });
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', 'attachment; filename=ig-package.zip');
+    res.send(buffer);
+
+    try {
+      await emptydir(rootPath);
+      await rmdir(rootPath);
+    } catch (ex) {
+      this.logger.error(`Error emptying and/or removing ${rootPath}`, ex);
+    }
   }
 }

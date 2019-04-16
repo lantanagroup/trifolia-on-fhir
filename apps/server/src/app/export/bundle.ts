@@ -103,9 +103,7 @@ export class BundleExporter {
       references.forEach((reference) => {
         const parsed = parseUrl(reference);
         const resourceUrl = buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
-        const resourcePromise = this.httpService.get(resourceUrl)
-          .toPromise()
-          .then((results) => results.data);
+        const resourcePromise = this.httpService.get(resourceUrl).toPromise();
         promises.push(resourcePromise);
       });
     });
@@ -124,16 +122,13 @@ export class BundleExporter {
         const reference = resource.reference.reference;
         const parsed = parseUrl(reference);
         const resourceUrl = buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
-        const resourcePromise = this.httpService.get(resourceUrl)
-          .toPromise()
-          .then((results) => results.data);
-        return resourcePromise;
+        return this.httpService.get(resourceUrl).toPromise();
       });
 
     return Promise.all(promises);
   }
 
-  public getBundle(removeExtensions = false): Promise<Bundle> {
+  public async getBundle(removeExtensions = false): Promise<Bundle> {
     if (!fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server has not been configured with FHIR servers');
     }
@@ -160,22 +155,22 @@ export class BundleExporter {
         .then((responses) => {
           const resourceEntries = responses
             .filter((response) => {
-              return !!response.body && !!response.body.resourceType;
+              return !!response.data && !!response.data.resourceType;
             })
             .map((response) => {
               let fullUrl = response.headers['content-location'];
 
               if (!fullUrl) {
-                fullUrl = joinUrl(this.fhirServerBase, response.body.resourceType, response.body.id);
+                fullUrl = joinUrl(this.fhirServerBase, response.data.resourceType, response.data.id);
 
-                if (response.body.meta && response.body.meta.versionId) {
-                  fullUrl = joinUrl(fullUrl, '_history', response.body.meta.versionId);
+                if (response.data.meta && response.data.meta.versionId) {
+                  fullUrl = joinUrl(fullUrl, '_history', response.data.meta.versionId);
                 }
               }
 
               return {
                 fullUrl: fullUrl,
-                resource: response.body
+                resource: response.data
               };
             });
 
@@ -197,8 +192,8 @@ export class BundleExporter {
           resolve(bundle);
         })
         .catch((err) => {
-          if (err && err.response && err.response.body) {
-            const errBody = <OperationOutcome>err.response.body;
+          if (err && err.response && err.response.data) {
+            const errBody = <OperationOutcome> err.response.data;
             const issueTexts = (errBody.issue || []).map((issue) => issue.diagnostics);
 
             if (issueTexts.length > 0) {

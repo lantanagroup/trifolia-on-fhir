@@ -61,13 +61,14 @@ export class CustomSTU3Validator extends CustomValidator {
       }
     });
 
-    groupedResources.forEach((resourceGroup, reference) => {
-      if (resourceGroup.length > 1) {
+    const groupedResourcesKeys = Object.keys(groupedResources);
+    groupedResourcesKeys.forEach((groupedResourcesKey) => {
+      if (groupedResources[groupedResourcesKey].length > 1) {
         messages.push({
           location: 'ImplementationGuide.package.resource',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `Multiple resources found with reference ${reference || '""'}`
+          message: `Multiple resources found with reference ${groupedResourcesKey || '""'}`
         });
       }
     });
@@ -81,24 +82,26 @@ export class CustomSTU3Validator extends CustomValidator {
       });
     }
 
-    groupedPageTitles.forEach((pages, title) => {
-      if (pages.length > 1) {
+    const groupedPageTitlesKeys = Object.keys(groupedPageTitles);
+    groupedPageTitlesKeys.forEach((groupedPageTitlesKey) => {
+      if (groupedPageTitles[groupedPageTitlesKey].length > 1) {
         messages.push({
           location: 'ImplementationGuide.page+',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `Multiple pages found with the same title ${title || '""'}`
+          message: `Multiple pages found with the same title ${groupedPageTitlesKey || '""'}`
         });
       }
     });
 
-    groupedPageFileNames.forEach((pages, fileName) => {
-      if (pages.length > 1) {
+    const groupedPageFileNamesKeys = Object.keys(groupedPageFileNames);
+    groupedPageFileNamesKeys.forEach((groupedPageFileNamesKey) => {
+      if (groupedPageFileNames[groupedPageFileNamesKey].length > 1) {
         messages.push({
           location: 'ImplementationGuide.page+',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `Multiple pages found with the same source (file name) ${fileName || '""'}`
+          message: `Multiple pages found with the same source (file name) ${groupedPageFileNamesKey || '""'}`
         });
       }
     });

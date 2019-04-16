@@ -12,12 +12,14 @@ import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/ex
 import {Response} from 'express';
 import {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
-import {BadRequestException, Logger} from '@nestjs/common';
+import {BadRequestException, Logger, NotFoundException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as config from 'config';
+import * as fs from 'fs';
+import {NotFoundExceptionFilter} from './not-found-exception-filter';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
@@ -185,6 +187,7 @@ async function bootstrap() {
   const globalPrefix = 'api';
 
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalFilters(new NotFoundExceptionFilter());
 
   initSocket(app);
 

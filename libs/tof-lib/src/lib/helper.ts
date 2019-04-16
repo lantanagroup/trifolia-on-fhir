@@ -43,6 +43,19 @@ export function reduceFlatten<T>(callback: (next: T) => any[]) {
   };
 }
 
+export function reduceDistinct<T>(callback: (next: T) => any) {
+  return (previous: any[], current: T): any[] => {
+    const id = callback(current);
+    const previousIds = previous.map(prev => callback(prev));
+
+    if (previousIds.indexOf(id) < 0) {
+      previous.push(current);
+    }
+
+    return previous;
+  };
+}
+
 export function groupBy(items: any[], callback: (next: any) => any): { [key: string]: any} {
   const groups = {};
 

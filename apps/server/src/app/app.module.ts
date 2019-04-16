@@ -11,6 +11,10 @@ import {CapabilityStatementController} from './capability-statement.controller';
 import {ManageController} from './manage.controller';
 import {ExportController} from './export.controller';
 import {ImportController} from './import.controller';
+import {HttpStrategy} from './auth.strategy';
+import {OperationDefinitionController} from './operation-definition.controller';
+import {CodeSystemController} from './code-system.controller';
+import {QuestionnaireController} from './questionnaire.controller';
 
 @Module({
   imports: [HttpModule],
@@ -23,11 +27,16 @@ import {ImportController} from './import.controller';
     PractitionerController,
     StructureDefinitionController,
     ValueSetController,
+    CodeSystemController,
     CapabilityStatementController,
+    OperationDefinitionController,
+    QuestionnaireController,
     ManageController,
     ExportController,
     ImportController
   ],
-  providers: [],
+  providers: [
+    HttpStrategy
+  ],
 })
 export class AppModule {}

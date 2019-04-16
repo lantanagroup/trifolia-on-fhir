@@ -1,10 +1,12 @@
 import {BaseController} from './base.controller';
-import {All, BadRequestException, Controller, Get, HttpService, Logger, Param, Req} from '@nestjs/common';
+import {All, BadRequestException, Controller, Get, HttpService, Logger, Param, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {map} from 'rxjs/operators';
+import {AuthGuard} from '@nestjs/passport';
 
 @Controller('fhir')
+@UseGuards(AuthGuard('bearer'))
 export class FhirController extends BaseController {
   private readonly logger = new Logger(FhirController.name);
 

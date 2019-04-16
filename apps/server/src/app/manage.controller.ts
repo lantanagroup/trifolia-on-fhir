@@ -1,13 +1,15 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, Post, Req} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
+import {AuthGuard} from '@nestjs/passport';
 
 interface MessageRequest {
   message: string;
 }
 
 @Controller('manage')
+@UseGuards(AuthGuard('bearer'))
 export class ManageController extends BaseController {
   constructor() {
     super();

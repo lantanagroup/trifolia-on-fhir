@@ -236,7 +236,8 @@ export class ExportComponent implements OnInit {
           } else if (this.options.exportFormat === ExportFormats.HTML) {
             const reader = new FileReader();
             reader.addEventListener('loadend', (e: any) => {
-              this.packageId = e.srcElement.result;
+              const result = JSON.parse(e.srcElement.result);
+              this.packageId = result.content;
             });
             reader.readAsText(results.body);
           }

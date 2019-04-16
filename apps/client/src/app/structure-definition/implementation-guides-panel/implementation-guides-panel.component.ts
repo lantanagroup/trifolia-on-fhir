@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {
-  StructureDefinitionImplementationnGuide,
+  StructureDefinitionImplementationGuide,
   StructureDefinitionOptions
 } from '../../shared/structure-definition.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
@@ -17,7 +17,7 @@ export class ImplementationGuidesPanelComponent implements OnInit {
   @Input() options = new StructureDefinitionOptions();
   @Input() showIntro = true;
   public implementationGuidesBundle: Bundle;
-  public newImplementationGuide: StructureDefinitionImplementationnGuide;
+  public newImplementationGuide: StructureDefinitionImplementationGuide;
   public Globals = Globals;
 
   constructor(
@@ -34,7 +34,7 @@ export class ImplementationGuidesPanelComponent implements OnInit {
   }
 
   public addImplementationGuide() {
-    this.newImplementationGuide = new StructureDefinitionImplementationnGuide();
+    this.newImplementationGuide = new StructureDefinitionImplementationGuide();
     this.newImplementationGuide.isNew = true;
   }
 
@@ -43,7 +43,7 @@ export class ImplementationGuidesPanelComponent implements OnInit {
     this.newImplementationGuide = null;
   }
 
-  public removeImplementationGuide(ig: StructureDefinitionImplementationnGuide) {
+  public removeImplementationGuide(ig: StructureDefinitionImplementationGuide) {
     if (ig.isNew) {
       const index = this.options.implementationGuides.indexOf(ig);
       this.options.implementationGuides.splice(index, 1);

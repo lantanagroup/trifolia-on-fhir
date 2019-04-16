@@ -1,11 +1,28 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {BadGatewayException, BadRequestException, Body, Controller, Delete, Get, HttpService, Logger, Param, Post, Put, Query, Req} from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpService,
+  Logger,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import * as nanoid from 'nanoid';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {AuthGuard} from '@nestjs/passport';
 
 @Controller('practitioner')
+@UseGuards(AuthGuard('bearer'))
 export class PractitionerController extends BaseFhirController {
   resourceType = 'Practitioner';
 
@@ -15,6 +32,7 @@ export class PractitionerController extends BaseFhirController {
     super(httpService);
   }
 
+  @Post('me')
   public updateMyPractitioner(@Req() request: ITofRequest, @Body() practitioner: Practitioner): Promise<any> {
     return this.getMyPractitioner(request, true)
       .then((existingPractitioner) => {
@@ -76,6 +94,7 @@ export class PractitionerController extends BaseFhirController {
       .then((results) => results);
   }
 
+  @Get('me')
   public getMyPractitioner(@Req() request: ITofRequest, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<any> {
     let system = '';
     let identifier = request.user.sub;

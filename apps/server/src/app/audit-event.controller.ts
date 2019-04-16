@@ -1,8 +1,10 @@
-import {Controller, Get, HttpService, Param, Req} from '@nestjs/common';
+import {Controller, Get, HttpService, Param, Req, UseGuards} from '@nestjs/common';
 import {BaseFhirController} from './base-fhir.controller';
 import {ITofRequest} from './models/tof-request';
+import {AuthGuard} from '@nestjs/passport';
 
 @Controller('auditEvent')
+@UseGuards(AuthGuard('bearer'))
 export class AuditEventController extends BaseFhirController {
   resourceType = 'AuditEvent';
 

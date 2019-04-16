@@ -4,6 +4,7 @@ import * as config from 'config';
 import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import * as nanoid from 'nanoid';
+import {TofNotFoundException} from '../not-found-exception';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -84,7 +85,7 @@ export class BaseFhirController extends BaseController {
       .then((results) => results.data);
   }
 
-  protected baseGet(baseUrl, id: string, query?: any): Promise<any> {
+  protected async baseGet(baseUrl, id: string, query?: any): Promise<any> {
     const url = buildUrl(baseUrl, this.resourceType, id, null, query);
     const options = {
       url: url,
@@ -95,8 +96,14 @@ export class BaseFhirController extends BaseController {
       }
     };
 
-    return this.httpService.request(options).toPromise()
-      .then((results) => results.data);
+    try {
+      const getResults = await this.httpService.request(options).toPromise();
+      return getResults.data;
+    } catch (ex) {
+      if (ex.response.status === 404) {
+        throw new TofNotFoundException();
+      }
+    }
   }
 
   protected baseCreate(baseUrl: string, data: any, query?: any) {

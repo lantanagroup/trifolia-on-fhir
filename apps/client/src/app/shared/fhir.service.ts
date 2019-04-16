@@ -116,7 +116,7 @@ export class FhirService {
   private getSystemConcepts(concepts: ConceptDefinitionComponent[]): Coding[] {
     let all = [];
 
-    concepts.forEach((concept) => {
+    (concepts || []).forEach((concept) => {
       all.push(new Coding(concept));
       const next = this.getSystemConcepts(concept.concept);
       all = all.concat(next);

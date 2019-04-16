@@ -16,7 +16,15 @@
             "outputPath": "dist/apps/server",
             "main": "apps/server/src/main.ts",
             "tsConfig": "apps/server/tsconfig.app.json",
-            "assets": ["apps/server/src/assets", "apps/server/src/config"]
+            "assets": [
+              "apps/server/src/assets",
+              "apps/server/src/config",
+              {
+                "glob": "**/*",
+                "input": "libs/tof-lib/src/assets",
+                "output": "./assets"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -101,7 +109,12 @@
             "assets": [
               "apps/client/src/favicon.ico",
               "apps/client/src/assets",
-              "apps/client/src/help"
+              "apps/client/src/help",
+              {
+                "glob": "**/*",
+                "input": "libs/tof-lib/src/assets",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "apps/client/src/styles.css",

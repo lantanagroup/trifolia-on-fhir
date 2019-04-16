@@ -28,6 +28,8 @@ import * as fs from 'fs-extra';
 import * as config from 'config';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
+import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getBootstrapComponent} from '@nrwl/schematics/src/utils/ast-utils';
 
 const fhirConfig = <IFhirConfig>config.get('fhir');
 const serverConfig = <IServerConfig>config.get('server');
@@ -159,7 +161,7 @@ export class HtmlExporter {
     return output;
   }
 
-  private sendSocketMessage(status, message) {
+  private sendSocketMessage(status, message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
       return;
@@ -172,12 +174,16 @@ export class HtmlExporter {
         message: message
       });
     }
+
+    if (shouldLog) {
+      this.logger.log(`${status}: ${message}`);
+    }
   }
 
   private getIgPublisher(useLatest: boolean): Promise<string> {
     return new Promise((resolve) => {
       const fileName = 'org.hl7.fhir.igpublisher.jar';
-      const defaultPath = path.join(__dirname, '../../ig-publisher');
+      const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
       const defaultFilePath = path.join(defaultPath, fileName);
 
       if (useLatest === true) {
@@ -286,9 +292,8 @@ export class HtmlExporter {
   private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide) {
     const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
     const distinctResources = (bundle.entry || [])
-      .map((entry) => entry.resource)
-      .uniq((resource) => resource.id)
-      .value();
+      .map((entry) => <DomainResource> entry.resource)
+      .reduce(reduceDistinct((resource: DomainResource) => resource.id), []);
     const valueSets = distinctResources.filter((resource) => resource.resourceType === 'ValueSet');
     const codeSystems = distinctResources.filter((resource) => resource.resourceType === 'CodeSystem');
     const profiles = distinctResources.filter((resource) => resource.resourceType === 'StructureDefinition' && (!resource.baseDefinition || !resource.baseDefinition.endsWith('Extension')));
@@ -316,7 +321,7 @@ export class HtmlExporter {
 
     if (profiles.length > 0) {
       const profilesData = profiles
-        .sortBy((profile) => profile.name)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
         .map((profile) => {
           return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
         });
@@ -327,7 +332,7 @@ export class HtmlExporter {
 
     if (extensions.length > 0) {
       const extData = extensions
-        .sortBy((extension) => extension.name)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
         .map((extension) => {
           return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
         });
@@ -341,7 +346,7 @@ export class HtmlExporter {
       const vsPath = path.join(rootPath, 'source/pages/terminology.md');
 
       valueSets
-        .sortBy((valueSet) => valueSet.title || valueSet.name)
+        .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         .forEach((valueSet) => {
           vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
         });
@@ -354,7 +359,7 @@ export class HtmlExporter {
       const csPath = path.join(rootPath, 'source/pages/terminology.md');
 
       codeSystems
-        .sortBy((codeSystem) => codeSystem.title || codeSystem.name)
+        .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         .forEach((codeSystem) => {
           csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
         });
@@ -364,7 +369,7 @@ export class HtmlExporter {
 
     if (capabilityStatements.length > 0) {
       const csData = capabilityStatements
-        .sortBy((capabilityStatement) => capabilityStatement.name)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
         .map((capabilityStatement) => {
           return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
         });
@@ -375,9 +380,12 @@ export class HtmlExporter {
 
     if (otherResources.length > 0) {
       const oData = otherResources
-        .sortBy((resource) => {
-          let display = resource.title || this.getDisplayName(resource.name) || resource.id;
-          return resource.resourceType + display;
+        .sort((a, b) => {
+          const aDisplay = a.title || this.getDisplayName(a.name) || a.id || '';
+          const aCompare = a.resourceType + aDisplay;
+          const bDisplay = b.title || this.getDisplayName(b.name) || b.id || '';
+          const bCompare = b.resourceType + bDisplay;
+          return aCompare.localeCompare(bCompare);
         })
         .map((resource) => {
           let name = resource.title || this.getDisplayName(resource.name) || resource.id;
@@ -839,7 +847,6 @@ export class HtmlExporter {
     return new Promise((resolve, reject) => {
       const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
       const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
-      const extension = (!isXml ? '.json' : '.xml');
       const homedir = require('os').homedir();
       const fhirServerConfig = fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
       let control;
@@ -854,21 +861,22 @@ export class HtmlExporter {
         }
 
         const controlPath = path.join(rootPath, 'ig.json');
-        let bundle: Bundle;
 
         this.packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
         resolve(this.packageId);
 
         setTimeout(() => {
-          this.sendSocketMessage('progress', 'Created temp directory. Retrieving resources for implementation guide.');
+          this.sendSocketMessage('progress', 'Created temp directory. Retrieving resources for implementation guide.', true);
+
+          let bundle: Bundle;
 
           // Prepare IG Publisher package
           bundleExporter.getBundle(false)
-            .then((results: any) => {
-              bundle = <Bundle>results;
+            .then((results: Bundle) => {
+              bundle = results;
               const resourcesDir = path.join(rootPath, 'source/resources');
 
-              this.sendSocketMessage('progress', 'Resources retrieved. Packaging.');
+              this.sendSocketMessage('progress', 'Resources retrieved. Packaging.', true);
 
               for (let i = 0; i < bundle.entry.length; i++) {
                 const resource = bundle.entry[i].resource;
@@ -912,7 +920,7 @@ export class HtmlExporter {
             })
             .then(() => {
               // Copy the contents of the ig-publisher-template folder to the export temporary folder
-              const templatePath = path.join(__dirname, '../../', 'ig-publisher-template');
+              const templatePath = path.join(__dirname, 'assets', 'ig-publisher-template');
               fs.copySync(templatePath, rootPath);
 
               // Write the ig.json file to the export temporary folder
@@ -930,20 +938,20 @@ export class HtmlExporter {
                 this.writeR4Pages(rootPath, implementationGuideResource);
               }
 
-              this.sendSocketMessage('progress', 'Done building package');
+              this.sendSocketMessage('progress', 'Done building package', true);
 
               return this.getIgPublisher(useLatest);
             })
             .then((igPublisherLocation) => {
               if (includeIgPublisherJar && igPublisherLocation) {
-                this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.');
+                this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.', true);
                 const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
                 const destJarPath = path.join(rootPath, jarFileName);
                 fs.copySync(igPublisherLocation, destJarPath);
               }
 
               if (!executeIgPublisher || !igPublisherLocation) {
-                this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+                this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.', true);
 
                 if (testCallback) {
                   testCallback(rootPath);
@@ -963,7 +971,7 @@ export class HtmlExporter {
                 jarParams.push('-tx', 'N/A');
               }
 
-              this.sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`);
+              this.sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`, true);
 
               this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
@@ -994,13 +1002,13 @@ export class HtmlExporter {
               igPublisherProcess.on('exit', (code) => {
                 this.logger.log(`IG Publisher is done executing for ${rootPath}`);
 
-                this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code);
+                this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
 
                 if (code !== 0) {
-                  this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.');
+                  this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
                   this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
                 } else {
-                  this.sendSocketMessage('progress', 'Copying output to deployment path.');
+                  this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
 
                   const generatedPath = path.resolve(rootPath, 'generated_output');
                   const outputPath = path.resolve(rootPath, 'output');
@@ -1021,7 +1029,7 @@ export class HtmlExporter {
                       this.sendSocketMessage('error', 'Error copying contents to deployment path.');
                     } else {
                       const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/implementation-guide/${this.implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
-                      this.sendSocketMessage('complete', finalMessage);
+                      this.sendSocketMessage('complete', finalMessage, true);
                     }
 
                     if (!downloadOutput) {
@@ -1040,7 +1048,7 @@ export class HtmlExporter {
               });
             })
             .catch((err) => {
-              this.logger.error(err);
+              this.logger.error(err.message || err);
               this.sendSocketMessage('error', 'Error during export: ' + err);
 
               if (testCallback) {

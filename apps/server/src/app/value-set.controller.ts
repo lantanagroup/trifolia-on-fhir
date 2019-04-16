@@ -1,15 +1,17 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Logger, Param, Post, Put, Req} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, Logger, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import * as config from 'config';
 import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {AuthGuard} from '@nestjs/passport';
+import * as config from 'config';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
 @Controller('valueSet')
+@UseGuards(AuthGuard('bearer'))
 export class ValueSetController extends BaseFhirController {
   resourceType = 'ValueSet';
   

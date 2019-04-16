@@ -1,9 +1,10 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Controller, Body, Delete, Get, HttpService, Param, Post, Put, Req} from '@nestjs/common';
+import {Controller, Body, Delete, Get, HttpService, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
 import * as config from 'config';
 import {IFhirConfig} from './models/fhir-config';
 import {ITofRequest} from './models/tof-request';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {AuthGuard} from '@nestjs/passport';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -19,6 +20,7 @@ interface PublishedGuidesModel {
 }
 
 @Controller('implementationGuide')
+@UseGuards(AuthGuard('bearer'))
 export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 

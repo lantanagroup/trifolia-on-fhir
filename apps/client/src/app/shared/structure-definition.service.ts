@@ -5,7 +5,12 @@ import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/s
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 
-export class StructureDefinitionImplementationnGuide {
+export class StructureDefinitionImplementationGuide {
+  constructor(id?: string, name?: string) {
+    this.id = id;
+    this.name = name;
+  }
+
   public id: string;
   public name: string;
   public isRemoved = false;
@@ -13,7 +18,7 @@ export class StructureDefinitionImplementationnGuide {
 }
 
 export class StructureDefinitionOptions {
-  public implementationGuides: StructureDefinitionImplementationnGuide[] = [];
+  public implementationGuides: StructureDefinitionImplementationGuide[] = [];
 }
 
 export class GetStructureDefinitionModel {
