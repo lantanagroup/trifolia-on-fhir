@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../globals';
-import {Coding} from '../../models/stu3/fhir';
+import {Coding} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 @Component({
   selector: 'app-fhir-coding-modal',
@@ -12,7 +11,7 @@ export class FhirCodingModalComponent implements OnInit {
   @Input() coding: Coding;
 
   constructor(
-      public activeModal: NgbActiveModal) {
+    public activeModal: NgbActiveModal) {
 
   }
 

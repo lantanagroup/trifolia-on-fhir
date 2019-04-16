@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Resource} from '../../models/stu3/fhir';
+import {Resource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {saveAs} from 'file-saver';
 import * as vkbeautify from 'vkbeautify';

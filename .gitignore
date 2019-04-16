@@ -49,3 +49,4 @@ dist.zip
 *.log
 config/local.json
 manifest.txt
+node_modules_1/

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CodeableConcept, Coding} from '../../models/stu3/fhir';
+import {CodeableConcept, Coding} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../globals';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirCodingModalComponent} from '../coding-modal/coding-modal.component';
 
 @Component({
@@ -15,14 +15,14 @@ export class FhirCodeableConceptModalComponent implements OnInit {
   public Globals = Globals;
 
   constructor(
-      private modalService: NgbModal,
-      public activeModal: NgbActiveModal) {
+    private modalService: NgbModal,
+    public activeModal: NgbActiveModal) {
 
   }
 
   editCoding(coding: Coding) {
-      const modalRef = this.modalService.open(FhirCodingModalComponent);
-      modalRef.componentInstance.coding = coding;
+    const modalRef = this.modalService.open(FhirCodingModalComponent);
+    modalRef.componentInstance.coding = coding;
   }
 
   ngOnInit() {

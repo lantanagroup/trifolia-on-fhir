@@ -1,74 +1,72 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../globals';
-import {ResourceReference} from '../../models/stu3/fhir';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {ResourceReference} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirReferenceModalComponent} from '../reference-modal/reference-modal.component';
 
 @Component({
-    selector: 'app-fhir-reference',
-    templateUrl: './reference.component.html',
-    styleUrls: ['./reference.component.css']
+  selector: 'app-fhir-reference',
+  templateUrl: './reference.component.html',
+  styleUrls: ['./reference.component.css']
 })
 export class FhirReferenceComponent implements OnInit {
-    @Input() public parentObject: any;
-    @Input() public propertyName: string;
-    @Input() public isFormGroup = true;
-    @Input() public title: string;
-    @Input() public resourceType?: string;
-    @Input() public required: boolean;
-    @Input() public hideResourceType?: boolean;
-    @Input() public disabled: boolean;
+  @Input() public parentObject: any;
+  @Input() public propertyName: string;
+  @Input() public isFormGroup = true;
+  @Input() public title: string;
+  @Input() public resourceType?: string;
+  @Input() public required: boolean;
+  @Input() public hideResourceType?: boolean;
+  @Input() public disabled: boolean;
 
-    public Globals = Globals;
+  public Globals = Globals;
 
-    constructor(
-        private modalService: NgbModal) {
+  constructor(
+    private modalService: NgbModal) {
+  }
+
+  get reference(): string {
+    if (this.parentObject[this.propertyName]) {
+      return this.parentObject[this.propertyName].reference;
     }
-    
-    get reference(): string {
-        if (this.parentObject[this.propertyName]) {
-            return this.parentObject[this.propertyName].reference;
-        }
-        return '';
-    }
-    
-    set reference(value: string) {
-        if (!this.parentObject[this.propertyName]) {
-            return;
-        }
-        
-        this.parentObject[this.propertyName].reference = value;
+    return '';
+  }
+
+  set reference(value: string) {
+    if (!this.parentObject[this.propertyName]) {
+      return;
     }
 
-    get display(): string {
-        if (this.parentObject[this.propertyName]) {
-            return this.parentObject[this.propertyName].display;
-        }
-        return '';
+    this.parentObject[this.propertyName].reference = value;
+  }
+
+  get display(): string {
+    if (this.parentObject[this.propertyName]) {
+      return this.parentObject[this.propertyName].display;
+    }
+    return '';
+  }
+
+  set display(value: string) {
+    if (!this.parentObject[this.propertyName]) {
+      return;
     }
 
-    set display(value: string) {
-        if (!this.parentObject[this.propertyName]) {
-            return;
-        }
+    this.parentObject[this.propertyName].display = value;
+  }
 
-        this.parentObject[this.propertyName].display = value;
-    }
+  open(content) {
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    modalRef.componentInstance.resourceType = this.resourceType;
+    modalRef.componentInstance.hideResourceType = this.hideResourceType;
 
-    open(content) {
-        const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
-        modalRef.componentInstance.resourceType = this.resourceType;
-        modalRef.componentInstance.hideResourceType = this.hideResourceType;
+    modalRef.result.then((results: any) => {
+      const reference: ResourceReference = this.parentObject[this.propertyName];
+      reference.reference = results.resourceType + '/' + results.id;
+      reference.display = results.display;
+    });
+  }
 
-        modalRef.result.then((results: any) => {
-            const reference: ResourceReference = this.parentObject[this.propertyName];
-            reference.reference = results.resourceType + '/' + results.id;
-            reference.display = results.display;
-        });
-    }
-
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 }

@@ -1,4 +1,4 @@
-import {DomainResource} from './stu3/fhir';
+import {DomainResource} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 export class FileModel {
   name: string;

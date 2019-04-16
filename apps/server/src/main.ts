@@ -14,6 +14,7 @@ import {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
 import {BadRequestException, Logger} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
+import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as config from 'config';
@@ -189,10 +190,12 @@ async function bootstrap() {
 
   app.use(bodyParser.json({ limit: '15mb' }));
   app.use(bodyParser.raw({ type: ['application/octet-stream', 'application/binary']}));
-  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.urlencoded({ limit: '15mb', extended: false }));
   app.use(compression());
   app.use(loadTofRequest);
   app.use(parseFhirBody);
+
+  app.useStaticAssets(path.join(__dirname, '/../client'));
 
   const port = process.env.port || serverConfig.port || 3333;
   await app.listen(port, () => {

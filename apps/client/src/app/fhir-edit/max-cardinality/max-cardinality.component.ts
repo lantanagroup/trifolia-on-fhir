@@ -1,40 +1,40 @@
 import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
-    selector: 'app-fhir-max-cardinality',
-    templateUrl: './max-cardinality.component.html',
-    styleUrls: ['./max-cardinality.component.css']
+  selector: 'app-fhir-max-cardinality',
+  templateUrl: './max-cardinality.component.html',
+  styleUrls: ['./max-cardinality.component.css']
 })
 export class FhirMaxCardinalityComponent implements OnInit {
-    @Input() parentObject: any;
-    @Input() property: string;
+  @Input() parentObject: any;
+  @Input() property: string;
 
-    constructor() {
+  constructor() {
+  }
+
+  public get cardinalityNumber(): number {
+    const floatVal = parseFloat(this.parentObject[this.property]);
+
+    if (!isNaN(floatVal)) {
+      return floatVal;
+    } else {
+      return undefined;
     }
+  }
 
-    public get cardinalityNumber(): number {
-        const floatVal = parseFloat(this.parentObject[this.property]);
+  public set cardinalityNumber(value: number) {
+    this.parentObject[this.property] = value.toString();
+  }
 
-        if (!isNaN(floatVal)) {
-            return floatVal;
-        } else {
-            return undefined;
-        }
+  public toggleUnlimited(value: boolean) {
+    if (value) {
+      this.parentObject[this.property] = '*';
+    } else {
+      this.parentObject[this.property] = '1';
     }
+  }
 
-    public set cardinalityNumber(value: number) {
-        this.parentObject[this.property] = value.toString();
-    }
-
-    public toggleUnlimited(value: boolean) {
-        if (value) {
-            this.parentObject[this.property] = '*';
-        } else {
-            this.parentObject[this.property] = '1';
-        }
-    }
-
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
 }

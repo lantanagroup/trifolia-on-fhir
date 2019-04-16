@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
-import {Globals} from '../../globals';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {CookieService} from 'angular2-cookie/core';
 
 @Component({

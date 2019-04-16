@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Globals} from '../../globals';
-import {Attachment} from '../../models/stu3/fhir';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {Attachment} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirAttachmentModalComponent} from '../attachment-modal/attachment-modal.component';
 
@@ -10,43 +10,43 @@ import {FhirAttachmentModalComponent} from '../attachment-modal/attachment-modal
   styleUrls: ['./attachment.component.css']
 })
 export class FhirAttachmentComponent implements OnInit {
-    @Input() parentObject: any;
-    @Input() propertyName: string;
-    @Input() title: string;
-    @Input() required = false;
-    @Input() isFormGroup = true;
-    @Input() defaultValue = { };
-    @Input() tooltip: string;
-    @Input() tooltipKey: string;
+  @Input() parentObject: any;
+  @Input() propertyName: string;
+  @Input() title: string;
+  @Input() required = false;
+  @Input() isFormGroup = true;
+  @Input() defaultValue = {};
+  @Input() tooltip: string;
+  @Input() tooltipKey: string;
 
-    public Globals = Globals;
+  public Globals = Globals;
 
-    constructor(private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
 
+  }
+
+  editAttachment() {
+    const modalRef = this.modalService.open(FhirAttachmentModalComponent, {size: 'lg'});
+    modalRef.componentInstance.attachment = this.parentObject[this.propertyName];
+  }
+
+  getDisplay() {
+    if (!this.parentObject || !this.parentObject[this.propertyName]) {
+      return 'No attachment';
     }
 
-    editAttachment() {
-        const modalRef = this.modalService.open(FhirAttachmentModalComponent, { size: 'lg' });
-        modalRef.componentInstance.attachment = this.parentObject[this.propertyName];
+    const attachment = <Attachment>this.parentObject[this.propertyName];
+
+    return attachment.title ||
+      attachment.contentType ||
+      (attachment.size ? 'size: ' + attachment.size.toString() : '') ||
+      attachment.url ||
+      'Has attachment';
+  }
+
+  ngOnInit() {
+    if (this.tooltipKey) {
+      this.tooltip = Globals.tooltips[this.tooltipKey];
     }
-
-    getDisplay() {
-        if (!this.parentObject || !this.parentObject[this.propertyName]) {
-            return 'No attachment';
-        }
-
-        const attachment = <Attachment> this.parentObject[this.propertyName];
-
-        return attachment.title ||
-            attachment.contentType ||
-            (attachment.size ? 'size: ' + attachment.size.toString() : '') ||
-            attachment.url ||
-            'Has attachment';
-    }
-
-    ngOnInit() {
-        if (this.tooltipKey) {
-            this.tooltip = Globals.tooltips[this.tooltipKey];
-        }
-    }
+  }
 }

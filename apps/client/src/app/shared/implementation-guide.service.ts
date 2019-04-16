@@ -1,13 +1,8 @@
 import {Injectable} from '@angular/core';
-import {ImplementationGuideListItemModel} from '../models/implementation-guide-list-item-model';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {
-    Bundle,
-    ImplementationGuide as STU3ImplementationGuide,
-    OperationOutcome as STU3OperationOutcome
-} from '../models/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../models/r4/fhir';
+import {Bundle, ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 export class PublishedGuideModel {
     public name: string;

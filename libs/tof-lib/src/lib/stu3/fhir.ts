@@ -1,4 +1,4 @@
-import '../../../../../src/date-extensions';
+import '../date-extensions';
 
 export class Base {
     public fhir_comments?: string[];

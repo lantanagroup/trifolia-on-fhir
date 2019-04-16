@@ -1,20 +1,20 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Practitioner} from '../../models/stu3/fhir';
-import {Globals} from '../../globals';
+import {Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
-    selector: 'app-fhir-practitioner',
-    templateUrl: './practitioner.component.html',
-    styleUrls: ['./practitioner.component.css']
+  selector: 'app-fhir-practitioner',
+  templateUrl: './practitioner.component.html',
+  styleUrls: ['./practitioner.component.css']
 })
 export class FhirPractitionerComponent implements OnInit {
-    @Input() practitioner = new Practitioner();
+  @Input() practitioner = new Practitioner();
 
-    public Globals = Globals;
+  public Globals = Globals;
 
-    constructor() {
-    }
+  constructor() {
+  }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 }

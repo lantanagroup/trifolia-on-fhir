@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Identifier} from '../../models/stu3/fhir';
-import {Globals} from '../../globals';
+import {Identifier} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 @Component({
   selector: 'app-fhir-identifier-modal',
@@ -12,7 +11,7 @@ export class FhirIdentifierModalComponent implements OnInit {
   @Input() identifier: Identifier;
 
   constructor(
-      public activeModal: NgbActiveModal) {
+    public activeModal: NgbActiveModal) {
 
   }
 

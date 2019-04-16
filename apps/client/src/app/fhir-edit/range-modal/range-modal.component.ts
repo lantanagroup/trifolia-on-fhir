@@ -1,22 +1,22 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Range} from '../../models/stu3/fhir';
-import {Globals} from '../../globals';
+import {Range} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-    selector: 'app-range-modal',
-    templateUrl: './range-modal.component.html',
-    styleUrls: ['./range-modal.component.css']
+  selector: 'app-range-modal',
+  templateUrl: './range-modal.component.html',
+  styleUrls: ['./range-modal.component.css']
 })
 export class FhirRangeModalComponent implements OnInit {
-    @Input() range: Range;
+  @Input() range: Range;
 
-    public Globals = Globals;
+  public Globals = Globals;
 
-    constructor(public activeModal: NgbActiveModal) {
+  constructor(public activeModal: NgbActiveModal) {
 
-    }
+  }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 }

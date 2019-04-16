@@ -1,23 +1,23 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Globals} from '../../globals';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Ratio} from '../../models/stu3/fhir';
+import {Ratio} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 @Component({
-    selector: 'app-fhir-edit-ratio-modal',
-    templateUrl: './ratio-modal.component.html',
-    styleUrls: ['./ratio-modal.component.css']
+  selector: 'app-fhir-edit-ratio-modal',
+  templateUrl: './ratio-modal.component.html',
+  styleUrls: ['./ratio-modal.component.css']
 })
 export class FhirRatioModalComponent implements OnInit {
-    @Input() ratio: Ratio;
+  @Input() ratio: Ratio;
 
-    public Globals = Globals;
+  public Globals = Globals;
 
-    constructor(
-        public activeModal: NgbActiveModal) {
+  constructor(
+    public activeModal: NgbActiveModal) {
 
-    }
+  }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 }

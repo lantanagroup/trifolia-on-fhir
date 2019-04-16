@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {HumanName} from '../../models/stu3/fhir';
-import {Globals} from '../../globals';
+import {HumanName} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
     selector: 'app-fhir-human-names',

@@ -1,11 +1,12 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {ConfigModel} from '../models/config-model';
+import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
-import {CapabilityStatement as STU3CapabilityStatement} from '../models/stu3/fhir';
-import {CapabilityStatement as R4CapabilityStatement} from '../models/r4/fhir';
+import {CapabilityStatement as STU3CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CapabilityStatement as R4CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class ConfigService {
@@ -43,8 +44,7 @@ export class ConfigService {
     }
 
     public getConfig(): Promise<any> {
-        return this.http.get('/api/config')
-            .map(res => <ConfigModel>res)
+        return this.http.get('/api/config').pipe(map(res => <ConfigModel> res))
             .toPromise()
             .then((config: ConfigModel) => {
                 this.config = config;
