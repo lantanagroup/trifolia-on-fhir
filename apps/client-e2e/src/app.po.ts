@@ -5,9 +5,11 @@ export class AppPage {
     return browser.get(browser.baseUrl) as Promise<any>;
   }
 
-  getTitleText() {
-    return element(by.css('trifolia-fhir-root h1')).getText() as Promise<
-      string
-    >;
+  getWelcomeText() {
+    return element(by.css('#welcomeDiv h2')).getText() as Promise<string>;
+  }
+
+  getWhatsNewText() {
+    return element(by.css('#whatsNewDiv h2')).getText() as Promise<string>;
   }
 }

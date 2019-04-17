@@ -1,16 +1,23 @@
 import { AppPage } from './app.po';
-import { browser, logging } from 'protractor';
+import {protractor, browser, logging, by, element} from 'protractor';
 
-describe('workspace-project App', () => {
+const EC = protractor.ExpectedConditions;
+
+describe('ToF App', () => {
   let page: AppPage;
 
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to client!');
+  it('should display welcome message', async () => {
+    await page.navigateTo();
+    await browser.waitForAngularEnabled(false);
+    await browser.sleep(1000);      // to finish loading
+    const welcomeText = await page.getWelcomeText();
+    const whatsNewText = await page.getWhatsNewText();
+    expect(welcomeText).toEqual('Welcome');
+    expect(whatsNewText).toEqual('What\'s New');
   });
 
   afterEach(async () => {

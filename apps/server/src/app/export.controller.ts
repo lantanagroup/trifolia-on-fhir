@@ -134,7 +134,7 @@ export class ExportController extends BaseController {
   }
 
   @Post(':implementationGuideId')
-  public exportImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string): Promise<GenericResponse> {
+  public exportImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string) {
     const options = new ExportOptions(request.query);
 
     switch (options.exportFormat) {
