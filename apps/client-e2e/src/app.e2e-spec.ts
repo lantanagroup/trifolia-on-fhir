@@ -1,35 +1,37 @@
-import { AppPage } from './app.po';
-import {protractor, browser, logging, by, element} from 'protractor';
+import { HomePage } from './home.po';
+import {browser, logging} from 'protractor';
 
-const EC = protractor.ExpectedConditions;
+beforeEach(async () => {
+  await browser.get(browser.baseUrl);
+  await browser.waitForAngularEnabled(false);
+  await browser.sleep(1000);      // to finish loading
+});
 
 describe('ToF App', () => {
-  let page: AppPage;
+  describe('home', async () => {
+    let homePage: HomePage;
 
-  beforeEach(() => {
-    page = new AppPage();
+    it('should display welcome message on the home screen', async () => {
+      await homePage.testHome();
+    });
   });
 
-  it('should display welcome message', async () => {
-    await page.navigateTo();
-    await browser.waitForAngularEnabled(false);
-    await browser.sleep(1000);      // to finish loading
-    const welcomeText = await page.getWelcomeText();
-    const whatsNewText = await page.getWhatsNewText();
-    expect(welcomeText).toEqual('Welcome');
-    expect(whatsNewText).toEqual('What\'s New');
-  });
+  /*
+  it('should navigate to browse implementation guides', async () => {
 
-  afterEach(async () => {
-    // Assert that there are no errors emitted from the browser
-    const logs = await browser
-      .manage()
-      .logs()
-      .get(logging.Type.BROWSER);
-    expect(logs).not.toContain(
-      jasmine.objectContaining({
-        level: logging.Level.SEVERE
-      })
-    );
   });
+   */
+});
+
+afterEach(async () => {
+  // Assert that there are no errors emitted from the browser
+  const logs = await browser
+    .manage()
+    .logs()
+    .get(logging.Type.BROWSER);
+  expect(logs).not.toContain(
+    jasmine.objectContaining({
+      level: logging.Level.SEVERE
+    })
+  );
 });
