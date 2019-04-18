@@ -16,17 +16,21 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const request = <ITofRequest> ctx.getRequest();
     const response = <Response> ctx.getResponse();
 
-    console.log(request.originalUrl);
+    if (request.originalUrl.startsWith('/igs')) {
+      response
+        .contentType('text/html')
+        .send('<html><head></head><body>This implementation guide does not exist, or has not yet been published.</body></html>');
+    } else if (!request.originalUrl.startsWith('/api')) {
+      const indexPath = path.join(__dirname, '/../client/index.html');
+      const stat = fs.statSync(indexPath);
+      const rs = fs.createReadStream(indexPath);
 
-    const indexPath = path.join(__dirname, '/../client/index.html');
-    const stat = fs.statSync(indexPath);
-    const rs = fs.createReadStream(indexPath);
+      response.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': stat.size
+      });
 
-    response.writeHead(200, {
-      'Content-Type': 'text/html',
-      'Content-Length': stat.size
-    });
-
-    rs.pipe(response);
+      rs.pipe(response);
+    }
   }
 }

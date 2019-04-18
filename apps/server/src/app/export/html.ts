@@ -29,10 +29,9 @@ import * as config from 'config';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
-import {getBootstrapComponent} from '@nrwl/schematics/src/utils/ast-utils';
 
-const fhirConfig = <IFhirConfig>config.get('fhir');
-const serverConfig = <IServerConfig>config.get('server');
+const fhirConfig = <IFhirConfig> config.get('fhir');
+const serverConfig = <IServerConfig> config.get('server');
 
 interface TableOfContentsEntry {
   level: number;
@@ -960,7 +959,7 @@ export class HtmlExporter {
                 return;
               }
 
-              const deployDir = path.resolve(__dirname, '../../wwwroot/igs', this.fhirServerId, implementationGuideResource.id);
+              const deployDir = path.resolve(serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, implementationGuideResource.id);
               fs.ensureDirSync(deployDir);
 
               const igPublisherVersion = useLatest ? 'latest' : 'default';

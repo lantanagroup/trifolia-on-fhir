@@ -19,6 +19,7 @@
             "assets": [
               "apps/server/src/assets",
               "apps/server/src/config",
+              "apps/server/src/igs",
               {
                 "glob": "**/*",
                 "input": "libs/tof-lib/src/assets",

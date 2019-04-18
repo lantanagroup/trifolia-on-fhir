@@ -6,4 +6,5 @@ export interface IServerConfig {
   javaLocation?: string;
   logFileName?: string;
   logLevel?: 'all'|'warn'|'error';
+  publishedIgsDirectory?: string;
 }

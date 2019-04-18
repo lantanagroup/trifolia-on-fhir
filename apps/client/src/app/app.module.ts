@@ -64,140 +64,142 @@ import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
-    constructor() {
+  constructor() {
 
+  }
+
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const tokenExpiresAt = localStorage.getItem('expires_at');
+    const token = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('token') : undefined;
+    const fhirServer = localStorage.getItem('fhirServer');
+    const headers = {};
+
+    if (req.url.startsWith('/')) {
+      if (token) {
+        headers['Authorization'] = 'Bearer ' + token;
+      }
     }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const tokenExpiresAt = localStorage.getItem('expires_at');
-        const token = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('token') : undefined;
-        const fhirServer = localStorage.getItem('fhirServer');
-        const headers = {};
+    if (req.url.startsWith('/api/')) {
+      headers['Cache-Control'] = 'no-cache';
 
-        if (req.url.startsWith('/')) {
-            if (token) {
-                headers['Authorization'] = 'Bearer ' + token;
-            }
-
-            if (fhirServer) {
-                headers['fhirServer'] = fhirServer;
-            }
-
-            headers['Cache-Control'] = 'no-cache';
-        }
-
-        const clonedRequest = req.clone({
-            setHeaders: headers
-        });
-
-        return next.handle(clonedRequest);
+      if (fhirServer) {
+        headers['fhirServer'] = fhirServer;
+      }
     }
+
+    const clonedRequest = req.clone({
+      setHeaders: headers
+    });
+
+    return next.handle(clonedRequest);
+  }
 }
 
 export function cookieServiceFactory() {
-    return new CookieService();
+  return new CookieService();
 }
 
 const appRoutes: Routes = [
-    {path: 'home', component: HomeComponent},
-    {path: 'implementation-guide', component: ImplementationGuidesComponent},
-    {path: 'implementation-guide/new', component: ImplementationGuideWrapperComponent},
-    {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-    {path: 'implementation-guide/:id', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
-    {path: 'structure-definition', component: StructureDefinitionsComponent},
-    {path: 'structure-definition/new', component: NewProfileComponent},
-    {path: 'structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
-    {path: 'capability-statement', component: CapabilityStatementsComponent},
-    {path: 'capability-statement/new', component: CapabilityStatementWrapperComponent},
-    {path: 'capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
-    {path: 'operation-definition', component: OperationDefinitionsComponent},
-    {path: 'operation-definition/new', component: OperationDefinitionComponent},
-    {path: 'operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
-    {path: 'value-set', component: ValuesetsComponent},
-    {path: 'value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
-    {path: 'value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
-    {path: 'code-system', component: CodesystemsComponent},
-    {path: 'code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
-    {path: 'questionnaire', component: QuestionnairesComponent},
-    {path: 'questionnaire/new', component: QuestionnaireComponent},
-    {path: 'questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
-    {path: 'other-resources', component: OtherResourcesComponent},
-    {path: 'publish', component: PublishComponent},
-    {path: 'export', component: ExportComponent},
-    {path: 'import', component: ImportComponent},
-    {path: 'users', component: UsersComponent},
-    {path: 'users/me', component: UserComponent},
-    {path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
-    {path: 'login', component: LoginComponent},
-    {
-        path: '',
-        redirectTo: '/home',
-        pathMatch: 'full'
-    }
+  {path: 'home', component: HomeComponent},
+  {path: 'implementation-guide', component: ImplementationGuidesComponent},
+  {path: 'implementation-guide/new', component: ImplementationGuideWrapperComponent},
+  {path: 'implementation-guide/:id/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
+  {path: 'implementation-guide/:id', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
+  {path: 'structure-definition', component: StructureDefinitionsComponent},
+  {path: 'structure-definition/new', component: NewProfileComponent},
+  {path: 'structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
+  {path: 'capability-statement', component: CapabilityStatementsComponent},
+  {path: 'capability-statement/new', component: CapabilityStatementWrapperComponent},
+  {path: 'capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
+  {path: 'operation-definition', component: OperationDefinitionsComponent},
+  {path: 'operation-definition/new', component: OperationDefinitionComponent},
+  {path: 'operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
+  {path: 'value-set', component: ValuesetsComponent},
+  {path: 'value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
+  {path: 'value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
+  {path: 'code-system', component: CodesystemsComponent},
+  {path: 'code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
+  {path: 'questionnaire', component: QuestionnairesComponent},
+  {path: 'questionnaire/new', component: QuestionnaireComponent},
+  {path: 'questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
+  {path: 'other-resources', component: OtherResourcesComponent},
+  {path: 'publish', component: PublishComponent},
+  {path: 'export', component: ExportComponent},
+  {path: 'import', component: ImportComponent},
+  {path: 'users', component: UsersComponent},
+  {path: 'users/me', component: UserComponent},
+  {path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
+  {path: 'login', component: LoginComponent},
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full'
+  }
 ];
 
 export function getConfig(configService: ConfigService) {
-    return () => configService.getConfig();
+  return () => configService.getConfig();
 }
 
 @NgModule({
-    entryComponents: [
-        STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
-        ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-        QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-        MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
-    ],
-    declarations: [
-        AppComponent, ImplementationGuidesComponent,
-        HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
-        ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
-        CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
-        NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
-        STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
-        CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-        OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-        ConceptCardComponent, ImplementationGuideViewComponent,
-        OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-        ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
-        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-        ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
-    ],
-    imports: [
-        RouterModule.forRoot(
-            appRoutes, {
-                enableTracing: false,           // <-- debugging purposes only
-                onSameUrlNavigation: 'reload'
-            }
-        ),
-        BrowserModule,
-        FormsModule,
-        HttpClientModule,
-        HttpModule,
-        NgbModule.forRoot(),
-        FileDropModule,
-        TreeModule,
-        SharedModule,
-        SharedUiModule,
-        FhirEditModule,
-        ModalsModule
-    ],
-    providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: getConfig,
-            deps: [ConfigService],
-            multi: true
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AddHeaderInterceptor,
-            multi: true
-        }, {
-            provide: CookieService,
-            useFactory: cookieServiceFactory
-        }
-    ],
-    bootstrap: [AppComponent]
+  entryComponents: [
+    STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
+    ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
+    QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
+    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
+  ],
+  declarations: [
+    AppComponent, ImplementationGuidesComponent,
+    HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
+    ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
+    CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
+    NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
+    STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
+    CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
+    OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
+    ConceptCardComponent, ImplementationGuideViewComponent,
+    OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
+    ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
+    MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
+  ],
+  imports: [
+    RouterModule.forRoot(
+      appRoutes, {
+        enableTracing: false,           // <-- debugging purposes only
+        onSameUrlNavigation: 'reload'
+      }
+    ),
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    HttpModule,
+    NgbModule.forRoot(),
+    FileDropModule,
+    TreeModule,
+    SharedModule,
+    SharedUiModule,
+    FhirEditModule,
+    ModalsModule
+  ],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: getConfig,
+      deps: [ConfigService],
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AddHeaderInterceptor,
+      multi: true
+    }, {
+      provide: CookieService,
+      useFactory: cookieServiceFactory
+    }
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 }

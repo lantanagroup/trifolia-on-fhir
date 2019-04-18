@@ -15,11 +15,12 @@ import socketIo from 'socket.io';
 import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
+import {TofLogger} from './app/tof-logger';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as config from 'config';
-import {TofLogger} from './app/tof-logger';
+import * as fs from 'fs-extra';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
@@ -199,6 +200,10 @@ async function bootstrap() {
   app.use(loadTofRequest);
   app.use(parseFhirBody);
 
+  const publishedIgsDirectory = path.join(serverConfig.publishedIgsDirectory || __dirname, 'igs');
+  fs.ensureDirSync(publishedIgsDirectory);
+
+  app.useStaticAssets(publishedIgsDirectory, { prefix: '/igs' });
   app.useStaticAssets(path.join(__dirname, '/../client'));
 
   const port = process.env.port || serverConfig.port || 3333;
