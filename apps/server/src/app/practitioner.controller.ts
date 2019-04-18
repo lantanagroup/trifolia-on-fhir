@@ -1,32 +1,18 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {
-  BadGatewayException,
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpService,
-  Logger,
-  Param,
-  Post,
-  Put,
-  Query,
-  Req,
-  UseGuards
-} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
-import * as nanoid from 'nanoid';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
+import {TofLogger} from './tof-logger';
+import * as nanoid from 'nanoid';
 
 @Controller('practitioner')
 @UseGuards(AuthGuard('bearer'))
 export class PractitionerController extends BaseFhirController {
   resourceType = 'Practitioner';
 
-  protected readonly logger = new Logger(PractitionerController.name);
+  protected readonly logger = new TofLogger(PractitionerController.name);
   
   constructor(protected httpService: HttpService) {
     super(httpService);

@@ -1,9 +1,10 @@
 import {Strategy} from 'passport-http-bearer';
 import {PassportStrategy} from '@nestjs/passport';
-import {HttpService, Injectable, Logger, UnauthorizedException} from '@nestjs/common';
+import {HttpService, Injectable, UnauthorizedException} from '@nestjs/common';
 import {IAuthConfig} from './models/auth-config';
-import * as config from 'config';
 import {ITofUser} from './models/tof-request';
+import {TofLogger} from './tof-logger';
+import * as config from 'config';
 
 const authConfig: IAuthConfig = config.get('auth');
 
@@ -11,7 +12,7 @@ const authConfig: IAuthConfig = config.get('auth');
 export class HttpStrategy extends PassportStrategy(Strategy) {
   static authorizationCodes: {[token: string]: ITofUser} = {};
 
-  private readonly logger = new Logger(HttpStrategy.name);
+  private readonly logger = new TofLogger(HttpStrategy.name);
 
   constructor(private httpService: HttpService) {
     super();

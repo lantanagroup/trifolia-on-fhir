@@ -4,4 +4,6 @@ export interface IServerConfig {
   supportUrl: string;
   googleAnalyticsCode?: string;
   javaLocation?: string;
+  logFileName?: string;
+  logLevel?: 'all'|'warn'|'error';
 }

@@ -1,14 +1,15 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Logger, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
+import {TofLogger} from './tof-logger';
 
 @Controller('capabilityStatement')
 @UseGuards(AuthGuard('bearer'))
 export class CapabilityStatementController extends BaseFhirController {
   resourceType = 'CapabilityStatement';
   
-  protected readonly logger = new Logger(CapabilityStatementController.name);
+  protected readonly logger = new TofLogger(CapabilityStatementController.name);
   
   constructor(protected httpService: HttpService) {
     super(httpService);

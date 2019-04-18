@@ -1,9 +1,10 @@
 import {Response} from 'express';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {Logger, UnauthorizedException} from '@nestjs/common';
+import {UnauthorizedException} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import * as config from 'config';
 import {IServerConfig} from './models/server-config';
+import {TofLogger} from './tof-logger';
 
 const serverConfig: IServerConfig = config.get('server');
 
@@ -15,7 +16,7 @@ export interface GenericResponse {
 }
 
 export class BaseController {
-  private static logger = new Logger(BaseController.name);
+  private static logger = new TofLogger(BaseController.name);
 
   constructor() {}
 

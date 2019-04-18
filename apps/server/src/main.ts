@@ -12,19 +12,19 @@ import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/ex
 import {Response} from 'express';
 import {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
-import {BadRequestException, Logger, NotFoundException} from '@nestjs/common';
+import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
+import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as config from 'config';
-import * as fs from 'fs';
-import {NotFoundExceptionFilter} from './not-found-exception-filter';
+import {TofLogger} from './app/tof-logger';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
 
-const logger = new Logger('main');
+const logger = new TofLogger('main');
 const fhirStu3 = getFhirStu3Instance();
 const fhirR4 = getFhirR4Instance();
 const connections: ISocketConnection[] = [];
@@ -188,6 +188,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalFilters(new NotFoundExceptionFilter());
+  app.useLogger(new TofLogger());
 
   initSocket(app);
 

@@ -1,5 +1,5 @@
 import {BaseController, GenericResponse} from './base.controller';
-import {Controller, Get, Header, HttpService, Logger, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
+import {Controller, Get, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
 import {HtmlExporter} from './export/html';
 import {ITofRequest} from './models/tof-request';
@@ -12,6 +12,7 @@ import {ExportFormats} from './models/export-formats';
 import {ExportOptions} from './models/export-options';
 import {AuthGuard} from '@nestjs/passport';
 import {Response} from 'express';
+import {TofLogger} from './tof-logger';
 import * as path from "path";
 import * as tmp from 'tmp';
 
@@ -20,7 +21,7 @@ import * as tmp from 'tmp';
 export class ExportController extends BaseController {
   static htmlExports = [];
 
-  private readonly logger = new Logger(ExportController.name);
+  private readonly logger = new TofLogger(ExportController.name);
 
   constructor(private httpService: HttpService) {
     super();

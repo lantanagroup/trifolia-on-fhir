@@ -1,16 +1,17 @@
 import {BaseController} from './base.controller';
-import {HttpService, Logger} from '@nestjs/common';
-import * as config from 'config';
+import {HttpService} from '@nestjs/common';
 import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import * as nanoid from 'nanoid';
 import {TofNotFoundException} from '../not-found-exception';
+import {TofLogger} from './tof-logger';
+import * as config from 'config';
+import * as nanoid from 'nanoid';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
-  protected readonly logger = new Logger(BaseFhirController.name);
+  protected readonly logger = new TofLogger(BaseFhirController.name);
   
   constructor(protected httpService: HttpService) {
     super();
