@@ -125,6 +125,7 @@ const appRoutes: Routes = [
   {path: 'questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
   {path: 'other-resources', component: OtherResourcesComponent},
   {path: 'publish', component: PublishComponent},
+  {path: 'publish/:id', component: PublishComponent, runGuardsAndResolvers: 'always'},
   {path: 'export', component: ExportComponent},
   {path: 'import', component: ImportComponent},
   {path: 'users', component: UsersComponent},
