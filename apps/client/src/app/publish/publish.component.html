@@ -106,7 +106,8 @@
     </ngb-tab>
     <ngb-tab title="Status" id="status">
         <ng-template ngbTabContent>
-            <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer></pre>
+            <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
+            <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
