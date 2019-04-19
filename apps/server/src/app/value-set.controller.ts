@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -56,7 +56,7 @@ export class ValueSetController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, query?: any): Promise<any> {
+  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
     return super.baseSearch(request.fhirServerBase, query);
   }
 

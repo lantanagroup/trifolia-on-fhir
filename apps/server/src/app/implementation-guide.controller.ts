@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Controller, Body, Delete, Get, HttpService, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
+import {Controller, Body, Delete, Get, HttpService, Param, Post, Put, Req, UseGuards, Query} from '@nestjs/common';
 import * as config from 'config';
 import {IFhirConfig} from './models/fhir-config';
 import {ITofRequest} from './models/tof-request';
@@ -58,7 +58,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, query?: any): Promise<any> {
+  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
     return super.baseSearch(request.fhirServerBase, query);
   }
 

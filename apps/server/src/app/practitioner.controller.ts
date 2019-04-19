@@ -116,7 +116,7 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, query?: any): Promise<any> {
+  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
     return super.baseSearch(request.fhirServerBase, query);
   }
 
