@@ -26,7 +26,7 @@ export class CustomSTU3Validator extends CustomValidator {
 
   public validateImplementationGuide(implementationGuide: ImplementationGuide): ValidatorMessage[] {
     const messages: ValidatorMessage[] = [];
-    const allResources = implementationGuide.package.reduce(reduceFlatten<PackageComponent>((next) => next.resource), []);
+    const allResources = (implementationGuide.package || []).reduce(reduceFlatten<PackageComponent>((next) => next.resource), []);
     const groupedResources = groupBy(allResources, (resource: PackageResourceComponent) => resource.sourceReference ? resource.sourceReference.reference : resource.sourceUri);
     const allPages = this.getAllPages(implementationGuide);
     const groupedPageTitles = groupBy(allPages, (page: PageComponent) => page.title);

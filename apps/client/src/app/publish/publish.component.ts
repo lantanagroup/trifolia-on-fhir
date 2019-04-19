@@ -123,7 +123,8 @@ export class PublishComponent implements OnInit {
       .subscribe((results: any) => {
         const reader = new FileReader();
         reader.addEventListener('loadend', (e: any) => {
-          this.packageId = e.srcElement.result;
+          const result = JSON.parse(e.srcElement.result);
+          this.packageId = result.content;
         });
         reader.readAsText(results.body);
       }, (err) => {

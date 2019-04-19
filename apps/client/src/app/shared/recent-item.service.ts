@@ -65,7 +65,7 @@ export class RecentItemService {
 
         foundItem.date = new Date().toISOString();
 
-        items = _.sort(items, (a, b) => (a.date || '').localeCompare(b.date || ''));
+        items = items.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
         items = items.reverse();
         items = items.slice(0, 5);
         this.cookieService.putObject(cookieKey, items);

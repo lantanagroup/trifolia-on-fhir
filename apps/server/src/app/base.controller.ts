@@ -20,12 +20,6 @@ export class BaseController {
 
   constructor() {}
 
-  protected assertAdmin(request: ITofRequest) {
-    if (request.headers['admin-code'] !== serverConfig.adminCode) {
-      throw new UnauthorizedException('You are not authenticated as an admin');
-    }
-  }
-
   protected static handleResponse(res: Response, actual: GenericResponse) {
     if (actual.contentType) {
       res.contentType(actual.contentType);
@@ -51,6 +45,12 @@ export class BaseController {
       }
 
       res.send(msg);
+    }
+  }
+
+  protected assertAdmin(request: ITofRequest) {
+    if (request.headers['admin-code'] !== serverConfig.adminCode) {
+      throw new UnauthorizedException('You are not authenticated as an admin');
     }
   }
 }

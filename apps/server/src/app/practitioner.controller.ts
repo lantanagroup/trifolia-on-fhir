@@ -5,6 +5,7 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
+import {AxiosRequestConfig} from 'axios';
 import * as nanoid from 'nanoid';
 
 @Controller('practitioner')
@@ -55,9 +56,7 @@ export class PractitionerController extends BaseFhirController {
         const practitionerRequest = {
           url: buildUrl(request.fhirServerBase, this.resourceType, practitioner.id),
           method: 'PUT',
-          body: practitioner,
-          json: true,
-          resolveWithFullResponse: true
+          data: practitioner
         };
 
         return this.httpService.request(practitionerRequest).toPromise();
@@ -69,10 +68,9 @@ export class PractitionerController extends BaseFhirController {
           throw new Error(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
         }
 
-        const options = {
+        const options = <AxiosRequestConfig> {
           url: location,
-          method: 'GET',
-          json: true
+          method: 'GET'
         };
 
         return this.httpService.request(options).toPromise();
@@ -90,10 +88,8 @@ export class PractitionerController extends BaseFhirController {
       identifier = identifier.substring(6);
     }
 
-    const url = buildUrl(request.fhirServerBase, this.resourceType, null, null, { identifier: system + '|' + identifier });
-    const options = {
-      url: url,
-      json: true,
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(request.fhirServerBase, this.resourceType, null, null, { identifier: system + '|' + identifier }),
       headers: {
         'Cache-Control': 'no-cache'
       }
@@ -139,7 +135,7 @@ export class PractitionerController extends BaseFhirController {
     return super.baseUpdate(request.fhirServerBase, id, body, request.query);
   }
 
-  @Delete()
+  @Delete(':id')
   public delete(@Req() request: ITofRequest, @Param('id') id: string) {
     return super.baseDelete(request.fhirServerBase, id, request.query);
   }

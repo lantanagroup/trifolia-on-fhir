@@ -3,7 +3,7 @@ import {Controller, Get, HttpService, Param, Post, Req, Res, UseGuards} from '@n
 import {BundleExporter} from './export/bundle';
 import {HtmlExporter} from './export/html';
 import {ITofRequest} from './models/tof-request';
-import {Bundle, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
 import {Fhir} from 'fhir/fhir';
@@ -28,10 +28,28 @@ export class ExportController extends BaseController {
   }
 
   @Get(':implementationGuideId/([$])validate')
-  public validate(@Req() request: ITofRequest, @Param('id') implementationGuideId: string) {
+  public validate(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string) {
     return new Promise((resolve, reject) => {
       const bundleExporter = new BundleExporter(this.httpService, this.logger, request.fhirServerBase, request.fhirServerId, request.fhirServerVersion, request.fhir, implementationGuideId);
       let validationRequests = [];
+
+      const validateResource = (resource: DomainResource) => {
+        return new Promise((resolve, reject) => {
+          const options = {
+            url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
+            method: 'POST',
+            data: resource
+          };
+
+          this.httpService.request(options).toPromise()
+            .then((results) => resolve(results.data))
+            .catch((err) => {
+              if (err.response) {
+                resolve(err.response.data);
+              }
+            })
+        });
+      }
 
       bundleExporter.getBundle(true)
         .then((results: Bundle) => {
@@ -43,9 +61,7 @@ export class ExportController extends BaseController {
             };
             return {
               resourceReference: `${entry.resource.resourceType}/${entry.resource.id}`,
-              promise: this.httpService.request<OperationOutcome>(options)
-                .toPromise()
-                .then((nextResult) => nextResult.data)
+              promise: validateResource(entry.resource)
             };
           });
 
@@ -56,8 +72,8 @@ export class ExportController extends BaseController {
           let validationResults: ServerValidationResult[] = [];
 
           resultSets.forEach((resultSet: any, index) => {
-            if (resultSet.body && resultSet.body.resourceType === 'OperationOutcome') {
-              const oo = <OperationOutcome> resultSet.body;
+            if (resultSet && resultSet.resourceType === 'OperationOutcome') {
+              const oo = <OperationOutcome> resultSet;
 
               if (oo.issue) {
                 const next = oo.issue.map((issue) => {

@@ -1,8 +1,7 @@
 import {ParseConformance} from 'fhir/parseConformance';
 import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
-import * as stu3Types from './stu3/types.json';
-import * as stu3Resources from './stu3/resources.json';
-import * as stu3ValueSets from './stu3/valuesets.json';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export function joinUrl(...parts: string[]) {
   let url = '';
@@ -73,18 +72,41 @@ export function parseUrl(url: string, base?: string) {
   }
 }
 
+function getJsonFromFile(relativePath: string) {
+  const actualPath = path.join(__dirname, relativePath);
+  const contentStream = fs.readFileSync(actualPath);
+  const content = contentStream.toString('utf8');
+  return JSON.parse(content);
+}
+
 export function getFhirStu3Instance() {
-  // TODO: Determine which FHIR version to load
   const parser = new ParseConformance(false, FhirVersions.STU3);
-  parser.parseBundle(stu3ValueSets);
-  parser.parseBundle(stu3Types);
-  parser.parseBundle(stu3Resources);
+  const valueSets = getJsonFromFile('assets/stu3/valuesets.json');
+  const types = getJsonFromFile('assets/stu3/profiles-types.json');
+  const resources = getJsonFromFile('assets/stu3/profiles-resources.json');
+  const iso3166 = getJsonFromFile('assets/stu3/codesystem-iso3166.json');
+
+  parser.parseBundle(valueSets);
+  parser.parseBundle(types);
+  parser.parseBundle(resources);
+  parser.loadCodeSystem(iso3166);
+
   const fhir = new Fhir(parser);
   return fhir;
 }
 
 export function getFhirR4Instance() {
-  const fhir = new Fhir();
-  // TODO: Consider loading specific base resources for FHIR R4...
+  const parser = new ParseConformance(false, FhirVersions.R4);
+  const valueSets = getJsonFromFile('assets/r4/valuesets.json');
+  const types = getJsonFromFile('assets/r4/profiles-types.json');
+  const resources = getJsonFromFile('assets/r4/profiles-resources.json');
+  const iso3166 = getJsonFromFile('assets/r4/codesystem-iso3166.json');
+
+  parser.parseBundle(valueSets);
+  parser.parseBundle(types);
+  parser.parseBundle(resources);
+  parser.loadCodeSystem(iso3166);
+
+  const fhir = new Fhir(parser);
   return fhir;
 }

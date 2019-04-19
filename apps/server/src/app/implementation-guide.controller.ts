@@ -77,7 +77,7 @@ export class ImplementationGuideController extends BaseFhirController {
     return super.baseUpdate(request.fhirServerBase, id, body, request.query);
   }
 
-  @Delete()
+  @Delete(':id')
   public delete(@Req() request: ITofRequest, @Param('id') id: string) {
     return super.baseDelete(request.fhirServerBase, id, request.query);
   }

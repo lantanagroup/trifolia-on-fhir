@@ -130,5 +130,6 @@ export class ConfigService {
     public handleError(error: any, prefix?: string) {
         const errorMessage = this.getMessageFromError(error, prefix);
         this.setStatusMessage(errorMessage);
+        window.scrollTo(0, 0);
     }
 }

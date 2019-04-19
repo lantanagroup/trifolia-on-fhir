@@ -9,7 +9,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
-  Put,
+  Put, Query,
   Req,
   UseGuards
 } from '@nestjs/common';
@@ -67,8 +67,7 @@ export class StructureDefinitionController extends BaseFhirController {
 
         const options = {
           url: publishedFhirVersion.url + '/' + id + '.profile.json',
-          method: 'GET',
-          json: true
+          method: 'GET'
         };
 
         return this.httpService.request<StructureDefinition>(options).toPromise();
@@ -92,7 +91,7 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, query?: any): Promise<any> {
+  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
     return super.baseSearch(request.fhirServerBase, query);
   }
 
@@ -327,7 +326,7 @@ export class StructureDefinitionController extends BaseFhirController {
     return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, id, body.resource, body.options);
   }
 
-  @Delete()
+  @Delete(':id')
   public delete(@Req() request: ITofRequest, @Param('id') id: string) {
     return super.baseDelete(request.fhirServerBase, id, request.query);
   }

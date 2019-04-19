@@ -29,8 +29,7 @@ export class ValueSetController extends BaseFhirController {
 
       const getOptions = {
         url: buildUrl(request.fhirServerBase, 'ValueSet', id),
-        method: 'GET',
-        json: true
+        method: 'GET'
       };
 
       this.logger.log(`Expand operation is requesting value set content for ${id}`);
@@ -43,8 +42,7 @@ export class ValueSetController extends BaseFhirController {
           const expandOptions = {
             url: buildUrl(fhirConfig.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
             method: 'POST',
-            json: true,
-            body: valueSet
+            data: valueSet
           };
 
           this.logger.log(`Asking the FHIR server to expand value set ${id}`);
@@ -77,7 +75,7 @@ export class ValueSetController extends BaseFhirController {
     return super.baseUpdate(request.fhirServerBase, id, body, request.query);
   }
 
-  @Delete()
+  @Delete(':id')
   public delete(@Req() request: ITofRequest, @Param('id') id: string) {
     return super.baseDelete(request.fhirServerBase, id, request.query);
   }

@@ -55,11 +55,9 @@ export class ConfigController extends BaseController {
       return Promise.resolve(ConfigController.serverMetadata[request.fhirServerBase]);
     }
 
-    const url = buildUrl(request.fhirServerBase, 'metadata');
     const options = {
-      url: url,
-      method: 'GET',
-      json: true
+      url: buildUrl(request.fhirServerBase, 'metadata'),
+      method: 'GET'
     };
 
     return this.httpService.request(options).toPromise()

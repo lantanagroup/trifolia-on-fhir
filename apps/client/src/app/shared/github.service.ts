@@ -300,7 +300,7 @@ export class GithubService {
             return new Observable<ContentModel[]>((observer) => {
                 this.getContents(ownerLogin, repositoryName, branchName, id.substring(4))
                     .subscribe((dirContents) => {
-                        const observables = _.map(dirContents, (dirContent) => this.getAllContents(ownerLogin, repositoryName, branchName, dirContent.type + '|' + dirContent.path));
+                        const observables = dirContents.map((dirContent) => this.getAllContents(ownerLogin, repositoryName, branchName, dirContent.type + '|' + dirContent.path));
 
                         forkJoin(observables)
                             .subscribe((dirFilesResponses) => {

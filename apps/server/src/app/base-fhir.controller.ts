@@ -4,6 +4,7 @@ import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';
+import {AxiosRequestConfig} from 'axios';
 import * as config from 'config';
 import * as nanoid from 'nanoid';
 
@@ -71,11 +72,9 @@ export class BaseFhirController extends BaseController {
   protected baseSearch(baseUrl, query?: any): Promise<any> {
     return this.prepareSearchQuery(query)
       .then((preparedQuery) => {
-        const url = buildUrl(baseUrl, this.resourceType, null, null, preparedQuery);
-        const options = {
-          url: url,
+        const options = <AxiosRequestConfig> {
+          url: buildUrl(baseUrl, this.resourceType, null, null, preparedQuery),
           method: 'GET',
-          json: true,
           headers: {
             'Cache-Control': 'no-cache'
           }
@@ -87,11 +86,9 @@ export class BaseFhirController extends BaseController {
   }
 
   protected async baseGet(baseUrl, id: string, query?: any): Promise<any> {
-    const url = buildUrl(baseUrl, this.resourceType, id, null, query);
-    const options = {
-      url: url,
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, id, null, query),
       method: 'GET',
-      json: true,
       headers: {
         'Cache-Control': 'no-cache'
       }
@@ -115,10 +112,9 @@ export class BaseFhirController extends BaseController {
         data.id = nanoid(8);
       }
 
-      const existsOptions = {
+      const existsOptions = <AxiosRequestConfig> {
         url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
-        method: 'GET',
-        json: true
+        method: 'GET'
       };
 
       // Make sure the resource doesn't already exist with the same id
@@ -128,19 +124,16 @@ export class BaseFhirController extends BaseController {
           reject(`A ${this.resourceType} already exists with the id ${data.id}`);
         })
         .catch((existsErr) => {
-          if (existsErr.statusCode !== 404) {
+          if (existsErr.response && existsErr.response.status !== 404) {
             const msg = `An unexpected error code ${existsErr.statusCode} was returned when checking if a ${this.resourceType} already exists with the id ${data.id}`;
             this.logger.error(msg);
             return reject(msg);
           }
 
-          const url = buildUrl(baseUrl, this.resourceType, data.id);
-          const createOptions = {
-            url: url,
+          const createOptions = <AxiosRequestConfig> {
+            url: buildUrl(baseUrl, this.resourceType, data.id),
             method: 'PUT',
-            json: true,
-            body: data,
-            resolveWithFullResponse: true
+            data: data
           };
 
           // Create the resource
@@ -151,8 +144,7 @@ export class BaseFhirController extends BaseController {
               if (location) {
                 const getOptions = {
                   url: location,
-                  method: 'GET',
-                  json: true
+                  method: 'GET'
                 };
 
                 // Get the saved version of the resource (with a unique id)
@@ -170,12 +162,10 @@ export class BaseFhirController extends BaseController {
   protected baseUpdate(baseUrl: string, id: string, data: any, query?: any): Promise<any> {
     this.assertEditingAllowed(data);
 
-    const url = buildUrl(baseUrl, this.resourceType, id, null, query);
-    const options = {
-      url: url,
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, id, null, query),
       method: 'PUT',
-      json: true,
-      body: data
+      data: data
     };
 
     return this.httpService.request(options).toPromise()
@@ -189,11 +179,9 @@ export class BaseFhirController extends BaseController {
       .then((resource) => {
         this.assertEditingAllowed(resource);
 
-        const deleteUrl = buildUrl(baseUrl, this.resourceType, id, null, query);
-        const options = {
-          url: deleteUrl,
-          method: 'DELETE',
-          json: true
+        const options = <AxiosRequestConfig> {
+          url: buildUrl(baseUrl, this.resourceType, id, null, query),
+          method: 'DELETE'
         };
 
         return this.httpService.request(options).toPromise();

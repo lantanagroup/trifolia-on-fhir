@@ -1,10 +1,24 @@
 import {BaseController} from './base.controller';
-import {All, BadRequestException, Controller, Get, HttpService, Param, Req, UseGuards} from '@nestjs/common';
+import {
+  All,
+  BadRequestException,
+  Controller,
+  Header,
+  HttpCode,
+  HttpService,
+  InternalServerErrorException,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards
+} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {map} from 'rxjs/operators';
+import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
+import {AxiosRequestConfig, AxiosResponse} from 'axios';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -15,8 +29,60 @@ export class FhirController extends BaseController {
     super();
   }
 
+  @Post(':resourceType/:id/([\$])change-id')
+  @Header('Content-Type', 'text/plain')
+  @HttpCode(200)
+  async changeId(@Req() request: ITofRequest, @Param('resourceType') resourceType: string, @Param('id') currentId: string): Promise<any> {
+    const newId = request.query.newId;
+
+    if (!newId) {
+      throw new BadRequestException('You must specify a "newId" to change the id of the resource');
+    }
+
+    const currentOptions = {
+      url: buildUrl(request.fhirServerBase, resourceType, currentId),
+      method: 'GET'
+    };
+
+    this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
+
+    // Get the current state of the resource
+    const getResponse = await this.httpService.request(currentOptions).toPromise();
+    const resource = getResponse.data;
+
+    if (!resource || !resource.id) {
+      throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
+    }
+
+    // Change the id of the resource
+    resource.id = newId;
+
+    const createOptions = {
+      url: buildUrl(request.fhirServerBase, resourceType, newId),
+      method: 'PUT',
+      data: resource
+    };
+    const deleteOptions = {
+      url: buildUrl(request.fhirServerBase, resourceType, currentId),
+      method: 'DELETE'
+    };
+
+    this.logger.log('Sending PUT request to FHIR server with the new resource ID');
+
+    // Create the new resource with the new id
+    await this.httpService.request(createOptions).toPromise();
+
+    this.logger.log('Sending DELETE request to FHIR server for original resource');
+
+    // Delete the original resource with the original id
+    await this.httpService.request(deleteOptions).toPromise();
+
+    this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
+    return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
+  }
+
   @All()
-  public proxy(@Req() request: ITofRequest) {
+  public proxy(@Req() request: ITofRequest, @Res() response: Response) {
     let proxyUrl = request.fhirServerBase;
 
     if (proxyUrl.endsWith('/')) {
@@ -38,89 +104,40 @@ export class FhirController extends BaseController {
 
     proxyHeaders['Cache-Control'] = 'no-cache';
 
-    const options = {
+    const options = <AxiosRequestConfig> {
       url: proxyUrl,
       method: request.method,
       headers: proxyHeaders,
-      body: undefined,
       encoding: 'utf8',
-      gzip: false,
-      json: false
+      gzip: false
     };
 
     if (request.method !== 'GET' && request.method !== 'DELETE') {
-      options.body = request.body;
-      options.json = typeof request.body === 'object';
+      options.data = request.body;
     }
 
-    if (proxyHeaders['accept-encoding'] && proxyHeaders['accept-encoding'].indexOf('gzip') >= 0) {
-      options.gzip = true;
-    }
-
-
-    return this.httpService.request(options).pipe(
-      map(response => response.data)
-    );
-  }
-
-  @Get('/:resourceType/:id/([\$])change-id')
-  changeId(@Req() request: ITofRequest, @Param('resourceType') resourceType: string, @Param('id') currentId: string): Promise<any> {
-    const newId = request.query.newId;
-    
-    return new Promise((resolve, reject) => {
-      if (!newId) {
-        throw new BadRequestException('You must specify a "newId" to change the id of the resource');
+    const sendResults = (results: AxiosResponse) => {
+      if (results.headers['content-type']) {
+        response.contentType(results.headers['content-type']);
       }
 
-      const currentOptions = {
-        url: buildUrl(request.fhirServerBase, resourceType, currentId),
-        method: 'GET',
-        json: true
-      };
+      response.status(results.status);
+      response.send(results.data);
+    };
 
-      this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
+    return this.httpService.request(options).toPromise()
+      .then((results) => {
+        sendResults(results);
+      })
+      .catch((err) => {
+        const results = err.response;
 
-      // Get the current state of the resource
-      this.httpService.request(currentOptions).toPromise()
-        .then((results) => {
-          const resource = results.data;
-
-          if (!resource || !resource.id) {
-            throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
-          }
-
-          // Change the id of the resource
-          resource.id = newId;
-
-          const createOptions = {
-            url: buildUrl(request.fhirServerBase, resourceType, newId),
-            method: 'PUT',
-            json: true,
-            body: resource
-          };
-
-          this.logger.log('Sending PUT request to FHIR server with the new resource ID');
-
-          // Create the new resource with the new id
-          return this.httpService.request(createOptions).toPromise();
-        })
-        .then(() => {
-          const deleteOptions = {
-            url: buildUrl(request.fhirServerBase, resourceType, currentId),
-            method: 'DELETE',
-            json: true
-          };
-
-          this.logger.log('Sending DELETE request to FHIR server for original resource');
-
-          // Delete the original resource with the original id
-          return this.httpService.request(deleteOptions).toPromise();
-        })
-        .then(() => {
-          this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
-          resolve(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
-        })
-        .catch((err) => reject(err));
-    });
+        if (results) {
+          sendResults(results);
+        } else {
+          this.logger.error('Error processing http-error results in proxy', err);
+          throw new InternalServerErrorException();
+        }
+      });
   }
 }
