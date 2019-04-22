@@ -10,10 +10,10 @@
         <input type="file" class="form-control" (change)="attachmentUpload($event)"/>
         <span class="help-block">Select a file to override this attachment data.</span>
     </div>
-
-    <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" title="Content Type" [isTypeahead]="true" [codes]="Globals.mimeTypeCodes"></app-fhir-select-single-code>
-
-    <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" title="Language" [isTypeahead]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/all-languages" defaultCode="en-US"></app-fhir-select-single-code>
+    <!-- content-type class is defined in select-single-code.component.css -->
+    <app-fhir-select-single-code [parentObject]="attachment" propertyName="contentType" customClass="content-type" title="Content Type" [isTypeahead]="true" [codes]="Globals.mimeTypeCodes"></app-fhir-select-single-code>
+    <!-- language class is defined in select-single-code.component.css -->
+    <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" customClass="language" title="Language" [isTypeahead]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/all-languages" defaultCode="en-US"></app-fhir-select-single-code>
 
     <div class="form-group">
         <label>

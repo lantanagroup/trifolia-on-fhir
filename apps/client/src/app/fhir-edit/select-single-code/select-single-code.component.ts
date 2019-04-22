@@ -22,6 +22,7 @@ export class FhirSelectSingleCodeComponent implements OnInit {
   @Input() isFormGroup = true;
   @Input() isTypeahead = false;
   @Input() defaultCode: string;
+  @Input() customClass: string;
   @Output() change = new EventEmitter<Coding>();
 
   constructor(
