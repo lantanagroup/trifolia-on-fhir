@@ -8,11 +8,14 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import * as config from 'config';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
 @Controller('valueSet')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Value Set')
+@ApiOAuth2Auth()
 export class ValueSetController extends BaseFhirController {
   resourceType = 'ValueSet';
   

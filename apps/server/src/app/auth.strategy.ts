@@ -5,6 +5,7 @@ import {IAuthConfig} from './models/auth-config';
 import {ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import * as config from 'config';
+import {ApiUseTags} from '@nestjs/swagger';
 
 const authConfig: IAuthConfig = config.get('auth');
 

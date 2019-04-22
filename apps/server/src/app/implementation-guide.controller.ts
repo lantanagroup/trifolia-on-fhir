@@ -5,6 +5,7 @@ import {IFhirConfig} from './models/fhir-config';
 import {ITofRequest} from './models/tof-request';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -21,6 +22,8 @@ interface PublishedGuidesModel {
 
 @Controller('implementationGuide')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Implementation Guide')
+@ApiOAuth2Auth()
 export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 

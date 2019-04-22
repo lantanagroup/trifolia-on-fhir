@@ -15,9 +15,12 @@ import {Response} from 'express';
 import {TofLogger} from './tof-logger';
 import * as path from "path";
 import * as tmp from 'tmp';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('export')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Export')
+@ApiOAuth2Auth()
 export class ExportController extends BaseController {
   static htmlExports = [];
 

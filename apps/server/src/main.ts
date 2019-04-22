@@ -11,14 +11,18 @@ import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
+import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as config from 'config';
 import * as fs from 'fs-extra';
+import * as modulePackage from '../../../package.json';
+import {IAuthConfig} from './app/models/auth-config';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
+const authConfig: IAuthConfig = config.get('auth');
 
 const logger = new TofLogger('main');
 const fhirStu3 = getFhirStu3Instance();
@@ -178,6 +182,20 @@ const initSocket = (app) => {
   });
 };
 
+const fixSwagger = (document) => {
+  const keys = Object.keys(document.paths);
+  keys.forEach((key) => {
+    const newKey = key.replace('{0}', '$');
+
+    if (newKey !== key) {
+      document.paths[newKey] = document.paths[key];
+      delete document.paths[key];
+    }
+  });
+
+  return document;
+};
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
@@ -195,14 +213,32 @@ async function bootstrap() {
   app.use(loadTofRequest);
   app.use(parseFhirBody);
 
+  const hostname = serverConfig.hostname || 'localhost';
+  const port = process.env.port || serverConfig.port || 3333;
+  const swaggerPort = port !== 80 ? ':' + port : '';
   const publishedIgsDirectory = path.join(serverConfig.publishedIgsDirectory || __dirname, 'igs');
   fs.ensureDirSync(publishedIgsDirectory);
 
   app.useStaticAssets(publishedIgsDirectory, { prefix: '/igs' });
   app.useStaticAssets(path.join(__dirname, '/../client'));
 
-  const port = process.env.port || serverConfig.port || 3333;
-  await app.listen(port, () => {
+  const options = new DocumentBuilder()
+    .setTitle('Trifolia-on-FHIR API')
+    .setVersion(modulePackage.version)
+    .setBasePath('/api')
+    .addOAuth2('implicit', `https://${authConfig.domain}/authorize`, `https://${authConfig.domain}/oauth/token`)
+    .build();
+  const document = fixSwagger(SwaggerModule.createDocument(app, options));
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      oauth: {
+        clientId: authConfig.clientId
+      },
+      oauth2RedirectUrl: `http://${hostname}${swaggerPort}/api-docs/oauth2-redirect.html`
+    }
+  });
+
+  await app.listen(port, hostname, () => {
     logger.log(`Listening at http://localhost:${port}/${globalPrefix}`);
   });
 }

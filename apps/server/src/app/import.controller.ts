@@ -6,9 +6,12 @@ import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {map} from 'rxjs/operators';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('import')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Import')
+@ApiOAuth2Auth()
 export class ImportController extends BaseController {
   readonly vsacBaseUrl = 'https://cts.nlm.nih.gov/fhir/';
 

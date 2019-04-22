@@ -3,9 +3,12 @@ import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req
 import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('binary')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Binary')
+@ApiOAuth2Auth()
 export class BinaryController extends BaseFhirController {
   resourceType = 'Binary';
   

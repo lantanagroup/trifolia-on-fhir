@@ -1,5 +1,6 @@
 {
   "server": {
+    "hostname": "localhost",
     "port": 49366,
     "adminCode": "t3st",
     "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",

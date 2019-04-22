@@ -11,6 +11,7 @@ import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/ex
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import * as config from 'config';
 import * as modulePackage from '../../../../package.json';
+import {ApiUseTags} from '@nestjs/swagger';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
@@ -18,6 +19,7 @@ const authConfig: IAuthConfig = config.get('auth');
 const githubConfig: IGithubConfig = config.get('github');
 
 @Controller('config')
+@ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
   

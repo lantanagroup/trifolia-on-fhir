@@ -7,9 +7,12 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import * as nanoid from 'nanoid';
+import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('practitioner')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Practitioner')
+@ApiOAuth2Auth()
 export class PractitionerController extends BaseFhirController {
   resourceType = 'Practitioner';
 
@@ -116,6 +119,7 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Get()
+  @ApiImplicitQuery({ name: 'name', type: 'string', required: false, description: 'Filter results by name' })
   public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
     return super.baseSearch(request.fhirServerBase, query);
   }

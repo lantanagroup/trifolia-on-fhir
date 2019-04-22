@@ -34,6 +34,7 @@ import * as config from 'config';
 import * as semver from 'semver';
 import * as nanoid from 'nanoid';
 import {TofNotFoundException} from '../not-found-exception';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -44,6 +45,8 @@ interface SaveStructureDefinitionRequest {
 
 @Controller('structureDefinition')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Structure Definition')
+@ApiOAuth2Auth()
 export class StructureDefinitionController extends BaseFhirController {
   resourceType = 'StructureDefinition';
 

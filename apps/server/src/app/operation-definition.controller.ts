@@ -3,9 +3,12 @@ import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req
 import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
+import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('operationDefinition')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('Operation Definition')
+@ApiOAuth2Auth()
 export class OperationDefinitionController extends BaseFhirController {
   resourceType = 'OperationDefinition';
   

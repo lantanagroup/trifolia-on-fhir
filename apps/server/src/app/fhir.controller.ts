@@ -8,7 +8,7 @@ import {
   HttpService,
   InternalServerErrorException,
   Param,
-  Post,
+  Post, Query,
   Req,
   Res,
   UseGuards
@@ -19,9 +19,12 @@ import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig, AxiosResponse} from 'axios';
+import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
+@ApiUseTags('FHIR Proxy')
+@ApiOAuth2Auth()
 export class FhirController extends BaseController {
   private readonly logger = new TofLogger(FhirController.name);
 
@@ -32,9 +35,8 @@ export class FhirController extends BaseController {
   @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
-  async changeId(@Req() request: ITofRequest, @Param('resourceType') resourceType: string, @Param('id') currentId: string): Promise<any> {
-    const newId = request.query.newId;
-
+  @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
+  async changeId(@Req() request: ITofRequest, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }

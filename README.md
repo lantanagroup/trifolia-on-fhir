@@ -2,29 +2,41 @@
 
 [![Build Status](https://travis-ci.org/lantanagroup/trifolia-on-fhir.svg?branch=master)](https://travis-ci.org/lantanagroup/trifolia-on-fhir)
 
-## Running
-1. Run npm install
-2. Modify configuration to specify server port and authentication
-3. Compile Angular2 application with `ng build` or `ng build --watch` for development
-    1. Angular CLI - must be installed globally to build the UI/client application `npm install -g @angular/cli`
-    2. The results of `ng build` are stored in the wwwroot folder, which is served by the server in the next step.
-4. Run the server with `node server.js`
 
-## Deploying
+## Requirements
 
-Requirements:
 * Angular CLI (for compiling) - See note above in "Running"
 * [Java](https://www.java.com/en/download/) - to run the ig publisher
 * [Jekyll](http://jekyll-windows.juthilo.com/2-jekyll-gem/) - to run the ig publisher without errors
     * Jekyll must be available to the user that is running the Node.JS server. Consider adding the Ruby installation directory to the global PATH.
-* Node.JSng
+* Node.JS
 
-1. Run `ng build -prod`
-    1. This will build the client application in production mode, making the packages much smaller. However, debugging a "prod" build is nearly impossible...
-2. Run `powershell tools\publish.ps1`
-    1. This will create the client.zip and server.zip packages in the "dist" folder and copy the dist folder to the server
-    2. You must be connected to VPN and have access to the \\DEV7 file system as an admin to have the copy succeed
-3. Login to server and run `powershell .\installPackages.ps1` as an administrator
+## Building/Running
+
+```bash
+npm install             # install node modules
+ng build client         # build the client application (output to dist/client)
+ng build server         # build the server application (output to dist/server)
+cd dist/server          # working directory should be the output of the server
+node main.js            # run the server application, which also hosts the client application
+```
+
+### Developers
+
+```bash
+ng build server --watch
+ng build client --watch
+```
+
+## Configuration
+
+The configuration files are in the dist/server/config directory. You may create a local.json file that overwrite default.json properties. Alternatively, you may create an environment-specific config file and use the NODE_ENV environment variable to indicate the name of the environment.
+
+Example:
+```
+dist/server/config/production.json
+NODE_ENV=production
+```
 
 ## FHIR Server Requirements
 

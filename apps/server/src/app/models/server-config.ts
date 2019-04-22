@@ -1,4 +1,5 @@
 export interface IServerConfig {
+  hostname?: string;
   port?: number;
   adminCode: string;
   supportUrl: string;
