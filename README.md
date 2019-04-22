@@ -28,6 +28,8 @@ ng build server --watch
 ng build client --watch
 ```
 
+Changes during development should be applied to the `development` branch. Once they are QA'd and approved, they are merged into the `master` branch and a release is made based on the master branch.
+
 ## Configuration
 
 The configuration files are in the dist/server/config directory. You may create a local.json file that overwrite default.json properties. Alternatively, you may create an environment-specific config file and use the NODE_ENV environment variable to indicate the name of the environment.
