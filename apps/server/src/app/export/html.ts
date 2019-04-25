@@ -193,7 +193,7 @@ export class HtmlExporter {
         // TODO: Check http://build.fhir.org/version.info first
 
         // TODO: Set config on GET request to return binary
-        this.httpService.get(fhirConfig.latestPublisher).toPromise()
+        this.httpService.get(fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise()
           .then((results) => {
             this.logger.log('Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists');
 
@@ -201,12 +201,11 @@ export class HtmlExporter {
             fs.ensureDirSync(latestPath);
 
             // noinspection JSUnresolvedFunction
-            const buff = Buffer.from(results.data, 'utf8');
             const latestFilePath = path.join(latestPath, fileName);
 
             this.logger.log('Saving FHIR IG publisher to ' + latestFilePath);
 
-            fs.writeFileSync(latestFilePath, buff);
+            fs.writeFileSync(latestFilePath, results.data);
 
             resolve(latestFilePath);
           })
