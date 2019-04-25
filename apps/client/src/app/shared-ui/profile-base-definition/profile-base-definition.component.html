@@ -1,0 +1,36 @@
+<div class="form-group">
+  <label>Base Definition</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="parentObject[propertyName]" [ngbTypeahead]="search" [class.is-invalid]="!parentObject[propertyName]" />
+    <div class="input-group-btn">
+      <button type="button" class="btn btn-default" (click)="openSelectBaseDefinitionModal()">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #selectBaseDefinitionModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Select Base Definition</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-info">This is a list of all profiles on the FHIR server that match the <strong>{{profileType}}</strong> type.</div>
+    <table class="table table-striped">
+      <tbody>
+      <tr *ngFor="let bpu of baseProfileUrls">
+        <td>{{bpu}}</td>
+        <td class="actions-column-1">
+          <button type="button" class="btn btn-primary" (click)="selectBaseDefinition(bpu, modal)">Select</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>

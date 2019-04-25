@@ -21,8 +21,6 @@ import {
   StructureDefinition
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {IFhirConfig} from './models/fhir-config';
-import {ConfigController} from './config.controller';
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
@@ -30,13 +28,11 @@ import {
   StructureDefinitionImplementationGuide,
   StructureDefinitionOptions
 } from '../../../client/src/app/shared/structure-definition.service';
-import * as config from 'config';
-import * as semver from 'semver';
 import * as nanoid from 'nanoid';
 import {TofNotFoundException} from '../not-found-exception';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-
-const fhirConfig: IFhirConfig = config.get('fhir');
+import {ParseConformance, StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
+import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 
 interface SaveStructureDefinitionRequest {
   options?: StructureDefinitionOptions;
@@ -54,28 +50,93 @@ export class StructureDefinitionController extends BaseFhirController {
     super(httpService);
   }
 
-  @Get('base/:id')
-  public getBaseStructureDefinition(@Req() request: ITofRequest, @Param('id') id: string): Promise<StructureDefinition> {
-    const configController = new ConfigController(this.httpService);
+  /**
+   * Gets all possible base definitions for the given type
+   * @param request
+   * @param type
+   */
+  @Get('base/:type')
+  public async getBaseStructureDefinitions(@Req() request: ITofRequest, @Param('type') type: string): string[] {
+    const url = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, { type: type });
+    const results = await this.httpService.get<Bundle>(url).toPromise();
 
-    return configController.getFhirCapabilities(request)
-      .then((capabilities) => {
-        const publishedFhirVersion = (fhirConfig.publishedVersions || []).find((publishedVersion) => {
-          return semver.satisfies(capabilities.fhirVersion, publishedVersion.version);
-        });
+    const ret = (results.data.entry || []).map((entry) => {
+      const structureDefinition = <StructureDefinition> entry.resource;
+      return structureDefinition.url;
+    });
 
-        if (!publishedFhirVersion) {
-          throw new BadRequestException(`Unsupported FHIR version ${capabilities.fhirVersion}`);
+    // Add the base definition from the spec for the type
+    ret.splice(0, 0, `http://hl7.org/fhir/StructureDefinition/${type}`);
+
+    return ret;
+  }
+
+  /**
+   * Gets the base structure definition specified by the url.
+   * Ensures that the structure definition returned has a snapshot.
+   * @param request The express request object
+   * @param url The url of the base profile to return
+   */
+  @Get('base')
+  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string) {
+    // Recursive function to get all base profiles for a given url
+    const getNextBase = async (baseUrl: string, list: StructureDefinition[] = []) => {
+      const foundBaseProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+      if (foundBaseProfile) {
+        list.push(foundBaseProfile);
+      } else {
+        const url = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, {url: baseUrl});
+        const results = await this.httpService.get<Bundle>(url).toPromise();
+
+        if (!results.data || results.data.total !== 1) {
+          throw new Error(`Could not find base profile ${baseUrl}`);
         }
 
-        const options = {
-          url: publishedFhirVersion.url + '/' + id + '.profile.json',
-          method: 'GET'
-        };
+        const base = <StructureDefinition>results.data.entry[0].resource;
 
-        return this.httpService.request<StructureDefinition>(options).toPromise();
-      })
-      .then((results) => results.data);
+        list.push(base);
+        await getNextBase(base.baseDefinition, list);
+      }
+
+      return list;
+    };
+
+    let baseProfiles;
+
+    try {
+      baseProfiles = await getNextBase(url);
+    } catch (ex) {
+      // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot base don the core spec
+      const getProfileUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, { url: url });
+      const getProfileResults = await this.httpService.get<Bundle>(getProfileUrl).toPromise();
+
+      if (!getProfileResults.data || getProfileResults.data.total !== 1) {
+        throw new Error(`Could not find profile with URL ${url}`);
+      }
+
+      const profile = <StructureDefinition> getProfileResults.data.entry[0].resource;
+      const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + profile.type;
+      const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+
+      if (!baseTypeProfile) {
+        throw new Error(`Can't find base profile for ${baseUrl}`);
+      }
+
+      const originalBaseDefinition = profile.baseDefinition;
+      profile.baseDefinition = baseTypeProfile.url;
+      request.fhir.generateSnapshot(SnapshotGenerator.createBundle(baseTypeProfile, <PCStructureDefinition> profile));
+      profile.baseDefinition = originalBaseDefinition;
+      return profile;
+    }
+
+    const found = baseProfiles.find((baseProfile) => baseProfile.url === url);
+
+    if (!found.snapshot) {
+      const baseProfilesBundle = SnapshotGenerator.createBundle(...(<PCStructureDefinition[]>baseProfiles));
+      request.fhir.generateSnapshot(baseProfilesBundle);
+    }
+
+    return found;
   }
 
   protected prepareSearchQuery(query?: any): Promise<any> {
@@ -121,7 +182,7 @@ export class StructureDefinitionController extends BaseFhirController {
     }
 
     const igRequestOptions = {
-      url: buildUrl(request.fhirServerBase, 'ImplementationGuide', null, null, { resource: `StructureDefinition/${id}` }),
+      url: buildUrl(request.fhirServerBase, 'ImplementationGuide', null, null, {resource: `StructureDefinition/${id}`}),
       method: 'GET',
       headers: {
         'Cache-Control': 'no-cache'
@@ -134,12 +195,13 @@ export class StructureDefinitionController extends BaseFhirController {
       resource: structureDefinition,
       options: {
         implementationGuides: (igResults.data.entry || []).map((entry) => {
-          const ig = <STU3ImplementationGuide> entry.resource;
+          const ig = <STU3ImplementationGuide>entry.resource;
           return new StructureDefinitionImplementationGuide(entry.resource.id, ig.name);
         })
       }
     }
   }
+
   /**
    * Adds a structure definition to the specified implementation guide
    * @param structureDefinition The structure definition to add (must have an id)
@@ -153,9 +215,9 @@ export class StructureDefinitionController extends BaseFhirController {
     this.assertEditingAllowed(igResults.data);
 
     if (fhirServerVersion !== 'stu3') {        // r4+
-      const r4 = <R4ImplementationGuide> implementationGuide;
+      const r4 = <R4ImplementationGuide>implementationGuide;
 
-      r4.definition = r4.definition || { resource: [] };
+      r4.definition = r4.definition || {resource: []};
       r4.definition.resource = r4.definition.resource || [];
 
       const foundResource = r4.definition.resource.find((resource) => {
@@ -173,7 +235,7 @@ export class StructureDefinitionController extends BaseFhirController {
         });
       }
     } else {                                        // stu3
-      const stu3 = <STU3ImplementationGuide> implementationGuide;
+      const stu3 = <STU3ImplementationGuide>implementationGuide;
 
       stu3.package = stu3.package || [];
 
@@ -232,9 +294,9 @@ export class StructureDefinitionController extends BaseFhirController {
     this.assertEditingAllowed(implementationGuide);
 
     if (fhirServerVersion !== 'stu3') {                // r4+
-      const r4 = <R4ImplementationGuide> implementationGuide;
+      const r4 = <R4ImplementationGuide>implementationGuide;
 
-      r4.definition = r4.definition || { resource: [] };
+      r4.definition = r4.definition || {resource: []};
       r4.definition.resource = r4.definition.resource || [];
 
       const foundResource = r4.definition.resource.find((resource) => {
@@ -248,7 +310,7 @@ export class StructureDefinitionController extends BaseFhirController {
         r4.definition.resource.splice(index, 1);
       }
     } else {                                                // stu3
-      const stu3 = <STU3ImplementationGuide> implementationGuide;
+      const stu3 = <STU3ImplementationGuide>implementationGuide;
 
       stu3.package = stu3.package || [];
 

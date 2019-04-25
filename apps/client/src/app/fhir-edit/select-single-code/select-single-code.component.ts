@@ -44,8 +44,10 @@ export class FhirSelectSingleCodeComponent implements OnInit {
   public set theValue(value: any) {
     if (!value && this.theValue) {
       delete this.parentObject[this.propertyName];
+      this.selectedCodeChanged();
     } else if (value && this.parentObject) {
       this.parentObject[this.propertyName] = value;
+      this.selectedCodeChanged();
     }
   }
 

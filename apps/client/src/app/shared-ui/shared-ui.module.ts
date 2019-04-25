@@ -14,30 +14,32 @@ import {SafePipe} from './safe-pipe';
 import {XmlPipe} from './xml-pipe';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {FormsModule} from '@angular/forms';
+import {ProfileBaseDefinitionComponent} from './profile-base-definition/profile-base-definition.component';
 
 const components = [
-    MarkdownComponent,
-    ResourceHistoryComponent,
-    TooltipIconComponent,
-    ValidationResultsComponent,
-    RawResourceComponent,
-    FhirXmlPipe,
-    FhirDisplayPipe,
-    KeysPipe,
-    SafePipe,
-    XmlPipe
+  MarkdownComponent,
+  ResourceHistoryComponent,
+  TooltipIconComponent,
+  ValidationResultsComponent,
+  RawResourceComponent,
+  FhirXmlPipe,
+  FhirDisplayPipe,
+  KeysPipe,
+  SafePipe,
+  XmlPipe,
+  ProfileBaseDefinitionComponent
 ];
 
 @NgModule({
-    declarations: components,
-    exports: components,
-    imports: [
-        CommonModule,
-        NgbModule.forRoot(),
-        FormsModule,
-        SharedModule,
-        DiffMatchPatchModule
-    ]
+  declarations: components,
+  exports: components,
+  imports: [
+    CommonModule,
+    NgbModule.forRoot(),
+    FormsModule,
+    SharedModule,
+    DiffMatchPatchModule
+  ]
 })
 export class SharedUiModule {
 }

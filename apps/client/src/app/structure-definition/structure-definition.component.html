@@ -3,345 +3,374 @@
 <div class="alert alert-danger" *ngIf="sdNotFound">Structure Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="sd-main" *ngIf="structureDefinition">
-    <h2>{{structureDefinition.name || 'No name'}}</h2>
+  <h2>{{structureDefinition.name || 'No name'}}</h2>
 
-    <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false" [class.has-element-definition]="selectedElement && selectedElement.constrainedElement" #sdTabs="ngbTabset">
-        <ngb-tab id="general">
-            <ng-template ngbTabTitle>
-                <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
-            </ng-template>
-            <ng-template ngbTabContent>
-                <fieldset>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url" (change)="nameChanged()"></app-fhir-string>
+  <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false" [class.has-element-definition]="selectedElement && selectedElement.constrainedElement" #sdTabs="ngbTabset">
+    <ngb-tab id="general">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <fieldset>
+          <div class="row">
+            <div class="col-md-6">
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url" (change)="nameChanged()"></app-fhir-string>
 
-                            <app-fhir-string
-                                    [parentObject]="structureDefinition"
-                                    (change)="nameChanged()"
-                                    [pattern]="Globals.regexPatterns.namePattern"
-                                    [patternMessage]="Globals.tooltips['name.validation.failed']"
-                                    propertyName="name"
-                                    title="Name"
-                                    tooltipPath="StructureDefinition.name">
-                            </app-fhir-string>
+              <app-fhir-string
+                [parentObject]="structureDefinition"
+                (change)="nameChanged()"
+                [pattern]="Globals.regexPatterns.namePattern"
+                [patternMessage]="Globals.tooltips['name.validation.failed']"
+                propertyName="name"
+                title="Name"
+                tooltipPath="StructureDefinition.name">
+              </app-fhir-string>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
 
-                            <app-implementation-guides-panel [showIntro]="sdTabs.activeId === 'general'" [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general.implementation-guides'] : undefined" [options]="options"></app-implementation-guides-panel>
-                        </div>
+              <app-implementation-guides-panel [showIntro]="sdTabs.activeId === 'general'"
+                                               [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general.implementation-guides'] : undefined"
+                                               [options]="options"></app-implementation-guides-panel>
+            </div>
 
-                        <div class="col-md-3">
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true" tooltipPath="StructureDefinition.status"></app-fhir-select-single-code>
+            <div class="col-md-3">
+              <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"
+                                           [required]="true" tooltipPath="StructureDefinition.status"></app-fhir-select-single-code>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" tooltipPath="StructureDefinition.baseDefinition"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"></app-fhir-string>
 
-                            <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"></app-fhir-string>
+              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="experimental" title="Experimental" tooltipPath="StructureDefinition.experimental"></app-fhir-boolean>
 
-                            <app-fhir-boolean [parentObject]="structureDefinition" propertyName="experimental" title="Experimental" tooltipPath="StructureDefinition.experimental"></app-fhir-boolean>
-                        </div>
+              <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipPath="StructureDefinition.date"></app-fhir-date>
+            </div>
 
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>ID <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon></label>
-                                <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id" />
-                            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>ID
+                  <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon>
+                </label>
+                <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id"/>
+              </div>
 
-                            <div class="form-group">
-                                <label>Type <app-tooltip-icon tooltipPath="StructureDefinition.type"></app-tooltip-icon></label>
-                                <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true" title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type.">
-                                    <option>{{structureDefinition.type}}</option>
-                                </select>
-                            </div>
+              <div class="form-group">
+                <label>Type
+                  <app-tooltip-icon tooltipKey="sd.type"></app-tooltip-icon>
+                </label>
+                <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true"
+                        title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type.">
+                  <option>{{structureDefinition.type}}</option>
+                </select>
+              </div>
 
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
+              <div class="form-group">
+                <label>Base Definition
+                  <app-tooltip-icon tooltipKey="sd.baseDefinition"></app-tooltip-icon>
+                </label>
+                <input type="text" class="form-control" readonly="readonly" [ngModel]="structureDefinition.baseDefinition" />
+              </div>
 
-                            <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
+              <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind"
+                                           [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
 
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" valueSetUrl="http://hl7.org/fhir/ValueSet/extension-context" tooltipPath="StructureDefinition.contextType"></app-fhir-select-single-code>
+              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
 
-                            <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule" tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
+              <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" valueSetUrl="http://hl7.org/fhir/ValueSet/extension-context"
+                                           tooltipPath="StructureDefinition.contextType"></app-fhir-select-single-code>
 
-                            <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipPath="StructureDefinition.date"></app-fhir-date>
-                        </div>
+              <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
+                                           tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
+            </div>
+          </div>
+        </fieldset>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="narrative">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-fhir-narrative [resource]="structureDefinition"></app-fhir-narrative>
+
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
+
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>
+
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"></app-fhir-markdown>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="additional">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.additional-tab'] : undefined">Additional</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <div class="row">
+          <div class="col-md-6">
+            <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"></app-fhir-multi-identifier>
+
+            <app-fhir-multi-use-context [parentObject]="structureDefinition" propertyName="useContext" tooltipPath="StructureDefinition.useContext"></app-fhir-multi-use-context>
+
+            <app-fhir-multi-jurisdiction [parentObject]="structureDefinition" propertyName="jurisdiction" tooltipPath="StructureDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
+
+            <app-fhir-multi-contact [parentObject]="structureDefinition" propertyName="contact" tooltipPath="StructureDefinition.contact"></app-fhir-multi-contact>
+          </div>
+          <div class="col-md-6">
+            <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)" tooltipPath="StructureDefinition.keyword"></app-fhir-select-multi-coding>
+
+            <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
+
+            <div class="card context-invariant">
+              <div class="card-header">
+                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('contextInvariant')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'contextInvariant', [''])"/>
+                Context Invariant
+                <app-tooltip-icon tooltipPath="StructureDefinition.contextInvariant"></app-tooltip-icon>
+              </div>
+              <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('contextInvariant')">
+                <thead>
+                <tr>
+                  <th>
+                    Value
+                    <app-tooltip-icon tooltipKey="StructureDefinition.contextInvariant.value"></app-tooltip-icon>
+                  </th>
+                  <th class="actions-column-1">
+                    <div class="pull-right">
+                      <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push('')">
+                        <i class="fa fa-plus"></i>
+                      </button>
                     </div>
-                </fieldset>
-            </ng-template>
-        </ngb-tab>
-
-        <ngb-tab id="narrative">
-            <ng-template ngbTabTitle>
-                <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
-            </ng-template>
-            <ng-template ngbTabContent>
-                <app-fhir-narrative [resource]="structureDefinition"></app-fhir-narrative>
-
-                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
-
-                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>
-
-                <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"></app-fhir-markdown>
-            </ng-template>
-        </ngb-tab>
-
-        <ngb-tab id="additional">
-            <ng-template ngbTabTitle>
-                <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.additional-tab'] : undefined">Additional</span>
-            </ng-template>
-            <ng-template ngbTabContent>
-                <div class="row">
-                    <div class="col-md-6">
-                        <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"></app-fhir-multi-identifier>
-
-                        <app-fhir-multi-use-context [parentObject]="structureDefinition" propertyName="useContext" tooltipPath="StructureDefinition.useContext"></app-fhir-multi-use-context>
-
-                        <app-fhir-multi-jurisdiction [parentObject]="structureDefinition" propertyName="jurisdiction" tooltipPath="StructureDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
-
-                        <app-fhir-multi-contact [parentObject]="structureDefinition" propertyName="contact" tooltipPath="StructureDefinition.contact"></app-fhir-multi-contact>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let ci of structureDefinition.contextInvariant; let cii = index; trackBy: Globals.trackByFn">
+                  <td>
+                    <input type="text" class="form-control" [(ngModel)]="structureDefinition.contextInvariant[cii]"/>
+                  </td>
+                  <td>
+                    <div class="pull-right">
+                      <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
                     </div>
-                    <div class="col-md-6">
-                        <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)" tooltipPath="StructureDefinition.keyword"></app-fhir-select-multi-coding>
-
-                        <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
-
-                        <div class="card context-invariant">
-                            <div class="card-header">
-                                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('contextInvariant')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'contextInvariant', [''])" />
-                                Context Invariant
-                                <app-tooltip-icon tooltipPath="StructureDefinition.contextInvariant"></app-tooltip-icon>
-                            </div>
-                            <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('contextInvariant')">
-                                <thead>
-                                <tr>
-                                    <th>
-                                        Value <app-tooltip-icon tooltipKey="StructureDefinition.contextInvariant.value"></app-tooltip-icon>
-                                    </th>
-                                    <th class="actions-column-1">
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push('')">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let ci of structureDefinition.contextInvariant; let cii = index; trackBy: Globals.trackByFn">
-                                    <td>
-                                        <input type="text" class="form-control" [(ngModel)]="structureDefinition.contextInvariant[cii]" />
-                                    </td>
-                                    <td>
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </ngb-tab>
-
-        <ngb-tab id="mapping">
-            <ng-template ngbTabTitle>
-                <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
-            </ng-template>
-            <ng-template ngbTabContent>
-                <p>
-                    <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'mapping', [{ identity: '' }])" />
-                    This structure definition includes mappings
-                    <app-tooltip-icon tooltipPath="StructureDefinition.mapping"></app-tooltip-icon>
-                </p>
-
-                <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('mapping')">
-                    <thead>
-                    <tr>
-                        <th>
-                            Identity
-                            <app-tooltip-icon tooltipPath="StructureDefinition.mapping.identity"></app-tooltip-icon>
-                        </th>
-                        <th>
-                            URI
-                            <app-tooltip-icon tooltipPath="StructureDefinition.mapping.uri"></app-tooltip-icon>
-                        </th>
-                        <th>
-                            Name
-                            <app-tooltip-icon tooltipPath="StructureDefinition.mapping.name"></app-tooltip-icon>
-                        </th>
-                        <th>
-                            Comment
-                            <app-tooltip-icon tooltipPath="StructureDefinition.mapping.comment"></app-tooltip-icon>
-                        </th>
-                        <th class="actions-column-1">
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-default btn-sm" title="Add a mapping" (click)="structureDefinition.mapping.push({ identity: '' })">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let m of structureDefinition.mapping; let mi = index">
-                        <td>
-                            <input type="text" class="form-control" [(ngModel)]="m.identity" [class.is-invalid]="!m.identity" />
-                        </td>
-                        <td>
-                            <app-fhir-string [parentObject]="m" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
-                        </td>
-                        <td>
-                            <app-fhir-string [parentObject]="m" propertyName="name" [isFormGroup]="false"></app-fhir-string>
-                        </td>
-                        <td>
-                            <app-fhir-string [parentObject]="m" propertyName="comment" [isFormGroup]="false"></app-fhir-string>
-                        </td>
-                        <td>
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1)">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </ng-template>
-        </ngb-tab>
-
-        <ngb-tab id="elements">
-            <ng-template ngbTabTitle>
-                <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
-            </ng-template>
-            <ng-template ngbTabContent>
-                <div class="elements">
-                    <div class="element" *ngFor="let e of elements">
-                        <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
-                            <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
-                        </div>
-                        <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
-                        <div>
-                            <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
-                            <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
-
-                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
-                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
-                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
-                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
-                            <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
-
-                            <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
-                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut" title="Slice this element" (click)="sliceElement(e)"></i> </span>
-                            <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fas fa-trash-alt" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
-                            <br />
-                            <span title="Type">{{e.type}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
-                        </div>
-                    </div>
-                </div>
-                <table class="table table-striped elements">
-                    <thead>
-                    <tr>
-                        <th class="element-name">Element/Attribute</th>
-                        <th class="element-properties">Properties</th>
-                        <th class="element-type">Type</th>
-                        <th class="element-cardinality">Cardinality</th>
-                        <th class="element-binding">Binding</th>
-                        <th class="element-actions"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="clickable" *ngFor="let e of elements; let ei = index" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement" (click)="toggleSelectedElement(e)" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '2' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
-                        <td class="element-name" [class.has-children]="e.hasChildren">
-                            <div>
-                                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
-                                    <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
-                                </div>
-                                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
-                                {{e.displayId}}
-                                <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
-                            </div>
-                        </td>
-                        <td class="element-properties">
-                            <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
-                            <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
-                            <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
-                            <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
-                            <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
-                        </td>
-                        <td class="element-type">{{e.type}}</td>
-                        <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
-                        <td class="element-binding">{{e.binding}}</td>
-                        <td class="element-actions">
-                            <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '1' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.constrain'] : undefined" title="Constrain this element" (click)="constrainElement(e, $event)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '3' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.slice'] : undefined" title="Slice this element" (click)="sliceElement(e)" [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '4' : undefined" [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.remove'] : undefined" title="Remove this element" (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="6">&nbsp;</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </ng-template>
-        </ngb-tab>
-
-        <!-- Validation -->
-        <ngb-tab id="validation">
-            <ng-template ngbTabTitle>
-                Validation ({{validation?.messages?.length || 0}})
-            </ng-template>
-            <ng-template ngbTabContent>
-                <app-validation-results [results]="validation"></app-validation-results>
-            </ng-template>
-        </ngb-tab>
-
-        <!-- RAW JSON/XML -->
-        <ngb-tab id="raw" title="RAW">
-            <ng-template ngbTabContent>
-                <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
-            </ng-template>
-        </ngb-tab>
-
-        <!-- Version History -->
-        <ngb-tab id="history" title="History">
-            <ng-template ngbTabContent>
-                <app-resource-history [(resource)]="structureDefinition"></app-resource-history>
-            </ng-template>
-        </ngb-tab>
-    </ngb-tabset>
-
-    <div class="element-definition card" *ngIf="selectedElement && selectedElement.constrainedElement">
-        <div class="card-header">
-            <span>Element Definition</span>
-            <button type="button" class="btn btn-default btn-sm" (click)="toggleSelectedElement()" title="Close the definition for this element" style="float: right">
-                <i class="fa fa-close"></i>
-            </button>
-
-            <!--div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
-                <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
-                <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(selectedElement.constrainedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fas fa-trash-alt"></i></button>
-            </div-->
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-            <app-element-definition-panel [elementTreeModel]="selectedElement" [disabled]="false" [elementTreeModels]="elements" [structureDefinition]="structureDefinition"></app-element-definition-panel>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="mapping">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <p>
+          <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'mapping', [{ identity: '' }])"/>
+          This structure definition includes mappings
+          <app-tooltip-icon tooltipPath="StructureDefinition.mapping"></app-tooltip-icon>
+        </p>
+
+        <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('mapping')">
+          <thead>
+          <tr>
+            <th>
+              Identity
+              <app-tooltip-icon tooltipPath="StructureDefinition.mapping.identity"></app-tooltip-icon>
+            </th>
+            <th>
+              URI
+              <app-tooltip-icon tooltipPath="StructureDefinition.mapping.uri"></app-tooltip-icon>
+            </th>
+            <th>
+              Name
+              <app-tooltip-icon tooltipPath="StructureDefinition.mapping.name"></app-tooltip-icon>
+            </th>
+            <th>
+              Comment
+              <app-tooltip-icon tooltipPath="StructureDefinition.mapping.comment"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default btn-sm" title="Add a mapping" (click)="structureDefinition.mapping.push({ identity: '' })">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let m of structureDefinition.mapping; let mi = index">
+            <td>
+              <input type="text" class="form-control" [(ngModel)]="m.identity" [class.is-invalid]="!m.identity"/>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="m" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="m" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="m" propertyName="comment" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="elements">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <div class="elements">
+          <div class="element" *ngFor="let e of elements">
+            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
+              <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
+            </div>
+            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
+            <div>
+              <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
+              <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
+
+              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
+              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
+              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
+              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
+              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
+
+              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
+              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut"
+                                                                                                                                                          title="Slice this element"
+                                                                                                                                                          (click)="sliceElement(e)"></i> </span>
+              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fas fa-trash-alt" title="Remove this element"
+                                                                                                        (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
+              <br/>
+              <span title="Type">{{e.type}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
+            </div>
+          </div>
         </div>
+        <table class="table table-striped elements">
+          <thead>
+          <tr>
+            <th class="element-name">Element/Attribute</th>
+            <th class="element-properties">Properties</th>
+            <th class="element-type">Type</th>
+            <th class="element-cardinality">Cardinality</th>
+            <th class="element-binding">Binding</th>
+            <th class="element-actions"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="clickable" *ngFor="let e of elements; let ei = index" [class.selected]="selectedElement === e" [class.constrained]="!!e.constrainedElement" (click)="toggleSelectedElement(e)"
+              [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '2' : undefined"
+              [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
+            <td class="element-name" [class.has-children]="e.hasChildren">
+              <div>
+                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
+                  <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
+                </div>
+                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
+                {{e.displayId}}
+                <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
+              </div>
+            </td>
+            <td class="element-properties">
+              <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
+            </td>
+            <td class="element-type">{{e.type}}</td>
+            <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
+            <td class="element-binding">{{e.binding}}</td>
+            <td class="element-actions">
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '1' : undefined"
+                        [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.constrain'] : undefined" title="Constrain this element"
+                        (click)="constrainElement(e, $event)" [disabled]="e.constrainedElement"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '3' : undefined"
+                        [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.slice'] : undefined" title="Slice this element" (click)="sliceElement(e)"
+                        [disabled]="!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot"><i class="fa fa-cut"></i></button>
+                <button type="button" class="btn btn-default btn-sm" [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '4' : undefined"
+                        [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.remove'] : undefined" title="Remove this element"
+                        (click)="removeElementDefinition(e.constrainedElement)" [disabled]="!e.constrainedElement || e.depth === 1 || hasSlices(e)"><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="6">&nbsp;</td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation">
+      <ng-template ngbTabTitle>
+        Validation ({{validation?.messages?.length || 0}})
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-validation-results [results]="validation"></app-validation-results>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- RAW JSON/XML -->
+    <ngb-tab id="raw" title="RAW">
+      <ng-template ngbTabContent>
+        <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Version History -->
+    <ngb-tab id="history" title="History">
+      <ng-template ngbTabContent>
+        <app-resource-history [(resource)]="structureDefinition"></app-resource-history>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+  <div class="element-definition card" *ngIf="selectedElement && selectedElement.constrainedElement">
+    <div class="card-header">
+      <span>Element Definition</span>
+      <button type="button" class="btn btn-default btn-sm" (click)="toggleSelectedElement()" title="Close the definition for this element" style="float: right">
+        <i class="fa fa-close"></i>
+      </button>
+
+      <!--div class="btn-group pull-right">
+          <button type="button" class="btn btn-default" title="Constrain this element" (click)="constrainElement(selectedElement)" [disabled]="selectedElement.constrainedElement"><i class="fa fa-edit"></i></button>
+          <button type="button" class="btn btn-default" title="Slice this element" (click)="sliceElement(selectedElement)" [disabled]="!selectedElement.constrainedElement && cardinalityAllowsMultiple(selectedElement.baseElement.max)"><i class="fa fa-copy"></i></button>
+          <button type="button" class="btn btn-default" title="Remove this element" (click)="removeElementDefinition(selectedElement.constrainedElement)" [disabled]="!selectedElement.constrainedElement"><i class="fas fa-trash-alt"></i></button>
+      </div-->
     </div>
+    <div class="card-body">
+      <app-element-definition-panel [elementTreeModel]="selectedElement" [disabled]="false" [elementTreeModels]="elements"
+                                    [structureDefinition]="structureDefinition"></app-element-definition-panel>
+    </div>
+  </div>
 </div>
 
 <footer class="footer">
-    <div class="btn-group">
-        <button type="button" class="btn btn-default" (click)="save()">Save</button>
-        <button type="button" class="btn btn-default" (click)="revert()">Revert</button>
-    </div>
-    <span class="message">{{message}}</span>
+  <div class="btn-group">
+    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <button type="button" class="btn btn-default" (click)="revert()">Revert</button>
+  </div>
+  <span class="message">{{message}}</span>
 </footer>

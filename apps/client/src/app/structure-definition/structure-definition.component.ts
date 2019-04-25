@@ -195,49 +195,60 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
   }
 
-  private getStructureDefinition() {
+  private async getStructureDefinition() {
     const sdId = this.route.snapshot.paramMap.get('id');
 
     this.message = 'Loading structure definition...';
     this.structureDefinition = null;
     this.elements = [];
 
-    this.strucDefService.getStructureDefinition(sdId).pipe(mergeMap((results: GetStructureDefinitionModel) => {
-      if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
-        throw new Error('The requested StructureDefinition either does not exist or has been deleted');
-      }
+    let results;
 
-      this.structureDefinition = results.resource;
-      this.options = results.options;
-      this.nameChanged();
+    try {
+      results = await this.strucDefService.getStructureDefinition(sdId).toPromise();
+    } catch (err) {
+      this.sdNotFound = err.status === 404;
+      this.message = this.fhirService.getErrorString(err);
+      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
+      return;
+    }
 
-      if (!this.structureDefinition.differential) {
-        this.structureDefinition.differential = new DifferentialComponent({element: []});
-      }
+    if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
+      throw new Error('The requested StructureDefinition either does not exist or has been deleted');
+    }
 
-      if (this.structureDefinition.differential.element.length === 0) {
-        this.structureDefinition.differential.element.push({
-          id: this.structureDefinition.type,
-          path: this.structureDefinition.type
-        });
-      }
+    this.structureDefinition = results.resource;
+    this.options = results.options;
+    this.nameChanged();
 
-      this.message = 'Loading base structure definition...';
-      return this.strucDefService.getBaseStructureDefinition(this.structureDefinition.type);
-    }))
-      .subscribe(baseStructureDefinition => {
-        this.baseStructureDefinition = baseStructureDefinition;
-        this.populateBaseElements();
-        this.recentItemService.ensureRecentItem(
-          Globals.cookieKeys.recentStructureDefinitions,
-          this.structureDefinition.id,
-          this.structureDefinition.name);
-        this.message = 'Done loading structure definition';
-      }, (err) => {
-        this.sdNotFound = err.status === 404;
-        this.message = this.fhirService.getErrorString(err);
-        this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
+    if (!this.structureDefinition.differential) {
+      this.structureDefinition.differential = new DifferentialComponent({element: []});
+    }
+
+    if (this.structureDefinition.differential.element.length === 0) {
+      this.structureDefinition.differential.element.push({
+        id: this.structureDefinition.type,
+        path: this.structureDefinition.type
       });
+    }
+
+    this.message = 'Loading base structure definition...';
+    let baseStructureDefinition;
+
+    try {
+      baseStructureDefinition = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition).toPromise();
+    } catch (err) {
+      this.message = this.fhirService.getErrorString(err);
+      return;
+    }
+
+    this.baseStructureDefinition = baseStructureDefinition;
+    this.populateBaseElements();
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentStructureDefinitions,
+      this.structureDefinition.id,
+      this.structureDefinition.name);
+    this.message = 'Done loading structure definition';
   }
 
   public constrainElement(elementTreeModel: ElementTreeModel, event?: any) {

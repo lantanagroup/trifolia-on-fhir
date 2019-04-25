@@ -40,6 +40,11 @@ export class StructureDefinitionService {
     private fileService: FileService) {
   }
 
+  public getBaseStructureDefinitions(type: string) {
+    const url = `/api/structureDefinition/base/${type}`;
+    return this.http.get<string[]>(url);
+  }
+
   public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string, titleText?: string): Observable<Bundle> {
     let url = '/api/structureDefinition?';
 
@@ -81,19 +86,8 @@ export class StructureDefinitionService {
     return this.http.get<GetStructureDefinitionModel>(url);
   }
 
-  public getBaseStructureDefinition(resourceType: string): Observable<StructureDefinition> {
-    return new Observable(subscriber => {
-      const foundResource = this.fhirService.profiles.find((profile) => {
-        return profile.id === resourceType;
-      });
-
-      if (foundResource) {
-        subscriber.next(foundResource);
-      } else {
-        subscriber.error('Could not find base structure definition for ' + resourceType);
-      }
-    });
-    // return this.http.get('/api/structureDefinition/base/' + resourceType);
+  public getBaseStructureDefinition(url: string): Observable<StructureDefinition> {
+    return this.http.get<StructureDefinition>('/api/structureDefinition/base?url=' + encodeURIComponent(url));
   }
 
   public save(structureDefinition: StructureDefinition, options?: StructureDefinitionOptions): Observable<StructureDefinition> {
