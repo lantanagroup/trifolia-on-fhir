@@ -72,6 +72,7 @@
     "simplemde": "^1.11.2",
     "socket.io": "^2.2.0",
     "source-map-support": "^0.5.12",
+    "stream": "0.0.2",
     "swagger-ui-express": "^4.0.2",
     "tmp": "^0.1.0",
     "uuid": "^3.3.2",
