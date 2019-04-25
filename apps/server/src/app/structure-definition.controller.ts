@@ -56,7 +56,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param type
    */
   @Get('base/:type')
-  public async getBaseStructureDefinitions(@Req() request: ITofRequest, @Param('type') type: string): string[] {
+  public async getBaseStructureDefinitions(@Req() request: ITofRequest, @Param('type') type: string): Promise<string[]> {
     const url = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, { type: type });
     const results = await this.httpService.get<Bundle>(url).toPromise();
 
