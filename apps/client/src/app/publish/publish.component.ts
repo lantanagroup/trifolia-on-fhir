@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
@@ -27,12 +27,16 @@ export class PublishComponent implements OnInit {
   public message: string;
   public validation: ServerValidationResult[];
   public socketOutput = '';
+  public autoScroll = true;
   public Globals = Globals;
 
   private packageId;
 
   @ViewChild('tabs')
   private tabs: NgbTabset;
+
+  @ViewChild('outputEle')
+  private outputEle: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -150,6 +154,10 @@ export class PublishComponent implements OnInit {
 
         if (!data.message.endsWith('\n')) {
           this.socketOutput += '\r\n';
+        }
+
+        if (this.autoScroll && this.outputEle) {
+          setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
         }
 
         if (data.status === 'complete') {
