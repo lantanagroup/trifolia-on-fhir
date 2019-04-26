@@ -92,124 +92,24 @@ export class BundleExporter {
     return object;
   }
 
-  private _getStu3Resources(implementationGuide: STU3ImplementationGuide) {
-    const promises = [];
-
-    (implementationGuide.package || []).forEach((igPackage) => {
-      const references = (igPackage.resource || [])
-        .filter((resource) => !!resource.sourceReference && !!resource.sourceReference.reference)
-        .map((resource) => resource.sourceReference.reference);
-
-      references.forEach((reference) => {
-        const parsed = parseUrl(reference);
-        const resourceUrl = buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
-        const resourcePromise = this.httpService.get(resourceUrl).toPromise();
-        promises.push(resourcePromise);
-      });
-    });
-
-    return Promise.all(promises);
-  }
-
-  private _getR4Resources(implementationGuide: R4ImplementationGuide) {
-    if (!implementationGuide.definition) {
-      return Promise.resolve([]);
-    }
-
-    const promises = (implementationGuide.definition.resource || [])
-      .filter((resource) => !!resource.reference && !!resource.reference.reference)
-      .map((resource) => {
-        const reference = resource.reference.reference;
-        const parsed = parseUrl(reference);
-        const resourceUrl = buildUrl(this.fhirServerBase, parsed.resourceType, parsed.id);
-        return this.httpService.get(resourceUrl).toPromise();
-      });
-
-    return Promise.all(promises);
-  }
-
   public async getBundle(removeExtensions = false): Promise<Bundle> {
-    if (!fhirConfig.servers) {
-      throw new InvalidModuleConfigException('This server has not been configured with FHIR servers');
+    const url = buildUrl(this.fhirServerBase, 'ImplementationGuide', null, null, {
+      _id: this.implementationGuideId,
+      _include: [
+        'ImplementationGuide:resource',
+        'ImplementationGuide:global'
+      ]
+    });
+    const results = await this.httpService.get<Bundle>(url).toPromise();
+    const bundle = results.data;
+
+    bundle.total = (bundle.entry || []).length;
+
+    if (removeExtensions) {
+      (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource));
     }
 
-    return new Promise((resolve, reject) => {
-      const igUrl = buildUrl(this.fhirServerBase, 'ImplementationGuide', this.implementationGuideId);
-      const fhirServerConfig = fhirConfig.servers.find((serverConfig) => {
-        return serverConfig.id === this.fhirServerId;
-      });
-      let implementationGuide;
-      let implementationGuideFullUrl;
-
-      this.httpService.get(igUrl).toPromise()
-        .then((response) => {
-          implementationGuide = response.data;
-          implementationGuideFullUrl = response.headers['content-location'];
-
-          if (fhirServerConfig.version === 'stu3') {
-            return this._getStu3Resources(implementationGuide);
-          }
-
-          return this._getR4Resources(implementationGuide);
-        })
-        .then((responses) => {
-          const resourceEntries = responses
-            .filter((response) => {
-              return !!response.data && !!response.data.resourceType;
-            })
-            .map((response) => {
-              let fullUrl = response.headers['content-location'];
-
-              if (!fullUrl) {
-                fullUrl = joinUrl(this.fhirServerBase, response.data.resourceType, response.data.id);
-
-                if (response.data.meta && response.data.meta.versionId) {
-                  fullUrl = joinUrl(fullUrl, '_history', response.data.meta.versionId);
-                }
-              }
-
-              return {
-                fullUrl: fullUrl,
-                resource: response.data
-              };
-            });
-
-          if (responses.length !== resourceEntries.length) {
-            this.logger.error(`Expected ${responses.length} entries in the export bundle, but only returning ${resourceEntries.length}. Some resources could not be returned in the bundle due to the response from the server.`);
-          }
-
-          const bundle = <Bundle>{
-            resourceType: 'Bundle',
-            type: 'collection',
-            total: resourceEntries.length + 1,
-            entry: [{fullUrl: implementationGuideFullUrl, resource: implementationGuide}].concat(resourceEntries)
-          };
-
-          if (removeExtensions) {
-            BundleExporter.cleanupResource(bundle, false);
-          }
-
-          resolve(bundle);
-        })
-        .catch((err) => {
-          if (err && err.response && err.response.data) {
-            const errBody = <OperationOutcome> err.response.data;
-            const issueTexts = (errBody.issue || []).map((issue) => issue.diagnostics);
-
-            if (issueTexts.length > 0) {
-              reject(issueTexts.join(' & '));
-            } else if (errBody.text && errBody.text.div) {
-              reject(errBody.text.div);
-            } else {
-              this.logger.error(errBody);
-              reject('Unknown error returned by FHIR server when getting resources for implementation guide');
-            }
-          } else {
-            this.logger.error(err);
-            reject(err);
-          }
-        });
-    });
+    return bundle;
   }
 
   public export(format: 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml' = 'json', removeExtensions = false) {

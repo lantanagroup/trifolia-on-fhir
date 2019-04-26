@@ -976,7 +976,10 @@ export class HtmlExporter {
               const igPublisherProcess = spawn(process, jarParams);
 
               igPublisherProcess.stdout.on('data', (data) => {
-                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
+                const message = data.toString()
+                  .replace(tmp.tmpdir, 'XXX')
+                  .replace(tmp.tmpdir.replace(/\\/g, '/'), 'XXX')
+                  .replace(homedir, 'XXX');
 
                 if (message && message.trim().replace(/\./g, '') !== '') {
                   this.sendSocketMessage('progress', message);
