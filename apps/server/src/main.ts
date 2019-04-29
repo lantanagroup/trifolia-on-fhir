@@ -71,29 +71,6 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     req.fhirServerBase += '/';
   }
 
-  req.getFhirServerUrl = function(resourceType, id, operation, params) {
-    return buildUrl(req.fhirServerBase, resourceType, id, operation, params);
-  };
-
-  req.getErrorMessage = function(err) {
-    if (err && err.response && err.response.body && err.response.body.resourceType === 'OperationOutcome') {
-      const oo = err.response.body;
-
-      if (oo.issue && oo.issue.length === 1 && oo.issue[0].diagnostics) {
-        return oo.issue[0].diagnostics;
-      } else if (oo.text && oo.text.div) {
-        return oo.text.div;
-      }
-    } else if (err && err.message) {
-      return err.message;
-    } else if (typeof err === 'string') {
-      return err;
-    }
-
-    logger.error(err);
-    return 'Unspecified error';
-  };
-
   next();
 };
 

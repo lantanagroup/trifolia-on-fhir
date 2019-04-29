@@ -36,7 +36,4 @@ export interface ITofRequest extends Request {
     'admin-code'?: string;
     [key: string]: string;
   }
-
-  getFhirServerUrl(resourceType: string, id?: string, operation?: string, params?: { [key: string]: any }): string;
-  getErrorMessage(err): string;
 }

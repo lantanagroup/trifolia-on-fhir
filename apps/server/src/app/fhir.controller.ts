@@ -1,25 +1,25 @@
 import {BaseController} from './base.controller';
 import {
   All,
-  BadRequestException,
+  BadRequestException, Body,
   Controller,
   Header,
+  Headers,
   HttpCode,
   HttpService,
   InternalServerErrorException,
   Param,
   Post, Query,
-  Req,
   Res,
   UseGuards
 } from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
+import {FhirServerBase, RequestMethod, RequestUrl} from './server.decorators';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -36,13 +36,13 @@ export class FhirController extends BaseController {
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@Req() request: ITofRequest, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string): Promise<any> {
+  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
 
     const currentOptions = {
-      url: buildUrl(request.fhirServerBase, resourceType, currentId),
+      url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'GET'
     };
 
@@ -60,12 +60,12 @@ export class FhirController extends BaseController {
     resource.id = newId;
 
     const createOptions = {
-      url: buildUrl(request.fhirServerBase, resourceType, newId),
+      url: buildUrl(fhirServerBase, resourceType, newId),
       method: 'PUT',
       data: resource
     };
     const deleteOptions = {
-      url: buildUrl(request.fhirServerBase, resourceType, currentId),
+      url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'DELETE'
     };
 
@@ -84,16 +84,23 @@ export class FhirController extends BaseController {
   }
 
   @All()
-  public proxy(@Req() request: ITofRequest, @Res() response: Response) {
-    let proxyUrl = request.fhirServerBase;
+  public proxy(
+    @RequestUrl() url: string,
+    @Headers() headers: {[key: string]: any},
+    @RequestMethod() method: string,
+    @FhirServerBase() fhirServerBase: string,
+    @Res() response: Response,
+    @Body() body?) {
+
+    let proxyUrl = fhirServerBase;
 
     if (proxyUrl.endsWith('/')) {
       proxyUrl = proxyUrl.substring(0, proxyUrl.length - 1);
     }
 
-    proxyUrl += request.url;
+    proxyUrl += url;
 
-    const proxyHeaders = JSON.parse(JSON.stringify(request.headers));
+    const proxyHeaders = JSON.parse(JSON.stringify(headers));
     delete proxyHeaders['authorization'];
     delete proxyHeaders['fhirserver'];
     delete proxyHeaders['host'];
@@ -108,14 +115,14 @@ export class FhirController extends BaseController {
 
     const options = <AxiosRequestConfig> {
       url: proxyUrl,
-      method: request.method,
+      method: method,
       headers: proxyHeaders,
       encoding: 'utf8',
       gzip: false
     };
 
-    if (request.method !== 'GET' && request.method !== 'DELETE') {
-      options.data = request.body;
+    if (method !== 'GET' && method !== 'DELETE' && body) {
+      options.data = body;
     }
 
     const sendResults = (results: AxiosResponse) => {

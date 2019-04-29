@@ -111,6 +111,250 @@ export class HtmlExporter {
     this.implementationGuideId = implementationGuideId;
   }
 
+  static getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
+    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
+    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+    const packageIdExtension = (implementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
+    let canonicalBase;
+
+    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
+      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
+    } else {
+      canonicalBase = canonicalBaseMatch[1];
+    }
+
+    // TODO: Extract npm-name from IG extension.
+    // currently, IG resource has to be in XML format for the IG Publisher
+    const control = <FhirControl>{
+      tool: 'jekyll',
+      source: 'implementationguide/' + implementationGuide.id + '.xml',
+      'npm-name': packageIdExtension && packageIdExtension.valueString ? packageIdExtension.valueString : implementationGuide.id + '-npm',
+      license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
+      paths: {
+        qa: 'generated_output/qa',
+        temp: 'generated_output/temp',
+        output: 'output',
+        txCache: 'generated_output/txCache',
+        specification: 'http://hl7.org/fhir/STU3',
+        pages: [
+          'framework',
+          'source/pages'
+        ],
+        resources: ['source/resources']
+      },
+      pages: ['pages'],
+      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+      'sct-edition': 'http://snomed.info/sct/731000124108',
+      canonicalBase: canonicalBase,
+      defaults: {
+        'Location': {'template-base': 'ex.html'},
+        'ProcedureRequest': {'template-base': 'ex.html'},
+        'Organization': {'template-base': 'ex.html'},
+        'MedicationStatement': {'template-base': 'ex.html'},
+        'SearchParameter': {'template-base': 'base.html'},
+        'StructureDefinition': {
+          'template-mappings': 'sd-mappings.html',
+          'template-base': 'sd.html',
+          'template-defns': 'sd-definitions.html'
+        },
+        'Immunization': {'template-base': 'ex.html'},
+        'Patient': {'template-base': 'ex.html'},
+        'StructureMap': {
+          'content': false,
+          'script': false,
+          'template-base': 'ex.html',
+          'profiles': false
+        },
+        'ConceptMap': {'template-base': 'base.html'},
+        'Practitioner': {'template-base': 'ex.html'},
+        'OperationDefinition': {'template-base': 'base.html'},
+        'CodeSystem': {'template-base': 'base.html'},
+        'Communication': {'template-base': 'ex.html'},
+        'Any': {
+          'template-format': 'format.html',
+          'template-base': 'base.html'
+        },
+        'PractitionerRole': {'template-base': 'ex.html'},
+        'ValueSet': {'template-base': 'base.html'},
+        'CapabilityStatement': {'template-base': 'base.html'},
+        'Observation': {'template-base': 'ex.html'}
+      },
+      resources: {}
+    };
+
+
+    if (implementationGuide.fhirVersion) {
+      control.version = implementationGuide.fhirVersion;
+    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
+      control.version = version;
+    }
+
+    if (implementationGuide.version) {
+      control['fixed-business-version'] = implementationGuide.version;
+    }
+
+    // Set the dependencyList based on the extensions in the IG
+    const dependencyExtensions = (implementationGuide.extension || []).filter((extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
+
+    // R4 ImplementationGuide.dependsOn
+    control.dependencyList = dependencyExtensions
+      .filter((dependencyExtension) => {
+        const locationExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
+        const nameExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
+
+        return !!locationExtension && !!locationExtension.valueUri && !!nameExtension && !!nameExtension.valueString;
+      })
+      .map((dependencyExtension) => {
+        const locationExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
+        const nameExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
+        const versionExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-version']);
+
+        return <FhirControlDependency>{
+          location: locationExtension ? locationExtension.valueUri : '',
+          name: nameExtension ? nameExtension.valueString : '',
+          version: versionExtension ? versionExtension.valueString : ''
+        };
+      });
+
+    // Define the resources in the control and what templates they should use
+    if (bundle && bundle.entry) {
+      for (let i = 0; i < bundle.entry.length; i++) {
+        const entry = bundle.entry[i];
+        const resource = entry.resource;
+
+        if (resource.resourceType === 'ImplementationGuide') {
+          continue;
+        }
+
+        control.resources[resource.resourceType + '/' + resource.id] = {
+          base: resource.resourceType + '-' + resource.id + '.html',
+          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
+        };
+      }
+    }
+
+    return control;
+  }
+
+  public static getR4Control(implementationGuide: R4ImplementationGuide, bundle: R4Bundle, version: string) {
+    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
+    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
+    let canonicalBase;
+
+    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
+      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
+    } else {
+      canonicalBase = canonicalBaseMatch[1];
+    }
+
+    // currently, IG resource has to be in XML format for the IG Publisher
+    const control = <FhirControl>{
+      tool: 'jekyll',
+      source: 'implementationguide/' + implementationGuide.id + '.xml',
+      'npm-name': implementationGuide.packageId || implementationGuide.id + '-npm',
+      license: implementationGuide.license || 'CC0-1.0',
+      paths: {
+        qa: 'generated_output/qa',
+        temp: 'generated_output/temp',
+        output: 'output',
+        txCache: 'generated_output/txCache',
+        specification: 'http://hl7.org/fhir/R4/',
+        pages: [
+          'framework',
+          'source/pages'
+        ],
+        resources: ['source/resources']
+      },
+      pages: ['pages'],
+      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
+      'sct-edition': 'http://snomed.info/sct/731000124108',
+      canonicalBase: canonicalBase,
+      defaults: {
+        'Location': {'template-base': 'ex.html'},
+        'ProcedureRequest': {'template-base': 'ex.html'},
+        'Organization': {'template-base': 'ex.html'},
+        'MedicationStatement': {'template-base': 'ex.html'},
+        'SearchParameter': {'template-base': 'base.html'},
+        'StructureDefinition': {
+          'template-mappings': 'sd-mappings.html',
+          'template-base': 'sd.html',
+          'template-defns': 'sd-definitions.html'
+        },
+        'Immunization': {'template-base': 'ex.html'},
+        'Patient': {'template-base': 'ex.html'},
+        'StructureMap': {
+          'content': false,
+          'script': false,
+          'template-base': 'ex.html',
+          'profiles': false
+        },
+        'ConceptMap': {'template-base': 'base.html'},
+        'Practitioner': {'template-base': 'ex.html'},
+        'OperationDefinition': {'template-base': 'base.html'},
+        'CodeSystem': {'template-base': 'base.html'},
+        'Communication': {'template-base': 'ex.html'},
+        'Any': {
+          'template-format': 'format.html',
+          'template-base': 'base.html'
+        },
+        'PractitionerRole': {'template-base': 'ex.html'},
+        'ValueSet': {'template-base': 'base.html'},
+        'CapabilityStatement': {'template-base': 'base.html'},
+        'Observation': {'template-base': 'ex.html'}
+      },
+      resources: {}
+    };
+
+    if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
+      control.version = implementationGuide.fhirVersion[0];
+    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
+      control.version = version;
+    }
+
+    if (implementationGuide.version) {
+      control['fixed-business-version'] = implementationGuide.version;
+    }
+
+    control.dependencyList = (implementationGuide.dependsOn || [])
+      .filter((dependsOn) => {
+        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
+        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
+
+        return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
+      })
+      .map((dependsOn) => {
+        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
+        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
+
+        return {
+          location: locationExtension ? locationExtension.valueString : '',
+          name: nameExtension ? nameExtension.valueString : '',
+          version: dependsOn.version
+        };
+      });
+
+    // Define the resources in the control and what templates they should use
+    if (bundle && bundle.entry) {
+      for (let i = 0; i < bundle.entry.length; i++) {
+        const entry = bundle.entry[i];
+        const resource = entry.resource;
+
+        if (resource.resourceType === 'ImplementationGuide') {
+          continue;
+        }
+
+        control.resources[resource.resourceType + '/' + resource.id] = {
+          base: resource.resourceType + '-' + resource.id + '.html',
+          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
+        };
+      }
+    }
+
+    return control;
+  }
+
   private getDisplayName(name: string | HumanName): string {
     if (!name) {
       return;
@@ -419,250 +663,6 @@ export class HtmlExporter {
     fs.writeFileSync(summaryPath, '');
   }
 
-  private getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
-    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
-    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
-    const packageIdExtension = (implementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
-    let canonicalBase;
-
-    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
-    } else {
-      canonicalBase = canonicalBaseMatch[1];
-    }
-
-    // TODO: Extract npm-name from IG extension.
-    // currently, IG resource has to be in XML format for the IG Publisher
-    const control = <FhirControl>{
-      tool: 'jekyll',
-      source: 'implementationguide/' + implementationGuide.id + '.xml',
-      'npm-name': packageIdExtension && packageIdExtension.valueString ? packageIdExtension.valueString : implementationGuide.id + '-npm',
-      license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
-      paths: {
-        qa: 'generated_output/qa',
-        temp: 'generated_output/temp',
-        output: 'output',
-        txCache: 'generated_output/txCache',
-        specification: 'http://hl7.org/fhir/STU3',
-        pages: [
-          'framework',
-          'source/pages'
-        ],
-        resources: ['source/resources']
-      },
-      pages: ['pages'],
-      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'sct-edition': 'http://snomed.info/sct/731000124108',
-      canonicalBase: canonicalBase,
-      defaults: {
-        'Location': {'template-base': 'ex.html'},
-        'ProcedureRequest': {'template-base': 'ex.html'},
-        'Organization': {'template-base': 'ex.html'},
-        'MedicationStatement': {'template-base': 'ex.html'},
-        'SearchParameter': {'template-base': 'base.html'},
-        'StructureDefinition': {
-          'template-mappings': 'sd-mappings.html',
-          'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
-        },
-        'Immunization': {'template-base': 'ex.html'},
-        'Patient': {'template-base': 'ex.html'},
-        'StructureMap': {
-          'content': false,
-          'script': false,
-          'template-base': 'ex.html',
-          'profiles': false
-        },
-        'ConceptMap': {'template-base': 'base.html'},
-        'Practitioner': {'template-base': 'ex.html'},
-        'OperationDefinition': {'template-base': 'base.html'},
-        'CodeSystem': {'template-base': 'base.html'},
-        'Communication': {'template-base': 'ex.html'},
-        'Any': {
-          'template-format': 'format.html',
-          'template-base': 'base.html'
-        },
-        'PractitionerRole': {'template-base': 'ex.html'},
-        'ValueSet': {'template-base': 'base.html'},
-        'CapabilityStatement': {'template-base': 'base.html'},
-        'Observation': {'template-base': 'ex.html'}
-      },
-      resources: {}
-    };
-
-
-    if (implementationGuide.fhirVersion) {
-      control.version = implementationGuide.fhirVersion;
-    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
-      control.version = version;
-    }
-
-    if (implementationGuide.version) {
-      control['fixed-business-version'] = implementationGuide.version;
-    }
-
-    // Set the dependencyList based on the extensions in the IG
-    const dependencyExtensions = (implementationGuide.extension || []).filter((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency');
-
-    // R4 ImplementationGuide.dependsOn
-    control.dependencyList = dependencyExtensions
-      .filter((dependencyExtension) => {
-        const locationExtension = (dependencyExtension.extension || []).find((next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
-        const nameExtension = (dependencyExtension.extension || []).find((next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
-
-        return !!locationExtension && !!locationExtension.valueUri && !!nameExtension && !!nameExtension.valueString;
-      })
-      .map((dependencyExtension) => {
-        const locationExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location');
-        const nameExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name');
-        const versionExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version');
-
-        return <FhirControlDependency>{
-          location: locationExtension ? locationExtension.valueUri : '',
-          name: nameExtension ? nameExtension.valueString : '',
-          version: versionExtension ? versionExtension.valueString : ''
-        };
-      });
-
-    // Define the resources in the control and what templates they should use
-    if (bundle && bundle.entry) {
-      for (let i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
-
-        if (resource.resourceType === 'ImplementationGuide') {
-          continue;
-        }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-          base: resource.resourceType + '-' + resource.id + '.html',
-          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
-      }
-    }
-
-    return control;
-  }
-
-  private getR4Control(implementationGuide: R4ImplementationGuide, bundle: R4Bundle, version: string) {
-    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
-    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
-    let canonicalBase;
-
-    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
-    } else {
-      canonicalBase = canonicalBaseMatch[1];
-    }
-
-    // currently, IG resource has to be in XML format for the IG Publisher
-    const control = <FhirControl>{
-      tool: 'jekyll',
-      source: 'implementationguide/' + implementationGuide.id + '.xml',
-      'npm-name': implementationGuide.packageId || implementationGuide.id + '-npm',
-      license: implementationGuide.license || 'CC0-1.0',
-      paths: {
-        qa: 'generated_output/qa',
-        temp: 'generated_output/temp',
-        output: 'output',
-        txCache: 'generated_output/txCache',
-        specification: 'http://hl7.org/fhir/R4/',
-        pages: [
-          'framework',
-          'source/pages'
-        ],
-        resources: ['source/resources']
-      },
-      pages: ['pages'],
-      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'sct-edition': 'http://snomed.info/sct/731000124108',
-      canonicalBase: canonicalBase,
-      defaults: {
-        'Location': {'template-base': 'ex.html'},
-        'ProcedureRequest': {'template-base': 'ex.html'},
-        'Organization': {'template-base': 'ex.html'},
-        'MedicationStatement': {'template-base': 'ex.html'},
-        'SearchParameter': {'template-base': 'base.html'},
-        'StructureDefinition': {
-          'template-mappings': 'sd-mappings.html',
-          'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
-        },
-        'Immunization': {'template-base': 'ex.html'},
-        'Patient': {'template-base': 'ex.html'},
-        'StructureMap': {
-          'content': false,
-          'script': false,
-          'template-base': 'ex.html',
-          'profiles': false
-        },
-        'ConceptMap': {'template-base': 'base.html'},
-        'Practitioner': {'template-base': 'ex.html'},
-        'OperationDefinition': {'template-base': 'base.html'},
-        'CodeSystem': {'template-base': 'base.html'},
-        'Communication': {'template-base': 'ex.html'},
-        'Any': {
-          'template-format': 'format.html',
-          'template-base': 'base.html'
-        },
-        'PractitionerRole': {'template-base': 'ex.html'},
-        'ValueSet': {'template-base': 'base.html'},
-        'CapabilityStatement': {'template-base': 'base.html'},
-        'Observation': {'template-base': 'ex.html'}
-      },
-      resources: {}
-    };
-
-    if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
-      control.version = implementationGuide.fhirVersion[0];
-    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
-      control.version = version;
-    }
-
-    if (implementationGuide.version) {
-      control['fixed-business-version'] = implementationGuide.version;
-    }
-
-    control.dependencyList = (implementationGuide.dependsOn || [])
-      .filter((dependsOn) => {
-        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
-        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
-
-        return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
-      })
-      .map((dependsOn) => {
-        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
-        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
-
-        return {
-          location: locationExtension ? locationExtension.valueString : '',
-          name: nameExtension ? nameExtension.valueString : '',
-          version: dependsOn.version
-        };
-      });
-
-    // Define the resources in the control and what templates they should use
-    if (bundle && bundle.entry) {
-      for (let i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
-
-        if (resource.resourceType === 'ImplementationGuide') {
-          continue;
-        }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-          base: resource.resourceType + '-' + resource.id + '.html',
-          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
-      }
-    }
-
-    return control;
-  }
-
   private getStu3PageContent(implementationGuide: STU3ImplementationGuide, page: PageComponent) {
     const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
 
@@ -909,9 +909,9 @@ export class HtmlExporter {
               }
 
               if (fhirServerConfig.version === 'stu3') {
-                control = this.getStu3Control(implementationGuideResource, <STU3Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
+                control = HtmlExporter.getStu3Control(implementationGuideResource, <STU3Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
               } else {
-                control = this.getR4Control(implementationGuideResource, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
+                control = HtmlExporter.getR4Control(implementationGuideResource, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
               }
 
               return this.getDependencies(control, isXml, resourcesDir, this.fhir, fhirServerConfig);
