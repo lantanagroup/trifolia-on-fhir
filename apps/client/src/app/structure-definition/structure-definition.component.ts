@@ -1,7 +1,7 @@
-import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, DoCheck, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {GetStructureDefinitionModel, StructureDefinitionOptions, StructureDefinitionService} from '../shared/structure-definition.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {StructureDefinitionOptions, StructureDefinitionService} from '../shared/structure-definition.service';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -10,7 +10,7 @@ import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
 import {DOCUMENT} from '@angular/common';
 import {ConfigService} from '../shared/config.service';
-import {mergeMap} from 'rxjs/operators';
+import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
 
 @Component({
   selector: 'app-profile',
@@ -18,15 +18,23 @@ import {mergeMap} from 'rxjs/operators';
   styleUrls: ['./structure-definition.component.css']
 })
 export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck {
+  private readonly dataTypes = ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation', 'CodeableConcept', 'Coding', 'Money',
+  'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
+  'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
+  'ParameterDefinition', 'Expression', 'TriggerDefinition'];
+
   @Input() public structureDefinition: StructureDefinition;
   public options = new StructureDefinitionOptions();
   public baseStructureDefinition;
-  public elements = [];
-  public selectedElement: any;
+  public elements: ElementTreeModel[] = [];
+  public selectedElement: ElementTreeModel;
   public validation: any;
   public message: string;
   public sdNotFound = false;
   public Globals = Globals;
+
+  @ViewChild('edPanel') edPanel: ElementDefinitionPanelComponent;
+  @ViewChild('sdTabs') sdTabs: NgbTabset;
 
   private navSubscription: any;
 
@@ -39,6 +47,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     private recentItemService: RecentItemService,
     private fhirService: FhirService,
     private fileService: FileService,
+    private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document) {
 
     this.document.body.classList.add('structure-definition');
@@ -56,10 +65,12 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
-  public toggleSelectedElement(element?: ElementTreeModel) {
+  public toggleSelectedElement(element?: ElementTreeModel, disableDeselect = false) {
     if (!element || this.selectedElement === element) {
-      this.selectedElement = null;
-    } else if (element && element.constrainedElement) {
+      if (!disableDeselect) {
+        this.selectedElement = null;
+      }
+    } else if (element) {
       this.selectedElement = element;
     }
   }
@@ -83,7 +94,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
   }
 
-  public toggleElementExpand(target: ElementTreeModel) {
+  public toggleElementExpand(target: ElementTreeModel, event?) {
     if (!target.hasChildren) {
       return;
     }
@@ -95,10 +106,11 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
       this.populateBaseElements(target);
       target.expanded = true;
     }
-  }
 
-  public populateElement(element: ElementTreeModel) {
-    return [element];
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
   public nameChanged() {
@@ -145,21 +157,23 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
       this.elements = [];
     }
 
+    const baseProfile = parent ? parent.profile : this.baseStructureDefinition;
+    const baseElements = baseProfile.snapshot.element || [];
     let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
-    const parentPath = parent ? parent.baseElement.path : '';
+    const parentPath = parent ? parent.profilePath : '';
     const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
     let filtered: ElementDefinition[];
 
-    if (parent && parent.baseElement.path.endsWith('[x]')) {
+    if (parentPath.endsWith('[x]')) {
       // this is a choice element, the child elements are the types of the choice
       filtered = (parent.baseElement.type || []).map((type) => {
         return {
-          path: parent.baseElement.path.substring(0, parent.baseElement.path.lastIndexOf('[x]')) + type.code
+          path: parentPath.substring(0, parentPath.lastIndexOf('[x]')) + type.code
         };
       });
     } else {
       // this is not a choice element, just need to find the children of the parent
-      filtered = (this.baseStructureDefinition.snapshot.element || []).filter((baseElement) => {
+      filtered = (baseElements || []).filter((baseElement) => {
         if (parentPath) {
           return baseElement.path.startsWith(parentPath + '.') &&
             baseElement.path.split('.').length === (parentPath.split('.').length + 1);
@@ -170,18 +184,46 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     }
 
     for (let i = 0; i < filtered.length; i++) {
-      const position = this.baseStructureDefinition.snapshot.element.indexOf(filtered[i]);
-      const depth = parent ? parent.depth + 1 : 1;
-      const hasChildren = (this.baseStructureDefinition.snapshot.element || []).filter((element: ElementDefinition) => {
-        return element.path.startsWith(filtered[i].path + '.') &&
-          element.path.split('.').length === (filtered[i].path.split('.').length + 1);
-      }).length > 0;
+      const position = baseElements.indexOf(filtered[i]);
+      const leafProperty = filtered[i].path.indexOf('.') > 0 ?
+        filtered[i].path.substring(filtered[i].path.lastIndexOf('.') + 1) :
+        filtered[i].path;
 
       const newElement = new ElementTreeModel();
       newElement.parent = parent;
-      newElement.setFields(filtered[i], parent ? parent.depth + 1 : 1, hasChildren, position);
+      newElement.baseElement = filtered[i];
+      newElement.depth = parent ? parent.depth + 1 : 1;
+      newElement.position = position;
 
-      const newElements = this.populateElement(newElement);
+      if (newElement.type && this.dataTypes.indexOf(newElement.type) >= 0) {
+        newElement.hasChildren = true;
+      } else {
+        newElement.hasChildren = (baseElements || []).filter((element: ElementDefinition) => {
+          return element.path.startsWith(filtered[i].path + '.') &&
+            element.path.split('.').length === (filtered[i].path.split('.').length + 1);
+        }).length > 0;
+      }
+
+      const isDataType = this.dataTypes.indexOf(newElement.type) >= 0;
+
+      // Change the profile of the tree item for data types
+      newElement.profile = isDataType ?
+        this.fhirService.fhir.parser.structureDefinitions.find((sd) => sd.id === newElement.type) :
+        baseProfile;
+
+      newElement.path = parent ?
+        parent.path + '.' + leafProperty :
+        filtered[i].path;
+
+      if (isDataType) {
+        newElement.profilePath = newElement.type;
+      } else if (parent) {
+        newElement.profilePath = parent.profilePath + '.' + leafProperty;
+      } else {
+        newElement.profilePath = newElement.path;
+      }
+
+      const newElements = [newElement];
       this.populateConstrainedElements(newElements, parentSliceName);
 
       for (let x = 0; x < newElements.length; x++) {
@@ -251,34 +293,60 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     this.message = 'Done loading structure definition';
   }
 
+  private calculateConstraintPosition(elementTreeModel: ElementTreeModel) {
+    // the element must have a parent and the parent must be constrained in order to create a child constraint
+    if (!elementTreeModel.parent || !elementTreeModel.parent.constrainedElement) {
+      return;
+    }
+
+    const thisElementIndex = this.elements.indexOf(elementTreeModel);
+    const previousConstrainedSiblings = this.elements.filter((e, i) => e.parent === elementTreeModel.parent && e.constrainedElement && i < thisElementIndex);
+
+    if (previousConstrainedSiblings.length === 0) {
+      // no siblings have been constrained. place this new constraint immediately following the parent
+      const parentConstraint = elementTreeModel.parent.constrainedElement;
+      const parentIndex = this.structureDefinition.differential.element.indexOf(parentConstraint);
+      return parentIndex + 1;
+    } else {
+      const previousConstrainedSibling = previousConstrainedSiblings[previousConstrainedSiblings.length - 1];
+      const previousConstrainedIndex = this.structureDefinition.differential.element.indexOf(previousConstrainedSibling.constrainedElement);
+      return previousConstrainedIndex + 1;
+    }
+  }
+
   public constrainElement(elementTreeModel: ElementTreeModel, event?: any) {
+    if (elementTreeModel.parent && !elementTreeModel.parent.constrainedElement) {
+      this.constrainElement(elementTreeModel.parent);
+    }
+
     const leafElementName = elementTreeModel.baseElement.id.substring(elementTreeModel.baseElement.id.lastIndexOf('.') + 1);
     const constrainedElement = new ElementDefinition();
     constrainedElement.id = elementTreeModel.parent ?
       `${elementTreeModel.parent.id}.${leafElementName}` :
       elementTreeModel.baseElement.path;
-    constrainedElement.path = elementTreeModel.baseElement.path;
+    constrainedElement.path = elementTreeModel.path;
 
     // Set the constrainedElement on the treeModel
     elementTreeModel.constrainedElement = constrainedElement;
 
-    // Add the element to the SD's differential elements
-    this.structureDefinition.differential.element.push(constrainedElement);
+    const newIndex = this.calculateConstraintPosition(elementTreeModel);
+    this.structureDefinition.differential.element.splice(newIndex, 0, constrainedElement);
 
     if (this.selectedElement !== elementTreeModel) {
       this.toggleSelectedElement(elementTreeModel);
     }
 
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-    // sort the list so that it matches the base model's order
-    this.structureDefinition.differential.element = (this.structureDefinition.differential.element || []).sort((a, b) => {
-      const aFound = this.elements.find((nextElementTreeModel) => nextElementTreeModel.constrainedElement === a);
-      const bFound = this.elements.find((nextElementTreeModel) => nextElementTreeModel.constrainedElement === b);
-
-      // TODO: Fix bug. not ever differential element has an entry in the tree models (child entries not expanded, for example)
-      return aFound.position.localeCompare(bFound.position);
-    });
+    // In case this was executed using the keyboard, automatically focus on the element definition panel
+    setTimeout(() => {
+      if (this.edPanel) {
+        this.edPanel.focus();
+      }
+    }, 100);
   }
 
   public hasSlices(elementTreeModel: ElementTreeModel) {
@@ -307,7 +375,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     return false;
   }
 
-  public sliceElement(elementTreeModel: ElementTreeModel) {
+  public sliceElement(elementTreeModel: ElementTreeModel, event?) {
     // Collapse the element so the tree doesn't look screwed up when we mess with it
     if (elementTreeModel.expanded) {
       this.toggleElementExpand(elementTreeModel);
@@ -327,12 +395,11 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     this.structureDefinition.differential.element.splice(elementIndex + 1, 0, newElement);
 
     const newElementTreeModel = new ElementTreeModel();
-    newElementTreeModel.setFields(
-      elementTreeModel.baseElement,
-      elementTreeModel.depth,
-      elementTreeModel.hasChildren,
-      elementTreeModel.position,
-      newElement);
+    newElementTreeModel.baseElement = elementTreeModel.baseElement;
+    newElementTreeModel.depth = elementTreeModel.depth;
+    newElementTreeModel.hasChildren = elementTreeModel.hasChildren;
+    newElementTreeModel.position = elementTreeModel.position;
+    newElementTreeModel.constrainedElement = newElement;
     newElementTreeModel.expanded = false;
 
     const elementTreeModelIndex = this.elements.indexOf(elementTreeModel);
@@ -342,19 +409,28 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
       const nextElementTreeModel = this.elements[i];
       if (this.isChildOfElement(nextElementTreeModel, elementTreeModel)) {
         nextElementTreeModel.parent = newElementTreeModel;
-        nextElementTreeModel.displayId = nextElementTreeModel.displayId + ':' + newSliceName;
+        // TODO: nextElementTreeModel.displayId = nextElementTreeModel.displayId + ':' + newSliceName;
         nextElementTreeModel.constrainedElement.id = nextElementTreeModel.constrainedElement.id + ':' + newSliceName;
         break;
       }
     }
 
     this.elements.splice(elementTreeModelIndex + 1, 0, newElementTreeModel);
+
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
-  public removeElementDefinition(element: ElementDefinition) {
+  public removeElementDefinition(element: ElementDefinition, event?, shouldConfirm = true) {
+    if (shouldConfirm && !confirm('Are you sure you want to remove the constraints for this element?')) {
+      return;
+    }
+
     const childElementDefinitions = this.getChildElementDefinitions(element);
 
-    childElementDefinitions.forEach((childElementDefinition) => this.removeElementDefinition(childElementDefinition));
+    childElementDefinitions.forEach((childElementDefinition) => this.removeElementDefinition(childElementDefinition, null, false));
 
     const elementIndex = this.structureDefinition.differential.element.indexOf(element);
     this.structureDefinition.differential.element.splice(elementIndex, 1);
@@ -376,6 +452,11 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     if (isSliceRoot) {
       const foundElementTreeModelIndex = this.elements.indexOf(foundElementTreeModel);
       this.elements.splice(foundElementTreeModelIndex, 1);
+    }
+
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
     }
   }
 
@@ -461,6 +542,55 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
   ngDoCheck() {
     if (this.structureDefinition) {
       this.validation = this.fhirService.validate(this.structureDefinition);
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyDown(event) {
+    if (event.ctrlKey && this.elements.length > 0) {
+      const index = this.selectedElement ? this.elements.indexOf(this.selectedElement) : -1;
+      let shouldFocus = false;
+
+      if (event.keyCode === 40) {           // down
+        if (!this.selectedElement) {
+          this.selectedElement = this.elements[0];
+          shouldFocus = true;
+        } else {
+          if (index < this.elements.length - 1) {
+            this.selectedElement = this.elements[index + 1];
+            shouldFocus = true;
+          }
+        }
+      } else if (event.keyCode === 38) {    // up
+        if (!this.selectedElement) {
+          this.selectedElement = this.elements[0];
+          shouldFocus = true;
+        } else if (index > 0) {
+          this.selectedElement = this.elements[index - 1];
+          shouldFocus = true;
+        }
+      } else if (event.keyCode === 46) {    // delete
+        if (this.selectedElement && this.selectedElement.constrainedElement) {
+          this.removeElementDefinition(this.selectedElement.constrainedElement);
+        }
+      }
+
+      if (shouldFocus) {
+        this.sdTabs.select('elements');
+
+        // Automatically focus on the element definition panel or the "constrain this element" button
+        setTimeout(() => {
+          if (this.edPanel) {
+            this.edPanel.focus();
+          } else {
+            const edConstraintBtn = document.getElementById('edConstraintBtn');
+
+            if (edConstraintBtn) {
+              edConstraintBtn.focus();
+            }
+          }
+        }, 100);
+      }
     }
   }
 }

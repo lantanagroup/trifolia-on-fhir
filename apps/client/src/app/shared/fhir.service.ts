@@ -55,7 +55,7 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
 
 @Injectable()
 export class FhirService {
-  private fhir: Fhir;
+  public fhir: Fhir;
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
   public valueSets: ValueSet[] = [];

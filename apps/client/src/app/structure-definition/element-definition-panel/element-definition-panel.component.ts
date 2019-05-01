@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../models/element-tree-model';
@@ -30,9 +30,13 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public definedTypeCodes: Coding[] = [];
   public Globals = Globals;
 
+  @ViewChild('edTabSet') edTabSet: NgbTabset;
+  @ViewChild('idTextField') idTextField: ElementRef;
+
   constructor(
     private modalService: NgbModal,
     private fhirService: FhirService,
+    private renderer: Renderer2,
     public configService: ConfigService) {
 
   }
@@ -40,6 +44,16 @@ export class ElementDefinitionPanelComponent implements OnInit {
   get element(): ElementDefinition {
     if (this.elementTreeModel) {
       return this.elementTreeModel.constrainedElement;
+    }
+  }
+
+  focus() {
+    if (this.edTabSet) {
+      this.edTabSet.select('general');
+    }
+
+    if (this.idTextField) {
+      this.renderer.selectRootElement(this.idTextField.nativeElement).focus();
     }
   }
 

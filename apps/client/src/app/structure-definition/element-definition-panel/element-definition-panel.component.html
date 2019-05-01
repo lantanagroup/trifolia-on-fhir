@@ -1,6 +1,6 @@
 <fieldset [disabled]="disabled">
-    <ngb-tabset justify="fill" *ngIf="element">
-        <ngb-tab>
+    <ngb-tabset justify="fill" *ngIf="element" #edTabSet>
+        <ngb-tab id="general">
             <ng-template ngbTabTitle>
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
             </ng-template>
@@ -8,7 +8,7 @@
                 <div class="form-group">
                     <label>ID/Path</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.id"/>
+                        <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.id" #idTextField />
                         <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.path"/>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
                 </div>
             </ng-template>
         </ngb-tab>
-        <ngb-tab *ngIf="element.slicing">
+        <ngb-tab *ngIf="element.slicing" id="slicing">
             <ng-template ngbTabTitle>
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
             </ng-template>
@@ -326,7 +326,7 @@
                 <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered" title="Ordered" tooltipPath="ElementDefinition.slicing.ordered"></app-fhir-boolean>
             </ng-template>
         </ngb-tab>
-        <ngb-tab>
+        <ngb-tab id="narrative">
             <ng-template ngbTabTitle>
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
             </ng-template>
@@ -348,7 +348,7 @@
                 <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing" [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing"></app-fhir-markdown>
             </ng-template>
         </ngb-tab>
-        <ngb-tab>
+        <ngb-tab id="binding">
             <ng-template ngbTabTitle>
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
             </ng-template>
@@ -370,7 +370,7 @@
                                  [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']" tooltipPath="ElementDefinition.maxValue[x]"></app-fhir-choice>
             </ng-template>
         </ngb-tab>
-        <ngb-tab>
+        <ngb-tab id="json">
             <ng-template ngbTabTitle>
                 <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
             </ng-template>

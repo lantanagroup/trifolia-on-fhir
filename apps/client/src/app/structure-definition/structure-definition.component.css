@@ -48,16 +48,20 @@ div.element-definition {
 }
 
 tr.selected > td {
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
 tr.selected > td:first-child {
-    border-left: 2px solid black;
+    border-left: 1px solid black;
 }
 
 tr.selected > td:last-child {
-    border-right: 2px solid black;
+    border-right: 1px solid black;
+}
+
+tr.selected > td {
+  background-color: darkgray;
 }
 
 tr.constrained {
@@ -120,4 +124,8 @@ table.elements > tbody > tr:last-child {
 
 th.element-binding, td.element-binding {
     word-wrap: break-word;
+}
+
+div.element-definition.card .card-body {
+  padding: 10px;
 }

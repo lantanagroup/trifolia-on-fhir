@@ -1,4 +1,4 @@
-import {ElementDefinition, ElementDefinitionBindingComponent, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class ElementTreeModel {
@@ -9,6 +9,9 @@ export class ElementTreeModel {
   public hasChildren = false;
   public position: number;
   public parent?: ElementTreeModel;
+  public profile: StructureDefinition;
+  public profilePath: string;
+  public path: string;
 
   constructor() {
   }
@@ -57,17 +60,6 @@ export class ElementTreeModel {
     return false;
   }
 
-  setFields(baseElement: ElementDefinition, depth: number, hasChildren: boolean, position: number, constrainedElement?: ElementDefinition) {
-    this.baseElement = baseElement;
-    this.depth = depth;
-    this.hasChildren = hasChildren;
-    this.position = position;
-
-    if (constrainedElement) {
-      this.constrainedElement = constrainedElement;
-    }
-  }
-
   private getTypeRefDisplay(typeRefs: TypeRefComponent[]): string {
     const typeCounts = {};
 
@@ -93,6 +85,23 @@ export class ElementTreeModel {
   }
 
   get type(): string {
+    const types = this.constrainedElement ? this.constrainedElement.type : this.baseElement.type;
+
+    if (types) {
+      const uniqueTypes: string[] = types.reduce((previous, current) => {
+        if (previous.indexOf(current.code) < 0) {
+          previous.push(current.code);
+        }
+        return previous;
+      }, []);
+
+      if (uniqueTypes.length === 1) {
+        return uniqueTypes[0];
+      }
+    }
+  }
+
+  get typeDisplay(): string {
     const constrainedElement = this.constrainedElement;
 
     if (constrainedElement && constrainedElement.type && constrainedElement.type.length > 0) {
