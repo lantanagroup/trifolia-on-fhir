@@ -466,59 +466,6 @@ export class HtmlExporter {
     });
   }
 
-  private copyExtension(destExtensionsDir: string, extensionFileName: string, isXml: boolean, fhir: FhirModule) {
-    const sourceExtensionsDir = path.join(__dirname, '../../src/assets/stu3/extensions');
-    const sourceExtensionFileName = path.join(sourceExtensionsDir, extensionFileName);
-    let destExtensionFileName = path.join(destExtensionsDir, extensionFileName);
-
-    if (!isXml) {
-      fs.copySync(sourceExtensionFileName, destExtensionFileName);
-    } else {
-      const extensionJson = fs.readFileSync(sourceExtensionFileName).toString();
-      const extensionXml = fhir.jsonToXml(extensionJson);
-
-      destExtensionFileName = destExtensionFileName.substring(0, destExtensionFileName.indexOf('.json')) + '.xml';
-      fs.writeFileSync(destExtensionFileName, extensionXml);
-    }
-  }
-
-  private getDependencies(control, isXml: boolean, resourcesDir: string, fhir: FhirModule, fhirServerConfig: IFhirConfigServer): Promise<any> {
-    const isStu3 = fhirServerConfig && fhirServerConfig.version === 'stu3';
-
-    // Load the ig dependency extensions into the resources directory
-    if (isStu3 && control.dependencyList && control.dependencyList.length > 0) {
-      const destExtensionsDir = path.join(resourcesDir, 'structuredefinition');
-
-      fs.ensureDirSync(destExtensionsDir);
-
-      this.copyExtension(destExtensionsDir, 'extension-ig-dependency.json', isXml, fhir);
-      this.copyExtension(destExtensionsDir, 'extension-ig-dependency-version.json', isXml, fhir);
-      this.copyExtension(destExtensionsDir, 'extension-ig-dependency-location.json', isXml, fhir);
-      this.copyExtension(destExtensionsDir, 'extension-ig-dependency-name.json', isXml, fhir);
-    }
-
-    return Promise.resolve([]);           // This isn't actually needed, since the IG Publisher attempts to resolve these dependency automatically
-
-    /*
-    // Attempt to resolve the dependency's definitions and include it in the package
-    const deferred = Q.defer();
-    const promises = _.map(control.dependencyList, (dependency) => {
-        const dependencyUrl =
-            dependency.location +
-            (dependency.location.endsWith('/') ? '' : '/') + 'definitions.' +
-            (isXml ? 'xml' : 'json') +
-            '.zip';
-        return getDependency(dependencyUrl, dependency.name);
-    });
-
-    Q.all(promises)
-        .then(deferred.resolve)
-        .catch(deferred.reject);
-
-    return deferred.promise;
-    */
-  }
-
   private getFhirControlVersion(fhirServerConfig) {
     const configVersion = fhirServerConfig ? fhirServerConfig.version : null;
 
@@ -914,9 +861,6 @@ export class HtmlExporter {
                 control = HtmlExporter.getR4Control(implementationGuideResource, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
               }
 
-              return this.getDependencies(control, isXml, resourcesDir, this.fhir, fhirServerConfig);
-            })
-            .then(() => {
               // Copy the contents of the ig-publisher-template folder to the export temporary folder
               const templatePath = path.join(__dirname, 'assets', 'ig-publisher-template');
               fs.copySync(templatePath, rootPath);
