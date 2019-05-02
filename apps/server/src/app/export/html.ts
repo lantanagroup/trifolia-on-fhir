@@ -732,7 +732,6 @@ export class HtmlExporter {
   }
 
   private writeStu3Pages(rootPath: string, implementationGuide: STU3ImplementationGuide) {
-    const tocFilePath = path.join(rootPath, 'source/pages/toc.md');
     const tocEntries = [];
 
     if (implementationGuide.page) {
@@ -890,6 +889,15 @@ export class HtmlExporter {
                 const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
                 const destJarPath = path.join(rootPath, jarFileName);
                 fs.copySync(igPublisherLocation, destJarPath);
+
+                // Create .sh and .bat files for easy execution of the IG publisher jar
+                const shContent = '#!/bin/bash\n' +
+                'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
+                'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+                fs.writeFileSync(path.join(rootPath, 'publisher.sh'), shContent);
+
+                const batContent = 'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+                fs.writeFileSync(path.join(rootPath, 'publisher.bat'), batContent);
               }
 
               if (!executeIgPublisher || !igPublisherLocation) {
