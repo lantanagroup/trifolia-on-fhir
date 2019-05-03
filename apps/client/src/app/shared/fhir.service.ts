@@ -232,15 +232,19 @@ export class FhirService {
    * @param {string} [searchContent]
    * @param {boolean} [summary?]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string) {
     let url = '/api/fhir/' + resourceType + '?';
 
     if (searchContent) {
-      url += '_content=' + encodeURIComponent(searchContent) + '&';
+      url += `_content=${encodeURIComponent(searchContent)}&`;
     }
 
     if (searchUrl) {
-      url += 'url=' + encodeURIComponent(searchUrl) + '&';
+      url += `url=${encodeURIComponent(searchUrl)}&`;
+    }
+
+    if (id) {
+      url += `_id=${encodeURIComponent(id)}&`;
     }
 
     if (summary === true) {

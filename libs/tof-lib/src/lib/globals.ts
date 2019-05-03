@@ -2,6 +2,7 @@ import {Coding} from './stu3/fhir';
 import * as _ from 'underscore';
 
 export class Globals {
+  static readonly securitySystem = 'https://trifolia-fhir.lantanagroup.com/security';
   static readonly regexPatterns = {
     namePattern: '^[A-Z][A-Za-z0-9_]+$'
   };

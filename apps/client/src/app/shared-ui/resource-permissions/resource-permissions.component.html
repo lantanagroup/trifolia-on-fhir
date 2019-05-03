@@ -1,0 +1,130 @@
+<div class="row">
+  <div class="col-md-6">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Type</th>
+        <th>Who</th>
+        <th>Read?</th>
+        <th>Write?</th>
+        <th class="actions-column-1"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let s of security">
+        <td>{{s.getTypeDisplay()}}</td>
+        <td>{{s.display || s.id}}</td>
+        <td>{{s.canRead ? 'Yes' : 'No'}}</td>
+        <td>
+          {{s.canWrite ? 'Yes' : 'No'}}
+          <i class="fas fa-times clickable" *ngIf="s.canWrite" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id)"></i>
+        </td>
+        <td>
+          <button type="button" class="btn btn-default" title="Remove all permissions for this group/user" (click)="removePermission(s.type, 'read', s.id)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <button type="button" class="btn btn-default" (click)="copyPermissionsFrom()">Copy permissions from...</button>
+  </div>
+
+  <!-- Add Group -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Add Group</div>
+      <div class="card-body">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search group by name" />
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="searchGroups()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th class="actions-column-1">Read</th>
+            <th class="actions-column-1">Write</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><i>Everyone</i></td>
+            <td>
+              <button type="button" class="btn btn-default" title="Add read/view permissions for everyone" (click)="addPermission('everyone', 'read')">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn btn-default" title="Add write/edit permissions for everyone" (click)="addPermission('everyone', 'write')">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngFor="let g of foundGroups">
+            <td>{{g.name}}</td>
+            <td>
+              <button type="button" class="btn btn-default" title="Add read/view permissions for this group">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn btn-default" title="Add write/edit permissions for this group">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add User -->
+    <div class="card">
+      <div class="card-header">Add User</div>
+      <div class="card-body">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search user by name" />
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default" (click)="searchUsers()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <table class="table table-striped" *ngIf="foundUsersBundle">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Read</th>
+            <th>Write</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let u of foundUsers">
+            <td>{{Globals.getHumanNamesDisplay(u.name)}}</td>
+            <td>{{getPractitionerEmail(u)}}</td>
+            <td class="actions-column-1">
+              <button type="button" class="btn btn-default" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id)">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+            <td class="actions-column-1">
+              <button type="button" class="btn btn-default" title="Add write/edit permissions for this user" (click)="addPermission('user', 'write', u.id)">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
