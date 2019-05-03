@@ -1,19 +1,159 @@
 <h1>Edit User/Person</h1>
 
 <ngb-tabset>
-    <ngb-tab title="General">
-        <ng-template ngbTabContent>
-            <app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab title="RAW">
-        <ng-template ngbTabContent>
-            <app-raw-resource [resource]="practitioner"></app-raw-resource>
-        </ng-template>
-    </ngb-tab>
+  <ngb-tab title="My Information">
+    <ng-template ngbTabContent>
+      <app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
+
+      <button type="button" class="btn btn-primary" (click)="saveUser()">Save</button>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="Groups">
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div [class.col-md-3]="editGroup" [class.col-md-12]="!editGroup">
+          <h3>Managing Groups</h3>
+          <table class="table table-striped managing-groups-table">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th class="actions-column-2">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default" title="Add a group" (click)="addGroup()">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let mg of managingGroups">
+              <td>{{mg.id}}</td>
+              <td>{{mg.name}}</td>
+              <td>
+                <button type="button" class="btn btn-default" title="Edit this group" (click)="editGroup = mg">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-default" title="Delete this group" (click)="deleteGroup(mg)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="managingGroups.length === 0">
+            <tr>
+              <td colspan="3">You are not the manager of any groups.</td>
+            </tr>
+            </tfoot>
+          </table>
+
+          <h3>Membership Groups</h3>
+          <table class="table table-striped membership-groups-table">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th class="actions-column-1">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let mg of memberGroups">
+              <td>{{mg.id}}</td>
+              <td>{{mg.name}}</td>
+              <td>
+                <button type="button" class="btn btn-default" title="Remove myself from this">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="memberGroups.length === 0">
+            <tr>
+              <td colspan="3">You are not a member of any other groups.</td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="col-md-9" *ngIf="editGroup">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" [(ngModel)]="editGroup.name" [class.is-invalid]="!editGroup.name" />
+                  </div>
+
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th class="actions-column-1"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let member of editGroup.member; let mi = index">
+                      <td>
+                        {{member.entity?.display || 'Unknown'}}
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-default" title="Remove this member" (click)="editGroup.member.splice(mi, 1)">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search users" [(ngModel)]="searchUsersCriteria" />
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default" title="Search for users" (click)="searchUsers()">
+                        <i class="fas fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <table class="table table-striped" *ngIf="searchUsersBundle">
+                    <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Email</th>
+                      <th class="actions-column-1"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let u of searchUserResults">
+                      <td>{{Globals.getHumanNamesDisplay(u.name)}}</td>
+                      <td>{{Globals.getPractitionerEmail(u)}}</td>
+                      <td>
+                        <button type="button" class="btn btn-default" title="Add this user as a member to the group" (click)="addMember(u)">
+                          <i class="fas fa-plus"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary" (click)="saveGroup()" [disabled]="!editGroup.name">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="RAW">
+    <ng-template ngbTabContent>
+      <app-raw-resource [resource]="practitioner"></app-raw-resource>
+    </ng-template>
+  </ngb-tab>
 </ngb-tabset>
 
-<footer class="footer">
-    <button type="button" class="btn btn-default" (click)="save()">Save</button>
-    <span class="message">{{message}}</span>
+<footer class="footer" *ngIf="message">
+  <span class="message">{{message}}</span>
 </footer>

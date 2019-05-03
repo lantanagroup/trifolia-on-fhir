@@ -17,6 +17,7 @@ export class Extension {
   public url: string;
   public valueBoolean?: boolean;
   public valueString?: string;
+  public valueReference?: ResourceReference;
 
   constructor(obj?: any) {
     if (obj) {
@@ -37,6 +38,9 @@ export class Extension {
       }
       if (obj.hasOwnProperty('valueString')) {
         this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueReference')) {
+        this.valueReference = new ResourceReference(obj.valueReference);
       }
 
       // TODO: Add other properties as needed
@@ -13253,6 +13257,7 @@ export class Group extends DomainResource {
   public actual: boolean;
   public code?: CodeableConcept;
   public name?: string;
+  public managingEntity?: ResourceReference;
   public quantity?: number;
   public characteristic?: GroupCharacteristicComponent[];
   public member?: GroupMemberComponent[];
@@ -13280,6 +13285,9 @@ export class Group extends DomainResource {
       }
       if (obj.hasOwnProperty('name')) {
         this.name = obj.name;
+      }
+      if (obj.hasOwnProperty('managingEntity')) {
+        this.managingEntity = new ResourceReference(obj.managingEntity);
       }
       if (obj.hasOwnProperty('quantity')) {
         this.quantity = obj.quantity;

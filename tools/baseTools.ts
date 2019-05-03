@@ -1,21 +1,12 @@
-import * as request from 'request';
-import * as _ from 'underscore';
-import {Fhir} from '../server/controllers/models';
-import CapabilityStatement = Fhir.CapabilityStatement;
-import DomainResource = Fhir.DomainResource;
-import Bundle = Fhir.Bundle;
+import {Bundle, CapabilityStatement, DomainResource} from '../libs/tof-lib/src/lib/stu3/fhir';
 
 export class BaseTools {
   protected getConformance(server: string): Promise<CapabilityStatement> {
+    const conformanceUrl = server + (server.endsWith('/') ? '' : '/') + 'metadata';
     return new Promise((resolve, reject) => {
-      const conformanceUrl = server + (server.endsWith('/') ? '' : '/') + 'metadata';
-      request({url: conformanceUrl, json: true}, (err, response, body) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(body);
-        }
-      });
+      rp({ url: conformanceUrl, json: true })
+        .then((results) => resolve(results))
+        .catch((err) => reject(err));
     });
   }
 
@@ -23,28 +14,25 @@ export class BaseTools {
     console.log(`Getting next page of resources of type ${resourceType}`);
 
     return new Promise((resolve, reject) => {
-      request({url: url, json: true}, (err, response, body: Bundle) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      rp({ url: url, json: true })
+        .then((body: Bundle) => {
+          console.log(`Found ${body.total} more resources for ${resourceType}`);
 
-        console.log(`Found ${body.total} more resources for ${resourceType}`);
+          let resources: DomainResource[] = (body.entry || []).map((entry) => entry.resource);
+          const foundNextLink = (body.link || []).find((link) => link.relation === 'next');
 
-        let resources = (body.entry || []).map((entry) => entry.resource);
-        const foundNextLink = (body.link || []).find((link) => link.relation === 'next');
-
-        if (foundNextLink) {
-          this.getNextResources(foundNextLink.url, resourceType)
-            .then((nextResources) => {
-              resources = resources.concat(nextResources);
-              resolve(resources);
-            })
-            .catch((nextErr) => reject(nextErr));
-        } else {
-          resolve(resources);
-        }
-      });
+          if (foundNextLink) {
+            this.getNextResources(foundNextLink.url, resourceType)
+              .then((nextResources) => {
+                resources = resources.concat(nextResources);
+                return resolve(resources);
+              })
+              .catch((nextErr) => reject(nextErr));
+          } else {
+            return resolve(resources);
+          }
+        })
+        .catch((err) => reject(err));
     });
   }
 
@@ -90,9 +78,41 @@ export class BaseTools {
     });
   }
 
-  protected saveResource(server: string, resource: DomainResource) {
+  protected getResource(server: string, resourceType: string, id: string): Promise<DomainResource> {
+    const options = {
+      method: 'GET',
+      url: server + (server.endsWith('/') ? '' : '/') + resourceType + '/' + id,
+      json: true
+    };
+
     return new Promise((resolve, reject) => {
-      resolve();
+      rp(options)
+        .then((results) => resolve(results))
+        .catch((err) => reject(err));
     });
+  }
+
+  protected saveResource(server: string, resource: DomainResource) {
+    const options = {
+      method: 'PUT',
+      url: server + (server.endsWith('/') ? '' : '/') + resource.resourceType + '/' + resource.id,
+      json: true,
+      body: resource
+    };
+    return rp(options);
+  }
+
+  protected printError(err) {
+    if (err.error && err.error.resourceType === 'OperationOutcome') {
+      if (err.error.issue && err.error.issue.length > 0) {
+        err.error.issue.forEach((issue: any) => console.error(issue.diagnostics));
+      } else if (err.err.text && err.error.text.div) {
+        console.error(err.error.text.div);
+      } else {
+        console.error(err);
+      }
+    } else {
+      console.error(err);
+    }
   }
 }

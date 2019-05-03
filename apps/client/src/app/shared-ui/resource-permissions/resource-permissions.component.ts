@@ -1,13 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Bundle, DomainResource, Group, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, Group, Meta, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {PractitionerService} from '../../shared/practitioner.service';
-import {addPermission, ensureSecurity, getHumanNamesDisplay, getResourceSecurity, groupBy, removePermission} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {resource} from 'selenium-webdriver/http';
-import {ResourceSecurityModel} from '../../../../../../libs/tof-lib/src/lib/resource-security-model';
+import {addPermission, ensureSecurity, getHumanNamesDisplay, getMetaSecurity, groupBy, removePermission} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -39,12 +37,14 @@ class ResourceSecurity {
   styleUrls: ['./resource-permissions.component.css']
 })
 export class ResourcePermissionsComponent implements OnInit {
-  @Input() resource: DomainResource;
+  @Input() meta: Meta;
 
   public groupsBundle: Bundle;
   public usersBundle: Bundle;
   public foundGroupsBundle: Bundle;
   public foundUsersBundle: Bundle;
+  public searchGroupsCriteria: string;
+  public searchUsersCriteria: string;
   public message: string;
   public Globals = Globals;
 
@@ -58,12 +58,13 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   public get security(): ResourceSecurity[] {
-    const resourceSecurity = getResourceSecurity(this.resource);
-    const grouped = groupBy(resourceSecurity, (next) => next.type + next.id);
-    const groupKeys = Object.keys(grouped);
+    const resourceSecurity = getMetaSecurity(this.meta);
+    const filtered = resourceSecurity.filter((next) => !next.inactive);
+    const grouped = groupBy(filtered, (next) => next.type + next.id);
+    const groupedKeys = Object.keys(grouped);
 
-    return groupKeys.map((groupKey) => {
-      const group: ResourceSecurityModel[] = grouped[groupKey];
+    return groupedKeys.map((groupedKey) => {
+      const group = grouped[groupedKey];
       const next = new ResourceSecurity();
       next.type = group[0].type;
       next.id = group[0].id;
@@ -108,37 +109,29 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   public searchGroups() {
-    this.fhirService.search('Group').toPromise()
+    this.fhirService.search('Group', this.searchGroupsCriteria).toPromise()
       .then((results: Bundle) => this.foundGroupsBundle = results)
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
 
   public searchUsers() {
-    this.fhirService.search('Practitioner').toPromise()
+    this.fhirService.search('Practitioner', this.searchUsersCriteria).toPromise()
       .then((results: Bundle) => this.foundUsersBundle = results)
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
 
-  public getPractitionerEmail(practitioner: Practitioner) {
-    const foundEmail = (practitioner.telecom || []).find((telecom) => telecom.system === 'email');
-
-    if (foundEmail && foundEmail.value) {
-      return foundEmail.value.replace('mailto:', '');
-    }
-  }
-
   public addPermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
-    if (addPermission(this.resource, type, permission, id)) {
+    if (addPermission(this.meta, type, permission, id)) {
       this.getPermittedResources();
     }
   }
 
   public removePermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
-    removePermission(this.resource, type, permission, id);
+    removePermission(this.meta, type, permission, id);
   }
 
   private getPermittedResources() {
-    const resourceSecurity = getResourceSecurity(this.resource);
+    const resourceSecurity = getMetaSecurity(this.meta);
     const groupIds = resourceSecurity
       .filter((security) => security.type === 'group')
       .map((security) => security.id);
@@ -159,38 +152,47 @@ export class ResourcePermissionsComponent implements OnInit {
     }
   }
 
+  private findCurrentUserPermission(permission: 'read'|'write') {
+    const resourceSecurity = getMetaSecurity(this.meta);
+
+    return resourceSecurity.find((security) => {
+      if (security.type === 'user' && security.id === this.currentUser.id) {
+        return true;
+      } else if (security.type === 'group' && this.groupsBundle) {
+        return !!(this.groupsBundle.entry || []).find((entry) => {
+          const group = <Group>entry.resource;
+          return !!(group.member || []).find((member) => {
+            if (!member.inactive && member.entity && member.entity.reference) {
+              return member.entity.reference === `Practitioner/${this.currentUser.id}`;
+            }
+
+            return false;
+          });
+        });
+      } else if (security.type === 'everyone') {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
   public copyPermissionsFrom() {
     const modalRef = this.modal.open(FhirReferenceModalComponent);
 
     modalRef.result.then((results) => {
       if (results.resource && results.resource.meta && results.resource.meta.security) {
-        ensureSecurity(this.resource);
+        ensureSecurity(this.meta);
 
-        this.resource.meta.security = results.resource.meta.security;
+        this.meta.security = results.resource.meta.security;
 
-        const resourceSecurity = getResourceSecurity(this.resource);
-        const meExists = resourceSecurity.find((security) => {
-          if (security.type === 'user' && security.id === this.currentUser.id) {
-            return true;
-          } else if (security.type === 'group' && this.groupsBundle) {
-            return !!(this.groupsBundle.entry || []).find((entry) => {
-              const group = <Group>entry.resource;
-              return !!(group.member || []).find((member) => {
-                if (!member.inactive && member.entity && member.entity.reference) {
-                  return member.entity.reference === `Practitioner/${this.currentUser.id}`;
-                }
+        const meCanRead = this.findCurrentUserPermission('read');
+        const meCanWrite = this.findCurrentUserPermission('write');
 
-                return false;
-              });
-            });
-          } else if (security.type === 'everyone') {
-            return true;
-          }
-
-          return false;
-        });
-
-        if (!meExists) {
+        if (!meCanRead) {
+          this.addPermission('user', 'read', this.currentUser.id);
+        }
+        if (!meCanWrite) {
           this.addPermission('user', 'write', this.currentUser.id);
         }
       }

@@ -2,6 +2,7 @@ import {Coding} from './stu3/fhir';
 import * as _ from 'underscore';
 
 export class Globals {
+  static readonly securityDelim = '^';
   static readonly securitySystem = 'https://trifolia-fhir.lantanagroup.com/security';
   static readonly regexPatterns = {
     namePattern: '^[A-Z][A-Za-z0-9_]+$'
@@ -20,7 +21,8 @@ export class Globals {
     'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
     'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
     'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
-    'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id'
+    'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
+    'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive'
   };
 
   static readonly introText = {

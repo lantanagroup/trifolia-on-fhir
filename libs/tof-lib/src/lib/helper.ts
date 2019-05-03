@@ -1,4 +1,4 @@
-import {Coding, DomainResource, HumanName} from './stu3/fhir';
+import {Coding, DomainResource, HumanName, Meta} from './stu3/fhir';
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
 
@@ -128,37 +128,33 @@ export function getHumanNamesDisplay(humanNames: HumanName[]) {
   }
 }
 
-export function ensureSecurity(resource: DomainResource) {
-  if (!resource) {
+export function ensureSecurity(meta: Meta) {
+  if (!meta) {
     return;
   }
 
-  if (!resource.meta) {
-    resource.meta = {};
-  }
-
-  if (!resource.meta.security) {
-    resource.meta.security = [];
+  if (!meta.security) {
+    meta.security = [];
   }
 }
 
-export function addPermission(resource: DomainResource, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
-  ensureSecurity(resource);
+export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+  ensureSecurity(meta);
 
   // Write permissions should always assume read permissions as well
   if (permission === 'write') {
-    addPermission(resource, type, 'read', id);
+    addPermission(meta, type, 'read', id);
   }
 
   const securityValue = type === 'everyone' ? `${type}|${permission}` : `${type}|${id}|${permission}`;
   let found: Coding;
 
-  if (resource && resource.meta && resource.meta.security) {
-    found = resource.meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  if (meta && meta.security) {
+    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
   }
 
   if (!found) {
-    resource.meta.security.push({
+    meta.security.push({
       system: Globals.securitySystem,
       code: securityValue
     });
@@ -169,24 +165,57 @@ export function addPermission(resource: DomainResource, type: 'user'|'group'|'ev
   return false;
 }
 
-export function removePermission(resource: DomainResource, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function removePermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
   // Assume that if we're removing read permission, they shouldn't have write permission either
   if (permission === 'read') {
-    removePermission(resource, type, 'write', id);
+    removePermission(meta, type, 'write', id);
   }
 
   const securityValue = type === 'everyone' ? `${type}|${permission}` : `${type}|${id}|${permission}`;
   let found: Coding;
 
-  if (resource && resource.meta && resource.meta.security) {
-    found = resource.meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  if (meta && meta.security) {
+    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
   }
 
   if (found) {
-    const index = resource.meta.security.indexOf(found);
-    resource.meta.security.splice(index, 1);
+    const index = meta.security.indexOf(found);
+    meta.security.splice(index, 1);
     return true;
   }
 
   return false;
+}
+
+
+export function getMetaSecurity(meta: Meta): ResourceSecurityModel[] {
+  if (meta && meta.security) {
+    return meta.security
+      .filter((security) => {
+        return security.system === Globals.securitySystem &&
+          security.code &&
+          security.code.split(Globals.securityDelim).length >= 2;
+      })
+      .map((security) => {
+        const split = security.code.split(Globals.securityDelim);
+        const inactiveExtension = (security.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-coding-inactive']);
+
+        if (split[0] === 'everyone') {
+          return <ResourceSecurityModel> {
+            type: 'everyone',
+            permission: split[1],
+            inactive: inactiveExtension && inactiveExtension.valueBoolean === true
+          };
+        } else if (split.length === 3) {
+          return <ResourceSecurityModel> {
+            type: split[0],
+            id: split[1],
+            permission: split[2],
+            inactive: inactiveExtension && inactiveExtension.valueBoolean === true
+          };
+        }
+      });
+  }
+
+  return [];
 }

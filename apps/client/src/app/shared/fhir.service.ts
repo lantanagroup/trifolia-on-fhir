@@ -232,7 +232,7 @@ export class FhirService {
    * @param {string} [searchContent]
    * @param {boolean} [summary?]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string }) {
     let url = '/api/fhir/' + resourceType + '?';
 
     if (searchContent) {
@@ -245,6 +245,13 @@ export class FhirService {
 
     if (id) {
       url += `_id=${encodeURIComponent(id)}&`;
+    }
+
+    if (additionalQuery) {
+      const keys = Object.keys(additionalQuery);
+      keys.forEach((key) => {
+        url += `${encodeURIComponent(key)}=${encodeURIComponent(additionalQuery[key])}&`;
+      });
     }
 
     if (summary === true) {
@@ -311,8 +318,13 @@ export class FhirService {
    * @param {string} resourceType
    * @param {Resource} resource
    */
-  public create(resourceType: string, resource: Resource) {
-    // TODO
+  public create(resource: DomainResource) {
+    if (!resource.resourceType) {
+      throw new Error('No resourceType is specified on the resource');
+    }
+
+    const url = `/api/fhir/${resource.resourceType}`;
+    return this.http.post<DomainResource>(url, resource);
   }
 
   public validateOnServer(resource: DomainResource): Observable<OperationOutcome> {
