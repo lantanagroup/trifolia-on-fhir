@@ -338,9 +338,9 @@ export class DomainResource extends Resource {
 }
 
 export class ContactPoint extends Element {
-  public system?: string;
+  public system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
   public value?: string;
-  public use?: string;
+  public use?: 'home'|'work'|'temp'|'old'|'mobile';
   public rank?: number;
   public period?: Period;
 
