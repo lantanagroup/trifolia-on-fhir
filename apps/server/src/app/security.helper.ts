@@ -1,7 +1,7 @@
 import {ITofUser} from './models/tof-request';
 import {Bundle, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {BadRequestException, HttpService, InternalServerErrorException} from '@nestjs/common';
+import {BadRequestException, HttpService, InternalServerErrorException, Logger} from '@nestjs/common';
 import {AxiosRequestConfig} from 'axios';
 import {IServerConfig} from './models/server-config';
 import {IFhirConfig} from './models/fhir-config';
@@ -10,6 +10,7 @@ import * as config from 'config';
 
 const serverConfig: IServerConfig = config.get('server');
 const fhirConfig: IFhirConfig = config.get('fhir');
+const logger = new Logger('security.helper');
 
 export interface UserSecurityInfo {
   user?: Practitioner;
@@ -26,7 +27,7 @@ export async function getMyPractitioner(httpService: HttpService, user: ITofUser
   }
 
   const options = <AxiosRequestConfig>{
-    url: buildUrl(fhirServerBase, this.resourceType, null, null, {identifier: system + '|' + identifier}),
+    url: buildUrl(fhirServerBase, 'Practitioner', null, null, {identifier: system + '|' + identifier}),
     headers: {
       'Cache-Control': 'no-cache'
     }
@@ -44,7 +45,7 @@ export async function getMyPractitioner(httpService: HttpService, user: ITofUser
   }
 
   if (bundle.total > 1) {
-    this.logger.error(`Expected a single ${this.resourceType} resource to be found with identifier ${system}|${identifier}`)
+    logger.error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`)
     throw new InternalServerErrorException();
   }
 
@@ -57,7 +58,7 @@ export async function getUserSecurityInfo(httpService: HttpService, user: ITofUs
   }
 
   const userSecurityInfo: UserSecurityInfo = {
-    user: await this.getMyPractitioner(user, fhirServerBase)
+    user: await getMyPractitioner(httpService, user, fhirServerBase)
   };
 
   const groupsUrl = buildUrl(fhirServerBase, 'Group', null, null, {member: userSecurityInfo.user.id, _summary: true});

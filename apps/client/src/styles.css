@@ -2,6 +2,10 @@ body {
     padding-top: 4.5rem;
 }
 
+app-root > div.container > div.jumbotron {
+  padding: 10px;
+}
+
 footer.footer {
     position: fixed;
     left: 0;

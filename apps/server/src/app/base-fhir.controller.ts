@@ -69,11 +69,11 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected baseSearch(user: ITofUser, fhirServerBase: string, baseUrl, query?: any): Promise<any> {
+  protected baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
     return this.prepareSearchQuery(user, fhirServerBase, query)
       .then((preparedQuery) => {
         const options = <AxiosRequestConfig> {
-          url: buildUrl(baseUrl, this.resourceType, null, null, preparedQuery),
+          url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
           method: 'GET',
           headers: {
             'Cache-Control': 'no-cache'

@@ -34,6 +34,7 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ParseConformance, StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, User} from './server.decorators';
+import {assertEditingAllowed} from './security.helper';
 
 interface SaveStructureDefinitionRequest {
   options?: StructureDefinitionOptions;
@@ -209,7 +210,7 @@ export class StructureDefinitionController extends BaseFhirController {
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    this.assertEditingAllowed(igResults.data);
+    assertEditingAllowed(igResults.data);
 
     if (fhirServerVersion !== 'stu3') {        // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -288,7 +289,7 @@ export class StructureDefinitionController extends BaseFhirController {
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    this.assertEditingAllowed(implementationGuide);
+    assertEditingAllowed(implementationGuide);
 
     if (fhirServerVersion !== 'stu3') {                // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -335,7 +336,7 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   private async saveStructureDefinition(fhirServerBase: string, fhirServerVersion: string, id: string, structureDefinition: StructureDefinition, options?: StructureDefinitionOptions) {
-    this.assertEditingAllowed(structureDefinition);
+    assertEditingAllowed(structureDefinition);
 
     if (!structureDefinition) {
       throw new BadRequestException();

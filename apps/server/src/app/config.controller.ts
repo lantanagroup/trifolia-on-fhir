@@ -37,6 +37,7 @@ export class ConfigController extends BaseController {
       version: modulePackage.version,
       supportUrl: serverConfig.supportUrl,
       fhirServers: fhirConfig.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
+      enableSecurity: serverConfig.enableSecurity,
       auth: {
         clientId: authConfig.clientId,
         scope: authConfig.scope,

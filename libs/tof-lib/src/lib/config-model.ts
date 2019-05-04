@@ -4,6 +4,7 @@ export interface ConfigModel {
   version: string;
   supportUrl: string;
   fhirServers: ConfigFhirServerModel[];
+  enableSecurity: boolean;
   auth: {
     clientId: string;
     domain: string;

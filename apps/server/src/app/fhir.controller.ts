@@ -20,6 +20,7 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, RequestMethod, RequestUrl} from './server.decorators';
+import {assertEditingAllowed} from './security.helper';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -55,6 +56,9 @@ export class FhirController extends BaseController {
     if (!resource || !resource.id) {
       throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
     }
+
+    // Make sure the resource can be edited, by the user
+    assertEditingAllowed(resource);
 
     // Change the id of the resource
     resource.id = newId;
