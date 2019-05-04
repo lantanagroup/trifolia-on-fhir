@@ -1,8 +1,7 @@
 import {BaseTools} from './baseTools';
-import {Fhir} from '../server/controllers/models';
-import DomainResource = Fhir.DomainResource;
-import {Globals} from '../src/app/globals';
-import * as _ from 'underscore';
+import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import * as rp from 'request-promise';
 
 export interface PermissionOptions {
@@ -71,7 +70,7 @@ export class RemovePermission extends BasePermissions {
   public execute() {
     this.getResources()
       .then((resources: DomainResource[]) => {
-        const removePromises = _.map(resources, (resource) => this.removePermission(resource));
+        const removePromises = resources.map((resource) => this.removePermission(resource));
         return Promise.all(removePromises);
       })
       .then(() => {
@@ -89,13 +88,12 @@ export class AddPermission extends BasePermissions {
   public execute() {
     this.getResources()
       .then((resources: DomainResource[]) => {
-        const savePromises = _.chain(resources)
+        const savePromises = resources
           .filter((resource) => {
             resource.meta = resource.meta || {};
-            return Globals.addPermission(resource.meta, this.options.type, this.options.permission, this.options.id);
+            return addPermission(resource.meta, this.options.type, this.options.permission, this.options.id);
           })
-          .map((resource) => this.saveResource(this.options.server, resource))
-          .value();
+          .map((resource) => this.saveResource(this.options.server, resource));
 
         return Promise.all(savePromises);
       })

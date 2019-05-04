@@ -66,6 +66,7 @@
     "passport-http-bearer": "^1.0.1",
     "popper.js": "^1.15.0",
     "reflect-metadata": "^0.1.12",
+    "request-promise": "^4.2.4",
     "rxjs": "6.3.3",
     "rxjs-compat": "^6.4.0",
     "semver": "^6.0.0",
@@ -78,6 +79,7 @@
     "uuid": "^3.3.2",
     "vkbeautify": "^0.99.3",
     "xlsx": "^0.14.2",
+    "yargs": "^13.2.2",
     "zip-dir": "^1.0.2",
     "zone.js": "^0.8.26"
   },
@@ -98,6 +100,7 @@
     "@types/nock": "^10.0.1",
     "@types/node": "~8.9.4",
     "@types/socket.io": "^2.1.2",
+    "@types/yargs": "^13.0.0",
     "codelyzer": "~4.5.0",
     "dotenv": "6.2.0",
     "jasmine": "^3.4.0",

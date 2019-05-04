@@ -1,4 +1,5 @@
-import {Bundle, CapabilityStatement, DomainResource} from '../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, CapabilityStatement, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import * as rp from 'request-promise';
 
 export class BaseTools {
   protected getConformance(server: string): Promise<CapabilityStatement> {

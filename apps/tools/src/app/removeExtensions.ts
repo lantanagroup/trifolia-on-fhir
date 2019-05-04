@@ -1,6 +1,5 @@
-import * as request from 'request';
 import {BaseTools} from './baseTools';
-import {DomainResource} from '../libs/tof-lib/src/lib/stu3/fhir';
+import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 export interface RemoveExtensionsOptions {
   server: string;

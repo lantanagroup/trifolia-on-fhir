@@ -54,7 +54,9 @@
               "apps/server/tsconfig.app.json",
               "apps/server/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -79,7 +81,9 @@
               "libs/tof-lib/tsconfig.lib.json",
               "libs/tof-lib/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -184,7 +188,9 @@
               "apps/client/tsconfig.app.json",
               "apps/client/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -218,7 +224,67 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "apps/client-e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "tools": {
+      "root": "apps/tools",
+      "sourceRoot": "apps/tools/src",
+      "projectType": "application",
+      "prefix": "tools",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/builders:node-build",
+          "options": {
+            "outputPath": "dist/apps/tools",
+            "main": "apps/tools/src/main.ts",
+            "tsConfig": "apps/tools/tsconfig.app.json",
+            "assets": [
+              "apps/tools/src/assets"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/tools/src/environments/environment.ts",
+                  "with": "apps/tools/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/builders:node-execute",
+          "options": {
+            "buildTarget": "tools:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/tools/tsconfig.app.json",
+              "apps/tools/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/builders:jest",
+          "options": {
+            "jestConfig": "apps/tools/jest.config.js",
+            "tsConfig": "apps/tools/tsconfig.spec.json"
           }
         }
       }
