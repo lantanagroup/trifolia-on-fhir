@@ -127,8 +127,8 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let u of searchUserResults">
-                      <td>{{Globals.getHumanNamesDisplay(u.name)}}</td>
-                      <td>{{Globals.getPractitionerEmail(u)}}</td>
+                      <td>{{getHumanNamesDisplay(u.name)}}</td>
+                      <td>{{getPractitionerEmail(u)}}</td>
                       <td>
                         <button type="button" class="btn btn-default" title="Add this user as a member to the group" (click)="addMember(u)">
                           <i class="fas fa-plus"></i>

@@ -8,4 +8,5 @@ export interface IServerConfig {
   logFileName?: string;
   logLevel?: 'all'|'warn'|'error';
   publishedIgsDirectory?: string;
+  enableSecurity: boolean;
 }

@@ -5,7 +5,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {PractitionerService} from '../../shared/practitioner.service';
-import {addPermission, ensureSecurity, getHumanNamesDisplay, getMetaSecurity, groupBy, removePermission} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {addPermission, ensureSecurity, getHumanNamesDisplay, getMetaSecurity, getPractitionerEmail, groupBy, removePermission} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -47,6 +47,8 @@ export class ResourcePermissionsComponent implements OnInit {
   public searchUsersCriteria: string;
   public message: string;
   public Globals = Globals;
+  public getHumanNamesDisplay = getHumanNamesDisplay;
+  public getPractitionerEmail = getPractitionerEmail;
 
   private currentUser: Practitioner;
 

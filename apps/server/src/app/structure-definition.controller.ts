@@ -13,7 +13,7 @@ import {
   Req,
   UseGuards
 } from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import {ITofRequest, ITofUser} from './models/tof-request';
 import {
   Bundle,
   ImplementationGuide as STU3ImplementationGuide,
@@ -33,6 +33,7 @@ import {TofNotFoundException} from '../not-found-exception';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ParseConformance, StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
+import {FhirServerBase, User} from './server.decorators';
 
 interface SaveStructureDefinitionRequest {
   options?: StructureDefinitionOptions;
@@ -139,24 +140,20 @@ export class StructureDefinitionController extends BaseFhirController {
     return found;
   }
 
-  protected prepareSearchQuery(query?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      super.prepareSearchQuery(query)
-        .then((preparedQuery) => {
-          if (preparedQuery.implementationGuideId) {
-            preparedQuery['_has:ImplementationGuide:resource:_id'] = preparedQuery.implementationGuideId;
-            delete preparedQuery.implementationGuideId;
-          }
+  protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
+    const preparedQuery = await super.prepareSearchQuery(user, fhirServerBase, query);
 
-          resolve(preparedQuery);
-        })
-        .catch((err) => reject(err));
-    });
+    if (preparedQuery.implementationGuideId) {
+      preparedQuery['_has:ImplementationGuide:resource:_id'] = preparedQuery.implementationGuideId;
+      delete preparedQuery.implementationGuideId;
+    }
+
+    return preparedQuery;
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
-    return super.baseSearch(request.fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query);
   }
 
   @Get(':id')

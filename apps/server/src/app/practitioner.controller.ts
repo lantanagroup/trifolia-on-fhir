@@ -1,6 +1,6 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {BadRequestException, Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import {BadRequestException, Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {ITofRequest, ITofUser} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
@@ -8,6 +8,8 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import * as nanoid from 'nanoid';
 import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {FhirServerBase, User} from './server.decorators';
+import {getMyPractitioner} from './security.helper';
 
 @Controller('practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -23,10 +25,10 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Post('me')
-  public updateMyPractitioner(@Req() request: ITofRequest, @Body() practitioner: Practitioner): Promise<any> {
-    return this.getMyPractitioner(request, true)
+  public updateMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Body() practitioner: Practitioner): Promise<any> {
+    return this.getMyPractitioner(user, fhirServerBase, true)
       .then((existingPractitioner) => {
-        const authUser = request.user.sub;
+        const authUser = user.sub;
         let system = '';
         let value = authUser;
 
@@ -57,7 +59,7 @@ export class PractitionerController extends BaseFhirController {
         }
 
         const practitionerRequest = {
-          url: buildUrl(request.fhirServerBase, this.resourceType, practitioner.id),
+          url: buildUrl(fhirServerBase, this.resourceType, practitioner.id),
           method: 'PUT',
           data: practitioner
         };
@@ -82,46 +84,14 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Get('me')
-  public getMyPractitioner(@Req() request: ITofRequest, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<any> {
-    let system = '';
-    let identifier = request.user.sub;
-
-    if (identifier.startsWith('auth0|')) {
-      system =  'https://auth0.com';
-      identifier = identifier.substring(6);
-    }
-
-    const options = <AxiosRequestConfig> {
-      url: buildUrl(request.fhirServerBase, this.resourceType, null, null, { identifier: system + '|' + identifier }),
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    };
-
-    return this.httpService.request<Bundle>(options).toPromise()
-      .then((results) => {
-        const bundle = results.data;
-
-        if (bundle.total === 0) {
-          if (!resolveIfNotFound) {
-            throw new BadRequestException('No practitioner was found associated with the authenticated user');
-          } else {
-            return;
-          }
-        }
-
-        if (bundle.total > 1) {
-          this.logger.log(`Expected a single ${this.resourceType} resource to be found with identifier ${system}|${identifier}`)
-        }
-
-        return bundle.entry[0].resource;
-      });
+  public async getMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
+    return getMyPractitioner(this.httpService, user, fhirServerBase, resolveIfNotFound);
   }
 
   @Get()
   @ApiImplicitQuery({ name: 'name', type: 'string', required: false, description: 'Filter results by name' })
-  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
-    return super.baseSearch(request.fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query);
   }
 
   @Get(':id')

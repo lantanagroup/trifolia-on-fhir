@@ -52,7 +52,7 @@ const argv = Yargs
       removePermission.execute();
     }
   })
-  .command('remove-extensions [server]', 'Removes specified extensions from the resources on the server', (yargs: Argv) => {
+  .command('remove-extensions [server]', 'Removes specified extensions from the resources on the server', (yargs) => {
     yargs
       .positional('server', {
         describe: 'The FHIR server to remove extensions from the resources on',

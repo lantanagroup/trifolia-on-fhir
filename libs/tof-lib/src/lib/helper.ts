@@ -1,4 +1,4 @@
-import {Coding, DomainResource, HumanName, Meta} from './stu3/fhir';
+import {Coding, DomainResource, HumanName, Meta, Practitioner} from './stu3/fhir';
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
 
@@ -140,13 +140,14 @@ export function ensureSecurity(meta: Meta) {
 
 export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
   ensureSecurity(meta);
+  const delim = Globals.securityDelim;
 
   // Write permissions should always assume read permissions as well
   if (permission === 'write') {
     addPermission(meta, type, 'read', id);
   }
 
-  const securityValue = type === 'everyone' ? `${type}|${permission}` : `${type}|${id}|${permission}`;
+  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
   let found: Coding;
 
   if (meta && meta.security) {
@@ -166,12 +167,14 @@ export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permi
 }
 
 export function removePermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+  const delim = Globals.securityDelim;
+
   // Assume that if we're removing read permission, they shouldn't have write permission either
   if (permission === 'read') {
     removePermission(meta, type, 'write', id);
   }
 
-  const securityValue = type === 'everyone' ? `${type}|${permission}` : `${type}|${id}|${permission}`;
+  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
   let found: Coding;
 
   if (meta && meta.security) {
@@ -218,4 +221,12 @@ export function getMetaSecurity(meta: Meta): ResourceSecurityModel[] {
   }
 
   return [];
+}
+
+export function getPractitionerEmail(practitioner: Practitioner) {
+  const foundEmail = (practitioner.telecom || []).find((telecom) => telecom.system === 'email');
+
+  if (foundEmail && foundEmail.value) {
+    return foundEmail.value.replace('mailto:', '');
+  }
 }

@@ -1,6 +1,10 @@
 import {createParamDecorator} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 
+export const User = createParamDecorator((data, req: ITofRequest) => {
+  return req.user;
+});
+
 export const FhirServerId = createParamDecorator((data, req: ITofRequest) => {
   return req.fhirServerId;
 });

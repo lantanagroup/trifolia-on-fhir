@@ -4,6 +4,7 @@ import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {FhirServerBase, User} from './server.decorators';
 
 @Controller('operationDefinition')
 @UseGuards(AuthGuard('bearer'))
@@ -19,8 +20,8 @@ export class OperationDefinitionController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
-    return super.baseSearch(request.fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query);
   }
 
   @Get(':id')

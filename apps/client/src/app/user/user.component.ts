@@ -7,7 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
-import {getHumanNamesDisplay} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-user',
@@ -23,6 +23,8 @@ export class UserComponent implements OnInit {
   public editGroup: Group;
   public message: string;
   public Globals = Globals;
+  public getHumanNamesDisplay = getHumanNamesDisplay;
+  public getPractitionerEmail = getPractitionerEmail;
 
   constructor(
     private configService: ConfigService,

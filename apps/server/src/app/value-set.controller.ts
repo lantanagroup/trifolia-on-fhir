@@ -9,6 +9,7 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import * as config from 'config';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {FhirServerBase, User} from './server.decorators';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -59,8 +60,8 @@ export class ValueSetController extends BaseFhirController {
   }
 
   @Get()
-  public search(@Req() request: ITofRequest, @Query() query?: any): Promise<any> {
-    return super.baseSearch(request.fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query);
   }
 
   @Get(':id')

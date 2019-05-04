@@ -15,6 +15,7 @@ import {XmlPipe} from './xml-pipe';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {FormsModule} from '@angular/forms';
 import {ProfileBaseDefinitionComponent} from './profile-base-definition/profile-base-definition.component';
+import {ResourcePermissionsComponent} from './resource-permissions/resource-permissions.component';
 
 const components = [
   MarkdownComponent,
@@ -27,7 +28,8 @@ const components = [
   KeysPipe,
   SafePipe,
   XmlPipe,
-  ProfileBaseDefinitionComponent
+  ProfileBaseDefinitionComponent,
+  ResourcePermissionsComponent
 ];
 
 @NgModule({

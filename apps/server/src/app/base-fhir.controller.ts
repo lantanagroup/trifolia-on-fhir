@@ -5,6 +5,10 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
+import {ITofUser} from './models/tof-request';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {assertEditingAllowed, getUserSecurityInfo} from './security.helper';
+
 import * as config from 'config';
 import * as nanoid from 'nanoid';
 
@@ -17,60 +21,56 @@ export class BaseFhirController extends BaseController {
   constructor(protected httpService: HttpService) {
     super();
   }
-  
-  protected assertEditingAllowed(resource: any) {
-    if (!resource || !fhirConfig.nonEditableResources) {
-      return;
+
+  protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
+    const userSecurityInfo = await getUserSecurityInfo(this.httpService, user, fhirServerBase);
+    const preparedQuery = query || {};
+    preparedQuery['_summary'] = true;
+    preparedQuery['_count'] = 10;
+
+    if (preparedQuery.name) {
+      preparedQuery['name:contains'] = preparedQuery.name;
+      delete preparedQuery.name;
     }
 
-    switch (resource.resourceType) {
-      case 'CodeSystem':
-        if (!fhirConfig.nonEditableResources.codeSystems) {
-          return;
-        }
-
-        if (fhirConfig.nonEditableResources.codeSystems.indexOf(resource.url) >= 0) {
-          throw new Error(`CodeSystem with URL ${resource.url} cannot be modified.`);
-        }
-        break;
+    if (preparedQuery.title) {
+      preparedQuery['title:contains'] = preparedQuery.title;
+      delete preparedQuery.title;
     }
+
+    if (preparedQuery.urlText) {
+      preparedQuery.url = preparedQuery.urlText;
+      delete preparedQuery.urlText;
+    }
+
+    if (preparedQuery.page) {
+      if (parseInt(preparedQuery.page) !== 1) {
+        preparedQuery._getpagesoffset = (parseInt(preparedQuery.page) - 1) * 10;
+      }
+
+      delete preparedQuery.page;
+    }
+
+    // Security search
+    if (userSecurityInfo) {
+      const securityTags = [`everyone${Globals.securityDelim}read`];
+
+      if (userSecurityInfo.user) {
+        securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.user.id}${Globals.securityDelim}read`);
+      }
+
+      userSecurityInfo.groups.forEach((group) => {
+        securityTags.push(`group${Globals.securityDelim}${group.id}${Globals.securityDelim}read`);
+      });
+
+      preparedQuery._security = securityTags;
+    }
+
+    return preparedQuery;
   }
 
-  protected prepareSearchQuery(query?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const preparedQuery = query || {};
-      preparedQuery['_summary'] = true;
-      preparedQuery['_count'] = 10;
-
-      if (preparedQuery.name) {
-        preparedQuery['name:contains'] = preparedQuery.name;
-        delete preparedQuery.name;
-      }
-
-      if (preparedQuery.title) {
-        preparedQuery['title:contains'] = preparedQuery.title;
-        delete preparedQuery.title;
-      }
-
-      if (preparedQuery.urlText) {
-        preparedQuery.url = preparedQuery.urlText;
-        delete preparedQuery.urlText;
-      }
-
-      if (preparedQuery.page) {
-        if (parseInt(preparedQuery.page) !== 1) {
-          preparedQuery._getpagesoffset = (parseInt(preparedQuery.page) - 1) * 10;
-        }
-
-        delete preparedQuery.page;
-      }
-
-      resolve(preparedQuery);
-    });
-  }
-
-  protected baseSearch(baseUrl, query?: any): Promise<any> {
-    return this.prepareSearchQuery(query)
+  protected baseSearch(user: ITofUser, fhirServerBase: string, baseUrl, query?: any): Promise<any> {
+    return this.prepareSearchQuery(user, fhirServerBase, query)
       .then((preparedQuery) => {
         const options = <AxiosRequestConfig> {
           url: buildUrl(baseUrl, this.resourceType, null, null, preparedQuery),
@@ -106,7 +106,7 @@ export class BaseFhirController extends BaseController {
 
   protected baseCreate(baseUrl: string, data: any, query?: any) {
     return new Promise((resolve, reject) => {
-      this.assertEditingAllowed(data);
+      assertEditingAllowed(data);
 
       if (!data.id) {
         data.id = nanoid(8);
@@ -160,7 +160,7 @@ export class BaseFhirController extends BaseController {
   }
 
   protected baseUpdate(baseUrl: string, id: string, data: any, query?: any): Promise<any> {
-    this.assertEditingAllowed(data);
+    assertEditingAllowed(data);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null, query),
@@ -177,7 +177,7 @@ export class BaseFhirController extends BaseController {
 
     return this.httpService.get(getUrl).toPromise()
       .then((resource) => {
-        this.assertEditingAllowed(resource);
+        assertEditingAllowed(resource);
 
         const options = <AxiosRequestConfig> {
           url: buildUrl(baseUrl, this.resourceType, id, null, query),
