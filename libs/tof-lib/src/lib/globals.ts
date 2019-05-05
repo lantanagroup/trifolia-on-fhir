@@ -1,5 +1,4 @@
 import {Coding} from './stu3/fhir';
-import * as _ from 'underscore';
 
 export class Globals {
   static readonly regexPatterns = {
@@ -210,7 +209,7 @@ export class Globals {
       throw new Error('At least one of matchSystem or matchCode must be true');
     }
 
-    return _.find(options, (next) => {
+    return options.find((next) => {
       const isSystemMatch = !matchSystem || code.system === next.system;
       const isCodeMatch = !matchCode || code.code === next.code;
       return isSystemMatch && isCodeMatch;
@@ -221,8 +220,8 @@ export class Globals {
     const keys = Object.keys(obj);
 
     if (choices) {
-      const foundProperties = _.filter(keys, (key: string) => {
-        const foundChoice = _.find(choices, (choice: Coding) => {
+      const foundProperties = keys.filter((key: string) => {
+        const foundChoice = choices.find((choice: Coding) => {
           return choice.code === propertyName + key;
         });
         return !!foundChoice;
@@ -235,7 +234,7 @@ export class Globals {
       }
     }
 
-    const foundProperties = _.filter(keys, (key: string) => key.startsWith(propertyName));
+    const foundProperties = keys.filter((key: string) => key.startsWith(propertyName));
 
     if (foundProperties.length > 0) {
       return foundProperties[0];

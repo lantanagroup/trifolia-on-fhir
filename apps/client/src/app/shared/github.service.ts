@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
-import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 
 export interface FileModel {
@@ -306,7 +305,7 @@ export class GithubService {
                             .subscribe((dirFilesResponses) => {
                                 let files = [];
 
-                                _.each(dirFilesResponses, (dirFiles: ContentModel[]) => {
+                                dirFilesResponses.forEach((dirFiles: ContentModel[]) => {
                                     files = files.concat(dirFiles);
                                 });
 
@@ -371,7 +370,7 @@ export class GithubService {
     public createTree(ownerLogin: string, repositoryName: string, baseTreeSha: string, files: FileModel[]) {
         const body = {
             base_tree: baseTreeSha,
-            tree: _.map(files, (file) => {
+            tree: files.map((file) => {
                 return {
                     path: file.path,
                     mode: '100644',
@@ -406,7 +405,7 @@ export class GithubService {
     public updateContents(ownerLogin: string, repositoryName: string, message: string, files: FileModel[], branchName = 'master') {
         return new Observable<any>((observer) => {
             // Create a blob for each of the files
-            const blobPromises = _.map(files, (file) => {
+            const blobPromises = files.map((file) => {
                 const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/blobs`;
                 const body = {
                     content: file.content,
@@ -425,7 +424,7 @@ export class GithubService {
                 })
                 .then((results) => {
                     baseTree = results;
-                    const filesWithSha = _.map(files, (file, index) => {
+                    const filesWithSha = files.map((file, index) => {
                         return <FileModel> {
                             path: file.path,
                             sha: blobs[index].sha

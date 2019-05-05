@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {CookieService} from 'angular2-cookie/core';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemModel} from '../models/recent-item-model';
-import * as _ from 'underscore';
 import {ConfigService} from './config.service';
 
 @Injectable()
@@ -50,7 +49,7 @@ export class RecentItemService {
         const fhirServer = this.configService.fhirServer;
         const cookieKey = requestedCookieKey + '-' + fhirServer;
         let items: RecentItemModel[] = this.getCollection(cookieKey);
-        let foundItem = _.find(items, (rig) => rig.id === id);
+        let foundItem = items.find((rig) => rig.id === id);
 
         if (!foundItem) {
             foundItem = {
@@ -103,7 +102,7 @@ export class RecentItemService {
         const fhirServer = this.configService.fhirServer;
         const cookieKey = requestedCookieKey + '-' + fhirServer;
         const items: RecentItemModel[] = this.getCollection(cookieKey);
-        const foundItem = _.find(items, (rig) => rig.id === id);
+        const foundItem = items.find((rig) => rig.id === id);
 
         if (foundItem) {
             const foundItemIndex = items.indexOf(foundItem);
@@ -146,7 +145,7 @@ export class RecentItemService {
         const coll = this.getCollection(cookieKey + '-' + fhirServer);
 
         if (coll) {
-            return _.find(coll, (recentItem: RecentItemModel) => recentItem.id === id);
+            return coll.find((recentItem: RecentItemModel) => recentItem.id === id);
         }
     }
 
