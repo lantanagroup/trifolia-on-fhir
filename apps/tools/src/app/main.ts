@@ -1,11 +1,16 @@
 import {RemoveExtensions} from './removeExtensions';
 import {AddPermission, RemovePermission} from './permissions';
 import * as Yargs from 'yargs';
-import {Argv} from 'yargs';
+
+const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
+const modifyPermissionDescription = 'Adds a permission to one or all resources';
+
+const removeExtensionsFormat = 'remove-extensions [server]';
+const removeExtensionsDescription = 'Removes specified extensions from all resources on the server';
 
 const argv = Yargs
-  .command('modify-permission <server> <modify> <type> <permission> [id]', 'Adds a permission to one or all resources', (yargs) => {
-    yargs
+  .command(modifyPermissionFormat, modifyPermissionDescription, (yargs: Yargs.Argv) => {
+    return yargs
       .positional('server', {
         describe: 'The FHIR server',
         required: true
@@ -48,12 +53,12 @@ const argv = Yargs
       const addPermission = new AddPermission(args);
       addPermission.execute();
     } else if (argv.modify === 'remove') {
-      const removePermission = new RemovePermission(argv);
+      const removePermission = new RemovePermission(args);
       removePermission.execute();
     }
   })
-  .command('remove-extensions [server]', 'Removes specified extensions from the resources on the server', (yargs) => {
-    yargs
+  .command(removeExtensionsFormat, removeExtensionsDescription, (yargs: Yargs.Argv) => {
+    return yargs
       .positional('server', {
         describe: 'The FHIR server to remove extensions from the resources on',
         required: true

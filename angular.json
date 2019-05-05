@@ -242,7 +242,7 @@
           "builder": "@nrwl/builders:node-build",
           "options": {
             "outputPath": "dist/apps/tools",
-            "main": "apps/tools/src/main.ts",
+            "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
             "assets": [
               "apps/tools/src/assets"
