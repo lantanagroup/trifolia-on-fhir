@@ -80,7 +80,7 @@ export class PractitionerController extends BaseFhirController {
 
         return this.httpService.request(options).toPromise();
       })
-      .then((results) => results);
+      .then((results) => results.data);
   }
 
   @Get('me')

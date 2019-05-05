@@ -1,7 +1,6 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from './shared/auth.service';
-import {PersonListModel} from './models/person-list-model';
 import {ConfigService} from './shared/config.service';
 import {RecentItemService} from './shared/recent-item.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
@@ -16,6 +15,8 @@ import {GithubService} from './shared/github.service';
 import {CookieService} from 'angular2-cookie/core';
 import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
+import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ import introJs from 'intro.js/intro.js';
 })
 export class AppComponent implements OnInit {
   public userProfile: any;
-  public person: PersonListModel;
+  public person: Practitioner;
 
   @ViewChild('navbarToggler', {read: ElementRef}) navbarToggler: ElementRef;
   @ViewChild('navbarCollapse', {read: ElementRef}) navbarCollapse: ElementRef;
@@ -40,10 +41,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private socketService: SocketService) {
-    this.authService.authChanged.subscribe(() => {
-      this.userProfile = this.authService.userProfile;
-      this.person = this.authService.practitioner;
-    });
+
   }
 
   public startIntro() {
@@ -63,7 +61,10 @@ export class AppComponent implements OnInit {
 
   public get fhirServerDisplay(): string {
     if (this.configService.fhirServer) {
-      const found = (this.configService.config.fhirServers || []).find((fhirServer) => fhirServer.id === this.configService.fhirServer);
+      const fhirServers = this.configService.config ?
+        this.configService.config.fhirServers : [];
+
+      const found = fhirServers.find((fhirServer) => fhirServer.id === this.configService.fhirServer);
 
       if (found) {
         return found.short || found.name;
@@ -72,12 +73,12 @@ export class AppComponent implements OnInit {
   }
 
   public get displayName(): string {
-    if (this.person) {
-      return this.person.getDisplayName();
+    if (this.authService.practitioner) {
+      return getHumanNamesDisplay(this.authService.practitioner.name);
     }
 
-    if (this.userProfile) {
-      return this.userProfile.name;
+    if (this.authService.userProfile) {
+      return this.authService.userProfile.name;
     }
   }
 

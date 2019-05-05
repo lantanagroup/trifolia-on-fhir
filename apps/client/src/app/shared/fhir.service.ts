@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {
   Bundle,
@@ -65,7 +65,7 @@ export class FhirService {
   readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
   constructor(
-    private http: HttpClient,
+    private injector: Injector,
     private configService: ConfigService) {
 
     this.customValidator = new CustomSTU3Validator(this);
@@ -80,7 +80,11 @@ export class FhirService {
     });
   }
 
-  private loadAssets() {
+  public get http(): HttpClient {
+    return this.injector.get(HttpClient);
+  }
+
+  public loadAssets() {
     this.loaded = false;
     const fhirVersion = ConfigService.identifyRelease(this.configService.fhirConformanceVersion);
     const isFhirR4 = fhirVersion === Versions.R4;
@@ -93,24 +97,27 @@ export class FhirService {
       this.http.get('/assets/' + loadDirectory + '/profiles-resources.json')
     ];
 
-    forkJoin(assetPromises)
-      .subscribe((allAssets) => {
-        const parser = new ParseConformance(false, fhirVersion);
-        parser.loadCodeSystem(allAssets[0]);
-        parser.parseBundle(allAssets[1]);
-        parser.parseBundle(allAssets[2]);
-        parser.parseBundle(allAssets[3]);
+    return new Promise((resolve, reject) => {
+      forkJoin(assetPromises)
+        .subscribe((allAssets) => {
+          const parser = new ParseConformance(false, fhirVersion);
+          parser.loadCodeSystem(allAssets[0]);
+          parser.parseBundle(allAssets[1]);
+          parser.parseBundle(allAssets[2]);
+          parser.parseBundle(allAssets[3]);
 
-        this.fhir = new Fhir(parser);
+          this.fhir = new Fhir(parser);
 
-        (<Bundle>allAssets[1]).entry.forEach((entry) => this.valueSets.push(<ValueSet>entry.resource));
-        (<Bundle>allAssets[2]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
-        (<Bundle>allAssets[3]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
+          (<Bundle>allAssets[1]).entry.forEach((entry) => this.valueSets.push(<ValueSet>entry.resource));
+          (<Bundle>allAssets[2]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
+          (<Bundle>allAssets[3]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
 
-        this.loaded = true;
-      }, (err) => {
-        console.log('Error loading assets');
-      });
+          this.loaded = true;
+          resolve();
+        }, (err) => {
+          reject(err);
+        });
+    });
   }
 
   private getSystemConcepts(concepts: ConceptDefinitionComponent[]): Coding[] {

@@ -1,12 +1,13 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import {PractitionerService} from './practitioner.service';
-import {HumanName, Identifier, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {HumanName, Identifier, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {NewUserModalComponent} from '../modals/new-user-modal/new-user-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Injectable()
 export class AuthService {
@@ -21,15 +22,24 @@ export class AuthService {
   private authTimeout: any;
 
   constructor(
-    public router: Router,
+    private injector: Injector,
     private socketService: SocketService,
     private configService: ConfigService,
-    private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
     private practitionerService: PractitionerService) {
     this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
     this.authChanged = new EventEmitter();
+  }
 
+  private get activatedRoute(): ActivatedRoute {
+    return this.injector.get(ActivatedRoute);
+  }
+
+  public get router(): Router {
+    return this.injector.get(Router);
+  }
+
+  public init() {
     if (this.authExpiresAt) {
       this.setSessionTimer();
     }
@@ -44,22 +54,9 @@ export class AuthService {
       });
     }
 
-    this.configService.fhirServerChanged.subscribe((fhirServer) => {
-      // This should only be triggered after the app has been initialized. So, this should truly be when the fhir server
-      // changes during the user's session.
+    this.authChanged.subscribe(() => {
       if (this.isAuthenticated()) {
-        // After the fhir server has been initialized, make sure the user has a profile on the FHIR server
-        this.getProfile()
-          .then(() => {
-            this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
-          })
-          .catch((err) => {
-            if (err && err.status === 404) {
-              this.createNewPractitioner();
-            } else {
-              console.log('An unknown error has occurred while retrieving your Practitioner profile');
-            }
-          });
+        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
       }
     });
 
@@ -69,31 +66,15 @@ export class AuthService {
         this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
       }
     });
-  }
 
-  private createNewPractitioner() {
-    const newPractitioner = new Practitioner();
-    const identifierSystem = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
-      'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
-    const identifierValue = this.userProfile.user_id && this.userProfile.user_id.indexOf('auth0|') === 0 ?
-      this.userProfile.user_id.substring(6) : this.userProfile.user_id;
-    newPractitioner.identifier = [new Identifier({
-      system: identifierSystem,
-      value: identifierValue
-    })];
-    newPractitioner.name = [];
-    newPractitioner.name.push(new HumanName({
-      family: '',
-      given: ['']
-    }));
+    // When the FHIR server changes, get the profile for the user on the FHIR server
+    // and then notify the socket connection that the user has been authenticated
+    this.configService.fhirServerChanged.subscribe(async () => {
+      await this.getProfile();
 
-    const modalRef = this.modalService.open(NewUserModalComponent, {size: 'lg', backdrop: 'static'});
-    modalRef.componentInstance.practitioner = newPractitioner;
-
-    modalRef.result.then((practitioner: Practitioner) => {
-      this.practitioner = practitioner;
-      this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
-      this.authChanged.emit();
+      if (this.isAuthenticated()) {
+        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+      }
     });
   }
 
@@ -129,12 +110,6 @@ export class AuthService {
               userProfile: this.userProfile,
               practitioner: this.practitioner
             });
-          }, (err) => {
-            if (err && err.status === 404) {
-              this.createNewPractitioner();
-            } else {
-              console.log('An unknown error has occurred while retrieving your Practitioner profile');
-            }
           });
       } else if (err) {
         this.router.navigate(['/home']);
@@ -166,42 +141,53 @@ export class AuthService {
     return new Date().getTime() < this.authExpiresAt;
   }
 
-  public getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
-    if (!this.auth0) {
+  private async getAuthUserInfo(accessToken: string) {
+    return new Promise((resolve, reject) => {
+      this.auth0.client.userInfo(accessToken, (userInfoErr, userProfile) => {
+        if (userInfoErr) {
+          reject(userInfoErr);
+          return;
+        }
+
+        resolve(userProfile);
+      });
+    });
+  }
+
+  public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
+    if (!this.auth0 || !this.isAuthenticated()) {
       return Promise.resolve({userProfile: null, practitioner: null});
     }
 
     const accessToken = localStorage.getItem('token');
-    const self = this;
 
     if (!accessToken) {
       throw new Error('Access token must exist to fetch profile');
     }
 
-    return new Promise((resolve, reject) => {
-      this.auth0.client.userInfo(accessToken, (userInfoErr, userProfile) => {
-        if (userInfoErr) {
-          return reject(userInfoErr);
-        }
+    this.userProfile = await this.getAuthUserInfo(accessToken);
 
-        if (userProfile) {
-          self.userProfile = userProfile;
+    try {
+      this.practitioner = await this.practitionerService.getMe().toPromise();
+    } catch (ex) {
+      this.practitioner = null;
+    }
 
-          this.practitionerService.getMe()
-            .subscribe((practitioner: Practitioner) => {
-              self.practitioner = practitioner;
+    // This also triggers a notification to the socket
+    this.authChanged.emit();
 
-              resolve({
-                userProfile: userProfile,
-                practitioner: practitioner
-              });
-              self.authChanged.emit();
-            }, (err) => {
-              reject(err);
-            });
-        }
-      });
-    });
+    return {
+      userProfile: this.userProfile,
+      practitioner: this.practitioner
+    };
+  }
+
+  public getDefaultMeta(): Meta {
+    const meta = new Meta();
+    if (this.practitioner) {
+      addPermission(meta, 'user', 'write', this.practitioner.id);
+    }
+    return meta;
   }
 
   private setSessionTimer() {

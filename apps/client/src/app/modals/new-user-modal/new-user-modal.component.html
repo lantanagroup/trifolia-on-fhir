@@ -1,13 +1,11 @@
-<div class="modal-header">
-    <h4 class="modal-title">New user</h4>
-</div>
-<div class="modal-body">
-    <p>Create a user (<a href="http://hl7.org/fhir/practitioner" target="_new">Practitioner</a> resource) on the selected FHIR server to continue...</p>
+<h2>New user profile</h2>
 
-    <p><strong>{{message}}</strong></p>
+<p>Create a user (<a href="http://hl7.org/fhir/practitioner" target="_new">Practitioner</a> resource) on the selected FHIR server to continue...</p>
 
-    <app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="ok()" [disabled]="okDisabled">OK</button>
+<p><strong>{{message}}</strong></p>
+
+<app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
+
+<div class="footer">
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="okDisabled">OK</button>
 </div>

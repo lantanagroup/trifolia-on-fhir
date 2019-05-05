@@ -9,6 +9,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
     selector: 'app-codesystem',
@@ -16,7 +17,7 @@ import {ConfigService} from '../shared/config.service';
     styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
-    public codeSystem = this.isNew ? new CodeSystem() : undefined;
+    public codeSystem;
     public filteredConcepts: ConceptDefinitionComponent[] = [];
     public pagedConcepts: ConceptDefinitionComponent[] = [];
     public message: string;
@@ -33,6 +34,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
 
     constructor(
         public route: ActivatedRoute,
+        private authService: AuthService,
         private modalService: NgbModal,
         private codeSystemService: CodeSystemService,
         private router: Router,
@@ -40,6 +42,8 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService) {
+
+      this.codeSystem = new CodeSystem(this.authService.getDefaultMeta());
     }
 
     public get isNew(): boolean {

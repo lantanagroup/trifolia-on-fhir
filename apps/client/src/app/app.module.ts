@@ -62,6 +62,8 @@ import {SharedModule} from './shared/shared.module';
 import {FhirEditModule} from './fhir-edit/fhir-edit.module';
 import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
+import {AuthService} from './shared/auth.service';
+import {FhirService} from './shared/fhir.service';
 
 export class AddHeaderInterceptor implements HttpInterceptor {
   constructor() {
@@ -139,8 +141,27 @@ const appRoutes: Routes = [
   }
 ];
 
-export function getConfig(configService: ConfigService) {
-  return () => configService.getConfig();
+export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
+  const getConfig = () => {
+    return new Promise((resolve, reject) => {
+      // Get the initial config for the server and get the FHIR server config
+      configService.getConfig(true)
+        .then(() => {
+          // Now that the config has been loaded, init the auth module
+          authService.init();
+
+          return fhirService.loadAssets();
+        })
+        .then(() => {
+          // The FHIR server should now be loaded, get the profile for the authenticated user (if any)
+          return authService.getProfile();
+        })
+        .then(() => resolve())
+        .catch((err) => reject(err));
+    });
+  };
+
+  return () => getConfig();
 }
 
 @NgModule({
@@ -187,8 +208,8 @@ export function getConfig(configService: ConfigService) {
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: getConfig,
-      deps: [ConfigService],
+      useFactory: init,
+      deps: [ConfigService, AuthService, FhirService],
       multi: true
     },
     {

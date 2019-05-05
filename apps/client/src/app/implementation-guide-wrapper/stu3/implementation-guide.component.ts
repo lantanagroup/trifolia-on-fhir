@@ -46,7 +46,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide = this.isNew ? new ImplementationGuide() : undefined;
+  public implementationGuide;
   public message: string;
   public currentResource: any;
   public validation: ValidatorResponse;
@@ -65,10 +65,12 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
     private authService: AuthService,
-    private configService: ConfigService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    public configService: ConfigService) {
+
+    this.implementationGuide = new ImplementationGuide(this.authService.getDefaultMeta());
   }
 
   public get isNew(): boolean {

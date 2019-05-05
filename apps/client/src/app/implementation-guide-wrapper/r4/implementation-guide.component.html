@@ -516,7 +516,7 @@
       </ng-template>
     </ngb-tab>
 
-    <ngb-tab id="permissions" title="Permissions">
+    <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabContent>
         <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
       </ng-template>

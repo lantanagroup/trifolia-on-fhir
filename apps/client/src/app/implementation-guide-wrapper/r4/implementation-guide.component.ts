@@ -1,4 +1,4 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -12,7 +12,7 @@ import {
   ImplementationGuideResourceComponent,
   ImplementationGuideDependsOnComponent, Extension
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
@@ -35,7 +35,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide = this.isNew ? new ImplementationGuide() : undefined;
+  public implementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];
@@ -57,10 +57,10 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
     private authService: AuthService,
-    private configService: ConfigService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
+    public configService: ConfigService,
     public route: ActivatedRoute) {
   }
 
@@ -211,6 +211,11 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
   }
 
   private getImplementationGuide() {
+    if (this.isNew) {
+      this.implementationGuide = new ImplementationGuide(this.authService.getDefaultMeta());
+      return;
+    }
+
     const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
@@ -552,11 +557,6 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
   }
 
   ngOnInit() {
-    this.navSubscription = this.router.events.subscribe((e: any) => {
-      if (e instanceof NavigationEnd && e.url.startsWith('/implementation-guide/')) {
-        this.getImplementationGuide();
-      }
-    });
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getImplementationGuide();
   }
@@ -566,7 +566,6 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
     this.configService.setTitle(null);
   }
 
