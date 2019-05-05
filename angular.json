@@ -252,13 +252,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/tools/src/environments/environment.ts",
-                  "with": "apps/tools/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },

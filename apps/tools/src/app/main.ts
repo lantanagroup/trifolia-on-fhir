@@ -1,12 +1,16 @@
 import {RemoveExtensions} from './removeExtensions';
 import {AddPermission, RemovePermission} from './permissions';
 import * as Yargs from 'yargs';
+import {RemoveExtras} from './removeExtras';
 
 const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
 const modifyPermissionDescription = 'Adds a permission to one or all resources';
 
 const removeExtensionsFormat = 'remove-extensions [server]';
 const removeExtensionsDescription = 'Removes specified extensions from all resources on the server';
+
+const removeExtrasFormat = 'remove-extras <directory>';
+const removeExtrasDescription = 'Removes extra properties from resources that aren\'t used by ToF. This should typically be executed only be ToF developers on resources in the tof-lib assets folder.';
 
 const argv = Yargs
   .command(modifyPermissionFormat, modifyPermissionDescription, (yargs: Yargs.Argv) => {
@@ -77,5 +81,15 @@ const argv = Yargs
     const removeExtensions = new RemoveExtensions(args);
     removeExtensions.execute();
   })
+  .command(removeExtrasFormat, removeExtrasDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('directory', {
+        description: 'The directory of all json resource files that should have extra properties removed from'
+      });
+  }, async (args: any) => {
+    const removeExtras = new RemoveExtras(args);
+    await removeExtras.execute();
+  })
   .help('help')
+  .demandCommand()
   .argv;
