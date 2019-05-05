@@ -321,12 +321,15 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
 
   public editPage(pageDef: PageDefinition) {
     const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg'});
-    modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.componentInstance.page = pageDef.page;
+    const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
+
+    componentInstance.implementationGuide = this.implementationGuide;
 
     if (this.implementationGuide.definition.page === pageDef.page) {
-      modalRef.componentInstance.rootPage = true;
+      componentInstance.rootPage = true;
     }
+
+    componentInstance.setPage(pageDef.page);
   }
 
   private getNewPageTitles(next = this.implementationGuide.definition.page, pageTitles: string[] = []) {

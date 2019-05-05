@@ -1,22 +1,42 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Binary, ImplementationGuide, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
-  selector: 'app-fhir-page-component-modal',
   templateUrl: './page-component-modal.component.html',
   styleUrls: ['./page-component-modal.component.css']
 })
 export class PageComponentModalComponent implements OnInit {
-  @Input() page: PageComponent;
-  @Input() implementationGuide: ImplementationGuide;
-
+  private inputPage: PageComponent;
+  public page: PageComponent;
+  public implementationGuide: ImplementationGuide;
   public pageBinary: Binary;
   public Globals = Globals;
 
   constructor(public activeModal: NgbActiveModal) {
 
+  }
+
+  public setPage(inputPage: PageComponent) {
+    this.inputPage = inputPage;
+
+    // Make a clone of the page provided in the component's input so that
+    // the modal window doesn't make changes directly to the page
+    this.page = JSON.parse(JSON.stringify(this.inputPage));
+
+    if (this.page && this.page.source) {
+      const contentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
+
+      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
+        const reference = contentExtension.valueReference.reference;
+
+        if (reference.startsWith('#')) {
+          // Find the Binary in the contained resources
+          this.pageBinary = <Binary> (this.implementationGuide.contained || []).find((extension) => extension.id === reference.substring(1));
+        }
+      }
+    }
   }
 
   public get autoGenerate(): boolean {
@@ -122,18 +142,15 @@ export class PageComponentModalComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  ngOnInit() {
-    if (this.page && this.page.source) {
-      const contentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
-
-      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-          // Find the Binary in the contained resources
-          this.pageBinary = <Binary> (this.implementationGuide.contained || []).find((extension) => extension.id === reference.substring(1));
-        }
-      }
+  ok() {
+    if (this.inputPage) {
+      // Update the properties of the input page with the changes from the cloned version
+      Object.assign(this.inputPage, this.page);
     }
+
+    this.activeModal.close();
+  }
+
+  ngOnInit() {
   }
 }

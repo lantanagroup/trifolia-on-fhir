@@ -1,4 +1,4 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -413,8 +413,10 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
 
   public editPage(pageDef: PageDefinition) {
     const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg'});
-    modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.componentInstance.page = pageDef.page;
+    const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
+
+    componentInstance.implementationGuide = this.implementationGuide;
+    componentInstance.setPage(pageDef.page);
   }
 
   private getNewPageSources(next = this.implementationGuide.page, pageSources: string[] = []) {

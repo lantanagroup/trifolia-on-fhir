@@ -9,13 +9,32 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
   styleUrls: ['./page-component-modal.component.css']
 })
 export class PageComponentModalComponent implements OnInit {
-  @Input() page: ImplementationGuidePageComponent;
-  @Input() implementationGuide: ImplementationGuide;
-  @Input() rootPage: boolean;
+  private inputPage: ImplementationGuidePageComponent;
+  public page: ImplementationGuidePageComponent;
+  public implementationGuide: ImplementationGuide;
+  public rootPage: boolean;
   public pageBinary: Binary;
 
   constructor(public activeModal: NgbActiveModal) {
 
+  }
+
+  public setPage(value: ImplementationGuidePageComponent) {
+    this.inputPage = value;
+
+    // Make a clone of the page provided in the component's input so that
+    // the modal window doesn't make changes directly to the page
+    this.page = JSON.parse(JSON.stringify(this.inputPage));
+
+    // Make sure the page has the required name property
+    if (this.page && !this.page.nameReference && !this.page.nameUrl) {
+      this.page.nameReference = {reference: '', display: ''};
+    }
+
+    if (this.page && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
+      // Find the Binary in the contained resources
+      this.pageBinary = <Binary> (this.implementationGuide.contained || []).find((extension) => extension.id === this.page.nameReference.reference.substring(1));
+    }
   }
 
   public get autoGenerate(): boolean {
@@ -127,15 +146,15 @@ export class PageComponentModalComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  ngOnInit() {
-    // Make sure the page has the required name property
-    if (this.page && !this.page.nameReference && !this.page.nameUrl) {
-      this.page.nameReference = {reference: '', display: ''};
+  ok() {
+    if (this.inputPage) {
+      // Update the properties of the input page with the changes from the cloned version
+      Object.assign(this.inputPage, this.page);
     }
 
-    if (this.page && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
-      // Find the Binary in the contained resources
-      this.pageBinary = <Binary> (this.implementationGuide.contained || []).find((extension) => extension.id === this.page.nameReference.reference.substring(1));
-    }
+    this.activeModal.close();
+  }
+
+  ngOnInit() {
   }
 }
