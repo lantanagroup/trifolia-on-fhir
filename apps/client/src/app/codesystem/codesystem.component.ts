@@ -9,7 +9,6 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
-import * as _ from 'underscore';
 
 @Component({
     selector: 'app-codesystem',
@@ -84,7 +83,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
             const lowerSearchDisplay = this.searchDisplay ? this.searchDisplay.toLowerCase() : null;
             const lowerSearchDefinition = this.searchDefinition ? this.searchDefinition.toLowerCase() : null;
 
-            filtered = _.filter(actualConcepts, (concept: ConceptDefinitionComponent) => {
+            filtered = actualConcepts.filter((concept: ConceptDefinitionComponent) => {
                 const matchesCode = !lowerSearchCode ||
                     (concept.code && concept.code.toLowerCase().indexOf(lowerSearchCode) >= 0);
                 const matchesDisplay = !lowerSearchDisplay ||
