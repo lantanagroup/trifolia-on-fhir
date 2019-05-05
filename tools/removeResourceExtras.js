@@ -56,7 +56,6 @@ function cleanResource(resource) {
     delete resource.jurisdiction;
     delete resource.date;
     delete resource.description;
-    delete resource.concept;
 
     if (resource.concept) {
       for (let i = 0; i < resource.concept.length; i++) {
