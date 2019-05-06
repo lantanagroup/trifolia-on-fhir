@@ -34,7 +34,7 @@ export class CustomR4Validator extends CustomValidator {
     }
 
     const messages: ValidatorMessage[] = [];
-    const allResources = implementationGuide.definition.resource;
+    const allResources = implementationGuide.definition.resource || [];
     const groupedResources = groupBy(allResources, (resource: ImplementationGuideResourceComponent) => resource.reference ? resource.reference.reference : null);
     const allPages = this.getAllPages(implementationGuide);
     const groupedPageTitles = groupBy(allPages, (page: ImplementationGuidePageComponent) => page.title);
