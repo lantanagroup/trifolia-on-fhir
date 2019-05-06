@@ -138,6 +138,23 @@ export function ensureSecurity(meta: Meta) {
   }
 }
 
+export function findPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+  if (!meta) {
+    return false;
+  }
+
+  const security = meta.security || [];
+  const delim = Globals.securityDelim;
+
+  return !!security.find((next) => {
+    if (type === 'everyone') {
+      return next.code === `${type}${delim}${permission}`;
+    } else {
+      return next.code === `${type}${delim}${id}${delim}${permission}`;
+    }
+  });
+}
+
 export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
   ensureSecurity(meta);
   const delim = Globals.securityDelim;

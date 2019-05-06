@@ -10,7 +10,6 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-valuesets',
   templateUrl: './valuesets.component.html',
   styleUrls: ['./valuesets.component.css']
 })

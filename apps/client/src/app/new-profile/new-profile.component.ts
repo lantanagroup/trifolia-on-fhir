@@ -5,6 +5,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 import {FhirService} from '../shared/fhir.service';
 import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-new-profile',
@@ -12,14 +13,17 @@ import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent implements OnInit {
-  public structureDefinition = new StructureDefinition();
+  public structureDefinition;
   public message: string;
 
   constructor(
     private fhirService: FhirService,
     private route: Router,
     private modalService: NgbModal,
+    private authService: AuthService,
     private strucDefService: StructureDefinitionService) {
+
+    this.structureDefinition = new StructureDefinition({ meta: this.authService.getDefaultMeta() });
   }
 
   public saveDisabled() {

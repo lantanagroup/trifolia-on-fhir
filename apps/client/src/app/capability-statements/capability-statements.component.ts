@@ -9,7 +9,6 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-capability-statements',
   templateUrl: './capability-statements.component.html',
   styleUrls: ['./capability-statements.component.css']
 })

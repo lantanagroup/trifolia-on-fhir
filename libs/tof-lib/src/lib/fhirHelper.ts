@@ -45,7 +45,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
     keys.forEach((key) => {
       if (params[key] instanceof Array) {
         const valueArray = <any[]> params[key];
-        valueArray.forEach((nextValue) => paramArray.push(`${key}=${encodeURIComponent(nextValue)}`))
+        paramArray.push(`${key}=${encodeURIComponent(valueArray.join(','))}`);
       } else {
         const value = params[key];
         paramArray.push(`${key}=${encodeURIComponent(value)}`);

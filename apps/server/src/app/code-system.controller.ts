@@ -25,22 +25,22 @@ export class CodeSystemController extends BaseFhirController {
   }
 
   @Get(':id')
-  public get(@Req() request: ITofRequest, @Param('id') id: string) {
-    return super.baseGet(request.fhirServerBase, id, request.query);
+  public get(@FhirServerBase() fhirServerBase, @Query() query, @User() user, @Param('id') id: string) {
+    return super.baseGet(fhirServerBase, id, query, user);
   }
 
   @Post()
-  public create(@Req() request: ITofRequest, @Body() body) {
-    return super.baseCreate(request.fhirServerBase, body, request.query);
+  public create(@FhirServerBase() fhirServerBase, @User() user, @Body() body) {
+    return super.baseCreate(fhirServerBase, body, user);
   }
 
   @Put(':id')
-  public update(@Req() request: ITofRequest, @Param('id') id: string, @Body() body) {
-    return super.baseUpdate(request.fhirServerBase, id, body, request.query);
+  public update(@FhirServerBase() fhirServerBase, @Param('id') id: string, @Body() body, @User() user) {
+    return super.baseUpdate(fhirServerBase, id, body, user);
   }
 
   @Delete(':id')
-  public delete(@Req() request: ITofRequest, @Param('id') id: string) {
-    return super.baseDelete(request.fhirServerBase, id, request.query);
+  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, id, user);
   }
 }

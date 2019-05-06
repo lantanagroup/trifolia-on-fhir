@@ -12,7 +12,6 @@ import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
 
 @Component({
-    selector: 'app-codesystem',
     templateUrl: './codesystem.component.html',
     styleUrls: ['./codesystem.component.css']
 })
@@ -43,7 +42,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         private fileService: FileService,
         private fhirService: FhirService) {
 
-      this.codeSystem = new CodeSystem(this.authService.getDefaultMeta());
+      this.codeSystem = new CodeSystem({ meta: this.authService.getDefaultMeta() });
     }
 
     public get isNew(): boolean {

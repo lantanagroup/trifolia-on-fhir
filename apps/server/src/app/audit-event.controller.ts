@@ -22,7 +22,7 @@ export class AuditEventController extends BaseFhirController {
   }
 
   @Get(':id')
-  get(@Req() request: ITofRequest, @Param('id') id: string) {
-    return super.baseGet(request.fhirServerBase, id, request.query);
+  public get(@FhirServerBase() fhirServerBase, @Query() query, @User() user, @Param('id') id: string) {
+    return super.baseGet(fhirServerBase, id, query, user);
   }
 }

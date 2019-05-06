@@ -147,6 +147,9 @@ export function init(configService: ConfigService, authService: AuthService, fhi
       // Get the initial config for the server and get the FHIR server config
       configService.getConfig(true)
         .then(() => {
+          return configService.changeFhirServer();
+        })
+        .then(() => {
           // Now that the config has been loaded, init the auth module
           authService.init();
 

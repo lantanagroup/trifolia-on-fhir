@@ -9,7 +9,6 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-operation-definitions',
   templateUrl: './operation-definitions.component.html',
   styleUrls: ['./operation-definitions.component.css']
 })

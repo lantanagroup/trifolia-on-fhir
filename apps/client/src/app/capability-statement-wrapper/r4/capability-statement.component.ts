@@ -12,14 +12,14 @@ import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {ClientHelper} from '../../clientHelper';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
-  selector: 'app-r4-capability-statement',
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
 export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
+  @Input() public capabilityStatement;
 
   public message: string;
   public validation: any;
@@ -33,6 +33,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
 
   constructor(
     public route: ActivatedRoute,
+    private authService: AuthService,
     private configService: ConfigService,
     private modalService: NgbModal,
     private csService: CapabilityStatementService,
@@ -41,6 +42,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
     private recentItemService: RecentItemService,
     private fhirService: FhirService) {
 
+    this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

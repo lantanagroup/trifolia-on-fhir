@@ -1,4 +1,4 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {OperationDefinition, OperationOutcome, ParameterComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
@@ -9,14 +9,14 @@ import {ParameterModalComponent} from './parameter-modal/parameter-modal.compone
 import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
-  selector: 'app-operation-definition',
   templateUrl: './operation-definition.component.html',
   styleUrls: ['./operation-definition.component.css']
 })
 export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck {
-  public operationDefinition: OperationDefinition = this.isNew ? new OperationDefinition() : undefined;
+  public operationDefinition: OperationDefinition;
   public message: string;
   public validation: any;
   public odNotFound = false;
@@ -26,6 +26,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
   constructor(
     public route: ActivatedRoute,
+    private authService: AuthService,
     private modal: NgbModal,
     private router: Router,
     private configService: ConfigService,
@@ -34,6 +35,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     private fileService: FileService,
     private fhirService: FhirService) {
 
+    this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

@@ -12,14 +12,14 @@ import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/refer
 import {ConfigService} from '../../shared/config.service';
 import {FileService} from '../../shared/file.service';
 import {ClientHelper} from '../../clientHelper';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
-  selector: 'app-stu3-capability-statement',
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
 export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement = this.isNew ? new CapabilityStatement() : undefined;
+  @Input() public capabilityStatement;
 
   public message: string;
   public validation: any;
@@ -35,12 +35,14 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     public fhirService: FhirService,
     public fileService: FileService,
     public route: ActivatedRoute,
+    private authService: AuthService,
     private modalService: NgbModal,
     private csService: CapabilityStatementService,
     private configService: ConfigService,
     private router: Router,
     private recentItemService: RecentItemService) {
 
+    this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

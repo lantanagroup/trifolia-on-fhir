@@ -12,14 +12,14 @@ import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/referenc
 import {FileOpenModalComponent} from '../modals/file-open-modal/file-open-modal.component';
 import {FileModel} from '../models/file-model';
 import {ClientHelper} from '../clientHelper';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
-  selector: 'app-valueset',
   templateUrl: './valueset.component.html',
   styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
-  public valueSet = this.isNew ? new ValueSet() : undefined;
+  public valueSet;
   public message: string;
   public validation: any;
   public vsNotFound = false;
@@ -30,6 +30,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(
     public route: ActivatedRoute,
+    private authService: AuthService,
     private valueSetService: ValueSetService,
     private router: Router,
     private modalService: NgbModal,
@@ -37,6 +38,8 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
+
+    this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

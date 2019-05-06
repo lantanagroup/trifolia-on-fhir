@@ -6,7 +6,6 @@ import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-other-resources',
   templateUrl: './other-resources.component.html',
   styleUrls: ['./other-resources.component.css']
 })

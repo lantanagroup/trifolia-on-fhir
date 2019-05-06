@@ -9,7 +9,6 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-questionnaires',
   templateUrl: './questionnaires.component.html',
   styleUrls: ['./questionnaires.component.css']
 })

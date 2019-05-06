@@ -17,7 +17,6 @@ import {AuthService} from '../shared/auth.service';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-export',
   templateUrl: './export.component.html',
   styleUrls: ['./export.component.css']
 })

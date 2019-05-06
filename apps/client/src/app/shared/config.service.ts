@@ -69,17 +69,21 @@ export class ConfigService {
       });
   }
 
-  public changeFhirServer(fhirServer: string) {
-    this.fhirServer = fhirServer;
+  public changeFhirServer(fhirServer?: string) {
+    if (fhirServer) {
+      this.fhirServer = fhirServer;
+    }
+
+    if (!this.fhirServer) {
+      throw new Error('FHIR Server ID has not been set to a default');
+    }
 
     localStorage.setItem('fhirServer', this.fhirServer);
 
-    this.http.get('/api/config/fhir')
-      .subscribe((res: any) => {
+    return this.http.get('/api/config/fhir').toPromise()
+      .then((res: any) => {
         this.fhirConformance = res;
         this.fhirServerChanged.emit(this.fhirServer);
-      }, error => {
-
       });
   }
 

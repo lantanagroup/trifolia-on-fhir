@@ -390,7 +390,7 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   @Delete(':id')
-  public delete(@Req() request: ITofRequest, @Param('id') id: string) {
-    return super.baseDelete(request.fhirServerBase, id, request.query);
+  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, id, user);
   }
 }

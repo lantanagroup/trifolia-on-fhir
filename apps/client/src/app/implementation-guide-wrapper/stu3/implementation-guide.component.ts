@@ -70,7 +70,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     private fhirService: FhirService,
     public configService: ConfigService) {
 
-    this.implementationGuide = new ImplementationGuide(this.authService.getDefaultMeta());
+    this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

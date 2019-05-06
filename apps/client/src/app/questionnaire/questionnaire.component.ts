@@ -9,6 +9,7 @@ import {FhirService} from '../shared/fhir.service';
 import {QuestionnaireService} from '../shared/questionnaire.service';
 import {ConfigService} from '../shared/config.service';
 import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
+import {AuthService} from '../shared/auth.service';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -38,12 +39,11 @@ export class ItemModel {
 }
 
 @Component({
-  selector: 'app-questionnaire',
   templateUrl: './questionnaire.component.html',
   styleUrls: ['./questionnaire.component.css']
 })
 export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public questionnaire = this.isNew ? new Questionnaire() : undefined;
+  @Input() public questionnaire;
   public message: string;
   public validation: any;
   public flattenedItems: ItemModel[];
@@ -52,6 +52,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(
     public route: ActivatedRoute,
+    private authService: AuthService,
     private questionnaireService: QuestionnaireService,
     private router: Router,
     private configService: ConfigService,
@@ -59,6 +60,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
+
+    this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {

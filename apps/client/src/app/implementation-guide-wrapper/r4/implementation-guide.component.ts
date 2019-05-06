@@ -62,6 +62,8 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     private fhirService: FhirService,
     public configService: ConfigService,
     public route: ActivatedRoute) {
+
+    this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
   }
 
   public get resources(): ImplementationGuideResourceComponent[] {
@@ -211,11 +213,6 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
   }
 
   private getImplementationGuide() {
-    if (this.isNew) {
-      this.implementationGuide = new ImplementationGuide(this.authService.getDefaultMeta());
-      return;
-    }
-
     const implementationGuideId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {

@@ -38,7 +38,6 @@ class GitHubImportContent {
 }
 
 @Component({
-  selector: 'app-import',
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css']
 })

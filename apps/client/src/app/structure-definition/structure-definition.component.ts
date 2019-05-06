@@ -13,7 +13,6 @@ import {ConfigService} from '../shared/config.service';
 import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
 
 @Component({
-  selector: 'app-profile',
   templateUrl: './structure-definition.component.html',
   styleUrls: ['./structure-definition.component.css']
 })

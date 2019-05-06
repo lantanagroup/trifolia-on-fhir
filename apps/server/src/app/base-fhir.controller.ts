@@ -1,5 +1,5 @@
 import {BaseController} from './base.controller';
-import {HttpService} from '@nestjs/common';
+import {BadRequestException, HttpService, InternalServerErrorException} from '@nestjs/common';
 import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
@@ -7,7 +7,7 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {assertEditingAllowed, getUserSecurityInfo} from './security.helper';
+import {assertEditingAllowed, assertViewingAllowed, getUserSecurityInfo} from './security.helper';
 
 import * as config from 'config';
 import * as nanoid from 'nanoid';
@@ -85,7 +85,7 @@ export class BaseFhirController extends BaseController {
       .then((results) => results.data);
   }
 
-  protected async baseGet(baseUrl, id: string, query?: any): Promise<any> {
+  protected async baseGet(baseUrl, id: string, query?: any, user?: ITofUser): Promise<any> {
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null, query),
       method: 'GET',
@@ -96,96 +96,104 @@ export class BaseFhirController extends BaseController {
 
     try {
       const getResults = await this.httpService.request(options).toPromise();
+
+      await assertViewingAllowed(getResults.data, this.httpService, user, baseUrl);
+
       return getResults.data;
     } catch (ex) {
       if (ex.response.status === 404) {
         throw new TofNotFoundException();
+      } else {
+        throw ex;
       }
     }
   }
 
-  protected baseCreate(baseUrl: string, data: any, query?: any) {
-    return new Promise((resolve, reject) => {
-      assertEditingAllowed(data);
+  protected async baseCreate(baseUrl: string, data: any, user: ITofUser) {
+    await assertEditingAllowed(data, this.httpService, user, baseUrl);
 
-      if (!data.id) {
-        data.id = nanoid(8);
-      }
+    if (!data.id) {
+      data.id = nanoid(8);
+    }
 
-      const existsOptions = <AxiosRequestConfig> {
-        url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
-        method: 'GET'
-      };
+    const existsOptions = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
+      method: 'GET'
+    };
 
+    try {
       // Make sure the resource doesn't already exist with the same id
-      return this.httpService.request(existsOptions).toPromise()
-        .then(() => {
-          this.logger.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
-          reject(`A ${this.resourceType} already exists with the id ${data.id}`);
-        })
-        .catch((existsErr) => {
-          if (existsErr.response && existsErr.response.status !== 404) {
-            const msg = `An unexpected error code ${existsErr.statusCode} was returned when checking if a ${this.resourceType} already exists with the id ${data.id}`;
-            this.logger.error(msg);
-            return reject(msg);
-          }
+      await this.httpService.request(existsOptions).toPromise();
+      this.logger.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
+      throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
+    } catch (ex) {
+      // A 404 not found exception SHOULD be thrown
+    }
 
-          const createOptions = <AxiosRequestConfig> {
-            url: buildUrl(baseUrl, this.resourceType, data.id),
-            method: 'PUT',
-            data: data
-          };
-
-          // Create the resource
-          return this.httpService.request(createOptions).toPromise()
-            .then((results) => {
-              const location = results.headers.location || results.headers['content-location'];
-
-              if (location) {
-                const getOptions = {
-                  url: location,
-                  method: 'GET'
-                };
-
-                // Get the saved version of the resource (with a unique id)
-                return this.httpService.request(getOptions).toPromise();
-              } else {
-                throw new Error(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
-              }
-            })
-            .then((newIgResults) => resolve(newIgResults.data))
-            .catch((err) => reject(err));
-        });
-    });
-  }
-
-  protected baseUpdate(baseUrl: string, id: string, data: any, query?: any): Promise<any> {
-    assertEditingAllowed(data);
-
-    const options = <AxiosRequestConfig> {
-      url: buildUrl(baseUrl, this.resourceType, id, null, query),
+    const createOptions = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, data.id),
       method: 'PUT',
       data: data
     };
 
-    return this.httpService.request(options).toPromise()
-      .then((results) => results.data);
+    // Create the resource
+    const createResults = await this.httpService.request(createOptions).toPromise();
+    const location = createResults.headers.location || createResults.headers['content-location'];
+
+    if (location) {
+      const getOptions = {
+        url: location,
+        method: 'GET'
+      };
+
+      // Get the saved version of the resource (with a unique id)
+      const getResults = await this.httpService.request(getOptions).toPromise();
+      return getResults.data;
+    } else {
+      throw new InternalServerErrorException(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
+    }
   }
 
-  protected baseDelete(baseUrl: string, id: string, query?: any): Promise<any> {
+  protected async baseUpdate(baseUrl: string, id: string, data: any, user: ITofUser): Promise<any> {
+    // Make sure the user can modify the resource based on the permissions
+    // stored on the server, first
+    try {
+      const getOptions = <AxiosRequestConfig> {
+        url: buildUrl(baseUrl, this.resourceType, id),
+        method: 'GET'
+      };
+      const getResults = await this.httpService.request(getOptions).toPromise();
+      await assertEditingAllowed(getResults.data, this.httpService, user, baseUrl);
+    } catch (ex) {
+      // The resource doesn't exist yet and this is a create-on-update operation
+    }
+
+    // Make sure the user has granted themselves the ability to edit the resource
+    // in the resource they're updating on the server
+    await assertEditingAllowed(data, this.httpService, user, baseUrl);
+
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, id),
+      method: 'PUT',
+      data: data
+    };
+
+    const updateResults = await this.httpService.request(options).toPromise();
+    return updateResults.data;
+  }
+
+  protected async baseDelete(baseUrl: string, id: string, user: ITofUser): Promise<any> {
     const getUrl = buildUrl(baseUrl, this.resourceType, id);
+    const getResults = await this.httpService.get(getUrl).toPromise();
 
-    return this.httpService.get(getUrl).toPromise()
-      .then((resource) => {
-        assertEditingAllowed(resource);
+    await assertEditingAllowed(getResults.data, this.httpService, user, baseUrl);
 
-        const options = <AxiosRequestConfig> {
-          url: buildUrl(baseUrl, this.resourceType, id, null, query),
-          method: 'DELETE'
-        };
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(baseUrl, this.resourceType, id, null),
+      method: 'DELETE'
+    };
 
-        return this.httpService.request(options).toPromise();
-      })
-      .then((results) => results.data);
+    const deleteResults = await this.httpService.request(options).toPromise();
+    return deleteResults.data;
   }
 }

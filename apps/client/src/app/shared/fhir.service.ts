@@ -363,6 +363,9 @@ export class FhirService {
 
   public getErrorString(err, body?, defaultMessage = 'An unknown error occurred') {
     if (err && err.error) {
+      if (typeof err.error === 'object') {
+        return this.getErrorString(err.error);
+      }
       return err.error;
     } else if (err && err.message) {
       return err.message;

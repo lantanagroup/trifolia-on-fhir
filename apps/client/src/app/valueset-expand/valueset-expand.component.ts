@@ -7,7 +7,6 @@ import {FhirService} from '../shared/fhir.service';
 import {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 
 @Component({
-  selector: 'app-valueset-expand',
   templateUrl: './valueset-expand.component.html',
   styleUrls: ['./valueset-expand.component.css']
 })
