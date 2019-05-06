@@ -16,6 +16,7 @@ import {TofLogger} from './tof-logger';
 import * as path from "path";
 import * as tmp from 'tmp';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
 
 @Controller('export')
 @UseGuards(AuthGuard('bearer'))
@@ -26,8 +27,8 @@ export class ExportController extends BaseController {
 
   private readonly logger = new TofLogger(ExportController.name);
 
-  constructor(private httpService: HttpService) {
-    super();
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   @Get(':implementationGuideId/([$])validate')

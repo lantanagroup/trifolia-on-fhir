@@ -152,6 +152,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
         .then(() => {
           // Now that the config has been loaded, init the auth module
           authService.init();
+          authService.handleAuthentication();
 
           return fhirService.loadAssets();
         })

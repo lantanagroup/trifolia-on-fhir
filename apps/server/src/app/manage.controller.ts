@@ -1,9 +1,10 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpService, Post, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
 
 interface MessageRequest {
   message: string;
@@ -14,8 +15,9 @@ interface MessageRequest {
 @ApiUseTags('Manage')
 @ApiOAuth2Auth()
 export class ManageController extends BaseController {
-  constructor() {
-    super();
+
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   @Get('user/active')

@@ -6,10 +6,10 @@ import {ISocketConnection} from './socket-connection';
 export interface ITofUser {
   app_metadata?: any;
   clientID: string;
-  created_at: string;
+  created_at?: string;
   email: string;
-  email_verified: boolean;
-  identities: [{
+  email_verified?: boolean;
+  identities?: [{
     connection: string;
     isSocial: boolean;
     provider: string;
@@ -19,8 +19,8 @@ export interface ITofUser {
   nickname?: string;
   picture?: string;
   sub: string;
-  updated_at: string;
-  user_id: string;
+  updated_at?: string;
+  user_id?: string;
 }
 
 export interface ITofRequest extends Request {

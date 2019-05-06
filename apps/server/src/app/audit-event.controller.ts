@@ -4,6 +4,7 @@ import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
+import {ConfigService} from './config.service';
 
 @Controller('auditEvent')
 @UseGuards(AuthGuard('bearer'))
@@ -12,8 +13,8 @@ import {FhirServerBase, User} from './server.decorators';
 export class AuditEventController extends BaseFhirController {
   resourceType = 'AuditEvent';
 
-  constructor(protected httpService: HttpService) {
-    super(httpService);
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
   }
 
   @Get()

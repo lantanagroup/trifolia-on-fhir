@@ -1624,7 +1624,7 @@ export class Bundle extends Resource {
   public type: string;
   public total?: number;
   public link?: LinkComponent[];
-  public entry?: EntryComponent[];
+  public entry?: EntryComponent[] = [];
   public signature?: Signature;
 
   constructor(obj?: any) {

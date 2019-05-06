@@ -31,10 +31,10 @@ import {
 import * as nanoid from 'nanoid';
 import {TofNotFoundException} from '../not-found-exception';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {ParseConformance, StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
+import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, User} from './server.decorators';
-import {assertEditingAllowed} from './security.helper';
+import {ConfigService} from './config.service';
 
 interface SaveStructureDefinitionRequest {
   options?: StructureDefinitionOptions;
@@ -48,8 +48,8 @@ interface SaveStructureDefinitionRequest {
 export class StructureDefinitionController extends BaseFhirController {
   resourceType = 'StructureDefinition';
 
-  constructor(protected httpService: HttpService) {
-    super(httpService);
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
   }
 
   /**
@@ -205,12 +205,12 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param structureDefinition The structure definition to add (must have an id)
    * @param implementationGuideId The id of the implementation guide to add the structure definition to
    */
-  private async addToImplementationGuide(fhirServerBase: string, fhirServerVersion: string, structureDefinition: StructureDefinition, implementationGuideId: string): Promise<void> {
+  private async addToImplementationGuide(fhirServerBase: string, fhirServerVersion: string, structureDefinition: StructureDefinition, implementationGuideId: string, user: ITofUser): Promise<void> {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    assertEditingAllowed(igResults.data);
+    await this.assertEditingAllowed(igResults.data, user, fhirServerBase);
 
     if (fhirServerVersion !== 'stu3') {        // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -284,12 +284,12 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param structureDefinition The structure definition to remove (must have an id)
    * @param implementationGuideId The id of the implementation guide to remove the structure definition from
    */
-  private async removeFromImplementationGuide(fhirServerBase: string, fhirServerVersion: string, structureDefinition: StructureDefinition, implementationGuideId: string): Promise<void> {
+  private async removeFromImplementationGuide(fhirServerBase: string, fhirServerVersion: string, structureDefinition: StructureDefinition, implementationGuideId: string, user: ITofUser): Promise<void> {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    assertEditingAllowed(implementationGuide);
+    await this.assertEditingAllowed(implementationGuide, user, fhirServerBase);
 
     if (fhirServerVersion !== 'stu3') {                // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -335,8 +335,8 @@ export class StructureDefinitionController extends BaseFhirController {
     await this.httpService.request(updateOptions).toPromise();
   }
 
-  private async saveStructureDefinition(fhirServerBase: string, fhirServerVersion: string, id: string, structureDefinition: StructureDefinition, options?: StructureDefinitionOptions) {
-    assertEditingAllowed(structureDefinition);
+  private async saveStructureDefinition(fhirServerBase: string, fhirServerVersion: string, id: string, structureDefinition: StructureDefinition, user: ITofUser, options?: StructureDefinitionOptions) {
+    await this.assertEditingAllowed(structureDefinition, user, fhirServerBase);
 
     if (!structureDefinition) {
       throw new BadRequestException();
@@ -367,9 +367,9 @@ export class StructureDefinitionController extends BaseFhirController {
     if (options) {
       options.implementationGuides.forEach((implementationGuide) => {
         if (implementationGuide.isNew) {
-          igUpdatePromises.push(this.addToImplementationGuide(fhirServerBase, fhirServerVersion, updatedStructureDefinition, implementationGuide.id));
+          igUpdatePromises.push(this.addToImplementationGuide(fhirServerBase, fhirServerVersion, updatedStructureDefinition, implementationGuide.id, user));
         } else if (implementationGuide.isRemoved) {
-          igUpdatePromises.push(this.removeFromImplementationGuide(fhirServerBase, fhirServerVersion, updatedStructureDefinition, implementationGuide.id));
+          igUpdatePromises.push(this.removeFromImplementationGuide(fhirServerBase, fhirServerVersion, updatedStructureDefinition, implementationGuide.id, user));
         }
       });
     }
@@ -380,13 +380,13 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   @Post()
-  public create(@Req() request: ITofRequest, @Body() body) {
-    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, nanoid(8), body.resource, body.options);
+  public create(@Req() request: ITofRequest, @Body() body, @User() user: ITofUser) {
+    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, nanoid(8), body.resource, user, body.options);
   }
 
   @Put(':id')
-  public update(@Req() request: ITofRequest, @Param('id') id: string, @Body() body: SaveStructureDefinitionRequest) {
-    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, id, body.resource, body.options);
+  public update(@Req() request: ITofRequest, @Param('id') id: string, @Body() body: SaveStructureDefinitionRequest, @User() user: ITofUser) {
+    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, id, body.resource, user, body.options);
   }
 
   @Delete(':id')

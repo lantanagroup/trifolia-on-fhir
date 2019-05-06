@@ -10,3 +10,11 @@ export interface IServerConfig {
   publishedIgsDirectory?: string;
   enableSecurity: boolean;
 }
+
+export function createTestServerConfig(adminCode: string, enableSecurity = false): IServerConfig {
+  return {
+    adminCode: adminCode,
+    supportUrl: 'http://test.com/support',
+    enableSecurity: enableSecurity
+  };
+}

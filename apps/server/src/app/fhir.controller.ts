@@ -19,8 +19,9 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, RequestMethod, RequestUrl} from './server.decorators';
-import {assertEditingAllowed} from './security.helper';
+import {FhirServerBase, RequestMethod, RequestUrl, User} from './server.decorators';
+import {ConfigService} from './config.service';
+import {ITofUser} from './models/tof-request';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -29,15 +30,15 @@ import {assertEditingAllowed} from './security.helper';
 export class FhirController extends BaseController {
   private readonly logger = new TofLogger(FhirController.name);
 
-  constructor(private httpService: HttpService) {
-    super();
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string): Promise<any> {
+  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
@@ -58,7 +59,7 @@ export class FhirController extends BaseController {
     }
 
     // Make sure the resource can be edited, by the user
-    assertEditingAllowed(resource);
+    await this.assertEditingAllowed(resource, user, fhirServerBase);
 
     // Change the id of the resource
     resource.id = newId;

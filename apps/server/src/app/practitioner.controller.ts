@@ -1,15 +1,15 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {BadRequestException, Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
-import {ITofRequest, ITofUser} from './models/tof-request';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {ITofUser} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import * as nanoid from 'nanoid';
 import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
-import {getMyPractitioner} from './security.helper';
+import {ConfigService} from './config.service';
 
 @Controller('practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -20,8 +20,8 @@ export class PractitionerController extends BaseFhirController {
 
   protected readonly logger = new TofLogger(PractitionerController.name);
   
-  constructor(protected httpService: HttpService) {
-    super(httpService);
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
   }
 
   @Post('me')
@@ -85,7 +85,7 @@ export class PractitionerController extends BaseFhirController {
 
   @Get('me')
   public async getMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
-    return getMyPractitioner(this.httpService, user, fhirServerBase, resolveIfNotFound);
+    return this.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
   }
 
   @Get()

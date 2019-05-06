@@ -1,5 +1,5 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, Header, HttpService, Param, Post, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpService, Param, Post, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ITofRequest} from './models/tof-request';
@@ -7,6 +7,7 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {map} from 'rxjs/operators';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
 
 @Controller('import')
 @UseGuards(AuthGuard('bearer'))
@@ -15,8 +16,8 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 export class ImportController extends BaseController {
   readonly vsacBaseUrl = 'https://cts.nlm.nih.gov/fhir/';
 
-  constructor(private httpService: HttpService) {
-    super();
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   @Get('vsac/:resourceType/:id')

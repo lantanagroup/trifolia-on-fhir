@@ -1,12 +1,12 @@
 import {Response} from 'express';
-import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {UnauthorizedException} from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
-import * as config from 'config';
-import {IServerConfig} from './models/server-config';
+import {findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
+import {BadRequestException, HttpService, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
+import {ITofRequest, ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
-
-const serverConfig: IServerConfig = config.get('server');
+import {ConfigService} from './config.service';
+import {Bundle, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {AxiosRequestConfig} from 'axios';
 
 export interface GenericResponse {
   status?: number;
@@ -15,10 +15,15 @@ export interface GenericResponse {
   content: any;
 }
 
+export interface UserSecurityInfo {
+  user?: Practitioner;
+  groups?: Group[];
+}
+
 export class BaseController {
   private static logger = new TofLogger(BaseController.name);
 
-  constructor() {}
+  constructor(protected configService: ConfigService, protected httpService: HttpService) {}
 
   protected static handleResponse(res: Response, actual: GenericResponse) {
     if (actual.contentType) {
@@ -49,8 +54,144 @@ export class BaseController {
   }
 
   protected assertAdmin(request: ITofRequest) {
-    if (request.headers['admin-code'] !== serverConfig.adminCode) {
+    if (request.headers['admin-code'] !== this.configService.server.adminCode) {
       throw new UnauthorizedException('You are not authenticated as an admin');
     }
   }
+
+public async getMyPractitioner(user: ITofUser, fhirServerBase: string, resolveIfNotFound = false): Promise<Practitioner> {
+  let system = '';
+  let identifier = user.sub;
+
+  if (identifier.startsWith('auth0|')) {
+    system = 'https://auth0.com';
+    identifier = identifier.substring(6);
+  }
+
+  const options = <AxiosRequestConfig>{
+    url: buildUrl(fhirServerBase, 'Practitioner', null, null, {identifier: system + '|' + identifier}),
+    headers: {
+      'Cache-Control': 'no-cache'
+    }
+  };
+
+  const results = await this.httpService.request<Bundle>(options).toPromise();
+  const bundle = results.data;
+
+  if (bundle.total === 0) {
+    if (!resolveIfNotFound) {
+      throw new BadRequestException('No practitioner was found associated with the authenticated user');
+    } else {
+      return;
+    }
+  }
+
+  if (!bundle.entry) {
+    throw new InternalServerErrorException('Expected to receive entries when searching for currently logged-in user within FHIR server');
+  }
+
+  if (bundle.total > 1) {
+    new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`)
+    throw new InternalServerErrorException();
+  }
+
+  return <Practitioner> bundle.entry[0].resource;
+}
+
+public async getUserSecurityInfo(user: ITofUser, fhirServerBase: string): Promise<UserSecurityInfo> {
+  if (!this.configService.server.enableSecurity) {
+    return Promise.resolve(null);
+  }
+
+  const userSecurityInfo: UserSecurityInfo = {
+    user: await this.getMyPractitioner(user, fhirServerBase)
+  };
+
+  const groupsUrl = buildUrl(fhirServerBase, 'Group', null, null, {member: userSecurityInfo.user.id, _summary: true});
+  const groupsOptions = {
+    url: groupsUrl,
+    method: 'GET',
+    json: true,
+    headers: {
+      'Cache-Control': 'no-cache'
+    }
+  };
+
+  const groupsResults = await this.httpService.request<Bundle>(groupsOptions).toPromise();
+  userSecurityInfo.groups = (groupsResults.data.entry || []).map((entry) => <Group>entry.resource);
+
+  return userSecurityInfo;
+}
+
+public async assertViewingAllowed(resource: any, user: ITofUser, fhirServerBase: string) {
+  if (!this.configService.server.enableSecurity || findPermission(resource.meta, 'everyone', 'read')) {
+    return;
+  }
+
+  const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+
+  if (userSecurityInfo.user) {
+    if (findPermission(resource.meta, 'user', 'read', userSecurityInfo.user.id)) {
+      return;
+    }
+  }
+
+  if (userSecurityInfo.groups) {
+    const foundGroups = userSecurityInfo.groups.filter((group) => {
+      return findPermission(resource.meta, 'group', 'read', group.id);
+    });
+
+    if (foundGroups.length > 0) {
+      return;
+    }
+  }
+
+  throw new UnauthorizedException();
+}
+
+public async assertEditingAllowed(resource: any, user?: ITofUser, fhirServerBase?: string) {
+  if (!resource || !this.configService.fhir.nonEditableResources) {
+    return;
+  }
+
+  switch (resource.resourceType) {
+    case 'CodeSystem':
+      if (!this.configService.fhir.nonEditableResources.codeSystems) {
+        return;
+      }
+
+      if (this.configService.fhir.nonEditableResources.codeSystems.indexOf(resource.url) >= 0) {
+        throw new BadRequestException(`CodeSystem with URL ${resource.url} cannot be modified.`);
+      }
+      break;
+  }
+
+  if (!this.configService.server.enableSecurity || !this.httpService || !fhirServerBase || !user) {
+    return;
+  }
+
+  if (findPermission(resource.meta, 'everyone', 'write')) {
+    return;
+  }
+
+  const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+
+  if (userSecurityInfo.user) {
+    if (findPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id)) {
+      return;
+    }
+  }
+
+  if (userSecurityInfo.groups) {
+    const foundGroups = userSecurityInfo.groups.filter((group) => {
+      return findPermission(resource.meta, 'group', 'write', group.id);
+    });
+
+    if (foundGroups.length > 0) {
+      return;
+    }
+  }
+
+  throw new UnauthorizedException();
+}
 }

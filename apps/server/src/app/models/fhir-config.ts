@@ -11,7 +11,7 @@ export interface IFhirConfig {
   nonEditableResources: { [resourceType: string]: string[] };
   publishedGuides: string;
   latestPublisher: string;
-  publishedVersions: [{
+  publishedVersions?: [{
     version: string;
     url: string;
   }];

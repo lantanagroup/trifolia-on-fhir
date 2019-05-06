@@ -5,6 +5,7 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
+import {ConfigService} from './config.service';
 
 @Controller('questionnaire')
 @UseGuards(AuthGuard('bearer'))
@@ -15,8 +16,8 @@ export class QuestionnaireController extends BaseFhirController {
   
   protected readonly logger = new TofLogger(QuestionnaireController.name);
   
-  constructor(protected httpService: HttpService) {
-    super(httpService);
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
   }
 
   @Get()

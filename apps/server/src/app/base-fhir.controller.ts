@@ -1,29 +1,28 @@
 import {BaseController} from './base.controller';
 import {BadRequestException, HttpService, InternalServerErrorException} from '@nestjs/common';
-import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {assertEditingAllowed, assertViewingAllowed, getUserSecurityInfo} from './security.helper';
+import {Bundle} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ConfigService} from './config.service';
 
-import * as config from 'config';
 import * as nanoid from 'nanoid';
-
-const fhirConfig: IFhirConfig = config.get('fhir');
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
   protected readonly logger = new TofLogger(BaseFhirController.name);
   
-  constructor(protected httpService: HttpService) {
-    super();
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
-    const userSecurityInfo = await getUserSecurityInfo(this.httpService, user, fhirServerBase);
+    const userSecurityInfo = this.configService.server.enableSecurity ?
+      await this.getUserSecurityInfo(user, fhirServerBase) :
+      null;
     const preparedQuery = query || {};
     preparedQuery['_summary'] = true;
     preparedQuery['_count'] = 10;
@@ -69,7 +68,7 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
+  protected baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<Bundle> {
     return this.prepareSearchQuery(user, fhirServerBase, query)
       .then((preparedQuery) => {
         const options = <AxiosRequestConfig> {
@@ -97,7 +96,7 @@ export class BaseFhirController extends BaseController {
     try {
       const getResults = await this.httpService.request(options).toPromise();
 
-      await assertViewingAllowed(getResults.data, this.httpService, user, baseUrl);
+      await this.assertViewingAllowed(getResults.data, user, baseUrl);
 
       return getResults.data;
     } catch (ex) {
@@ -110,7 +109,7 @@ export class BaseFhirController extends BaseController {
   }
 
   protected async baseCreate(baseUrl: string, data: any, user: ITofUser) {
-    await assertEditingAllowed(data, this.httpService, user, baseUrl);
+    await this.assertEditingAllowed(data, user, baseUrl);
 
     if (!data.id) {
       data.id = nanoid(8);
@@ -163,14 +162,14 @@ export class BaseFhirController extends BaseController {
         method: 'GET'
       };
       const getResults = await this.httpService.request(getOptions).toPromise();
-      await assertEditingAllowed(getResults.data, this.httpService, user, baseUrl);
+      await this.assertEditingAllowed(getResults.data, user, baseUrl);
     } catch (ex) {
       // The resource doesn't exist yet and this is a create-on-update operation
     }
 
     // Make sure the user has granted themselves the ability to edit the resource
     // in the resource they're updating on the server
-    await assertEditingAllowed(data, this.httpService, user, baseUrl);
+    await this.assertEditingAllowed(data, user, baseUrl);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id),
@@ -186,7 +185,7 @@ export class BaseFhirController extends BaseController {
     const getUrl = buildUrl(baseUrl, this.resourceType, id);
     const getResults = await this.httpService.get(getUrl).toPromise();
 
-    await assertEditingAllowed(getResults.data, this.httpService, user, baseUrl);
+    await this.assertEditingAllowed(getResults.data, user, baseUrl);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null),

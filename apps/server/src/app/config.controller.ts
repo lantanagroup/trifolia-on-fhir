@@ -3,50 +3,41 @@ import {BaseController} from './base.controller';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {IServerConfig} from './models/server-config';
-import {IFhirConfig} from './models/fhir-config';
-import {IAuthConfig} from './models/auth-config';
-import {IGithubConfig} from './models/github-config';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
-import * as config from 'config';
-import * as modulePackage from '../../../../package.json';
 import {ApiUseTags} from '@nestjs/swagger';
-
-const serverConfig: IServerConfig = config.get('server');
-const fhirConfig: IFhirConfig = config.get('fhir');
-const authConfig: IAuthConfig = config.get('auth');
-const githubConfig: IGithubConfig = config.get('github');
+import {ConfigService} from './config.service';
+import * as modulePackage from '../../../../package.json';
 
 @Controller('config')
 @ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
   
-  constructor(private httpService: HttpService) {
-    super();
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(configService, httpService);
   }
 
   @Get()
   public getConfig() {
-    if (!fhirConfig.servers) {
+    if (!this.configService.fhir.servers) {
       throw new InvalidModuleConfigException('FHIR servers have not been configured on this server');
     }
 
     const retConfig: ConfigModel = {
       version: modulePackage.version,
-      supportUrl: serverConfig.supportUrl,
-      fhirServers: fhirConfig.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
-      enableSecurity: serverConfig.enableSecurity,
+      supportUrl: this.configService.server.supportUrl,
+      fhirServers: this.configService.fhir.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
+      enableSecurity: this.configService.server.enableSecurity,
       auth: {
-        clientId: authConfig.clientId,
-        scope: authConfig.scope,
-        domain: authConfig.domain
+        clientId: this.configService.auth.clientId,
+        scope: this.configService.auth.scope,
+        domain: this.configService.auth.domain
       },
       github: {
-        clientId: githubConfig.clientId
+        clientId: this.configService.github.clientId
       },
-      nonEditableResources: fhirConfig.nonEditableResources
+      nonEditableResources: this.configService.fhir.nonEditableResources
     };
 
     return retConfig;

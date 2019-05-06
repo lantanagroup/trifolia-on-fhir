@@ -113,7 +113,7 @@ export class AuthService {
           });
       } else if (err) {
         this.router.navigate(['/home']);
-        console.log(err);
+        console.error(err);
       }
     });
   }

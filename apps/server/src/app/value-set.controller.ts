@@ -10,6 +10,7 @@ import {TofLogger} from './tof-logger';
 import * as config from 'config';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
+import {ConfigService} from './config.service';
 
 const fhirConfig: IFhirConfig = config.get('fhir');
 
@@ -22,8 +23,8 @@ export class ValueSetController extends BaseFhirController {
   
   protected readonly logger = new TofLogger(ValueSetController.name);
   
-  constructor(protected httpService: HttpService) {
-    super(httpService);
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
   }
 
   @Get(':id/expand')
