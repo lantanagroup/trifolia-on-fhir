@@ -59,7 +59,7 @@ export function reduceDistinct<T>(callback: (next: T) => any) {
 export function groupBy(items: any[], callback: (next: any) => any): { [key: string]: any} {
   const groups = {};
 
-  items.forEach((next) => {
+  (items || []).forEach((next) => {
     let key = callback(next);
 
     if (key) {
