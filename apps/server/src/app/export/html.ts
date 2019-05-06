@@ -25,13 +25,9 @@ import {HttpService, Logger} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import * as config from 'config';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
-
-const fhirConfig = <IFhirConfig> config.get('fhir');
-const serverConfig = <IServerConfig> config.get('server');
 
 interface TableOfContentsEntry {
   level: number;
@@ -96,10 +92,13 @@ export class HtmlExporter {
   readonly io: Server;
   readonly socketId: string;
   readonly implementationGuideId: string;
+  readonly serverConfig: IServerConfig;
+  readonly fhirConfig: IFhirConfig;
 
   private packageId: string;
 
-  constructor(httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
+  // TODO: Refactor so that there aren't so many constructor params
+  constructor(serverConfig: IServerConfig, fhirConfig: IFhirConfig, httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
     this.httpService = httpService;
     this.logger = logger;
     this.fhirServerBase = fhirServerBase;
@@ -430,14 +429,14 @@ export class HtmlExporter {
       const defaultFilePath = path.join(defaultPath, fileName);
 
       if (useLatest === true) {
-        this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + fhirConfig.latestPublisher);
+        this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
 
         this.sendSocketMessage('progress', 'Downloading latest FHIR IG publisher');
 
         // TODO: Check http://build.fhir.org/version.info first
 
         // TODO: Set config on GET request to return binary
-        this.httpService.get(fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise()
+        this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise()
           .then((results) => {
             this.logger.log('Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists');
 
@@ -784,7 +783,7 @@ export class HtmlExporter {
   }
 
   public export(format: string, executeIgPublisher: boolean, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
-    if (!fhirConfig.servers) {
+    if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
 
@@ -792,7 +791,7 @@ export class HtmlExporter {
       const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
       const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
       const homedir = require('os').homedir();
-      const fhirServerConfig = fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
+      const fhirServerConfig = this.fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
       let control;
       let implementationGuideResource;
 
@@ -910,11 +909,11 @@ export class HtmlExporter {
                 return;
               }
 
-              const deployDir = path.resolve(serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, implementationGuideResource.id);
+              const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, implementationGuideResource.id);
               fs.ensureDirSync(deployDir);
 
               const igPublisherVersion = useLatest ? 'latest' : 'default';
-              const process = serverConfig.javaLocation || 'java';
+              const process = this.serverConfig.javaLocation || 'java';
               const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
 
               if (!useTerminologyServer) {

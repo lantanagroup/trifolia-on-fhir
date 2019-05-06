@@ -130,7 +130,18 @@ export class ExportController extends BaseController {
 
   private exportHtml(baseFhirServer: string, fhirServerId: string, fhirVersion: string, fhir: Fhir, io: SocketIO.Server, implementationGuideId: string, options: ExportOptions) {
     return new Promise<GenericResponse>((resolve, reject) => {
-      const exporter = new HtmlExporter(this.httpService, this.logger, baseFhirServer, fhirServerId, fhirVersion, fhir, io, options.socketId, implementationGuideId);
+      const exporter = new HtmlExporter(
+        this.configService.server,
+        this.configService.fhir,
+        this.httpService,
+        this.logger,
+        baseFhirServer,
+        fhirServerId,
+        fhirVersion,
+        fhir,
+        io,
+        options.socketId,
+        implementationGuideId);
 
       ExportController.htmlExports.push(exporter);
 

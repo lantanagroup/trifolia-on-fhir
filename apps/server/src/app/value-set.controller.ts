@@ -3,16 +3,12 @@ import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req
 import {ITofRequest} from './models/tof-request';
 import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {IFhirConfig} from './models/fhir-config';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import * as config from 'config';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
-
-const fhirConfig: IFhirConfig = config.get('fhir');
 
 @Controller('valueSet')
 @UseGuards(AuthGuard('bearer'))
@@ -45,7 +41,7 @@ export class ValueSetController extends BaseFhirController {
           this.logger.log('Retrieved value set content for expand');
 
           const expandOptions = {
-            url: buildUrl(fhirConfig.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
+            url: buildUrl(this.configService.fhir.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
             method: 'POST',
             data: valueSet
           };

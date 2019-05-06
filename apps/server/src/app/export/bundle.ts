@@ -1,20 +1,9 @@
 import {Fhir} from 'fhir/fhir';
-import {
-  Bundle,
-  DomainResource,
-  Extension,
-  ImplementationGuide as STU3ImplementationGuide,
-  OperationOutcome
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, DomainResource, Extension} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuidePageComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {HttpService, Logger} from '@nestjs/common';
-import * as config from 'config';
-import {IFhirConfig} from '../models/fhir-config';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
-import {buildUrl, joinUrl, parseUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-
-const fhirConfig: IFhirConfig = config.get('fhir');
+import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export class BundleExporter {
   readonly httpService: HttpService;

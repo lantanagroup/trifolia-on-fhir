@@ -1,7 +1,5 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
-import {IServerConfig} from './app/models/server-config';
-import {IFhirConfig} from './app/models/fhir-config';
 import {getFhirR4Instance, getFhirStu3Instance} from '../../../libs/tof-lib/src/lib/fhirHelper';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Response} from 'express';
@@ -15,14 +13,11 @@ import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
-import * as config from 'config';
 import * as fs from 'fs-extra';
 import * as modulePackage from '../../../package.json';
-import {IAuthConfig} from './app/models/auth-config';
+import {ConfigService} from './app/config.service';
 
-const serverConfig: IServerConfig = config.get('server');
-const fhirConfig: IFhirConfig = config.get('fhir');
-const authConfig: IAuthConfig = config.get('auth');
+const config = new ConfigService();
 
 const logger = new TofLogger('main');
 const fhirStu3 = getFhirStu3Instance();
@@ -31,22 +26,22 @@ const connections: ISocketConnection[] = [];
 let io;
 
 const loadTofRequest = (req: ITofRequest, res: Response, next) => {
-  if (!fhirConfig.servers || !fhirConfig.servers.length) {
+  if (!config.fhir.servers || !config.fhir.servers.length) {
     throw new InvalidModuleConfigException('This server is not configured with any FHIR servers');
   }
 
-  req.fhirServerId = req.headers['fhirserver'] || fhirConfig.servers[0].id;
-  req.fhirServerBase = fhirConfig.servers[0].uri;
-  req.fhirServerVersion = fhirConfig.servers[0].version;
+  req.fhirServerId = req.headers['fhirserver'] || config.fhir.servers[0].id;
+  req.fhirServerBase = config.fhir.servers[0].uri;
+  req.fhirServerVersion = config.fhir.servers[0].version;
   req.io = io;
   req.ioConnections = connections;
 
-  if (!fhirConfig.servers) {
+  if (!config.fhir.servers) {
     throw new InvalidModuleConfigException('FHIR servers have not been configured on the server');
   }
 
   if (req.fhirServerId) {
-    const foundFhirServer = fhirConfig.servers.find((server) => server.id === req.fhirServerId);
+    const foundFhirServer = config.fhir.servers.find((server) => server.id === req.fhirServerId);
 
     if (!foundFhirServer) {
       throw new BadRequestException('The ID of the fhir server specified by the "fhirserver" header is not valid.');
@@ -190,10 +185,10 @@ async function bootstrap() {
   app.use(loadTofRequest);
   app.use(parseFhirBody);
 
-  const hostname = serverConfig.hostname || 'localhost';
-  const port = process.env.port || serverConfig.port || 3333;
+  const hostname = config.server.hostname || 'localhost';
+  const port = process.env.port || config.server.port || 3333;
   const swaggerPort = port !== 80 ? ':' + port : '';
-  const publishedIgsDirectory = path.join(serverConfig.publishedIgsDirectory || __dirname, 'igs');
+  const publishedIgsDirectory = path.join(config.server.publishedIgsDirectory || __dirname, 'igs');
   fs.ensureDirSync(publishedIgsDirectory);
 
   app.useStaticAssets(publishedIgsDirectory, { prefix: '/igs' });
@@ -203,13 +198,13 @@ async function bootstrap() {
     .setTitle('Trifolia-on-FHIR API')
     .setVersion(modulePackage.version)
     .setBasePath('/api')
-    .addOAuth2('implicit', `https://${authConfig.domain}/authorize`, `https://${authConfig.domain}/oauth/token`)
+    .addOAuth2('implicit', `https://${config.auth.domain}/authorize`, `https://${config.auth.domain}/oauth/token`)
     .build();
   const document = fixSwagger(SwaggerModule.createDocument(app, options));
   SwaggerModule.setup('api-docs', app, document, {
     swaggerOptions: {
       oauth: {
-        clientId: authConfig.clientId
+        clientId: config.auth.clientId
       },
       oauth2RedirectUrl: `http://${hostname}${swaggerPort}/api-docs/oauth2-redirect.html`
     }
