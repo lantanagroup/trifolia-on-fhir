@@ -15,6 +15,7 @@ import {ContentModel, GithubService} from '../shared/github.service';
 import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
 import {forkJoin} from 'rxjs';
 import {v4 as uuidv4} from 'uuid';
+import {saveAs} from 'file-saver';
 
 enum ContentTypes {
   Json = 0,
@@ -195,6 +196,22 @@ export class ImportComponent implements OnInit {
       });
 
     return bundle;
+  }
+
+  public downloadBundle(format: 'json'|'xml') {
+    let content, contentBlob;
+
+    switch (format) {
+      case 'json':
+        content = JSON.stringify(this.importBundle, null, '\t');
+        contentBlob = new Blob([content], {type: 'application/json'});
+        saveAs(contentBlob, 'importBundle.json');
+        break;
+      case 'xml':
+        content = this.fhirService.serialize(this.importBundle);
+        contentBlob = new Blob([content], {type: 'application/xml'});
+        saveAs(contentBlob, 'importBundle.xml');
+    }
   }
 
   public getDisplayImportBundle(): Bundle {

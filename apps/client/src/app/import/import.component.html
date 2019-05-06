@@ -37,13 +37,13 @@
                 <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
                 <ngb-tabset #n="ngbTabset" [destroyOnHide]="false">
                     <ngb-tab id="importBundleJson">
-                        <ng-template ngbTabTitle>JSON</ng-template>
+                        <ng-template ngbTabTitle>JSON <i class="fas fa-download" (click)="downloadBundle('json')"></i></ng-template>
                         <ng-template ngbTabContent>
                             <pre>{{getDisplayImportBundle() | json}}</pre>
                         </ng-template>
                     </ngb-tab>
                     <ngb-tab id="importBundleXml">
-                        <ng-template ngbTabTitle>XML</ng-template>
+                        <ng-template ngbTabTitle>XML <i class="fas fa-download" (click)="downloadBundle('xml')"></i></ng-template>
                         <ng-template ngbTabContent>
                             <pre>{{getDisplayImportBundle() | fhirXml}}</pre>
                         </ng-template>
