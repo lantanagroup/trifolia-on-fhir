@@ -1,18 +1,31 @@
-import {ImplementationGuideController} from './implementation-guide.controller';
+import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
-import {HttpModule} from '@nestjs/common';
+import {Controller, HttpModule, HttpService} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ConfigService} from './config.service';
 import nock = require('nock');
 import http = require('axios/lib/adapters/http');
-import {ConfigService} from './config.service';
 
 nock.disableNetConnect();
 
-const configService = new ConfigService();
+const mockConfigService = new ConfigService();
 
-describe('ImplementationGuideController', () => {
-  let igController: ImplementationGuideController;
+@Controller('test')
+class TestController extends BaseFhirController {
+  resourceType = 'ImplementationGuide';     // No particular reason to use ImplementationGuide
+
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
+  }
+
+  public search(user: ITofUser, fhirServerBase: string, query?: any) {
+    return super.baseSearch(user, fhirServerBase, query);
+  }
+}
+
+describe('BaseFhirController', () => {
+  let testController: TestController;
   let app: TestingModule;
   const userPractitionerResponse = {
     "resourceType": "Bundle",
@@ -55,25 +68,25 @@ describe('ImplementationGuideController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      controllers: [ImplementationGuideController],
+      controllers: [TestController],
       providers: [{
         provide: ConfigService,
-        useValue: configService
+        useValue: mockConfigService
       }],
       imports: [HttpModule.register({
         adapter: http
       })]
     }).compile();
-    igController = app.get<ImplementationGuideController>(ImplementationGuideController);
+    testController = app.get<TestController>(TestController);
   });
 
   describe('security disabled', () => {
     beforeEach(() => {
-      configService.server.enableSecurity = false;
+      mockConfigService.server.enableSecurity = false;
     });
 
     it('should search without security tags',  (done) => {
-      igController.search(testUser, 'http://test.com/fhir')
+      testController.search(testUser, 'http://test.com/fhir')
         .then(() => done())
         .catch((err) => done(err));
 
@@ -95,11 +108,11 @@ describe('ImplementationGuideController', () => {
 
   describe('security enabled',  () => {
     beforeEach(() => {
-      configService.server.enableSecurity = true;
+      mockConfigService.server.enableSecurity = true;
     });
 
     it('should search with security tags',  (done) => {
-      igController.search(testUser, 'http://test.com/fhir')
+      testController.search(testUser, 'http://test.com/fhir')
         .then(() => done())
         .catch((err) => done(err));
 
