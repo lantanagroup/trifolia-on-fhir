@@ -6,7 +6,7 @@ export interface IServerConfig {
   googleAnalyticsCode?: string;
   javaLocation?: string;
   logFileName?: string;
-  logLevel?: 'all'|'warn'|'error';
+  logLevel?: 'all'|'trace'|'warn'|'error';
   publishedIgsDirectory?: string;
   enableSecurity: boolean;
 }

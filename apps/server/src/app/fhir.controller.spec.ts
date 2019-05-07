@@ -1,65 +1,69 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {FhirController} from './fhir.controller';
 import {HttpModule} from '@nestjs/common';
-import nock = require('nock');
-import http = require('axios/lib/adapters/http');
 import {ConfigService} from './config.service';
 import {ITofUser} from './models/tof-request';
+import nock = require('nock');
+import http = require('axios/lib/adapters/http');
+import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
+import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
+import {StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 
-jest.mock('config', () => {
-  return {
-    get: (config: string) => {
-      return {};
-    }
-  };
-});
+nock.disableNetConnect();
 
 describe('FhirController', () => {
   let app: TestingModule;
   let controller: FhirController;
+  const userPractitionerResponse = createUserPractitionerResponse();
+  const userGroupResponse = createUserGroupResponse();
+  const testUser = createTestUser();
+  const configService = new ConfigService();
 
   beforeAll(async () => {
+    configService.server.enableSecurity = true;
     app = await Test.createTestingModule({
       controllers: [FhirController],
       providers: [{
         provide: ConfigService,
-        useValue: new ConfigService()
+        useValue: configService
       }],
       imports: [HttpModule.register({
         adapter: http
       })]
     }).compile();
     controller = app.get<FhirController>(FhirController);
-
-    nock.disableNetConnect();
   });
 
   describe('change-id', () => {
     it('should change the id of a resource', async () => {
       const fhirServer = 'http://test-fhir-server.com';
-      const getRequest = nock(fhirServer)
+      const persistedResource = new StructureDefinition({
+        resourceType: 'StructureDefinition',
+        id: 'test',
+        meta: {}
+      });
+
+      addPermission(persistedResource.meta, 'everyone', 'write');
+
+      const req = nock(fhirServer)
         .get('/StructureDefinition/test')
-        .reply(200, { id: 'test' });
-      const putRequest = nock(fhirServer)
+        .reply(200, persistedResource)
+        .get('/Practitioner')
+        .query({ identifier: 'https://auth0.com|test.user' })
+        .reply(200, userPractitionerResponse)
+        .get('/Group')
+        .query({ member: 'test-user-id', '_summary': 'true' })
+        .reply(200, userGroupResponse)
         .put('/StructureDefinition/new-test-id')
-        .reply(200);
-      const deleteRequest = nock(fhirServer)
+        .reply(200)
         .delete('/StructureDefinition/test')
         .reply(200);
 
-      const user: ITofUser = {
-        clientID: 'test',
-        email: 'test@test.com',
-        name: 'test',
-        sub: 'auth0|test'
-      };
+      const results = await controller.changeId(fhirServer, 'StructureDefinition', 'test', 'new-test-id', testUser);
 
-      const results = await controller.changeId(fhirServer, 'StructureDefinition', 'test', 'new-test-id', user);
+      req.done();
 
       expect(results).toBeTruthy();
-      getRequest.done();
-      putRequest.done();
-      deleteRequest.done();
     });
   });
 });

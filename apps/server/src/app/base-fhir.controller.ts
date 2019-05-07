@@ -109,7 +109,9 @@ export class BaseFhirController extends BaseController {
   }
 
   protected async baseCreate(baseUrl: string, data: any, user: ITofUser) {
-    await this.assertEditingAllowed(data, user, baseUrl);
+    // Make sure the user has granted themselves permissions to edit their own creation
+    const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
+    this.assertUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
       data.id = nanoid(8);
@@ -154,22 +156,28 @@ export class BaseFhirController extends BaseController {
   }
 
   protected async baseUpdate(baseUrl: string, id: string, data: any, user: ITofUser): Promise<any> {
+    const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
+
     // Make sure the user can modify the resource based on the permissions
     // stored on the server, first
     try {
+      this.logger.trace(`Getting existing ${this.resourceType} to check permissions`);
       const getOptions = <AxiosRequestConfig> {
         url: buildUrl(baseUrl, this.resourceType, id),
         method: 'GET'
       };
       const getResults = await this.httpService.request(getOptions).toPromise();
-      await this.assertEditingAllowed(getResults.data, user, baseUrl);
+
+      this.logger.trace('Checking permissions');
+      this.assertUserCanEdit(userSecurityInfo, getResults.data);
     } catch (ex) {
       // The resource doesn't exist yet and this is a create-on-update operation
     }
 
     // Make sure the user has granted themselves the ability to edit the resource
     // in the resource they're updating on the server
-    await this.assertEditingAllowed(data, user, baseUrl);
+    this.logger.trace(`Checking that user has granted themselves permissions in the new version of the ${this.resourceType}`);
+    this.assertUserCanEdit(userSecurityInfo, data);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id),
@@ -177,6 +185,7 @@ export class BaseFhirController extends BaseController {
       data: data
     };
 
+    this.logger.trace(`Updating the ${this.resourceType} on the FHIR server`);
     const updateResults = await this.httpService.request(options).toPromise();
     return updateResults.data;
   }
@@ -185,7 +194,8 @@ export class BaseFhirController extends BaseController {
     const getUrl = buildUrl(baseUrl, this.resourceType, id);
     const getResults = await this.httpService.get(getUrl).toPromise();
 
-    await this.assertEditingAllowed(getResults.data, user, baseUrl);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
+    await this.assertUserCanEdit(userSecurityInfo, getResults.data);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null),

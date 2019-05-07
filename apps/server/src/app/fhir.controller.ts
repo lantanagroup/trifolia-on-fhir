@@ -59,7 +59,8 @@ export class FhirController extends BaseController {
     }
 
     // Make sure the resource can be edited, by the user
-    await this.assertEditingAllowed(resource, user, fhirServerBase);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    this.assertUserCanEdit(userSecurityInfo, resource);
 
     // Change the id of the resource
     resource.id = newId;

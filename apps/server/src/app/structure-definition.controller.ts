@@ -210,7 +210,8 @@ export class StructureDefinitionController extends BaseFhirController {
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    await this.assertEditingAllowed(igResults.data, user, fhirServerBase);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    this.assertUserCanEdit(userSecurityInfo, implementationGuide);
 
     if (fhirServerVersion !== 'stu3') {        // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -289,7 +290,8 @@ export class StructureDefinitionController extends BaseFhirController {
     const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     const implementationGuide = igResults.data;
 
-    await this.assertEditingAllowed(implementationGuide, user, fhirServerBase);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    this.assertUserCanEdit(userSecurityInfo, implementationGuide);
 
     if (fhirServerVersion !== 'stu3') {                // r4+
       const r4 = <R4ImplementationGuide>implementationGuide;
@@ -336,7 +338,8 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   private async saveStructureDefinition(fhirServerBase: string, fhirServerVersion: string, id: string, structureDefinition: StructureDefinition, user: ITofUser, options?: StructureDefinitionOptions) {
-    await this.assertEditingAllowed(structureDefinition, user, fhirServerBase);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    this.assertUserCanEdit(userSecurityInfo, structureDefinition);
 
     if (!structureDefinition) {
       throw new BadRequestException();
