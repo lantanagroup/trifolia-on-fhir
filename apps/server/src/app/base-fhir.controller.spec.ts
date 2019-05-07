@@ -35,6 +35,10 @@ class TestController extends BaseFhirController {
   public update(fhirServerBase: string, id: string, data: any, user: ITofUser) {
     return super.baseUpdate(fhirServerBase, id, data, user);
   }
+
+  public delete(fhirServerBase: string, id:  string, user: ITofUser) {
+    return super.baseDelete(fhirServerBase, id, user);
+  }
 }
 
 describe('BaseFhirController', () => {
@@ -264,8 +268,69 @@ describe('BaseFhirController', () => {
       });
     });
 
-    describe('update', () => {
+    describe('delete', () => {
       it('should fail when the user doesn\'t have permissions', async () => {
+        const persistedResource = {
+          resourceType: 'ImplementationGuide',
+          id: 'test-id'
+        };
+
+        const req = nock(fhirServerBase)
+          .get('/ImplementationGuide/test-id')
+          .reply(200, persistedResource)
+          // to check permissions on persisted IG
+          .get('/Practitioner')
+          .query({ identifier: 'https://auth0.com|test.user' })
+          .reply(200, userPractitionerResponse)
+          .get('/Group')
+          .query({ member: 'test-user-id', '_summary': 'true' })
+          .reply(200, userGroupResponse);
+
+        try {
+          await testController.delete(fhirServerBase, 'test-id', testUser);
+          throw new Error('Expected UnauthorizedException to be thrown.');
+        } catch (ex) {
+          expect(ex.response).toBeTruthy();
+          expect(ex.response.statusCode).toBe(401);
+          expect(ex.response.error).toBe('Unauthorized');
+        }
+
+        req.done();
+      });
+
+      it('should succeed when the user has permissions', async () => {
+        const persistedResource = {
+          resourceType: 'ImplementationGuide',
+          id: 'test-id',
+          meta: {
+            security: [
+              { code: 'user^test-user-id^read' },
+              { code: 'user^test-user-id^write' }
+            ]
+          }
+        };
+
+        const req = nock(fhirServerBase)
+          .get('/ImplementationGuide/test-id')
+          .reply(200, persistedResource)
+          // to check permissions on persisted IG
+          .get('/Practitioner')
+          .query({ identifier: 'https://auth0.com|test.user' })
+          .reply(200, userPractitionerResponse)
+          .get('/Group')
+          .query({ member: 'test-user-id', '_summary': 'true' })
+          .reply(200, userGroupResponse)
+          .delete('/ImplementationGuide/test-id')
+          .reply(200);
+
+        await testController.delete(fhirServerBase, 'test-id', testUser);
+
+        req.done();
+      });
+    });
+
+    describe('update', () => {
+      it('should fail when the user doesn\'t have permissions in the resource their updating', async () => {
         const resourceUpdates = {
           resourceType: 'ImplementationGuide',
           id: 'test-id',
