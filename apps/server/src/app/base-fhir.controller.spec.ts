@@ -124,9 +124,105 @@ describe('BaseFhirController', () => {
     });
 
     describe('create', () => {
-      it('should add permissions for the user', async () => {
+      it('should add read/write permissions for the user', async () => {
         const newResource = {
           resourceType: 'ImplementationGuide',
+          name: 'test'
+        };
+
+        const req = nock(fhirServerBase)
+          // to check permissions on persisted IG
+          .get('/Practitioner')
+          .query({ identifier: 'https://auth0.com|test.user' })
+          .reply(200, userPractitionerResponse)
+          .get('/Group')
+          .query({ member: 'test-user-id', '_summary': 'true' })
+          .reply(200, userGroupResponse)
+          // Request to FHIR server to update the resource
+          .put('/ImplementationGuide/test-new-id', (body: ImplementationGuide) => {
+            expect(body).toBeTruthy();
+            expect(body.meta).toBeTruthy();
+            expect(body.meta.security).toBeTruthy();
+            expect(body.meta.security.length).toBe(2);    // both read and write
+            expect(body.meta.security[0].code).toBe('user^test-user-id^read');
+            expect(body.meta.security[1].code).toBe('user^test-user-id^write');
+            return true;
+          })
+          .reply(201, newResource, {
+            'Content-Location': `${fhirServerBase}/ImplementationGuide/test-new-id/_history/1`
+          })
+          // Request to FHIR server after the resource has been updated
+          .get('/ImplementationGuide/test-new-id/_history/1')
+          .reply(200, {
+            resourceType: 'ImplementationGuide',
+            id: 'test-new-id',
+            name: 'test'
+          });
+
+        const results = <ImplementationGuide> await testController.create(testUser, fhirServerBase, newResource);
+
+        req.done();
+
+        expect(results).toBeTruthy();
+        expect(results.id).toBe('test-new-id');
+      });
+
+      it('should add read permissions for the user', async () => {
+        const newResource = {
+          resourceType: 'ImplementationGuide',
+          meta: {
+            security: [{
+              code: 'user^test-user-id^write'
+            }]
+          },
+          name: 'test'
+        };
+
+        const req = nock(fhirServerBase)
+        // to check permissions on persisted IG
+          .get('/Practitioner')
+          .query({ identifier: 'https://auth0.com|test.user' })
+          .reply(200, userPractitionerResponse)
+          .get('/Group')
+          .query({ member: 'test-user-id', '_summary': 'true' })
+          .reply(200, userGroupResponse)
+          // Request to FHIR server to update the resource
+          .put('/ImplementationGuide/test-new-id', (body: ImplementationGuide) => {
+            expect(body).toBeTruthy();
+            expect(body.meta).toBeTruthy();
+            expect(body.meta.security).toBeTruthy();
+            expect(body.meta.security.length).toBe(2);    // both read and write
+            expect(body.meta.security[0].code).toBe('user^test-user-id^write');
+            expect(body.meta.security[1].code).toBe('user^test-user-id^read');
+            return true;
+          })
+          .reply(201, newResource, {
+            'Content-Location': `${fhirServerBase}/ImplementationGuide/test-new-id/_history/1`
+          })
+          // Request to FHIR server after the resource has been updated
+          .get('/ImplementationGuide/test-new-id/_history/1')
+          .reply(200, {
+            resourceType: 'ImplementationGuide',
+            id: 'test-new-id',
+            name: 'test'
+          });
+
+        const results = <ImplementationGuide> await testController.create(testUser, fhirServerBase, newResource);
+
+        req.done();
+
+        expect(results).toBeTruthy();
+        expect(results.id).toBe('test-new-id');
+      });
+
+      it('should add write permissions for the user', async () => {
+        const newResource = {
+          resourceType: 'ImplementationGuide',
+          meta: {
+            security: [{
+              code: 'user^test-user-id^read'
+            }]
+          },
           name: 'test'
         };
 

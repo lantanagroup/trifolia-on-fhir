@@ -160,7 +160,7 @@ export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permi
   const delim = Globals.securityDelim;
 
   // Write permissions should always assume read permissions as well
-  if (permission === 'write') {
+  if (permission === 'write' && !findPermission(meta, type, 'read', id)) {
     addPermission(meta, type, 'read', id);
   }
 

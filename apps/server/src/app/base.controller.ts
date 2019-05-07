@@ -193,6 +193,16 @@ export class BaseController {
     throw new UnauthorizedException();
   }
 
+  protected userHasPermission(userSecurityInfo: UserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+    const foundEveryone = findPermission(resource.meta, 'everyone', permission);
+    const foundGroup = userSecurityInfo.groups.find((group) => {
+      return findPermission(resource.meta, 'group', permission, group.id);
+    });
+    const foundUser = findPermission(resource.meta, 'user', permission, userSecurityInfo.user.id);
+
+    return foundEveryone || foundGroup || foundUser;
+  }
+
   protected ensureUserCanEdit(userSecurityInfo: UserSecurityInfo, resource: DomainResource) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
       return;
@@ -201,13 +211,13 @@ export class BaseController {
     resource.meta = resource.meta || {};
     resource.meta.security = resource.meta.security || [];
 
-    const foundEveryone = findPermission(resource.meta, 'everyone', 'write');
-    const foundGroup = userSecurityInfo.groups.find((group) => {
-      return findPermission(resource.meta, 'group', 'write', group.id);
-    });
-    const foundUser = findPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
+    // Make sure user can read
+    if (!this.userHasPermission(userSecurityInfo, 'read', resource)) {
+      addPermission(resource.meta, 'user', 'read', userSecurityInfo.user.id);
+    }
 
-    if (!foundEveryone && !foundGroup && !foundUser) {
+    // Make sure user can write
+    if (!this.userHasPermission(userSecurityInfo, 'write', resource)) {
       addPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
     }
   }
