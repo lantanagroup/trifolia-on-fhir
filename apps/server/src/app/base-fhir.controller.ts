@@ -6,10 +6,10 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {Bundle} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 
-import * as nanoid from 'nanoid';
+import nanoid from 'nanoid';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -108,27 +108,30 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  protected async baseCreate(baseUrl: string, data: any, user: ITofUser) {
-    // Make sure the user has granted themselves permissions to edit their own creation
+  protected async baseCreate(baseUrl: string, data: DomainResource, user: ITofUser) {
+    if (!data.resourceType) {
+      throw new BadRequestException('Expected a FHIR resource');
+    }
+
     const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
-    this.assertUserCanEdit(userSecurityInfo, data);
+    this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
       data.id = nanoid(8);
-    }
-
-    const existsOptions = <AxiosRequestConfig> {
-      url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
-      method: 'GET'
-    };
-
-    try {
+    } else {
       // Make sure the resource doesn't already exist with the same id
-      await this.httpService.request(existsOptions).toPromise();
-      this.logger.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
-      throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
-    } catch (ex) {
-      // A 404 not found exception SHOULD be thrown
+      try {
+        const existsOptions = <AxiosRequestConfig> {
+          url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
+          method: 'GET'
+        };
+
+        await this.httpService.request(existsOptions).toPromise();
+        this.logger.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
+        throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
+      } catch (ex) {
+        // A 404 not found exception SHOULD be thrown
+      }
     }
 
     const createOptions = <AxiosRequestConfig> {

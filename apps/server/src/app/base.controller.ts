@@ -1,10 +1,10 @@
 import {Response} from 'express';
-import {findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
+import {addPermission, findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {BadRequestException, HttpService, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
 import {ITofRequest, ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
-import {Bundle, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 
@@ -191,5 +191,24 @@ export class BaseController {
     }
 
     throw new UnauthorizedException();
+  }
+
+  protected ensureUserCanEdit(userSecurityInfo: UserSecurityInfo, resource: DomainResource) {
+    if (!this.configService.server.enableSecurity || !userSecurityInfo) {
+      return;
+    }
+
+    resource.meta = resource.meta || {};
+    resource.meta.security = resource.meta.security || [];
+
+    const foundEveryone = findPermission(resource.meta, 'everyone', 'write');
+    const foundGroup = userSecurityInfo.groups.find((group) => {
+      return findPermission(resource.meta, 'group', 'write', group.id);
+    });
+    const foundUser = findPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
+
+    if (!foundEveryone && !foundGroup && !foundUser) {
+      addPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
+    }
   }
 }
