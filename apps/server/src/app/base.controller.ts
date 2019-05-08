@@ -221,4 +221,36 @@ export class BaseController {
       addPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
     }
   }
+
+  protected async removePermissions(fhirServiceBase: string, originalResource: DomainResource, newResource: DomainResource) {
+    if (!originalResource) {
+      return;
+    }
+
+    const originalSecurity = originalResource.meta && originalResource.meta.security ?
+      originalResource.meta.security : [];
+    const newSecurity = newResource.meta && newResource.meta.security ?
+      newResource.meta.security : [];
+    const securitiesToRemove = originalSecurity.filter((security) => {
+      // Only return security entries that are not found in the new resource
+      return !newSecurity.find((next) => next.code === security.code);
+    });
+    const url = buildUrl(fhirServiceBase, newResource.resourceType, newResource.id, '$meta-delete');
+
+    const promises = securitiesToRemove.map((securityToRemove) => {
+      const parameters = {
+        resourceType: 'Parameters',
+        parameter: [{
+          name: 'meta',
+          valueMeta: {
+            security: securityToRemove
+          }
+        }]
+      };
+
+      return this.httpService.post(url, parameters).toPromise();
+    });
+
+    return await Promise.all(promises);
+  }
 }

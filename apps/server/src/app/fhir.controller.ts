@@ -1,18 +1,5 @@
-import {BaseController} from './base.controller';
-import {
-  All,
-  BadRequestException, Body,
-  Controller,
-  Header,
-  Headers,
-  HttpCode,
-  HttpService,
-  InternalServerErrorException,
-  Param,
-  Post, Query,
-  Res,
-  UseGuards
-} from '@nestjs/common';
+import {BaseController, UserSecurityInfo} from './base.controller';
+import {All, BadRequestException, Body, Controller, Header, Headers, HttpCode, HttpService, InternalServerErrorException, Param, Post, Query, Res, UseGuards} from '@nestjs/common';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
@@ -22,6 +9,10 @@ import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {ITofUser} from './models/tof-request';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {parseFhirUrl} from './helper';
+import {Bundle, DomainResource, EntryComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import nanoid from 'nanoid';
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -89,16 +80,86 @@ export class FhirController extends BaseController {
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
   }
 
+  private async processTransactionEntry(entry: EntryComponent, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+    // Make sure the user has permission to edit the pre-existing resource
+    if (entry.request.method !== 'POST') {
+      const id = entry.resource.id;
+
+      if (!id) {
+        throw new BadRequestException('Transaction entry with a request method of PUT must specify Resource.id');
+      }
+
+      let originalResource;
+      const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
+
+      try {
+        originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+        this.assertUserCanEdit(userSecurityInfo, originalResource);
+      } catch (ex) {
+        if (ex.status !== 404) {
+          throw ex;
+        }
+
+        // Do nothing if the resource is not found... That means this is a create-with-id request
+      }
+
+      await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+    }
+
+    if (entry.request.method === 'POST' && !entry.resource.id) {
+      entry.resource.id = nanoid(8);
+    }
+
+    // Make sure the user has given themselves permissions to edit
+    // the resource they are requesting to be updated
+    if (entry.resource) {
+      this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+    }
+
+    const url = fhirServerBase +
+      (!fhirServerBase.endsWith('/') ? '/' : '') +
+      (entry.request.url.startsWith('/') ? entry.request.url.substring(1) : entry.request.url);
+    const options = {
+      url: url,
+      method: entry.request.method,
+      data: entry.resource
+    };
+
+    return this.httpService.request(options).toPromise();
+  }
+
+  private async processTransaction(bundle: Bundle, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+    if (!bundle || bundle.resourceType !== 'Bundle' || ['batch', 'transaction'].indexOf(bundle.type) < 0) {
+      throw new BadRequestException();
+    }
+
+    // Make sure each entry has a request.url
+    (bundle.entry || []).forEach((entry) => {
+      if (!entry.request || !entry.request.url || !entry.request.method) {
+        throw new BadRequestException('Transaction entries must have an request.url and request.method');
+      } else if (['GET','POST','PUT','DELETE'].indexOf(entry.request.method) < 0) {
+        throw new BadRequestException('Transaction entry\'s method must be GET, POST, PUT or DELETE');
+      }
+    });
+
+    const promises = (bundle.entry || []).map((entry) => this.processTransactionEntry(entry, fhirServerBase, userSecurityInfo));
+    const results = await Promise.all(promises);
+  }
+
   @All()
-  public proxy(
+  public async proxy(
     @RequestUrl() url: string,
     @Headers() headers: {[key: string]: any},
     @RequestMethod() method: string,
     @FhirServerBase() fhirServerBase: string,
     @Res() response: Response,
+    @User() user: ITofUser,
     @Body() body?) {
 
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     let proxyUrl = fhirServerBase;
+
+    console.log((userSecurityInfo ? 'has' : 'does not have') + ' userSecurityInfo');
 
     if (proxyUrl.endsWith('/')) {
       proxyUrl = proxyUrl.substring(0, proxyUrl.length - 1);
@@ -106,7 +167,51 @@ export class FhirController extends BaseController {
 
     proxyUrl += url;
 
-    // TODO: if security is enabled, add _security query parameter
+    const parsedUrl = parseFhirUrl(url);
+    const isTransaction = body && body.resourceType === 'Bundle' && body.type === 'transaction';
+
+    // TODO: When dealing with a transaction, process each individual resource within the bundle
+    if (isTransaction && !parsedUrl.resourceType) {
+      return this.processTransaction(body, fhirServerBase, userSecurityInfo);
+    // When searching, add _security query parameter
+    } else if (method === 'GET' && parsedUrl.resourceType && !parsedUrl.id && !parsedUrl.operation) {
+      if (this.configService.server.enableSecurity) {
+        // Security search
+        if (userSecurityInfo) {
+          const securityTags = [`everyone${Globals.securityDelim}read`];
+
+          if (userSecurityInfo.user) {
+            securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.user.id}${Globals.securityDelim}read`);
+          }
+
+          userSecurityInfo.groups.forEach((group) => {
+            securityTags.push(`group${Globals.securityDelim}${group.id}${Globals.securityDelim}read`);
+          });
+
+          const securityQueryValue = securityTags.join(',');
+
+          // Make sure the url deliminates query params
+          if (proxyUrl.indexOf('?') < 0) {
+            proxyUrl += '?';
+          }
+
+          // If there are already query params in the url, add another query param deliminator
+          if (!proxyUrl.endsWith('?')) {
+            proxyUrl += '&';
+          }
+
+          // Add the _security query param to the url
+          proxyUrl += '_security=' + encodeURIComponent(securityQueryValue);
+        }
+      }
+
+    // TODO: When creating, make sure permissions are assigned to the new resource
+    } else if (method === 'POST') {
+
+    // TODO: When updating, make sure the user can modify the resource in question
+    } else if (method === 'PUT') {
+      // TODO: get the id of the resource from the body. Throw error if it doesn't exist
+    }
 
     const proxyHeaders = JSON.parse(JSON.stringify(headers));
     delete proxyHeaders['authorization'];
@@ -119,6 +224,7 @@ export class FhirController extends BaseController {
     delete proxyHeaders['cookie'];
     delete proxyHeaders['connection'];
 
+    // Make sure that caching is turned off for proxied FHIR requests
     proxyHeaders['Cache-Control'] = 'no-cache';
 
     const options = <AxiosRequestConfig> {
@@ -142,19 +248,18 @@ export class FhirController extends BaseController {
       response.send(results.data);
     };
 
-    return this.httpService.request(options).toPromise()
-      .then((results) => {
-        sendResults(results);
-      })
-      .catch((err) => {
-        const results = err.response;
+    try {
+      const results = await this.httpService.request(options).toPromise();
+      sendResults(results);
+    } catch (ex) {
+      const results = ex.response;
 
-        if (results) {
-          sendResults(results);
-        } else {
-          this.logger.error('Error processing http-error results in proxy', err);
-          throw new InternalServerErrorException();
-        }
-      });
+      if (results) {
+        sendResults(results);
+      } else {
+        this.logger.error('Error processing http-error results in proxy', ex);
+        throw new InternalServerErrorException();
+      }
+    }
   }
 }
