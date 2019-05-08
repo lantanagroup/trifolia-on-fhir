@@ -1,40 +1,18 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpService,
-  InternalServerErrorException,
-  Param,
-  Post,
-  Put, Query,
-  Req,
-  UseGuards
-} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest, ITofUser} from './models/tof-request';
-import {
-  Bundle,
-  ImplementationGuide as STU3ImplementationGuide,
-  PackageResourceComponent,
-  StructureDefinition
-} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {
-  GetStructureDefinitionModel,
-  StructureDefinitionImplementationGuide,
-  StructureDefinitionOptions
-} from '../../../client/src/app/shared/structure-definition.service';
-import * as nanoid from 'nanoid';
+import {GetStructureDefinitionModel, StructureDefinitionImplementationGuide, StructureDefinitionOptions} from '../../../client/src/app/shared/structure-definition.service';
 import {TofNotFoundException} from '../not-found-exception';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import nanoid from 'nanoid';
 
 interface SaveStructureDefinitionRequest {
   options?: StructureDefinitionOptions;

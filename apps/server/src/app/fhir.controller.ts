@@ -106,6 +106,8 @@ export class FhirController extends BaseController {
 
     proxyUrl += url;
 
+    // TODO: if security is enabled, add _security query parameter
+
     const proxyHeaders = JSON.parse(JSON.stringify(headers));
     delete proxyHeaders['authorization'];
     delete proxyHeaders['fhirserver'];

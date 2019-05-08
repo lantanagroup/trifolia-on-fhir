@@ -6,10 +6,10 @@ import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
-import * as nanoid from 'nanoid';
 import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import nanoid from 'nanoid';
 
 @Controller('practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -84,8 +84,8 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Get('me')
-  public async getMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
-    return this.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
+  public getMe(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
+    return super.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
   }
 
   @Get()

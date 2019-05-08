@@ -63,6 +63,14 @@ describe('BaseFhirController', () => {
     testController = app.get<TestController>(TestController);
   });
 
+  /*
+  describe('general', () => {
+    it('should error when the resource already exists', async () => {
+
+    });
+  });
+   */
+
   describe('security disabled', () => {
     beforeEach(() => {
       // every test needs to reset this, since we don't know the order
@@ -85,12 +93,6 @@ describe('BaseFhirController', () => {
 
       expect(results).toBeTruthy();
     });
-
-    /*
-    it('should error when the resource already exists', async () => {
-
-    });
-     */
   });
 
   describe('security enabled',  () => {

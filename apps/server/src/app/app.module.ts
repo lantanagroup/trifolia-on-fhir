@@ -15,6 +15,7 @@ import {HttpStrategy} from './auth.strategy';
 import {OperationDefinitionController} from './operation-definition.controller';
 import {CodeSystemController} from './code-system.controller';
 import {QuestionnaireController} from './questionnaire.controller';
+import {ConfigService} from './config.service';
 
 @Module({
   imports: [HttpModule],
@@ -36,7 +37,8 @@ import {QuestionnaireController} from './questionnaire.controller';
     ImportController
   ],
   providers: [
-    HttpStrategy
+    HttpStrategy,
+    ConfigService
   ],
 })
 export class AppModule {}

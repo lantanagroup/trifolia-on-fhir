@@ -1,11 +1,22 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Bundle, Group, Meta, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, Group, Meta, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {PractitionerService} from '../../shared/practitioner.service';
-import {addPermission, ensureSecurity, getHumanNamesDisplay, getMetaSecurity, getPractitionerEmail, groupBy, removePermission} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {
+  addPermission,
+  ensureSecurity,
+  getHumanNameDisplay,
+  getHumanNamesDisplay,
+  getMetaSecurity,
+  getPractitionerEmail,
+  groupBy,
+  removePermission
+} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -49,6 +60,9 @@ export class ResourcePermissionsComponent implements OnInit {
   public Globals = Globals;
   public getHumanNamesDisplay = getHumanNamesDisplay;
   public getPractitionerEmail = getPractitionerEmail;
+  public resourceTypes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+  public copyResourceType: string;
+  public copyResource: DomainResource;
 
   private currentUser: Practitioner;
 
@@ -57,6 +71,38 @@ export class ResourcePermissionsComponent implements OnInit {
     private fhirService: FhirService,
     private modal: NgbModal) {
 
+  }
+
+  copyTypeaheadSearch = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.fhirService
+          .search(this.copyResourceType, term, true)
+          .pipe(
+            map((bundle: Bundle) =>
+              (bundle.entry || []).map((entry) => entry.resource)
+            )
+          )
+      )
+    );
+  }
+
+  copyTypeaheadFormatter = (resource: any) => {
+    let display = resource.title || resource.name;
+
+    if (display instanceof Array) {
+      display = getHumanNamesDisplay(display);
+    } else if (typeof display === 'object') {
+      display = getHumanNameDisplay(display);
+    }
+
+    if (display) {
+      return `${display} (id: ${resource.id})`;
+    } else {
+      return 'id: ' + resource.id;
+    }
   }
 
   public get security(): ResourceSecurity[] {
@@ -179,26 +225,36 @@ export class ResourcePermissionsComponent implements OnInit {
     });
   }
 
-  public copyPermissionsFrom() {
-    const modalRef = this.modal.open(FhirReferenceModalComponent);
+  public selectCopyResource() {
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
 
     modalRef.result.then((results) => {
-      if (results.resource && results.resource.meta && results.resource.meta.security) {
-        ensureSecurity(this.meta);
-
-        this.meta.security = results.resource.meta.security;
-
-        const meCanRead = this.findCurrentUserPermission('read');
-        const meCanWrite = this.findCurrentUserPermission('write');
-
-        if (!meCanRead) {
-          this.addPermission('user', 'read', this.currentUser.id);
-        }
-        if (!meCanWrite) {
-          this.addPermission('user', 'write', this.currentUser.id);
-        }
-      }
+      this.copyResource = results.resource;
     });
+  }
+
+  public copyPermissions() {
+    if (!this.copyResource) {
+      return;
+    }
+
+    if (this.copyResource.meta && this.copyResource.meta.security && this.copyResource.meta.security.length > 0) {
+      ensureSecurity(this.meta);
+
+      this.meta.security = this.copyResource.meta.security;
+
+      const meCanRead = this.findCurrentUserPermission('read');
+      const meCanWrite = this.findCurrentUserPermission('write');
+
+      if (!meCanRead) {
+        this.addPermission('user', 'read', this.currentUser.id);
+      }
+      if (!meCanWrite) {
+        this.addPermission('user', 'write', this.currentUser.id);
+      }
+    } else {
+      alert('The selected resource does not have any permissions defined');
+    }
   }
 
   ngOnInit() {

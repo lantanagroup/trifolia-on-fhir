@@ -28,7 +28,28 @@
       </tbody>
     </table>
 
-    <button type="button" class="btn btn-default" (click)="copyPermissionsFrom()">Copy permissions from...</button>
+    <ng-template #rt let-r="result" let-t="term">
+      {{copyTypeaheadFormatter(r)}}
+    </ng-template>
+
+    <div class="form-group">
+      <label>Copy permissions from...</label>
+      <div class="input-group">
+        <select class="form-control" [(ngModel)]="copyResourceType">
+          <option [ngValue]="undefined">SELECT</option>
+          <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
+        </select>
+        <input type="text" class="form-control" [(ngModel)]="copyResource" [disabled]="!copyResourceType" [ngbTypeahead]="copyTypeaheadSearch" [inputFormatter]="copyTypeaheadFormatter" [resultTemplate]="rt" />
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-outline-primary" (click)="selectCopyResource()" title="Use a more advanced search window to find the resource you would like to copy permissions from">
+            <i class="fas fa-hand-pointer"></i>
+          </button>
+          <button type="button" class="btn btn-primary" (click)="copyPermissions()" [disabled]="!copyResource || !copyResource.resourceType" title="Copy the selected resource's permissions to this resource">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Add Group -->
