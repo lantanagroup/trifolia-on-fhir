@@ -3,7 +3,17 @@ import {FhirService} from '../shared/fhir.service';
 import {Bundle, Coding, DomainResource, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {saveAs} from 'file-saver';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {ConfigService} from '../shared/config.service';
+
+class OpenedResource {
+  resource: DomainResource;
+  activeSub: 'json'|'xml'|'permissions' = 'json';
+
+  constructor(resource) {
+    this.resource = resource;
+  }
+}
 
 @Component({
   templateUrl: './other-resources.component.html',
@@ -15,13 +25,14 @@ export class OtherResourcesComponent implements OnInit {
   public searchContent: string;
   public searchUrl: string;
   public message: string;
-  public openedResources: DomainResource[] = [];
+  public openedResources: OpenedResource[] = [];
   public results: Bundle;
 
   @ViewChild('tabSet')
   public tabSet: NgbTabset;
 
   constructor(
+    private configService: ConfigService,
     private fhirService: FhirService,
     private modalService: NgbModal) {
   }
@@ -39,29 +50,44 @@ export class OtherResourcesComponent implements OnInit {
       });
   }
 
-  public remove(resource: DomainResource) {
-    this.fhirService.delete(resource.resourceType, resource.id)
+  public save(or: OpenedResource) {
+    this.fhirService.update(or.resource.resourceType, or.resource.id, or.resource).toPromise()
+      .then((updated) => {
+        Object.assign(or.resource, updated);
+        this.message = `Successfully updated resource ${or.resource.resourceType}/${or.resource.id}!`;
+      })
+      .catch((err) => {
+        this.message = this.fhirService.getErrorString(err);
+      });
+  }
+
+  public remove(or: OpenedResource) {
+    if (!confirm(`Are you sure you want to delete ${or.resource.resourceType}/${or.resource.id}?`)) {
+      return false;
+    }
+
+    this.fhirService.delete(or.resource.resourceType, or.resource.id)
       .subscribe(() => {
-        const index = this.openedResources.indexOf(resource);
+        const index = this.openedResources.indexOf(or);
         this.closeResource(index);
       }, (err) => {
         this.message = 'Error while removing the resource: ' + this.fhirService.getErrorString(err);
       });
   }
 
-  public changeId(resource: DomainResource) {
+  public changeId(or: OpenedResource) {
     const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
-    modalRef.componentInstance.resourceType = resource.resourceType;
-    modalRef.componentInstance.originalId = resource.id;
+    modalRef.componentInstance.resourceType = or.resource.resourceType;
+    modalRef.componentInstance.originalId = or.resource.id;
     modalRef.result.then((newId) => {
       // Update the search results to reflect the new id
-      const foundEntry = (this.results.entry || []).find((entry) => entry.resource.id === resource.id);
+      const foundEntry = (this.results.entry || []).find((entry) => entry.resource.id === or.resource.id);
       if (foundEntry) {
         foundEntry.resource.id = newId;
       }
 
       // Update the resource that's opened in a separate tab to reflect the new id
-      resource.id = newId;
+      or.resource.id = newId;
     });
   }
 
@@ -70,14 +96,14 @@ export class OtherResourcesComponent implements OnInit {
 
     switch (type) {
       case 'xml':
-        const xml = this.fhirService.serialize(openedResource);
+        const xml = this.fhirService.serialize(openedResource.resource);
         const xmlBlob = new Blob([xml], {type: 'application/xml'});
-        saveAs(xmlBlob, openedResource.id + '.xml');
+        saveAs(xmlBlob, openedResource.resource.id + '.xml');
         break;
       case 'json':
-        const json = JSON.stringify(openedResource, null, '\t');
+        const json = JSON.stringify(openedResource.resource, null, '\t');
         const jsonBlob = new Blob([json], {type: 'application/json'});
-        saveAs(jsonBlob, openedResource.id + '.json');
+        saveAs(jsonBlob, openedResource.resource.id + '.json');
         break;
     }
   }
@@ -106,17 +132,17 @@ export class OtherResourcesComponent implements OnInit {
         this.message = 'Updating the resource';
         fileInput.value = null;
 
-        this.fhirService.update(resource.resourceType, openedResource.id, resource)
+        this.fhirService.update(resource.resourceType, openedResource.resource.id, resource)
           .subscribe((result: DomainResource) => {
-            if (result.resourceType === openedResource.resourceType) {
+            if (result.resourceType === openedResource.resource.resourceType) {
               Object.assign(openedResource, result);
               this.message = 'Updated resource';
             } else if (result.resourceType === 'OperationOutcome') {
               this.message = this.fhirService.getOperationOutcomeMessage(<OperationOutcome>result);
 
-              this.fhirService.read(openedResource.resourceType, openedResource.id)
+              this.fhirService.read(openedResource.resource.resourceType, openedResource.resource.id)
                 .subscribe((updatedResource: DomainResource) => {
-                  Object.assign(openedResource, updatedResource);
+                  Object.assign(openedResource.resource, updatedResource);
                 }, (err) => {
                   console.log('Error re-opening resource after update: ' + err);
                   this.message = 'Error re-opening resource after update';
@@ -139,6 +165,14 @@ export class OtherResourcesComponent implements OnInit {
 
     this.tabSet.select('results');
     this.openedResources.splice(index, 1);
+  }
+
+  public getEntryUrl(entry) {
+    if (entry && entry.resource && entry.resource.url) {
+      return entry.url;
+    }
+
+    return '';
   }
 
   public getEntryName(entry) {
@@ -173,19 +207,23 @@ export class OtherResourcesComponent implements OnInit {
     }
   }
 
+  changeSubTab(or: OpenedResource, event: NgbTabChangeEvent) {
+    or.activeSub = <any> event.nextId;
+  }
+
   openResource(resource) {
     this.message = 'Opening resource';
 
     this.fhirService.read(resource.resourceType, resource.id)
       .subscribe((results: DomainResource) => {
-        const found = this.openedResources.find((next) => next.id === resource.id);
+        const found = this.openedResources.find((next) => next.resource.id === resource.id);
 
         if (found) {
           const index = this.openedResources.indexOf(found);
           this.openedResources.splice(index, 1);
         }
 
-        this.openedResources.push(results);
+        this.openedResources.push(new OpenedResource(results));
 
         setTimeout(() => {
           this.message = 'Resource opened.';

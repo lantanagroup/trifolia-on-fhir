@@ -246,6 +246,8 @@ export class FhirController extends BaseController {
         try {
           const getUrl = buildUrl(fhirServerBase, parsedUrl.resourceType, parsedUrl.id);
           const persistedResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+
+          await this.removePermissions(fhirServerBase, persistedResource, body);
           this.assertUserCanEdit(userSecurityInfo, persistedResource);
         } catch (ex) {
           if (ex.status !== 404) {

@@ -222,6 +222,13 @@ export class BaseController {
     }
   }
 
+  /**
+   * Removes permissions from the original resource that are no longer specified
+   * in the new resource (the resource sent by the user to overwrite the original).
+   * @param fhirServiceBase
+   * @param originalResource
+   * @param newResource
+   */
   protected async removePermissions(fhirServiceBase: string, originalResource: DomainResource, newResource: DomainResource) {
     if (!originalResource) {
       return;
