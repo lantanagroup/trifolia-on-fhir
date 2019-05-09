@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Glossary</title>
+  <title>Security</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Glossary">
+  <meta name="twitter:title" content="Security">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Glossary" />
+  <meta property="og:title" content="Security" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -161,9 +161,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Glossary"
-		  data-hnd-context="8"
-		  data-hnd-title="Glossary"
+		  data-hnd-id="Security"
+		  data-hnd-context="25"
+		  data-hnd-title="Security"
 		>
             
                 <div class="navigation">
@@ -171,63 +171,32 @@
                         
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Security.html" title="Security" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="FAQ.html" title="FAQ" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Help.html" title="Help" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Glossary.html" title="Glossary" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Glossary</h2>
+            <h2>Security</h2>
 
             <div class="main-content">
                 
 <p></p>
-<div class="rvps3"><table width="100%" border="1" cellpadding="1" cellspacing="2" style="border-color: #000000; border-style: solid; border-spacing: 2px;">
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts16">Acronym</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts16">Definition</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">ToF</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Trifolia-on-FHIR</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">FHIR</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Fast Healthcare Interoperability Resources</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">VSAC</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Value Set Authority Center</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">IG</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Implementation Guide</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">VS</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Value Set</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">CS</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Code System</span></p>
-</td>
-</tr>
-</table>
-</div>
+<h2 class="rvps8"><span class="rvts0"><span class="rvts22">Authentication</span></span></h2>
+<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is designed to minimally require that the user authenticate in order to access the data that is stored on the FHIR servers that ToF is configured to use. Additional permissions may be required depending on the configuration of the ToF installation.</span></p>
+<h2 class="rvps8"><span class="rvts0"><span class="rvts22">Permissions</span></span></h2>
+<p class="rvps3"><span class="rvts8">If the ToF installation is configured to require permissions, only data that the user has been permitted to view/edit will be access to them in the user interface. The remainder of this section presumes that permissions are required in the installation.</span></p>
+<p class="rvps3"><span class="rvts8">Permissions are maintained for each individual resource in the system. For example, permissions may be different for an instance of an ImplementationGuide compared to a StructureDefinintion that the implementation guide references.</span></p>
+<p class="rvps3"><span class="rvts8">Each edit screen contains a "Permissions" &nbsp;tab which allows the user to define the permissions for the resource. The user may search for users and groups, and add read and/or write permissions to the resource for the selected users/groups.</span></p>
+<p class="rvps3"><span class="rvts8">The user may select a different resource to copy permissions from. This can be done either by:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Selecting a resource type and typing search criteria in the text field. Suggestions will be presented below the text field. Select one of the suggestions and press the "Copy" button.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Click the "Search" button next to the text field to select a resource using the advanced search pop-up window. Once a resource has been identified and selected, click the "Copy" button.</span></li>
+</ol>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Managing Groups</span></span></h3>
+<p class="rvps3"><span class="rvts8">All users may create/manage their own groups. A group may only have one manager.</span></p>
+<p class="rvps3"><span class="rvts8">To create/edit/delete groups, click your name in the top-right of ToF, and select the "Groups" tab. Changes made to the "Groups" tab are made immediately. Pressing "Save" is not required and only applies to editing information for your profile.</span></p>
 <p></p>
 
             </div>
