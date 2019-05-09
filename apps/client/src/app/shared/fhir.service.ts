@@ -361,6 +361,7 @@ export class FhirService {
     }
   }
 
+  // TODO: Move this to a helper function that is not part of the service
   public getErrorString(err, body?, defaultMessage = 'An unknown error occurred') {
     if (err && err.error) {
       if (typeof err.error === 'object') {

@@ -21,38 +21,38 @@ import {UserService} from './user.service';
 import {ValueSetService} from './value-set.service';
 import {FileService} from './file.service';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {GroupService} from './group.service';
 
 @NgModule({
-    declarations: [
-    ],
-    imports: [
-        CommonModule,
-        NgbModule.forRoot()
-    ],
-    providers: [
-        AuditEventService,
-        AuthService,
-        BinaryService,
-        CapabilityStatementService,
-        CodeSystemService,
-        ConfigService,
-        ExportService,
-        FhirService,
-        FileService,
-        GithubService,
-        ImplementationGuideService,
-        ImportService,
-        OperationDefinitionService,
-        PractitionerService,
-        QuestionnaireService,
-        RecentItemService,
-        SocketService,
-        StructureDefinitionService,
-        UserService,
-        ValueSetService
-    ],
-    exports: [
-    ]
+  declarations: [],
+  imports: [
+    CommonModule,
+    NgbModule.forRoot()
+  ],
+  providers: [
+    AuditEventService,
+    AuthService,
+    BinaryService,
+    CapabilityStatementService,
+    CodeSystemService,
+    ConfigService,
+    ExportService,
+    FhirService,
+    FileService,
+    GithubService,
+    ImplementationGuideService,
+    ImportService,
+    OperationDefinitionService,
+    PractitionerService,
+    QuestionnaireService,
+    RecentItemService,
+    SocketService,
+    StructureDefinitionService,
+    UserService,
+    ValueSetService,
+    GroupService
+  ],
+  exports: []
 })
 export class SharedModule {
 }

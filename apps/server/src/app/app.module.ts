@@ -16,6 +16,7 @@ import {OperationDefinitionController} from './operation-definition.controller';
 import {CodeSystemController} from './code-system.controller';
 import {QuestionnaireController} from './questionnaire.controller';
 import {ConfigService} from './config.service';
+import {GroupController} from './group.controller';
 
 @Module({
   imports: [HttpModule],
@@ -34,7 +35,8 @@ import {ConfigService} from './config.service';
     QuestionnaireController,
     ManageController,
     ExportController,
-    ImportController
+    ImportController,
+    GroupController
   ],
   providers: [
     HttpStrategy,

@@ -2,7 +2,7 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
@@ -86,6 +86,15 @@ export class PractitionerController extends BaseFhirController {
   @Get('me')
   public getMe(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
     return super.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
+  }
+
+  @Get('user')
+  public async getUsers(@FhirServerBase() fhirServerBase: string, @Query() query) {
+    query.identifier = 'https://auth0.com|';
+
+    const url = buildUrl(fhirServerBase, 'Practitioner', null, null, query);
+    const results = await this.httpService.get<Bundle>(url).toPromise();
+    return results.data;
   }
 
   @Get()

@@ -17,6 +17,7 @@ import {
 } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
+import {GroupService} from '../../shared/group.service';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -63,12 +64,14 @@ export class ResourcePermissionsComponent implements OnInit {
   public resourceTypes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
   public copyResourceType: string;
   public copyResource: DomainResource;
+  public isSearchingGroups = false;
 
   private currentUser: Practitioner;
 
   constructor(
-    private practitionerService: PractitionerService,
     private fhirService: FhirService,
+    private groupService: GroupService,
+    private practitionerService: PractitionerService,
     private modal: NgbModal) {
 
   }
@@ -157,13 +160,20 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   public searchGroups() {
-    this.fhirService.search('Group', this.searchGroupsCriteria).toPromise()
-      .then((results: Bundle) => this.foundGroupsBundle = results)
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+    this.isSearchingGroups = true;
+    this.groupService.getMembership(this.searchGroupsCriteria).toPromise()
+      .then((results: Bundle) => {
+        this.foundGroupsBundle = results;
+        this.isSearchingGroups = false;
+      })
+      .catch((err) => {
+        this.message = this.fhirService.getErrorString(err);
+        this.isSearchingGroups = false;
+      });
   }
 
   public searchUsers() {
-    this.fhirService.search('Practitioner', this.searchUsersCriteria).toPromise()
+    this.practitionerService.getUsers(null, this.searchUsersCriteria).toPromise()
       .then((results: Bundle) => this.foundUsersBundle = results)
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
@@ -178,6 +188,14 @@ export class ResourcePermissionsComponent implements OnInit {
     removePermission(this.meta, type, permission, id);
   }
 
+  /**
+   * Gets all practitioners/users and groups that are assigned
+   * permissions to this resource. There is a possibility that
+   * the user is not a member of one of the groups that are
+   * permitted to the resource. In that case, the group will not
+   * be returned by the server call, and the UI will just show
+   * the ID of the group.
+   */
   private getPermittedResources() {
     const resourceSecurity = getMetaSecurity(this.meta);
     const groupIds = resourceSecurity
@@ -188,13 +206,13 @@ export class ResourcePermissionsComponent implements OnInit {
       .map((security) => security.id);
 
     if (groupIds.length > 0) {
-      this.fhirService.search('Group', null, null, null, groupIds.join(',')).toPromise()
+      this.groupService.getMembership(null, groupIds.join(',')).toPromise()
         .then((results: Bundle) => this.groupsBundle = results)
         .catch((err) => this.message = this.fhirService.getErrorString(err));
     }
 
     if (userIds.length > 0) {
-      this.fhirService.search('Practitioner', null, null, null, userIds.join(',')).toPromise()
+      this.practitionerService.getUsers(null, null, null, userIds.join(',')).toPromise()
         .then((results: Bundle) => this.usersBundle = results)
         .catch((err) => this.message = this.fhirService.getErrorString(err));
     }
@@ -204,6 +222,10 @@ export class ResourcePermissionsComponent implements OnInit {
     const resourceSecurity = getMetaSecurity(this.meta);
 
     return resourceSecurity.find((security) => {
+      if (security.permission !== permission) {
+        return false;
+      }
+
       if (security.type === 'user' && security.id === this.currentUser.id) {
         return true;
       } else if (security.type === 'group' && this.groupsBundle) {
@@ -229,6 +251,7 @@ export class ResourcePermissionsComponent implements OnInit {
     const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
 
     modalRef.result.then((results) => {
+      this.copyResourceType = results.resourceType;
       this.copyResource = results.resource;
     });
   }

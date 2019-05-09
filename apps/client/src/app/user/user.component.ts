@@ -8,75 +8,39 @@ import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
+import {GroupService} from '../shared/group.service';
 
 @Component({
-  selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-  private allGroupsBundle: Bundle;
-
   public practitioner = new Practitioner();
-  public searchUsersCriteria: string;
+  public searchUsersName: string;
+  public searchUsersEmail: string;
   public searchUsersBundle: Bundle;
   public editGroup: Group;
   public message: string;
   public Globals = Globals;
   public getHumanNamesDisplay = getHumanNamesDisplay;
   public getPractitionerEmail = getPractitionerEmail;
+  public managingGroups: Group[] = [];
+  public membershipGroups: Group[] = [];
 
   constructor(
     private configService: ConfigService,
     private modalService: NgbModal,
     private personService: PractitionerService,
+    private groupService: GroupService,
     private authService: AuthService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private practitionerService: PractitionerService) {
 
   }
 
   public get searchUserResults(): Practitioner[] {
     if (this.searchUsersBundle) {
       return (this.searchUsersBundle.entry || []).map((entry) => <Practitioner> entry.resource);
-    }
-
-    return [];
-  }
-
-  public get managingGroups(): Group[] {
-    if (this.allGroupsBundle) {
-      return (this.allGroupsBundle.entry || [])
-        .filter((entry) => {
-          const group = <Group> entry.resource;
-
-          if (this.configService.isFhirSTU3) {
-            return !!(group.extension || []).find((extension) => {
-              return extension.url === Globals.extensionUrls['extension-group-manager'] &&
-                extension.valueReference &&
-                extension.valueReference.reference === `Practitioner/${this.practitioner.id}`;
-            });
-          } else if (this.configService.isFhirR4) {
-            return group.managingEntity && group.managingEntity.reference === `Practitioner/${this.practitioner.id}`;
-          }
-
-          return false;
-        })
-        .map((entry) => <Group> entry.resource);
-    }
-
-    return [];
-  }
-
-  public get memberGroups() {
-    if (this.allGroupsBundle) {
-      const managingGroups = this.managingGroups;
-
-      return (this.allGroupsBundle.entry || [])
-        .filter((entry) => {
-          const group = <Group> entry.resource;
-          return managingGroups.indexOf(group) < 0;
-        })
-        .map((entry) => <Group> entry.resource);
     }
 
     return [];
@@ -94,14 +58,18 @@ export class UserComponent implements OnInit {
       });
   }
 
-  public addMember(user: Practitioner) {
-    const reference = <ResourceReference> {
-      reference: `Practitioner/${user.id}`,
-      display: getHumanNamesDisplay(user.name)
-    };
-    this.editGroup.member.push({
-      entity: reference
-    });
+  public addMember(practitioner: Practitioner) {
+    const foundMember = this.editGroup.member.find((next) => next.entity.reference === 'Practitioner/' + practitioner.id);
+
+    if (!foundMember) {
+      const reference = <ResourceReference>{
+        reference: `Practitioner/${practitioner.id}`,
+        display: getHumanNamesDisplay(practitioner.name)
+      };
+      this.editGroup.member.push({
+        entity: reference
+      });
+    }
   }
 
   public addGroup() {
@@ -116,10 +84,10 @@ export class UserComponent implements OnInit {
     newMember.entity = meReference;
 
     if (this.configService.isFhirSTU3) {
-      this.editGroup.extension = [{
+      newMember.extension = [{
         url: Globals.extensionUrls['extension-group-manager'],
-        valueReference: meReference
-      }];
+        valueBoolean: true
+      }]
     } else if (this.configService.isFhirR4) {
       this.editGroup.managingEntity = meReference;
     }
@@ -128,38 +96,61 @@ export class UserComponent implements OnInit {
   }
 
   public searchUsers() {
-    this.fhirService.search('Practitioner', this.searchUsersCriteria).toPromise()
+    this.practitionerService.getUsers(null, this.searchUsersName, this.searchUsersEmail).toPromise()
       .then((results: Bundle) => this.searchUsersBundle = results)
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
 
+  public isAdmin(group: Group, currentMember?: MemberComponent) {
+    if (!currentMember) {
+      currentMember = {
+        entity: {
+          reference: 'Practitioner/' + this.practitioner.id
+        }
+      };
+    }
+
+    let groupAdmin: string;
+
+    if (this.configService.isFhirSTU3) {
+      const foundMemberAdmin = group.member.find((member) => {
+        return !!(member.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-group-manager'] && ext.valueBoolean);
+      });
+
+      if (foundMemberAdmin) {
+        groupAdmin = foundMemberAdmin.entity.reference;
+      }
+    } else if (this.configService.isFhirR4 && group.managingEntity) {
+      groupAdmin = group.managingEntity.reference;
+    }
+
+    return currentMember.entity.reference === groupAdmin;
+  }
+
   public saveGroup() {
     if (!this.editGroup.id) {
-      this.fhirService.create(this.editGroup).toPromise()
+      this.groupService.createManagingGroup(this.editGroup).toPromise()
         .then((results: Group) => {
-          if (!this.allGroupsBundle.entry) {
-            this.allGroupsBundle.entry = [];
-          }
-
-          this.allGroupsBundle.entry.push({
-            resource: results
-          });
-
+          this.managingGroups.push(results);
           this.message = 'New group has been saved!';
+          this.editGroup = null;
         })
         .catch((err) => this.message = this.fhirService.getErrorString(err));
     } else {
-      this.fhirService.update('Group', this.editGroup.id, this.editGroup).toPromise()
-        .then(() => this.message = 'Group has been updated!')
+      this.groupService.updateManagingGroup(this.editGroup).toPromise()
+        .then(() => {
+          this.message = 'Group has been updated!';
+          this.editGroup = null;
+        })
         .catch((err) => this.message = this.fhirService.getErrorString(err));
     }
   }
 
   public deleteGroup(group: Group) {
-    this.fhirService.delete('Group', group.id).toPromise()
+    this.groupService.deleteManagingGroup(group).toPromise()
       .then(() => {
-        const index = this.allGroupsBundle.entry.indexOf(group);
-        this.allGroupsBundle.entry.splice(index, 1);
+        const index = this.managingGroups.indexOf(group);
+        this.managingGroups.splice(index, 1);
       })
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
@@ -168,18 +159,23 @@ export class UserComponent implements OnInit {
     this.personService.getMe().toPromise()
       .then((practitioner) => {
         this.practitioner = practitioner;
-
-        const reference = `Practitioner/${this.practitioner.id}`;
-        return this.fhirService.search('Group', null, null, null, null, { member: reference }).toPromise();
-      })
-      .then((groupsBundle: Bundle) => {
-        this.allGroupsBundle = groupsBundle;
       })
       .catch((err) => this.message = this.fhirService.getErrorString(err));
   }
 
-  ngOnInit() {
+  private async getGroups() {
+    const results = await Promise.all([
+      this.groupService.getManaging().toPromise(),
+      this.groupService.getMembership().toPromise()
+    ]);
+
+    this.managingGroups = results[0].entry.map((entry) => <Group> entry.resource);
+    this.membershipGroups = results[1].entry.map((entry) => <Group> entry.resource);
+  }
+
+  async ngOnInit() {
     this.authService.authChanged.subscribe(() => this.getMe());
     this.getMe();
+    await this.getGroups();
   }
 }

@@ -21,7 +21,8 @@ export class Globals {
     'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
     'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
-    'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive'
+    'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
+    'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager'
   };
 
   static readonly introText = {

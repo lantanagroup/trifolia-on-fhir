@@ -13,8 +13,8 @@ export const FhirServerBase = createParamDecorator((data, req: ITofRequest) => {
   return req.fhirServerBase;
 });
 
-export const FhirServerVersion = createParamDecorator((data, req: ITofRequest) => {
-  return req.fhirServerVersion;
+export const FhirServerVersion = createParamDecorator((data, req: ITofRequest): 'stu3'|'r4' => {
+  return <'stu3'|'r4'> req.fhirServerVersion;
 });
 
 export const FhirInstance = createParamDecorator((data, req: ITofRequest) => {
