@@ -36,11 +36,16 @@ export class BasePermissions extends BaseTools {
           .then((results) => resolve([results]))
           .catch((err) => reject(err));
       });
+    } else if (this.options.resourceType) {
+      return this.getAllResources(this.options.server, this.options.resourceType);
     }
   }
 }
 
 export class RemovePermission extends BasePermissions {
+  private readonly maxConcurrent = 5;
+  private queue: DomainResource[];
+
   private removePermission(resource: DomainResource) {
     const delim = Globals.securityDelim;
     const securityTag = this.options.type === 'everyone' ?
@@ -64,14 +69,31 @@ export class RemovePermission extends BasePermissions {
       }
     };
 
-    return rp(options);
+    return rp(options)
+      .then(() => {
+        const queueIndex = this.queue.indexOf(resource);
+        this.queue.splice(queueIndex, 1);
+      });
+  }
+
+  private async processQueue() {
+    const next = this.queue.slice(0, 5);
+    const promises = next.map((resource) => this.removePermission(resource));
+
+    console.log(`Processing ${promises.length} more resources`);
+
+    await Promise.all(promises);
+
+    if (this.queue.length > 0) {
+      await this.processQueue();
+    }
   }
 
   public execute() {
     this.getResources()
       .then((resources: DomainResource[]) => {
-        const removePromises = resources.map((resource) => this.removePermission(resource));
-        return Promise.all(removePromises);
+        this.queue = resources;
+        return this.processQueue();
       })
       .then(() => {
         console.log('Done removing permission from resources');
@@ -85,17 +107,56 @@ export class RemovePermission extends BasePermissions {
 }
 
 export class AddPermission extends BasePermissions {
+  private queue: DomainResource[];
+
+  private addPermission(resource: DomainResource) {
+    const delim = Globals.securityDelim;
+    const securityTag = this.options.type === 'everyone' ?
+      `${this.options.type}${delim}${this.options.permission}` :
+      `${this.options.type}${delim}${this.options.id}${delim}${this.options.permission}`;
+    const options = {
+      method: 'POST',
+      url: this.options.server + (this.options.server.endsWith('/') ? '' : '/') + resource.resourceType + '/' + resource.id + '/$meta-add',
+      json: true,
+      body: {
+        resourceType: 'Parameters',
+        parameter: [{
+          name: 'meta',
+          valueMeta: {
+            security: {
+              system: Globals.securitySystem,
+              code: securityTag
+            }
+          }
+        }]
+      }
+    };
+
+    return rp(options)
+      .then(() => {
+        const queueIndex = this.queue.indexOf(resource);
+        this.queue.splice(queueIndex, 1);
+      });
+  }
+
+  private async processQueue() {
+    const next = this.queue.slice(0, 5);
+    const promises = next.map((resource) => this.addPermission(resource));
+
+    console.log(`Processing ${promises.length} more resources`);
+
+    await Promise.all(promises);
+
+    if (this.queue.length > 0) {
+      await this.processQueue();
+    }
+  }
+
   public execute() {
     this.getResources()
       .then((resources: DomainResource[]) => {
-        const savePromises = resources
-          .filter((resource) => {
-            resource.meta = resource.meta || {};
-            return addPermission(resource.meta, this.options.type, this.options.permission, this.options.id);
-          })
-          .map((resource) => this.saveResource(this.options.server, resource));
-
-        return Promise.all(savePromises);
+        this.queue = resources;
+        return this.processQueue();
       })
       .then(() => {
         console.log('Done adding permissions to resources');

@@ -1,5 +1,6 @@
 import {Bundle, CapabilityStatement, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as rp from 'request-promise';
+import {resource} from 'selenium-webdriver/http';
 
 export class BaseTools {
   protected getConformance(server: string): Promise<CapabilityStatement> {
@@ -17,7 +18,7 @@ export class BaseTools {
     return new Promise((resolve, reject) => {
       rp({ url: url, json: true })
         .then((body: Bundle) => {
-          console.log(`Found ${body.total} more resources for ${resourceType}`);
+          console.log(`Found ${(body.entry || []).length} more resources for ${resourceType}`);
 
           let resources: DomainResource[] = (body.entry || []).map((entry) => entry.resource);
           const foundNextLink = (body.link || []).find((link) => link.relation === 'next');
@@ -61,15 +62,18 @@ export class BaseTools {
     });
   }
 
-  protected getAllResources(server: string): Promise<DomainResource[]> {
+  protected getAllResources(server: string, resourceType?: string): Promise<DomainResource[]> {
+    if (resourceType) {
+      return this.getAllResourcesByType(server, [resourceType]);
+    }
+
     return new Promise((resolve, reject) => {
       this.getConformance(server)
         .then((conformance) => {
-          let promises = [];
           const resourceTypes = [];
 
           (conformance.rest || []).forEach((rest) => {
-            (rest.resource || []).forEach((resource) => resourceTypes.push(resource.type));
+            (rest.resource || []).forEach((next) => resourceTypes.push(next.type));
           });
 
           return this.getAllResourcesByType(server, resourceTypes);

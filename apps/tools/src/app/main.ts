@@ -4,7 +4,7 @@ import * as Yargs from 'yargs';
 import {RemoveExtras} from './removeExtras';
 
 const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
-const modifyPermissionDescription = 'Adds a permission to one or all resources';
+const modifyPermissionDescription = 'Adds/removes a permission to one or all resources';
 
 const removeExtensionsFormat = 'remove-extensions [server]';
 const removeExtensionsDescription = 'Removes specified extensions from all resources on the server';
@@ -44,7 +44,6 @@ const argv = Yargs
       })
       .option('resourceType', {
         describe: 'The resource type for the resource to grant/revoke the permission to/from',
-        implies: 'resourceId',
         conflicts: 'allResources'
       })
       .option('resourceId', {
@@ -53,10 +52,10 @@ const argv = Yargs
         conflicts: 'allResources'
       });
   }, (args: any) => {
-    if (argv.modify === 'add') {
+    if (args.modify === 'add') {
       const addPermission = new AddPermission(args);
       addPermission.execute();
-    } else if (argv.modify === 'remove') {
+    } else if (args.modify === 'remove') {
       const removePermission = new RemovePermission(args);
       removePermission.execute();
     }
