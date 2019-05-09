@@ -43,7 +43,7 @@ export class Extension {
         this.valueReference = new ResourceReference(obj.valueReference);
       }
 
-      // TODO: Add other properties as needed
+      // Add other properties as needed
     }
   }
 

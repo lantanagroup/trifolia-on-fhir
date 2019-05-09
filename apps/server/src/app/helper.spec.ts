@@ -59,5 +59,20 @@ describe('helper', () => {
       expect(parsed.id).toBeFalsy();
       expect(parsed.operation).toBeFalsy();
     });
+
+    it('should parse a fhir url with _history', () => {
+      const parsed = parseFhirUrl('/ImplementationGuide/test-ig/_history/1');
+      expect(parsed.resourceType).toBe('ImplementationGuide');
+      expect(parsed.id).toBe('test-ig');
+      expect(parsed.versionId).toBe('1');
+    });
+
+    it('should parse a fhir url with _history and operation', () => {
+      const parsed = parseFhirUrl('/ImplementationGuide/test-ig/_history/1/$some-op');
+      expect(parsed.resourceType).toBe('ImplementationGuide');
+      expect(parsed.id).toBe('test-ig');
+      expect(parsed.versionId).toBe('1');
+      expect(parsed.operation).toBe('$some-op');
+    });
   });
 });

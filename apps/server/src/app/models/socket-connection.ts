@@ -6,6 +6,6 @@ export interface ISocketConnection {
   userProfile?: {
     'user_id': string;
     email: string;
+    // Add more properties as needed
   }
-  // TODO: Add more
 }

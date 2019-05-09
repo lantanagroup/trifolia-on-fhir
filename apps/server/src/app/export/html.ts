@@ -468,7 +468,7 @@ export class HtmlExporter {
   private getFhirControlVersion(fhirServerConfig) {
     const configVersion = fhirServerConfig ? fhirServerConfig.version : null;
 
-    // TODO: Add more logic
+    // Add more logic case statements as needed
     switch (configVersion) {
       case 'stu3':
         return '3.0.1';

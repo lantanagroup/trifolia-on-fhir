@@ -89,31 +89,32 @@ export class FhirController extends BaseController {
         throw new BadRequestException('Transaction entry with a request method of PUT must specify Resource.id');
       }
 
-      let originalResource;
-      const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
+      if (this.configService.server.enableSecurity) {
+        let originalResource;
+        const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
 
-      try {
-        originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
-        this.assertUserCanEdit(userSecurityInfo, originalResource);
-      } catch (ex) {
-        if (ex.status !== 404) {
-          throw ex;
+        try {
+          originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+          this.assertUserCanEdit(userSecurityInfo, originalResource);
+        } catch (ex) {
+          if (ex.status !== 404) {
+            throw ex;
+          }
+          // Do nothing if the resource is not found... That means this is a create-with-id request
         }
 
-        // Do nothing if the resource is not found... That means this is a create-with-id request
+        await this.removePermissions(fhirServerBase, originalResource, entry.resource);
       }
 
-      await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+      // Make sure the user has given themselves permissions to edit
+      // the resource they are requesting to be updated
+      if (entry.resource) {
+        this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+      }
     }
 
     if (entry.request.method === 'POST' && !entry.resource.id) {
       entry.resource.id = nanoid(8);
-    }
-
-    // Make sure the user has given themselves permissions to edit
-    // the resource they are requesting to be updated
-    if (entry.resource) {
-      this.ensureUserCanEdit(userSecurityInfo, entry.resource);
     }
 
     const url = fhirServerBase +
@@ -144,6 +145,35 @@ export class FhirController extends BaseController {
 
     const promises = (bundle.entry || []).map((entry) => this.processTransactionEntry(entry, fhirServerBase, userSecurityInfo));
     const results = await Promise.all(promises);
+    const responseBundle: Bundle = {
+      resourceType: 'Bundle',
+      type: 'transaction-response'
+    };
+
+    if (bundle.type === 'batch') {
+      responseBundle.type = 'batch-response';
+    }
+
+    responseBundle.entry = results.map((result, index) => {
+      const responseEntry = <EntryComponent> {
+        request: {
+          method: bundle.entry[index].request.method,
+          url: bundle.entry[index].request.url
+        },
+        response: {
+          status: result.status.toString() + (result.statusText ? ' ' + result.statusText : ''),
+          location: result.headers['content-location']
+        }
+      };
+
+      if (result.data && result.data.resourceType === 'OperationOutcome') {
+        responseEntry.response.outcome = result.data;
+      }
+
+      return responseEntry;
+    });
+
+    return responseBundle;
   }
 
   @All()
@@ -159,8 +189,6 @@ export class FhirController extends BaseController {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     let proxyUrl = fhirServerBase;
 
-    console.log((userSecurityInfo ? 'has' : 'does not have') + ' userSecurityInfo');
-
     if (proxyUrl.endsWith('/')) {
       proxyUrl = proxyUrl.substring(0, proxyUrl.length - 1);
     }
@@ -170,11 +198,14 @@ export class FhirController extends BaseController {
     const parsedUrl = parseFhirUrl(url);
     const isTransaction = body && body.resourceType === 'Bundle' && body.type === 'transaction';
 
-    // TODO: When dealing with a transaction, process each individual resource within the bundle
     if (isTransaction && !parsedUrl.resourceType) {
-      return this.processTransaction(body, fhirServerBase, userSecurityInfo);
-    // When searching, add _security query parameter
+      // When dealing with a transaction, process each individual resource within the bundle
+      const responseBundle = await this.processTransaction(body, fhirServerBase, userSecurityInfo);
+      response.status(200);
+      response.send(responseBundle);
+      return;
     } else if (method === 'GET' && parsedUrl.resourceType && !parsedUrl.id && !parsedUrl.operation) {
+      // When searching, add _security query parameter
       if (this.configService.server.enableSecurity) {
         // Security search
         if (userSecurityInfo) {
@@ -204,13 +235,29 @@ export class FhirController extends BaseController {
           proxyUrl += '_security=' + encodeURIComponent(securityQueryValue);
         }
       }
-
-    // TODO: When creating, make sure permissions are assigned to the new resource
     } else if (method === 'POST') {
+      // When creating, make sure permissions are assigned to the new resource
+      if (this.configService.server.enableSecurity) {
+        this.ensureUserCanEdit(userSecurityInfo, body);
+      }
+    } else if (method === 'PUT' || method === 'DELETE') {
+      // When updating, make sure the user can modify the resource in question
+      if (this.configService.server.enableSecurity) {
+        try {
+          const getUrl = buildUrl(fhirServerBase, parsedUrl.resourceType, parsedUrl.id);
+          const persistedResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+          this.assertUserCanEdit(userSecurityInfo, persistedResource);
+        } catch (ex) {
+          if (ex.status !== 404) {
+            throw ex;
+          }
+          // Do nothing if the resource is not found... That means this is a create-with-id request
+        }
 
-    // TODO: When updating, make sure the user can modify the resource in question
-    } else if (method === 'PUT') {
-      // TODO: get the id of the resource from the body. Throw error if it doesn't exist
+        if (body) {
+          this.ensureUserCanEdit(userSecurityInfo, body);
+        }
+      }
     }
 
     const proxyHeaders = JSON.parse(JSON.stringify(headers));

@@ -43,6 +43,7 @@ export interface ParsedFhirUrl {
   id?: string;
   operation?: string;
   query?: { [key: string]: string|boolean };
+  versionId?: string;
 }
 
 export function parseFhirUrl(url: string) {
@@ -91,11 +92,25 @@ export function parseFhirUrl(url: string) {
     }
   }
 
-  if (parts.length > 2 && parts[2].startsWith('$')) {
-    parsed.operation = parts[2];
+  if (parts.length > 2) {
+    if (parts[2].startsWith('$')) {
+      parsed.operation = parts[2];
+    } else if (parts[2] === '_history' && parts.length > 3) {
+      parsed.versionId = parts[3];
+    } else {
+      throw new BadRequestException();
+    }
+
+    if (parts.length > 4) {
+      if (parsed.versionId && parts[4].startsWith('$')) {
+        parsed.operation = parts[4];
+      } else {
+        throw new BadRequestException();
+      }
+    }
   }
 
-  if (parts.length > 3) {
+  if (parts.length > 5) {
     throw new BadRequestException();
   }
 
