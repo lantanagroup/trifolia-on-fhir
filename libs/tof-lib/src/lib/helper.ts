@@ -144,13 +144,17 @@ export function findPermission(meta: Meta, type: 'user'|'group'|'everyone', perm
   }
 
   const security = meta.security || [];
-  const delim = Globals.securityDelim;
+  const delimiter = Globals.securityDelim;
 
   return !!security.find((next) => {
+    if (next.system !== Globals.securitySystem) {
+      return false;
+    }
+
     if (type === 'everyone') {
-      return next.code === `${type}${delim}${permission}`;
+      return next.code === `${type}${delimiter}${permission}`;
     } else {
-      return next.code === `${type}${delim}${id}${delim}${permission}`;
+      return next.code === `${type}${delimiter}${id}${delimiter}${permission}`;
     }
   });
 }

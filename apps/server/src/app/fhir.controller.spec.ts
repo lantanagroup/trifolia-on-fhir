@@ -9,6 +9,7 @@ import {Response} from 'express';
 
 import nock = require('nock');
 import http = require('axios/lib/adapters/http');
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 jest.mock('nanoid', () => () => {
   return 'test-new-id';
@@ -236,8 +237,8 @@ describe('FhirController', () => {
           resourceType: 'Observation',
           meta: {
             security: [
-              { code: 'everyone^read' },
-              { code: 'everyone^write' }
+              { system: Globals.securitySystem, code: 'everyone^read' },
+              { system: Globals.securitySystem, code: 'everyone^write' }
             ]
           },
           id: 'test-obs-1'
@@ -291,8 +292,8 @@ describe('FhirController', () => {
           resourceType: 'Observation',
           meta: {
             security: [
-              { code: 'everyone^read' },
-              { code: 'everyone^write' }
+              { system: Globals.securitySystem, code: 'everyone^read' },
+              { system: Globals.securitySystem, code: 'everyone^write' }
             ]
           },
           id: 'test-obs-1'
@@ -510,8 +511,8 @@ describe('FhirController', () => {
           resourceType: 'Observation',
           meta: {
             security: [
-              { code: 'user^test-user-id^read' },
-              { code: 'user^test-user-id^write' }
+              { system: Globals.securitySystem, code: 'user^test-user-id^read' },
+              { system: Globals.securitySystem, code: 'user^test-user-id^write' }
             ]
           },
           id: 'test-id',

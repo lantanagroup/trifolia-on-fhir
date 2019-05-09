@@ -7,6 +7,7 @@ import {ConfigService} from './config.service';
 import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
 import nock = require('nock');
 import http = require('axios/lib/adapters/http');
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 nock.disableNetConnect();
 
@@ -178,6 +179,7 @@ describe('BaseFhirController', () => {
           resourceType: 'ImplementationGuide',
           meta: {
             security: [{
+              system: Globals.securitySystem,
               code: 'user^test-user-id^write'
             }]
           },
@@ -226,6 +228,7 @@ describe('BaseFhirController', () => {
           resourceType: 'ImplementationGuide',
           meta: {
             security: [{
+              system: Globals.securitySystem,
               code: 'user^test-user-id^read'
             }]
           },
@@ -306,8 +309,8 @@ describe('BaseFhirController', () => {
           id: 'test-id',
           meta: {
             security: [
-              { code: 'user^test-user-id^read' },
-              { code: 'user^test-user-id^write' }
+              { system: Globals.securitySystem, code: 'user^test-user-id^read' },
+              { system: Globals.securitySystem, code: 'user^test-user-id^write' }
             ]
           }
         };
@@ -366,6 +369,7 @@ describe('BaseFhirController', () => {
           id: 'test-id',
           meta: {
             security: [{
+              system: Globals.securitySystem,
               code: 'user^test-user-id^write'
             }]
           }
@@ -375,6 +379,7 @@ describe('BaseFhirController', () => {
           id: 'test-id',
           meta: {
             security: [{
+              system: Globals.securitySystem,
               code: 'user^test-user-id^write'
             }]
           },
