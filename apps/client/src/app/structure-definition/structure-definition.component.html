@@ -311,6 +311,13 @@
       </ng-template>
     </ngb-tab>
 
+    <!-- Permissions -->
+    <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+      <ng-template ngbTabContent>
+        <app-resource-permissions [meta]="structureDefinition.meta"></app-resource-permissions>
+      </ng-template>
+    </ngb-tab>
+
     <!-- Validation -->
     <ngb-tab id="validation">
       <ng-template ngbTabTitle>

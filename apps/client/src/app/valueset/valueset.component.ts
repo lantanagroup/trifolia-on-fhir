@@ -19,7 +19,7 @@ import {AuthService} from '../shared/auth.service';
   styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
-  public valueSet;
+  public valueSet: ValueSet;
   public message: string;
   public validation: any;
   public vsNotFound = false;
@@ -30,11 +30,11 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(
     public route: ActivatedRoute,
+    public configService: ConfigService,
     private authService: AuthService,
     private valueSetService: ValueSetService,
     private router: Router,
     private modalService: NgbModal,
-    private configService: ConfigService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {

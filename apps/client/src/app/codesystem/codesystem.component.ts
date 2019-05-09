@@ -16,7 +16,7 @@ import {AuthService} from '../shared/auth.service';
     styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
-    public codeSystem;
+    public codeSystem: CodeSystem;
     public filteredConcepts: ConceptDefinitionComponent[] = [];
     public pagedConcepts: ConceptDefinitionComponent[] = [];
     public message: string;
@@ -33,11 +33,11 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
 
     constructor(
         public route: ActivatedRoute,
+        public configService: ConfigService,
         private authService: AuthService,
         private modalService: NgbModal,
         private codeSystemService: CodeSystemService,
         private router: Router,
-        private configService: ConfigService,
         private recentItemService: RecentItemService,
         private fileService: FileService,
         private fhirService: FhirService) {

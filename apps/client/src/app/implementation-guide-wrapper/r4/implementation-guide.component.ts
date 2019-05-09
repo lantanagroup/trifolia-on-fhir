@@ -35,7 +35,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide;
+  public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];

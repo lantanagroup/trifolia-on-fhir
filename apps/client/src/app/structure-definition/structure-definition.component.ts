@@ -39,8 +39,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
   constructor(
     public route: ActivatedRoute,
+    public configService: ConfigService,
     private router: Router,
-    private configService: ConfigService,
     private strucDefService: StructureDefinitionService,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,

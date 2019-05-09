@@ -6,6 +6,7 @@ import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/referenc
 import {FhirService} from '../shared/fhir.service';
 import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthService} from '../shared/auth.service';
+import {ConfigService} from '../shared/config.service';
 
 @Component({
   selector: 'app-new-profile',
@@ -13,10 +14,11 @@ import {AuthService} from '../shared/auth.service';
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent implements OnInit {
-  public structureDefinition;
+  public structureDefinition: StructureDefinition;
   public message: string;
 
   constructor(
+    public configService: ConfigService,
     private fhirService: FhirService,
     private route: Router,
     private modalService: NgbModal,

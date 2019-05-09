@@ -43,7 +43,7 @@ export class ItemModel {
   styleUrls: ['./questionnaire.component.css']
 })
 export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public questionnaire;
+  @Input() public questionnaire: Questionnaire;
   public message: string;
   public validation: any;
   public flattenedItems: ItemModel[];
@@ -52,10 +52,10 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(
     public route: ActivatedRoute,
+    public configService: ConfigService,
     private authService: AuthService,
     private questionnaireService: QuestionnaireService,
     private router: Router,
-    private configService: ConfigService,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,

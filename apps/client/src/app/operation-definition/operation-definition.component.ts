@@ -26,10 +26,10 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
 
   constructor(
     public route: ActivatedRoute,
+    public configService: ConfigService,
     private authService: AuthService,
     private modal: NgbModal,
     private router: Router,
-    private configService: ConfigService,
     private opDefService: OperationDefinitionService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
