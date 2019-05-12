@@ -1,5 +1,5 @@
 import {Injectable, Injector} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpRequest} from '@angular/common/http';
 import {
   Bundle,
   CapabilityStatement,
@@ -332,6 +332,14 @@ export class FhirService {
 
     const url = `/api/fhir/${resource.resourceType}`;
     return this.http.post<DomainResource>(url, resource);
+  }
+
+  public transaction(data: string, contentType: string) {
+    return this.http.post<DomainResource>('/api/fhir', data, {
+      headers: {
+        'Content-Type': contentType
+      }
+    });
   }
 
   public validateOnServer(resource: DomainResource): Observable<OperationOutcome> {

@@ -77,22 +77,9 @@ describe('FhirController', () => {
 
   describe('proxy', () => {
     describe('security disabled', () => {
-      let isSent, contentTypeSet, statusSet, responseContent;
-      const response = <Response> <any> {
-        status: () => { statusSet = true; },
-        contentType: () => { contentTypeSet = true; },
-        send: (content?) => {
-          isSent = true;
-          responseContent = content;
-        }
-      };
-
       beforeEach(() => {
         nock.cleanAll();
         configService.server.enableSecurity = false;
-        isSent = false;
-        contentTypeSet = false;
-        statusSet = false;
       });
 
       it('should post/create a single resource', async () => {
@@ -114,7 +101,9 @@ describe('FhirController', () => {
           .post('/Observation', observation)
           .reply(201, postedResource, replyHeaders);
 
-        await controller.proxy('/Observation', {}, 'POST', fhirServerBase, response, testUser, observation);
+        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, testUser, observation);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -133,7 +122,9 @@ describe('FhirController', () => {
           .put('/Observation/test-id', updatedObservation)
           .reply(201, updatedObservation, replyHeaders);
 
-        await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, response, testUser, updatedObservation);
+        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -147,7 +138,9 @@ describe('FhirController', () => {
           .delete('/Observation/test-id')
           .reply(201, null, replyHeaders);
 
-        await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, response, testUser);
+        const results = await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -194,42 +187,33 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Observation' }, { 'content-location': 'http://test-fhir-server.com/Observation/test-obs-1/_history/2' });
 
-        await controller.proxy('/', { }, 'POST', fhirServerBase, response, testUser, transactionBundle);
-
-        expect(responseContent).toBeTruthy();
-        expect(responseContent.entry).toBeTruthy();
-        expect(responseContent.entry.length).toBe(2);
-        expect(responseContent.entry[0].request).toBeTruthy();
-        expect(responseContent.entry[0].request.method).toBe('POST');
-        expect(responseContent.entry[0].request.url).toBe('/Observation');
-        expect(responseContent.entry[0].response).toBeTruthy();
-        expect(responseContent.entry[0].response.status).toBe('201');
-        expect(responseContent.entry[0].response.location).toBe('http://test-fhir-server.com/Observation/test-new-id/_history/1');
-        expect(responseContent.entry[1].request).toBeTruthy();
-        expect(responseContent.entry[1].request.method).toBe('PUT');
-        expect(responseContent.entry[1].request.url).toBe('/Observation/test-obs-1');
-        expect(responseContent.entry[1].response).toBeTruthy();
-        expect(responseContent.entry[1].response.status).toBe('200');
-        expect(responseContent.entry[1].response.location).toBe('http://test-fhir-server.com/Observation/test-obs-1/_history/2');
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
+        
+        expect(results).toBeTruthy();
+        expect(results.data).toBeTruthy();
+        expect(results.data.entry).toBeTruthy();
+        expect(results.data.entry.length).toBe(2);
+        expect(results.data.entry[0].request).toBeTruthy();
+        expect(results.data.entry[0].request.method).toBe('POST');
+        expect(results.data.entry[0].request.url).toBe('/Observation');
+        expect(results.data.entry[0].response).toBeTruthy();
+        expect(results.data.entry[0].response.status).toBe('201');
+        expect(results.data.entry[0].response.location).toBe('http://test-fhir-server.com/Observation/test-new-id/_history/1');
+        expect(results.data.entry[1].request).toBeTruthy();
+        expect(results.data.entry[1].request.method).toBe('PUT');
+        expect(results.data.entry[1].request.url).toBe('/Observation/test-obs-1');
+        expect(results.data.entry[1].response).toBeTruthy();
+        expect(results.data.entry[1].response.status).toBe('200');
+        expect(results.data.entry[1].response.location).toBe('http://test-fhir-server.com/Observation/test-obs-1/_history/2');
 
         req.done();
       });
     });
 
     describe('security enabled', () => {
-      let isSent, contentTypeSet, statusSet;
-      const response = <Response> <any> {
-        status: () => { statusSet = true; },
-        contentType: () => { contentTypeSet = true; },
-        send: () => { isSent = true; }
-      };
-
       beforeEach(() => {
         nock.cleanAll();
         configService.server.enableSecurity = true;
-        isSent = false;
-        contentTypeSet = false;
-        statusSet = false;
       });
 
       it('should make sure resource retrieval checks security for entry in transaction', async () => {
@@ -282,7 +266,9 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        await controller.proxy('/', { }, 'POST', fhirServerBase, response, testUser, transactionBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -362,7 +348,9 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        await controller.proxy('/', { }, 'POST', fhirServerBase, response, testUser, transactionBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -383,13 +371,12 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Bundle' });
 
-        await controller.proxy('/ImplementationGuide', {}, 'GET', fhirServerBase, <Response> <any> response, testUser);
+        const results = await controller.proxy('/ImplementationGuide', {}, 'GET', fhirServerBase, testUser);
+        
+        expect(results).toBeTruthy();
+        expect(results.contentType).toBeTruthy();
 
         req.done();
-
-        expect(contentTypeSet).toBe(true);
-        expect(isSent).toBe(true);
-        expect(statusSet).toBe(true);
       });
 
       it('should make sure a create adds permissions for the user', async () => {
@@ -425,7 +412,9 @@ describe('FhirController', () => {
           })
           .reply(201, postedResource, replyHeaders);
 
-        await controller.proxy('/Observation', {}, 'POST', fhirServerBase, response, testUser, newObservation);
+        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, testUser, newObservation);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -469,7 +458,9 @@ describe('FhirController', () => {
           })
           .reply(201, persistedObservation, replyHeaders);
 
-        await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, response, testUser, updatedObservation);
+        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
+
+        expect(results).toBeTruthy();
 
         req.done();
       });
@@ -497,7 +488,7 @@ describe('FhirController', () => {
           .reply(200, persistedObservation);
 
         try {
-          await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, response, testUser, updatedObservation);
+          await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
           throw new Error('Proxy should have thrown an AuthorizationException');
         } catch (ex) {
           expect(ex.status).toBe(401);
@@ -531,7 +522,7 @@ describe('FhirController', () => {
           .delete('/Observation/test-id')
           .reply(200);
 
-        await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, response, testUser);
+        await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
 
         req.done();
       });
@@ -554,7 +545,7 @@ describe('FhirController', () => {
           .reply(200, persistedObservation);
 
         try {
-          await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, response, testUser);
+          await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
         } catch (ex) {
           expect(ex.status).toBe(401);
         }

@@ -1,12 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../shared/import.service';
-import {
-  Bundle,
-  DomainResource,
-  EntryComponent, IssueComponent,
-  OperationOutcome,
-  RequestComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, EntryComponent, IssueComponent, OperationOutcome, RequestComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
@@ -16,6 +10,7 @@ import {ImportGithubPanelComponent} from './import-github-panel/import-github-pa
 import {forkJoin} from 'rxjs';
 import {v4 as uuidv4} from 'uuid';
 import {saveAs} from 'file-saver';
+import {HttpClient} from '@angular/common/http';
 
 enum ContentTypes {
   Json = 0,
@@ -61,6 +56,7 @@ export class ImportComponent implements OnInit {
 
   constructor(
     public fhirService: FhirService,
+    private httpClient: HttpClient,
     private importService: ImportService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
@@ -232,28 +228,65 @@ export class ImportComponent implements OnInit {
   }
 
   private importText(tabSet: NgbTabset) {
-    const contentType = this.textContentType === ContentTypes.Json ? 'json' : 'xml';
-    this.importService.import(contentType, this.textContent)
-      .subscribe((results: OperationOutcome | Bundle) => {
+    let resource;
+
+    try {
+      resource = this.textContentType === ContentTypes.Xml ?
+        this.fhirService.fhir.xmlToObj(this.textContent) :
+        JSON.parse(this.textContent);
+    } catch (ex) {
+      this.outcome = {
+        resourceType: 'OperationOutcome',
+        text: {
+          status: 'generated',
+          div: 'An error occurred while parsing the text content: ' + this.fhirService.getErrorString(ex)
+        },
+        issue: []
+      };
+      this.message = 'Done. Errors occurred.';
+      setTimeout(() => {
+        tabSet.select('results');
+      });
+      return;
+    }
+
+    let response;
+
+    if (resource.resourceType === 'Bundle' && (resource.type === 'transaction' || resource.type === 'batch')) {
+      response = this.httpClient.post('/api/fhir', resource);
+    } else if (resource.id) {
+      response = this.httpClient.put(`/api/fhir/${resource.resourceType}/${resource.id}`, resource);
+    } else {
+      response = this.httpClient.post(`/api/fhir/${resource.resourceType}`, resource);
+    }
+
+    response
+      .subscribe((results: Bundle | OperationOutcome) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
         } else if (results.resourceType === 'Bundle') {
           this.resultsBundle = <Bundle>results;
         }
 
-        this.message = 'Done importing';
+        this.message = 'Done.';
         setTimeout(() => {
           tabSet.select('results');
         });
       }, (err) => {
-        this.outcome = {
-          resourceType: 'OperationOutcome',
-          text: {
-            status: 'generated',
-            div: 'An error occurred while importing the resource(s): ' + err
-          },
-          issue: []
-        };
+        if (err && err.error && err.error.resourceType === 'OperationOutcome') {
+          this.outcome = err.error;
+        } else {
+          this.outcome = {
+            resourceType: 'OperationOutcome',
+            text: {
+              status: 'generated',
+              div: 'An error occurred while importing the resource(s): ' + this.fhirService.getErrorString(err)
+            },
+            issue: []
+          };
+        }
+
+        this.message = 'Done. Errors occurred.';
         setTimeout(() => {
           tabSet.select('results');
         });

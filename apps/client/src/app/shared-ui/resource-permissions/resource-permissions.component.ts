@@ -275,7 +275,7 @@ export class ResourcePermissionsComponent implements OnInit {
       if (!meCanWrite) {
         this.addPermission('user', 'write', this.currentUser.id);
       }
-      
+
       this.getPermittedResources();
     } else {
       alert('The selected resource does not have any permissions defined');

@@ -1,5 +1,21 @@
 import {BaseController, UserSecurityInfo} from './base.controller';
-import {All, BadRequestException, Body, Controller, Header, Headers, HttpCode, HttpService, InternalServerErrorException, Param, Post, Query, Res, UseGuards} from '@nestjs/common';
+import {
+  All,
+  BadRequestException,
+  Body,
+  Controller,
+  Header,
+  Headers,
+  HttpCode,
+  HttpService,
+  InternalServerErrorException,
+  Param,
+  Post,
+  Query,
+  Res,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
@@ -13,6 +29,12 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {parseFhirUrl} from './helper';
 import {Bundle, DomainResource, EntryComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import nanoid from 'nanoid';
+
+export interface ProxyResponse {
+  status: number;
+  data: any;
+  contentType?: string;
+}
 
 @Controller('fhir')
 @UseGuards(AuthGuard('bearer'))
@@ -176,15 +198,12 @@ export class FhirController extends BaseController {
     return responseBundle;
   }
 
-  @All()
-  public async proxy(
-    @RequestUrl() url: string,
-    @Headers() headers: {[key: string]: any},
-    @RequestMethod() method: string,
-    @FhirServerBase() fhirServerBase: string,
-    @Res() response: Response,
-    @User() user: ITofUser,
-    @Body() body?) {
+  public async proxy(url: string, headers: {[key: string]: any}, method: string, fhirServerBase: string, user: ITofUser, body?): Promise<ProxyResponse> {
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    headers = headers || {};
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     let proxyUrl = fhirServerBase;
@@ -201,9 +220,10 @@ export class FhirController extends BaseController {
     if (isTransaction && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       const responseBundle = await this.processTransaction(body, fhirServerBase, userSecurityInfo);
-      response.status(200);
-      response.send(responseBundle);
-      return;
+      return {
+        status: 200,
+        data: responseBundle
+      };
     } else if (method === 'GET' && parsedUrl.resourceType && !parsedUrl.id && !parsedUrl.operation) {
       // When searching, add _security query parameter
       if (this.configService.server.enableSecurity) {
@@ -253,7 +273,7 @@ export class FhirController extends BaseController {
 
           this.assertUserCanEdit(userSecurityInfo, persistedResource);
         } catch (ex) {
-          if (ex.status !== 404) {
+          if (ex.response && ex.response.status !== 404) {
             throw ex;
           }
           // Do nothing if the resource is not found... That means this is a create-with-id request
@@ -291,27 +311,47 @@ export class FhirController extends BaseController {
       options.data = body;
     }
 
-    const sendResults = (results: AxiosResponse) => {
-      if (results.headers['content-type']) {
-        response.contentType(results.headers['content-type']);
-      }
-
-      response.status(results.status);
-      response.send(results.data);
-    };
-
     try {
       const results = await this.httpService.request(options).toPromise();
-      sendResults(results);
+
+      return {
+        status: results.status,
+        contentType: results.headers['content-type'] || null,
+        data: results.data
+      };
     } catch (ex) {
       const results = ex.response;
 
       if (results) {
-        sendResults(results);
+        return {
+          status: results.status,
+          contentType: results.headers['content-type'] || null,
+          data: results.data
+        };
       } else {
         this.logger.error('Error processing http-error results in proxy', ex);
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  @All()
+  public async proxyRequest(
+    @RequestUrl() url: string,
+    @Headers() headers: {[key: string]: any},
+    @RequestMethod() method: string,
+    @FhirServerBase() fhirServerBase: string,
+    @Res() response: Response,
+    @User() user: ITofUser,
+    @Body() body?) {
+    const results = await this.proxy(url, headers, method, fhirServerBase, user, body);
+
+    response.status(results.status);
+
+    if (results.contentType) {
+      response.contentType(results.contentType);
+    }
+
+    response.send(results.data);
   }
 }
