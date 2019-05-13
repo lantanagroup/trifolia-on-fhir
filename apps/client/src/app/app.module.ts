@@ -65,6 +65,10 @@ import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 
+/**
+ * This class is an HTTP interceptor that is responsible for adding an
+ * Authorization header to every request sent to the application server.
+ */
 export class AddHeaderInterceptor implements HttpInterceptor {
   constructor() {
 
@@ -102,6 +106,9 @@ export function cookieServiceFactory() {
   return new CookieService();
 }
 
+/**
+ * The routes in the client application.
+ */
 const appRoutes: Routes = [
   {path: 'home', component: HomeComponent},
   {path: 'implementation-guide', component: ImplementationGuidesComponent},
@@ -141,12 +148,20 @@ const appRoutes: Routes = [
   }
 ];
 
+/**
+ * Initialization logic.
+ * 1. Gets the client application's config from the server
+ * 2. Initialization authentication and handles an authentication request callback (if there is one)
+ * 3. Loads assets for the remembered version of the FHIR server
+ * 4. Gets the profile o f the currently logged-in user, if there is one
+ */
 export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
   const getConfig = () => {
     return new Promise((resolve, reject) => {
       // Get the initial config for the server and get the FHIR server config
       configService.getConfig(true)
         .then(() => {
+          // Notify components and the FHIR server has changed (or in this case, has been loaded)
           return configService.changeFhirServer();
         })
         .then(() => {
@@ -154,17 +169,19 @@ export function init(configService: ConfigService, authService: AuthService, fhi
           authService.init();
           authService.handleAuthentication();
 
+          // Load FHIR assets (profiles, value sets, etc.)
           return fhirService.loadAssets();
         })
         .then(() => {
           // The FHIR server should now be loaded, get the profile for the authenticated user (if any)
           return authService.getProfile();
         })
-        .then(() => resolve())
-        .catch((err) => reject(err));
+        .then(() => resolve())              // Done
+        .catch((err) => reject(err));       // Error
     });
   };
 
+  // First, get the config, which triggers a chain of other requests to initialize
   return () => getConfig();
 }
 
