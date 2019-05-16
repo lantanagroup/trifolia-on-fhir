@@ -7,12 +7,14 @@ import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   templateUrl: './operation-definitions.component.html',
   styleUrls: ['./operation-definitions.component.css']
 })
-export class OperationDefinitionsComponent implements OnInit {
+export class OperationDefinitionsComponent extends BaseComponent implements OnInit {
   public operationDefinitionsBundle: Bundle;
   public nameText: string;
   public criteriaChangedEvent = new Subject();
@@ -21,8 +23,11 @@ export class OperationDefinitionsComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private opDefService: OperationDefinitionService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

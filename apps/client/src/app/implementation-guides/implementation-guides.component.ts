@@ -7,13 +7,15 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-implementation-guides',
   templateUrl: './implementation-guides.component.html',
   styleUrls: ['./implementation-guides.component.css']
 })
-export class ImplementationGuidesComponent implements OnInit {
+export class ImplementationGuidesComponent extends BaseComponent implements OnInit {
   public results: Bundle = null;
   public page = 1;
   public nameText: string;
@@ -23,8 +25,11 @@ export class ImplementationGuidesComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private igService: ImplementationGuideService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

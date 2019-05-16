@@ -586,33 +586,33 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
       return;
     }
 
-    let routeBase: string;
+    let routeComponent: string;
 
     switch (parsed.resourceType) {
       case 'ImplementationGuide':
-        routeBase = 'implementation-guide';
+        routeComponent = 'implementation-guide';
         break;
       case 'StructureDefinition':
-        routeBase = 'structure-definition';
+        routeComponent = 'structure-definition';
         break;
       case 'CapabilityStatement':
-        routeBase = 'capability-statement';
+        routeComponent = 'capability-statement';
         break;
       case 'OperationDefinition':
-        routeBase = 'operation-definition';
+        routeComponent = 'operation-definition';
         break;
       case 'ValueSet':
-        routeBase = 'value-set';
+        routeComponent = 'value-set';
         break;
       case 'CodeSystem':
-        routeBase = 'code-system';
+        routeComponent = 'code-system';
         break;
       case 'Questionnaire':
-        routeBase = 'questionnaire';
+        routeComponent = 'questionnaire';
         break;
     }
 
-    this.router.navigate(['/' + routeBase + '/' + parsed.id]);
+    this.router.navigate([`/${this.configService.fhirServer}/${routeComponent}/${parsed.id}`]);
   }
 
   public initResources() {
@@ -634,6 +634,10 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
   }
 
   public removeResource(igResource: ImplementationGuideResource) {
+    if (!confirm('Are you sure you want to remove this resource from the implementation guide? Doing this will *not* delete the resource itself, it *only* removes it from the implementation guide.')) {
+      return;
+    }
+
     const packageResourceIndex = igResource.igPackage.resource.indexOf(igResource.resource);
     igResource.igPackage.resource.splice(packageResourceIndex, 1);
 

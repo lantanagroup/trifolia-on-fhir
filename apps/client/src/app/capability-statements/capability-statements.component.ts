@@ -7,12 +7,14 @@ import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   templateUrl: './capability-statements.component.html',
   styleUrls: ['./capability-statements.component.css']
 })
-export class CapabilityStatementsComponent implements OnInit {
+export class CapabilityStatementsComponent extends BaseComponent implements OnInit {
   public capabilityStatementsBundle: Bundle;
   public nameText: string;
   public criteriaChangedEvent = new Subject();
@@ -21,8 +23,11 @@ export class CapabilityStatementsComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private csService: CapabilityStatementService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

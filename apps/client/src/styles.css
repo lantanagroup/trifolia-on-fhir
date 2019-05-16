@@ -146,10 +146,6 @@ button {
     max-width: 350px;
 }
 
-a.btn {
-    background-color: buttonface;
-}
-
 .strikethrough {
     text-decoration: line-through;
 }

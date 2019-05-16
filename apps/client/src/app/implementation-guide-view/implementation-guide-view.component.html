@@ -2,7 +2,7 @@
   <ngb-tab title="Output">
     <ng-template ngbTabContent>
       <a href="{{implementationGuideOutputUrl}}" target="_new">Open in new tab</a>
-      <a *ngIf="implementationGuideId" class="nav-link" routerLink="/publish/{{implementationGuideId}}">Publish/Re-Publish</a>
+      <a *ngIf="implementationGuideId" class="nav-link" routerLink="/{{this.configService.fhirServer}}/publish/{{implementationGuideId}}">Publish/Re-Publish</a>
       <iframe *ngIf="implementationGuideId" [src]="implementationGuideOutputUrl | safe"></iframe>
     </ng-template>
   </ngb-tab>
@@ -12,6 +12,7 @@
         QA.html file with working links.
       </div>
       <a href="{{implementationGuideQAUrl}}" target="_new">Open in new tab</a>
+      <a *ngIf="implementationGuideId" class="nav-link" routerLink="/{{this.configService.fhirServer}}/publish/{{implementationGuideId}}">Publish/Re-Publish</a>
       <iframe *ngIf="implementationGuideId" [src]="implementationGuideQAUrl | safe"></iframe>
     </ng-template>
   </ngb-tab>

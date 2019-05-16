@@ -7,12 +7,14 @@ import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   templateUrl: './codesystems.component.html',
   styleUrls: ['./codesystems.component.css']
 })
-export class CodesystemsComponent implements OnInit {
+export class CodesystemsComponent extends BaseComponent implements OnInit {
   public codeSystemsBundle: Bundle;
   public nameText: string;
   public page = 1;
@@ -21,8 +23,11 @@ export class CodesystemsComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private codeSystemService: CodeSystemService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
@@ -43,7 +48,9 @@ export class CodesystemsComponent implements OnInit {
       return false;
     }
 
-    return this.configService.config.nonEditableResources.codeSystems.indexOf(codeSystem.url) >= 0;
+    const isNonEditable = this.configService.config.nonEditableResources.codeSystems.indexOf(codeSystem.url) >= 0;
+
+    return isNonEditable || !this.canEdit(codeSystem);
   }
 
   public nameTextChanged(value: string) {

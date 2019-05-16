@@ -35,13 +35,13 @@
             </div>
             <div class="col-md-12">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+                    <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
                         <i class="fa fa-times"></i> Clear
                     </button>
-                    <button type="button" class="btn btn-default" title="Refresh" (click)="getStructureDefinitions()">
+                    <button type="button" class="btn btn-primary" title="Refresh" (click)="getStructureDefinitions()">
                         <i class="fa fa-search"></i> Search
                     </button>
-                    <button type="button" class="btn btn-default" title="Show more/less" (click)="toggleSearchOptions()">
+                    <button type="button" class="btn btn-primary" title="Show more/less" (click)="toggleSearchOptions()">
                         <i class="fas" [class.fa-chevron-circle-down]="!showMoreSearch" [class.fa-chevron-circle-up]="showMoreSearch"></i> {{showMoreSearch ? 'Less' : 'More'}} options
                     </button>
                 </div>
@@ -72,7 +72,7 @@
         <th class="contact">Contact</th>
         <th>
             <div class="pull-right">
-                <a class="btn btn-default" routerLink="/structure-definition/new" title="Create a new structure definition" [attr.data-intro]="Globals.introText['browse.add']">
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/structure-definition/new" title="Create a new structure definition" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
@@ -93,13 +93,13 @@
         <td class="contact">{{getContactDisplay(structureDefinition)}}</td>
         <td>
             <div class="pull-right btn-group">
-                <a class="btn btn-default" [routerLink]="['/structure-definition', structureDefinition.id]" title="Edit this resource">
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/structure-definition/{{structureDefinition.id}}" title="Edit this resource">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(structureDefinition)" title="Remove this resource">
+                <button type="button" class="btn btn-secondary" (click)="remove(structureDefinition)" [disabled]="!canEdit(structureDefinition)" title="Remove this resource">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(structureDefinition)" title="Change this resource's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(structureDefinition)" [disabled]="!canEdit(structureDefinition)" title="Change this resource's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -120,13 +120,13 @@
         <td class="contact">Joe Somebody</td>
         <td>
             <div class="pull-right btn-group">
-                <a class="btn btn-default" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
+                <a class="btn btn-primary" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
+                <button type="button" class="btn btn-secondary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+                <button type="button" class="btn btn-secondary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -135,7 +135,7 @@
     </tbody>
     <tfoot>
     <tr *ngIf="response && response.total === 0">
-        <td colspan="3">No profiles (structure definitions)! Create one by clicking <a routerLink="/structure-definition/new">here</a>...</td>
+        <td colspan="3">No profiles (structure definitions)! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/structure-definition/new">here</a>...</td>
     </tr>
     <tr *ngIf="response && response.total > 0">
         <td colspan="6">

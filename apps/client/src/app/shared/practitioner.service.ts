@@ -7,37 +7,38 @@ import {map} from 'rxjs/operators';
 @Injectable()
 export class PractitionerService {
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
-    public getUsers(content?: string, name?: string, email?: string, id?: string) {
-      let url = '/api/practitioner/user?';
+  public getUsers(content?: string, name?: string, email?: string, id?: string) {
+    let url = '/api/practitioner/user?';
 
-      if (content) {
-        url += '_content=' + encodeURIComponent(content) + '&';
-      }
-
-      if (name) {
-        url += 'name=' + encodeURIComponent(name) + '&';
-      }
-
-      if (email) {
-        url += 'email=' + encodeURIComponent(email) + '&';
-      }
-
-      if (id) {
-        url += '_id=' + encodeURIComponent(id) + '&';
-      }
-
-      return this.http.get<Bundle>(url);
+    if (content) {
+      url += '_content=' + encodeURIComponent(content) + '&';
     }
 
-    public getMe(): Observable<Practitioner> {
-        return this.http.get('/api/practitioner/me')
-          .pipe(map(personObj => new Practitioner(personObj)));
+    if (name) {
+      url += 'name=' + encodeURIComponent(name) + '&';
     }
 
-    public updateMe(person: Practitioner): Observable<Practitioner> {
-        return this.http.post('/api/practitioner/me', person)
-          .pipe(map(personObj => new Practitioner(personObj)));
+    if (email) {
+      url += 'email=' + encodeURIComponent(email) + '&';
     }
+
+    if (id) {
+      url += '_id=' + encodeURIComponent(id) + '&';
+    }
+
+    return this.http.get<Bundle>(url);
+  }
+
+  public getMe(): Observable<Practitioner> {
+    return this.http.get('/api/practitioner/me')
+      .pipe(map(personObj => new Practitioner(personObj)));
+  }
+
+  public updateMe(person: Practitioner): Observable<Practitioner> {
+    return this.http.post('/api/practitioner/me', person)
+      .pipe(map(personObj => new Practitioner(personObj)));
+  }
 }

@@ -14,12 +14,15 @@ export class ConfigService {
   public fhirServer: string;
   public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
   public statusMessage: string;
-  public fhirConformance: STU3CapabilityStatement | R4CapabilityStatement;
   public showingIntroduction = false;
+  private fhirConformances: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement } = {};
 
   constructor(private injector: Injector) {
-
     this.fhirServer = localStorage.getItem('fhirServer');
+  }
+
+  public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement {
+    return this.fhirConformances[this.fhirServer];
   }
 
   public get titleService(): Title {
@@ -70,6 +73,11 @@ export class ConfigService {
   }
 
   public changeFhirServer(fhirServer?: string) {
+    // Don't do anything if we've already selected this fhir server
+    if (this.fhirServer === fhirServer && this.fhirConformance) {
+      return Promise.resolve();
+    }
+
     if (fhirServer) {
       this.fhirServer = fhirServer;
     }
@@ -80,9 +88,15 @@ export class ConfigService {
 
     localStorage.setItem('fhirServer', this.fhirServer);
 
+    if (this.fhirConformance) {
+      this.fhirServerChanged.emit(this.fhirServer);
+      return Promise.resolve();
+    }
+
+    // Get the conformance statement from the FHIR server and store it
     return this.http.get('/api/config/fhir').toPromise()
-      .then((res: any) => {
-        this.fhirConformance = res;
+      .then((res: STU3CapabilityStatement | R4CapabilityStatement) => {
+        this.fhirConformances[this.fhirServer] = res;
         this.fhirServerChanged.emit(this.fhirServer);
       });
   }

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
 import {RecentItemService} from './shared/recent-item.service';
@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
     private modalService: NgbModal,
     private fileService: FileService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private cookieService: CookieService,
     private socketService: SocketService) {
 
@@ -104,8 +105,21 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events.subscribe(() => {
+    // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
+    // This needs to be done in the init method so that the navbarCollapse element exists
+    this.router.events.subscribe((event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
+
+      if (event instanceof NavigationStart) {
+        const url = (event.url || '').substring(event.url.startsWith('/') ? 1 : 0);
+        const urlParts = url.split('/');
+
+        if (!url) {
+          this.router.navigate([`/${this.configService.fhirServer}/home`]);
+        } else if (this.configService.config && this.configService.config.fhirServers && this.configService.config.fhirServers.find((fhirServer) => fhirServer.id === urlParts[0])) {
+          this.configService.changeFhirServer(urlParts[0]);
+        }
+      }
     });
 
     this.socketService.onMessage.subscribe((message) => {

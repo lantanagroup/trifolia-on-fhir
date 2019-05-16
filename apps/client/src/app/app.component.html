@@ -38,25 +38,25 @@
           Browse/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="browseMenu">
-          <a class="dropdown-item" routerLink="/implementation-guide">Implementation Guides</a>
-          <a class="dropdown-item" routerLink="/structure-definition">Profiles/Extensions</a>
-          <a class="dropdown-item" routerLink="/capability-statement">Capability Statements</a>
-          <a class="dropdown-item" routerLink="/operation-definition">Operation Definition</a>
-          <a class="dropdown-item" routerLink="/value-set">Value Sets</a>
-          <a class="dropdown-item" routerLink="/code-system">Code Systems</a>
-          <a class="dropdown-item" routerLink="/questionnaire">Questionnaires</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/implementation-guide">Implementation Guides</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/structure-definition">Profiles/Extensions</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/capability-statement">Capability Statements</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/operation-definition">Operation Definition</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/value-set">Value Sets</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/code-system">Code Systems</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/questionnaire">Questionnaires</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" routerLink="/other-resources">Other Resources</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/other-resources">Other Resources</a>
         </div>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/import">Import</a>
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/import">Import</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/export">Export</a>
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/export">Export</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="/publish">Publish</a>
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/publish">Publish</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
@@ -70,7 +70,7 @@
           <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
         </li>
         <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" routerLink="/users/me">
+          <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/users/me">
             <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}"/>
             {{displayName}}
           </a>

@@ -10,13 +10,14 @@ import 'rxjs/add/operator/debounceTime';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
-  selector: 'app-profiles',
   templateUrl: './structure-definitions.component.html',
   styleUrls: ['./structure-definitions.component.css']
 })
-export class StructureDefinitionsComponent implements OnInit {
+export class StructureDefinitionsComponent extends BaseComponent implements OnInit {
   public response: Bundle;
   public message: string;
   public page = 1;
@@ -31,10 +32,13 @@ export class StructureDefinitionsComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService,
     private structureDefinitionService: StructureDefinitionService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

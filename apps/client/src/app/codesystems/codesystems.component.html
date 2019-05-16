@@ -5,10 +5,10 @@
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)"
            placeholder="Search name">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-default" title="Clear filters" (click)="clearFilters()">
+        <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
             <i class="fa fa-times"></i>
         </button>
-        <button type="button" class="btn btn-default" title="Refresh" (click)="getCodeSystems()">
+        <button type="button" class="btn btn-primary" title="Refresh" (click)="getCodeSystems()">
             <i class="fa fa-search"></i>
         </button>
     </div>
@@ -32,7 +32,7 @@
         <th>Name</th>
         <th class="actions-column-3">
             <div class="pull-right">
-                <button type="button" class="btn btn-default" routerLink="/code-system/new" title="Create a new code system" [attr.data-intro]="Globals.introText['browse.add']">
+                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/code-system/new" title="Create a new code system" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -45,13 +45,13 @@
         <td>{{cs.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" routerLink="/code-system/{{cs.id}}" [class.disabled]="isEditDisabled(cs)" title="Edit this resource">
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/code-system/{{cs.id}}" [class.disabled]="isEditDisabled(cs)" title="Edit this resource">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" (click)="remove(cs)" [disabled]="isEditDisabled(cs)" title="Remove this resource">
+                <button type="button" class="btn btn-secondary" (click)="remove(cs)" [disabled]="isEditDisabled(cs)" title="Remove this resource">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="changeId(cs)" [disabled]="isEditDisabled(cs)" title="Change this resource's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(cs)" [disabled]="isEditDisabled(cs)" title="Change this resource's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -64,13 +64,13 @@
         <td>Demo Name</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
+                <a class="btn btn-primary" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
                     <i class="fa fa-edit"></i>
                 </a>
-                <button type="button" class="btn btn-default" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
+                <button type="button" class="btn btn-secondary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+                <button type="button" class="btn btn-secondary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -79,7 +79,7 @@
     </tbody>
     <tfoot>
     <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total === 0">
-        <td colspan="3">No code systems! Create one by clicking <a routerLink="/code-system/new">here</a>...</td>
+        <td colspan="3">No code systems! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/code-system/new">here</a>...</td>
     </tr>
     <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total > 0">
         <td colspan="3">

@@ -2,12 +2,14 @@ import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as auth0 from 'auth0-js';
 import {PractitionerService} from './practitioner.service';
-import {HumanName, Identifier, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Group, HumanName, Identifier, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {NewUserModalComponent} from '../modals/new-user-modal/new-user-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
+import {GroupService} from './group.service';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
   public auth0: any;
   public userProfile: any;
   public practitioner: Practitioner;
+  public groups: Group[] = [];
   public authExpiresAt: number;
   public authChanged: EventEmitter<any>;
   private authTimeout: any;
@@ -26,7 +29,8 @@ export class AuthService {
     private socketService: SocketService,
     private configService: ConfigService,
     private modalService: NgbModal,
-    private practitionerService: PractitionerService) {
+    private practitionerService: PractitionerService,
+    private groupService: GroupService) {
     this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
     this.authChanged = new EventEmitter();
   }
@@ -92,18 +96,18 @@ export class AuthService {
     }
 
     this.auth0.parseHash((err, authResult) => {
-      let path = this.activatedRoute.snapshot.queryParams.pathname || '/home';
-
-      // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
-      if (path.startsWith('/login')) {
-        path = '/';
-      }
-
       if (authResult && authResult.idToken) {
         window.location.hash = '';
         this.setSession(authResult);
         this.getProfile()
           .then(() => {
+            let path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+
+            // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
+            if (path.startsWith('/login')) {
+              path = '/';
+            }
+
             this.router.navigate([path]);
             this.authChanged.emit();
             this.socketService.notifyAuthenticated({
@@ -112,7 +116,7 @@ export class AuthService {
             });
           });
       } else if (err) {
-        this.router.navigate(['/home']);
+        this.router.navigate([`/${this.configService.fhirServer}/home`]);
         console.error(err);
       }
     });
@@ -170,7 +174,19 @@ export class AuthService {
     try {
       this.practitioner = await this.practitionerService.getMe().toPromise();
     } catch (ex) {
+      console.error(ex);
       this.practitioner = null;
+    }
+
+    try {
+      this.groups = await this.groupService.getMembership()
+        .pipe(map(groupsBundle =>
+          (groupsBundle.entry || []).map(entry => <Group> entry.resource)
+        ))
+        .toPromise();
+    } catch (ex) {
+      console.error(ex);
+      this.groups = [];
     }
 
     // This also triggers a notification to the socket

@@ -8,12 +8,14 @@ import {ConfigService} from '../shared/config.service';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   templateUrl: './valuesets.component.html',
   styleUrls: ['./valuesets.component.css']
 })
-export class ValuesetsComponent implements OnInit {
+export class ValuesetsComponent extends BaseComponent implements OnInit {
   public results: Bundle;
   public nameText: string;
   public idText: string;
@@ -25,9 +27,12 @@ export class ValuesetsComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private fhirService: FhirService,
     private valueSetService: ValueSetService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

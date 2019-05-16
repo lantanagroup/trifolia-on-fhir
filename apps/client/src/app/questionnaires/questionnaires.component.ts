@@ -7,12 +7,14 @@ import {ConfigService} from '../shared/config.service';
 import {Subject} from 'rxjs';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   templateUrl: './questionnaires.component.html',
   styleUrls: ['./questionnaires.component.css']
 })
-export class QuestionnairesComponent implements OnInit {
+export class QuestionnairesComponent extends BaseComponent implements OnInit {
   public questionnairesBundle: Bundle;
   public nameText: string;
   public criteriaChangedEvent = new Subject();
@@ -21,8 +23,11 @@ export class QuestionnairesComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
+    protected authService: AuthService,
     private questionnaireService: QuestionnaireService,
     private modalService: NgbModal) {
+
+    super(configService, authService);
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {

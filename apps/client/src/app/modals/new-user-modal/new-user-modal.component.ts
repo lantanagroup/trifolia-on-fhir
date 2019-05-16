@@ -24,9 +24,9 @@ export class NewUserModalComponent implements OnInit {
     private practitionerService: PractitionerService) {
 
     this.practitioner = new Practitioner();
-    const identifierSystem = this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
+    const identifierSystem = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
       'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
-    const identifierValue = this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
+    const identifierValue = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
       this.authService.userProfile.user_id.substring(6) : this.authService.userProfile.user_id;
     this.practitioner.identifier = [new Identifier({
       system: identifierSystem,
