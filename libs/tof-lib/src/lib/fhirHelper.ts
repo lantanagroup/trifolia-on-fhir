@@ -19,7 +19,16 @@ export function joinUrl(...parts: string[]) {
   return url;
 }
 
-export function buildUrl(base: string, resourceType?: string, id?: string, operation?: string, params?: {[key: string]: any}) {
+/**
+ * Builds a URL for the FHIR API from arguments
+ * @param base The base of the URL (ex: https://some-fhir-server.com/fhir)
+ * @param resourceType The resource type to query for
+ * @param id The id of the resource
+ * @param operation An operation to perform on the server (no resource type), the resource type, or the resource instance (with id)
+ * @param params The query parameters to add onto the URL
+ * @param separateArrayParams Indicates whether array-based query parameters should be combined using a comma (,) or if the query param should be repeated for each element of the array
+ */
+export function buildUrl(base: string, resourceType?: string, id?: string, operation?: string, params?: {[key: string]: any}, separateArrayParams = false) {
   let path = base;
 
   if (!path) {
@@ -45,7 +54,12 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
     keys.forEach((key) => {
       if (params[key] instanceof Array) {
         const valueArray = <any[]> params[key];
-        paramArray.push(`${key}=${encodeURIComponent(valueArray.join(','))}`);
+
+        if (!separateArrayParams) {
+          paramArray.push(`${key}=${encodeURIComponent(valueArray.join(','))}`);
+        } else {
+          valueArray.forEach((element) => paramArray.push(`${key}=${encodeURIComponent(element)}`));
+        }
       } else {
         const value = params[key];
         paramArray.push(`${key}=${encodeURIComponent(value)}`);

@@ -23,7 +23,7 @@ export class BasePermissions extends BaseTools {
     this.options = options;
 
     if (!options.allResources && !options.resourceType && !options.resourceId) {
-      throw new Error('You must specify either "all" or "resourceType" and "resourceId"');
+      throw new Error('You must specify either "allResources" or "resourceType" and "resourceId"');
     }
   }
 
@@ -156,6 +156,8 @@ export class AddPermission extends BasePermissions {
     this.getResources()
       .then((resources: DomainResource[]) => {
         this.queue = resources;
+
+        console.log(`Queueing ${resources.length} resources to modify permissions`);
         return this.processQueue();
       })
       .then(() => {

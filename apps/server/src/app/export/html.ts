@@ -99,6 +99,8 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(serverConfig: IServerConfig, fhirConfig: IFhirConfig, httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
+    this.serverConfig = serverConfig;
+    this.fhirConfig = fhirConfig;
     this.httpService = httpService;
     this.logger = logger;
     this.fhirServerBase = fhirServerBase;

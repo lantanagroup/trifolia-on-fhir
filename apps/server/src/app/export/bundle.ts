@@ -88,7 +88,7 @@ export class BundleExporter {
         'ImplementationGuide:resource',
         'ImplementationGuide:global'
       ]
-    });
+    }, true);
     const results = await this.httpService.get<Bundle>(url).toPromise();
     const bundle = results.data;
 

@@ -67,20 +67,21 @@ export class BaseTools {
       return this.getAllResourcesByType(server, [resourceType]);
     }
 
-    return new Promise((resolve, reject) => {
-      this.getConformance(server)
-        .then((conformance) => {
-          const resourceTypes = [];
+    return this.getConformance(server)
+      .then((conformance) => {
+        const resourceTypes = [];
 
-          (conformance.rest || []).forEach((rest) => {
-            (rest.resource || []).forEach((next) => resourceTypes.push(next.type));
-          });
+        (conformance.rest || []).forEach((rest) => {
+          (rest.resource || []).forEach((next) => resourceTypes.push(next.type));
+        });
 
-          return this.getAllResourcesByType(server, resourceTypes);
-        })
-        .then((allResources) => allResources)
-        .catch((err) => reject(err));
-    });
+        return this.getAllResourcesByType(server, resourceTypes);
+      })
+      .then((results) => results)
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
   }
 
   protected getResource(server: string, resourceType: string, id: string): Promise<DomainResource> {
