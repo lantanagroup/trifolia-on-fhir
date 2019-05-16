@@ -80,7 +80,7 @@ export class RemovePermission extends BasePermissions {
     const next = this.queue.slice(0, 5);
     const promises = next.map((resource) => this.removePermission(resource));
 
-    console.log(`Processing ${promises.length} more resources`);
+    console.log(`Processing ${promises.length} more resources. ${this.queue.length} left.`);
 
     await Promise.all(promises);
 
@@ -143,7 +143,7 @@ export class AddPermission extends BasePermissions {
     const next = this.queue.slice(0, 5);
     const promises = next.map((resource) => this.addPermission(resource));
 
-    console.log(`Processing ${promises.length} more resources`);
+    console.log(`Processing ${promises.length} more resources. ${this.queue.length} left.`);
 
     await Promise.all(promises);
 

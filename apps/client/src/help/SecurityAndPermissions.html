@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Security</title>
+  <title>Security and Permissions</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Security">
+  <meta name="twitter:title" content="Security and Permissions">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Security" />
+  <meta property="og:title" content="Security and Permissions" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -161,9 +161,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Security"
+		  data-hnd-id="SecurityAndPermissions"
 		  data-hnd-context="25"
-		  data-hnd-title="Security"
+		  data-hnd-title="Security and Permissions"
 		>
             
                 <div class="navigation">
@@ -171,21 +171,21 @@
                         
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Help.html" title="Help" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Glossary.html" title="Glossary" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="WalkThrough.html" title="Walk-through" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="AdditionalHelp.html" title="Additional Help" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Security</h2>
+            <h2>Security and Permissions</h2>
 
             <div class="main-content">
                 
 <p></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts22">Authentication</span></span></h2>
+<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Authentication</span></span></h2>
 <p class="rvps3"><span class="rvts8">Trifolia-on-FHIR is designed to minimally require that the user authenticate in order to access the data that is stored on the FHIR servers that ToF is configured to use. Additional permissions may be required depending on the configuration of the ToF installation.</span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts22">Permissions</span></span></h2>
+<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Permissions</span></span></h2>
 <p class="rvps3"><span class="rvts8">If the ToF installation is configured to require permissions, only data that the user has been permitted to view/edit will be access to them in the user interface. The remainder of this section presumes that permissions are enabled in the installation.</span></p>
 <p class="rvps3"><span class="rvts8">Permissions are maintained for each individual resource in the system. For example, permissions may be different for an instance of an ImplementationGuide compared to a StructureDefinintion that the implementation guide references.</span></p>
 <p class="rvps3"><span class="rvts8">Each edit screen contains a "Permissions" &nbsp;tab which allows the user to define the permissions for the resource. The user may search for users and groups, and add read and/or write permissions to the resource for the selected users/groups.</span></p>
@@ -194,27 +194,14 @@
 <li value="1" class="rvps3"><span class="rvts8">Selecting a resource type and typing search criteria in the text field. Suggestions will be presented below the text field. Select one of the suggestions and press the "Copy" button.</span></li>
 <li value="2" class="rvps3"><span class="rvts8">Click the "Search" button next to the text field to select a resource using the advanced search pop-up window. Once a resource has been identified and selected, click the "Copy" button.</span></li>
 </ol>
+<p class="rvps3"><span class="rvts8">If you have been granted permissions to a resource via a group and that resource has other groups associated with it that you </span><span class="rvts21">aren't </span><span class="rvts8">a member of, the name of the group will not be shown and the "Permissions" tab will only show you the ID of those other groups.</span></p>
+<p class="rvps3"><span class="rvts8">If you do not have permissions to edit a resource, you will not be able to click the "Edit" button on the resource from the browse screen. Future enhancements may be made to allow the user to access the "Edit" screen in a disabled state when the user doesn't have edit permissions to the resource.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Managing Groups</span></span></h3>
 <p class="rvps3"><span class="rvts8">All users may create/manage their own groups. A group may only have one manager.</span></p>
-<p class="rvps3"><span class="rvts8">To create/edit/delete groups, click your name in the top-right of ToF, and select the "Groups" tab. Changes made to the "Groups" tab are made immediately. Pressing "Save" is not required and only applies to editing information for your profile.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Technical Details</span></span></h3>
-<p class="rvps3"><span class="rvts8">Permissions for resources are stored in Resource.meta.security. A custom code is created for three types of permissions:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Everyone - Anyone that has a user account in the installation.</span></li>
-<li class="rvps3"><span class="rvts8">Group - One or more users (Practitioners) that are represented together as a single Group. Use a group to represent a team of users.</span></li>
-<li class="rvps3"><span class="rvts8">User (Practitioner) - A single person that has access to the installation. ToF requires every user to create a Practitioner that represents their user when the login and open ToF to a specific FHIR server for the first time.</span></li>
-</ul>
-<p class="rvps3"><span class="rvts8">There are two levels of permissions:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Read - Allows the user to search/view the resource</span></li>
-<li class="rvps3"><span class="rvts8">Write - Allows the user to update/delete the resource</span></li>
-</ul>
-<p class="rvps3"><span class="rvts8">WIth these concepts combined, the resource may have several security codes. For example:</span></p>
-<p class="rvps10"><span class="rvts30">{</span><br/><span class="rvts30">&nbsp; resourceType: "ImplementationGuide",</span><br/><span class="rvts30">&nbsp; meta: {</span><br/><span class="rvts30">&nbsp; &nbsp; security: [</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // Everyone has access to read/wite</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^write" },</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // Members of group test-group-id have access to read/write</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^write" },</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // A specific user (Practitioner) with id test-practitioner-id has access to read/write</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^write" }</span><br/><span class="rvts30">&nbsp; &nbsp; ]</span><br/><span class="rvts30">&nbsp; }</span><br/><span class="rvts30">}</span></p>
-<p class="rvps3"><span class="rvts8">When a user searches for ImplementationGuide resources, ToF sends a search request to the FHIR server that includes a _security parameter with all possible variations that are applicable to the currently logged-in user. For example:</span></p>
-<p class="rvps10"><span class="rvts30">// un-encoded for readability</span><br/><span class="rvts30">https://some-fhir-server.com/fhir/ImplementationGuide?_security=&lt;system&gt;|everyone^read,&lt;system&gt;|group^test-group-id^read,&lt;system&gt;|user^test-practitioner-rid^read</span><br/><span class="rvts30">// encoded</span><br/><span class="rvts30">https://some-fhir-server.com/fhir/ImplementationGuide?_security=https%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Ceveryone%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cgroup%5Etest-group-id%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cuser%5Etest-practitioner-rid%5Eread</span></p>
-<p class="rvps3"><span class="rvts8">When a user clicks the "Edit" button on a resource, this initiates getting a single/specific resource. The ToF server checks that the persisted resource grants the logged-in user permissions to view the resource before sending the resource back to the user's browser for viewing.</span></p>
-<p class="rvps3"><span class="rvts8">Similarly, when a user clicks "Save" or "Delete", the ToF server first retrieves the instance of the resource that is persisted on the FHIR server, checks whether the user has permissions to modify the resource, and rejects the request with a 401 Unauthorized response if the user does not have permissions. Otherwise, the resource is updated on the FHIR server according to the user's request.</span></p>
+<p class="rvps3"><span class="rvts8">To create/edit/delete groups, click your name in the top-right of ToF, and select the "Groups" tab. Changes made to the "Groups" tab are persisted immediately; pressing "Save" is not required and only applies to editing information for your profile.</span></p>
+<p class="rvps3"><span class="rvts8">When you create a group, you are automatically added as a member to the group. You cannot remove yourself as a member from the group.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Importing Resources</span></span></h3>
+<p class="rvps3"><span class="rvts8">When importing </span><span class="rvts21">new </span><span class="rvts8">resources, the permissions for those new resources are defaulted to allow the user performing the import view/edit access. To allow additional permissions, you will need to edit each resource and grant additional permissions.</span></p>
 <p></p>
 
             </div>

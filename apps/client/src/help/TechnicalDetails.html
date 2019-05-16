@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>GitHub Integration</title>
+  <title>Technical Details</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="GitHub Integration">
+  <meta name="twitter:title" content="Technical Details">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="GitHub Integration" />
+  <meta property="og:title" content="Technical Details" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -161,50 +161,28 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="GitHubIntegration"
-		  data-hnd-context="16"
-		  data-hnd-title="GitHub Integration"
+		  data-hnd-id="TechnicalDetails"
+		  data-hnd-context="26"
+		  data-hnd-title="Technical Details"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li>Export/Import</li>
+                        
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="ExportImport.html" title="Export/Import" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Validation.html" title="Validation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="FAQ.html" title="FAQ" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="SystemRequirements.html" title="System Requirements" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>GitHub Integration</h2>
+            <h2>Technical Details</h2>
 
             <div class="main-content">
                 
 <p></p>
-<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Authentication</span></span></h2>
-<p class="rvps3"><span class="rvts8">The import and export screens both contain options for GitHub. As soon as the GitHub option is selected in either screen, you are prompted to login with your GitHub credentials. Once logged in, your GitHub authentication token is stored in cookies so that you do not have to login every time you select "GitHub" under the import/export screens.</span></p>
-<p class="rvps3"><span class="rvts8">After you have logged into GitHub, a GitHub icon appears in the top-right corner of the all screens. When clicked, this icon logs you out of GitHub within ToF.</span></p>
-<p class="rvps3"><span class="rvts8">ToF uses a pop-up window to authenticate with GitHub. If your browser blocks the pop-up window, ToF will not be able to authenticate with GitHub and you will receive an error.</span></p>
-<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Work Flow</span></span></h2>
-<p class="rvps3"><span class="rvts8">The work flow within ToF for GitHub is to</span></p>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Import resources from a GitHub repository into the selected FHIR server</span></li>
-<li value="2" class="rvps3"><span class="rvts8">Edit the resources using ToF</span></li>
-<li value="3" class="rvps3"><span class="rvts8">Export the resources back to the GitHub repository after they have the desired changes</span></li>
-</ol>
-<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Extensions</span></span></h2>
-<p class="rvps3"><span class="rvts8">When importing resources, two extensions are added to each resource representing the location within GitHub for where the resource came from. This enables ToF to know where in GItHub to export the resources back to.</span></p>
-<p class="rvps3"><span class="rvts8">If you are exporting </span><span class="rvts21">new</span><span class="rvts8">&nbsp;resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
-<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Limitations</span></span></h2>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Trifolia only exports the individual resources associated with the implementation guide, and does not include the entire IG Publication package. For example, the "framework" (html templates) folder is not included in the export.</span></li>
-<li class="rvps3"><span class="rvts8">Trifolia only allows importing FHIR resources. Trifolia-on-FHIR allows the user to select any JSON or XML file from GitHub. If the user selects an XML or JSON file that is not a FHIR resource, the import will fail.</span></li>
-<li class="rvps3"><span class="rvts8">GitHub does not allow retrieving/updating very large files. For example, if attempting to import/export a large ValueSet resource, GitHub may fail with a "Payload too large" error.</span></li>
-</ul>
-<h2 class="rvps9"><span class="rvts0"><span class="rvts20">Signing Out</span></span></h2>
-<p class="rvps3"><span class="rvts8">When you sign out of GitHub within Trifolia, this clears your GitHub session only within Trifolia. GitHub maintains its own session within your browser. To sign out of GitHub entirely, you will need to go to github.com and click "Sign out".</span></p>
 <p></p>
 
             </div>
