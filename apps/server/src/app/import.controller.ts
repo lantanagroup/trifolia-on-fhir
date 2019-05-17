@@ -37,8 +37,13 @@ export class ImportController extends BaseController {
 
     const results = await this.httpService.request(options).toPromise();
 
+    if (!results.data || ['ValueSet','CodeSystem'].indexOf(results.data.resourceType) < 0) {
+      throw new BadRequestException('Expected VSAC to return a ValueSet or CodeSystem');
+    }
+
+    const proxyUrl = `/${results.data.resourceType}/${results.data.id}`;
     const fhirProxy = new FhirController(this.httpService, this.configService);
-    const proxyResults = await fhirProxy.proxy('/', null, 'POST', fhirServerBase, user, results.data);
+    const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, user, results.data);
     return proxyResults.data;
   }
 }
