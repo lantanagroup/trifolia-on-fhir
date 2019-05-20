@@ -23,12 +23,6 @@ export class ImportService {
   constructor(private http: HttpClient) {
   }
 
-  public import(contentType: 'json' | 'xml', body: string): Observable<any> {
-    const url = '/api/import';
-    const headers = new HttpHeaders({'Content-Type': contentType === 'json' ? 'application/json' : 'application/xml'});
-    return this.http.post(url, body, {headers: headers});
-  }
-
   public importVsac(criteria: VSACImportCriteria): Observable<any> {
     return new Observable<any>((subscriber) => {
       const url = '/api/import/vsac/' + criteria.resourceType + '/' + criteria.id;

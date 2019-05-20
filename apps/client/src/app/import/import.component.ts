@@ -295,7 +295,7 @@ export class ImportComponent implements OnInit {
 
   private importFiles(tabSet: NgbTabset) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.importService.import('json', json)
+    this.fhirService.transaction(json, 'application/json')
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
@@ -467,7 +467,7 @@ export class ImportComponent implements OnInit {
         });
 
         const json = JSON.stringify(bundle, null, '\t');
-        this.importService.import('json', json)
+        this.fhirService.transaction(json, 'application/json')
           .subscribe((importResults: OperationOutcome | Bundle) => {
             if (importResults.resourceType === 'OperationOutcome') {
               this.outcome = <OperationOutcome>importResults;

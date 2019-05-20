@@ -234,7 +234,7 @@ export class ExportGithubPanelComponent implements OnChanges {
       };
     });
 
-    return this.importService.import('json', JSON.stringify(updateBundle));
+    return this.fhirService.transaction(JSON.stringify(updateBundle), 'application/json');
   }
 
   public okChanging() {
