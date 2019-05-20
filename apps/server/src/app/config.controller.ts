@@ -9,7 +9,7 @@ import {ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import * as modulePackage from '../../../../package.json';
 
-@Controller('config')
+@Controller('api/config')
 @ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};

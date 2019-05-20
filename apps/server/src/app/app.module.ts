@@ -1,5 +1,4 @@
 import {HttpModule, Module} from '@nestjs/common';
-import {AppController} from './app.controller';
 import {AuditEventController} from './audit-event.controller';
 import {ConfigController} from './config.controller';
 import {FhirController} from './fhir.controller';
@@ -17,11 +16,11 @@ import {CodeSystemController} from './code-system.controller';
 import {QuestionnaireController} from './questionnaire.controller';
 import {ConfigService} from './config.service';
 import {GroupController} from './group.controller';
+import {GithubController} from './github.controller';
 
 @Module({
   imports: [HttpModule],
   controllers: [
-    AppController,
     AuditEventController,
     ConfigController,
     FhirController,
@@ -36,7 +35,8 @@ import {GroupController} from './group.controller';
     ManageController,
     ExportController,
     ImportController,
-    GroupController
+    GroupController,
+    GithubController
   ],
   providers: [
     HttpStrategy,

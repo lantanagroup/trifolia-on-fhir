@@ -8,7 +8,7 @@ import {TofLogger} from './tof-logger';
 import {FhirController} from './fhir.controller';
 import {FhirServerBase, User} from './server.decorators';
 
-@Controller('import')
+@Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Import')
 @ApiOAuth2Auth()

@@ -10,7 +10,7 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
-@Controller('valueSet')
+@Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Value Set')
 @ApiOAuth2Auth()

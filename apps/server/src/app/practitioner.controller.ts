@@ -11,7 +11,7 @@ import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import nanoid from 'nanoid';
 
-@Controller('practitioner')
+@Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Practitioner')
 @ApiOAuth2Auth()

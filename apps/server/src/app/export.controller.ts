@@ -18,7 +18,7 @@ import * as tmp from 'tmp';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 
-@Controller('export')
+@Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Export')
 @ApiOAuth2Auth()

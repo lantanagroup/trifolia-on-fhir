@@ -172,7 +172,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
 
-  app.setGlobalPrefix(globalPrefix);
   app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useLogger(new TofLogger());
 

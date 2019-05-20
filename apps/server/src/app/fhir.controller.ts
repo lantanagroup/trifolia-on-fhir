@@ -36,7 +36,7 @@ export interface ProxyResponse {
   contentType?: string;
 }
 
-@Controller('fhir')
+@Controller('api/fhir')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('FHIR Proxy')
 @ApiOAuth2Auth()

@@ -11,7 +11,7 @@ import {Group} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
-@Controller('group')
+@Controller('api/group')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Group')
 @ApiOAuth2Auth()

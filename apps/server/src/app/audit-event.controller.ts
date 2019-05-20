@@ -6,7 +6,7 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
-@Controller('auditEvent')
+@Controller('api/auditEvent')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Audit')
 @ApiOAuth2Auth()

@@ -10,7 +10,7 @@ interface MessageRequest {
   message: string;
 }
 
-@Controller('manage')
+@Controller('api/manage')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Manage')
 @ApiOAuth2Auth()

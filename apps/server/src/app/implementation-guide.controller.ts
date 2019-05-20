@@ -18,7 +18,7 @@ interface PublishedGuidesModel {
   }];
 }
 
-@Controller('implementationGuide')
+@Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Implementation Guide')
 @ApiOAuth2Auth()

@@ -19,7 +19,7 @@ interface SaveStructureDefinitionRequest {
   resource: StructureDefinition;
 }
 
-@Controller('structureDefinition')
+@Controller('api/structureDefinition')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Structure Definition')
 @ApiOAuth2Auth()
