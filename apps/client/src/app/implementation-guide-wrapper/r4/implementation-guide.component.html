@@ -499,13 +499,13 @@
                 <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
                   <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
+                <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add a page as a child of this page">
                   <i class="fa fa-plus"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move up">
+                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
                   <i class="fa fa-arrow-up"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move up">
+                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
                   <i class="fa fa-arrow-down"></i>
                 </button>
               </div>

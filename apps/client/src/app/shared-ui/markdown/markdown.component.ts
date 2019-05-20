@@ -1,13 +1,14 @@
 import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    forwardRef,
-    Input,
-    OnChanges,
-    OnDestroy,
-    SimpleChanges,
-    ViewChild
+  AfterContentChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  forwardRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import * as SimpleMDE from 'simplemde';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -55,10 +56,11 @@ export class NgModelBase implements ControlValueAccessor {
     styleUrls: ['./markdown.component.css'],
     providers: [MARKDOWN_CONTROL_VALUE_ACCESSOR]
 })
-export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnDestroy, OnChanges {
+export class MarkdownComponent extends NgModelBase implements AfterContentChecked, AfterViewInit, OnDestroy, OnChanges {
     @ViewChild('simplemde') textarea: ElementRef;
     @Input() disabled = false;
 
+    private isVisible = false;
     private simplemde: SimpleMDE;
     private tmpValue = null;
 
@@ -140,5 +142,14 @@ export class MarkdownComponent extends NgModelBase implements AfterViewInit, OnD
 
     ngOnDestroy() {
         this.simplemde = null;
+    }
+
+    ngAfterContentChecked() {
+      if (!this.isVisible && this.textarea.nativeElement.offsetParent != null) {
+        this.isVisible = true;
+        this.simplemde.codemirror.refresh();
+      } else if (this.isVisible && this.textarea.nativeElement.offsetParent == null) {
+        this.isVisible = false;
+      }
     }
 }
