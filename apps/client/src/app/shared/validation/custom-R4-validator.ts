@@ -61,7 +61,7 @@ export class CustomR4Validator extends CustomValidator {
         const parsedReference = this.fhirService.parseReference(resource.reference.reference);
 
         if (resource.exampleBoolean || resource.exampleCanonical) {
-          if (allProfileTypes.indexOf(parsedReference.resourceType) >= 0) {
+          if (parsedReference && allProfileTypes.indexOf(parsedReference.resourceType) >= 0) {
             messages.push({
               location: 'ImplementationGuide.definition.resource',
               resourceId: implementationGuide.id,
