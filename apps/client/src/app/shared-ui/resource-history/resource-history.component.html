@@ -1,29 +1,31 @@
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
 <div class="row">
-    <div [class.col-md-12]="!compareResource" [class.col-md-4]="!!compareResource">
-        <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
-            <thead>
-            <tr>
-                <th>Version ID</th>
-                <th>Timestamp</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-                <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
-                <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.lastUpdated}}</a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="col-md-8" *ngIf="compareResource">
-        <h3>
-            Comparing version {{resource.meta.versionId}} to version {{compareResource.meta.versionId}}
-            <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Load this version">
-                <i class="fas fa-upload"></i>
-            </button>
-        </h3>
-        <pre diff [left]="compareResource | json" [right]="resource | json"></pre>
-    </div>
+  <div [class.col-md-12]="!compareResource" [class.col-md-4]="!!compareResource">
+    <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
+      <thead>
+      <tr>
+        <th>Version ID</th>
+        <th>Timestamp</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let entry of historyBundle.entry; let ei = index">
+        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
+        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.lastUpdated}}</a></td>
+        <td>{{getActionDisplay(entry)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-8" *ngIf="compareResource">
+    <h3>
+      Comparing version {{resource.meta.versionId}} to version {{compareResource.meta.versionId}}
+      <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Load this version">
+        <i class="fas fa-upload"></i>
+      </button>
+    </h3>
+    <pre diff [left]="compareResource | json" [right]="resource | json"></pre>
+  </div>
 </div>

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
-import {Bundle} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 @Component({
   selector: 'app-resource-history',
@@ -16,6 +16,23 @@ export class ResourceHistoryComponent implements OnInit {
   public compareResource: any;
 
   constructor(private fhirService: FhirService) {
+  }
+
+  public getActionDisplay(entry: EntryComponent) {
+    if (!entry || !entry.request || !entry.request.method) {
+      return 'Unknown';
+    }
+
+    switch (entry.request.method) {
+      case 'POST':
+        return 'Create';
+      case 'PUT':
+        return 'Update';
+      case 'DELETE':
+        return 'Remove';
+      default:
+        return entry.request.method;
+    }
   }
 
   public loadHistory(resource: any) {
