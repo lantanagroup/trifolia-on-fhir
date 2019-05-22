@@ -44,10 +44,13 @@ export interface ParsedFhirUrl {
   operation?: string;
   query?: { [key: string]: string|boolean };
   versionId?: string;
+  isHistory: boolean;
 }
 
 export function parseFhirUrl(url: string) {
-  const parsed: ParsedFhirUrl = {};
+  const parsed: ParsedFhirUrl = {
+    isHistory: false
+  };
 
   if (!url || url === '/') {
     return parsed;
@@ -96,7 +99,10 @@ export function parseFhirUrl(url: string) {
     if (parts[2].startsWith('$')) {
       parsed.operation = parts[2];
     } else if (parts[2] === '_history' && parts.length > 3) {
+      parsed.isHistory = true;
       parsed.versionId = parts[3];
+    } else if (parts[2] === '_history') {
+      parsed.isHistory = true;
     } else {
       throw new BadRequestException();
     }
