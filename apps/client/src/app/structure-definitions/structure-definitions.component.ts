@@ -96,6 +96,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.criteriaChangedEvent.next();
   }
 
+  public implementationGuideIdChanged(value: string) {
+    this.implementationGuideId = value;
+    this.page = 1;
+    this.criteriaChangedEvent.next();
+  }
+
   public urlTextChanged(value: string) {
     this.urlText = value;
     this.page = 1;

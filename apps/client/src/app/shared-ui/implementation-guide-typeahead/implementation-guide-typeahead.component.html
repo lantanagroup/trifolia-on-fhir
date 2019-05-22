@@ -1,0 +1,11 @@
+<div class="form-group">
+  <div class="input-group">
+    <input type="text" class="form-control"
+           [ngModel]="selectedImplementationGuide"
+           (ngModelChange)="implementationGuideChanged($event)"
+           [ngbTypeahead]="searchImplementationGuide"
+           [resultFormatter]="searchFormatter"
+           [inputFormatter]="searchFormatter"
+           autocomplete="off" />
+  </div>
+</div>
