@@ -57,7 +57,7 @@
     <th *ngIf="configService.isFhirR4">Title</th>
     <th class="actions-column-4">
       <div class="pull-right">
-        <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}implementation-guide/new" title="Create a new implementation guide"
+        <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/implementation-guide/new" title="Create a new implementation guide"
                 [attr.data-intro]="Globals.introText['browse.add']">
           <i class="fa fa-plus"></i>
         </button>
