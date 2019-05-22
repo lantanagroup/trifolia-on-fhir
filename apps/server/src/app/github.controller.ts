@@ -29,13 +29,6 @@ export class GithubController extends BaseController {
     const url = 'https://github.com/login/oauth/access_token?client_id=' + encodeURIComponent(clientId) + '&client_secret=' + encodeURIComponent(secret) + '&code=' + encodeURIComponent(code);
     let templateContent = fs.readFileSync('assets/github-callback.html').toString();
 
-    // The web-packed scripts are in scripts.bundle.js in a production envrionment, and in scripts.js in a dev/local environment
-    if (fs.existsSync('wwwroot/scripts.bundle.js')) {
-      templateContent = templateContent.replace('%SCRIPTS_JS%', '../scripts.bundle.js');
-    } else {
-      templateContent = templateContent.replace('%SCRIPTS_JS%', '../scripts.js');
-    }
-
     res.contentType('text/html');
 
     try {
