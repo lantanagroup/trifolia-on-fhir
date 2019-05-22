@@ -111,7 +111,7 @@
       <div class="card-header">Add User</div>
       <div class="card-body">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search user by name" />
+          <input type="text" class="form-control" placeholder="Search user by name" [(ngModel)]="searchUsersCriteria" />
           <div class="input-group-btn">
             <button type="button" class="btn btn-primary" (click)="searchUsers()">
               <i class="fas fa-search"></i>
