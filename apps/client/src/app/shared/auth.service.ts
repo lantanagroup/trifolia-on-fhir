@@ -136,6 +136,12 @@ export class AuthService {
       clearTimeout(this.authTimeout);
     }
 
+    if (this.auth0) {
+      this.auth0.logout({
+        returnTo: `${location.origin}/logout`
+      });
+    }
+
     // Go back to the home route
     this.router.navigate(['/']);
     this.authChanged.emit();
