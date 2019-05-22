@@ -9,7 +9,7 @@
 * [Java](https://www.java.com/en/download/) - to run the ig publisher
 * [Jekyll](http://jekyll-windows.juthilo.com/2-jekyll-gem/) - to run the ig publisher without errors
     * Jekyll must be available to the user that is running the Node.JS server. Consider adding the Ruby installation directory to the global PATH.
-* Node.JS
+* Node.JS (version 10+)
 
 ## Building/Running
 
@@ -17,6 +17,7 @@
 npm install             # install node modules
 ng build client         # build the client application (output to dist/client)
 ng build server         # build the server application (output to dist/server)
+or alternatively npm run build-watch:all # build the client, server, and tools application concurrently (output to dist/server)
 cd dist/server          # working directory should be the output of the server
 node main.js            # run the server application, which also hosts the client application
 ```
