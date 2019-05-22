@@ -548,7 +548,7 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
       .subscribe((results: ImplementationGuide) => {
         if (!this.implementationGuide.id) {
-          this.router.navigate(['/implementation-guide/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
           this.message = 'Your changes have been saved!';

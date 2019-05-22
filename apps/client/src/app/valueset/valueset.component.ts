@@ -173,7 +173,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     this.valueSetService.save(this.valueSet)
       .subscribe((results: ValueSet) => {
         if (this.isNew) {
-          this.router.navigate(['/value-set/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/value-set/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
           this.message = 'Your changes have been saved!';

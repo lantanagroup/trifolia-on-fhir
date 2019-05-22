@@ -514,7 +514,7 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
       .subscribe((results: ImplementationGuide) => {
         if (this.isNew) {
-          this.router.navigate(['/implementation-guide/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
           this.message = 'Your changes have been saved!';

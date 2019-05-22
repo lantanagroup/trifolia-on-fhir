@@ -75,7 +75,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     this.csService.save(this.capabilityStatement)
       .subscribe((results: CapabilityStatement) => {
         if (this.isNew) {
-          this.router.navigate(['/capability-statement/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/capability-statement/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
           this.message = 'Your changes have been saved!';

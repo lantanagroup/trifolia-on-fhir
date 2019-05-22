@@ -74,7 +74,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     this.opDefService.save(this.operationDefinition)
       .subscribe((results: OperationDefinition) => {
         if (this.isNew) {
-          this.router.navigate(['/operation-definition/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/operation-definition/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';

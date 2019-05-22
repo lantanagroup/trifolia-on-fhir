@@ -94,7 +94,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     this.questionnaireService.save(this.questionnaire)
       .subscribe((results: Questionnaire) => {
         if (this.isNew) {
-          this.router.navigate(['/questionnaire/' + results.id]);
+          this.router.navigate([`${this.configService.fhirServer}/questionnaire/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentQuestionnaires,
