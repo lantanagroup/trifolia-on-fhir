@@ -3,7 +3,7 @@
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="ig-main" *ngIf="implementationGuide">
-  <h2>{{implementationGuide.name || 'no-name'}}</h2>
+  <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
 
   <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
     <ngb-tab id="quick" title="Quick">
@@ -625,7 +625,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-default" (click)="save()">Save</button>
+    <button type="button" class="btn btn-default" (click)="save()" [disabled]="!canEdit(implementationGuide)">Save</button>
     <button type="button" class="btn btn-default" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

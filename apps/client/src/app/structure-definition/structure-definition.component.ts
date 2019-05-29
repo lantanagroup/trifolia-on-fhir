@@ -11,12 +11,14 @@ import {FileService} from '../shared/file.service';
 import {DOCUMENT} from '@angular/common';
 import {ConfigService} from '../shared/config.service';
 import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
+import {AuthService} from '../shared/auth.service';
+import {BaseComponent} from '../base.component';
 
 @Component({
   templateUrl: './structure-definition.component.html',
   styleUrls: ['./structure-definition.component.css']
 })
-export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck {
+export class StructureDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   private readonly dataTypes = ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation', 'CodeableConcept', 'Coding', 'Money',
   'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
   'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
@@ -40,6 +42,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
   constructor(
     public route: ActivatedRoute,
     public configService: ConfigService,
+    protected authService: AuthService,
     private router: Router,
     private strucDefService: StructureDefinitionService,
     private modalService: NgbModal,
@@ -48,6 +51,8 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     private fileService: FileService,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document) {
+
+    super(configService, authService);
 
     this.document.body.classList.add('structure-definition');
   }
@@ -277,7 +282,7 @@ export class StructureDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     let baseStructureDefinition;
 
     try {
-      baseStructureDefinition = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition).toPromise();
+      baseStructureDefinition = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
     } catch (err) {
       this.message = this.fhirService.getErrorString(err);
       return;

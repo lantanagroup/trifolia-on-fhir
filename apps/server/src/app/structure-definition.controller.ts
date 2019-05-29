@@ -58,7 +58,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param url The url of the base profile to return
    */
   @Get('base')
-  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string) {
+  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string) {
     // Recursive function to get all base profiles for a given url
     const getNextBase = async (baseUrl: string, list: StructureDefinition[] = []) => {
       const foundBaseProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
@@ -86,27 +86,19 @@ export class StructureDefinitionController extends BaseFhirController {
     try {
       baseProfiles = await getNextBase(url);
     } catch (ex) {
-      // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot base don the core spec
-      const getProfileUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, { url: url });
-      const getProfileResults = await this.httpService.get<Bundle>(getProfileUrl).toPromise();
-
-      if (!getProfileResults.data || getProfileResults.data.total !== 1) {
-        throw new Error(`Could not find profile with URL ${url}`);
+      // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot based on the core spec
+      if (!type) {
+        throw new Error(`Can't find one or more base profiles for ${url} and no type is specified to fall back on`);
       }
 
-      const profile = <StructureDefinition> getProfileResults.data.entry[0].resource;
-      const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + profile.type;
+      const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + type;
       const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
 
       if (!baseTypeProfile) {
         throw new Error(`Can't find base profile for ${baseUrl}`);
       }
 
-      const originalBaseDefinition = profile.baseDefinition;
-      profile.baseDefinition = baseTypeProfile.url;
-      request.fhir.generateSnapshot(SnapshotGenerator.createBundle(baseTypeProfile, <PCStructureDefinition> profile));
-      profile.baseDefinition = originalBaseDefinition;
-      return profile;
+      return baseTypeProfile;
     }
 
     const found = baseProfiles.find((baseProfile) => baseProfile.url === url);

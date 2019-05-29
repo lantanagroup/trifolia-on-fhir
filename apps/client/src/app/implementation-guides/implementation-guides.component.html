@@ -72,11 +72,11 @@
     <td *ngIf="configService.isFhirR4">{{ig.title}}</td>
     <td>
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}" title="Edit this resource">
-          <i class="fa fa-edit"></i>
+        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}" title="View/Edit this resource">
+          <i class="fas" [class.fa-edit]="canEdit(ig)" [class.fa-eye]="!canEdit(ig)"></i>
         </a>
-        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}/view" title="View this resource">
-          <i class="fa fa-eye"></i>
+        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}/view" title="View the published version of this implementation guide">
+          <i class="fas fa-file"></i>
         </a>
         <button type="button" class="btn btn-secondary" (click)="remove(ig)" [disabled]="!canEdit(ig)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>

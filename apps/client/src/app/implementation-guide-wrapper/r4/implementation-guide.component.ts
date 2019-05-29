@@ -23,6 +23,7 @@ import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {BaseComponent} from '../../base.component';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -34,7 +35,7 @@ class PageDefinition {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
+export class R4ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -56,12 +57,14 @@ export class R4ImplementationGuideComponent implements OnInit, OnDestroy, DoChec
     private modal: NgbModal,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
-    private authService: AuthService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
+    protected authService: AuthService,
     public configService: ConfigService,
     public route: ActivatedRoute) {
+
+    super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
   }

@@ -99,7 +99,7 @@
         <a class="btn btn-primary"
            routerLink="/{{this.configService.fhirServer}}/structure-definition/{{structureDefinition.id}}"
            title="Edit this resource">
-          <i class="fa fa-edit"></i>
+          <i class="fas" [class.fa-edit]="canEdit(structureDefinition)" [class.fa-eye]="!canEdit(structureDefinition)"></i>
         </a>
         <button type="button" class="btn btn-secondary" (click)="remove(structureDefinition)"
                 [disabled]="!canEdit(structureDefinition)" title="Remove this resource">

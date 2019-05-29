@@ -24,6 +24,7 @@ import {
   ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ClientHelper} from '../../clientHelper';
+import {BaseComponent} from '../../base.component';
 
 class PageDefinition {
   public page: PageComponent;
@@ -45,7 +46,7 @@ class ImplementationGuideResource {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
+export class STU3ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   public implementationGuide;
   public message: string;
   public currentResource: any;
@@ -64,11 +65,13 @@ export class STU3ImplementationGuideComponent implements OnInit, OnDestroy, DoCh
     private route: ActivatedRoute,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
-    private authService: AuthService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
+    protected authService: AuthService,
     public configService: ConfigService) {
+
+    super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
   }

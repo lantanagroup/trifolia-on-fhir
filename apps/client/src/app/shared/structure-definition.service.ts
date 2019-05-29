@@ -86,8 +86,14 @@ export class StructureDefinitionService {
     return this.http.get<GetStructureDefinitionModel>(url);
   }
 
-  public getBaseStructureDefinition(url: string): Observable<StructureDefinition> {
-    return this.http.get<StructureDefinition>('/api/structureDefinition/base?url=' + encodeURIComponent(url));
+  public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<StructureDefinition> {
+    let url = `/api/structureDefinition/base?url=${encodeURIComponent(baseDefinition)}&`;
+
+    if (type) {
+      url += `type=${encodeURIComponent(type)}&`;
+    }
+
+    return this.http.get<StructureDefinition>(url);
   }
 
   public save(structureDefinition: StructureDefinition, options?: StructureDefinitionOptions): Observable<StructureDefinition> {
