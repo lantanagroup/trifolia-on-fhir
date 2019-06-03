@@ -132,20 +132,14 @@ export class AddPermission extends BasePermissions {
       }
     };
 
-    return rp(options)
-      .then(() => {
-        const queueIndex = this.queue.indexOf(resource);
-        this.queue.splice(queueIndex, 1);
-      });
+    return rp(options);
   }
 
   private async processQueue() {
-    const next = this.queue.slice(0, 5);
-    const promises = next.map((resource) => this.addPermission(resource));
+    const next = this.queue.pop();
+    await this.addPermission(next);
 
-    console.log(`Processing ${promises.length} more resources. ${this.queue.length} left.`);
-
-    await Promise.all(promises);
+    console.log(`Processed another resource. ${this.queue.length} left.`);
 
     if (this.queue.length > 0) {
       await this.processQueue();
