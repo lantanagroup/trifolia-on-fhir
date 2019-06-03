@@ -119,13 +119,24 @@ export class FhirController extends BaseController {
           originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
           this.assertUserCanEdit(userSecurityInfo, originalResource);
         } catch (ex) {
-          if (ex.status !== 404) {
+          if (ex.response) {
+            if (ex.response.status !== 404) {
+              this.logger.error(`Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`, ex.stack);
+              throw ex;
+            }
+          } else {
+            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`, ex.stack);
             throw ex;
           }
           // Do nothing if the resource is not found... That means this is a create-with-id request
         }
 
-        await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+        try {
+          await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+        } catch (ex) {
+          this.logger.error(`Error occurred while removing permissions for resource in transaction: ${ex.message}`, ex.stack);
+          throw ex;
+        }
       }
 
       // Make sure the user has given themselves permissions to edit
@@ -148,7 +159,12 @@ export class FhirController extends BaseController {
       data: entry.resource
     };
 
-    return this.httpService.request(options).toPromise();
+    try {
+      return await this.httpService.request(options).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
+      throw ex;
+    }
   }
 
   private async processTransaction(bundle: Bundle, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
@@ -165,7 +181,9 @@ export class FhirController extends BaseController {
       }
     });
 
-    const promises = (bundle.entry || []).map((entry) => this.processTransactionEntry(entry, fhirServerBase, userSecurityInfo));
+    const promises = (bundle.entry || []).map((entry) => {
+      return this.processTransactionEntry(entry, fhirServerBase, userSecurityInfo);
+    });
     const results = await Promise.all(promises);
     const responseBundle: Bundle = {
       resourceType: 'Bundle',
@@ -219,11 +237,16 @@ export class FhirController extends BaseController {
 
     if (isTransaction && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
-      const responseBundle = await this.processTransaction(body, fhirServerBase, userSecurityInfo);
-      return {
-        status: 200,
-        data: responseBundle
-      };
+      try {
+        const responseBundle = await this.processTransaction(body, fhirServerBase, userSecurityInfo);
+        return {
+          status: 200,
+          data: responseBundle
+        };
+      } catch (ex) {
+        this.logger.error(`Error processing transaction in FHIR Proxy: ${ex.message}`, ex.stack);
+        throw ex;
+      }
     } else if (method === 'GET' && parsedUrl.resourceType && !parsedUrl.id && !parsedUrl.operation) {
       // When searching, add _security query parameter
       if (this.configService.server.enableSecurity) {
