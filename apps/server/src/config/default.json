@@ -32,7 +32,7 @@
       ]
     },
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
-    "latestPublisher": "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=LATEST&e=jar",
+    "latestPublisher": "https://github.com/FHIR/latest-ig-publisher/raw/master/org.hl7.fhir.publisher.jar",
     "publishedVersions": [{
       "version": "0.4.0 - 1.0.2",
       "url": "http://hl7.org/fhir/DSTU2/"
