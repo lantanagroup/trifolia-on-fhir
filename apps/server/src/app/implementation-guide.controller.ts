@@ -86,12 +86,12 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get(':id/list')
-  public getResourceList(@FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string) {
+  public async getResourceList(@FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string) {
     const exporter = new BundleExporter(this.httpService, this.logger, fhirServerBase, fhirServerId, fhirServerVersion, fhir, id);
-    const bundle = exporter.getBundle(false, true);
+    const bundle = await exporter.getBundle(false, true);
 
     return (bundle.entry || []).map((entry) => {
-      const resource = entry.resource;
+      const resource = <any> entry.resource;
       const ret = {
         resourceType: resource.resourceType,
         id: resource.id,
