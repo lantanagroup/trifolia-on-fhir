@@ -9,7 +9,7 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   PageComponent,
   Extension,
-  Bundle
+  ContactDetail
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   Binary as R4Binary,
@@ -21,13 +21,14 @@ import {BundleExporter} from './bundle';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IServerConfig} from '../models/server-config';
 import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
-import {HttpService, Logger} from '@nestjs/common';
+import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Formats} from '../models/export-options';
 
 interface TableOfContentsEntry {
   level: number;
@@ -82,6 +83,11 @@ interface FhirControl {
   };
 }
 
+export class ExportResults {
+  rootPath: string;
+  packageId: string;
+}
+
 export class HtmlExporter {
   readonly httpService: HttpService;
   readonly logger: Logger;
@@ -95,7 +101,13 @@ export class HtmlExporter {
   readonly serverConfig: IServerConfig;
   readonly fhirConfig: IFhirConfig;
 
-  private packageId: string;
+  readonly homedir: string;
+
+  private igPublisherLocation: string;
+  private implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public packageId: string;
+  public rootPath: string;
+  public controlPath: string;
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(serverConfig: IServerConfig, fhirConfig: IFhirConfig, httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
@@ -110,6 +122,8 @@ export class HtmlExporter {
     this.io = io;
     this.socketId = socketId;
     this.implementationGuideId = implementationGuideId;
+
+    this.homedir = require('os').homedir();
   }
 
   static getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
@@ -479,7 +493,7 @@ export class HtmlExporter {
     }
   }
 
-  private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide) {
+  private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
     const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
     const distinctResources = (bundle.entry || [])
       .map((entry) => <DomainResource> entry.resource)
@@ -500,7 +514,7 @@ export class HtmlExporter {
       }
 
       if (implementationGuide.contact) {
-        const authorsData = (implementationGuide.contact || []).map((contact) => {
+        const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
           const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
           return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
         });
@@ -784,233 +798,234 @@ export class HtmlExporter {
     this.generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, {fileName: rootPageFileName, content: rootPageContent});
   }
 
-  public export(format: string, executeIgPublisher: boolean, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
+  private createTempDirectory(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      tmp.dir((tmpDirErr, rootPath) => {
+        if (tmpDirErr) {
+          reject(tmpDirErr);
+        } else {
+          resolve(rootPath);
+        }
+      });
+    });
+  }
+
+  public async publish(format: Formats, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
+    if (!this.packageId) {
+      throw new MethodNotAllowedException('export() must be executed before publish()');
+    }
+
+    const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
+    fs.ensureDirSync(deployDir);
+
+    const igPublisherVersion = useLatest ? 'latest' : 'default';
+    const process = this.serverConfig.javaLocation || 'java';
+    const jarParams = ['-jar', this.igPublisherLocation, '-ig', this.controlPath];
+
+    if (!useTerminologyServer) {
+      jarParams.push('-tx', 'N/A');
+    }
+
+    this.sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`, true);
+
+    this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
+
+    const igPublisherProcess = spawn(process, jarParams);
+
+    igPublisherProcess.stdout.on('data', (data) => {
+      const message = data.toString()
+        .replace(tmp.tmpdir, 'XXX')
+        .replace(tmp.tmpdir.replace(/\\/g, '/'), 'XXX')
+        .replace(this.homedir, 'XXX');
+
+      if (message && message.trim().replace(/\./g, '') !== '') {
+        this.sendSocketMessage('progress', message);
+      }
+    });
+
+    igPublisherProcess.stderr.on('data', (data) => {
+      const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(this.homedir, 'XXX');
+
+      if (message && message.trim().replace(/\./g, '') !== '') {
+        this.sendSocketMessage('progress', message);
+      }
+    });
+
+    igPublisherProcess.on('error', (err) => {
+      const message = 'Error executing FHIR IG Publisher: ' + err;
+      this.logger.error(message);
+      this.sendSocketMessage('error', message);
+    });
+
+    igPublisherProcess.on('exit', (code) => {
+      this.logger.log(`IG Publisher is done executing for ${this.rootPath}`);
+
+      this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
+
+      if (code !== 0) {
+        this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
+        this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+      } else {
+        this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
+
+        const generatedPath = path.resolve(this.rootPath, 'generated_output');
+        const outputPath = path.resolve(this.rootPath, 'output');
+
+        this.logger.log(`Deleting content generated by ig publisher in ${generatedPath}`);
+
+        fs.emptyDir(generatedPath, (err) => {
+          if (err) {
+            this.logger.error(err);
+          }
+        });
+
+        this.logger.log(`Copying output from ${outputPath} to ${deployDir}`);
+
+        fs.copy(outputPath, deployDir, (err) => {
+          if (err) {
+            this.logger.error(err);
+            this.sendSocketMessage('error', 'Error copying contents to deployment path.');
+          } else {
+            const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/implementation-guide/${this.implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
+            this.sendSocketMessage('complete', finalMessage, true);
+          }
+
+          if (!downloadOutput) {
+            this.logger.log(`User indicated they don't need to download. Removing temporary directory ${this.rootPath}`);
+
+            fs.emptyDir(this.rootPath, (err) => {
+              if (err) {
+                this.logger.error(err);
+              } else {
+                this.logger.log(`Done removing temporary directory ${this.rootPath}`);
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
+  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
 
-    return new Promise((resolve, reject) => {
-      const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
-      const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
-      const homedir = require('os').homedir();
-      const fhirServerConfig = this.fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
-      let control;
-      let implementationGuideResource;
+    const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
+    const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
+    const fhirServerConfig = this.fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
+    let control, bundle;
 
-      this.logger.log(`Starting export of HTML package. Home directory is ${homedir}`);
+    this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}`);
 
-      tmp.dir((tmpDirErr, rootPath) => {
-        if (tmpDirErr) {
-          this.logger.error(tmpDirErr);
-          return reject('An error occurred while creating a temporary directory: ' + tmpDirErr);
-        }
+    try {
+      this.rootPath = await this.createTempDirectory();
+      this.controlPath = path.join(this.rootPath, 'ig.json');
+      this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
+    } catch (ex) {
+      this.logger.error(`Error while creating temporary directory for export: ${ex.message}`, ex.stack);
+      throw ex;
+    }
 
-        const controlPath = path.join(rootPath, 'ig.json');
+    this.logger.log('Retrieving resources for export');
 
-        this.packageId = rootPath.substring(rootPath.lastIndexOf(path.sep) + 1);
-        resolve(this.packageId);
+    try {
+      bundle = await bundleExporter.getBundle(false);
+    } catch (ex) {
+      this.logger.error(`Error while retrieving bundle: ${ex.message}`, ex.stack);
+      throw ex;
+    }
 
-        setTimeout(() => {
-          this.sendSocketMessage('progress', 'Created temp directory. Retrieving resources for implementation guide.', true);
+    const resourcesDir = path.join(this.rootPath, 'source/resources');
 
-          let bundle: Bundle;
+    this.logger.log('Resources retrieved. Writing resources to file system.');
 
-          // Prepare IG Publisher package
-          bundleExporter.getBundle(false)
-            .then((results: Bundle) => {
-              bundle = results;
-              const resourcesDir = path.join(rootPath, 'source/resources');
+    for (let i = 0; i < bundle.entry.length; i++) {
+      const resource = bundle.entry[i].resource;
+      const cleanResource = BundleExporter.cleanupResource(resource);
+      const resourceType = resource.resourceType;
+      const id = resource.id;
+      const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
+      let resourcePath;
 
-              this.sendSocketMessage('progress', 'Resources retrieved. Packaging.', true);
+      let resourceContent = null;
 
-              for (let i = 0; i < bundle.entry.length; i++) {
-                const resource = bundle.entry[i].resource;
-                const cleanResource = BundleExporter.cleanupResource(resource);
-                const resourceType = resource.resourceType;
-                const id = resource.id;
-                const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
-                let resourcePath;
+      if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
+        this.implementationGuide = resource;
+      }
 
-                let resourceContent = null;
+      // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
+      if (!isXml && resourceType !== 'ImplementationGuide') {
+        resourceContent = JSON.stringify(cleanResource, null, '\t');
+        resourcePath = path.join(resourceDir, id + '.json');
+      } else {
+        resourceContent = this.fhir.objToXml(cleanResource);
+        resourceContent = vkbeautify.xml(resourceContent);
+        resourcePath = path.join(resourceDir, id + '.xml');
+      }
 
-                if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
-                  implementationGuideResource = resource;
-                }
+      fs.ensureDirSync(resourceDir);
+      fs.writeFileSync(resourcePath, resourceContent);
+    }
 
-                // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
-                if (!isXml && resourceType !== 'ImplementationGuide') {
-                  resourceContent = JSON.stringify(cleanResource, null, '\t');
-                  resourcePath = path.join(resourceDir, id + '.json');
-                } else {
-                  resourceContent = this.fhir.objToXml(cleanResource);
-                  resourceContent = vkbeautify.xml(resourceContent);
-                  resourcePath = path.join(resourceDir, id + '.xml');
-                }
+    this.logger.log('Done writing resources to file system.');
 
-                fs.ensureDirSync(resourceDir);
-                fs.writeFileSync(resourcePath, resourceContent);
-              }
+    if (!this.implementationGuide) {
+      throw new Error('The implementation guide was not found in the bundle returned by the server');
+    }
 
-              if (!implementationGuideResource) {
-                throw new Error('The implementation guide was not found in the bundle returned by the server');
-              }
+    if (fhirServerConfig.version === 'stu3') {
+      control = HtmlExporter.getStu3Control(<STU3ImplementationGuide> this.implementationGuide, <STU3Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
+    } else {
+      control = HtmlExporter.getR4Control(<R4ImplementationGuide> this.implementationGuide, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
+    }
 
-              if (fhirServerConfig.version === 'stu3') {
-                control = HtmlExporter.getStu3Control(implementationGuideResource, <STU3Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
-              } else {
-                control = HtmlExporter.getR4Control(implementationGuideResource, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
-              }
+    this.logger.log('Copying IG Publisher template/framework to temp directory');
 
-              // Copy the contents of the ig-publisher-template folder to the export temporary folder
-              const templatePath = path.join(__dirname, 'assets', 'ig-publisher-template');
-              fs.copySync(templatePath, rootPath);
+    // Copy the contents of the ig-publisher-template folder to the export temporary folder
+    const templatePath = path.join(__dirname, 'assets', 'ig-publisher-template');
+    fs.copySync(templatePath, this.rootPath);
 
-              // Write the ig.json file to the export temporary folder
-              const controlContent = JSON.stringify(control, null, '\t');
-              fs.writeFileSync(controlPath, controlContent);
+    this.logger.log('Saving the control file to the temp directory');
 
-              // Write the intro, summary and search MD files for each resource
-              (bundle.entry || []).forEach((entry) => this.writeFilesForResources(rootPath, entry.resource));
+    // Write the ig.json file to the export temporary folder
+    const controlContent = JSON.stringify(control, null, '\t');
+    fs.writeFileSync(this.controlPath, controlContent);
 
-              this.updateTemplates(rootPath, bundle, implementationGuideResource);
+    // Write the intro, summary and search MD files for each resource
+    (bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
 
-              if (fhirServerConfig.version === 'stu3') {
-                this.writeStu3Pages(rootPath, implementationGuideResource);
-              } else {
-                this.writeR4Pages(rootPath, implementationGuideResource);
-              }
+    this.logger.log('Updating the IG publisher templates for the resources');
 
-              this.sendSocketMessage('progress', 'Done building package', true);
+    this.updateTemplates(this.rootPath, bundle, this.implementationGuide);
 
-              return this.getIgPublisher(useLatest);
-            })
-            .then((igPublisherLocation) => {
-              if (includeIgPublisherJar && igPublisherLocation) {
-                this.sendSocketMessage('progress', 'Copying IG Publisher JAR to working directory.', true);
-                const jarFileName = igPublisherLocation.substring(igPublisherLocation.lastIndexOf(path.sep) + 1);
-                const destJarPath = path.join(rootPath, jarFileName);
-                fs.copySync(igPublisherLocation, destJarPath);
+    this.logger.log('Writing pages for the implementation guide to the temp directory');
 
-                // Create .sh and .bat files for easy execution of the IG publisher jar
-                const shContent = '#!/bin/bash\n' +
-                'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-                'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
-                fs.writeFileSync(path.join(rootPath, 'publisher.sh'), shContent);
+    if (fhirServerConfig.version === 'stu3') {
+      this.writeStu3Pages(this.rootPath, <STU3ImplementationGuide> this.implementationGuide);
+    } else {
+      this.writeR4Pages(this.rootPath, <R4ImplementationGuide> this.implementationGuide);
+    }
 
-                const batContent = 'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
-                fs.writeFileSync(path.join(rootPath, 'publisher.bat'), batContent);
-              }
+    this.igPublisherLocation = await this.getIgPublisher(useLatest);
 
-              if (!executeIgPublisher || !igPublisherLocation) {
-                this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.', true);
+    if (includeIgPublisherJar && this.igPublisherLocation) {
+      this.logger.log('Copying IG Publisher JAR to working directory.');
 
-                if (testCallback) {
-                  testCallback(rootPath);
-                }
+      const jarFileName = this.igPublisherLocation.substring(this.igPublisherLocation.lastIndexOf(path.sep) + 1);
+      const destJarPath = path.join(this.rootPath, jarFileName);
+      fs.copySync(this.igPublisherLocation, destJarPath);
 
-                return;
-              }
+      // Create .sh and .bat files for easy execution of the IG publisher jar
+      const shContent = '#!/bin/bash\n' +
+        'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
+        'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+      fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
 
-              const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, implementationGuideResource.id);
-              fs.ensureDirSync(deployDir);
+      const batContent = 'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+      fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
+    }
 
-              const igPublisherVersion = useLatest ? 'latest' : 'default';
-              const process = this.serverConfig.javaLocation || 'java';
-              const jarParams = ['-jar', igPublisherLocation, '-ig', controlPath];
-
-              if (!useTerminologyServer) {
-                jarParams.push('-tx', 'N/A');
-              }
-
-              this.sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`, true);
-
-              this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
-
-              const igPublisherProcess = spawn(process, jarParams);
-
-              igPublisherProcess.stdout.on('data', (data) => {
-                const message = data.toString()
-                  .replace(tmp.tmpdir, 'XXX')
-                  .replace(tmp.tmpdir.replace(/\\/g, '/'), 'XXX')
-                  .replace(homedir, 'XXX');
-
-                if (message && message.trim().replace(/\./g, '') !== '') {
-                  this.sendSocketMessage('progress', message);
-                }
-              });
-
-              igPublisherProcess.stderr.on('data', (data) => {
-                const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(homedir, 'XXX');
-
-                if (message && message.trim().replace(/\./g, '') !== '') {
-                  this.sendSocketMessage('progress', message);
-                }
-              });
-
-              igPublisherProcess.on('error', (err) => {
-                const message = 'Error executing FHIR IG Publisher: ' + err;
-                this.logger.error(message);
-                this.sendSocketMessage('error', message);
-              });
-
-              igPublisherProcess.on('exit', (code) => {
-                this.logger.log(`IG Publisher is done executing for ${rootPath}`);
-
-                this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
-
-                if (code !== 0) {
-                  this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
-                  this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
-                } else {
-                  this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
-
-                  const generatedPath = path.resolve(rootPath, 'generated_output');
-                  const outputPath = path.resolve(rootPath, 'output');
-
-                  this.logger.log(`Deleting content generated by ig publisher in ${generatedPath}`);
-
-                  fs.emptyDir(generatedPath, (err) => {
-                    if (err) {
-                      this.logger.error(err);
-                    }
-                  });
-
-                  this.logger.log(`Copying output from ${outputPath} to ${deployDir}`);
-
-                  fs.copy(outputPath, deployDir, (err) => {
-                    if (err) {
-                      this.logger.error(err);
-                      this.sendSocketMessage('error', 'Error copying contents to deployment path.');
-                    } else {
-                      const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/implementation-guide/${this.implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
-                      this.sendSocketMessage('complete', finalMessage, true);
-                    }
-
-                    if (!downloadOutput) {
-                      this.logger.log(`User indicated they don't need to download. Removing temporary directory ${rootPath}`);
-
-                      fs.emptyDir(rootPath, (err) => {
-                        if (err) {
-                          this.logger.error(err);
-                        } else {
-                          this.logger.log(`Done removing temporary directory ${rootPath}`);
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            })
-            .catch((err) => {
-              this.logger.error(err.message || err);
-              this.sendSocketMessage('error', 'Error during export: ' + err);
-
-              if (testCallback) {
-                testCallback(rootPath, err);
-              }
-            });
-        }, 1000);
-      });
-    });
+    this.logger.log(`Done creating HTML export for IG ${this.implementationGuideId}`);
   }
 }

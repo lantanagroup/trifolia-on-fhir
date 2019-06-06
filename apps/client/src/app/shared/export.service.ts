@@ -9,7 +9,6 @@ export class ExportOptions {
   public exportFormat = ExportFormats.HTML;
   public responseFormat?: 'application/json' | 'application/xml' = 'application/json';
   public useTerminologyServer? = true;
-  public executeIgPublisher? = true;
   public useLatest? = false;
   public downloadOutput? = true;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
@@ -24,12 +23,40 @@ export class ExportService {
   }
 
   public validate(implementationGuideId: string) {
-    const url = `/api/export/${implementationGuideId}/$validate`;
+    const url = `/api/export/${encodeURIComponent(implementationGuideId)}/$validate`;
     return this.http.get<ServerValidationResult[]>(url);
   }
 
-  public export(options: ExportOptions) {
-    let url = '/api/export/' + options.implementationGuideId + '?exportFormat=' + options.exportFormat + '&';
+  public exportBundle(options: ExportOptions) {
+    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/bundle?`;
+
+    if (options.responseFormat) {
+      url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
+    }
+
+    return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
+  }
+
+  public exportHtml(options: ExportOptions) {
+    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/html?`;
+
+    if (options.responseFormat) {
+      url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
+    }
+
+    if (options.useLatest === true) {
+      url += 'useLatest=true&';
+    }
+
+    if (options.includeIgPublisherJar === true) {
+      url += 'includeIgPublisherJar=true&';
+    }
+
+    return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
+  }
+
+  public publish(options: ExportOptions) {
+    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/publish?`;
 
     if (!this.socketService.socketId) {
       throw new Error('Your browser could not connect to the server via a socket to export the package');
@@ -43,10 +70,6 @@ export class ExportService {
       url += 'useTerminologyServer=' + options.useTerminologyServer.toString() + '&';
     }
 
-    if (options.executeIgPublisher === true || options.executeIgPublisher === false) {
-      url += 'executeIgPublisher=' + options.executeIgPublisher.toString() + '&';
-    }
-
     if (options.useLatest === true) {
       url += 'useLatest=true&';
     }
@@ -55,14 +78,9 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
-    // Only allow preventing downloads when executing the IG publisher
-    if (options.exportFormat === ExportFormats.HTML && !options.executeIgPublisher && options.downloadOutput === false) {
-      url += 'downloadOutput=false&';
-    }
-
     url += 'socketId=' + encodeURIComponent(this.socketService.socketId);
 
-    return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
+    return this.http.get(url, {responseType: 'text'});
   }
 
   public getPackage(packageId: string) {

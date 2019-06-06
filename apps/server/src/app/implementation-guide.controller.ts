@@ -4,8 +4,10 @@ import {ITofUser} from './models/tof-request';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import {BundleExporter} from './export/bundle';
+import {getHumanNameDisplay, getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
 
 interface PublishedGuidesModel {
   guides: [{
@@ -81,5 +83,28 @@ export class ImplementationGuideController extends BaseFhirController {
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase: string, @Param('id') id: string, @User() user) {
     return super.baseDelete(fhirServerBase, id, user);
+  }
+
+  @Get(':id/list')
+  public getResourceList(@FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string) {
+    const exporter = new BundleExporter(this.httpService, this.logger, fhirServerBase, fhirServerId, fhirServerVersion, fhir, id);
+    const bundle = exporter.getBundle(false, true);
+
+    return (bundle.entry || []).map((entry) => {
+      const resource = entry.resource;
+      const ret = {
+        resourceType: resource.resourceType,
+        id: resource.id,
+        display: resource.title || resource.name
+      };
+
+      if (ret.display instanceof Array) {
+        ret.display = getHumanNamesDisplay(ret.display);
+      } else if (typeof ret.display === 'object') {
+        ret.display = getHumanNameDisplay(ret.display);
+      }
+
+      return ret;
+    });
   }
 }

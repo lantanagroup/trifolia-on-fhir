@@ -1,5 +1,6 @@
 import {ExportFormats} from './export-formats';
 
+export type Formats = 'xml'|'json'|'application/xml'|'application/fhir+xml'|'application/json'|'application/fhir+json';
 
 export class ExportOptions {
   public socketId?: string;
@@ -7,9 +8,15 @@ export class ExportOptions {
   public useTerminologyServer = false;
   public useLatest = false;
   public downloadOutput = true;
-  public format: 'json'|'xml'|'application/json'|'application/fhir+json'|'application/xml'|'application/fhir+xml' = 'json';
+  public format: Formats;
   public exportFormat = ExportFormats.Bundle;
   public includeIgPublisherJar = false;
+
+  public get isXml() {
+    return this.format === 'application/xml' ||
+      this.format === 'application/fhir+xml' ||
+      this.format === 'xml';
+  }
 
   constructor(query?: any) {
     if (query) {

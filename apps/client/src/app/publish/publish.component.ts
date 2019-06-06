@@ -47,8 +47,6 @@ export class PublishComponent implements OnInit {
     private configService: ConfigService,
     private exportService: ExportService) {
 
-    this.options.exportFormat = ExportFormats.HTML;
-    this.options.executeIgPublisher = true;
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
       this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
       this.route.snapshot.paramMap.get('id');
@@ -127,14 +125,9 @@ export class PublishComponent implements OnInit {
     this.socketOutput = '';
     this.tabs.select('status');
 
-    this.exportService.export(this.options)
-      .subscribe((results: any) => {
-        const reader = new FileReader();
-        reader.addEventListener('loadend', (e: any) => {
-          const result = JSON.parse(e.srcElement.result);
-          this.packageId = result.content;
-        });
-        reader.readAsText(results.body);
+    this.exportService.publish(this.options)
+      .subscribe((packageId: string) => {
+        this.packageId = packageId;
       }, (err) => {
         this.message = this.fhirService.getErrorString(err);
       });
@@ -163,13 +156,7 @@ export class PublishComponent implements OnInit {
         if (data.status === 'complete') {
           this.message = 'Done exporting';
 
-          let shouldDownload = this.options.downloadOutput;
-
-          if (this.options.exportFormat === ExportFormats.HTML && !this.options.executeIgPublisher) {
-            shouldDownload = true;
-          }
-
-          if (shouldDownload) {
+          if (this.options.downloadOutput) {
             const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 
             this.exportService.getPackage(this.packageId)

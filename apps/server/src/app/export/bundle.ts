@@ -81,14 +81,20 @@ export class BundleExporter {
     return object;
   }
 
-  public async getBundle(removeExtensions = false): Promise<Bundle> {
-    const url = buildUrl(this.fhirServerBase, 'ImplementationGuide', null, null, {
+  public async getBundle(removeExtensions = false, summary = false): Promise<Bundle> {
+    const params = {
       _id: this.implementationGuideId,
       _include: [
         'ImplementationGuide:resource',
         'ImplementationGuide:global'
       ]
-    }, true);
+    };
+
+    if (summary) {
+      params['_summary'] = true;
+    }
+
+    const url = buildUrl(this.fhirServerBase, 'ImplementationGuide', null, null, params, true);
     const results = await this.httpService.get<Bundle>(url).toPromise();
     const bundle = results.data;
 

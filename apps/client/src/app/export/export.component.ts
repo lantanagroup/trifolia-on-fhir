@@ -3,7 +3,7 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
-import {HtmlExportStatus, SocketService} from '../shared/socket.service';
+import {SocketService} from '../shared/socket.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../shared/config.service';
@@ -15,6 +15,7 @@ import {ExportGithubPanelComponent} from '../export-github-panel/export-github-p
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '../shared/auth.service';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import {getStringFromBlob} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './export.component.html',
@@ -46,39 +47,21 @@ export class ExportComponent implements OnInit {
 
     this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
-    this.options.executeIgPublisher = false;            // Never execute the ig publisher. This is only for exporting.
     this.options.downloadOutput = true;
-
-    // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
-    this.socketService.onConnected.subscribe(() => {
-      if (this.packageId) {
-        this.socketService.notifyExporting(this.packageId);
-      }
-    });
   }
 
-  private getImplementationGuideResources() {
+  private async getImplementationGuideResources() {
     this.message = 'Retrieving resources for the implementation guide';
 
-    this.exportService.export({implementationGuideId: this.options.implementationGuideId, exportFormat: ExportFormats.Bundle})
-      .subscribe((response) => {
-        const reader = new FileReader();
+    const bundleResponse = await this.exportService.exportBundle({implementationGuideId: this.options.implementationGuideId, exportFormat: ExportFormats.Bundle}).toPromise();
+    const bundleJson = await getStringFromBlob(bundleResponse.body);
 
-        reader.addEventListener('loadend', (e) => {
-          const bundleJson = (<any>e.srcElement).result;
-
-          try {
-            this.githubResourcesBundle = <Bundle>JSON.parse(bundleJson);
-            this.message = '';
-          } catch (ex) {
-            this.message = 'Could not parse the bundle: ' + ex.message;
-          }
-        });
-
-        reader.readAsText(response.body);
-      }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
-      });
+    try {
+      this.githubResourcesBundle = <Bundle>JSON.parse(bundleJson);
+      this.message = '';
+    } catch (ex) {
+      this.message = 'Could not parse the bundle: ' + ex.message;
+    }
   }
 
   public onTabChange(event: NgbTabChangeEvent) {
@@ -216,33 +199,35 @@ export class ExportComponent implements OnInit {
 
     this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
-    if (this.options.exportFormat === ExportFormats.GitHub) {
-      try {
-        this.exportGithub();
-      } catch (ex) {
-        this.message = ex.message;
-      }
-    } else {
-      this.exportService.export(this.options)
-        .subscribe((results: any) => {
-          if (this.options.exportFormat === ExportFormats.Bundle) {
-            const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
-            const extension = (this.options.responseFormat === 'application/xml' ? '.xml' : '.json');
+    const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
+    const extension = (this.options.responseFormat === 'application/xml' ? '.xml' : '.json');
 
-            this.message = 'Done exporting';
-
-            saveAs(results.body, igName + extension);
-          } else if (this.options.exportFormat === ExportFormats.HTML) {
-            const reader = new FileReader();
-            reader.addEventListener('loadend', (e: any) => {
-              const result = JSON.parse(e.srcElement.result);
-              this.packageId = result.content;
+    try {
+      switch (this.options.exportFormat) {
+        case ExportFormats.HTML:
+          this.exportService.exportHtml(this.options)
+            .subscribe((response) => {
+              saveAs(response.body, igName + '.zip');
+              this.message = 'Done exporting.';
+            }, (err) => {
+              this.message = this.fhirService.getErrorString(err);
             });
-            reader.readAsText(results.body);
-          }
-        }, (err) => {
-          this.message = this.fhirService.getErrorString(err);
-        });
+          break;
+        case ExportFormats.Bundle:
+          this.exportService.exportBundle(this.options)
+            .subscribe((response) => {
+              saveAs(response.body, igName + extension);
+              this.message = 'Done exporting.';
+            }, (err) => {
+              this.message = this.fhirService.getErrorString(err);
+            });
+          break;
+        case ExportFormats.GitHub:
+          this.exportGithub();
+          break;
+      }
+    } catch (ex) {
+      this.message = ex.message;
     }
   }
 
@@ -253,36 +238,5 @@ export class ExportComponent implements OnInit {
           this.selectedImplementationGuide = implementationGuide;
         }, (err) => this.message = this.fhirService.getErrorString(err));
     }
-
-    this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
-      if (data.packageId === this.packageId) {
-        this.socketOutput += data.message;
-
-        if (!data.message.endsWith('\n')) {
-          this.socketOutput += '\r\n';
-        }
-
-        if (data.status === 'complete') {
-          this.message = 'Done exporting';
-
-          let shouldDownload = this.options.downloadOutput;
-
-          if (this.options.exportFormat === ExportFormats.HTML && !this.options.executeIgPublisher) {
-            shouldDownload = true;
-          }
-
-          if (shouldDownload) {
-            const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
-
-            this.exportService.getPackage(this.packageId)
-              .subscribe((results: any) => {
-                saveAs(results.body, igName + '.zip');
-              });
-          }
-        }
-      }
-    }, (err) => {
-      this.socketOutput += 'An error occurred while communicating with the server for the export';
-    });
   }
 }

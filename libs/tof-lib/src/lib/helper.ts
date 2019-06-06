@@ -251,3 +251,17 @@ export function getPractitionerEmail(practitioner: Practitioner) {
     return foundEmail.value.replace('mailto:', '');
   }
 }
+
+export function getStringFromBlob(theBlob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = function () {
+        resolve(<string> reader.result);
+      }
+      reader.readAsText(theBlob);
+    } catch (ex) {
+      reject(ex.message);
+    }
+  });
+}
