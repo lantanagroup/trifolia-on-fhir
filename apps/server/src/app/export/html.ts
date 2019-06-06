@@ -40,6 +40,7 @@ interface FhirControlDependency {
   location: string;
   name: string;
   version: string;
+  package: string;
 }
 
 interface FhirControl {
@@ -346,7 +347,8 @@ export class HtmlExporter {
         return {
           location: locationExtension ? locationExtension.valueString : '',
           name: nameExtension ? nameExtension.valueString : '',
-          version: dependsOn.version
+          version: dependsOn.version,
+          package: dependsOn.packageId
         };
       });
 
