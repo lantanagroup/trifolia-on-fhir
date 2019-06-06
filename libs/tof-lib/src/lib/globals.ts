@@ -7,6 +7,8 @@ export class Globals {
     namePattern: '^[A-Z][A-Za-z0-9_]+$'
   };
 
+  static readonly authNamespace = 'https://auth0.com';
+
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',

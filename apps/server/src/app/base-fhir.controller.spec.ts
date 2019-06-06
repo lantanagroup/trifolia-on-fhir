@@ -107,7 +107,7 @@ describe('BaseFhirController', () => {
       it('should have _security in the query params',  async () => {
         const req = nock(fhirServerBase)
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -140,7 +140,7 @@ describe('BaseFhirController', () => {
         const req = nock(fhirServerBase)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -189,7 +189,7 @@ describe('BaseFhirController', () => {
         const req = nock(fhirServerBase)
         // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -238,7 +238,7 @@ describe('BaseFhirController', () => {
         const req = nock(fhirServerBase)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -285,7 +285,7 @@ describe('BaseFhirController', () => {
           .reply(200, persistedResource)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -320,7 +320,7 @@ describe('BaseFhirController', () => {
           .reply(200, persistedResource)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -345,7 +345,7 @@ describe('BaseFhirController', () => {
         const req = nock(fhirServerBase)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
@@ -391,7 +391,7 @@ describe('BaseFhirController', () => {
           .reply(200, persistedResource)
           // to check permissions on persisted IG
           .get('/Practitioner')
-          .query({ identifier: 'https://auth0.com|test.user' })
+          .query({ identifier: Globals.authNamespace + '|test.user' })
           .reply(200, userPractitionerResponse)
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })

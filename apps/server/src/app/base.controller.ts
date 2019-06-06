@@ -7,6 +7,7 @@ import {ConfigService} from './config.service';
 import {Bundle, DomainResource, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 export interface GenericResponse {
   status?: number;
@@ -65,7 +66,7 @@ export class BaseController {
     let identifier = user.sub;
 
     if (identifier.startsWith('auth0|')) {
-      system = 'https://auth0.com';
+      system = Globals.authNamespace;
       identifier = identifier.substring(6);
     }
 

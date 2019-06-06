@@ -1,5 +1,6 @@
 import {ITofUser} from './models/tof-request';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com'): ITofUser {
   return {
@@ -30,7 +31,7 @@ export function createUserPractitionerResponse(firstName = 'test', lastName = 'u
           "id": id,
           "identifier": [
             {
-              "system": "https://auth0.com",
+              "system": Globals.authNamespace,
               "value": authId
             }
           ],

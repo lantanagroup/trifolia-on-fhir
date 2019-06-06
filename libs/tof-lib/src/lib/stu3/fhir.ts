@@ -14083,14 +14083,6 @@ export class Practitioner extends DomainResource {
       }
     }
   }
-
-  getDisplayName(): string {
-    if (this.name && this.name.length > 0) {
-      return this.name[0].getDisplay();
-    }
-
-    return 'Unspecified Name';
-  }
 }
 
 export class PractitionerRole extends DomainResource {

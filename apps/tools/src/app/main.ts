@@ -2,6 +2,7 @@ import {RemoveExtensions} from './removeExtensions';
 import {AddPermission, RemovePermission} from './permissions';
 import * as Yargs from 'yargs';
 import {RemoveExtras} from './removeExtras';
+import {UserListCommand} from './user-list';
 
 const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
 const modifyPermissionDescription = 'Adds/removes a permission to one or all resources';
@@ -11,6 +12,9 @@ const removeExtensionsDescription = 'Removes specified extensions from all resou
 
 const removeExtrasFormat = 'remove-extras <directory>';
 const removeExtrasDescription = 'Removes extra properties from resources that aren\'t used by ToF. This should typically be executed only be ToF developers on resources in the tof-lib assets folder.';
+
+const userListFormat = 'user-list';
+const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
 const argv = Yargs
   .command(modifyPermissionFormat, modifyPermissionDescription, (yargs: Yargs.Argv) => {
@@ -88,6 +92,18 @@ const argv = Yargs
   }, async (args: any) => {
     const removeExtras = new RemoveExtras(args);
     await removeExtras.execute();
+  })
+  .command(userListFormat, userListDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .option('fhirServer', {
+        alias: 'f',
+        description: 'The fhir server(s) to search for users in. Specify this parameter for each FHIR server to include.',
+        multiple: true,
+        required: true
+      });
+  }, async (args: any) => {
+    const command = new UserListCommand(args);
+    command.execute();
   })
   .help('help')
   .demandCommand()

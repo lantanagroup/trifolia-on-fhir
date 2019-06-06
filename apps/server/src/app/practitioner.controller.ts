@@ -10,6 +10,7 @@ import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import nanoid from 'nanoid';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -33,7 +34,7 @@ export class PractitionerController extends BaseFhirController {
         let value = authUser;
 
         if (authUser.startsWith('auth0|')) {
-          system =  'https://auth0.com';
+          system =  Globals.authNamespace;
           value = authUser.substring(6);
         }
 
@@ -90,7 +91,7 @@ export class PractitionerController extends BaseFhirController {
 
   @Get('user')
   public async getUsers(@FhirServerBase() fhirServerBase: string, @Query() query) {
-    query.identifier = 'https://auth0.com|';
+    query.identifier = `${Globals.authNamespace}|`;
 
     const url = buildUrl(fhirServerBase, 'Practitioner', null, null, query);
     const results = await this.httpService.get<Bundle>(url).toPromise();

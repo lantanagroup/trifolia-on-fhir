@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {FhirService} from '../../shared/fhir.service';
 import {AuthService} from '../../shared/auth.service';
 import {SocketService} from '../../shared/socket.service';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
   selector: 'app-new-user-modal',
@@ -25,7 +26,7 @@ export class NewUserModalComponent implements OnInit {
 
     this.practitioner = new Practitioner();
     const identifierSystem = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
-      'https://auth0.com' : 'https://trifolia-fhir.lantanagroup.com';
+      Globals.authNamespace : 'https://trifolia-fhir.lantanagroup.com';
     const identifierValue = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
       this.authService.userProfile.user_id.substring(6) : this.authService.userProfile.user_id;
     this.practitioner.identifier = [new Identifier({
