@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
 import {Bundle, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-resource-history',
@@ -51,7 +52,7 @@ export class ResourceHistoryComponent implements OnInit {
         .subscribe((bundle: Bundle) => {
           this.historyBundle = bundle;
         }, (err) => {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         });
     }
   }

@@ -14,6 +14,7 @@ import {saveAs} from 'file-saver';
 import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server-validation-result';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-publish',
@@ -79,7 +80,7 @@ export class PublishComponent implements OnInit {
           (results) => {
             this.validation = results;
           },
-          (err) => this.message = this.fhirService.getErrorString(err)
+          (err) => this.message = getErrorString(err)
         );
     }
   }
@@ -129,7 +130,7 @@ export class PublishComponent implements OnInit {
       .subscribe((packageId: string) => {
         this.packageId = packageId;
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -138,7 +139,7 @@ export class PublishComponent implements OnInit {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe((implementationGuide: ImplementationGuide) => {
           this.implementationGuideChanged(implementationGuide);
-        }, (err) => this.message = this.fhirService.getErrorString(err));
+        }, (err) => this.message = getErrorString(err));
     }
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
@@ -167,7 +168,7 @@ export class PublishComponent implements OnInit {
         }
       }
     }, (err) => {
-      this.socketOutput += 'An error occurred while communicating with the server for the export: ' + this.fhirService.getErrorString(err);
+      this.socketOutput += 'An error occurred while communicating with the server for the export: ' + getErrorString(err);
     });
   }
 

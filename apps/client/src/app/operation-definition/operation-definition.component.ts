@@ -10,6 +10,7 @@ import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './operation-definition.component.html',
@@ -118,7 +119,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
             this.operationDefinition.name);
         }, (err) => {
           this.odNotFound = err.status === 404;
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
         });
     }

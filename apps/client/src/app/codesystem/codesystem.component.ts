@@ -10,6 +10,7 @@ import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-conce
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
     templateUrl: './codesystem.component.html',
@@ -152,7 +153,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
-                this.message = 'An error occured while saving the code system: ' + this.fhirService.getErrorString(err);
+                this.message = 'An error occured while saving the code system: ' + getErrorString(err);
             });
     }
 
@@ -189,7 +190,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                         this.codeSystem.name || this.codeSystem.title);
                 }, (err) => {
                     this.csNotFound = err.status === 404;
-                    this.message = this.fhirService.getErrorString(err);
+                    this.message = getErrorString(err);
                     this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
                 });
         }

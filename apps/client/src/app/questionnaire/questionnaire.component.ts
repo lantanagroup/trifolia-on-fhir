@@ -10,6 +10,7 @@ import {QuestionnaireService} from '../shared/questionnaire.service';
 import {ConfigService} from '../shared/config.service';
 import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
 import {AuthService} from '../shared/auth.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -141,7 +142,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
             this.questionnaire.name || this.questionnaire.title);
         }, (err) => {
           this.qNotFound = err.status === 404;
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, questionnaireId);
         });
     }

@@ -5,6 +5,7 @@ import {NodeMenuItemAction, NodeSelectedEvent, TreeModel, TreeModelSettings} fro
 import {ImportService} from '../shared/import.service';
 import {FhirService} from '../shared/fhir.service';
 import {Content} from '@angular/compiler/src/render3/r3_ast';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-export-github-panel',
@@ -124,7 +125,7 @@ export class ExportGithubPanelComponent implements OnChanges {
             templates: templates
           };
         } else {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         }
       });
   }
@@ -150,7 +151,7 @@ export class ExportGithubPanelComponent implements OnChanges {
             });
           callback(childTreeModels);
         }, (err) => {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         });
     };
 
@@ -184,7 +185,7 @@ export class ExportGithubPanelComponent implements OnChanges {
           .subscribe(() => {
             this.message = 'Updated implementation guide\'s repository and branch';
           }, (err) => {
-            this.message = this.fhirService.getErrorString(err);
+            this.message = getErrorString(err);
           });
       }
     }
@@ -208,7 +209,7 @@ export class ExportGithubPanelComponent implements OnChanges {
 
         this.branchChanged();
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -264,7 +265,7 @@ export class ExportGithubPanelComponent implements OnChanges {
         this.message = 'Updated resources with GitHub repository and path.';
         this.isChanging = false;
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -281,7 +282,7 @@ export class ExportGithubPanelComponent implements OnChanges {
           this.repository = repositories.find((repo) => repo.full_name === implementationGuideDetails.owner + '/' + implementationGuideDetails.repository);
           this.repositoryChanged();
         }, (err) => {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         });
     }
 

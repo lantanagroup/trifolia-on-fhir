@@ -13,6 +13,7 @@ import {ConfigService} from '../../shared/config.service';
 import {FileService} from '../../shared/file.service';
 import {ClientHelper} from '../../clientHelper';
 import {AuthService} from '../../shared/auth.service';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -172,7 +173,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
             this.capabilityStatement.name || this.capabilityStatement.title);
         }, (err) => {
           this.csNotFound = err.status === 404;
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
         });
     }

@@ -24,6 +24,7 @@ import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {BaseComponent} from '../../base.component';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -248,7 +249,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
             this.implementationGuide.name);
         }, (err) => {
           this.igNotFound = err.status === 404;
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
         });
     }
@@ -526,7 +527,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the implementation guide: ' + this.fhirService.getErrorString(err);
+        this.message = 'An error occured while saving the implementation guide: ' + getErrorString(err);
       });
   }
 

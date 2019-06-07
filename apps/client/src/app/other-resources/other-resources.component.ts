@@ -5,6 +5,7 @@ import {saveAs} from 'file-saver';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 class OpenedResource {
   resource: DomainResource;
@@ -46,7 +47,7 @@ export class OtherResourcesComponent implements OnInit {
         this.message = 'Done searching...';
         this.tabSet.select('results');
       }, (err) => {
-        this.message = 'Error while searching for other resources: ' + this.fhirService.getErrorString(err);
+        this.message = 'Error while searching for other resources: ' + getErrorString(err);
       });
   }
 
@@ -57,7 +58,7 @@ export class OtherResourcesComponent implements OnInit {
         this.message = `Successfully updated resource ${or.resource.resourceType}/${or.resource.id}!`;
       })
       .catch((err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -71,7 +72,7 @@ export class OtherResourcesComponent implements OnInit {
         const index = this.openedResources.indexOf(or);
         this.closeResource(index);
       }, (err) => {
-        this.message = 'Error while removing the resource: ' + this.fhirService.getErrorString(err);
+        this.message = 'Error while removing the resource: ' + getErrorString(err);
       });
   }
 
@@ -230,7 +231,7 @@ export class OtherResourcesComponent implements OnInit {
           this.tabSet.select('resource-' + (this.openedResources.length - 1));
         }, 100);
       }, (err) => {
-        this.message = 'Error opening resource: ' + this.fhirService.getErrorString(err);
+        this.message = 'Error opening resource: ' + getErrorString(err);
       });
   }
 

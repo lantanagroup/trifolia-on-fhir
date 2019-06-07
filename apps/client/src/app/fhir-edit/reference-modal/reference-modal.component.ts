@@ -6,6 +6,7 @@ import {HttpClient} from '@angular/common/http';
 import {FhirService} from '../../shared/fhir.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 export interface ResourceSelection {
   resourceType: string;
@@ -135,7 +136,7 @@ export class FhirReferenceModalComponent implements OnInit {
           this.results = results;
         }
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 

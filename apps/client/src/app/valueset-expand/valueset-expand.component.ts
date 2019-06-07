@@ -5,6 +5,7 @@ import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/st
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './valueset-expand.component.html',
@@ -50,7 +51,7 @@ export class ValuesetExpandComponent implements OnInit {
           resourceType: 'OperationOutcome',
           text: {
             status: 'generated',
-            div: 'An error occurred while expanding the value set: ' + this.fhirService.getErrorString(err)
+            div: 'An error occurred while expanding the value set: ' + getErrorString(err)
           },
           issue: []
         };
@@ -72,7 +73,7 @@ export class ValuesetExpandComponent implements OnInit {
 
         this.valueSet = <ValueSet>valueSet;
       }, (err) => {
-        this.message = 'An error occurred while loading the value set: ' + this.fhirService.getErrorString(err);
+        this.message = 'An error occurred while loading the value set: ' + getErrorString(err);
       });
   }
 }

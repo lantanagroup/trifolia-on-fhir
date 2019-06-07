@@ -7,7 +7,7 @@ import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/refer
 import {PractitionerService} from '../../shared/practitioner.service';
 import {
   addPermission,
-  ensureSecurity,
+  ensureSecurity, getErrorString,
   getHumanNameDisplay,
   getHumanNamesDisplay,
   getMetaSecurity,
@@ -167,7 +167,7 @@ export class ResourcePermissionsComponent implements OnInit {
         this.isSearchingGroups = false;
       })
       .catch((err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
         this.isSearchingGroups = false;
       });
   }
@@ -175,7 +175,7 @@ export class ResourcePermissionsComponent implements OnInit {
   public searchUsers() {
     this.practitionerService.getUsers(null, this.searchUsersCriteria).toPromise()
       .then((results: Bundle) => this.foundUsersBundle = results)
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+      .catch((err) => this.message = getErrorString(err));
   }
 
   public addPermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
@@ -208,13 +208,13 @@ export class ResourcePermissionsComponent implements OnInit {
     if (groupIds.length > 0) {
       this.groupService.getMembership(null, groupIds.join(',')).toPromise()
         .then((results: Bundle) => this.groupsBundle = results)
-        .catch((err) => this.message = this.fhirService.getErrorString(err));
+        .catch((err) => this.message = getErrorString(err));
     }
 
     if (userIds.length > 0) {
       this.practitionerService.getUsers(null, null, null, userIds.join(',')).toPromise()
         .then((results: Bundle) => this.usersBundle = results)
-        .catch((err) => this.message = this.fhirService.getErrorString(err));
+        .catch((err) => this.message = getErrorString(err));
     }
   }
 
@@ -287,6 +287,6 @@ export class ResourcePermissionsComponent implements OnInit {
 
     this.practitionerService.getMe().toPromise()
       .then((currentUser: Practitioner) => this.currentUser = currentUser)
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+      .catch((err) => this.message = getErrorString(err));
   }
 }

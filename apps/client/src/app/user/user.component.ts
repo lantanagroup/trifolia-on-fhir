@@ -7,7 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
-import {getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from '../shared/group.service';
 
 @Component({
@@ -54,7 +54,7 @@ export class UserComponent implements OnInit {
         this.practitioner = updatedPractitioner;
         this.message = 'Your changes have been saved!';
       }, err => {
-        this.message = 'Error saving practitioner: ' + this.fhirService.getErrorString(err);
+        this.message = 'Error saving practitioner: ' + getErrorString(err);
       });
   }
 
@@ -98,7 +98,7 @@ export class UserComponent implements OnInit {
   public searchUsers() {
     this.practitionerService.getUsers(null, this.searchUsersName, this.searchUsersEmail).toPromise()
       .then((results: Bundle) => this.searchUsersBundle = results)
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+      .catch((err) => this.message = getErrorString(err));
   }
 
   public isAdmin(group: Group, currentMember?: MemberComponent) {
@@ -135,14 +135,14 @@ export class UserComponent implements OnInit {
           this.message = 'New group has been saved!';
           this.editGroup = null;
         })
-        .catch((err) => this.message = this.fhirService.getErrorString(err));
+        .catch((err) => this.message = getErrorString(err));
     } else {
       this.groupService.updateManagingGroup(this.editGroup).toPromise()
         .then(() => {
           this.message = 'Group has been updated!';
           this.editGroup = null;
         })
-        .catch((err) => this.message = this.fhirService.getErrorString(err));
+        .catch((err) => this.message = getErrorString(err));
     }
   }
 
@@ -152,7 +152,7 @@ export class UserComponent implements OnInit {
         const index = this.managingGroups.indexOf(group);
         this.managingGroups.splice(index, 1);
       })
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+      .catch((err) => this.message = getErrorString(err));
   }
 
   private getMe() {
@@ -160,7 +160,7 @@ export class UserComponent implements OnInit {
       .then((practitioner) => {
         this.practitioner = practitioner;
       })
-      .catch((err) => this.message = this.fhirService.getErrorString(err));
+      .catch((err) => this.message = getErrorString(err));
   }
 
   private async getGroups() {

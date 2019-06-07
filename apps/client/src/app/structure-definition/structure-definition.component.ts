@@ -13,6 +13,7 @@ import {ConfigService} from '../shared/config.service';
 import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -254,7 +255,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       results = await this.strucDefService.getStructureDefinition(sdId).toPromise();
     } catch (err) {
       this.sdNotFound = err.status === 404;
-      this.message = this.fhirService.getErrorString(err);
+      this.message = getErrorString(err);
       this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
       return;
     }
@@ -284,7 +285,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     try {
       baseStructureDefinition = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
     } catch (err) {
-      this.message = this.fhirService.getErrorString(err);
+      this.message = getErrorString(err);
       return;
     }
 
@@ -530,7 +531,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           }, 3000);
         }
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 

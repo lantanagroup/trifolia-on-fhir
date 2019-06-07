@@ -7,6 +7,7 @@ import {FhirService} from '../shared/fhir.service';
 import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthService} from '../shared/auth.service';
 import {ConfigService} from '../shared/config.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-new-profile',
@@ -42,7 +43,7 @@ export class NewProfileComponent implements OnInit {
       .subscribe((results) => {
         this.route.navigate([`${this.configService.fhirServer}/structure-definition/${results.id}`]);
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 

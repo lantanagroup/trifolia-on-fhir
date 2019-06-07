@@ -6,6 +6,7 @@ import {
   TreeModel
 } from 'ng2-tree';
 import {FhirService} from '../../shared/fhir.service';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-import-github-panel',
@@ -85,7 +86,7 @@ export class ImportGithubPanelComponent implements OnInit {
               });
             callback(childTreeModels);
           }, (err) => {
-            this.message = this.fhirService.getErrorString(err);
+            this.message = getErrorString(err);
           });
       };
     }
@@ -127,7 +128,7 @@ export class ImportGithubPanelComponent implements OnInit {
           }
         };
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -148,7 +149,7 @@ export class ImportGithubPanelComponent implements OnInit {
           this.branchChanged();
         }
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -161,10 +162,10 @@ export class ImportGithubPanelComponent implements OnInit {
             this.repositories = repositories;
             this.loadingRepositories = false;
           }, (err) => {
-            this.message = this.fhirService.getErrorString(err);
+            this.message = getErrorString(err);
           });
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -174,7 +175,7 @@ export class ImportGithubPanelComponent implements OnInit {
         this.repositories = repositories;
         this.loadingRepositories = false;
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 }

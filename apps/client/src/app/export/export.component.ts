@@ -15,7 +15,7 @@ import {ExportGithubPanelComponent} from '../export-github-panel/export-github-p
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '../shared/auth.service';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import {getStringFromBlob} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, getStringFromBlob} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './export.component.html',
@@ -189,7 +189,7 @@ export class ExportComponent implements OnInit {
       .subscribe(() => {
         this.message = 'Done exporting to GitHub';
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
@@ -210,7 +210,7 @@ export class ExportComponent implements OnInit {
               saveAs(response.body, igName + '.zip');
               this.message = 'Done exporting.';
             }, (err) => {
-              this.message = this.fhirService.getErrorString(err);
+              this.message = getErrorString(err);
             });
           break;
         case ExportFormats.Bundle:
@@ -219,7 +219,7 @@ export class ExportComponent implements OnInit {
               saveAs(response.body, igName + extension);
               this.message = 'Done exporting.';
             }, (err) => {
-              this.message = this.fhirService.getErrorString(err);
+              this.message = getErrorString(err);
             });
           break;
         case ExportFormats.GitHub:
@@ -236,7 +236,7 @@ export class ExportComponent implements OnInit {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe((implementationGuide: ImplementationGuide) => {
           this.selectedImplementationGuide = implementationGuide;
-        }, (err) => this.message = this.fhirService.getErrorString(err));
+        }, (err) => this.message = getErrorString(err));
     }
   }
 }

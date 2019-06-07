@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../shared/fhir.service';
 import {RecentItemService} from '../../shared/recent-item.service';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-change-resource-id-modal',
@@ -30,7 +31,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
         this.activeModal.close(this.newId);
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 

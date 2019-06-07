@@ -11,6 +11,7 @@ import {forkJoin} from 'rxjs';
 import {v4 as uuidv4} from 'uuid';
 import {saveAs} from 'file-saver';
 import {HttpClient} from '@angular/common/http';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 enum ContentTypes {
   Json = 0,
@@ -239,7 +240,7 @@ export class ImportComponent implements OnInit {
         resourceType: 'OperationOutcome',
         text: {
           status: 'generated',
-          div: 'An error occurred while parsing the text content: ' + this.fhirService.getErrorString(ex)
+          div: 'An error occurred while parsing the text content: ' + getErrorString(ex)
         },
         issue: []
       };
@@ -280,7 +281,7 @@ export class ImportComponent implements OnInit {
             resourceType: 'OperationOutcome',
             text: {
               status: 'generated',
-              div: 'An error occurred while importing the resource(s): ' + this.fhirService.getErrorString(err)
+              div: 'An error occurred while importing the resource(s): ' + getErrorString(err)
             },
             issue: []
           };
@@ -312,7 +313,7 @@ export class ImportComponent implements OnInit {
         if (err && err.message) {
           this.message = 'Error while importing: ' + err.message;
         } else {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         }
       });
   }
@@ -347,7 +348,7 @@ export class ImportComponent implements OnInit {
         } else if (err && err.message) {
           this.message = 'Error while importing: ' + err.message;
         } else {
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
         }
       });
   }
@@ -481,13 +482,13 @@ export class ImportComponent implements OnInit {
               tabSet.select('results');
             });
           }, (err) => {
-            this.message = this.fhirService.getErrorString(err);
+            this.message = getErrorString(err);
           });
       } catch (ex) {
         this.message = ex.message;
       }
     }, (err) => {
-      this.message = this.fhirService.getErrorString(err);
+      this.message = getErrorString(err);
     });
   }
 

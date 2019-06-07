@@ -28,7 +28,6 @@ import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -369,11 +368,6 @@ export class FhirService {
         }
       }
     }
-  }
-
-  // TODO: Move this to a helper function that is not part of the service
-  public getErrorString(err, body?, defaultMessage = 'An unknown error occurred') {
-    return getErrorString(err, body, defaultMessage);
   }
 
   /**

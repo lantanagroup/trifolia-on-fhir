@@ -10,6 +10,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './valuesets.component.html',
@@ -69,7 +70,7 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
         this.results.entry.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 

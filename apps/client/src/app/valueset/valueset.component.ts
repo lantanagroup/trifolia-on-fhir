@@ -13,6 +13,7 @@ import {FileOpenModalComponent} from '../modals/file-open-modal/file-open-modal.
 import {FileModel} from '../models/file-model';
 import {ClientHelper} from '../clientHelper';
 import {AuthService} from '../shared/auth.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './valueset.component.html',
@@ -228,7 +229,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
             this.valueSet.name || this.valueSet.title);
         }, (err) => {
           this.vsNotFound = err.status === 404;
-          this.message = this.fhirService.getErrorString(err);
+          this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentValueSets, valueSetId);
         });
     }

@@ -7,6 +7,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {AuthService} from '../../shared/auth.service';
 import {SocketService} from '../../shared/socket.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'app-new-user-modal',
@@ -51,7 +52,7 @@ export class NewUserModalComponent implements OnInit {
           this.router.navigate(['/home']);
         });
       }, (err) => {
-        this.message = this.fhirService.getErrorString(err);
+        this.message = getErrorString(err);
       });
   }
 
