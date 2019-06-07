@@ -69,20 +69,32 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<Bundle> {
-    return this.prepareSearchQuery(user, fhirServerBase, query)
-      .then((preparedQuery) => {
-        const options = <AxiosRequestConfig> {
-          url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        };
+  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<Bundle> {
+    const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query);
 
-        return this.httpService.request(options).toPromise();
-      })
-      .then((results) => results.data);
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    };
+
+    try {
+      const results = await this.httpService.request(options).toPromise();
+      return results.data;
+    } catch (ex) {
+      let message = `Failed to search for resource type ${this.resourceType}: ${ex.message}`;
+
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        message = getErrorString(null, ex.response.data);
+        this.logger.error(message, ex.stack);
+        throw new InternalServerErrorException(message);
+      }
+
+      this.logger.error(message, ex.stack);
+      throw ex;
+    }
   }
 
   protected async baseGet(baseUrl, id: string, query?: any, user?: ITofUser): Promise<any> {
@@ -101,8 +113,12 @@ export class BaseFhirController extends BaseController {
 
       return getResults.data;
     } catch (ex) {
-      if (ex.response.status === 404) {
+      if (ex.response && ex.response.status === 404) {
         throw new TofNotFoundException();
+      } else if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+          const message = getErrorString(null, ex.response.data);
+          this.logger.error(message, ex.stack);
+          throw new InternalServerErrorException(message);
       } else {
         throw ex;
       }
@@ -142,7 +158,23 @@ export class BaseFhirController extends BaseController {
     };
 
     // Create the resource
-    const createResults = await this.httpService.request(createOptions).toPromise();
+    let createResults;
+
+    try {
+      createResults = await this.httpService.request(createOptions).toPromise();
+    } catch (ex) {
+      let message = `Failed to create resource ${this.resourceType}: ${ex.message}`;
+
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        message = getErrorString(null, ex.response.data);
+        this.logger.error(message, ex.stack);
+        throw new InternalServerErrorException(message);
+      }
+
+      this.logger.error(message, ex.stack);
+      throw ex;
+    }
+
     const location = createResults.headers.location || createResults.headers['content-location'];
 
     if (location) {
@@ -194,7 +226,7 @@ export class BaseFhirController extends BaseController {
       const updateResults = await this.httpService.request(options).toPromise();
       return updateResults.data;
     } catch (ex) {
-      let message = `Failed to update implementation guide ${id}: ${ex.message}`;
+      let message = `Failed to update resource ${this.resourceType}/${id}: ${ex.message}`;
 
       if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
         message = getErrorString(null, ex.response.data);
@@ -219,7 +251,20 @@ export class BaseFhirController extends BaseController {
       method: 'DELETE'
     };
 
-    const deleteResults = await this.httpService.request(options).toPromise();
-    return deleteResults.data;
+    try {
+      const deleteResults = await this.httpService.request(options).toPromise();
+      return deleteResults.data;
+    } catch (ex) {
+      let message = `Failed to delete resource ${this.resourceType}/${id}: ${ex.message}`;
+
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        message = getErrorString(null, ex.response.data);
+        this.logger.error(message, ex.stack);
+        throw new InternalServerErrorException(message);
+      }
+
+      this.logger.error(message, ex.stack);
+      throw ex;
+    }
   }
 }
