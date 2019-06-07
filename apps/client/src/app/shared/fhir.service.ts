@@ -28,6 +28,7 @@ import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -372,26 +373,7 @@ export class FhirService {
 
   // TODO: Move this to a helper function that is not part of the service
   public getErrorString(err, body?, defaultMessage = 'An unknown error occurred') {
-    if (err && err.error) {
-      if (typeof err.error === 'object') {
-        return this.getErrorString(err.error);
-      }
-      return err.error;
-    } else if (err && err.message) {
-      return err.message;
-    } else if (err && err.data) {
-      return err.data;
-    } else if (typeof err === 'string') {
-      return err;
-    } else if (err.name === 'HttpErrorResponse' && err.message) {
-      return err.message;
-    } else if (body && body.resourceType === 'OperationOutcome') {
-      if (body.issue && body.issue.length > 0 && body.issue[0].diagnostics) {
-        return body.issue[0].diagnostics;
-      }
-    }
-
-    return defaultMessage;
+    return getErrorString(err, body, defaultMessage);
   }
 
   /**

@@ -10,6 +10,7 @@ import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir
 import {ConfigService} from './config.service';
 
 import nanoid from 'nanoid';
+import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -189,8 +190,21 @@ export class BaseFhirController extends BaseController {
     };
 
     this.logger.trace(`Updating the ${this.resourceType} on the FHIR server`);
-    const updateResults = await this.httpService.request(options).toPromise();
-    return updateResults.data;
+    try {
+      const updateResults = await this.httpService.request(options).toPromise();
+      return updateResults.data;
+    } catch (ex) {
+      let message = `Failed to update implementation guide ${id}: ${ex.message}`;
+
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        message = getErrorString(null, ex.response.data);
+        this.logger.error(message, ex.stack);
+        throw new InternalServerErrorException(message);
+      }
+
+      this.logger.error(message, ex.stack);
+      throw ex;
+    }
   }
 
   protected async baseDelete(baseUrl: string, id: string, user: ITofUser): Promise<any> {

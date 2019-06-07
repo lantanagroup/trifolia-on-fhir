@@ -4,7 +4,9 @@ import {Globals} from './globals';
 
 export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   if (err && err.error) {
-    if (typeof err.error === 'string') {
+    if (err.error.message) {
+      return err.error.message;
+    } else if (typeof err.error === 'string') {
       return err.error;
     } else if (typeof err.error === 'object') {
       if (err.error.resourceType === 'OperationOutcome') {
