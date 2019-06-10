@@ -12,6 +12,8 @@ import {v4 as uuidv4} from 'uuid';
 import {saveAs} from 'file-saver';
 import {HttpClient} from '@angular/common/http';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ConfigService} from '../shared/config.service';
 
 enum ContentTypes {
   Json = 0,
@@ -49,6 +51,7 @@ export class ImportComponent implements OnInit {
   public activeTab = 'file';
   public vsacCriteria = new VSACImportCriteria();
   public rememberVsacCredentials: boolean;
+  public Globals = Globals;
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
@@ -57,6 +60,7 @@ export class ImportComponent implements OnInit {
 
   constructor(
     public fhirService: FhirService,
+    public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
     private cdr: ChangeDetectorRef,

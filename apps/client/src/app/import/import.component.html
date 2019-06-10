@@ -1,151 +1,212 @@
 <h1>Import</h1>
 
 <ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
-    <ngb-tab id="file" title="Import Files">
-        <ng-template ngbTabContent>
-            <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.</div>
+  <ngb-tab id="file">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="t.activeId === 'file' ? Globals.introText['import.file-tab'] : undefined">Import Files</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
+      </div>
 
-            <file-drop (onFileDrop)="dropped($event)">
-                <span>Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
-                <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile />
-            </file-drop>
+      <file-drop (onFileDrop)="dropped($event)">
+        <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
+        <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile/>
+      </file-drop>
 
-            <table class="table table-striped" *ngIf="files && files.length > 0">
-                <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>ID(s)</th>
-                    <th>Type</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
-                    <td>{{f.name}}</td>
-                    <td>{{getIdDisplay(f)}}</td>
-                    <td>{{getContentTypeDisplay(f)}}</td>
-                    <td class="actions-column-1">
-                        <div class="pull-right">
-                            <i class="fas fa-trash-alt" (click)="removeImportFile(fi)"></i>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div *ngIf="files && files.length > 0 && importBundle">
-                <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
-                <ngb-tabset #n="ngbTabset" [destroyOnHide]="false">
-                    <ngb-tab id="importBundleJson">
-                        <ng-template ngbTabTitle>JSON <i class="fas fa-download" (click)="downloadBundle('json')"></i></ng-template>
-                        <ng-template ngbTabContent>
-                            <pre>{{getDisplayImportBundle() | json}}</pre>
-                        </ng-template>
-                    </ngb-tab>
-                    <ngb-tab id="importBundleXml">
-                        <ng-template ngbTabTitle>XML <i class="fas fa-download" (click)="downloadBundle('xml')"></i></ng-template>
-                        <ng-template ngbTabContent>
-                            <pre>{{getDisplayImportBundle() | fhirXml}}</pre>
-                        </ng-template>
-                    </ngb-tab>
-                </ngb-tabset>
+      <table class="table table-striped" *ngIf="!configService.showingIntroduction && files && files.length > 0">
+        <thead>
+        <tr>
+          <th>File Name</th>
+          <th>ID(s)</th>
+          <th>Type</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
+          <td>{{f.name}}</td>
+          <td>{{getIdDisplay(f)}}</td>
+          <td>{{getContentTypeDisplay(f)}}</td>
+          <td class="actions-column-1">
+            <div class="pull-right">
+              <i class="fas fa-trash-alt" (click)="removeImportFile(fi)"></i>
             </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab id="text" title="Import Text">
-        <ng-template ngbTabContent>
-            <div class="form-group">
-                <label>Content Type</label>
-                <br />
-                <input type="radio" name="textContentType" [value]="0" [(ngModel)]="textContentType"/> JSON
-                <input type="radio" name="textContentType" [value]="1" [(ngModel)]="textContentType"/> XML
-            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
-            <div class="form-group">
-                <label>Text</label>
-                <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
-            </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab id="vsac" title="VSAC">
-        <ng-template ngbTabContent>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">Search Criteria</div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Type</label>
-                                <select class="form-control" [(ngModel)]="vsacCriteria.resourceType">
-                                    <option value="ValueSet">Value set</option>
-                                    <option value="CodeSystem">Code system</option>
-                                </select>
-                            </div>
+      <div *ngIf="!configService.showingIntroduction && files && files.length > 0 && importBundle">
+        <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
+        <ngb-tabset #n="ngbTabset" [destroyOnHide]="false">
+          <ngb-tab id="importBundleJson">
+            <ng-template ngbTabTitle>JSON <i class="fas fa-download" (click)="downloadBundle('json')"></i></ng-template>
+            <ng-template ngbTabContent>
+              <pre>{{getDisplayImportBundle() | json}}</pre>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="importBundleXml">
+            <ng-template ngbTabTitle>XML <i class="fas fa-download" (click)="downloadBundle('xml')"></i></ng-template>
+            <ng-template ngbTabContent>
+              <pre>{{getDisplayImportBundle() | fhirXml}}</pre>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
 
-                            <div class="form-group">
-                                <label>ID</label>
-                                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" placeholder="OID" />
-                                <div class="help-block">This is the OID of the value set as specified by the VSAC browser (ex: 2.16.840.1.113762.1.4.1096.153).</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">VSAC Credentials</div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.username" />
-                            </div>
-
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control" [(ngModel)]="vsacCriteria.password" />
-                            </div>
-
-                            <p>
-                                <input type="checkbox" [(ngModel)]="rememberVsacCredentials" /> Remember VSAC credentials in the future <i class="fa fa-question-circle" ngbTooltip="If checked, these credentials will be stored in your browser's cookies. These credentials are never stored on the server, and are only used to authenticate requests to the VSAC on your behalf."></i>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+      <!-- INTRO -->
+      <table class="table table-striped" *ngIf="configService.showingIntroduction" [attr.data-intro]="Globals.introText['import.file.list']">
+        <thead>
+        <tr>
+          <th>File Name</th>
+          <th>ID(s)</th>
+          <th>Type</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>test-profile.json</td>
+          <td>test-profile</td>
+          <td>Resource JSON</td>
+          <td class="actions-column-1">
+            <div class="pull-right">
+              <i class="fas fa-trash-alt" [attr.data-intro]="Globals.introText['import.file.delete']"></i>
             </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab id="github" title="GitHub">
-        <ng-template ngbTabContent>
-            <app-import-github-panel #importGithubPanel></app-import-github-panel>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
-        <ng-template ngbTabContent>
-            <div *ngIf="outcome">
-                <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
-                <div class="card" *ngFor="let issue of outcome.issue">
-                    <div class="card-header">{{issue.severity}}{{issue.location && issue.location.length === 1 ? ' - ' + issue.location[0] : ''}}</div>
-                    <div class="card-body">{{issue.diagnostics}}</div>
-                </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="configService.showingIntroduction" [attr.data-intro]="Globals.introText['import.file.formats']">
+        <ngb-tabset>
+          <ngb-tab>
+            <ng-template ngbTabTitle>JSON <i class="fas fa-download" [attr.data-intro]="Globals.introText['import.file.formats.json']"></i></ng-template>
+            <ng-template ngbTabContent>
+              <pre>
+&#123;
+  "resourceType": "Bundle",
+  "entry": [
+    &#123;
+      "request": &#123;
+        "method": "PUT",
+        "url": "StructureDefinition/test-profile"
+      },
+      "resource": &#123;
+         "resourceType": "StructureDefinition",
+         "id": "test-profile"
+      }
+    }
+  ],
+  "type": "transaction"
+}
+              </pre>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle>XML <i class="fas fa-download"></i></ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab id="text" title="Import Text">
+    <ng-template ngbTabContent>
+      <div class="form-group">
+        <label>Content Type</label>
+        <br/>
+        <input type="radio" name="textContentType" [value]="0" [(ngModel)]="textContentType"/> JSON
+        <input type="radio" name="textContentType" [value]="1" [(ngModel)]="textContentType"/> XML
+      </div>
+
+      <div class="form-group">
+        <label>Text</label>
+        <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab id="vsac" title="VSAC">
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Search Criteria</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Type</label>
+                <select class="form-control" [(ngModel)]="vsacCriteria.resourceType">
+                  <option value="ValueSet">Value set</option>
+                  <option value="CodeSystem">Code system</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>ID</label>
+                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" placeholder="OID"/>
+                <div class="help-block">This is the OID of the value set as specified by the VSAC browser (ex: 2.16.840.1.113762.1.4.1096.153).</div>
+              </div>
             </div>
-            <div *ngIf="resultsBundle">
-                <div class="card" *ngFor="let entry of resultsBundle.entry; let i = index">
-                    <div class="card-header">Bundle entry {{i+1}} - {{entry.response ? entry.response.status : 'Unknown status'}}</div>
-                    <div class="card-body" *ngIf="getBundleEntryOutcome(entry)">
-                        <p></p>
-                        <ul>
-                            <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
-                                Issue {{ii+1}} - {{issue.diagnostics}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">VSAC Credentials</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.username"/>
+              </div>
+
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" [(ngModel)]="vsacCriteria.password"/>
+              </div>
+
+              <p>
+                <input type="checkbox" [(ngModel)]="rememberVsacCredentials"/> Remember VSAC credentials in the future <i class="fa fa-question-circle"
+                                                                                                                          ngbTooltip="If checked, these credentials will be stored in your browser's cookies. These credentials are never stored on the server, and are only used to authenticate requests to the VSAC on your behalf."></i>
+              </p>
             </div>
-        </ng-template>
-    </ngb-tab>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab id="github" title="GitHub">
+    <ng-template ngbTabContent>
+      <app-import-github-panel #importGithubPanel></app-import-github-panel>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
+    <ng-template ngbTabContent>
+      <div *ngIf="outcome">
+        <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
+        <div class="card" *ngFor="let issue of outcome.issue">
+          <div class="card-header">{{issue.severity}}{{issue.location && issue.location.length === 1 ? ' - ' + issue.location[0] : ''}}</div>
+          <div class="card-body">{{issue.diagnostics}}</div>
+        </div>
+      </div>
+      <div *ngIf="resultsBundle">
+        <div class="card" *ngFor="let entry of resultsBundle.entry; let i = index">
+          <div class="card-header">Bundle entry {{i + 1}} - {{entry.response ? entry.response.status : 'Unknown status'}}</div>
+          <div class="card-body" *ngIf="getBundleEntryOutcome(entry)">
+            <p></p>
+            <ul>
+              <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
+                Issue {{ii + 1}} - {{issue.diagnostics}}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="import(t)" [disabled]="importDisabled()">Import</button>
-    <span class="message">{{message}}</span>
+  <button type="button" class="btn btn-default" (click)="import(t)" [disabled]="importDisabled()" [attr.data-intro]="Globals.introText['import.import-btn']">Import</button>
+  <span class="message">{{message}}</span>
 </footer>
