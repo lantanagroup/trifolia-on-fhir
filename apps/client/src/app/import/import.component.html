@@ -3,7 +3,7 @@
 <ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
   <ngb-tab id="file">
     <ng-template ngbTabTitle>
-      <span [attr.data-intro]="t.activeId === 'file' ? Globals.introText['import.file-tab'] : undefined">Import Files</span>
+      <span [attr.data-intro]="Globals.introText['import.file-tab']">Files</span>
     </ng-template>
     <ng-template ngbTabContent>
       <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
@@ -111,7 +111,10 @@
       </div>
     </ng-template>
   </ngb-tab>
-  <ngb-tab id="text" title="Import Text">
+  <ngb-tab id="text">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['import.text-tab']">Text</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <div class="form-group">
         <label>Content Type</label>
@@ -120,14 +123,17 @@
         <input type="radio" name="textContentType" [value]="1" [(ngModel)]="textContentType"/> XML
       </div>
 
-      <div class="form-group">
+      <div class="form-group" [attr.data-intro]="Globals.introText['import.text.content']">
         <label>Text</label>
         <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
       </div>
     </ng-template>
   </ngb-tab>
 
-  <ngb-tab id="vsac" title="VSAC">
+  <ngb-tab id="vsac">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['import.vsac-tab']">VSAC</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-6">
@@ -142,9 +148,9 @@
                 </select>
               </div>
 
-              <div class="form-group">
+              <div class="form-group" [attr.data-intro]="Globals.introText['import.vsac.id']">
                 <label>ID</label>
-                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" placeholder="OID"/>
+                <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" placeholder="OID" />
                 <div class="help-block">This is the OID of the value set as specified by the VSAC browser (ex: 2.16.840.1.113762.1.4.1096.153).</div>
               </div>
             </div>
@@ -152,7 +158,7 @@
         </div>
 
         <div class="col-md-6">
-          <div class="card">
+          <div class="card" [attr.data-intro]="Globals.introText['import.vsac.credentials']">
             <div class="card-header">VSAC Credentials</div>
             <div class="card-body">
               <div class="form-group">
@@ -175,7 +181,10 @@
       </div>
     </ng-template>
   </ngb-tab>
-  <ngb-tab id="github" title="GitHub">
+  <ngb-tab id="github">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['import.github-tab']">GitHub</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>

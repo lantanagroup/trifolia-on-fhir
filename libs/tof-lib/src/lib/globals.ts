@@ -52,13 +52,19 @@ export class Globals {
     'browse.search': 'Here you can search for items based on specific criteria.',
     'browse.add': 'Click this button to create a new resource.',
     'browse.vs.expand': 'Click here to expand the value set to see the calculated/enumerated list of codes.',
-    'import.file-tab': 'The "Import Files" tab is where you can upload FHIR resources and excel-based value sets directly from your computer to Trifolia-on-FHIR.',
+    'import.file-tab': 'The "Files" tab is where you can upload FHIR resources and excel-based value sets directly from your computer to Trifolia-on-FHIR.',
     'import.file.drag-and-drop': 'You can drag-and-drop files from your computer\'s file explorer here, or you may select the "Click to select" link to select the files you wish to upload.',
     'import.file.list': 'A list of the files that will be imported are shown here.',
     'import.file.delete': 'Clicking the trash icon will remove the file from the list of files that will be uploaded.',
     'import.file.formats': 'When uploading, the data will be sent to the Trifolia-on-FHIR FHIR server as a <a href="http://www.hl7.org/fhir/http.html#transaction" target="_new">transaction bundle</a>. This shows a glance of what the transaction bundle looks like prior to uploading. <strong>This is typically only important to advanced users.</strong>',
     'import.file.formats.json': 'You may click this button to download the JSON representation of the transaction bundle.',
-    'import.import-btn': 'Once you are satisfied with the settings for your import, click the "Import" button to send everything to Trifolia-on-FHIR and have it persisted.'
+    'import.import-btn': 'Once you are satisfied with the settings for your import, click the "Import" button to send everything to Trifolia-on-FHIR and have it persisted.',
+    'import.text-tab': 'The "Text" tab allows you to copy/paste JSON or XML content directly into Trifolia-on-FHIR to have it imported.',
+    'import.text.content': 'The content in this tab should represent a FHIR resource in either JSON or XML format. This content <em>should not</em> be a <a href="http://www.hl7.org/fhir/http.html#transaction" target="_new">transaction bundle</a>.',
+    'import.vsac-tab': 'The "VSAC" tab allows you to import value sets and code systems directly from VSAC into Trifolia-on-FHIR, so those value sets and code systems may be referenced by and included in your implementation guide.',
+    'import.vsac.id': 'Specify the OID of the value set or code system here. Ex: "2.16.840.1.113883.1.11.1" for the Administrative Gender value set',
+    'import.vsac.credentials': 'You must specify your username and password for the Value Set Authority Center (VSAC) so that Trifolia-on-FHIR can retrieve the content on your behalf. <a href="https://uts.nlm.nih.gov//license.html" target="_new">Click here</a> to register for a VSAC account.',
+    'import.github-tab': 'The "GitHub" tab allows you to import resources directly from GitHub. After clicking the "GitHub" tab you will be prompted to login to GitHub.'
   };
 
   static readonly tooltips = {
