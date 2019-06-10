@@ -7,7 +7,6 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {CookieService} from 'angular2-cookie/core';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {ExportFormats} from '../models/export-formats.enum';
 import {FhirService} from '../shared/fhir.service';
 import {HtmlExportStatus, SocketService} from '../shared/socket.service';
 import {saveAs} from 'file-saver';

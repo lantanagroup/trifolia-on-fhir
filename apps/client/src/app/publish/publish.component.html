@@ -1,118 +1,126 @@
-<div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>v4.1.0-288459e2</strong>). When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.</div>
+<div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>v4.1.0-288459e2</strong>).
+  When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.
+</div>
 
-<div class="form-group">
-    <label>Implementation Guide</label>
-    <div class="input-group">
-        <input type="text" class="form-control"
-               [ngModel]="selectedImplementationGuide"
-               (ngModelChange)="implementationGuideChanged($event)"
-               [ngbTypeahead]="searchImplementationGuide"
-               [resultFormatter]="searchFormatter"
-               [inputFormatter]="searchFormatter"
-               autocomplete="off"/>
-        <div class="input-group-btn">
-            <button type="button" class="btn btn-default" title="Clear the selection"
-                    (click)="clearImplementationGuide()">
-                <i class="fa fa-times"></i>
-            </button>
-        </div>
+<div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']">
+  <label>Implementation Guide</label>
+  <div class="input-group">
+    <input type="text" class="form-control"
+           [ngModel]="selectedImplementationGuide"
+           (ngModelChange)="implementationGuideChanged($event)"
+           [ngbTypeahead]="searchImplementationGuide"
+           [resultFormatter]="searchFormatter"
+           [inputFormatter]="searchFormatter"
+           autocomplete="off"/>
+    <div class="input-group-btn">
+      <button type="button" class="btn btn-default" title="Clear the selection"
+              (click)="clearImplementationGuide()">
+        <i class="fa fa-times"></i>
+      </button>
     </div>
+  </div>
 </div>
 
 <ngb-tabset #tabs>
-    <ngb-tab title="Options" id="options">
-        <ng-template ngbTabContent>
-            <div class="row">
-                <div class="col-md-6">
-                    <app-fhir-boolean
-                            [parentObject]="options"
-                            propertyName="useLatest"
-                            [required]="true"
-                            [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
-                            title="Use latest FHIR IG Publisher?">
-                    </app-fhir-boolean>
-                    <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
-                </div>
+  <ngb-tab id="options">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['publish.options']">Options</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div class="col-md-6">
+          <app-fhir-boolean
+            [parentObject]="options"
+            propertyName="useLatest"
+            [required]="true"
+            [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
+            title="Use latest FHIR IG Publisher?">
+          </app-fhir-boolean>
+          <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
+        </div>
 
-                <div class="col-md-6">
-                    <app-fhir-boolean
-                            [parentObject]="options"
-                            [required]="true"
-                            propertyName="useTerminologyServer"
-                            [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
-                            title="Use terminology server?">
-                    </app-fhir-boolean>
-                </div>
+        <div class="col-md-6">
+          <app-fhir-boolean
+            [parentObject]="options"
+            [required]="true"
+            propertyName="useTerminologyServer"
+            [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
+            title="Use terminology server?">
+          </app-fhir-boolean>
+        </div>
 
-                <div class="col-md-6">
-                    <app-fhir-boolean
-                            [parentObject]="options"
-                            [required]="true"
-                            propertyName="includeIgPublisherJar"
-                            [cookieKey]="Globals.cookieKeys.exportLastIncludeFhirIgPublisher"
-                            title="Include FHIR IG Publisher JAR?">
-                    </app-fhir-boolean>
-                </div>
+        <div class="col-md-6">
+          <app-fhir-boolean
+            [parentObject]="options"
+            [required]="true"
+            propertyName="includeIgPublisherJar"
+            [cookieKey]="Globals.cookieKeys.exportLastIncludeFhirIgPublisher"
+            title="Include FHIR IG Publisher JAR?">
+          </app-fhir-boolean>
+        </div>
 
-                <div class="col-md-6">
-                    <app-fhir-boolean
-                            [parentObject]="options"
-                            [required]="true"
-                            propertyName="downloadOutput"
-                            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
-                            title="Download?">
-                    </app-fhir-boolean>
-                </div>
+        <div class="col-md-6">
+          <app-fhir-boolean
+            [parentObject]="options"
+            [required]="true"
+            propertyName="downloadOutput"
+            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
+            title="Download?">
+          </app-fhir-boolean>
+        </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Output Format</label>
-                        <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
-                            <option value="application/json">JSON</option>
-                            <option value="application/xml">XML</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab *ngIf="validation" id="validation">
-        <ng-template ngbTabTitle>
-            Validation ({{validation.length}})
-        </ng-template>
-        <ng-template ngbTabContent>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Severity</th>
-                    <th>Resource</th>
-                    <th>Details</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let issue of validation">
-                    <td>{{issue.severity}}</td>
-                    <td>{{issue.resourceReference}}</td>
-                    <td>{{issue.details}}</td>
-                </tr>
-                </tbody>
-                <tfoot *ngIf="validation.length === 0">
-                <tr>
-                    <td colspan="3">No validation issues found!</td>
-                </tr>
-                </tfoot>
-            </table>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab title="Status" id="status">
-        <ng-template ngbTabContent>
-            <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
-            <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
-        </ng-template>
-    </ngb-tab>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Output Format</label>
+            <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+              <option value="application/json">JSON</option>
+              <option value="application/xml">XML</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab *ngIf="validation" id="validation">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['publish.validation']">Validation ({{validation.length}})</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Resource</th>
+          <th>Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let issue of validation">
+          <td>{{issue.severity}}</td>
+          <td>{{issue.resourceReference}}</td>
+          <td>{{issue.details}}</td>
+        </tr>
+        </tbody>
+        <tfoot *ngIf="validation.length === 0">
+        <tr>
+          <td colspan="3">No validation issues found!</td>
+        </tr>
+        </tfoot>
+      </table>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab id="status">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
+      <input type="checkbox" [(ngModel)]="autoScroll"/> Automatically scroll to bottom when status is updated
+    </ng-template>
+  </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">
-    <button type="button" class="btn btn-default" (click)="publish()" [disabled]="publishDisabled">Publish</button>
-    <span class="message">{{message}}</span>
+  <button type="button" class="btn btn-default" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>
+  <span class="message">{{message}}</span>
 </footer>

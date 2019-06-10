@@ -67,7 +67,12 @@ export class Globals {
     'import.github-tab': 'The "GitHub" tab allows you to import resources directly from GitHub. After clicking the "GitHub" tab you will be prompted to login to GitHub.',
     'import.github.repository': 'Select the repository in GitHub which you want to import files from',
     'import.github.files': 'Select the files that you want to import from the GitHub repository.',
-    'import.results': 'The results of importing from the "Files" tab are shown here.'
+    'import.results': 'The results of importing from the "Files" tab are shown here.',
+    'publish.implementation-guide': 'Select the implementation guide that you would like to publish. This is a type-ahead field, so begin typing the name of the implementation guide you would like and the field will show you matching options.',
+    'publish.options': 'Specify options you would like to use for the export.',
+    'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
+    'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
+    'publish.publish-btn': 'When you are satisified with the options, press this button to start the publication process.'
   };
 
   static readonly tooltips = {
