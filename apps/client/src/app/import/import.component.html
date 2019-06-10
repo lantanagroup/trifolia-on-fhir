@@ -189,7 +189,10 @@
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>
   </ngb-tab>
-  <ngb-tab id="results" title="Results" [disabled]="!outcome && !resultsBundle">
+  <ngb-tab id="results" [disabled]="!outcome && !resultsBundle">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['import.results']">Results</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <div *ngIf="outcome">
         <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>

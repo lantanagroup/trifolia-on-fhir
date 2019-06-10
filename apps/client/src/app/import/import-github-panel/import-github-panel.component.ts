@@ -7,6 +7,23 @@ import {
 } from 'ng2-tree';
 import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from '../../shared/config.service';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+
+const createTreeItem = (value: string, directory: boolean, ...children: TreeModel[]) => {
+  const item = {
+    value: value,
+    id: directory ? 'dir|' + value : 'file|' + value,
+    settings: {
+      "rightMenu": false,
+      "leftMenu": false,
+      "selectionAllowed": !directory
+    },
+    children: children
+  };
+
+  return item;
+};
 
 @Component({
   selector: 'app-import-github-panel',
@@ -20,13 +37,37 @@ export class ImportGithubPanelComponent implements OnInit {
   public branchName: string;
   public message: string;
   public tree: TreeModel;
+  public introTree: TreeModel = {
+    "value": "master",
+    "id": "master",
+    "children": [
+      createTreeItem("framework", true),
+      createTreeItem("resources", true, createTreeItem("structuredefinition", true, createTreeItem("my-profile.json", false))),
+      createTreeItem("ig.json", false)
+    ],
+    "settings": {
+      "cssClasses": {
+        "expanded": "fa fa-caret-down",
+        "collapsed": "fa fa-caret-right",
+        "empty": "fa fa-caret-right disabled",
+        "leaf": "fa"
+      },
+      "static": true
+    },
+    "templates": {
+      "node": "<i class=\"fa fa-folder-o\"></i>",
+      "leaf": "<i class=\"fa fa-file-o\"></i>"
+    }
+  };
   public selectedPaths: string[] = [];
   public loadingRepositories = true;
+  public Globals = Globals;
 
   @ViewChild('treeComponent') treeComponent;
 
   constructor(
     private fhirService: FhirService,
+    public configService: ConfigService,
     public githubService: GithubService) {
   }
 

@@ -64,7 +64,10 @@ export class Globals {
     'import.vsac-tab': 'The "VSAC" tab allows you to import value sets and code systems directly from VSAC into Trifolia-on-FHIR, so those value sets and code systems may be referenced by and included in your implementation guide.',
     'import.vsac.id': 'Specify the OID of the value set or code system here. Ex: "2.16.840.1.113883.1.11.1" for the Administrative Gender value set',
     'import.vsac.credentials': 'You must specify your username and password for the Value Set Authority Center (VSAC) so that Trifolia-on-FHIR can retrieve the content on your behalf. <a href="https://uts.nlm.nih.gov//license.html" target="_new">Click here</a> to register for a VSAC account.',
-    'import.github-tab': 'The "GitHub" tab allows you to import resources directly from GitHub. After clicking the "GitHub" tab you will be prompted to login to GitHub.'
+    'import.github-tab': 'The "GitHub" tab allows you to import resources directly from GitHub. After clicking the "GitHub" tab you will be prompted to login to GitHub.',
+    'import.github.repository': 'Select the repository in GitHub which you want to import files from',
+    'import.github.files': 'Select the files that you want to import from the GitHub repository.',
+    'import.results': 'The results of importing from the "Files" tab are shown here.'
   };
 
   static readonly tooltips = {
