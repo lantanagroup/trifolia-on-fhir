@@ -16262,7 +16262,7 @@ export class Media extends DomainResource {
   public identifier?: Identifier[];
   public basedOn?: ResourceReference[];
   public partOf?: ResourceReference[];
-  public status: string;
+  public status: 'preparation'|'in-progress'|'not-done'|'suspended'|'aborted'|'completed'|'entered-in-error'|'unknown';
   public type?: CodeableConcept;
   public modality?: CodeableConcept;
   public view?: CodeableConcept;

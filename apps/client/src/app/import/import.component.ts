@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../shared/import.service';
-import {Bundle, DomainResource, EntryComponent, IssueComponent, OperationOutcome, RequestComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, EntryComponent, IssueComponent, Media, OperationOutcome, RequestComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
@@ -14,11 +14,16 @@ import {HttpClient} from '@angular/common/http';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
+import {Media as STU3Media} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+
+const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp'];
 
 enum ContentTypes {
   Json = 0,
   Xml = 1,
-  Xlsx = 2
+  Xlsx = 2,
+  Image = 3
 }
 
 class ImportFileModel {
@@ -77,12 +82,42 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  private populateFile(file) {
+  private createMedia(name: string, buffer: ArrayBuffer) {
+    const b64content = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+
+    if (this.configService.isFhirSTU3) {
+      const media = new STU3Media();
+      media.id = name.substring(0, name.lastIndexOf('.')).replace(/[^\w\s]/gi, '').replace(/_/gi, '-');
+      media.type = 'photo';
+      media.identifier = [{
+        value: name
+      }];
+      media.content = {
+        data: b64content
+      };
+      return media;
+    } else if (this.configService.isFhirR4) {
+      const media = new R4Media();
+      media.id = name.substring(0, name.lastIndexOf('.')).replace(/[^\w\s]/gi, '').replace(/_/gi, '-');
+      media.status = 'completed';
+      media.identifier = [{
+        value: name
+      }];
+      media.content = {
+        data: b64content
+      };
+      return media;
+    } else {
+      throw new Error('Can\'t create media. Unexpected FHIR server version');
+    }
+  }
+
+  private populateFile(file: File) {
     const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
     const reader = new FileReader();
 
-    if (extension !== '.json' && extension !== '.xml' && extension !== '.xlsx') {
-      alert('Expected either JSON, XML or XLSX file');
+    if (validExtensions.indexOf(extension) < 0) {
+      alert('Expected one of the following file types: ' + validExtensions.join(' '));
       return;
     }
 
@@ -98,6 +133,8 @@ export class ImportComponent implements OnInit {
         importFileModel.contentType = ContentTypes.Xml;
       } else if (extension === '.xlsx') {
         importFileModel.contentType = ContentTypes.Xlsx;
+      } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp') {
+        importFileModel.contentType = ContentTypes.Image;
       }
 
       try {
@@ -113,6 +150,8 @@ export class ImportComponent implements OnInit {
           }
 
           importFileModel.vsBundle = convertResults.bundle;
+        } else if (importFileModel.contentType === ContentTypes.Image) {
+          importFileModel.resource = this.createMedia(file.name, result);
         }
       } catch (ex) {
         importFileModel.message = ex.message;
@@ -133,7 +172,7 @@ export class ImportComponent implements OnInit {
 
     if (extension === '.json' || extension === '.xml') {
       reader.readAsText(file);
-    } else if (extension === '.xlsx') {
+    } else {
       reader.readAsArrayBuffer(file);
     }
   }
@@ -179,7 +218,11 @@ export class ImportComponent implements OnInit {
     const bundle = new Bundle();
     bundle.type = 'transaction';
     bundle.entry = this.files
-      .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Json || importFile.contentType === ContentTypes.Xml)
+      .filter((importFile: ImportFileModel) => {
+        return importFile.contentType === ContentTypes.Json ||
+          importFile.contentType === ContentTypes.Xml ||
+          importFile.contentType === ContentTypes.Image;
+      })
       .map((importFile: ImportFileModel) => {
         const entry = new EntryComponent();
         entry.request = new RequestComponent();
@@ -527,14 +570,14 @@ export class ImportComponent implements OnInit {
   }
 
   public getIdDisplay(file: ImportFileModel) {
-    if (file.contentType === ContentTypes.Json || file.contentType === ContentTypes.Xml) {
-      if (file.resource) {
-        return file.resource.id;
-      }
-    } else if (file.contentType === ContentTypes.Xlsx) {
+    if (file.contentType === ContentTypes.Xlsx) {
       if (file.vsBundle) {
         const ids = (file.vsBundle.entry || []).map((entry) => entry.resource.id);
         return ids.join(', ');
+      }
+    } else {
+      if (file.resource) {
+        return file.resource.id;
       }
     }
   }
@@ -547,6 +590,10 @@ export class ImportComponent implements OnInit {
         return 'Resource XML';
       case ContentTypes.Xlsx:
         return 'Value Set XLSX';
+      case ContentTypes.Image:
+        return 'Image';
+      default:
+        return 'Unknown';
     }
   }
 

@@ -11477,7 +11477,7 @@ export class Media extends DomainResource {
   public resourceType = 'Media';
   public identifier?: Identifier[];
   public basedOn?: ResourceReference[];
-  public type: string;
+  public type: 'photo'|'video'|'audio';
   public subtype?: CodeableConcept;
   public view?: CodeableConcept;
   public subject?: ResourceReference;
