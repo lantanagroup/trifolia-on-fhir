@@ -31,7 +31,7 @@
 
     <div class="form-group" *ngIf="!autoGenerate">
         <label>Content</label>
-        <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary"></app-markdown>
+        <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></app-markdown>
         <div class="help-block" *ngIf="!pageBinary">
             A contained Binary resource could not be found for this source. This will result in an incomplete FHIR IG Publisher build package.
             <br/>

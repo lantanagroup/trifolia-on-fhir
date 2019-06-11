@@ -240,7 +240,7 @@ export class FhirService {
    * @param {string} [searchContent]
    * @param {boolean} [summary?]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string }) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false) {
     let url = '/api/fhir/' + resourceType + '?';
 
     if (searchContent) {
@@ -258,7 +258,19 @@ export class FhirService {
     if (additionalQuery) {
       const keys = Object.keys(additionalQuery);
       keys.forEach((key) => {
-        url += `${encodeURIComponent(key)}=${encodeURIComponent(additionalQuery[key])}&`;
+        const value = additionalQuery[key];
+
+        if (value instanceof Array) {
+          if (separateArrayQuery) {
+            value.forEach((next) => {
+              url += `${encodeURIComponent(key)}=${encodeURIComponent(next)}&`;
+            });
+          } else {
+            url += `${encodeURIComponent(key)}=${encodeURIComponent(value.join(','))}&`;
+          }
+        } else {
+          url += `${encodeURIComponent(key)}=${encodeURIComponent(value)}&`;
+        }
       });
     }
 

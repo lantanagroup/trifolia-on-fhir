@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Binary, ImplementationGuide, ImplementationGuidePageComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {MediaReference} from '../../shared-ui/markdown/markdown.component';
 
 @Component({
   selector: 'app-fhir-page-component-modal',
@@ -17,6 +18,24 @@ export class PageComponentModalComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal) {
 
+  }
+
+  public getMediaReferences(): MediaReference[] {
+    if (!this.implementationGuide || !this.implementationGuide.definition) {
+      return [];
+    }
+
+    return (this.implementationGuide.definition.resource || [])
+      .filter((resource) => {
+        return resource.reference && resource.reference.reference && resource.reference.reference.startsWith('Media/');
+      })
+      .map((resource) => {
+        const mediaRef = new MediaReference();
+        mediaRef.id = resource.reference.reference.substring('Media/'.length);
+        mediaRef.name = resource.name;
+        mediaRef.description = resource.description;
+        return mediaRef;
+      });
   }
 
   public setPage(value: ImplementationGuidePageComponent) {

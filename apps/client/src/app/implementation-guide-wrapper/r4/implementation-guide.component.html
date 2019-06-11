@@ -14,8 +14,12 @@
         <div class="alert alert-info">These fields are the key fields used to develop and publish an implementation guide package. Use the other tabs to access more details.</div>
 
         <div class="row">
-          <div class="col-md-6" *ngIf="isNew">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="id" title="ID" placeholder="AUTO"></app-fhir-string>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>ID</label>
+              <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+            </div>
           </div>
 
           <div class="col-md-6">

@@ -1,3 +1,46 @@
 <div [class.disable-markdown]="disabled">
     <textarea #simplemde></textarea>
 </div>
+
+<ng-template #imageListModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Select an image</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th class="actions-column-1">&nbsp;</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let image of images">
+        <td>{{image.name}}</td>
+        <td>{{image.title}}</td>
+        <td>{{image.description}}</td>
+        <td>
+          <button type="button" class="btn btn-primary" title="Select this image" (click)="modal.close(image)">
+            <i class="fa fa-hand-pointer-o"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+      <tfoot *ngIf="!images || images.length === 0">
+      <tr>
+        <td colspan="4">
+          <em>No images are available to select.</em>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
