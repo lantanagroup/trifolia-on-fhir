@@ -16,6 +16,7 @@ export function createTestServerConfig(adminCode: string, enableSecurity = false
   return {
     adminCode: adminCode,
     supportUrl: 'http://test.com/support',
-    enableSecurity: enableSecurity
+    enableSecurity: enableSecurity,
+    maxRequestSizeMegabytes: 50
   };
 }
