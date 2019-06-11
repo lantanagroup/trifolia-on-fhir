@@ -9,6 +9,7 @@ export interface IServerConfig {
   logLevel?: 'all'|'trace'|'warn'|'error';
   publishedIgsDirectory?: string;
   enableSecurity: boolean;
+  maxRequestSizeMegabytes: number;
 }
 
 export function createTestServerConfig(adminCode: string, enableSecurity = false): IServerConfig {

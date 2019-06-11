@@ -177,9 +177,16 @@ async function bootstrap() {
 
   initSocket(app);
 
-  app.use(bodyParser.json({ limit: '15mb' }));
-  app.use(bodyParser.raw({ type: ['application/octet-stream', 'application/binary']}));
-  app.use(bodyParser.urlencoded({ limit: '15mb', extended: false }));
+  app.use(bodyParser.json({
+    limit: config.server.maxRequestSizeMegabytes.toString() + 'mb'
+  }));
+  app.use(bodyParser.raw({
+    type: ['application/octet-stream', 'application/binary']
+  }));
+  app.use(bodyParser.urlencoded({
+    limit: config.server.maxRequestSizeMegabytes.toString() + 'mb',
+    extended: false
+  }));
   app.use(compression());
   app.use(loadTofRequest);
   app.use(parseFhirBody);

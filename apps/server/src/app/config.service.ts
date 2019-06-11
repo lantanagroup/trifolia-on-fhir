@@ -11,7 +11,8 @@ export class ConfigService {
   public server: IServerConfig = {
     adminCode: 'default',
     supportUrl: 'http://test.com/support',
-    enableSecurity: false
+    enableSecurity: false,
+    maxRequestSizeMegabytes: 50
   };
   public fhir: IFhirConfig = {
     nonEditableResources: {},
@@ -37,6 +38,7 @@ export class ConfigService {
   };
 
   constructor() {
+    // If this is not a unit test, load configs using the config module.
     if (!process.env.JEST_WORKER_ID) {
       this.server = config.get('server');
       this.fhir = config.get('fhir');

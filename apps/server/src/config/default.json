@@ -7,7 +7,8 @@
     "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",
     "googleAnalyticsCode": "UA-43626731-3",
     "logFileName": "tof.log",
-    "logLevel": "all"
+    "logLevel": "all",
+    "maxRequestSizeMegabytes": 50
   },
   "auth": {
     "clientId": "",
