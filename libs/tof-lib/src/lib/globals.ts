@@ -28,6 +28,11 @@ export class Globals {
   };
 
   static readonly introText = {
+    'resource.permissions-tab': 'This tab lets you specify who can read and edit this resource. By default, only you are allowed to view/edit the resource.',
+    'resource.validation-tab': 'This tab provides real-time validation of the resource. This is only basic validation to ensure that required properties are specified correctly. More advanced validation occurs during the "Publish" process/screen.',
+    'resource.raw-tab': 'This tab allows you to view the resource\'s JSON and XML representations. You may also download the various representations of the resource to your computer from here.',
+    'resource.history-tab': 'This tab shows the history of the resource that the FHIR server is aware of. If the resource was exported from another server and imported into Trifolia-on-FHIR, the history of the resource from the previous server will not be known to Trifolia-on-FHIR.',
+    'resource.save-btn': 'Don\'t forget to press this "Save" button. If you don\'t, you will lose your changes (includes changes from pop-up windows that don\'t expressly have a "Save" button).',
     'sd.general-tab': 'The general tab contains the basic meta data of the profile/extension, such as the canonical URL, name and any implementation guide(s) that the profile belongs to.',
     'sd.narrative-tab': 'The narrative tab contains rich-text enabled fields that contain narrative content, such as the description, purpose and copyright.',
     'sd.additional-tab': 'The additional tab contains properties that are less commonly used in profiles, such as identifiers and use context.',
@@ -72,7 +77,13 @@ export class Globals {
     'publish.options': 'Specify options you would like to use for the export.',
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
-    'publish.publish-btn': 'When you are satisified with the options, press this button to start the publication process.'
+    'publish.publish-btn': 'When you are satisified with the options, press this button to start the publication process.',
+    'ig.quick-tab': 'This tab has the most important fields that are needed to create a basic implementation guide. Other fields are represented in additional tabs, categorized according to their use/purpose.',
+    'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
+    'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
+    'ig.globals-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
+    'ig.packages-tab': 'This tab lets you to define packages that are used to categorize/group resources included in the implementation guide. These packages are not commonly used and are for more advanced implementation guide authors.',
+    'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.'
   };
 
   static readonly tooltips = {

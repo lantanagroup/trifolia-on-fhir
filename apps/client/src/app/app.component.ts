@@ -55,6 +55,8 @@ export class AppComponent implements OnInit {
 
     this.configService.showingIntroduction = true;
 
+    // Give angular a few milliseconds to update the screen since "showIntroduction" may
+    // have altered the UI to include additional data-intro attributes.
     setTimeout(() => {
       intro.start();
     }, 200);

@@ -11,7 +11,7 @@ export class BaseComponent {
   }
 
   private canReadOrWrite(resource: DomainResource, permission: 'read'|'write') {
-    if (!this.configService.config || !this.authService.practitioner) {
+    if (!resource || !this.configService.config || !this.authService.practitioner) {
       return false;
     }
 

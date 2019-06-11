@@ -6,7 +6,10 @@
   <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
 
   <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
-    <ngb-tab id="general" title="General">
+    <ngb-tab id="general">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.general-tab']">General</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <fieldset>
           <div class="row">
@@ -122,7 +125,10 @@
     </ngb-tab>
 
     <!-- Globals -->
-    <ngb-tab id="globals" title="Globals">
+    <ngb-tab id="globals">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Globals</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <p>
           <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')"
@@ -172,7 +178,10 @@
       </ng-template>
     </ngb-tab>
 
-    <ngb-tab id="resources" title="Resources">
+    <ngb-tab id="resources">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <table class="table table-striped">
           <thead>
@@ -232,7 +241,9 @@
 
     <!-- Packages -->
     <ngb-tab id="packages">
-      <ng-template ngbTabTitle>Packages</ng-template>
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.packages-tab']">Packages</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
                (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"/> This
@@ -372,7 +383,10 @@
     </ngb-tab>
 
     <!-- Pages -->
-    <ngb-tab id="pages" title="Pages">
+    <ngb-tab id="pages">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('page')"
                (ngModelChange)="toggleRootPage($event)"/> Implementation guide has pages
@@ -433,7 +447,10 @@
       </ng-template>
     </ngb-tab>
     
-    <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
       </ng-template>
@@ -441,21 +458,29 @@
 
     <!-- Validation -->
     <ngb-tab id="validation">
-      <ng-template ngbTabTitle>Validation <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span></ng-template>
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
     </ngb-tab>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw" title="RAW">
+    <ngb-tab id="raw">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
     </ngb-tab>
 
     <!-- Version History -->
-    <ngb-tab id="history" title="History" *ngIf="!isNew">
+    <ngb-tab id="history" *ngIf="!isNew">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
       </ng-template>
@@ -504,7 +529,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-default" (click)="save()" [disabled]="!canEdit(implementationGuide)">Save</button>
+    <button type="button" class="btn btn-default" (click)="save()" [disabled]="!canEdit(implementationGuide)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-default" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
