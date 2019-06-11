@@ -9,7 +9,7 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   PageComponent,
   Extension,
-  ContactDetail
+  ContactDetail, ResourceReference, Media
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   Binary as R4Binary,
@@ -29,6 +29,7 @@ import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
+import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 interface TableOfContentsEntry {
   level: number;
@@ -608,6 +609,22 @@ export class HtmlExporter {
       return;
     }
 
+    if (resource.resourceType === 'Media') {
+      const fileNameIdentifier = ((<Media>resource).identifier || []).find(id => !!id.value);
+
+      if (fileNameIdentifier && (<Media>resource).content && (<Media>resource).content.data) {
+        const outputPath = path.join(this.rootPath, 'source/pages/_includes', fileNameIdentifier.value);
+
+        try {
+          fs.writeFileSync(outputPath, new Buffer((<Media>resource).content.data, 'base64'));
+        } catch (ex) {
+          this.logger.error(`Error writing media/image to export directory: ${ex.message}`);
+        }
+      }
+
+      return;
+    }
+
     const introPath = path.join(rootPath, `source/pages/_includes/${resource.id}-intro.md`);
     const searchPath = path.join(rootPath, `source/pages/_includes/${resource.id}-search.md`);
     const summaryPath = path.join(rootPath, `source/pages/_includes/${resource.id}-summary.md`);
@@ -798,6 +815,31 @@ export class HtmlExporter {
 
     // Append TOC Entries to the toc.md file in the template
     this.generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, {fileName: rootPageFileName, content: rootPageContent});
+  }
+
+  private getImplementationGuideReferences() {
+    if (this.fhirVersion === 'stu3') {
+      const ig = <STU3ImplementationGuide> this.implementationGuide;
+      const references = [];
+
+      (ig.package || []).forEach((pkg) => {
+        (pkg.resource || []).forEach((resource) => {
+          if (resource.sourceReference && resource.sourceReference.reference) {
+            references.push(resource.sourceReference);
+          }
+        });
+      });
+
+      return references;
+    } else if (this.fhirVersion === 'r4') {
+      const ig = <R4ImplementationGuide> this.implementationGuide;
+
+      if (!ig.definition) {
+        return [];
+      }
+
+      return (ig.definition.resource || []).map((resource) => resource.reference);
+    }
   }
 
   private createTempDirectory(): Promise<string> {
