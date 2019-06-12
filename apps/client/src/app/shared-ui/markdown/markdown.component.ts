@@ -211,10 +211,6 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
     if (changes['disabled'] && changes['disabled'].previousValue !== changes['disabled'].currentValue) {
       this.simplemde.codemirror.setOption('disableInput', changes['disabled'].currentValue);
     }
-
-    if (changes['mediaReferences'] && changes['mediaReferences'].previousValue !== changes['mediaReferences'].currentValue) {
-      this.populateImages();
-    }
   }
 
   ngOnDestroy() {
