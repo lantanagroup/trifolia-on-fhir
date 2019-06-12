@@ -670,10 +670,10 @@ export class HtmlExporter {
     const previousPage = pageIndex === 0 ? null : pageList[pageIndex - 1];
     const nextPage = pageIndex === pageList.length - 1 ? null : pageList[pageIndex + 1];
     const previousPageLink = previousPage ?
-      `<a href="${previousPage.finalFileName}">Previous Page</a>\n` :
+      `[Previous Page](${previousPage.finalFileName})\n\n` :
       null;
     const nextPageLink = nextPage ?
-      `\n<a href="${nextPage.finalFileName}">Next Page</a>` :
+      `\n\n[Next Page](${nextPage.finalFileName})` :
       null;
 
     if (page.kind !== 'toc' && pageInfo.content) {
@@ -712,10 +712,10 @@ export class HtmlExporter {
     const nextPage = pageInfoIndex < pageList.length - 1 ? pageList[pageInfoIndex + 1] : null;
 
     const previousPageLink = previousPage ?
-      `<a href="${previousPage.finalFileName}">Previous Page</a>\n` :
+      `[Previous Page](${previousPage.finalFileName})\n\n` :
       null;
     const nextPageLink = nextPage ?
-      `\n<a href="${nextPage.finalFileName}">Next Page</a>` :
+      `\n\n[Next Page](${nextPage.finalFileName})` :
       null;
 
     if (pageInfo.content && pageInfo.fileName) {
