@@ -83,7 +83,8 @@ export class ImportComponent implements OnInit {
   }
 
   private createMedia(name: string, buffer: ArrayBuffer) {
-    const b64content = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+    const b64content = btoa(new Uint8Array(buffer)
+      .reduce((data, byte) => data + String.fromCharCode(byte), ''));
 
     if (this.configService.isFhirSTU3) {
       const media = new STU3Media();
