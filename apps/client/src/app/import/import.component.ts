@@ -158,7 +158,13 @@ export class ImportComponent implements OnInit {
         importFileModel.message = ex.message;
       }
 
-      const foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
+      // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
+      let foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
+
+      // If another file with the same name can't be found, determine if there is a file with the same resource id as this one, and replace it
+      if (!foundImportFile && importFileModel.resource) {
+        foundImportFile = this.files.find((importFile) => importFile.resource && importFile.resource.id === importFileModel.resource.id);
+      }
 
       if (foundImportFile) {
         const index = this.files.indexOf(foundImportFile);
