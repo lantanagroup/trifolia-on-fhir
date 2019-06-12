@@ -116,7 +116,10 @@ export class FhirController extends BaseController {
         const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
 
         try {
+          this.logger.log('Retrieving resource to check security');
           originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+
+          this.logger.log('Checking security for resource');
           this.assertUserCanEdit(userSecurityInfo, originalResource);
         } catch (ex) {
           if (ex.response) {

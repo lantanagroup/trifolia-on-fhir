@@ -75,7 +75,6 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
       return [];
     }
 
-    const profileTypes = ['StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'ImplementationGuide', 'SearchParameter'];
     const terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
     return (this.implementationGuide.definition.resource || [])
@@ -86,7 +85,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
 
         const parsedReference = this.fhirService.parseReference(resource.reference.reference);
 
-        if (this.filterResourceType.profile && profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+        if (this.filterResourceType.profile && this.fhirService.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
           return true;
         }
 
@@ -94,7 +93,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        if (this.filterResourceType.example && profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
+        if (this.filterResourceType.example && this.fhirService.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
           return true;
         }
 

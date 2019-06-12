@@ -61,7 +61,7 @@ export class FhirService {
   public valueSets: ValueSet[] = [];
   private customValidator: CustomValidator;
 
-  readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter'];
+  readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
   constructor(

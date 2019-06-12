@@ -9,13 +9,13 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   PageComponent,
   Extension,
-  ContactDetail, ResourceReference, Media
+  ContactDetail, Media, PackageResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   Binary as R4Binary,
   Bundle as R4Bundle,
   ImplementationGuide as R4ImplementationGuide,
-  ImplementationGuidePageComponent
+  ImplementationGuidePageComponent, ImplementationGuideResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
@@ -29,7 +29,6 @@ import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
-import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 interface TableOfContentsEntry {
   level: number;
@@ -85,6 +84,19 @@ interface FhirControl {
   };
 }
 
+class PageInfo {
+  page: PageComponent | ImplementationGuidePageComponent;
+  fileName: string;
+  content: string;
+  shouldAutoGenerate: boolean;
+
+  get finalFileName() {
+    if (this.fileName && this.fileName.endsWith('.md')) {
+      return this.fileName.substring(0, this.fileName.lastIndexOf('.')) + '.html';
+    }
+  }
+}
+
 export class ExportResults {
   rootPath: string;
   packageId: string;
@@ -126,6 +138,14 @@ export class HtmlExporter {
     this.implementationGuideId = implementationGuideId;
 
     this.homedir = require('os').homedir();
+  }
+
+  private get stu3ImplementationGuide(): STU3ImplementationGuide {
+    return <STU3ImplementationGuide> this.implementationGuide;
+  }
+
+  private get r4ImplementationGuide(): R4ImplementationGuide {
+    return <R4ImplementationGuide> this.implementationGuide;
   }
 
   static getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
@@ -613,7 +633,7 @@ export class HtmlExporter {
       const fileNameIdentifier = ((<Media>resource).identifier || []).find(id => !!id.value);
 
       if (fileNameIdentifier && (<Media>resource).content && (<Media>resource).content.data) {
-        const outputPath = path.join(this.rootPath, 'source/pages/_includes', fileNameIdentifier.value);
+        const outputPath = path.join(this.rootPath, 'source/pages', fileNameIdentifier.value);
 
         try {
           fs.writeFileSync(outputPath, new Buffer((<Media>resource).content.data, 'base64'));
@@ -644,44 +664,33 @@ export class HtmlExporter {
     fs.writeFileSync(summaryPath, '');
   }
 
-  private getStu3PageContent(implementationGuide: STU3ImplementationGuide, page: PageComponent) {
-    const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+  private writeStu3Page(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
+    const pageInfo = pageList.find(next => next.page === page);
+    const pageIndex = pageList.indexOf(pageInfo);
+    const previousPage = pageIndex === 0 ? null : pageList[pageIndex - 1];
+    const nextPage = pageIndex === pageList.length - 1 ? null : pageList[pageIndex + 1];
+    const previousPageLink = previousPage ?
+      `<a href="${previousPage.finalFileName}">Previous Page</a>\n` :
+      null;
+    const nextPageLink = nextPage ?
+      `\n<a href="${nextPage.finalFileName}">Next Page</a>` :
+      null;
 
-    if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-      const reference = contentExtension.valueReference.reference;
-
-      if (reference.startsWith('#')) {
-        const contained = (implementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
-        const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
-
-        if (binary) {
-          return {
-            fileName: page.source,
-            content: Buffer.from(binary.content, 'base64').toString()
-          };
-        }
-      }
-    }
-  }
-
-  private writeStu3Page(pagesPath: string, implementationGuide: STU3ImplementationGuide, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
-    const pageContent = this.getStu3PageContent(implementationGuide, page);
-
-    if (page.kind !== 'toc' && pageContent && pageContent.content) {
-      const newPagePath = path.join(pagesPath, pageContent.fileName);
+    if (page.kind !== 'toc' && pageInfo.content) {
+      const newPagePath = path.join(pagesPath, pageInfo.fileName);
 
       const content = '---\n' +
         `title: ${page.title}\n` +
         'layout: default\n' +
         `active: ${page.title}\n` +
-        '---\n\n' + pageContent.content;
+        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
 
       fs.writeFileSync(newPagePath, content);
     }
 
     // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: page.kind === 'page' && pageContent ? pageContent.fileName : null, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeStu3Page(pagesPath, implementationGuide, subPage, level + 1, tocEntries));
+    tocEntries.push({level: level, fileName: page.kind === 'page' && pageInfo.fileName, title: page.title});
+    (page.page || []).forEach((subPage) => this.writeStu3Page(pagesPath, subPage, level + 1, tocEntries, pageList));
   }
 
   private getPageExtension(page: ImplementationGuidePageComponent) {
@@ -696,43 +705,37 @@ export class HtmlExporter {
     }
   }
 
-  private writeR4Page(pagesPath: string, implementationGuide: R4ImplementationGuide, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
-    let fileName;
+  private writeR4Page(pagesPath: string, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
+    const pageInfo = pageList.find(next => next.page === page);
+    const pageInfoIndex = pageList.indexOf(pageInfo);
+    const previousPage = pageInfoIndex > 0 ? pageList[pageInfoIndex - 1] : null;
+    const nextPage = pageInfoIndex < pageList.length - 1 ? pageList[pageInfoIndex + 1] : null;
 
-    if (page.nameReference && page.nameReference.reference && page.title) {
-      const reference = page.nameReference.reference;
+    const previousPageLink = previousPage ?
+      `<a href="${previousPage.finalFileName}">Previous Page</a>\n` :
+      null;
+    const nextPageLink = nextPage ?
+      `\n<a href="${nextPage.finalFileName}">Next Page</a>` :
+      null;
 
-      if (reference.startsWith('#')) {
-        const contained = (implementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
-        const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
+    if (pageInfo.content && pageInfo.fileName) {
+      const newPagePath = path.join(pagesPath, pageInfo.fileName);
 
-        if (binary && binary.data) {
-          fileName = page.title.replace(/ /g, '_');
-
-          if (fileName.indexOf('.') < 0) {
-            fileName += this.getPageExtension(page);
-          }
-
-          const newPagePath = path.join(pagesPath, fileName);
-
-          // noinspection JSUnresolvedFunction
-          const binaryContent = Buffer.from(binary.data, 'base64').toString();
-          const content = '---\n' +
-            `title: ${page.title}\n` +
-            'layout: default\n' +
-            `active: ${page.title}\n` +
-            `---\n\n${binaryContent}`;
-          fs.writeFileSync(newPagePath, content);
-        }
-      }
+      // noinspection JSUnresolvedFunction
+      const content = '---\n' +
+        `title: ${page.title}\n` +
+        'layout: default\n' +
+        `active: ${page.title}\n` +
+        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
+      fs.writeFileSync(newPagePath, content);
     }
 
     // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, implementationGuide, subPage, level + 1, tocEntries));
+    tocEntries.push({level: level, fileName: pageInfo.fileName, title: page.title});
+    (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, subPage, level + 1, tocEntries, pageList));
   }
 
-  private generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, pageContent) {
+  private generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
     const tocPath = path.join(rootPath, 'source/pages/toc.md');
     let tocContent = '';
 
@@ -756,8 +759,8 @@ export class HtmlExporter {
           tocContent += `${entry.title}\n`;
         }
       });
-    } else if (pageContent && pageContent.content) {
-      tocContent = pageContent.content;
+    } else if (content) {
+      tocContent = content;
     }
 
     if (tocContent) {
@@ -765,80 +768,109 @@ export class HtmlExporter {
     }
   }
 
-  private writeStu3Pages(rootPath: string, implementationGuide: STU3ImplementationGuide) {
-    const tocEntries = [];
+  private writeStu3Pages(rootPath: string) {
+    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
+    const getPagesList = (theList: PageInfo[], page: PageComponent) => {
+      if (!page) {
+        return theList;
+      }
 
-    if (implementationGuide.page) {
-      const autoGenerateExtension = (implementationGuide.page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-      const shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-      const pageContent = this.getStu3PageContent(implementationGuide, implementationGuide.page);
-      const pagesPath = path.join(rootPath, 'source/pages');
-      fs.ensureDirSync(pagesPath);
+      const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
 
-      this.writeStu3Page(pagesPath, implementationGuide, implementationGuide.page, 1, tocEntries);
-      this.generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, pageContent);
-    }
-  }
+      const pageInfo = new PageInfo();
+      pageInfo.page = page;
+      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
 
-  private writeR4Pages(rootPath: string, implementationGuide: R4ImplementationGuide) {
-    const tocEntries = [];
-    let shouldAutoGenerate = true;
-    let rootPageContent;
-    let rootPageFileName;
+      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
+        const reference = contentExtension.valueReference.reference;
 
-    if (implementationGuide.definition && implementationGuide.definition.page) {
-      const autoGenerateExtension = (implementationGuide.definition.page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-      shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-      const pagesPath = path.join(rootPath, 'source/pages');
-      fs.ensureDirSync(pagesPath);
-
-      if (implementationGuide.definition.page.nameReference) {
-        const nameReference = implementationGuide.definition.page.nameReference;
-
-        if (nameReference.reference && nameReference.reference.startsWith('#')) {
-          const foundContained = (implementationGuide.contained || []).find((contained) => contained.id === nameReference.reference.substring(1));
-          const binary = foundContained && foundContained.resourceType === 'Binary' ? <R4Binary>foundContained : undefined;
+        if (reference.startsWith('#')) {
+          const contained = (this.stu3ImplementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
+          const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
 
           if (binary) {
-            rootPageContent = new Buffer(binary.data, 'base64').toString();
-            rootPageFileName = implementationGuide.definition.page.title.replace(/ /g, '_');
-
-            if (!rootPageFileName.endsWith('.md')) {
-              rootPageFileName += '.md';
-            }
+            pageInfo.fileName = page.source;
+            pageInfo.content = Buffer.from(binary.content, 'base64').toString();
           }
         }
       }
 
-      this.writeR4Page(pagesPath, implementationGuide, implementationGuide.definition.page, 1, tocEntries);
-    }
+      pageList.push(pageInfo);
 
-    // Append TOC Entries to the toc.md file in the template
-    this.generateTableOfContents(rootPath, tocEntries, shouldAutoGenerate, {fileName: rootPageFileName, content: rootPageContent});
+      (page.page || []).forEach((next) => getPagesList(theList, next));
+
+      return theList;
+    };
+
+    const tocEntries = [];
+    const pageList: PageInfo[] = getPagesList([], this.stu3ImplementationGuide.page);
+    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
+
+    if (rootPageInfo) {
+      const pagesPath = path.join(rootPath, 'source/pages');
+      fs.ensureDirSync(pagesPath);
+
+      this.writeStu3Page(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries, pageList);
+      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, rootPageInfo.content);
+    }
   }
 
-  private getImplementationGuideReferences() {
-    if (this.fhirVersion === 'stu3') {
-      const ig = <STU3ImplementationGuide> this.implementationGuide;
-      const references = [];
-
-      (ig.package || []).forEach((pkg) => {
-        (pkg.resource || []).forEach((resource) => {
-          if (resource.sourceReference && resource.sourceReference.reference) {
-            references.push(resource.sourceReference);
-          }
-        });
-      });
-
-      return references;
-    } else if (this.fhirVersion === 'r4') {
-      const ig = <R4ImplementationGuide> this.implementationGuide;
-
-      if (!ig.definition) {
-        return [];
+  private writeR4Pages(rootPath: string) {
+    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
+    const getPagesList = (theList: PageInfo[], page: ImplementationGuidePageComponent) => {
+      if (!page) {
+        return theList;
       }
 
-      return (ig.definition.resource || []).map((resource) => resource.reference);
+      const pageInfo = new PageInfo();
+      pageInfo.page = page;
+
+      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
+      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
+
+      if (page.nameReference && page.nameReference.reference) {
+        const reference = page.nameReference.reference;
+
+        if (reference.startsWith('#')) {
+          const contained = (this.r4ImplementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
+          const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
+
+          if (binary && binary.data) {
+            pageInfo.fileName = page.title.replace(/ /g, '_');
+
+            if (pageInfo.fileName.indexOf('.') < 0) {
+              pageInfo.fileName += this.getPageExtension(page);
+            }
+          }
+
+          if (binary && binary.data) {
+            pageInfo.content = Buffer.from(binary.data, 'base64').toString();
+          }
+        }
+      } else if (page.nameUrl) {
+        pageInfo.fileName = page.nameUrl;
+      }
+
+      theList.push(pageInfo);
+
+      (page.page || []).forEach((next) => getPagesList(theList, next));
+
+      return theList;
+    };
+
+    const pageList = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
+    const tocEntries = [];
+
+    if (rootPageInfo) {
+      const pagesPath = path.join(rootPath, 'source/pages');
+      fs.ensureDirSync(pagesPath);
+
+      this.writeR4Page(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries, pageList);
+
+      // Append TOC Entries to the toc.md file in the template
+      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, {fileName: rootPageInfo.fileName, content: rootPageInfo.content});
     }
   }
 
@@ -950,6 +982,46 @@ export class HtmlExporter {
     });
   }
 
+  private isImplementationGuideReferenceExample(igReference: PackageResourceComponent | ImplementationGuideResourceComponent): boolean {
+    if (!igReference) {
+      return false;
+    }
+
+    if (this.fhirVersion === 'stu3') {
+      const obj = <PackageResourceComponent> igReference;
+      return obj.example || !!obj.exampleFor;
+    } else if (this.fhirVersion === 'r4') {
+      const obj = <ImplementationGuideResourceComponent> igReference;
+      return obj.exampleBoolean || !!obj.exampleCanonical;
+    } else {
+      throw new Error('Unexpected FHIR version');
+    }
+  }
+
+  private getImplementationGuideReference(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
+    if (this.fhirVersion === 'stu3') {
+      if (this.stu3ImplementationGuide.package) {
+        for (let i = 0; i < this.stu3ImplementationGuide.package.length; i++) {
+          const pkg = this.stu3ImplementationGuide.package[i];
+          const found = (pkg.resource || [])
+            .find(res => res.sourceReference && res.sourceReference.reference === `${resourceType}/${id}`);
+
+          if (found) {
+            return found;
+          }
+        }
+      }
+    } else if (this.fhirVersion === 'r4') {
+      if (this.r4ImplementationGuide.definition) {
+        const found = (this.r4ImplementationGuide.definition.resource || [])
+          .find(res => res.reference && res.reference.reference === `${resourceType}/${id}`);
+        return found;
+      }
+    } else {
+      throw new Error('Unexpected FHIR version');
+    }
+  }
+
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -974,7 +1046,7 @@ export class HtmlExporter {
     this.logger.log('Retrieving resources for export');
 
     try {
-      bundle = await bundleExporter.getBundle(false);
+      bundle = await bundleExporter.getBundle();
     } catch (ex) {
       this.logger.error(`Error while retrieving bundle: ${ex.message}`, ex.stack);
       throw ex;
@@ -990,9 +1062,7 @@ export class HtmlExporter {
       const resourceType = resource.resourceType;
       const id = resource.id;
       const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
-      let resourcePath;
-
-      let resourceContent = null;
+      let resourcePath, resourceContent;
 
       if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
         this.implementationGuide = resource;
@@ -1006,6 +1076,15 @@ export class HtmlExporter {
         resourceContent = this.fhir.objToXml(cleanResource);
         resourceContent = vkbeautify.xml(resourceContent);
         resourcePath = path.join(resourceDir, id + '.xml');
+      }
+
+      if (resource.resourceType === 'Media') {
+        const mediaReference = this.getImplementationGuideReference('Media', resource.id);
+
+        // If the Media is not an example, don't save it to the resources folder
+        if (!this.isImplementationGuideReferenceExample(mediaReference)) {
+          continue;
+        }
       }
 
       fs.ensureDirSync(resourceDir);
@@ -1046,9 +1125,9 @@ export class HtmlExporter {
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
     if (fhirServerConfig.version === 'stu3') {
-      this.writeStu3Pages(this.rootPath, <STU3ImplementationGuide> this.implementationGuide);
+      this.writeStu3Pages(this.rootPath);
     } else {
-      this.writeR4Pages(this.rootPath, <R4ImplementationGuide> this.implementationGuide);
+      this.writeR4Pages(this.rootPath);
     }
 
     this.igPublisherLocation = await this.getIgPublisher(useLatest);

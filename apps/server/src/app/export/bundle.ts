@@ -40,28 +40,64 @@ export class BundleExporter {
       const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
       const keys = Object.keys(object);
 
-      // Convert page.nameReference to page.nameTitle
-      if (object.resourceType === 'ImplementationGuide' && object.definition && object.definition.page) {
-        const fixPage = (page: ImplementationGuidePageComponent) => {
-          if (page.nameReference && page.title) {
-            delete page.nameReference;
-            page.nameUrl = page.title.replace(/ /g, '_') + '.html';
-          }
-
-          (page.page || []).forEach((next) => fixPage(next));
-        };
-
-        fixPage(object.definition.page);
-
-        // Remove any contained binary resources. The IG publisher produces errors when there is a contained binary resource on the IG.
-        const containedBinaries = (object.contained || []).filter((contained: DomainResource) => contained.resourceType === 'Binary');
-        containedBinaries.forEach((contained) => {
-          const index = object.contained.indexOf(contained);
-          object.contained.splice(index, 1);
-        });
+      if (object.meta && object.meta.security) {
+        delete object.meta.security;
       }
 
-      // Remove ToF-specific extensions
+      // Convert page.nameReference to page.nameTitle
+      if (object.resourceType === 'ImplementationGuide' && object.definition) {
+        if (object.definition.page) {
+          const fixPage = (page: ImplementationGuidePageComponent) => {
+            if (page.nameReference && page.title) {
+              delete page.nameReference;
+              page.nameUrl = page.title.replace(/ /g, '_') + '.html';
+            }
+
+            (page.page || []).forEach((next) => fixPage(next));
+          };
+
+          fixPage(object.definition.page);
+
+          // Remove any contained binary resources. The IG publisher produces errors when there is a contained binary resource on the IG.
+          const containedBinaries = (object.contained || []).filter((contained: DomainResource) => contained.resourceType === 'Binary');
+          containedBinaries.forEach((contained) => {
+            const index = object.contained.indexOf(contained);
+            object.contained.splice(index, 1);
+          });
+        }
+
+        // Remove Media resources from the IG. Media should only be left if it is an example
+        if (object.definition.resource) { // R4
+          for (let i = object.definition.resource.length - 1; i >= 0; i--) {
+            const resource = object.definition.resource[i];
+            const isExample = resource.exampleBoolean === true || !!resource.exampleCanonical;
+            const isMedia = resource.reference && resource.reference.reference && resource.reference.reference.startsWith('Media/');
+
+            if (isMedia && !isExample) {
+              object.definition.resource.splice(i, 1);
+            }
+          }
+        } else if (object.package) {      // STU3
+          object.package.forEach((pkg) => {
+            if (!pkg.resource) {
+              return;
+            }
+
+            for (let i = pkg.resource.length - 1; i >= 0; i++) {
+              const resource = pkg.resource[i];
+              const isMedia = resource.sourceReference && resource.sourceReference.reference && resource.sourceReference.reference.startsWith('Media/');
+
+              if (resource.sourceReference && resource.sourceReference.reference && resource.sourceReference.reference.startsWith('Media/')) {
+                if (isMedia && resource.example === false) {
+                  pkg.resource.splice(i, 1);
+                }
+              }
+            }
+          });
+        }
+      }
+
+      // Remove ToF-specific extensions recursively in the object
       keys.forEach((key) => {
         if (key === 'extension') {
           const extensions: Extension[] = object[key];
@@ -81,7 +117,7 @@ export class BundleExporter {
     return object;
   }
 
-  public async getBundle(removeExtensions = false, summary = false): Promise<Bundle> {
+  public async getBundle(cleanup = false, summary = false): Promise<Bundle> {
     const params = {
       _id: this.implementationGuideId,
       _include: [
@@ -100,7 +136,7 @@ export class BundleExporter {
 
     bundle.total = (bundle.entry || []).length;
 
-    if (removeExtensions) {
+    if (cleanup) {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource));
     }
 
