@@ -522,11 +522,23 @@ export class HtmlExporter {
       .map((entry) => <DomainResource> entry.resource)
       .reduce(reduceDistinct((resource: DomainResource) => resource.id), []);
     const valueSets = distinctResources.filter((resource) => resource.resourceType === 'ValueSet');
+    const terminologyPath = path.join(rootPath, 'source/pages/terminology.md');
     const codeSystems = distinctResources.filter((resource) => resource.resourceType === 'CodeSystem');
     const profiles = distinctResources.filter((resource) => resource.resourceType === 'StructureDefinition' && (!resource.baseDefinition || !resource.baseDefinition.endsWith('Extension')));
+    const profilesPath = path.join(rootPath, 'source/pages/profiles.md');
     const extensions = distinctResources.filter((resource) => resource.resourceType === 'StructureDefinition' && resource.baseDefinition && resource.baseDefinition.endsWith('Extension'));
     const capabilityStatements = distinctResources.filter((resource) => resource.resourceType === 'CapabilityStatement');
-    const otherResources = distinctResources.filter((resource) => mainResourceTypes.indexOf(resource.resourceType) < 0);
+    const csPath = path.join(rootPath, 'source/pages/capstatements.md');
+    const otherResources = distinctResources.filter((resource) => {
+      // If the resource is Media, only show it in the "Other" page if it is an example
+      if (resource.resourceType === 'Media') {
+        const igResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
+        return this.isImplementationGuideReferenceExample(igResource);
+      }
+
+      return mainResourceTypes.indexOf(resource.resourceType) < 0;
+    });
+    const otherPath = path.join(rootPath, 'source/pages/other.md');
 
     if (implementationGuide) {
       const indexPath = path.join(rootPath, 'source/pages/index.md');
@@ -553,8 +565,9 @@ export class HtmlExporter {
           return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
         });
       const profilesTable = this.createTableFromArray(['Name', 'Description'], profilesData);
-      const profilesPath = path.join(rootPath, 'source/pages/profiles.md');
       fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
+    } else {
+      fs.appendFileSync(profilesPath, '**No profiles are defined for this implementation guide**\n\n');
     }
 
     if (extensions.length > 0) {
@@ -564,35 +577,38 @@ export class HtmlExporter {
           return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
         });
       const extContent = this.createTableFromArray(['Name', 'Description'], extData);
-      const extPath = path.join(rootPath, 'source/pages/profiles.md');
-      fs.appendFileSync(extPath, '### Extensions\n\n' + extContent + '\n\n');
+      fs.appendFileSync(profilesPath, '### Extensions\n\n' + extContent + '\n\n');
+    } else {
+      fs.appendFileSync(profilesPath, '### Extensions\n\n**No extensions are defined for this implementation guide**\n\n');
     }
 
-    if (valueSets.length > 0) {
-      let vsContent = '### Value Sets\n\n';
-      const vsPath = path.join(rootPath, 'source/pages/terminology.md');
+    let vsContent = '### Value Sets\n\n';
 
+    if (valueSets.length > 0) {
       valueSets
         .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         .forEach((valueSet) => {
           vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
         });
-
-      fs.appendFileSync(vsPath, vsContent + '\n\n');
+    } else {
+      vsContent += '**No value sets are defined for this implementation guide**\n\n';
     }
 
-    if (codeSystems.length > 0) {
-      let csContent = '### Code Systems\n\n';
-      const csPath = path.join(rootPath, 'source/pages/terminology.md');
+    fs.appendFileSync(terminologyPath, vsContent + '\n\n');
 
+    let csContent = '### Code Systems\n\n';
+
+    if (codeSystems.length > 0) {
       codeSystems
         .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         .forEach((codeSystem) => {
           csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
         });
-
-      fs.appendFileSync(csPath, csContent + '\n\n');
+    } else {
+      csContent += '**No code systems are defined for this implementation guide**\n\n';
     }
+
+    fs.appendFileSync(terminologyPath, csContent + '\n\n');
 
     if (capabilityStatements.length > 0) {
       const csData = capabilityStatements
@@ -600,9 +616,10 @@ export class HtmlExporter {
         .map((capabilityStatement) => {
           return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
         });
-      const csContent = this.createTableFromArray(['Name', 'Description'], csData);
-      const csPath = path.join(rootPath, 'source/pages/capstatements.md');
-      fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + csContent);
+      const capContent = this.createTableFromArray(['Name', 'Description'], csData);
+      fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + capContent);
+    } else {
+      fs.appendFileSync(csPath, '**No capability statements are defined for this implementation guide**');
     }
 
     if (otherResources.length > 0) {
@@ -615,12 +632,13 @@ export class HtmlExporter {
           return aCompare.localeCompare(bCompare);
         })
         .map((resource) => {
-          let name = resource.title || this.getDisplayName(resource.name) || resource.id;
+          const name = resource.title || this.getDisplayName(resource.name) || resource.id;
           return [resource.resourceType, `<a href="${resource.resourceType}-${resource.id}.html">${name}</a>`];
         });
       const oContent = this.createTableFromArray(['Type', 'Name'], oData);
-      const csPath = path.join(rootPath, 'source/pages/other.md');
-      fs.appendFileSync(csPath, '### Other Resources\n\n' + oContent);
+      fs.appendFileSync(otherPath, '### Other Resources\n\n' + oContent);
+    } else {
+      fs.appendFileSync(otherPath, '**No examples are defined for this implementation guide**');
     }
   }
 
@@ -982,23 +1000,47 @@ export class HtmlExporter {
     });
   }
 
-  private isImplementationGuideReferenceExample(igReference: PackageResourceComponent | ImplementationGuideResourceComponent): boolean {
-    if (!igReference) {
+  private getImplementationGuideResourceReference(igResource: PackageResourceComponent | ImplementationGuideResourceComponent) {
+    if (!igResource) {
+      return;
+    }
+
+    if (this.fhirVersion === 'stu3') {
+      const obj = <PackageResourceComponent> igResource;
+      return obj.sourceReference ? obj.sourceReference.reference : undefined;
+    } else if (this.fhirVersion === 'r4') {
+      const obj = <ImplementationGuideResourceComponent> igResource;
+      return obj.reference ? obj.reference.reference : undefined;
+    } else {
+      throw new Error('Unexpected FHIR version');
+    }
+  }
+
+  private isImplementationGuideReferenceExample(igResource: PackageResourceComponent | ImplementationGuideResourceComponent): boolean {
+    if (!igResource) {
       return false;
     }
 
     if (this.fhirVersion === 'stu3') {
-      const obj = <PackageResourceComponent> igReference;
+      const obj = <PackageResourceComponent> igResource;
       return obj.example || !!obj.exampleFor;
     } else if (this.fhirVersion === 'r4') {
-      const obj = <ImplementationGuideResourceComponent> igReference;
+      const obj = <ImplementationGuideResourceComponent> igResource;
       return obj.exampleBoolean || !!obj.exampleCanonical;
     } else {
       throw new Error('Unexpected FHIR version');
     }
   }
 
-  private getImplementationGuideReference(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
+  /**
+   * Finds the resource within the ImplementationGuide, which contains information
+   * on how the resource is used within the implementation guide. This is separate logic
+   * because the structure of ImplementationGuide is majorly different between STU3
+   * and R4.
+   * @param resourceType {string}
+   * @param id {string}
+   */
+  private getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
     if (this.fhirVersion === 'stu3') {
       if (this.stu3ImplementationGuide.package) {
         for (let i = 0; i < this.stu3ImplementationGuide.package.length; i++) {
@@ -1079,7 +1121,7 @@ export class HtmlExporter {
       }
 
       if (resource.resourceType === 'Media') {
-        const mediaReference = this.getImplementationGuideReference('Media', resource.id);
+        const mediaReference = this.getImplementationGuideResource('Media', resource.id);
 
         // If the Media is not an example, don't save it to the resources folder
         if (!this.isImplementationGuideReferenceExample(mediaReference)) {

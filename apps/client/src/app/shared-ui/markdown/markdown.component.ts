@@ -131,13 +131,18 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
       name: 'image-list',
       className: 'fas fa-images',
       title: this.imageListButtonTitle,
+
+      // This action is called when the user clicks the button
+      // It will open the imageListModal that is embedded in the HTML of this component
+      // When the modal closes, the user will have selected the image they want inserted
       action: () => {
         this.modalService.open(this.imageListModal, { size: 'lg', backdrop: 'static' }).result
           .then((image: ImageItem) => {
             const doc = this.simplemde.codemirror.getDoc();
             const cursor = doc.getCursor();
 
-            const replaceText = `![${image.title || ''}](${image.name})`;
+            const altTag = image.title ? `alt="${image.title}" ` : '';
+            const replaceText = `<table><tr><td><img src="${image.name}" ${altTag}/></td></tr></table>`;
             doc.replaceRange(replaceText, cursor);
           });
       }
