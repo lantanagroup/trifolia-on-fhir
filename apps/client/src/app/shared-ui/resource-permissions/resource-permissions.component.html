@@ -58,7 +58,7 @@
       <div class="card-header">Add Group</div>
       <div class="card-body">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search group by name" [(ngModel)]="searchGroupsCriteria" />
+          <input type="text" class="form-control" placeholder="Search group by name" [(ngModel)]="searchGroupsCriteria" (keyup.enter)="searchGroups()" />
           <div class="input-group-btn">
             <button type="button" class="btn btn-primary" (click)="searchGroups()" [disabled]="isSearchingGroups">
               <i class="fas fa-search"></i>
@@ -111,7 +111,7 @@
       <div class="card-header">Add User</div>
       <div class="card-body">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search user by name" [(ngModel)]="searchUsersCriteria" />
+          <input type="text" class="form-control" placeholder="Search user by name" [(ngModel)]="searchUsersCriteria" (keyup.enter)="searchUsers()" />
           <div class="input-group-btn">
             <button type="button" class="btn btn-primary" (click)="searchUsers()">
               <i class="fas fa-search"></i>
