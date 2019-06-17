@@ -111,17 +111,6 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Accept Unknown</label>
-                        <select class="form-control" [(ngModel)]="capabilityStatement.acceptUnknown"
-                                [class.is-invalid]="!capabilityStatement.acceptUnknown">
-                            <option value="no">No</option>
-                            <option value="extensions">Extensions</option>
-                            <option value="elements">Elements</option>
-                            <option value="both">Both</option>
-                        </select>
-                    </div>
-
                     <app-fhir-string [parentObject]="capabilityStatement" propertyName="fhirVersion" title="FHIR Version" [required]="true"></app-fhir-string>
 
                     <app-fhir-string [parentObject]="capabilityStatement" propertyName="version" title="Version" [required]="true"></app-fhir-string>

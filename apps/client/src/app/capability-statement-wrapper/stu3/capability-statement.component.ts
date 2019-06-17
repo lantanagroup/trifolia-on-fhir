@@ -20,7 +20,7 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
   styleUrls: ['./capability-statement.component.css']
 })
 export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement;
+  @Input() public capabilityStatement: CapabilityStatement;
 
   public message: string;
   public validation: any;
