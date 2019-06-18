@@ -7,9 +7,9 @@ import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server
 export class ExportOptions {
   public implementationGuideId: string;
   public exportFormat = ExportFormats.HTML;
-  public responseFormat?: 'application/json' | 'application/xml' = 'application/json';
+  public responseFormat?: 'application/json' | 'application/xml' = 'application/xml';
   public useTerminologyServer? = true;
-  public useLatest? = false;
+  public useLatest? = true;
   public downloadOutput? = true;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
 }
