@@ -88,7 +88,10 @@ export class ImportComponent implements OnInit {
 
     if (this.configService.isFhirSTU3) {
       const media = new STU3Media();
-      media.id = name.substring(0, name.lastIndexOf('.')).replace(/[^\w\s]/gi, '').replace(/_/gi, '-');
+      media.id = name
+        .substring(0, name.lastIndexOf('.'))
+        .replace(/[^a-z0-9_]/gi, '')
+        .replace(/_/gi, '-');
       media.type = 'photo';
       media.identifier = [{
         value: name
@@ -99,7 +102,10 @@ export class ImportComponent implements OnInit {
       return media;
     } else if (this.configService.isFhirR4) {
       const media = new R4Media();
-      media.id = name.substring(0, name.lastIndexOf('.')).replace(/[^\w\s]/gi, '').replace(/_/gi, '-');
+      media.id = name
+        .substring(0, name.lastIndexOf('.'))
+        .replace(/[^a-z0-9_]/gi, '')
+        .replace(/_/gi, '-');
       media.status = 'completed';
       media.identifier = [{
         value: name
