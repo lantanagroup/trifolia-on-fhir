@@ -18,6 +18,7 @@ import {
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
+import {ConfigService} from '../../shared/config.service';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -69,6 +70,7 @@ export class ResourcePermissionsComponent implements OnInit {
   private currentUser: Practitioner;
 
   constructor(
+    public configService: ConfigService,
     private fhirService: FhirService,
     private groupService: GroupService,
     private practitionerService: PractitionerService,

@@ -10,7 +10,7 @@
         <th class="actions-column-1"></th>
       </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="!configService.showingIntroduction">
       <tr *ngFor="let s of security">
         <td>{{s.getTypeDisplay()}}</td>
         <td>{{s.display || s.id}}</td>
@@ -26,25 +26,51 @@
         </td>
       </tr>
       </tbody>
+      <tbody *ngIf="configService.showingIntroduction">
+      <tr>
+        <td>User</td>
+        <td>Somebody, Joe</td>
+        <td>Yes</td>
+        <td>
+          Yes
+          <i class="fas fa-times clickable" [attr.data-intro]="Globals.introText['resource-permisisons.remove-write']"></i>
+        </td>
+        <td>
+          <button type="button" class="btn btn-primary" [attr.data-intro]="Globals.introText['resource-permissions.remove-both']">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
     </table>
 
     <ng-template #rt let-r="result" let-t="term">
       {{copyTypeaheadFormatter(r)}}
     </ng-template>
 
-    <div class="form-group">
+    <div class="form-group" [attr.data-intro]="Globals.introText['resource-permissions.copy']">
       <label>Copy permissions from...</label>
       <div class="input-group">
-        <select class="form-control" [(ngModel)]="copyResourceType">
+        <select class="form-control" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
           <option [ngValue]="undefined">SELECT</option>
           <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
         </select>
-        <input type="text" class="form-control" [(ngModel)]="copyResource" [disabled]="!copyResourceType" [ngbTypeahead]="copyTypeaheadSearch" [inputFormatter]="copyTypeaheadFormatter" [resultTemplate]="rt" />
+        <input type="text" class="form-control"
+               [(ngModel)]="copyResource"
+               [disabled]="!copyResourceType"
+               [ngbTypeahead]="copyTypeaheadSearch"
+               [inputFormatter]="copyTypeaheadFormatter"
+               [resultTemplate]="rt"
+               [attr.data-intro]="Globals.introText['resource-permissions.copy.criteria']" />
         <div class="input-group-btn">
-          <button type="button" class="btn btn-outline-primary" (click)="selectCopyResource()" title="Use a more advanced search window to find the resource you would like to copy permissions from">
+          <button type="button" class="btn btn-outline-primary" title="Use a more advanced search window to find the resource you would like to copy permissions from"
+                  (click)="selectCopyResource()" [attr.data-intro]="Globals.introText['resource-permissions.copy.select']">
             <i class="fas fa-hand-pointer"></i>
           </button>
-          <button type="button" class="btn btn-primary" (click)="copyPermissions()" [disabled]="!copyResource || !copyResource.resourceType" title="Copy the selected resource's permissions to this resource">
+          <button type="button" class="btn btn-primary" title="Copy the selected resource's permissions to this resource"
+                  (click)="copyPermissions()"
+                  [disabled]="!copyResource || !copyResource.resourceType"
+                  [attr.data-intro]="Globals.introText['resource-permissions.copy.copy-btn']">
             <i class="fas fa-copy"></i>
           </button>
         </div>
