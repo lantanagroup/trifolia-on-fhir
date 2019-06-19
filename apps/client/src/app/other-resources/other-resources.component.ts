@@ -35,7 +35,7 @@ export class OtherResourcesComponent implements OnInit {
   public tabSet: NgbTabset;
 
   constructor(
-    private configService: ConfigService,
+    public configService: ConfigService,
     private fhirService: FhirService,
     private modalService: NgbModal) {
   }
