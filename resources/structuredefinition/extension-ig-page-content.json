@@ -1,0 +1,60 @@
+{
+	"resourceType": "StructureDefinition",
+	"id": "extension-ig-page-content",
+	"meta": {
+		"versionId": "7",
+		"lastUpdated": "2019-06-10T10:36:26.000-04:00",
+		"security": [
+			{
+				"system": "https://trifolia-fhir.lantanagroup.com/security",
+				"code": "everyone^read"
+			},
+			{
+				"system": "https://trifolia-fhir.lantanagroup.com/security",
+				"code": "everyone^write"
+			}
+		]
+	},
+	"extension": [
+		{
+			"url": "https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-branch",
+			"valueString": "master"
+		},
+		{
+			"url": "https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-path",
+			"valueString": "lantanagroup/tof-gh-integration-test-repo/resources/structuredefinition/extension-ig-page-content.json"
+		}
+	],
+	"url": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content",
+	"name": "Test_Extension",
+	"title": "Test Implementation Guide Page Content Extension",
+	"status": "draft",
+	"experimental": false,
+	"kind": "resource",
+	"abstract": false,
+	"type": "Extension",
+	"baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+	"derivation": "constraint",
+	"differential": {
+		"element": [
+			{
+				"id": "Extension",
+				"path": "Extension"
+			},
+			{
+				"id": "Extension.url",
+				"path": "Extension.url",
+				"fixedUri": "https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content"
+			},
+			{
+				"id": "Extension.value[x]",
+				"path": "Extension.value[x]",
+				"type": [
+					{
+						"code": "Resource"
+					}
+				]
+			}
+		]
+	}
+}
