@@ -70,6 +70,8 @@ export class BaseController {
       identifier = identifier.substring(6);
     }
 
+    BaseController.logger.log(`Getting Practitioner for user with identifier ${system}|${identifier}`);
+
     const options = <AxiosRequestConfig>{
       url: buildUrl(fhirServerBase, 'Practitioner', null, null, {identifier: system + '|' + identifier}),
       headers: {
