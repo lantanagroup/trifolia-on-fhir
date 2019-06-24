@@ -77,8 +77,15 @@ export class BaseController {
       }
     };
 
-    const results = await this.httpService.request<Bundle>(options).toPromise();
-    const bundle = results.data;
+    let bundle: Bundle;
+
+    try {
+      const results = await this.httpService.request<Bundle>(options).toPromise();
+      bundle = results.data;
+    } catch (ex) {
+      BaseController.logger.error(`Error retrieving current user's Practitioner from FHIR server with URL "${options.url}": ${ex.message}`, ex.stack);
+      throw ex;
+    }
 
     if (bundle.total === 0) {
       if (!resolveIfNotFound) {
