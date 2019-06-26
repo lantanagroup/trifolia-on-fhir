@@ -737,7 +737,10 @@ export class HtmlExporter {
       null;
 
     if (pageInfo.content && pageInfo.fileName) {
-      const newPagePath = path.join(pagesPath, pageInfo.fileName);
+      const fileName = pageInfo.fileName
+        .replace(/—/g, '')
+        .replace(/[/\\]/g, '_');
+      const newPagePath = path.join(pagesPath, fileName);
 
       // noinspection JSUnresolvedFunction
       const content = '---\n' +
