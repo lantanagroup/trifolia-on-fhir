@@ -77,13 +77,28 @@ export class Globals {
     'publish.options': 'Specify options you would like to use for the export.',
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
-    'publish.publish-btn': 'When you are satisified with the options, press this button to start the publication process.',
+    'publish.publish-btn': 'When you are satisfied with the options, press this button to start the publication process.',
     'ig.quick-tab': 'This tab has the most important fields that are needed to create a basic implementation guide. Other fields are represented in additional tabs, categorized according to their use/purpose.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
     'ig.globals-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
     'ig.packages-tab': 'This tab lets you to define packages that are used to categorize/group resources included in the implementation guide. These packages are not commonly used and are for more advanced implementation guide authors.',
-    'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.'
+    'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.',
+    'other.open-resource-tab': 'Each resource that you open will show in a separate tab like this.',
+    'other.search-results-tab': 'After you click the search button, the results are shown here.',
+    'other.search-criteria': 'Specify your search criteria in this tab.',
+    'other.search.resource-type': 'A resource type must be selected before searching.',
+    'other.search.search-btn': 'Click this button to start the search.',
+    'other.resource.save': 'Click this button to save changes to permissions.',
+    'other.resource.download': 'Click this button to download the resource in the format you are viewing.',
+    'other.resource.upload': 'Click this button to upload changes to the resource in the format you are viewing.',
+    'resource-permisisons.remove-write': 'Click this X icon to remove only write/edit permissions for this user/entity.',
+    'resource-permissions.remove-both': 'Click this button to remove both read/view and write/edit permissions for this user/entity.',
+    'resource-permissions.copy': 'You can specify a resource that you would like to copy permissions from to this resource.',
+    'resource-permissions.copy.resource-type': 'Specify the resource type of the resource you would like to copy.',
+    'resource-permissions.copy.criteria': 'This is a type-ahead field. Begin typing the name/title/id of the resource you would like to select. A drop-down should appear with matching results (if there are any).',
+    'resource-permissions.copy.copy-btn': 'Once a resource has been selected to copy permissions from, click this button to copy the permissions.',
+    'resource-permissions.copy.select': 'You may select a resource using more advanced searching methods with this button.'
   };
 
   static readonly tooltips = {

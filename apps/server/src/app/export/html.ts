@@ -728,6 +728,7 @@ export class HtmlExporter {
     const pageInfoIndex = pageList.indexOf(pageInfo);
     const previousPage = pageInfoIndex > 0 ? pageList[pageInfoIndex - 1] : null;
     const nextPage = pageInfoIndex < pageList.length - 1 ? pageList[pageInfoIndex + 1] : null;
+    const fileName = pageInfo.fileName;
 
     const previousPageLink = previousPage ?
       `[Previous Page](${previousPage.finalFileName})\n\n` :
@@ -737,7 +738,7 @@ export class HtmlExporter {
       null;
 
     if (pageInfo.content && pageInfo.fileName) {
-      const newPagePath = path.join(pagesPath, pageInfo.fileName);
+      const newPagePath = path.join(pagesPath, fileName);
 
       // noinspection JSUnresolvedFunction
       const content = '---\n' +
@@ -749,7 +750,7 @@ export class HtmlExporter {
     }
 
     // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: pageInfo.fileName, title: page.title});
+    tocEntries.push({level: level, fileName: fileName, title: page.title});
     (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, subPage, level + 1, tocEntries, pageList));
   }
 
@@ -808,7 +809,13 @@ export class HtmlExporter {
           const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
 
           if (binary) {
-            pageInfo.fileName = page.source;
+            pageInfo.fileName = page.source ?
+              page.source
+                .trim()
+                .replace(/—/g, '')
+                .replace(/[/\\]/g, '_')
+                .replace(/ /g, '_') :
+              null;
             pageInfo.content = Buffer.from(binary.content, 'base64').toString();
           }
         }
@@ -855,7 +862,11 @@ export class HtmlExporter {
           const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
 
           if (binary && binary.data) {
-            pageInfo.fileName = page.title.replace(/ /g, '_');
+            pageInfo.fileName = page.title
+              .trim()
+              .replace(/—/g, '')
+              .replace(/[/\\]/g, '_')
+              .replace(/ /g, '_');
 
             if (pageInfo.fileName.indexOf('.') < 0) {
               pageInfo.fileName += this.getPageExtension(page);

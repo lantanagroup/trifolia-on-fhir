@@ -70,6 +70,8 @@ export class BaseController {
       identifier = identifier.substring(6);
     }
 
+    BaseController.logger.log(`Getting Practitioner for user with identifier ${system}|${identifier}`);
+
     const options = <AxiosRequestConfig>{
       url: buildUrl(fhirServerBase, 'Practitioner', null, null, {identifier: system + '|' + identifier}),
       headers: {
@@ -77,8 +79,15 @@ export class BaseController {
       }
     };
 
-    const results = await this.httpService.request<Bundle>(options).toPromise();
-    const bundle = results.data;
+    let bundle: Bundle;
+
+    try {
+      const results = await this.httpService.request<Bundle>(options).toPromise();
+      bundle = results.data;
+    } catch (ex) {
+      BaseController.logger.error(`Error retrieving current user's Practitioner from FHIR server with URL "${options.url}": ${ex.message}`, ex.stack);
+      throw ex;
+    }
 
     if (bundle.total === 0) {
       if (!resolveIfNotFound) {

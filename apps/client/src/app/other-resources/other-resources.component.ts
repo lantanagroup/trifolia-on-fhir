@@ -6,6 +6,7 @@ import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal
 import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 class OpenedResource {
   resource: DomainResource;
@@ -28,17 +29,22 @@ export class OtherResourcesComponent implements OnInit {
   public message: string;
   public openedResources: OpenedResource[] = [];
   public results: Bundle;
+  public Globals = Globals;
 
   @ViewChild('tabSet')
   public tabSet: NgbTabset;
 
   constructor(
-    private configService: ConfigService,
+    public configService: ConfigService,
     private fhirService: FhirService,
     private modalService: NgbModal) {
   }
 
   public search() {
+    if (!this.searchResourceType) {
+      return;
+    }
+
     this.message = 'Searching...';
 
     this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl)
