@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Bundle, Coding, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Bundle, Coding, EntryComponent, StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
 import {HttpClient} from '@angular/common/http';
 import {FhirService} from '../../shared/fhir.service';
@@ -25,6 +25,8 @@ export class FhirReferenceModalComponent implements OnInit {
   @Input() public resourceType?: string;
   @Input() public hideResourceType?: boolean;
   @Input() public selectMultiple = false;
+  @Input() public allowCoreProfiles = true;
+  @Input() public selectedSearchLocation: string;
   public idSearch?: string;
   public contentSearch?: string;
   public criteriaChangedEvent: Subject<string> = new Subject<string>();
@@ -36,6 +38,8 @@ export class FhirReferenceModalComponent implements OnInit {
   public nameSearchTypes: string[] = [];
   public titleSearchTypes: string[] = [];
   public message: string;
+  public baseResourceLength: number;
+
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -105,6 +109,8 @@ export class FhirReferenceModalComponent implements OnInit {
       return;
     }
 
+
+
     const nonContentResourceTypes = this.nameSearchTypes.concat(this.titleSearchTypes);
     let url = '/api/fhir/' + this.resourceType + '?_summary=true&_count=10&';
 
@@ -127,21 +133,70 @@ export class FhirReferenceModalComponent implements OnInit {
     if (this.idSearch) {
       url += '_id=' + encodeURIComponent(this.idSearch) + '&';
     }
+    if(this.selectedSearchLocation === 'server') {
+      this.http.get(url)
+        .subscribe((results: Bundle) => {
+          // If we are loading more results from the server, then concatenate the entries
+          if (this.results) {
+            this.results.entry = this.results.entry.concat(results.entry);
+          } else {
+            this.results = results;
+          }
 
-    this.http.get(url)
-      .subscribe((results: Bundle) => {
-        if (this.results) {
-          this.results.entry = this.results.entry.concat(results.entry);
-        } else {
-          this.results = results;
-        }
-      }, (err) => {
-        this.message = getErrorString(err);
+        }, (err) => {
+          this.message = getErrorString(err);
+        });
+    }
+    // Search base resources loaded in memory
+    else if (this.selectedSearchLocation === 'base') {
+      if(!this.results){
+        this.results = new Bundle();
+        this.baseResourceLength = 10;
+      }
+      let additionalEntries: EntryComponent[] = this.fhirService.fhir.parser.structureDefinitions
+        .map((sd: StructureDefinition) => {
+          return {
+            resource: sd
+          };
       });
+      if(this.nameSearch) {
+        additionalEntries = additionalEntries
+          .filter(object => (<StructureDefinition> object.resource).name.toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0)
+          .map(object => {
+            return {
+              resource: object.resource
+            };
+          });
+      }
+      if(this.titleSearch){
+        additionalEntries = additionalEntries
+          .filter(object => (<StructureDefinition> object.resource).title.toLowerCase().indexOf(this.titleSearch.toLowerCase()) >= 0)
+          .map(object => {
+            return {
+              resource: object.resource
+            };
+          });
+      }
+      if(this.idSearch){
+        additionalEntries = additionalEntries
+          .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0))
+          .map(object => {
+            return {
+              resource: object.resource
+            };
+          });
+      }
+
+      this.results.entry = additionalEntries;
+      this.results.total = this.results.entry.length;
+      this.baseResourceLength = loadMore ? (this.baseResourceLength + 10 < this.results.total ? this.baseResourceLength + 10 : this.results.total) : this.baseResourceLength;
+      this.results.entry = this.results.entry.slice(0, this.baseResourceLength);
+    }
   }
 
   ngOnInit() {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+    this.selectedSearchLocation = "server";
     this.criteriaChanged();
     this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
     this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
