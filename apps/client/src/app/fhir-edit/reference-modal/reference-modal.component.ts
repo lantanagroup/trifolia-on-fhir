@@ -179,7 +179,7 @@ export class FhirReferenceModalComponent implements OnInit {
       }
       if(this.idSearch){
         additionalEntries = additionalEntries
-          .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0))
+          .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.idSearch.toLowerCase()) >= 0))
           .map(object => {
             return {
               resource: object.resource
