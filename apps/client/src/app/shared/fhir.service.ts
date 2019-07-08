@@ -80,6 +80,18 @@ export class FhirService {
     });
   }
 
+  public get primitiveTypes(): string[] {
+    if (this.configService.isFhirSTU3) {
+      return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
+        'boolean', 'code', 'string', 'integer', 'uri', 'markdown',
+        'id', 'oid', 'unsignedInt', 'positiveInt', 'Element'];
+    } else if (this.configService.isFhirR4) {
+      return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
+        'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
+        'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
+    }
+  }
+
   public get http(): HttpClient {
     return this.injector.get(HttpClient);
   }
@@ -385,16 +397,17 @@ export class FhirService {
   /**
    * Validates the specified resource using the FHIR-JS module
    * @param {Resource} resource
+   * @param extraData Extra data to be passed along to the custom validation logic
    * @return {any}
    */
-  public validate(resource: Resource): ValidatorResponse {
+  public validate(resource: Resource, extraData?: any): ValidatorResponse {
     if (!this.fhir) {
       return;
     }
 
     const results = this.fhir.validate(resource, {
       // inject custom validation into the FHIR module
-      onBeforeValidateResource: (nextResource) => this.validateResource(nextResource)
+      onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
     });
 
     // Remove any messages that are only information
@@ -464,13 +477,14 @@ export class FhirService {
   /**
    * Executed by the FHIR module. Performs custom validation on resources.
    * @param resource
+   * @param extraData
    */
-  private validateResource(resource: any): ValidatorMessage[] {
+  private validateResource(resource: any, extraData?: any): ValidatorMessage[] {
     if (!this.customValidator) {
       return;
     }
 
-    let additionalMessages = this.customValidator.validateResource(resource) || [];
+    let additionalMessages = this.customValidator.validateResource(resource, extraData) || [];
 
     switch (resource.resourceType) {
       case 'ImplementationGuide':

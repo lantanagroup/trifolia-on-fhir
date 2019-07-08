@@ -546,7 +546,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
   ngDoCheck() {
     if (this.structureDefinition) {
-      this.validation = this.fhirService.validate(this.structureDefinition);
+      this.validation = this.fhirService.validate(this.structureDefinition, {
+        baseStructureDefinition: this.baseStructureDefinition
+      });
     }
   }
 

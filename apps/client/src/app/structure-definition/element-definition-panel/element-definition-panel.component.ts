@@ -142,6 +142,53 @@ export class ElementDefinitionPanelComponent implements OnInit {
     this.element.type.push({code: this.getDefaultType()});
   }
 
+  isPrimitiveExceptBoolean() {
+    return this.fhirService.primitiveTypes
+      .indexOf(this.elementTreeModel.baseElement.type[0].code) !== -1 &&
+      this.elementTreeModel.baseElement.type[0].code !== 'boolean';
+  }
+
+  get isMinValid() {
+    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+      return true;
+    }
+
+    const maxRequired = this.elementTreeModel.constrainedElement.max || this.elementTreeModel.baseElement.max;
+    const minValue = this.elementTreeModel.constrainedElement.min;
+
+    if (minValue < this.elementTreeModel.baseElement.min) {
+      return false;
+    }
+
+    // If max is specified, and max is not "unlimited", make sure min less than max
+    if (maxRequired !== undefined && maxRequired !== '*' && minValue > parseInt(maxRequired)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  get isMaxValid(){
+    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+      return true;
+    }
+
+    const maxValue = this.elementTreeModel.constrainedElement.max;
+    const minRequired = this.elementTreeModel.constrainedElement.min || this.elementTreeModel.baseElement.min;
+
+    if (maxValue !== undefined && ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
+      || (maxValue === "*" && this.elementTreeModel.baseElement.max !== "*"))) {
+      return false;
+    }
+
+    // If max is specified, min is specified, and max is not "unlimited", make sure max greater than min
+    if(maxValue !== undefined && maxValue !== "*" && minRequired !== undefined && maxValue < parseInt(minRequired)){
+      return false;
+    }
+
+    return true;
+  }
+
   ngOnInit() {
     this.definedTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/defined-types');
   }
