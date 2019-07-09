@@ -24,6 +24,8 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build client
 RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build server --prod
 RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools --prod
 
+RUN npm prune --production
+
 FROM node:12-alpine
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
 
