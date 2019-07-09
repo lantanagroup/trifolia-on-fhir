@@ -182,7 +182,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     // If max is specified, min is specified, and max is not "unlimited", make sure max greater than min
-    if(maxValue !== undefined && maxValue !== "*" && minRequired !== undefined && maxValue < parseInt(minRequired)){
+    if(maxValue !== undefined && maxValue !== "*" && minRequired !== undefined && parseInt(maxValue) < minRequired){
       return false;
     }
 
