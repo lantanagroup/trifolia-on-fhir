@@ -1,5 +1,8 @@
 FROM node:12-alpine AS build-ToF
 
+# Python and G++ are required for some of the node devDependencies
+# Java is required for Trifolia-on-FHIR to "Publish" implementation guides
+# (Java is used to executed the FHIR IG Publisher)
 RUN apk add --no-cache --virtual .gyp python make g++ openjdk8-jre
 
 RUN mkdir /build
