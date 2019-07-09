@@ -27,6 +27,7 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 FROM node:12-alpine
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
 
+COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 COPY --from=build-ToF /build/dist/apps/client/. /ToF/client/
 COPY --from=build-ToF /build/dist/apps/server/. /ToF/server/
 COPY --from=build-ToF /build/dist/apps/tools/. /ToF/tools/
