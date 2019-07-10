@@ -6,8 +6,9 @@
     "adminCode": "t3st",
     "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",
     "googleAnalyticsCode": "UA-43626731-3",
-    "logFileName": "tof.log",
+    "logFileName": "logs/tof.log",
     "logLevel": "all",
+    "maxLogSizeKB": 1024,
     "maxRequestSizeMegabytes": 50
   },
   "auth": {
