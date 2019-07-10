@@ -5,7 +5,6 @@ import * as XLSX from 'xlsx';
 import {Bundle, EntryComponent, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
 export class VSACImportCriteria {
-  resourceType = 'ValueSet';
   id: string;
   username: string;
   password: string;
@@ -25,7 +24,7 @@ export class ImportService {
 
   public importVsac(criteria: VSACImportCriteria): Observable<any> {
     return new Observable<any>((subscriber) => {
-      const url = '/api/import/vsac/' + criteria.resourceType + '/' + criteria.id;
+      const url = `/api/import/vsac/${encodeURIComponent(criteria.id)}`;
       const authorization = btoa(criteria.username + ':' + criteria.password);
       const headers = {
         'vsacAuthorization': 'Basic ' + authorization

@@ -405,6 +405,8 @@ export class ImportComponent implements OnInit {
           setTimeout(() => {
             tabSet.select('results');
           });
+        } else if (err && err.error && err.error.message) {
+          this.message = err.error.message;
         } else if (err && err.message) {
           this.message = 'Error while importing: ' + err.message;
         } else {
@@ -574,7 +576,7 @@ export class ImportComponent implements OnInit {
     } else if (this.activeTab === 'text') {
       return !this.textContent;
     } else if (this.activeTab === 'vsac') {
-      return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password || !this.vsacCriteria.resourceType;
+      return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password;
     } else if (this.activeTab === 'github') {
       return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
     }
