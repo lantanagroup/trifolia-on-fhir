@@ -52,7 +52,7 @@
           </div>
 
           <div class="col-md-6">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId"></app-fhir-string>
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
           </div>
 
           <div class="col-md-6">
@@ -276,7 +276,7 @@
 
               <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
 
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId"></app-fhir-string>
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
             </div>
           </div>
         </fieldset>
