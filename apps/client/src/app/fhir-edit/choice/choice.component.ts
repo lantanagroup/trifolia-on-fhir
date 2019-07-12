@@ -22,10 +22,12 @@ export class FhirChoiceComponent implements OnInit {
   @Input() isFormGroup = true;
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Input() allowedType: string;
 
   public tooltip: string;
   public contactPointSystemCodes: Coding[] = [];
   public Globals = Globals;
+  public typeInvalid: boolean;
 
   constructor(
     private fhirService: FhirService,
@@ -236,10 +238,24 @@ export class FhirChoiceComponent implements OnInit {
     }
 
     if (!this.choices) {
-      this.choices = Globals.dataTypes;
+      this.choices =  this.fhirService.dataTypes;
     }
 
     this.choices.sort();
     this.contactPointSystemCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/contact-point-system');
+
+    // Limit the choices based on the allowed type specified
+    if (this.allowedType && this.choices.indexOf(this.allowedType) >= 0) {
+      const selected = this.hasChoice() ? this.getChoiceName() : undefined;
+
+      this.choices = [this.allowedType];
+
+      // If the user has already selected a choice that is not one of the allowed types,
+      // we should still show the option for their already-selected choice. They can fix the choice/selection later.
+      if (selected && this.choices.indexOf(selected) < 0) {
+        this.choices.push(selected);
+        this.typeInvalid = true;
+      }
+    }
   }
 }

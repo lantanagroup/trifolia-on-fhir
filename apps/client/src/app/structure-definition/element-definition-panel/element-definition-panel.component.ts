@@ -182,11 +182,20 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
 
     // If max is specified, min is specified, and max is not "unlimited", make sure max greater than min
-    if(maxValue !== undefined && maxValue !== "*" && minRequired !== undefined && maxValue < parseInt(minRequired)){
+    if(maxValue !== undefined && maxValue !== "*" && minRequired !== undefined && parseInt(maxValue) < minRequired){
       return false;
     }
 
     return true;
+  }
+
+  getAllowedType(propertyPrefix: 'fixed'|'pattern'|'minValue'|'maxValue') {
+    const dataTypes = this.fhirService.dataTypes;
+    const foundMatchingProperty = dataTypes.find((dt) => {
+      const caseSensitiveDataType = dt.substring(0, 1).toUpperCase() + dt.substring(1);
+      return this.elementTreeModel.baseElement.hasOwnProperty(propertyPrefix + caseSensitiveDataType);
+    });
+    return foundMatchingProperty;
   }
 
   ngOnInit() {

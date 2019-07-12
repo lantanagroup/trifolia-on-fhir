@@ -92,6 +92,29 @@ export class FhirService {
     }
   }
 
+  public get dataTypes(): string[] {
+    if (this.configService.isFhirSTU3) {
+      return ['Address', 'Age', 'Ratio', 'Period', 'Range', 'Attachment',
+        'Identifier', 'Timing', 'HumanName', 'Coding', 'Annotation',
+        'Signature', 'CodeableConcept', 'Quantity', 'SampledData', 'ContactPoint',
+        'Distance', 'SimpleQuantity', 'Duration', 'Count', 'Money', 'instant',
+        'time', 'date', 'dateTime', 'base64Binary', 'decimal', 'boolean', 'code',
+        'string', 'integer', 'uri', 'markdown', 'id', 'oid', 'unsignedInt',
+        'positiveInt', 'Element'];
+    } else if (this.configService.isFhirR4) {
+      return [ 'Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation',
+        'HumanName', 'CodeableConcept', 'ContactPoint', 'Coding', 'Money', 'Address',
+        'Timing', 'BackboneElement', 'Quantity', 'SampledData', 'Signature', 'Age',
+        'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity',
+        'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact',
+        'UsageContext', 'ParameterDefinition', 'Expression', 'TriggerDefinition',
+        'Reference', 'Meta', 'Dosage', 'xhtml', 'Narrative', 'Extension', 'ElementDefinition',
+        'instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
+        'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
+        'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
+    }
+  }
+
   public get http(): HttpClient {
     return this.injector.get(HttpClient);
   }

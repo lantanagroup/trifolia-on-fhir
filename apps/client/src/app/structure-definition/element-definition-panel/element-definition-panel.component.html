@@ -395,24 +395,22 @@
         <app-element-definition-binding [element]="element"></app-element-definition-binding>
 
         <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed"
-                         tooltipPath="ElementDefinition.fixed[x]"></app-fhir-choice>
+                         tooltipPath="ElementDefinition.fixed[x]" [allowedType]="getAllowedType('fixed')"></app-fhir-choice>
 
         <app-fhir-choice [parentObject]="element" propertyName="pattern" title="Pattern"
-                         tooltipPath="ElementDefinition.pattern[x]"></app-fhir-choice>
+                         tooltipPath="ElementDefinition.pattern[x]" [allowedType]="getAllowedType('pattern')"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value"
-                         tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
+        <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value" tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="example" title="Example"
-                         tooltipPath="ElementDefinition.example[x]"></app-fhir-choice>
+        <app-fhir-choice [parentObject]="element" propertyName="example" title="Example" tooltipPath="ElementDefinition.example[x]"></app-fhir-choice>
 
         <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
-                         tooltipPath="ElementDefinition.minValue[x]"></app-fhir-choice>
+                         tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')"></app-fhir-choice>
 
         <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
-                         tooltipPath="ElementDefinition.maxValue[x]"></app-fhir-choice>
+                         tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')"></app-fhir-choice>
       </ng-template>
     </ngb-tab>
     <ngb-tab id="json">
