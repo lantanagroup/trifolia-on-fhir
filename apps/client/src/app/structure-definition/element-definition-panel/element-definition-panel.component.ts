@@ -143,9 +143,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   isPrimitiveExceptBoolean() {
-    return this.fhirService.primitiveTypes
-      .indexOf(this.elementTreeModel.baseElement.type[0].code) !== -1 &&
-      this.elementTreeModel.baseElement.type[0].code !== 'boolean';
+    const type = this.elementTreeModel.baseElement.type;
+    return !type || type.length === 0 || !type[0].code ||
+      (this.fhirService.primitiveTypes.indexOf(type[0].code) !== -1 && type[0].code !== 'boolean');
   }
 
   get isMinValid() {
