@@ -1,4 +1,4 @@
-<h1>Value Set</h1>
+<h1>Value Set <span *ngIf="valueSet && valueSet.name">"{{valueSet.name}}"</span></h1>
 
 <div class="alert alert-danger" *ngIf="vsNotFound">Value Set with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
