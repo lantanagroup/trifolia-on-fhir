@@ -41,7 +41,7 @@ export abstract class CustomValidator {
           structureDefinition.differential.element.forEach((element, index) => {
             const foundBaseElement = extraData.baseStructureDefinition.snapshot.element.find((baseElement) => baseElement.path === element.path);
 
-            if (element.min && element.min < foundBaseElement.min) {
+            if (foundBaseElement && element.min && element.min < foundBaseElement.min) {
               messages.push({
                 severity: Severities.Error,
                 location: `StructureDefinition.differential.element[${index+1}]`,
@@ -50,8 +50,8 @@ export abstract class CustomValidator {
               });
             }
 
-            const elementMaxRequired = element.max || foundBaseElement.max;
-            const elementMinRequired = element.min || foundBaseElement.min;
+            const elementMaxRequired = element.max || (foundBaseElement && foundBaseElement.max);
+            const elementMinRequired = element.min || (foundBaseElement && foundBaseElement.min);
 
             if (elementMaxRequired && elementMaxRequired !== "*" && element.min > parseInt(elementMaxRequired)) {
               messages.push({
@@ -62,7 +62,9 @@ export abstract class CustomValidator {
               });
             }
 
-            if (element.max && ((element.max !== "*" && foundBaseElement.max !== "*" && element.max > foundBaseElement.max) || (element.max === "*" && foundBaseElement.max !== "*"))){
+            if (foundBaseElement && element.max &&
+              ((element.max !== "*" && foundBaseElement.max !== "*" && element.max > foundBaseElement.max) ||
+                (element.max === "*" && foundBaseElement.max !== "*"))){
               messages.push({
                 severity: Severities.Error,
                 location: `StructureDefinition.differential.element[${index + 1}]`,
@@ -71,12 +73,48 @@ export abstract class CustomValidator {
               });
             }
 
-            if(element.max && element.max !== "*" && elementMinRequired && element.max < parseInt(elementMinRequired)){
+            if(element.max && elementMinRequired && element.max !== "*" && element.max < parseInt(elementMinRequired)){
               messages.push({
                 severity: Severities.Error,
                 location: `StructureDefinition.differential.element[${index + 1}]`,
                 resourceId: structureDefinition.id,
                 message: `The constrained element\'s max value cannot be less than the base element\'s min value. Constrained element's max value is ${element.max} while the base element's min value is ${elementMinRequired}.`
+              });
+            }
+
+            if(foundBaseElement && foundBaseElement.fixed && element.fixed !== foundBaseElement.fixed){
+              messages.push({
+                severity: Severities.Error,
+                location: `StructureDefinition.differential.element[${index + 1}]`,
+                resourceId: structureDefinition.id,
+                message: `The constrained element\'s fixed value cannot anything other than the base element\'s fixed value. Constrained element's fixed value is ${element.fixed} while the base element's fixed value is ${foundBaseElement.fixed}.`
+              });
+            }
+
+            if(foundBaseElement && foundBaseElement.pattern && element.pattern !== foundBaseElement.pattern){
+              messages.push({
+                severity: Severities.Error,
+                location: `StructureDefinition.differential.element[${index + 1}]`,
+                resourceId: structureDefinition.id,
+                message: `The constrained element\'s pattern value cannot anything other than the base element\'s pattern value. Constrained element's pattern value is ${element.pattern} while the base element's pattern value is ${foundBaseElement.pattern}.`
+              });
+            }
+
+            if(foundBaseElement && foundBaseElement.minValue && element.minValue !== foundBaseElement.minValue){
+              messages.push({
+                severity: Severities.Error,
+                location: `StructureDefinition.differential.element[${index + 1}]`,
+                resourceId: structureDefinition.id,
+                message: `The constrained element binding\'s min value cannot anything other than the base element binding's min value. Constrained element binding's min value is ${element.minValue} while the base element binding's min value is ${foundBaseElement.minValue}.`
+              });
+            }
+
+            if(foundBaseElement && foundBaseElement.maxValue && element.maxValue !== foundBaseElement.maxValue){
+              messages.push({
+                severity: Severities.Error,
+                location: `StructureDefinition.differential.element[${index + 1}]`,
+                resourceId: structureDefinition.id,
+                message: `The constrained element binding\'s max value cannot anything other than the base element binding's max value. Constrained element binding's max value is ${element.maxValue} while the base element binding's max value is ${foundBaseElement.maxValue}.`
               });
             }
 
