@@ -29,6 +29,7 @@ export class ExportComponent implements OnInit {
   public githubCommitMessage: string;
   public searching = false;
   public activeTabId = 'html';
+  public Globals = Globals;
 
   @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 

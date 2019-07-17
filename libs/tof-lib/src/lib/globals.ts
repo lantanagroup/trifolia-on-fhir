@@ -28,6 +28,15 @@ export class Globals {
   };
 
   static readonly introText = {
+    'export.implementationGuide': 'Select the implementation guide you wish to export here by using the typeahead bar.',
+    'export.igPublisher': 'This tab exports a published version of the implementation guide.',
+    'export.igPublisherOutput': 'You can select the type of output the published IG will take here.',
+    'export.igPublisherJAR': 'You can also choose whether the FHIR IG Publisher JAR will be included in the export package here.',
+    'export.bundle': 'This tab exports a FHIR Bundle that contains the resources referenced by the selected implementation guide.',
+    'export.bundleOutput': 'You can select the type of output the Bundle will take here.',
+    'export.github': 'This tab exports the implementation guide to a GitHub repository.',
+    'export.githubMessage': 'Write the commit message that you\'d like to be associated with this IG on GitHub',
+    'export.exportButton': 'After you\'ve selected a tab and the appropriate options for your export, click here to complete the export process.',
     'resource.permissions-tab': 'This tab lets you specify who can read and edit this resource. By default, only you are allowed to view/edit the resource.',
     'resource.validation-tab': 'This tab provides real-time validation of the resource. This is only basic validation to ensure that required properties are specified correctly. More advanced validation occurs during the "Publish" process/screen.',
     'resource.raw-tab': 'This tab allows you to view the resource\'s JSON and XML representations. You may also download the various representations of the resource to your computer from here.',
