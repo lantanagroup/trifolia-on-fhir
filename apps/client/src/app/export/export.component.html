@@ -30,8 +30,9 @@
       </div>
 
       <div class="row" [attr.data-intro]="Globals.introText['export.igPublisher']">
-        <div class="col-md-6" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
-          <div class="form-group" *ngIf="options.implementationGuideId && options.exportFormat !== 3">
+        <div class="col-md-6">
+          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
+               [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat">
               <option value="application/json">JSON</option>
@@ -40,8 +41,8 @@
           </div>
         </div>
 
-        <div class="col-md-6" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
-          <div class="form-group">
+        <div class="col-md-6">
+          <div class="form-group" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
             <label>Include FHIR IG Publisher JAR?</label>
             <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
               <option [ngValue]="true">Yes</option>
@@ -59,8 +60,9 @@
       </div>
 
       <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
-        <div class="col-md-6" [attr.data-intro]="Globals.introText['export.bundleOutput']">
-          <div class="form-group" *ngIf="options.implementationGuideId && options.exportFormat !== 3">
+        <div class="col-md-6">
+          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
+               [attr.data-intro]="Globals.introText['export.bundleOutput']">
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
               <option value="application/json">JSON</option>
@@ -73,22 +75,24 @@
   </ngb-tab>
   <ngb-tab title="GitHub" id="github">
     <ng-template ngbTabContent>
-      <div class="alert alert-info">The "GitHub" export format places all the resources within the IG in the specified
-        GitHub repository/branch.
-      </div>
+      <div [attr.data-intro]="Globals.introText['export.github']">
+        <div class="alert alert-info">The "GitHub" export format places all the resources within the IG in the specified
+          GitHub repository/branch.
+        </div>
 
-      <div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to
-        GitHub. If the file already exists in GitHub, it will be completely overwritten by this export. At least one
-        resource must have GitHub location information specified to export.
-      </div>
+        <div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to
+          GitHub. If the file already exists in GitHub, it will be completely overwritten by this export. At least one
+          resource must have GitHub location information specified to export.
+        </div>
 
-      <div class="form-group" [attr.data-intro]="Globals.introText['export.github']">
-        <label>Commit Message</label>
-        <textarea class="form-control" [class.is-invalid]="!githubCommitMessage" [(ngModel)]="githubCommitMessage"
-                  placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
-      </div>
+        <div class="form-group">
+          <label>Commit Message</label>
+          <textarea class="form-control" [class.is-invalid]="!githubCommitMessage" [(ngModel)]="githubCommitMessage"
+                    placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
+        </div>
 
-      <app-export-github-panel [resourcesBundle]="githubResourcesBundle" #githubPanel></app-export-github-panel>
+        <app-export-github-panel [resourcesBundle]="githubResourcesBundle" #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"></app-export-github-panel>
+      </div>
     </ng-template>
   </ngb-tab>
 </ngb-tabset>

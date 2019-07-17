@@ -36,6 +36,7 @@ export class Globals {
     'export.bundleOutput': 'You can select the type of output the Bundle will take here.',
     'export.github': 'This tab exports the implementation guide to a GitHub repository.',
     'export.githubMessage': 'Write the commit message that you\'d like to be associated with this IG on GitHub',
+    'export.githubLogin': 'Click here to login to GitHub.',
     'export.exportButton': 'After you\'ve selected a tab and the appropriate options for your export, click here to complete the export process.',
     'resource.permissions-tab': 'This tab lets you specify who can read and edit this resource. By default, only you are allowed to view/edit the resource.',
     'resource.validation-tab': 'This tab provides real-time validation of the resource. This is only basic validation to ensure that required properties are specified correctly. More advanced validation occurs during the "Publish" process/screen.',
