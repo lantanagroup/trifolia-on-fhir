@@ -4,6 +4,10 @@ layout: default
 active: downloads
 ---
 
+**Full Implementation Guide**
+
+The entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).
+
 **Validator Pack and Definitions:**
 
 The following file contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.:
