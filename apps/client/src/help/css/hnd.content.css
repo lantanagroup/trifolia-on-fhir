@@ -82,24 +82,22 @@ span.rvts14
 }
 span.rvts15
 {
- font-family: 'Times New Roman', 'Times', serif;
+ text-decoration: underline;
 }
 span.rvts16
 {
- text-decoration: underline;
+ font-weight: bold;
+ color: #000000;
 }
 span.rvts17
 {
- font-size: 11pt;
- font-family: 'Calibri';
  color: #000000;
 }
-a.rvts18, span.rvts18
+span.rvts18
 {
- font-size: 11pt;
- font-family: 'Calibri';
- color: #000000;
- text-decoration: underline;
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
 }
 span.rvts19
 {
@@ -108,18 +106,16 @@ span.rvts19
 }
 span.rvts20
 {
- font-size: 14pt;
  font-style: italic;
- font-weight: bold;
 }
 span.rvts21
 {
- font-style: italic;
+ font-size: 16pt;
+ font-weight: bold;
 }
 span.rvts22
 {
- font-size: 16pt;
- font-weight: bold;
+ font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts23
 {
@@ -160,7 +156,17 @@ span.rvts31
  font-style: italic;
  font-weight: bold;
 }
-a.rvts32, span.rvts32
+span.rvts32
+{
+ font-family: 'Times New Roman', 'Times', serif;
+}
+span.rvts33
+{
+ font-size: 11pt;
+ font-family: 'Calibri';
+ color: #000000;
+}
+a.rvts34, span.rvts34
 {
  font-size: 11pt;
  font-family: 'Calibri';
@@ -208,40 +214,41 @@ p,ul,ol /* Paragraph Style */
 }
 .rvps6
 {
- line-height: 1.07;
- widows: 2;
- orphans: 2;
- margin: 0px 0px 19px 0px;
+ text-align: left;
+ text-indent: 0px;
+ page-break-after: avoid;
+ padding: 0px 0px 0px 0px;
+ margin: 16px 0px 4px 0px;
 }
 .rvps7
 {
+ text-align: left;
+ text-indent: 0px;
+ page-break-after: avoid;
+ padding: 0px 0px 0px 0px;
+ margin: 16px 0px 4px 0px;
 }
 .rvps8
 {
- text-align: left;
- text-indent: 0px;
- page-break-after: avoid;
- padding: 0px 0px 0px 0px;
- margin: 16px 0px 4px 0px;
 }
 .rvps9
 {
- text-align: left;
- text-indent: 0px;
- page-break-after: avoid;
- padding: 0px 0px 0px 0px;
- margin: 16px 0px 4px 0px;
+ margin: 0px 0px 0px 72px;
 }
 .rvps10
-{
-}
-.rvps11
 {
  border-color: #000000;
  border-style: solid;
  border-width: 1px;
  padding: 4px 4px 4px 4px;
  margin: 3px 19px 3px 19px;
+}
+.rvps11
+{
+ line-height: 1.07;
+ widows: 2;
+ orphans: 2;
+ margin: 0px 0px 19px 0px;
 }
 .rvps12
 {

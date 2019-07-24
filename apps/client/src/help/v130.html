@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.2.0.255">
+  <meta name="generator" content="HelpNDoc Personal Edition 6.3.0.298">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -16,6 +16,8 @@
   <meta name="keywords" content="">
 
 
+
+  
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
@@ -29,31 +31,31 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.3.6/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
-      <script src="vendors/html5shiv-3.7.2/html5shiv.min.js"></script>
+      <script src="vendors/html5shiv-3.7.3/html5shiv.min.js"></script>
       <script src="vendors/respond-1.4.2/respond.min.js"></script>
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.2/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
   <link href="css/effects.min.css" rel="stylesheet" />
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
-  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded #main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/lantana-hnd.css" />
+  
 
 
 
@@ -87,21 +89,21 @@
       
 	  
         <li role="presentation" class="tab active">
-            <a href="#contents" aria-controls="contents" role="tab" data-toggle="tab">
+            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-list"></i>
                 Contents
             </a>
         </li>
       
         <li role="presentation" class="tab">
-            <a href="#index" aria-controls="index" role="tab" data-toggle="tab">
+            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-asterisk"></i>
                 Index
             </a>
         </li>
       
         <li role="presentation" class="tab">
-            <a href="#search" aria-controls="search" role="tab" data-toggle="tab">
+            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-search"></i>
                 Search
             </a>
@@ -171,7 +173,7 @@
                         <li>Version History</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="VersionHistory.html" title="Version History" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="VersionHistory.html" title="Version History" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v120.html" title="v1.2.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails_SecurityandPerm.html" title="Security and Permissions" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v120.html" title="v1.2.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -183,14 +185,14 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.3.0 on March 29, 2019</span></p>
+<p class="rvps3"><span class="rvts15">Release 1.3.0 on March 29, 2019</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Search by 'Title' for Implementation Guides and Profiles</span></span></h3>
 <p class="rvps3"><span class="rvts8">Users can search for Implementation Guides and Profiles by title. Note, users must expand 'More Options' to search by title for Profiles/Extensions. </span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Fixed element ids for slicing</span></span></h3>
 <p class="rvps3"><span class="rvts8">A bug has been fixed which caused slices to produce the wrong "id" property for elements.</span></p>
 <p class="rvps3"><span class="rvts8">Example of section slicing:</span></p>
-<p class="rvps3"><span class="rvts8">Before: </span><span class="rvts23">&lt;element id="Composition.section.entry:testSectionSlice"&gt;</span></p>
-<p class="rvps3"><span class="rvts8">After: </span><span class="rvts23">&lt;element id="Composition.section:testSectionSlice.entry"&gt; </span></p>
+<p class="rvps3"><span class="rvts8">Before: </span><span class="rvts22">&lt;element id="Composition.section.entry:testSectionSlice"&gt;</span></p>
+<p class="rvps3"><span class="rvts8">After: </span><span class="rvts22">&lt;element id="Composition.section:testSectionSlice.entry"&gt; </span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">LOINC &amp; SNOMED code systems locked</span></span></h3>
 <p class="rvps3"><span class="rvts8">Users can no longer edit or delete LOINC or SNOMED code systems using the user interface. </span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Retain Export/Publish preferences</span></span></h3>
@@ -206,146 +208,147 @@
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-27" target="_blank">TRIFFHIR-27</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-27" target="_blank">TRIFFHIR-27</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Disable editing for select/configured resources</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Disable editing for select/configured resources</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-82" target="_blank">TRIFFHIR-82</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-82" target="_blank">TRIFFHIR-82</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">On Export, add option to include IG publisher jar file and build script(s)</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">On Export, add option to include IG publisher jar file and build script(s)</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-116" target="_blank">TRIFFHIR-116</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-116" target="_blank">TRIFFHIR-116</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Save defaults during subsequent Exports</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Save defaults during subsequent Exports</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-123" target="_blank">TRIFFHIR-123</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-123" target="_blank">TRIFFHIR-123</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Generic Error message</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Generic Error message</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-130" target="_blank">TRIFFHIR-130</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-130" target="_blank">TRIFFHIR-130</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Story</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Login problems for GitHub authentication</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Login problems for GitHub authentication</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-143" target="_blank">TRIFFHIR-143</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-143" target="_blank">TRIFFHIR-143</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">New Feature</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Display version history for remaining editing screens</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Display version history for remaining editing screens</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-156" target="_blank">TRIFFHIR-156</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-156" target="_blank">TRIFFHIR-156</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Use type-ahead search for implementation guide selection on export screen</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Use type-ahead search for implementation guide selection on export screen</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-157" target="_blank">TRIFFHIR-157</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-157" target="_blank">TRIFFHIR-157</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Profile editor not showing slices</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Profile editor not showing slices</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-158" target="_blank">TRIFFHIR-158</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-158" target="_blank">TRIFFHIR-158</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Resources on "Other" page of published IG all prefixed as "CapabilityStatement" causing broken link</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Resources on "Other" page of published IG all prefixed as "CapabilityStatement" causing broken link</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-159" target="_blank">TRIFFHIR-159</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-159" target="_blank">TRIFFHIR-159</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Create new profile - Type should not default to Account</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Create new profile - Type should not default to Account</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-160" target="_blank">TRIFFHIR-160</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-160" target="_blank">TRIFFHIR-160</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Specify packageId on STU3 implementation guide</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Specify packageId on STU3 implementation guide</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-164" target="_blank">TRIFFHIR-164</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-164" target="_blank">TRIFFHIR-164</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Search by title for implementation guide and profiles</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Search by title for implementation guide and profiles</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-165" target="_blank">TRIFFHIR-165</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-165" target="_blank">TRIFFHIR-165</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Extra validation on the "name" field in Implementation Guide and Profiles</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Extra validation on the "name" field in Implementation Guide and Profiles</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-166" target="_blank">TRIFFHIR-166</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-166" target="_blank">TRIFFHIR-166</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Improvement</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Minor UI styling and field position changes</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Minor UI styling and field position changes</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-167" target="_blank">TRIFFHIR-167</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-167" target="_blank">TRIFFHIR-167</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Invalid element ids after slicing</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Invalid element ids after slicing</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-169" target="_blank">TRIFFHIR-169</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-169" target="_blank">TRIFFHIR-169</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Value Set binding incorrect for R4</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Value Set binding incorrect for R4</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts32" href="https://trifolia.atlassian.net/browse/TRIFFHIR-174" target="_blank">TRIFFHIR-174</a></p>
+<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><a class="rvts34" href="https://trifolia.atlassian.net/browse/TRIFFHIR-174" target="_blank">TRIFFHIR-174</a></p>
 </td>
 <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts8">Defect</span></p>
 </td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts17">Update XML viewing under Raw tab</span></p>
+<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps3"><span class="rvts33">Update XML viewing under Raw tab</span></p>
 </td>
 </tr>
 </table>
 </div>
-<p class="rvps6"><span class="rvts15"><br/></span></p>
-<p class="rvps6"><span class="rvts15"><br/></span></p>
+<p class="rvps11"><span class="rvts32"><br/></span></p>
+<p class="rvps11"><span class="rvts32"><br/></span></p>
 <p></p>
+<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com">Free Qt Help documentation generator</a></p>
 
             </div>
             
@@ -353,28 +356,45 @@
         </div>  <!-- /#topic-content -->
     </article>
 
-    <footer>
-        
-    </footer>
+    <footer></footer>
 
   </div>  <!-- /#main -->
 
   <div class="mask" data-toggle="sm-nav-expanded"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="hndModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-1.11.3/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
   <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
-  <script src="vendors/markjs-8.8.3/jquery.mark.min.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.1/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.3.6/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
-  <script src="vendors/headroom-0.9.3/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.3/jquery.headroom.min.js"></script>
+  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
+  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
 
   <!-- JsTree -->
-  <script src="vendors/jstree-3.3.2/jstree.min.js"></script>
+  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
 
   <!-- HelpNDoc scripts -->
   <script src="_translations.js"></script>
@@ -391,10 +411,18 @@
       var app = new Hnd.App();
       // Update translations
       hnd_ut(app);
+	  // Instanciate imageMapResizer
+	  imageMapResize();
+	  // Custom JS
+	  
       // Boot the app
       app.Boot();
     });
   </script>
 
-  
+
+
+</body>
+
+</html>
 
