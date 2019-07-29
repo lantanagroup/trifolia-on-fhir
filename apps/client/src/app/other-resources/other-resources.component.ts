@@ -50,7 +50,7 @@ export class OtherResourcesComponent implements OnInit {
     this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl)
       .subscribe((results: Bundle) => {
         this.results = results;
-        this.message = 'Done searching...';
+        this.message = 'Done searching.';
         this.tabSet.select('results');
       }, (err) => {
         this.message = 'Error while searching for other resources: ' + getErrorString(err);

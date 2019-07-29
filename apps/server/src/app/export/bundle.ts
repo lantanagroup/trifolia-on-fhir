@@ -131,6 +131,9 @@ export class BundleExporter {
     }
 
     const url = buildUrl(this.fhirServerBase, 'ImplementationGuide', null, null, params, true);
+
+    this.logger.log(`Getting bundle of resources for implementation guide ${this.implementationGuideId} using URL ${url}`);
+
     const results = await this.httpService.get<Bundle>(url).toPromise();
     const bundle = results.data;
 
