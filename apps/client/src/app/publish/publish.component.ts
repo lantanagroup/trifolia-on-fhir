@@ -29,6 +29,7 @@ export class PublishComponent implements OnInit {
   public socketOutput = '';
   public autoScroll = true;
   public Globals = Globals;
+  public inProgress = false;
 
   private packageId;
 
@@ -114,7 +115,7 @@ export class PublishComponent implements OnInit {
   }
 
   public get publishDisabled(): boolean {
-    return !this.options.implementationGuideId || !this.options.responseFormat;
+    return !this.options.implementationGuideId || !this.options.responseFormat || this.inProgress;
   }
 
   public responseFormatChanged() {
@@ -122,6 +123,7 @@ export class PublishComponent implements OnInit {
   }
 
   public publish() {
+    this.inProgress = true;
     this.socketOutput = '';
     this.tabs.select('status');
 
@@ -143,7 +145,7 @@ export class PublishComponent implements OnInit {
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {
-        this.socketOutput += data.message;
+        this.socketOutput += data.message === "Done. You will be prompted to download the package in a moment." ? data.message : data.message.trim() + "...\n";
 
         if (!data.message.endsWith('\n')) {
           this.socketOutput += '\r\n';
@@ -162,6 +164,7 @@ export class PublishComponent implements OnInit {
             this.exportService.getPackage(this.packageId)
               .subscribe((results: any) => {
                 saveAs(results.body, igName + '.zip');
+                this.inProgress = false;
               });
           }
         }
