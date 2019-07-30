@@ -516,6 +516,13 @@ export class HtmlExporter {
     }
   }
 
+  /**
+   * Updates the default templates for the pages "Profiles", "Terminology", "Capability Statements", etc.
+   * with links to the resources in the implementation guide.
+   * @param rootPath
+   * @param bundle
+   * @param implementationGuide
+   */
   private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
     const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
     const distinctResources = (bundle.entry || [])
@@ -558,6 +565,7 @@ export class HtmlExporter {
       }
     }
 
+    // Profiles
     if (profiles.length > 0) {
       const profilesData = profiles
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
@@ -570,6 +578,7 @@ export class HtmlExporter {
       fs.appendFileSync(profilesPath, '**No profiles are defined for this implementation guide**\n\n');
     }
 
+    // Extensions
     if (extensions.length > 0) {
       const extData = extensions
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
@@ -582,6 +591,7 @@ export class HtmlExporter {
       fs.appendFileSync(profilesPath, '### Extensions\n\n**No extensions are defined for this implementation guide**\n\n');
     }
 
+    // Value Sets
     let vsContent = '### Value Sets\n\n';
 
     if (valueSets.length > 0) {
@@ -596,13 +606,14 @@ export class HtmlExporter {
 
     fs.appendFileSync(terminologyPath, vsContent + '\n\n');
 
+    // Code Systems
     let csContent = '### Code Systems\n\n';
 
     if (codeSystems.length > 0) {
       codeSystems
         .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         .forEach((codeSystem) => {
-          csContent += `- [${codeSystem.title || codeSystem.name}](ValueSet-${codeSystem.id}.html)\n`;
+          csContent += `- [${codeSystem.title || codeSystem.name}](CodeSystem-${codeSystem.id}.html)\n`;
         });
     } else {
       csContent += '**No code systems are defined for this implementation guide**\n\n';
@@ -610,6 +621,7 @@ export class HtmlExporter {
 
     fs.appendFileSync(terminologyPath, csContent + '\n\n');
 
+    // Capability Statements
     if (capabilityStatements.length > 0) {
       const csData = capabilityStatements
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
@@ -622,6 +634,7 @@ export class HtmlExporter {
       fs.appendFileSync(csPath, '**No capability statements are defined for this implementation guide**');
     }
 
+    // Other Resources
     if (otherResources.length > 0) {
       const oData = otherResources
         .sort((a, b) => {
