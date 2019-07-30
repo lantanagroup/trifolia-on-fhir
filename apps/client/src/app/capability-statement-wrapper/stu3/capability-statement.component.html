@@ -293,8 +293,7 @@
       capability statement includes REST entries
       <app-tooltip-icon tooltipPath="CapabilityStatement.rest"></app-tooltip-icon>
 
-      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet
-                  [destroyOnHide]="false">
+      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false" (tabChange)="beforeRestTabChange($event)">
         <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
           <ng-template ngbTabTitle>
             <span>REST {{ri + 1}} </span>
@@ -464,7 +463,7 @@
                   <th class="actions-column-1">
                     <div class="pull-right">
                       <button type="button" class="btn btn-default btn-sm" title="Add an interaction"
-                              (click)="r.resource.push({ code: 'transaction' })">
+                              (click)="r.interaction.push({ code: 'transaction' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -655,13 +654,12 @@
             </div>
           </ng-template>
         </ngb-tab>
-        <ngb-tab [disabled]="true">
+        <ngb-tab id="add">
           <ng-template ngbTabTitle>
             <button type="button" class="btn btn-default" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
               Add
             </button>
           </ng-template>
-          <ng-template ngbTabContent></ng-template>
         </ngb-tab>
       </ngb-tabset>
     </ng-template>

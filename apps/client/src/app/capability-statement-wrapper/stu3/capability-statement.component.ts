@@ -5,7 +5,7 @@ import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComp
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
@@ -131,6 +131,12 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
       const newRestTabId = 'rest-' + lastIndex.toString();
       restTabSet.select(newRestTabId);
     }, 50);
+  }
+
+  public beforeRestTabChange($event: NgbTabChangeEvent) {
+    if ($event.nextId === 'add') {
+      $event.preventDefault();
+    }
   }
 
   public addMessagingEntry(messagingTabSet) {
