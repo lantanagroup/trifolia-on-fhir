@@ -40,7 +40,8 @@ export class ValueSetService {
     }
 
     public get(id: string) {
-        const url = '/api/valueSet/' + encodeURIComponent(id);
+        let url = '/api/valueSet/' + encodeURIComponent(id);
+        url += "?_sort=name";
         return this.http.get<ValueSet|OperationOutcome>(url);
     }
 

@@ -68,6 +68,8 @@ export class StructureDefinitionService {
       url += `title=${encodeURIComponent(titleText)}&`;
     }
 
+    url += '_sort=name';
+
     return this.http.get<Bundle>(url);
   }
 

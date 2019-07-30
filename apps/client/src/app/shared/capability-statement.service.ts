@@ -28,7 +28,8 @@ export class CapabilityStatementService {
     }
 
     public get(id: string) {
-        const url = '/api/capabilityStatement/' + encodeURIComponent(id);
+        let url = '/api/capabilityStatement/' + encodeURIComponent(id);
+        url += '?_sort=name';
         return this.http.get<CapabilityStatement | OperationOutcome>(url);
     }
 

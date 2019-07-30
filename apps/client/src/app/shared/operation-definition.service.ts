@@ -28,7 +28,8 @@ export class OperationDefinitionService {
     }
 
     public get(id: string) {
-        const url = '/api/operationDefinition/' + encodeURIComponent(id);
+        let url = '/api/operationDefinition/' + encodeURIComponent(id);
+        url += "?_sort=name";
         return this.http.get<OperationDefinition | OperationOutcome>(url);
     }
 

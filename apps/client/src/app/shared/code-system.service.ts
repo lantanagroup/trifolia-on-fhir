@@ -31,7 +31,8 @@ export class CodeSystemService {
     }
 
     public get(id: string) {
-        const url = '/api/codeSystem/' + encodeURIComponent(id);
+        let url = '/api/codeSystem/' + encodeURIComponent(id);
+        url += "?_sort=name";
         return this.http.get<CodeSystem | OperationOutcome>(url);
     }
 

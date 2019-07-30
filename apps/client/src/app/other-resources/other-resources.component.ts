@@ -47,7 +47,7 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl)
+    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = 'Done searching.';
@@ -175,8 +175,8 @@ export class OtherResourcesComponent implements OnInit {
   }
 
   public getEntryUrl(entry) {
-    if (entry && entry.resource && entry.resource.url) {
-      return entry.url;
+    if (entry && entry.fullUrl) {
+      return entry.fullUrl;
     }
 
     return '';

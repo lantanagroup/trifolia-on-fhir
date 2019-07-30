@@ -275,7 +275,7 @@ export class FhirService {
    * @param {string} [searchContent]
    * @param {boolean} [summary?]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false) {
     let url = '/api/fhir/' + resourceType + '?';
 
     if (searchContent) {
@@ -312,6 +312,8 @@ export class FhirService {
     if (summary === true) {
       url += '_summary=true&';
     }
+
+    if(sortID) url += '_sort=_id&';
 
     return this.http.get(url);
   }
