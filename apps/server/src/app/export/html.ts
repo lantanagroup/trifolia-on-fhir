@@ -821,7 +821,7 @@ export class HtmlExporter {
         }
       }
 
-      pageList.push(pageInfo);
+      theList.push(pageInfo);
 
       (page.page || []).forEach((next) => getPagesList(theList, next));
 
