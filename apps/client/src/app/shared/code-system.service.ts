@@ -27,12 +27,13 @@ export class CodeSystemService {
             url += 'name=' + encodeURIComponent(name) + '&';
         }
 
+        url += '_sort=name';
+
         return this.http.get<Bundle>(url);
     }
 
     public get(id: string) {
         let url = '/api/codeSystem/' + encodeURIComponent(id);
-        url += "?_sort=name";
         return this.http.get<CodeSystem | OperationOutcome>(url);
     }
 
