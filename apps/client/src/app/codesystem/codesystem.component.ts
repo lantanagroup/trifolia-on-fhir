@@ -78,6 +78,11 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         this.refreshConcepts();
     }
 
+    public initConcepts(){
+      Globals.toggleProperty(this.codeSystem, 'concept', [{}]);
+      this.codeSystem.concept[0].code = '';
+      this.refreshConcepts();
+    }
     public refreshConcepts() {
         const actualConcepts = <ConceptDefinitionComponent[]> this.codeSystem.concept;
         let filtered = [];

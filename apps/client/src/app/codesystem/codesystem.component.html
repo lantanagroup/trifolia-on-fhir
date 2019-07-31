@@ -210,7 +210,7 @@
   <ngb-tab title="Concept(s)">
     <ng-template ngbTabContent>
       <p>
-        <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'concept', [{}])"/> Code system has concepts
+        <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="initConcepts()"/> Code system has concepts
         <app-tooltip-icon tooltipPath="CodeSystem.concept"></app-tooltip-icon>
       </p>
 
