@@ -1,40 +1,42 @@
-import {Injectable} from '@angular/core';
-import {Bundle, CapabilityStatement, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Bundle, CapabilityStatement, OperationOutcome } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class CapabilityStatementService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
-    public save(capabilityStatement: CapabilityStatement): Observable<CapabilityStatement> {
-        if (capabilityStatement.id) {
-            const url = '/api/capabilityStatement/' + encodeURIComponent(capabilityStatement.id);
-            return this.http.put<CapabilityStatement>(url, capabilityStatement);
-        } else {
-            return this.http.post<CapabilityStatement>('/api/capabilityStatement', capabilityStatement);
-        }
+  public save(capabilityStatement: CapabilityStatement): Observable<CapabilityStatement> {
+    if (capabilityStatement.id) {
+      const url = '/api/capabilityStatement/' + encodeURIComponent(capabilityStatement.id);
+      return this.http.put<CapabilityStatement>(url, capabilityStatement);
+    } else {
+      return this.http.post<CapabilityStatement>('/api/capabilityStatement', capabilityStatement);
+    }
+  }
+
+  public search(page = 1, name?: string) {
+    let url = '/api/capabilityStatement?page=' + page + '&';
+
+    if (name) {
+      url += 'name=' + encodeURIComponent(name) + '&';
     }
 
-    public search(page = 1, name?: string) {
-        let url = '/api/capabilityStatement?page=' + page + '&';
+    url += '?_sort=name';
 
-        if (name) {
-            url += 'name=' + encodeURIComponent(name) + '&';
-        }
+    return this.http.get<Bundle>(url);
+  }
 
-        return this.http.get<Bundle>(url);
-    }
+  public get(id: string) {
+    let url = '/api/capabilityStatement/' + encodeURIComponent(id);
+    return this.http.get<CapabilityStatement | OperationOutcome>(url);
+  }
 
-    public get(id: string) {
-        let url = '/api/capabilityStatement/' + encodeURIComponent(id);
-        url += '?_sort=name';
-        return this.http.get<CapabilityStatement | OperationOutcome>(url);
-    }
-
-    public delete(id: string) {
-        const url = '/api/capabilityStatement/' + encodeURIComponent(id);
-        return this.http.delete(url);
-    }
+  public delete(id: string) {
+    const url = '/api/capabilityStatement/' + encodeURIComponent(id);
+    return this.http.delete(url);
+  }
 }
