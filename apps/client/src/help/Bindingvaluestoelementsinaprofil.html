@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Adding images to pages</title>
+  <title>Binding values to elements in a profile</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Adding images to pages">
+  <meta name="twitter:title" content="Binding values to elements in a profile">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Adding images to pages" />
+  <meta property="og:title" content="Binding values to elements in a profile" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,9 +163,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="AddingImages"
-		  data-hnd-context="29"
-		  data-hnd-title="Adding images to pages"
+		  data-hnd-id="Bindingvaluestoelementsinaprofil"
+		  data-hnd-context="30"
+		  data-hnd-title="Binding values to elements in a profile"
 		>
             
                 <div class="navigation">
@@ -173,35 +173,29 @@
                         <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="AuthoringValuesets.html" title="Value sets" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Bindingvaluestoelementsinaprofil.html" title="Binding values to elements in a profile" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="AddingImages.html" title="Adding images to pages" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Export.html" title="Export" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Adding images to pages</h2>
+            <h2>Binding values to elements in a profile</h2>
 
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">To add one or more images to pages in your implementation guide, follow these steps:</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts18">To create a fixed binding for an element in a profile:</span></span></h2>
+<p class="rvps3"><span class="rvts8">Starting from the profile editor's "Elements" tab:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps3"><span class="rvts8">Import your images via the "Import" screen. You may drag-and-drop the images into the "Import" screen's "File" tab.</span><br/><span class="rvts8">These images will be imported as "Media" resources. The "id" of the Media resource will be based on the filename of the image, and the exact filename will be stored as an "identifier" in the Media.</span></li>
-<li value="2" class="rvps3"><span class="rvts8">Add your newly imported Media resources to the IG's "resources".</span><br/><span class="rvts8">Make sure they are </span><span class="rvts20">not</span><span class="rvts8">&nbsp;marked as an example. Leave the "Example" field either "Undefined" or "No". Otherwise, your Media resources will be treated as an example and will be preserved during the implementation guide's export, which may produce errors during final publication.</span></li>
-<li value="3" class="rvps3"><span class="rvts8">Open the page(s) you would like the image to show in, place your cursor where you want the image inserted and select the "Insert image from pre-defined list" option in the Markdown editor.</span></li>
-<li value="4" class="rvps3"><span class="rvts8">Select the image you want to add.</span></li>
-<li value="5" class="rvps3"><span class="rvts8">Text will be placed at your cursor for the image you selected.</span></li>
+<li value="1" class="rvps3"><span class="rvts8">Select the element you want to bind the fixed value to.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the "binding" tab in the properties of the element (on the right side of the screen).</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Check the checkbox next to "Fixed".</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Select the corresponding "type" for the element (ex: "CodeableConcept" or "string" or whatever, depending on the data type of the element you are constraining).</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Edit the value of the fixed binding according to what you want to make sure the implementer uses. </span><br/><span class="rvts8">In some cases, more complex data types (such as CodeableConcept) will show an "edit" (pencil) icon next the type you selected in #4 which opens a pop-up dialog box to have you enter the information. </span><br/><span class="rvts8">Types that are simple (such as "code" or "string") just simply show a text field for you to enter the value in.</span></li>
 </ol>
-<p class="rvps3"><span class="rvts8">Note: The following image types are supported:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">.JPG</span></li>
-<li class="rvps3"><span class="rvts8">.GIF</span></li>
-<li class="rvps3"><span class="rvts8">.PNG</span></li>
-<li class="rvps3"><span class="rvts8">.BMP</span></li>
-</ul>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/feature-tour">Easily create EBooks</a></p>
+<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/feature-tour">Easily create CHM Help documents</a></p>
 
             </div>
             
