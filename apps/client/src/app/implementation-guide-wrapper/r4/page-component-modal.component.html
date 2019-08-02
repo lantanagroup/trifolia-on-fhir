@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit page</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" *ngIf="page">
+    <div class="form-group" *ngIf="rootPage">
+        <label>Auto Generate Table of Contents? <app-tooltip-icon tooltipKey="implementationguide.page.auto-generate"></app-tooltip-icon></label>
+        <select class="form-control" [(ngModel)]="autoGenerate">
+            <option [ngValue]="false">No</option>
+            <option [ngValue]="true">Yes</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Name Type</label>
+        <select class="form-control" [(ngModel)]="nameType">
+            <option>Url</option>
+            <option>Reference</option>
+        </select>
+    </div>
+
+    <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Name URL" [required]="true"></app-fhir-string>
+
+    <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')" title="Name Reference" [required]="true"></app-fhir-reference>
+
+    <app-fhir-string [parentObject]="page" propertyName="title" title="Title" [required]="true"></app-fhir-string>
+
+    <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true"></app-fhir-select-single-code>
+
+    <div class="form-group" *ngIf="!autoGenerate">
+        <label>Content</label>
+        <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></app-markdown>
+        <div class="help-block" *ngIf="!pageBinary">
+            A contained Binary resource could not be found for this source. This will result in an incomplete FHIR IG Publisher build package.
+            <br/>
+            <input type="file" style="display: none" (change)="importFile(fileInput.files[0])" accept=".html,.txt,.md" #fileInput />
+            <button type="button" class="btn btn-default" (click)="fileInput.click()">Import from computer (HTML, Text, MD/Markdown)</button>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="ok()">OK</button>
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.dismiss()">Cancel</button>
+</div>

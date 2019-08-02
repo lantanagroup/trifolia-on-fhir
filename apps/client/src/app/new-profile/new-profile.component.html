@@ -1,0 +1,70 @@
+<h3>New Structure Definition</h3>
+
+<ngb-tabset>
+  <ngb-tab title="General">
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div class="col-md-8">
+          <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true"
+                           tooltipPath="StructureDefinition.url"></app-fhir-string>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-string [parentObject]="structureDefinition" propertyName="id" title="ID" placeholder="Auto generate"
+                           tooltipPath="StructureDefinition.id"></app-fhir-string>
+        </div>
+        <div class="col-md-8">
+          <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" [required]="true"
+                           tooltipPath="StructureDefinition.name"></app-fhir-string>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" [required]="true"
+                                       tooltipPath="StructureDefinition.status"></app-fhir-select-single-code>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind" [required]="true"
+                                       tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true"
+                            tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
+        </div>
+        <div class="col-md-4">
+          <!-- new-profile-type class is defined in select-single-code.component.css -->
+          <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/defined-types" [isTypeahead]="true" customClass="new-profile-type"
+                                       [required]="true" tooltipPath="StructureDefinition.type" (change)="typeChanged()"
+                                       [defaultCode]="null"></app-fhir-select-single-code>
+        </div>
+        <div class="col-md-4">
+          <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
+                                       tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
+        </div>
+        <div class="col-md-4" *ngIf="structureDefinition.type">
+          <app-profile-base-definition [parentObject]="structureDefinition" propertyName="baseDefinition"
+                                       [profileType]="structureDefinition.type"></app-profile-base-definition>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- Permissions -->
+  <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+    <ng-template ngbTabContent>
+      <app-resource-permissions [meta]="structureDefinition.meta"></app-resource-permissions>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab title="RAW">
+    <ng-template ngbTabContent>
+      <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>
+
+<footer class="footer">
+  <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled()">Save</button>
+  <span class="message">{{message}}</span>
+</footer>

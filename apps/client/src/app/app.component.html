@@ -1,0 +1,110 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <a class="navbar-brand" routerLink="/">
+    <img src="assets/trifoliaonfhir_64.png" alt="Trifolia-on-FHIR" title="Trifolia-on-FHIR"/>
+    <span>Trifolia-on-FHIR</span>
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation" #navbarToggler>
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="homeMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          File <span class="sr-only">(current)</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="homeMenu">
+          <a class="dropdown-item" routerLink="/">
+            <i class="fa fa-home"></i> Home
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()">
+            <i class="fa fa-upload"></i> Open from computer
+          </a>
+          <a class="dropdown-item" href="/help/index.html" target="tof-help">
+            <i class="fa fa-book"></i> Documentation
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
+            <i class="fa fa-question"></i> Request Support
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()">
+            <i class="fa fa-cog"></i> Settings
+          </a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Browse/Edit
+        </a>
+        <div class="dropdown-menu" aria-labelledby="browseMenu">
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/implementation-guide">Implementation Guides</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/structure-definition">Profiles/Extensions</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/capability-statement">Capability Statements</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/operation-definition">Operation Definition</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/value-set">Value Sets</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/code-system">Code Systems</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/questionnaire">Questionnaires</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/other-resources">Other Resources</a>
+        </div>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/import">Import</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/export">Export</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.isAuthenticated()">
+        <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/publish">Publish</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
+            <div class="badge badge-info">{{fhirServerDisplay}}</div>
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="!authService.isAuthenticated()">
+          <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
+        </li>
+        <li class="nav-item" *ngIf="authService.isAuthenticated()">
+          <a class="nav-link" routerLink="/{{this.configService.fhirServer}}/users/me">
+            <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}"/>
+            {{displayName}}
+          </a>
+        </li>
+        <li class="nav-item nav-icons">
+          <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()" title="Logout" *ngIf="authService.isAuthenticated()">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
+          <a class="nav-link" href="javascript:void(0)" (click)="githubService.logout()" title="Logout of GitHub within ToF" *ngIf="githubService.token">
+            <i class="fab fa-github"></i>
+          </a>
+          <a class="nav-link" href="javascript:void(0)" (click)="startIntro()" title="Get information about how to use the current page">
+            <i class="fas fa-info"></i>
+          </a>
+        </li>
+      </ul>
+    </form>
+  </div>
+</nav>
+
+<div class="container container-large">
+  <div class="jumbotron" *ngIf="!authService.isAuthenticated()">
+    <app-home></app-home>
+  </div>
+  <div class="jumbotron" *ngIf="authService.isAuthenticated() && !authService.practitioner">
+    <app-new-user-modal></app-new-user-modal>
+  </div>
+  <div class="jumbotron" *ngIf="authService.isAuthenticated() && authService.practitioner">
+    <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
+      {{configService.statusMessage}}
+    </div>
+    <router-outlet *ngIf="fhirService.loaded"></router-outlet>
+    <div *ngIf="!fhirService.loaded">
+      Loading information from selected FHIR server...
+    </div>
+  </div>
+</div>

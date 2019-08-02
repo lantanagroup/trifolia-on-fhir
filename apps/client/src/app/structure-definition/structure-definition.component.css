@@ -1,0 +1,131 @@
+div.elements {
+    display: none;
+}
+
+div.element-definition > .card-header > .pull-right {
+    display: none;
+}
+
+div.elements > .element {
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid lightgray;
+}
+
+div.elements > .element span.property,
+div.elements > .element span.action {
+    margin-left: 10px;
+}
+
+@media (max-width: 1024px) {
+    div.element-definition {
+        top: 0px;
+        height: 100%;
+        left: 6px;
+        width: auto !important;
+        right: 14px;
+    }
+
+    table.elements {
+        display:  none;
+    }
+
+    div.elements {
+        display: inherit;
+    }
+
+    div.element-definition > .card-header > .pull-right {
+        display: inherit;
+    }
+}
+
+div.element-definition {
+    position: absolute;
+    width: 33%;
+    right: 23px;
+    top: 0px;
+    height: 100%;
+}
+
+tr.selected > td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+tr.selected > td:first-child {
+    border-left: 1px solid black;
+}
+
+tr.selected > td:last-child {
+    border-right: 1px solid black;
+}
+
+tr.selected > td {
+  background-color: darkgray;
+}
+
+tr.constrained {
+    font-weight: bold;
+}
+
+.sd-main:not(.small) {
+    width: 100%;
+}
+
+.sd-main.small {
+    width: 75%;
+    display: inline-table;
+    padding-right: 10px;
+}
+
+.selected-element {
+    width: 25%;
+    position: fixed;
+    right: 29px;
+    top: 88px;
+}
+
+.selected-element {
+    overflow-y: auto;
+    max-height: 85%;
+}
+
+div.element-definition > div.card-body {
+    height: 100%;
+    overflow-y: auto;
+}
+
+div.element-definition .card-body {
+    padding: 0px;
+    margin-top: -1px;
+}
+
+.card.context {
+    margin-bottom: 15px;
+}
+
+div.expand-collapse {
+    display: inline-block;
+    width: 15px;
+}
+
+table.elements .element-name > div {
+    display: flex;
+}
+
+table.elements > thead > tr,
+table.elements > tbody > tr {
+    height: 25px;
+}
+
+table.elements > tbody > tr:last-child {
+    height: 100%;
+}
+
+th.element-binding, td.element-binding {
+    word-wrap: break-word;
+}
+
+div.element-definition.card .card-body {
+  padding: 10px;
+}

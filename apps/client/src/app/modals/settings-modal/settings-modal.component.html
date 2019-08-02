@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit settings</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="configService.config">
+  <p>Trifolia-on-FHIR Version <strong>{{configService.config.version}}</strong></p>
+
+  <div class="form-group" *ngIf="authCode">
+    <label>Authorization Code</label>
+    <input type="text" class="form-control" readonly="readonly" [ngModel]="authCode"/>
+  </div>
+
+  <div class="form-group">
+    <label>Selected FHIR Server</label>
+    <select class="form-control" name="fhirServerSelect" [(ngModel)]="fhirServerId">
+      <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
+    </select>
+    <div class="help-block">{{fhirServerId}}</div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="ok()">OK</button>
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.dismiss()">Cancel</button>
+</div>

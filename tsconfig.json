@@ -1,26 +1,24 @@
 {
-  "compileOnSave": true,
+  "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./wwwroot/out-tsc",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "extendedDiagnostics": true,
-    "target": "es2018",
-    "typeRoots": [
-      "src/typings.d.ts",
-      "node_modules/@types",
-      "node_modules/fhir"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
-    "module": "es6",
+    "importHelpers": true,
+    "target": "es5",
+    "module": "es2015",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "socket.io-client": ["../node_modules/socket.io-client/dist/socket.io.slim.js"]
-    }
-  }
+      "@trifolia-fhir/tof-lib": ["libs/tof-lib/src/index.ts"]
+    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "tmp"]
 }

@@ -1,0 +1,657 @@
+<h1>Implementation Guide (R4)</h1>
+
+<div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+
+<div class="ig-main" *ngIf="implementationGuide">
+  <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
+
+  <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
+    <ngb-tab id="quick">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.quick-tab']">Quick</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <div class="alert alert-info">These fields are the key fields used to develop and publish an implementation guide package. Use the other tabs to access more details.</div>
+
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>ID</label>
+              <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string
+              [parentObject]="implementationGuide"
+              [required]="true"
+              (change)="nameChanged()"
+              [pattern]="Globals.regexPatterns.namePattern"
+              [patternMessage]="Globals.tooltips['name.validation.failed']"
+              propertyName="name"
+              title="Name"
+              tooltipPath="ImplementationGuide.name">
+            </app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'fhirVersion', [])"/>
+                FHIR Version
+              </label>
+              <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: Globals.trackByFn">
+                <input type="text" class="form-control" [ngModel]="fhirVersion" readonly="readonly"/>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="input-group" *ngIf="implementationGuide.hasOwnProperty('fhirVersion')">
+                <select class="form-control" [(ngModel)]="newFhirVersion">
+                  <option>4.1.0</option>
+                  <option>4.0.0</option>
+                  <option>3.5.0</option>
+                  <option>3.3.0</option>
+                  <option>3.0.1</option>
+                  <option>3.0.0</option>
+                  <option>1.8.0</option>
+                  <option>1.6.0</option>
+                </select>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"
+                               tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+          </div>
+
+          <div class="col-md-12">
+            <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
+          </div>
+
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.resource" (ngModelChange)="toggleResources($event)"/>
+                Resources
+                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource"></app-tooltip-icon>
+              </div>
+              <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
+                <thead>
+                <tr>
+                  <td colspan="4">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                          <label class="btn" [class.btn-default]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
+                            All
+                          </label>
+                          <label class="btn" [class.btn-default]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
+                            Profiles
+                          </label>
+                          <label class="btn" [class.btn-default]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology"
+                                 (click)="toggleFilterResourceType('terminology')">
+                            Terminology
+                          </label>
+                          <label class="btn" [class.btn-default]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
+                            Examples
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Reference</th>
+                  <th>Name</th>
+                  <th>Example?</th>
+                  <th class="actions-column-1">
+                    <div class="pull-right">
+                      <button type="button" class="btn btn-default" (click)="addResources()" title="Add existing resources to this implementation guide">
+                        <i class="fa fa-hand-pointer-o"></i>
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let resource of resources; let ri = index">
+                  <td>
+                    <i class="fa fa-copy" *ngIf="isDuplicateResource(resource)" title="This is a duplicate"></i>
+                    <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                  </td>
+                  <td>
+                    <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+                  </td>
+                  <td>
+                    <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
+                  </td>
+                  <td>
+                    <div class="pull-right">
+                      <button type="button" class="btn btn-default" (click)="removeResource(resource)">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.page" (ngModelChange)="toggleRootPage($event)"/>
+                Pages
+              </div>
+
+              <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
+                <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Generation</th>
+                  <th class="actions-column-5">&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
+                  <td>
+                    <input type="text" class="form-control" [(ngModel)]="p.page.title"
+                           [class.is-invalid]="!p.page.title"/>
+                  </td>
+                  <td>
+                    <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
+                                                 [isFormGroup]="false"></app-fhir-select-single-code>
+                  </td>
+                  <td>
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-default" (click)="editPage(p)" title="Edit this page">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                      <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
+                        <i class="fa fa-plus"></i>
+                      </button>
+                      <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move up">
+                        <i class="fa fa-arrow-up"></i>
+                      </button>
+                      <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move up">
+                        <i class="fa fa-arrow-down"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="general">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.general-tab']">General</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <fieldset>
+          <div class="row">
+            <div class="col-md-8">
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
+
+              <app-fhir-string
+                [parentObject]="implementationGuide"
+                [required]="true"
+                (change)="nameChanged()"
+                pattern="^[A-Z][A-Za-z0-9_]+$"
+                patternMessage="Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter."
+                propertyName="name"
+                title="Name"
+                tooltipPath="ImplementationGuide.name">
+              </app-fhir-string>
+
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
+
+              <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
+
+              <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>ID
+                  <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
+                </label>
+                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
+              </div>
+
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version"></app-fhir-string>
+
+              <div class="form-group">
+                <label>
+                  <span>Status </span>
+                  <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
+                </label>
+                <select class="form-control" [(ngModel)]="implementationGuide.status">
+                  <option [ngValue]="'draft'">Draft</option>
+                  <option [ngValue]="'active'">Active</option>
+                  <option [ngValue]="'retired'">Retired</option>
+                  <option [ngValue]="'unknown'">Unknown</option>
+                </select>
+              </div>
+
+              <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
+
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
+            </div>
+          </div>
+        </fieldset>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="narrative">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-fhir-narrative [resource]="implementationGuide"></app-fhir-narrative>
+
+        <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"
+                           tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+
+        <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
+
+        <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.page" (ngModelChange)="toggleRootPage($event)"/> Implementation guide has pages
+
+        <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
+          <thead>
+          <tr>
+            <th>
+              Title
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
+            </th>
+            <th>
+              Generation
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.generation"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-5">&nbsp;</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
+            <td>
+              <input type="text" class="form-control" [(ngModel)]="p.page.title"
+                     [class.is-invalid]="!p.page.title"/>
+            </td>
+            <td>
+              <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
+                                           [isFormGroup]="false"></app-fhir-select-single-code>
+            </td>
+            <td>
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default" (click)="editPage(p)" title="Edit this page">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add a page as a child of this page">
+                  <i class="fa fa-plus"></i>
+                </button>
+                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
+                  <i class="fa fa-arrow-up"></i>
+                </button>
+                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
+                  <i class="fa fa-arrow-down"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Globals -->
+    <ngb-tab id="globals">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Globals</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <p>
+          <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/>
+          Allow globals
+        </p>
+
+        <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
+          <thead>
+          <tr>
+            <th>
+              Type
+              <app-tooltip-icon tooltipPath="ImplementationGuide.global.type"></app-tooltip-icon>
+            </th>
+            <th>
+              Profile
+              <app-tooltip-icon tooltipPath="ImplementationGuide.global.profile"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Add global"
+                        (click)="implementationGuide.global.push({type: '', profile: '' })">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
+            <td>
+              <select class="form-control" [(ngModel)]="g.type">
+                <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+              </select>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="g" propertyName="profile" [required]="true" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Remove global"
+                        (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Packages -->
+    <ngb-tab id="packages">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.packages-tab']">Packages</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.package" (ngModelChange)="togglePackages($event)"/> Implementation guide has packages
+
+        <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.package">
+          <thead>
+          <tr>
+            <th>
+              ID
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.id"></app-tooltip-icon>
+            </th>
+            <th>
+              Name
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.name"></app-tooltip-icon>
+            </th>
+            <th>
+              Description
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.package.description"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Add a package to the implementation guide"
+                        (click)="implementationGuide.definition.package.push({ id: 'new-id', name: 'New Package' })">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let package of implementationGuide.definition.package; let pi = index">
+            <td>
+              <app-fhir-string [parentObject]="package" propertyName="id" [isFormGroup]="false" [required]="true"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="package" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="package" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(ri, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Resources -->
+    <ngb-tab id="resources">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.resource" (ngModelChange)="toggleResources($event)"/> Implementation guide has resources
+
+        <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
+          <thead>
+          <tr>
+            <th>
+              Reference
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.reference"></app-tooltip-icon>
+            </th>
+            <th>
+              Name
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.name"></app-tooltip-icon>
+            </th>
+            <th>
+              Description
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
+            </th>
+            <th style="width: 150px;">
+              Example?
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.example[x]"></app-tooltip-icon>
+            </th>
+            <th style="width: 225px;">
+              Package
+              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.package"></app-tooltip-icon>
+            </th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Add existing resources to this implementation guide" (click)="addResources()">
+                  <i class="fa fa-hand-pointer-o"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let resource of implementationGuide.definition.resource; let ri = index">
+            <td>
+              <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="resource" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
+            </td>
+            <td>
+              <select class="form-control" [(ngModel)]="resource.package">
+                <option [ngValue]="undefined">Unspecified</option>
+                <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
+              </select>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Remove this resource from the implementation guide" (click)="implementationGuide.definition.resource.splice(ri, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-tab>
+
+    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Validation -->
+    <ngb-tab id="validation">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span></ng-template>
+      <ng-template ngbTabContent>
+        <app-validation-results [results]="validation"></app-validation-results>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- RAW JSON/XML -->
+    <ngb-tab id="raw">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Version History -->
+    <ngb-tab id="history" *ngIf="!isNew">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</div>
+
+<ng-template #dependsOn>
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'dependsOn', [{ version: 'current' }])"/>
+      Dependencies
+      <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
+    </div>
+    <table class="table table-striped" *ngIf="implementationGuide.hasOwnProperty('dependsOn')">
+      <thead>
+      <tr>
+        <th>
+          URI
+          <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
+        </th>
+        <th>
+          Location
+          <app-tooltip-icon tooltipKey="ig.dependsOn.location"></app-tooltip-icon>
+        </th>
+        <th>
+          Package ID
+          <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
+        </th>
+        <th>
+          Name
+          <app-tooltip-icon tooltipKey="ig.dependsOn.name"></app-tooltip-icon>
+        </th>
+        <th>
+          Version
+          <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
+        </th>
+        <th class="actions-column-1">
+          <div class="pull-right">
+            <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ version: 'current' })">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
+        <td>
+          <div class="input-group">
+            <input type="text" class="form-control" [class.is-invalid]="!dependsOn.uri" [(ngModel)]="dependsOn.uri"/>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependsOn)">
+                <i class="fa fa-hand-pointer-o"></i>
+              </button>
+            </div>
+          </div>
+        </td>
+        <td>
+          <input type="text" class="form-control" [class.is-invalid]="!getDependsOnLocation(dependsOn)" [ngModel]="getDependsOnLocation(dependsOn)"
+                 (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
+          <input type="text" class="form-control" [class.is-invalid]="!getDependsOnName(dependsOn)" [ngModel]="getDependsOnName(dependsOn)" (ngModelChange)="setDependsOnName(dependsOn, $event)"/>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
+
+<footer class="footer">
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(implementationGuide)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
+  </div>
+  <span class="message">{{message}}</span>
+</footer>

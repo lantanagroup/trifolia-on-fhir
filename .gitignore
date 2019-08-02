@@ -49,3 +49,5 @@ dist.zip
 *.log
 config/local.json
 manifest.txt
+node_modules_1/
+apps/server/src/config/local.json

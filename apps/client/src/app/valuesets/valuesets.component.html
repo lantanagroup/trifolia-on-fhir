@@ -1,0 +1,105 @@
+<h1>Value Sets</h1>
+<app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
+
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
+    <input type="text" class="form-control" [ngModel]="idText" (ngModelChange)="idTextChanged($event)" placeholder="Search ID" />
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+    <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete URL" />
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
+        <button type="button" class="btn btn-primary" title="Refresh" (click)="getValueSets()">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+</div>
+
+<br />
+
+<div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+    <ngb-pagination class="d-flex justify-content-center"
+                    [maxSize]="5"
+                    [collectionSize]="results.total"
+                    [(page)]="page"
+                    [pageSize]="8"
+                    [boundaryLinks]="true"
+                    (pageChange)="criteriaChanged()"></ngb-pagination>
+</div>
+
+<table class="table table-striped" *ngIf="results">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>URL</th>
+        <th class="actions-column-4">
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/new" title="Create a new value set" [attr.data-intro]="Globals.introText['browse.add']">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody *ngIf="!configService.showingIntroduction">
+    <tr *ngFor="let vs of valueSets">
+        <td>{{vs.id}}</td>
+        <td>{{vs.name}}</td>
+        <td>{{vs.url}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/{{vs.id}}" title="Edit this value set">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/{{vs.id}}/expand" title="Expand this value set">
+                    <i class="fa fa-expand"></i>
+                </a>
+                <button type="button" class="btn btn-secondary" (click)="remove(vs)" [disabled]="!canEdit(vs)" title="Remove this value set">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="changeId(vs)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="configService.showingIntroduction">
+    <tr>
+        <td>DEMO-ID</td>
+        <td>Demo Name</td>
+        <td>http://some.url/for/the/valueset</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" href="#" title="Edit this value set" [attr.data-intro]="Globals.introText['browse.edit']">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-primary" href="#" title="Expand this value set" [attr.data-intro]="Globals.introText['browse.vs.expand']">
+                    <i class="fa fa-expand"></i>
+                </a>
+                <button type="button" class="btn btn-secondary" title="Remove this value set" [attr.data-intro]="Globals.introText['browse.remove']">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" title="Change this value set's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr *ngIf="results && results.total === 0">
+        <td colspan="3">No value sets! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/value-set/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="results && results.total > 0">
+        <td colspan="4">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+
+<footer class="footer">
+    <span class="message">{{message}}</span>
+</footer>

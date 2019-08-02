@@ -1,0 +1,90 @@
+<h1>Operation Definitions</h1>
+
+<app-tooltip-icon tooltipKey="operationdefinition.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
+
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+        </button>
+        <button type="button" class="btn btn-primary" title="Refresh" (click)="getOperationDefinitions()">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+</div>
+
+<br />
+
+<div *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+    <ngb-pagination class="d-flex justify-content-center"
+                    [maxSize]="5"
+                    [collectionSize]="operationDefinitionsBundle.total"
+                    [(page)]="page"
+                    [boundaryLinks]="true"
+                    (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+</div>
+
+<table class="table table-striped" *ngIf="operationDefinitionsBundle">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th class="actions-column-3">
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/operation-definition/new" title="Create a new operation definition" [attr.data-intro]="Globals.introText['browse.add']">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody *ngIf="!configService.showingIntroduction">
+    <tr *ngFor="let od of operationDefinitions">
+        <td>{{od.id}}</td>
+        <td>{{od.name}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/operation-definition/{{od.id}}">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-secondary" (click)="remove(od)" [disabled]="!canEdit(od)" title="Remove this resource">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="changeId(od)" [disabled]="!canEdit(od)" title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="configService.showingIntroduction">
+    <tr>
+        <td>DEMO-ID</td>
+        <td>Demo Operation Definition</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-primary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-primary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total === 0">
+        <td colspan="3">No operation definitions! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/operation-definition/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total > 0">
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="operationDefinitionsBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+        </td>
+    </tr>
+    </tfoot>
+</table>
