@@ -243,19 +243,11 @@
           </label>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" *ngIf="structureDefinition.type == 'Extension'">
           <label>
             <input type="checkbox" [(ngModel)]="element.isModifier"/>
             Is modifier
             <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [(ngModel)]="element.isSummary"/>
-            Is summary
-            <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
           </label>
         </div>
 
@@ -371,9 +363,6 @@
         <app-fhir-string [parentObject]="element" propertyName="alias" title="Alias"
                          tooltipPath="ElementDefinition.alias"></app-fhir-string>
 
-        <app-fhir-string [parentObject]="element" propertyName="orderMeaning" title="Order meaning"
-                         tooltipPath="ElementDefinition.orderMeaning"></app-fhir-string>
-
         <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"
                            tooltipPath="ElementDefinition.definition"></app-fhir-markdown>
 
@@ -383,7 +372,7 @@
         <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"
                            [displayOnly]="true" tooltipPath="ElementDefinition.requirements"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
+        <app-fhir-markdown *ngIf="structureDefinition.type == 'Extension'" [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
                            [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing"></app-fhir-markdown>
       </ng-template>
     </ngb-tab>
