@@ -33,7 +33,8 @@ export class QuestionnaireService {
     }
 
     public get(id: string) {
-        const url = '/api/questionnaire/' + encodeURIComponent(id);
+        let url = '/api/questionnaire/' + encodeURIComponent(id);
+        url += "?_sort=name";
         return this.http.get<Questionnaire|OperationOutcome>(url);
     }
 

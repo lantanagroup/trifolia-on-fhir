@@ -44,6 +44,7 @@ export class ImplementationGuideService {
             url += 'title=' + encodeURIComponent(title) + '&';
         }
 
+        url += '_sort=name';
         return this.http.get<Bundle>(url);
     }
 

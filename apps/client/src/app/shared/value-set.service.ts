@@ -36,11 +36,13 @@ export class ValueSetService {
             url += '_id=' + encodeURIComponent(id) + '&';
         }
 
+        url += '_sort=name';
+
         return this.http.get(url);
     }
 
     public get(id: string) {
-        const url = '/api/valueSet/' + encodeURIComponent(id);
+        let url = '/api/valueSet/' + encodeURIComponent(id);
         return this.http.get<ValueSet|OperationOutcome>(url);
     }
 
