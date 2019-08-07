@@ -132,6 +132,7 @@ export class PublishComponent implements OnInit {
         this.packageId = packageId;
       }, (err) => {
         this.message = getErrorString(err);
+        this.inProgress = false;
       });
   }
 
@@ -167,6 +168,9 @@ export class PublishComponent implements OnInit {
                 this.inProgress = false;
               });
           }
+        } else if (data.status === 'error') {
+          this.inProgress = false;
+          this.message = 'An error occurred. Please review the status tab.';
         }
       }
     }, (err) => {

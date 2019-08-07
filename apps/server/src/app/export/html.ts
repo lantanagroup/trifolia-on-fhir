@@ -119,6 +119,7 @@ export class HtmlExporter {
 
   private igPublisherLocation: string;
   private implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  private pageInfos: PageInfo[];
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
@@ -193,7 +194,8 @@ export class HtmlExporter {
         'StructureDefinition': {
           'template-mappings': 'sd-mappings.html',
           'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
+          'template-defns': 'sd-definitions.html',
+          'mappings': '{{[id]}}-mappings.html'
         },
         'Immunization': {'template-base': 'ex.html'},
         'Patient': {'template-base': 'ex.html'},
@@ -317,7 +319,8 @@ export class HtmlExporter {
         'StructureDefinition': {
           'template-mappings': 'sd-mappings.html',
           'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
+          'template-defns': 'sd-definitions.html',
+          'mappings': '{{[id]}}-mappings.html'
         },
         'Immunization': {'template-base': 'ex.html'},
         'Patient': {'template-base': 'ex.html'},
@@ -442,7 +445,7 @@ export class HtmlExporter {
     return output;
   }
 
-  private sendSocketMessage(status, message, shouldLog?: boolean) {
+  private sendSocketMessage(status: 'error'|'progress'|'complete', message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
       return;
@@ -695,11 +698,11 @@ export class HtmlExporter {
     fs.writeFileSync(summaryPath, '');
   }
 
-  private writeStu3Page(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
-    const pageInfo = pageList.find(next => next.page === page);
-    const pageIndex = pageList.indexOf(pageInfo);
-    const previousPage = pageIndex === 0 ? null : pageList[pageIndex - 1];
-    const nextPage = pageIndex === pageList.length - 1 ? null : pageList[pageIndex + 1];
+  private writeStu3Page(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
+    const pageInfo = this.pageInfos.find(next => next.page === page);
+    const pageIndex = this.pageInfos.indexOf(pageInfo);
+    const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
+    const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
     const previousPageLink = previousPage ?
       `[Previous Page](${previousPage.finalFileName})\n\n` :
       null;
@@ -708,6 +711,16 @@ export class HtmlExporter {
       null;
 
     if (page.kind !== 'toc' && pageInfo.content) {
+      const pagesPathFiles = fs.readdirSync(pagesPath);
+      const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
+
+      if (foundExistingPage) {
+        this.sendSocketMessage('progress', `Removing pre-existing framework/template file ${foundExistingPage} to be replaced by a narrative page in the IG.`);
+        const removePagePath = path.join(pagesPath, foundExistingPage);
+        fs.unlinkSync(removePagePath);
+        pageInfo.fileName = foundExistingPage;
+      }
+
       const newPagePath = path.join(pagesPath, pageInfo.fileName);
 
       const content = '---\n' +
@@ -721,7 +734,7 @@ export class HtmlExporter {
 
     // Add an entry to the TOC
     tocEntries.push({level: level, fileName: page.kind === 'page' && pageInfo.fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeStu3Page(pagesPath, subPage, level + 1, tocEntries, pageList));
+    (page.page || []).forEach((subPage) => this.writeStu3Page(pagesPath, subPage, level + 1, tocEntries));
   }
 
   private getPageExtension(page: ImplementationGuidePageComponent) {
@@ -736,11 +749,11 @@ export class HtmlExporter {
     }
   }
 
-  private writeR4Page(pagesPath: string, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
-    const pageInfo = pageList.find(next => next.page === page);
-    const pageInfoIndex = pageList.indexOf(pageInfo);
-    const previousPage = pageInfoIndex > 0 ? pageList[pageInfoIndex - 1] : null;
-    const nextPage = pageInfoIndex < pageList.length - 1 ? pageList[pageInfoIndex + 1] : null;
+  private writeR4Page(pagesPath: string, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
+    const pageInfo = this.pageInfos.find(next => next.page === page);
+    const pageInfoIndex = this.pageInfos.indexOf(pageInfo);
+    const previousPage = pageInfoIndex > 0 ? this.pageInfos[pageInfoIndex - 1] : null;
+    const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
 
     const previousPageLink = previousPage ?
@@ -751,6 +764,16 @@ export class HtmlExporter {
       null;
 
     if (pageInfo.content && pageInfo.fileName) {
+      const pagesPathFiles = fs.readdirSync(pagesPath);
+      const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
+
+      if (foundExistingPage) {
+        this.sendSocketMessage('progress', `Removing pre-existing framework/template file ${foundExistingPage} to be replaced by a narrative page in the IG.`);
+        const removePagePath = path.join(pagesPath, foundExistingPage);
+        fs.unlinkSync(removePagePath);
+        pageInfo.fileName = foundExistingPage;
+      }
+
       const newPagePath = path.join(pagesPath, fileName);
 
       // noinspection JSUnresolvedFunction
@@ -764,7 +787,7 @@ export class HtmlExporter {
 
     // Add an entry to the TOC
     tocEntries.push({level: level, fileName: fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, subPage, level + 1, tocEntries, pageList));
+    (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, subPage, level + 1, tocEntries));
   }
 
   private generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
@@ -842,14 +865,14 @@ export class HtmlExporter {
     };
 
     const tocEntries = [];
-    const pageList: PageInfo[] = getPagesList([], this.stu3ImplementationGuide.page);
-    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
+    this.pageInfos = getPagesList([], this.stu3ImplementationGuide.page);
+    const rootPageInfo = this.pageInfos.length > 0 ? this.pageInfos[0] : null;
 
     if (rootPageInfo) {
       const pagesPath = path.join(rootPath, 'source/pages');
       fs.ensureDirSync(pagesPath);
 
-      this.writeStu3Page(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries, pageList);
+      this.writeStu3Page(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries);
       this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, rootPageInfo.content);
     }
   }
@@ -901,15 +924,15 @@ export class HtmlExporter {
       return theList;
     };
 
-    const pageList = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
-    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
+    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+    const rootPageInfo = this.pageInfos.length > 0 ? this.pageInfos[0] : null;
     const tocEntries = [];
 
     if (rootPageInfo) {
       const pagesPath = path.join(rootPath, 'source/pages');
       fs.ensureDirSync(pagesPath);
 
-      this.writeR4Page(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries, pageList);
+      this.writeR4Page(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries);
 
       // Append TOC Entries to the toc.md file in the template
       this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, {fileName: rootPageInfo.fileName, content: rootPageInfo.content});
@@ -1185,7 +1208,6 @@ export class HtmlExporter {
     (bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
 
     this.logger.log('Updating the IG publisher templates for the resources');
-
     this.updateTemplates(this.rootPath, bundle, this.implementationGuide);
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
