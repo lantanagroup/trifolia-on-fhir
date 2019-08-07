@@ -16,7 +16,7 @@ export class ProfileBaseDefinitionComponent implements OnInit, OnChanges {
   public baseProfileUrls = [];
   private changeTrigger: Subject<void> = new Subject();
 
-  @ViewChild('selectBaseDefinitionModal')
+  @ViewChild('selectBaseDefinitionModal', { static: true })
   private selectBaseDefinitionModal;
 
   constructor(

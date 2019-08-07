@@ -30,8 +30,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public definedTypeCodes: Coding[] = [];
   public Globals = Globals;
 
-  @ViewChild('edTabSet') edTabSet: NgbTabset;
-  @ViewChild('idTextField') idTextField: ElementRef;
+  @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
+  @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
 
   constructor(
     private modalService: NgbModal,

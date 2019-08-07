@@ -32,7 +32,7 @@ describe('StructureDefinitionComponent', () => {
         BrowserModule,
         RouterTestingModule,
         HttpClientTestingModule,
-        NgbModule.forRoot(),
+        NgbModule,
         FormsModule
       ],
       providers: [

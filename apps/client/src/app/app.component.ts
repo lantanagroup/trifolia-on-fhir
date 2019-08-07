@@ -27,8 +27,8 @@ export class AppComponent implements OnInit {
   public userProfile: any;
   public person: Practitioner;
 
-  @ViewChild('navbarToggler', {read: ElementRef}) navbarToggler: ElementRef;
-  @ViewChild('navbarCollapse', {read: ElementRef}) navbarCollapse: ElementRef;
+  @ViewChild('navbarToggler', {read: ElementRef, static: true}) navbarToggler: ElementRef;
+  @ViewChild('navbarCollapse', {read: ElementRef, static: true}) navbarCollapse: ElementRef;
 
   constructor(
     public authService: AuthService,

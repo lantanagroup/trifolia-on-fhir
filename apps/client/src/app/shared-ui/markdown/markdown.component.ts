@@ -74,8 +74,8 @@ export class MediaReference {
   providers: [MARKDOWN_CONTROL_VALUE_ACCESSOR]
 })
 export class MarkdownComponent extends NgModelBase implements AfterContentChecked, AfterViewInit, OnDestroy, OnChanges, OnInit {
-  @ViewChild('simplemde') textarea: ElementRef;
-  @ViewChild('imageListModal') imageListModal;
+  @ViewChild('simplemde', { static: true }) textarea: ElementRef;
+  @ViewChild('imageListModal', { static: true }) imageListModal;
   @Input() disabled = false;
   @Input() mediaReferences: MediaReference[];
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';

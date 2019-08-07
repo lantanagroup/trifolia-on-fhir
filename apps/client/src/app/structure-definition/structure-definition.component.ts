@@ -35,8 +35,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public sdNotFound = false;
   public Globals = Globals;
 
-  @ViewChild('edPanel') edPanel: ElementDefinitionPanelComponent;
-  @ViewChild('sdTabs') sdTabs: NgbTabset;
+  @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
+  @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
 
   private navSubscription: any;
 

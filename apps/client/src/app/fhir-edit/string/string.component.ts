@@ -21,10 +21,10 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
 
-  @ViewChild('formGroupModel')
+  @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
 
-  @ViewChild('model')
+  @ViewChild('model', { static: true })
   private model: NgModel;
 
   /**

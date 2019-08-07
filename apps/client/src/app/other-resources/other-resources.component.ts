@@ -35,7 +35,7 @@ export class OtherResourcesComponent implements OnInit {
   public Globals = Globals;
   public page = 1;
 
-  @ViewChild('tabSet')
+  @ViewChild('tabSet', { static: true })
   public tabSet: NgbTabset;
 
   constructor(
