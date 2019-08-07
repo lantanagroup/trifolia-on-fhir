@@ -96,6 +96,7 @@ export class Globals {
     'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.',
     'other.open-resource-tab': 'Each resource that you open will show in a separate tab like this.',
     'other.search-results-tab': 'After you click the search button, the results are shown here.',
+    'other.search-results-paging': 'A limited number of items are shown on this screen. Here you can navigate between multiple pages of items.',
     'other.search-criteria': 'Specify your search criteria in this tab.',
     'other.search.resource-type': 'A resource type must be selected before searching.',
     'other.search.search-btn': 'Click this button to start the search.',

@@ -275,8 +275,13 @@ export class FhirService {
    * @param {string} [searchContent]
    * @param {boolean} [summary?]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false) {
-    let url = '/api/fhir/' + resourceType + '?';
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10) {
+    let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
+
+    if(page){
+      let offset = (page - 1) * count;
+      url += `_getpagesoffset=${offset.toString()}&`;
+    }
 
     if (searchContent) {
       url += `_content=${encodeURIComponent(searchContent)}&`;
