@@ -70,6 +70,26 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public toggleMappings() {
+    if (this.structureDefinition.mapping) {
+      if (this.structureDefinition.mapping.length > 0) {
+        const foundElementsWithMappings = this.structureDefinition.differential.element.filter(e => e.mapping && e.mapping.length > 0);
+
+        if (foundElementsWithMappings.length > 0) {
+          if (!confirm(`This will remove ${foundElementsWithMappings.length} element mappings from this profile. Are you sure you want to continue?`)) {
+            return;
+          }
+
+          foundElementsWithMappings.forEach((e) => delete e.mapping);
+        }
+
+        delete this.structureDefinition.mapping;
+      }
+    } else {
+      this.structureDefinition.mapping = [{ identity: '' }];
+    }
+  }
+
   public toggleSelectedElement(element?: ElementTreeModel, disableDeselect = false) {
     if (!element || this.selectedElement === element) {
       if (!disableDeselect) {

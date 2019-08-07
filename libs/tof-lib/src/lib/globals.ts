@@ -131,7 +131,8 @@ export class Globals {
     'name.validation.failed': 'Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.',
     'resource.move': 'To change the ID of this resource, go back to the browse screen for the resource and click the "Change ID" button.',
     'sd.baseDefinition': 'Definition that this type is constrained/specialized from. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different base definition and/or type.',
-    'sd.type': 'Type defined or constrained by this structure. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different type and/or base definition.'
+    'sd.type': 'Type defined or constrained by this structure. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different type and/or base definition.',
+    'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.'
   };
 
   static readonly cookieKeys = {

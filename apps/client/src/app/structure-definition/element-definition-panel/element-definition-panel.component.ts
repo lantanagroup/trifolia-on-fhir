@@ -58,8 +58,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   editMappings() {
-    const modalRef = this.modalService.open(MappingModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl'});
     modalRef.componentInstance.mappings = this.element.mapping;
+    modalRef.componentInstance.structureDefinition = this.structureDefinition;
   }
 
   toggleMaxUnlimited() {

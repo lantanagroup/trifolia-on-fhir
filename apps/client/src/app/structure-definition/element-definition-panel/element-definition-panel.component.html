@@ -253,8 +253,7 @@
 
         <div class="form-group">
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
             Constraint
             <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
           </label>
@@ -265,15 +264,13 @@
 
         <div class="form-group">
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
             Mapping
             <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
           </label>
           <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
-          <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')"
-                  (click)="editMappings()">Edit
-          </button>
+          <button type="button" class="btn btn-primary btn-sm" *ngIf="element.hasOwnProperty('mapping')" (click)="editMappings()" [disabled]="!structureDefinition.mapping || structureDefinition.mapping.length === 0">Edit</button>
+          <app-tooltip-icon *ngIf="element.hasOwnProperty('mapping') && (!structureDefinition.mapping || structureDefinition.mapping.length === 0)" [showAsExclamation]="true" tooltipKey="sd.no-mappings"></app-tooltip-icon>
         </div>
       </ng-template>
     </ngb-tab>
