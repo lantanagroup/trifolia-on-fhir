@@ -1,6 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ElementDefinition as R4ElementDefinition} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  ElementDefinition as STU3ElementDefinition,
+  ElementDefinitionBindingComponent,
+  ValueSet
+} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  ElementDefinition as R4ElementDefinition,
+  ElementDefinitionElementDefinitionBindingComponent
+} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../../../shared/config.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -44,8 +51,12 @@ export class BindingPanelComponent implements OnInit {
               private modalService: NgbModal) {
   }
 
-  public getDefaultBinding(): ElementDefinitionBindingComponent {
-    return new ElementDefinitionBindingComponent({strength: 'required'});
+  public getDefaultBinding(): ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent {
+    if (this.configService.isFhirSTU3) {
+      return new ElementDefinitionBindingComponent({ strength: 'required' });
+    } else if (this.configService.isFhirR4) {
+      return new ElementDefinitionElementDefinitionBindingComponent({ strength: 'required' });
+    }
   }
 
   public setValueSetChoice(elementBinding: any, choice: string) {
@@ -73,7 +84,8 @@ export class BindingPanelComponent implements OnInit {
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {
-      this.R4Element.binding.valueSet = result.resource.url;
+      const valueSet: ValueSet = result.resource;
+      this.R4Element.binding.valueSet = valueSet.url;
     });
   }
 

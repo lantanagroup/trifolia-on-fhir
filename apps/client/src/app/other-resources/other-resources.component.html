@@ -40,6 +40,15 @@
       <span [attr.data-intro]="Globals.introText['other.search-results-tab']">Search Results</span>
     </ng-template>
     <ng-template ngbTabContent>
+      <div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['other.search-results-paging']">
+        <ngb-pagination class="d-flex justify-content-center"
+                        *ngIf="results && results.total > 0"
+                        [maxSize]="5"
+                        [collectionSize]="results.total"
+                        [(page)]="page"
+                        [boundaryLinks]="true"
+                        (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+      </div>
       <table class="table table-striped" *ngIf="results">
         <thead>
         <tr>
@@ -63,6 +72,18 @@
           </td>
         </tr>
         </tbody>
+        <tfoot>
+        <tr *ngIf="results && results.total === 0">
+          <td colspan="3">No results match the search criteria!</td>
+        </tr>
+        <tr *ngIf="results && results.total > 0">
+          <td colspan="6">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total"
+                            [(page)]="page" [boundaryLinks]="true"
+                            (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+          </td>
+        </tr>
+        </tfoot>
       </table>
     </ng-template>
   </ngb-tab>
