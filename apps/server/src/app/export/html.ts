@@ -184,6 +184,7 @@ export class HtmlExporter {
       'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'sct-edition': 'http://snomed.info/sct/731000124108',
+      'extraTemplates': ['mappings'],
       canonicalBase: canonicalBase,
       defaults: {
         'Location': {'template-base': 'ex.html'},
@@ -195,7 +196,7 @@ export class HtmlExporter {
           'template-mappings': 'sd-mappings.html',
           'template-base': 'sd.html',
           'template-defns': 'sd-definitions.html',
-          'mappings': '{{[id]}}-mappings.html'
+          'mappings': 'StructureDefinition-{{[id]}}-mappings.html'
         },
         'Immunization': {'template-base': 'ex.html'},
         'Patient': {'template-base': 'ex.html'},
@@ -309,6 +310,7 @@ export class HtmlExporter {
       'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'sct-edition': 'http://snomed.info/sct/731000124108',
+      'extraTemplates': ['mappings'],
       canonicalBase: canonicalBase,
       defaults: {
         'Location': {'template-base': 'ex.html'},
@@ -320,7 +322,7 @@ export class HtmlExporter {
           'template-mappings': 'sd-mappings.html',
           'template-base': 'sd.html',
           'template-defns': 'sd-definitions.html',
-          'mappings': '{{[id]}}-mappings.html'
+          'mappings': 'StructureDefinition-{{[id]}}-mappings.html'
         },
         'Immunization': {'template-base': 'ex.html'},
         'Patient': {'template-base': 'ex.html'},
