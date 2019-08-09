@@ -138,6 +138,20 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return '';
   }
 
+  toggleAlias() {
+    if(!this.element){
+      return;
+    }
+    if(this.element.hasOwnProperty('alias')){
+      delete this.element.alias;
+    }else{
+      this.element.alias = [];
+      this.element.alias.push('');
+    }
+  }
+
+
+
   addType() {
     this.element.type.push({code: this.getDefaultType()});
   }
