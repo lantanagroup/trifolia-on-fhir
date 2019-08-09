@@ -27,7 +27,7 @@ import {GroupService} from './group.service';
   declarations: [],
   imports: [
     CommonModule,
-    NgbModule.forRoot()
+    NgbModule
   ],
   providers: [
     AuditEventService,

@@ -30,8 +30,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public definedTypeCodes: Coding[] = [];
   public Globals = Globals;
 
-  @ViewChild('edTabSet') edTabSet: NgbTabset;
-  @ViewChild('idTextField') idTextField: ElementRef;
+  @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
+  @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
 
   constructor(
     private modalService: NgbModal,
@@ -58,8 +58,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   editMappings() {
-    const modalRef = this.modalService.open(MappingModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl'});
     modalRef.componentInstance.mappings = this.element.mapping;
+    modalRef.componentInstance.structureDefinition = this.structureDefinition;
   }
 
   toggleMaxUnlimited() {

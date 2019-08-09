@@ -213,7 +213,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     FormsModule,
     HttpClientModule,
     HttpModule,
-    NgbModule.forRoot(),
+    NgbModule,
     FileDropModule,
     TreeModule,
     SharedModule,

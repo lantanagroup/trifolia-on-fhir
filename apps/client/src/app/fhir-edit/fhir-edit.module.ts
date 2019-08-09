@@ -111,7 +111,7 @@ const components = [
     imports: [
         FormsModule,
         CommonModule,
-        NgbModule.forRoot(),
+        NgbModule,
         SharedModule,
         SharedUiModule,
         AngularEditorModule

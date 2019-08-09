@@ -173,7 +173,7 @@
       </ng-template>
       <ng-template ngbTabContent>
         <p>
-          <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'mapping', [{ identity: '' }])"/>
+          <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings()"/>
           This structure definition includes mappings
           <app-tooltip-icon tooltipPath="StructureDefinition.mapping"></app-tooltip-icon>
         </p>
