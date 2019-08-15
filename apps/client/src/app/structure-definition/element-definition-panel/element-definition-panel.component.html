@@ -357,8 +357,27 @@
         <app-fhir-string [parentObject]="element" propertyName="label" title="Label"
                          tooltipPath="ElementDefinition.label"></app-fhir-string>
 
-        <app-fhir-string [parentObject]="element" propertyName="alias" title="Alias"
-                         tooltipPath="ElementDefinition.alias"></app-fhir-string>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')"
+                   (ngModelChange)="toggleAlias()"/>
+            Alias
+            <app-tooltip-icon tooltipPath="ElementDefinition.alias"></app-tooltip-icon>
+          </label>
+          <div class="pull-right" *ngIf="element.alias">
+            <i class="fa fa-plus clickable" title="Add an alias" (click)="element.alias.push('')"></i>
+          </div>
+          <div class="input-group" *ngFor="let a of element.alias; let ai = index; trackBy: Globals.trackByFn" [attr.data-index]="ai">
+            <input type="text" class="form-control" [(ngModel)]="element.alias[ai]"
+                    [disabled]="!element.hasOwnProperty('alias')"/>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default clickable" (click)="element.alias.splice(ai, 1)"
+                      title="Remove this alias">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"
                            tooltipPath="ElementDefinition.definition"></app-fhir-markdown>
