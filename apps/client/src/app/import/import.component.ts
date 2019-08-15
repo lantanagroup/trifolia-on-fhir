@@ -229,7 +229,7 @@ export class ImportComponent implements OnInit {
 
   private getFileBundle(): Bundle {
     const bundle = new Bundle();
-    bundle.type = 'transaction';
+    bundle.type = 'batch';
     bundle.entry = this.files
       .filter((importFile: ImportFileModel) => {
         return importFile.contentType === ContentTypes.Json ||
@@ -313,7 +313,7 @@ export class ImportComponent implements OnInit {
 
     let response;
 
-    if (resource.resourceType === 'Bundle' && (resource.type === 'transaction' || resource.type === 'batch')) {
+    if (resource.resourceType === 'Bundle' && resource.type === 'batch') {
       response = this.httpClient.post('/api/fhir', resource);
     } else if (resource.id) {
       response = this.httpClient.put(`/api/fhir/${resource.resourceType}/${resource.id}`, resource);

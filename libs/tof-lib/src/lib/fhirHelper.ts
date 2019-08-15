@@ -2,6 +2,7 @@ import {ParseConformance} from 'fhir/parseConformance';
 import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import {OperationOutcome} from './r4/fhir';
 
 export function joinUrl(...parts: string[]) {
   let url = '';
@@ -130,4 +131,15 @@ export function getFhirR4Instance() {
 
   const fhir = new Fhir(parser);
   return fhir;
+}
+
+export function createOperationOutcome(severity: string, code: string, diagnostics: string) {
+  return <OperationOutcome> {
+    resourceType: 'OperationOutcome',
+    issue: [{
+      severity: severity,
+      code: code,
+      diagnostics: diagnostics
+    }]
+  };
 }

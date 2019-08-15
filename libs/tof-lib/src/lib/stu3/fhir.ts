@@ -1621,7 +1621,7 @@ export class Signature extends Element {
 export class Bundle extends Resource {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
-  public type: string;
+  public type: 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
   public total?: number;
   public link?: LinkComponent[];
   public entry?: EntryComponent[] = [];

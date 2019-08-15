@@ -16,7 +16,7 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, createOperationOutcome} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -102,7 +102,7 @@ export class FhirController extends BaseController {
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
   }
 
-  private async processTransactionEntry(entry: EntryComponent, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+  private async processBatchEntry(entry: EntryComponent, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
     // Make sure the user has permission to edit the pre-existing resource
     if (entry.request.method !== 'POST') {
       const id = entry.resource.id;
@@ -122,14 +122,22 @@ export class FhirController extends BaseController {
           this.logger.log('Checking security for resource');
           this.assertUserCanEdit(userSecurityInfo, originalResource);
         } catch (ex) {
-          if (ex.response) {
-            if (ex.response.status !== 404) {
-              this.logger.error(`Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`, ex.stack);
-              throw ex;
-            }
+          if (ex.status === 401) {
+            return {
+              status: 401,
+              data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
+            };
+          } else if (ex.status && ex.status !== 404) {
+            return {
+              status: ex.status,
+              data: createOperationOutcome('fatal', 'processing', `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`)
+            };
           } else {
-            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`, ex.stack);
-            throw ex;
+            return {
+              status: ex.response.status,
+              data: createOperationOutcome('fatal', 'processing', `A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`)
+            };
+            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`);
           }
           // Do nothing if the resource is not found... That means this is a create-with-id request
         }
@@ -163,39 +171,45 @@ export class FhirController extends BaseController {
     };
 
     try {
-      return await this.httpService.request(options).toPromise();
+      const response = await this.httpService.request(options).toPromise();
+      return response;
     } catch (ex) {
       this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
+
+      if (ex.response) {
+        return ex.response;
+      }
+
       throw ex;
     }
   }
 
-  private async processTransaction(bundle: Bundle, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
-    if (!bundle || bundle.resourceType !== 'Bundle' || ['batch', 'transaction'].indexOf(bundle.type) < 0) {
-      throw new BadRequestException();
+  private async processBatch(bundle: Bundle, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+    if (!bundle || bundle.resourceType !== 'Bundle') {
+      throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
+    }
+
+    if (bundle.type !== 'batch') {
+      throw new BadRequestException('Trifolia-on-FHIR only supports Bundles of type "batch".');
     }
 
     // Make sure each entry has a request.url
-    (bundle.entry || []).forEach((entry) => {
+    (bundle.entry || []).forEach((entry, index) => {
       if (!entry.request || !entry.request.url || !entry.request.method) {
         throw new BadRequestException('Transaction entries must have an request.url and request.method');
       } else if (['GET','POST','PUT','DELETE'].indexOf(entry.request.method) < 0) {
-        throw new BadRequestException('Transaction entry\'s method must be GET, POST, PUT or DELETE');
+        throw new BadRequestException(`Transaction entry[${index}] method must be GET, POST, PUT or DELETE`);
       }
     });
 
     const promises = (bundle.entry || []).map((entry) => {
-      return this.processTransactionEntry(entry, fhirServerBase, userSecurityInfo);
+      return this.processBatchEntry(entry, fhirServerBase, userSecurityInfo);
     });
     const results = await Promise.all(promises);
     const responseBundle: Bundle = {
       resourceType: 'Bundle',
-      type: 'transaction-response'
+      type: 'batch-response'
     };
-
-    if (bundle.type === 'batch') {
-      responseBundle.type = 'batch-response';
-    }
 
     responseBundle.entry = results.map((result, index) => {
       const responseEntry = <EntryComponent> {
@@ -205,12 +219,18 @@ export class FhirController extends BaseController {
         },
         response: {
           status: result.status.toString() + (result.statusText ? ' ' + result.statusText : ''),
-          location: result.headers['content-location']
+          location: result.headers ? result.headers['content-location'] : undefined
         }
       };
 
       if (result.data && result.data.resourceType === 'OperationOutcome') {
         responseEntry.response.outcome = result.data;
+      } else {
+        if (result.data && result.data.resourceType) {
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', `Successfully created/updated resource ${result.data.resourceType}/${result.data.id}`)
+        } else {
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', 'Successfully created/updated resource.')
+        }
       }
 
       return responseEntry;
@@ -236,12 +256,12 @@ export class FhirController extends BaseController {
     proxyUrl += url;
 
     const parsedUrl = parseFhirUrl(url);
-    const isTransaction = body && body.resourceType === 'Bundle' && body.type === 'transaction';
+    const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
 
-    if (isTransaction && !parsedUrl.resourceType) {
+    if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       try {
-        const responseBundle = await this.processTransaction(body, fhirServerBase, userSecurityInfo);
+        const responseBundle = await this.processBatch(body, fhirServerBase, userSecurityInfo);
         return {
           status: 200,
           data: responseBundle
@@ -355,7 +375,7 @@ export class FhirController extends BaseController {
           data: results.data
         };
       } else {
-        this.logger.error('Error processing http-error results in proxy', ex);
+        this.logger.error(`Error (status ${ex.status} processing http-error results in proxy: ${ex.message}`, ex);
         throw new InternalServerErrorException();
       }
     }

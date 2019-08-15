@@ -145,10 +145,10 @@ describe('FhirController', () => {
         req.done();
       });
 
-      it('should post and put resource entries in the transaction', async () => {
-        const transactionBundle: Bundle = {
+      it('should post and put resource entries in the batch', async () => {
+        const batchBundle: Bundle = {
           resourceType: 'Bundle',
-          type: 'transaction',
+          type: 'batch',
           entry: [{
             resource: <Observation> {
               resourceType: 'Observation',
@@ -187,8 +187,8 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Observation' }, { 'content-location': 'http://test-fhir-server.com/Observation/test-obs-1/_history/2' });
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
-        
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+
         expect(results).toBeTruthy();
         expect(results.data).toBeTruthy();
         expect(results.data.entry).toBeTruthy();
@@ -208,6 +208,65 @@ describe('FhirController', () => {
 
         req.done();
       });
+
+      it('should handle server response errors for individual entries in a batch', async () => {
+        const batchBundle: Bundle = {
+          resourceType: 'Bundle',
+          type: 'batch',
+          entry: [{
+            resource: <Observation> {
+              resourceType: 'Observation',
+              status: 'final'
+            },
+            request: {
+              method: 'POST',
+              url: '/Observation'
+            }
+          }, {
+            resource: <Observation> {
+              resourceType: 'Observation',
+              status: 'final',
+              id: 'test-obs-1'
+            },
+            request: {
+              method: 'PUT',
+              url: '/Observation/test-obs-1'
+            }
+          }]
+        };
+
+        const req = nock(fhirServerBase)
+          .post('/Observation', (obs) => {
+            expect(obs).toBeTruthy();
+            expect(obs.resourceType).toBe('Observation');
+            expect(obs.id).toBe('test-new-id');
+            return true;
+          })
+          .reply(400, { resourceType: 'OperationOutcome' })
+          .put('/Observation/test-obs-1', (obs) => {
+            expect(obs).toBeTruthy();
+            expect(obs.resourceType).toBe('Observation');
+            expect(obs.id).toBe('test-obs-1');
+            return true;
+          })
+          .reply(200, { resourceType: 'Observation' }, { 'content-location': 'http://test-fhir-server.com/Observation/test-obs-1/_history/2' });
+
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+
+        expect(results).toBeTruthy();
+        expect(results.data).toBeTruthy();
+        expect(results.data.entry).toBeTruthy();
+        expect(results.data.entry.length).toEqual(2);
+        expect(results.data.entry[0].response).toBeTruthy();
+        expect(results.data.entry[0].response.location).toBeFalsy();
+        expect(results.data.entry[0].response.status).toEqual('400');
+        expect(results.data.entry[0].response.outcome).toBeTruthy();
+        expect(results.data.entry[1].response).toBeTruthy();
+        expect(results.data.entry[1].response.status).toEqual('200');
+        expect(results.data.entry[1].response.location).toEqual('http://test-fhir-server.com/Observation/test-obs-1/_history/2');
+
+        req.done();
+      });
     });
 
     describe('security enabled', () => {
@@ -216,7 +275,7 @@ describe('FhirController', () => {
         configService.server.enableSecurity = true;
       });
 
-      it('should make sure resource retrieval checks security for entry in transaction', async () => {
+      it('should make sure resource retrieval checks security for entry in batch', async () => {
         const persistedObs = {
           resourceType: 'Observation',
           meta: {
@@ -227,9 +286,9 @@ describe('FhirController', () => {
           },
           id: 'test-obs-1'
         };
-        const transactionBundle: Bundle = {
+        const batchBundle: Bundle = {
           resourceType: 'Bundle',
-          type: 'transaction',
+          type: 'batch',
           entry: [{
             resource: <Observation> {
               resourceType: 'Observation',
@@ -266,7 +325,7 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
 
         expect(results).toBeTruthy();
 
@@ -284,9 +343,9 @@ describe('FhirController', () => {
           },
           id: 'test-obs-1'
         };
-        const transactionBundle: Bundle = {
+        const batchBundle: Bundle = {
           resourceType: 'Bundle',
-          type: 'transaction',
+          type: 'batch',
           entry: [{
             resource: <Observation> {
               resourceType: 'Observation',
@@ -348,7 +407,7 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, transactionBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
 
         expect(results).toBeTruthy();
 
@@ -372,7 +431,7 @@ describe('FhirController', () => {
           .reply(200, { resourceType: 'Bundle' });
 
         const results = await controller.proxy('/ImplementationGuide', {}, 'GET', fhirServerBase, testUser);
-        
+
         expect(results).toBeTruthy();
         expect(results.contentType).toBeTruthy();
 

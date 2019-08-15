@@ -200,7 +200,7 @@
             <p></p>
             <ul>
               <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
-                Issue {{ii + 1}} - {{issue.diagnostics}}
+                #{{ii + 1}} - {{issue.diagnostics}}
               </li>
             </ul>
           </div>
