@@ -118,8 +118,7 @@
                           <label class="btn" [class.btn-default]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
                             Profiles
                           </label>
-                          <label class="btn" [class.btn-default]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology"
-                                 (click)="toggleFilterResourceType('terminology')">
+                          <label class="btn" [class.btn-default]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')">
                             Terminology
                           </label>
                           <label class="btn" [class.btn-default]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
@@ -149,8 +148,15 @@
                 <tbody>
                 <tr *ngFor="let resource of resources; let ri = index">
                   <td>
-                    <i class="fa fa-copy" *ngIf="isDuplicateResource(resource)" title="This is a duplicate"></i>
-                    <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                    <app-fhir-reference
+                      [parentObject]="resource"
+                      propertyName="reference"
+                      [hideDisplay]="true"
+                      [isFormGroup]="false"
+                      [required]="true"
+                      [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                      prependIconTooltip="This is a duplicate">
+                    </app-fhir-reference>
                   </td>
                   <td>
                     <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
@@ -501,7 +507,15 @@
           <tbody>
           <tr *ngFor="let resource of implementationGuide.definition.resource; let ri = index">
             <td>
-              <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+              <app-fhir-reference
+                [parentObject]="resource"
+                propertyName="reference"
+                [hideDisplay]="true"
+                [isFormGroup]="false"
+                [required]="true"
+                [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                prependIconTooltip="This is a duplicate">
+              </app-fhir-reference>
             </td>
             <td>
               <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>

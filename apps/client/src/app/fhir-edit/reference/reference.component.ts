@@ -18,6 +18,9 @@ export class FhirReferenceComponent implements OnInit {
   @Input() public required: boolean;
   @Input() public hideResourceType?: boolean;
   @Input() public disabled: boolean;
+  @Input() public hideDisplay = false;
+  @Input() public prependIconClass: string;
+  @Input() public prependIconTooltip: string;
 
   public Globals = Globals;
 
