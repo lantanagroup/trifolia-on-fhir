@@ -9,8 +9,8 @@ import {AxiosRequestConfig} from 'axios';
 import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import nanoid from 'nanoid';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import nanoid from 'nanoid';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -20,7 +20,7 @@ export class PractitionerController extends BaseFhirController {
   resourceType = 'Practitioner';
 
   protected readonly logger = new TofLogger(PractitionerController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
@@ -59,7 +59,7 @@ export class PractitionerController extends BaseFhirController {
           practitioner.id = nanoid(8);
         }
 
-        const practitionerRequest = {
+        const practitionerRequest: AxiosRequestConfig = {
           url: buildUrl(fhirServerBase, this.resourceType, practitioner.id),
           method: 'PUT',
           data: practitioner

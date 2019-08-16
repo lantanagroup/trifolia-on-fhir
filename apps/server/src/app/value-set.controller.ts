@@ -9,6 +9,7 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))
@@ -16,9 +17,9 @@ import {ConfigService} from './config.service';
 @ApiOAuth2Auth()
 export class ValueSetController extends BaseFhirController {
   resourceType = 'ValueSet';
-  
+
   protected readonly logger = new TofLogger(ValueSetController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
@@ -28,7 +29,7 @@ export class ValueSetController extends BaseFhirController {
     return new Promise((resolve, reject) => {
       this.logger.log(`Beginning request to expand value set ${id}`);
 
-      const getOptions = {
+      const getOptions: AxiosRequestConfig = {
         url: buildUrl(request.fhirServerBase, 'ValueSet', id),
         method: 'GET'
       };
@@ -40,7 +41,7 @@ export class ValueSetController extends BaseFhirController {
           const valueSet = results.data;
           this.logger.log('Retrieved value set content for expand');
 
-          const expandOptions = {
+          const expandOptions: AxiosRequestConfig = {
             url: buildUrl(this.configService.fhir.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
             method: 'POST',
             data: valueSet

@@ -4,6 +4,7 @@ import {HttpService, Injectable, UnauthorizedException} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
@@ -21,7 +22,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     } else {
       this.logger.log(`Authorization code not found in cache. Requesting from identity provider. Code: ${token}`);
 
-      const options = {
+      const options: AxiosRequestConfig = {
         method: 'GET',
         url: this.configService.auth.userInfoUrl,
         headers: {

@@ -1129,7 +1129,7 @@ export class SearchComponent extends BackboneElement {
 }
 
 export class RequestComponent extends BackboneElement {
-  public method: string;
+  public method: 'GET'|'POST'|'PUT'|'DELETE';
   public url: string;
   public ifNoneMatch?: string;
   public ifModifiedSince?: Date;

@@ -16,6 +16,7 @@ import * as compression from 'compression';
 import * as fs from 'fs-extra';
 import * as modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
+import {NestExpressApplication} from '@nestjs/platform-express';
 
 const config = new ConfigService();
 
@@ -169,7 +170,7 @@ const fixSwagger = (document) => {
 };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const globalPrefix = 'api';
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

@@ -119,10 +119,9 @@ export class BaseController {
     };
 
     const groupsUrl = buildUrl(fhirServerBase, 'Group', null, null, {member: userSecurityInfo.user.id, _summary: true});
-    const groupsOptions = {
+    const groupsOptions: AxiosRequestConfig = {
       url: groupsUrl,
       method: 'GET',
-      json: true,
       headers: {
         'Cache-Control': 'no-cache'
       }

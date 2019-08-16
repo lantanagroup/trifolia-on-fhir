@@ -15,7 +15,7 @@ import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
   protected readonly logger = new TofLogger(BaseFhirController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
   }
@@ -178,7 +178,7 @@ export class BaseFhirController extends BaseController {
     const location = createResults.headers.location || createResults.headers['content-location'];
 
     if (location) {
-      const getOptions = {
+      const getOptions: AxiosRequestConfig = {
         url: location,
         method: 'GET'
       };

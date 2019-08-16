@@ -13,6 +13,7 @@ import {Response} from 'express';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 
 import * as path from "path";
 import * as tmp from 'tmp';
@@ -38,7 +39,7 @@ export class ExportController extends BaseController {
 
       const validateResource = (resource: DomainResource) => {
         return new Promise((resolve, reject) => {
-          const options = {
+          const options: AxiosRequestConfig = {
             url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
             method: 'POST',
             data: resource

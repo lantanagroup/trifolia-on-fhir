@@ -20,7 +20,7 @@ import {buildUrl, createOperationOutcome} from '../../../../libs/tof-lib/src/lib
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig, AxiosResponse} from 'axios';
+import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
@@ -56,7 +56,7 @@ export class FhirController extends BaseController {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
 
-    const currentOptions = {
+    const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'GET'
     };
@@ -78,12 +78,12 @@ export class FhirController extends BaseController {
     // Change the id of the resource
     resource.id = newId;
 
-    const createOptions = {
+    const createOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, newId),
       method: 'PUT',
       data: resource
     };
-    const deleteOptions = {
+    const deleteOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'DELETE'
     };
@@ -164,7 +164,7 @@ export class FhirController extends BaseController {
     const url = fhirServerBase +
       (!fhirServerBase.endsWith('/') ? '/' : '') +
       (entry.request.url.startsWith('/') ? entry.request.url.substring(1) : entry.request.url);
-    const options = {
+    const options: AxiosRequestConfig = {
       url: url,
       method: entry.request.method,
       data: entry.resource

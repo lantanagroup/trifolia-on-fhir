@@ -12,6 +12,7 @@ import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformanc
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 import nanoid from 'nanoid';
 
 interface SaveStructureDefinitionRequest {
@@ -130,7 +131,7 @@ export class StructureDefinitionController extends BaseFhirController {
   @Get(':id')
   public async get(@Req() request: ITofRequest, @Param('id') id: string): Promise<GetStructureDefinitionModel> {
     const url = buildUrl(request.fhirServerBase, this.resourceType, id, null, request.query);
-    const requestOptions = {
+    const requestOptions: AxiosRequestConfig = {
       url: url,
       method: 'GET',
       headers: {
@@ -149,7 +150,7 @@ export class StructureDefinitionController extends BaseFhirController {
       throw ex;
     }
 
-    const igRequestOptions = {
+    const igRequestOptions: AxiosRequestConfig = {
       url: buildUrl(request.fhirServerBase, 'ImplementationGuide', null, null, {resource: `StructureDefinition/${id}`}),
       method: 'GET',
       headers: {
@@ -241,7 +242,7 @@ export class StructureDefinitionController extends BaseFhirController {
       }
     }
 
-    const updateOptions = {
+    const updateOptions: AxiosRequestConfig = {
       method: 'PUT',
       url: igUrl,
       data: implementationGuide
@@ -298,7 +299,7 @@ export class StructureDefinitionController extends BaseFhirController {
       });
     }
 
-    const updateOptions = {
+    const updateOptions: AxiosRequestConfig = {
       method: 'PUT',
       url: igUrl,
       data: implementationGuide
@@ -319,7 +320,7 @@ export class StructureDefinitionController extends BaseFhirController {
       structureDefinition.id = id;
     }
 
-    const updateOptions = {
+    const updateOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, this.resourceType, id),
       method: 'PUT',
       data: structureDefinition

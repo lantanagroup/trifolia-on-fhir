@@ -7,13 +7,14 @@ import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/ex
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 import * as modulePackage from '../../../../package.json';
 
 @Controller('api/config')
 @ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
   }
@@ -49,7 +50,7 @@ export class ConfigController extends BaseController {
       return Promise.resolve(ConfigController.serverMetadata[request.fhirServerBase]);
     }
 
-    const options = {
+    const options: AxiosRequestConfig = {
       url: buildUrl(request.fhirServerBase, 'metadata'),
       method: 'GET'
     };

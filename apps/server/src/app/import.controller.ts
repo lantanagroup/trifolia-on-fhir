@@ -9,6 +9,7 @@ import {FhirController} from './fhir.controller';
 import {FhirServerBase, User} from './server.decorators';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
+import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -28,7 +29,7 @@ export class ImportController extends BaseController {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
     }
 
-    const options = {
+    const options: AxiosRequestConfig = {
       method: 'GET',
       url: buildUrl(this.vsacBaseUrl, 'ValueSet', id),
       headers: {

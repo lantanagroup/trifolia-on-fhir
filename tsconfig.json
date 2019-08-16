@@ -18,7 +18,8 @@
       "@trifolia-fhir/tof-lib": ["libs/tof-lib/src/index.ts"]
     },
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "rootDir": "."
   },
   "exclude": ["node_modules", "tmp"]
 }
