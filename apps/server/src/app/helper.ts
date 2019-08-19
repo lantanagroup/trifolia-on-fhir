@@ -1,3 +1,6 @@
+import {ParseConformance} from 'fhir/parseConformance';
+import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
+import * as path from 'path';
 import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import {BadRequestException} from '@nestjs/common';
@@ -121,4 +124,43 @@ export function parseFhirUrl(url: string) {
   }
 
   return parsed;
+}
+
+function getJsonFromFile(relativePath: string) {
+  const actualPath = path.join(__dirname, relativePath);
+  const contentStream = fs.readFileSync(actualPath);
+  const content = contentStream.toString('utf8');
+  return JSON.parse(content);
+}
+
+export function getFhirStu3Instance() {
+  const parser = new ParseConformance(false, FhirVersions.STU3);
+  const valueSets = getJsonFromFile('assets/stu3/valuesets.json');
+  const types = getJsonFromFile('assets/stu3/profiles-types.json');
+  const resources = getJsonFromFile('assets/stu3/profiles-resources.json');
+  const iso3166 = getJsonFromFile('assets/stu3/codesystem-iso3166.json');
+
+  parser.parseBundle(valueSets);
+  parser.parseBundle(types);
+  parser.parseBundle(resources);
+  parser.loadCodeSystem(iso3166);
+
+  const fhir = new Fhir(parser);
+  return fhir;
+}
+
+export function getFhirR4Instance() {
+  const parser = new ParseConformance(false, FhirVersions.R4);
+  const valueSets = getJsonFromFile('assets/r4/valuesets.json');
+  const types = getJsonFromFile('assets/r4/profiles-types.json');
+  const resources = getJsonFromFile('assets/r4/profiles-resources.json');
+  const iso3166 = getJsonFromFile('assets/r4/codesystem-iso3166.json');
+
+  parser.parseBundle(valueSets);
+  parser.parseBundle(types);
+  parser.parseBundle(resources);
+  parser.loadCodeSystem(iso3166);
+
+  const fhir = new Fhir(parser);
+  return fhir;
 }

@@ -1,8 +1,4 @@
-import {ParseConformance} from 'fhir/parseConformance';
-import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import {OperationOutcome} from './r4/fhir';
+import {OperationOutcome, ResourceReference} from './r4/fhir';
 
 export function joinUrl(...parts: string[]) {
   let url = '';
@@ -94,45 +90,6 @@ export function parseUrl(url: string, base?: string) {
   }
 }
 
-function getJsonFromFile(relativePath: string) {
-  const actualPath = path.join(__dirname, relativePath);
-  const contentStream = fs.readFileSync(actualPath);
-  const content = contentStream.toString('utf8');
-  return JSON.parse(content);
-}
-
-export function getFhirStu3Instance() {
-  const parser = new ParseConformance(false, FhirVersions.STU3);
-  const valueSets = getJsonFromFile('assets/stu3/valuesets.json');
-  const types = getJsonFromFile('assets/stu3/profiles-types.json');
-  const resources = getJsonFromFile('assets/stu3/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/stu3/codesystem-iso3166.json');
-
-  parser.parseBundle(valueSets);
-  parser.parseBundle(types);
-  parser.parseBundle(resources);
-  parser.loadCodeSystem(iso3166);
-
-  const fhir = new Fhir(parser);
-  return fhir;
-}
-
-export function getFhirR4Instance() {
-  const parser = new ParseConformance(false, FhirVersions.R4);
-  const valueSets = getJsonFromFile('assets/r4/valuesets.json');
-  const types = getJsonFromFile('assets/r4/profiles-types.json');
-  const resources = getJsonFromFile('assets/r4/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/r4/codesystem-iso3166.json');
-
-  parser.parseBundle(valueSets);
-  parser.parseBundle(types);
-  parser.parseBundle(resources);
-  parser.loadCodeSystem(iso3166);
-
-  const fhir = new Fhir(parser);
-  return fhir;
-}
-
 export function createOperationOutcome(severity: string, code: string, diagnostics: string) {
   return <OperationOutcome> {
     resourceType: 'OperationOutcome',
@@ -142,4 +99,43 @@ export function createOperationOutcome(severity: string, code: string, diagnosti
       diagnostics: diagnostics
     }]
   };
+}
+
+export function getExtensionString(obj: any, url: string): string {
+  const foundExtension = (obj.extension || []).find((ex) => ex.url === url);
+
+  if (foundExtension) {
+    return foundExtension.valueString;
+  }
+}
+
+export function setExtensionString(obj: any, url: string, value: string) {
+  let foundExtension = (obj.extension || []).find((ex) => ex.url === url);
+
+  if (value) {
+    if (!foundExtension) {
+      if (!obj.extension) {
+        obj.extension = [];
+      }
+
+      foundExtension = { url: url };
+      obj.extension.push(foundExtension);
+    }
+
+    foundExtension.valueString = value;
+  } else if (!value && foundExtension) {
+    const index = obj.extension.indexOf(foundExtension);
+    obj.extension.splice(index, 1);
+  }
+}
+
+
+export function getDefaultImplementationGuideResourcePath(reference: ResourceReference) {
+  if (reference && reference.reference) {
+    const parsed = parseUrl(reference.reference);
+
+    if (parsed) {
+      return `resources/${parsed.resourceType.toLowerCase()}/${parsed.id.toLowerCase()}.xml`;
+    }
+  }
 }

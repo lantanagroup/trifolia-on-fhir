@@ -17,7 +17,6 @@ export interface ResourceSelection {
 }
 
 @Component({
-  selector: 'app-fhir-reference-modal',
   templateUrl: './reference-modal.component.html',
   styleUrls: ['./reference-modal.component.css']
 })

@@ -26,6 +26,10 @@ footer.footer span.message {
     padding-left: 10px;
 }
 
+.red {
+  color: red;
+}
+
 a.btn > i.fa {
     color: black;
 }

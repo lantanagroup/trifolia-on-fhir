@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CookieService} from 'angular2-cookie/core';
 
 @Component({
@@ -15,6 +15,7 @@ export class FhirBooleanComponent implements OnInit {
   @Input() defaultValue = false;
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Output() change = new EventEmitter<any>();
 
   /**
    * Indicates that the value of the component should be remembered in cookies
@@ -35,12 +36,14 @@ export class FhirBooleanComponent implements OnInit {
   public set value(newValue: boolean) {
     if (newValue !== true && newValue !== false && this.parentObject && this.parentObject.hasOwnProperty(this.propertyName)) {
       delete this.parentObject[this.propertyName];
+      this.change.emit();
 
       if (this.cookieKey && this.cookieService.get(this.cookieKey)) {
         this.cookieService.remove(this.cookieKey);
       }
     } else if (newValue === true || newValue === false) {
       this.parentObject[this.propertyName] = newValue;
+      this.change.emit();
 
       if (this.cookieKey) {
         this.cookieService.put(this.cookieKey, newValue.toString());

@@ -24,7 +24,8 @@ export class Globals {
     'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
-    'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager'
+    'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
+    'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path'
   };
 
   static readonly introText = {
@@ -132,7 +133,8 @@ export class Globals {
     'resource.move': 'To change the ID of this resource, go back to the browse screen for the resource and click the "Change ID" button.',
     'sd.baseDefinition': 'Definition that this type is constrained/specialized from. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different base definition and/or type.',
     'sd.type': 'Type defined or constrained by this structure. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different type and/or base definition.',
-    'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.'
+    'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.',
+    'ig.resource.filePath': 'This is the path where the resource should be stored when exporting to FHIR IG Publisher packages and GitHub.'
   };
 
   static readonly cookieKeys = {

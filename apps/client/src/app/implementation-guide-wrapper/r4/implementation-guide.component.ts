@@ -25,6 +25,8 @@ import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {BaseComponent} from '../../base.component';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ResourceModalComponent} from './resource-modal.component';
+import {getDefaultImplementationGuideResourcePath} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -128,6 +130,12 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
   }
 
+  public editResource(resource: ImplementationGuideResourceComponent) {
+    const modalRef = this.modal.open(ResourceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resource = resource;
+    modalRef.componentInstance.implementationGuide = this.implementationGuide;
+  }
+
   public addResources() {
     const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
@@ -141,11 +149,17 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
       const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
 
       results.forEach((result: ResourceSelection) => {
+        const newReference: ResourceReference = {
+          reference: result.resourceType + '/' + result.id,
+          display: result.display
+        };
+
         this.implementationGuide.definition.resource.push({
-          reference: {
-            reference: result.resourceType + '/' + result.id,
-            display: result.display
-          },
+          extension: [{
+            url: Globals.extensionUrls['extension-ig-resource-file-path'],
+            valueString: getDefaultImplementationGuideResourcePath(newReference)
+          }],
+          reference: newReference,
           name: result.display,
           exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
         });

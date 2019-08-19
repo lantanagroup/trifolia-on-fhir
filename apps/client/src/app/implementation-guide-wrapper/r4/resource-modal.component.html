@@ -1,0 +1,49 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Resource</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+  <app-fhir-reference [parentObject]="resource" propertyName="reference" [required]="true" (change)="referenceChanged()" title="Reference" tooltipPath="ImplementationGuide.definition.resource.reference"></app-fhir-reference>
+
+  <app-fhir-string [parentObject]="resource" propertyName="name" title="Name" tooltipPath="ImplementationGuide.definition.resource.name"></app-fhir-string>
+
+  <app-fhir-string [parentObject]="resource" propertyName="description" title="Description" tooltipPath="ImplementationGuide.definition.resource.description"></app-fhir-string>
+
+  <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" title="Example?" tooltipPath="ImplementationGuide.definition.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
+
+  <div class="form-group">
+    <label>Example of Profile (URL)</label>
+    <div class="input-group">
+      <input type="text" class="form-control" [(ngModel)]="resource.exampleCanonical" [disabled]="!enableExampleCanonical" />
+      <div class="input-group-append">
+        <button type="button" class="btn btn-primary" title="Select a profile that this resource is an example of" (click)="selectExampleCanonical()">
+          <i class="fa fa-hand-pointer-o"></i>
+        </button>
+      </div>
+    </div>
+    <span class="help-block">The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".</span>
+  </div>
+
+  <div class="form-group">
+    <label>
+      File Path <app-tooltip-icon tooltipKey="ig.resource.filePath"></app-tooltip-icon>
+    </label>
+    <input type="text" class="form-control" [(ngModel)]="filePath" />
+  </div>
+
+  <div class="form-group">
+    <label>
+      Package <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.package"></app-tooltip-icon>
+      <i *ngIf="!enablePackage" class="fas fa-exclamation-circle" ngbTooltip="You cannot select a package for the resource because the implementation guide does not define any packages"></i>
+    </label>
+    <select class="form-control" [(ngModel)]="resource.package" [disabled]="!enablePackage">
+      <option [ngValue]="undefined">Unspecified</option>
+      <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
+    </select>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="ok()">Done</button>
+</div>

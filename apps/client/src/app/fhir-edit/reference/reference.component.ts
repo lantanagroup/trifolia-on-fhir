@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ResourceReference} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -21,6 +21,8 @@ export class FhirReferenceComponent implements OnInit {
   @Input() public hideDisplay = false;
   @Input() public prependIconClass: string;
   @Input() public prependIconTooltip: string;
+
+  @Output() public change = new EventEmitter<any>();
 
   public Globals = Globals;
 
@@ -67,6 +69,7 @@ export class FhirReferenceComponent implements OnInit {
       const reference: ResourceReference = this.parentObject[this.propertyName];
       reference.reference = results.resourceType + '/' + results.id;
       reference.display = results.display;
+      this.change.emit();
     });
   }
 

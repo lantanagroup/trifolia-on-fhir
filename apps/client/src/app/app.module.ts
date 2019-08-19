@@ -64,6 +64,7 @@ import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
+import {ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -185,7 +186,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
+    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, ResourceModalComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -200,7 +201,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
     ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, ResourceModalComponent
   ],
   imports: [
     RouterModule.forRoot(

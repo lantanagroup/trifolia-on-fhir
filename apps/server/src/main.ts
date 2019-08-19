@@ -1,6 +1,5 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
-import {getFhirR4Instance, getFhirStu3Instance} from '../../../libs/tof-lib/src/lib/fhirHelper';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Response} from 'express';
 import {ITofRequest} from './app/models/tof-request';
@@ -17,6 +16,7 @@ import * as fs from 'fs-extra';
 import * as modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
+import {getFhirR4Instance, getFhirStu3Instance} from './app/helper';
 
 const config = new ConfigService();
 
