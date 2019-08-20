@@ -2,23 +2,19 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {spawn} from 'child_process';
 import {
+  ContactDetail,
   DomainResource,
-  HumanName,
-  Bundle as STU3Bundle,
-  Binary as STU3Binary,
-  ImplementationGuide as STU3ImplementationGuide,
-  PageComponent,
   Extension,
-  ContactDetail, Media, PackageResourceComponent
+  ImplementationGuide as STU3ImplementationGuide,
+  Media,
+  PackageResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  Binary as R4Binary,
-  Bundle as R4Bundle,
   ImplementationGuide as R4ImplementationGuide,
-  ImplementationGuidePageComponent, ImplementationGuideResourceComponent
+  ImplementationGuidePageComponent,
+  ImplementationGuideResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IServerConfig} from '../models/server-config';
 import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
@@ -27,9 +23,9 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
+import {createTableFromArray, getDisplayName, reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
-import {FhirControl, FhirControlDependency, PageInfo, TableOfContentsEntry} from './html.models';
+import {PageInfo, TableOfContentsEntry} from './html.models';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -87,55 +83,6 @@ export class HtmlExporter {
     return;
   }
 
-  private getDisplayName(name: string | HumanName): string {
-    if (!name) {
-      return;
-    }
-
-    if (typeof name === 'string') {
-      return <string>name;
-    }
-
-    let display = name.family;
-
-    if (name.given) {
-      if (display) {
-        display += ', ';
-      } else {
-        display = '';
-      }
-
-      display += name.given.join(' ');
-    }
-
-    return display;
-  }
-
-
-  private createTableFromArray(headers, data) {
-    let output = '<table>\n<thead>\n<tr>\n';
-
-    headers.forEach((header) => {
-      output += `<th>${header}</th>\n`;
-    });
-
-    output += '</tr>\n</thead>\n<tbody>\n';
-
-    data.forEach((row: string[]) => {
-      output += '<tr>\n';
-
-      row.forEach((cell) => {
-        output += `<td>${cell}</td>\n`;
-      });
-
-      output += '</tr>\n';
-    });
-
-    output += '</tbody>\n</table>\n';
-
-    return output;
-  }
-
   protected sendSocketMessage(status: 'error'|'progress'|'complete', message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
@@ -155,47 +102,83 @@ export class HtmlExporter {
     }
   }
 
-  private getIgPublisher(useLatest: boolean): Promise<string> {
-    return new Promise((resolve) => {
-      const fileName = 'org.hl7.fhir.igpublisher.jar';
-      const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
-      const defaultFilePath = path.join(defaultPath, fileName);
+  static getIgPublisherBuildInfo(content: string): string {
+    if (!content) {
+      return;
+    }
 
-      if (useLatest === true) {
-        this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
+    const lines = content.replace(/\r/g, '').split('\n');
 
-        this.sendSocketMessage('progress', 'Downloading latest FHIR IG publisher');
+    if (lines.length < 6) {
+      return;
+    }
 
-        // TODO: Check http://build.fhir.org/version.info first
+    const buildId = lines.find(l => l.split('=')[0] === 'buildId');
+    const buildIdSplit = buildId.split('=');
 
-        // TODO: Set config on GET request to return binary
-        this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise()
-          .then((results) => {
-            this.logger.log('Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists');
+    if (buildIdSplit.length !== 2) {
+      return;
+    }
 
-            const latestPath = path.join(defaultPath, 'latest');
-            fs.ensureDirSync(latestPath);
+    return buildIdSplit[1];
+  }
 
-            // noinspection JSUnresolvedFunction
-            const latestFilePath = path.join(latestPath, fileName);
+  private async getIgPublisher(useLatest: boolean): Promise<string> {
+    const fileName = 'org.hl7.fhir.igpublisher.jar';
+    const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
+    const defaultFilePath = path.join(defaultPath, fileName);
+    const latestPath = path.join(defaultPath, 'latest');
+    const latestFilePath = path.join(latestPath, fileName);
+    const localVersionPath = path.join(latestPath, 'version.info');
+    let versionContent;
 
-            this.logger.log('Saving FHIR IG publisher to ' + latestFilePath);
+    if (useLatest === true) {
+      fs.ensureDirSync(latestPath);
 
-            fs.writeFileSync(latestFilePath, results.data);
+      this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
 
-            resolve(latestFilePath);
-          })
-          .catch((err) => {
-            this.logger.error(`Error getting latest version of FHIR IG publisher: ${err}`);
-            this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
-            resolve(defaultFilePath);
-          });
-      } else {
-        this.logger.log('Using built-in version of FHIR IG publisher for export');
-        this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
-        resolve(defaultFilePath);
+      this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
+
+      // Check http://build.fhir.org/version.info first
+      try {
+        const versionResults = await this.httpService.get('http://build.fhir.org/version.info', { responseType: 'text' }).toPromise();
+        versionContent = versionResults.data;
+        const version = HtmlExporter.getIgPublisherBuildInfo(versionContent);
+
+        const localVersionContent = fs.existsSync(localVersionPath) ? fs.readFileSync(localVersionPath).toString() : undefined;
+        const localVersion = HtmlExporter.getIgPublisherBuildInfo(localVersionContent);
+
+        if (version === localVersion) {
+          this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
+          return latestFilePath;
+        }
+
+        this.sendSocketMessage('progress', 'Server does not have the latest version of the IG publisher... Downloading.', true);
+      } catch (ex) {
+        this.logger.error(`Error getting version information about the FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading version info for the latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
       }
-    });
+
+      try {
+        const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
+
+        this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
+
+        fs.writeFileSync(latestFilePath, results.data);
+        fs.writeFileSync(localVersionPath, versionContent);
+
+        return latestFilePath;
+      } catch (ex) {
+        this.logger.error(`Error getting latest version of FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
+      }
+    } else {
+      this.logger.log('Using built-in version of FHIR IG publisher for export');
+      this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
+      return defaultFilePath;
+    }
   }
 
   /**
@@ -242,7 +225,7 @@ export class HtmlExporter {
           const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
           return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
         });
-        const authorsContent = '### Authors\n\n' + this.createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
         fs.appendFileSync(indexPath, authorsContent);
       }
     }
@@ -254,7 +237,7 @@ export class HtmlExporter {
         .map((profile) => {
           return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
         });
-      const profilesTable = this.createTableFromArray(['Name', 'Description'], profilesData);
+      const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
       fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
     } else {
       fs.appendFileSync(profilesPath, '**No profiles are defined for this implementation guide**\n\n');
@@ -267,7 +250,7 @@ export class HtmlExporter {
         .map((extension) => {
           return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
         });
-      const extContent = this.createTableFromArray(['Name', 'Description'], extData);
+      const extContent = createTableFromArray(['Name', 'Description'], extData);
       fs.appendFileSync(profilesPath, '### Extensions\n\n' + extContent + '\n\n');
     } else {
       fs.appendFileSync(profilesPath, '### Extensions\n\n**No extensions are defined for this implementation guide**\n\n');
@@ -310,7 +293,7 @@ export class HtmlExporter {
         .map((capabilityStatement) => {
           return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
         });
-      const capContent = this.createTableFromArray(['Name', 'Description'], csData);
+      const capContent = createTableFromArray(['Name', 'Description'], csData);
       fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + capContent);
     } else {
       fs.appendFileSync(csPath, '**No capability statements are defined for this implementation guide**');
@@ -320,17 +303,17 @@ export class HtmlExporter {
     if (otherResources.length > 0) {
       const oData = otherResources
         .sort((a, b) => {
-          const aDisplay = a.title || this.getDisplayName(a.name) || a.id || '';
+          const aDisplay = a.title || getDisplayName(a.name) || a.id || '';
           const aCompare = a.resourceType + aDisplay;
-          const bDisplay = b.title || this.getDisplayName(b.name) || b.id || '';
+          const bDisplay = b.title || getDisplayName(b.name) || b.id || '';
           const bCompare = b.resourceType + bDisplay;
           return aCompare.localeCompare(bCompare);
         })
         .map((resource) => {
-          const name = resource.title || this.getDisplayName(resource.name) || resource.id;
+          const name = resource.title || getDisplayName(resource.name) || resource.id;
           return [resource.resourceType, `<a href="${resource.resourceType}-${resource.id}.html">${name}</a>`];
         });
-      const oContent = this.createTableFromArray(['Type', 'Name'], oData);
+      const oContent = createTableFromArray(['Type', 'Name'], oData);
       fs.appendFileSync(otherPath, '### Other Resources\n\n' + oContent);
     } else {
       fs.appendFileSync(otherPath, '**No examples are defined for this implementation guide**');

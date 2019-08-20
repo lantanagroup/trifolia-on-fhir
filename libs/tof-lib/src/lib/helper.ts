@@ -267,3 +267,51 @@ export function getStringFromBlob(theBlob: Blob): Promise<string> {
     }
   });
 }
+
+export function createTableFromArray(headers, data): string {
+  let output = '<table>\n<thead>\n<tr>\n';
+
+  headers.forEach((header) => {
+    output += `<th>${header}</th>\n`;
+  });
+
+  output += '</tr>\n</thead>\n<tbody>\n';
+
+  data.forEach((row: string[]) => {
+    output += '<tr>\n';
+
+    row.forEach((cell) => {
+      output += `<td>${cell}</td>\n`;
+    });
+
+    output += '</tr>\n';
+  });
+
+  output += '</tbody>\n</table>\n';
+
+  return output;
+}
+
+ export function getDisplayName(name: string | HumanName): string {
+  if (!name) {
+    return;
+  }
+
+  if (typeof name === 'string') {
+    return <string>name;
+  }
+
+  let display = name.family;
+
+  if (name.given) {
+    if (display) {
+      display += ', ';
+    } else {
+      display = '';
+    }
+
+    display += name.given.join(' ');
+  }
+
+  return display;
+}
