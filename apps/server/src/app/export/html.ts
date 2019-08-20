@@ -26,6 +26,11 @@ import * as vkbeautify from 'vkbeautify';
 import {createTableFromArray, getDisplayName, reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
 import {PageInfo, TableOfContentsEntry} from './html.models';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getExtensionString
+} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -554,6 +559,62 @@ export class HtmlExporter {
     }
   }
 
+  private getResourceFilePath(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+    // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
+    if (resource === this.implementationGuide) {
+      fs.ensureDirSync(path.join(resourcesDir, 'implementationguide'));
+      return path.join(resourcesDir, 'implementationguide', resource.id.toLowerCase() + '.xml');
+    }
+
+    const implementationGuideResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
+    let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
+
+    if (!resourcePath) {
+      resourcePath = getDefaultImplementationGuideResourcePath({
+        reference: `${resource.resourceType}/${resource.id}`
+      });
+    }
+
+    if (isXml && !resourcePath.endsWith('.xml')) {
+      resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf('.')) + '.xml';
+    } else if (!isXml && !resourcePath.endsWith('.json')) {
+      resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf('.')) + '.json';
+    }
+
+    // Make sure the directory for the resource exists
+    const fullResourcePath = path.join(resourcesDir, resourcePath);
+    const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf('/'));
+    fs.ensureDirSync(resourceDir);
+
+    return fullResourcePath;
+  }
+
+  private writeResourceContent(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+    const cleanResource = BundleExporter.cleanupResource(resource);
+    const resourcePath = this.getResourceFilePath(resourcesDir, resource, isXml);
+    let resourceContent;
+
+    if (resourcePath.endsWith('.xml')) {
+      resourceContent = this.fhir.objToXml(cleanResource);
+      resourceContent = vkbeautify.xml(resourceContent);
+    } else if (resourcePath.endsWith('.json')) {
+      resourceContent = JSON.stringify(cleanResource, null, '\t');
+    } else {
+      throw new Error(`Unexpected resource file path extension: ${resourcePath}`);
+    }
+
+    if (resource.resourceType === 'Media') {
+      const mediaReference = this.getImplementationGuideResource('Media', resource.id);
+
+      // If the Media is not an example, don't save it to the resources folder
+      if (!this.isImplementationGuideReferenceExample(mediaReference)) {
+        return;
+      }
+    }
+
+    fs.writeFileSync(resourcePath, resourceContent);
+  }
+
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -588,40 +649,17 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-    for (let i = 0; i < bundle.entry.length; i++) {
-      const resource = bundle.entry[i].resource;
-      const cleanResource = BundleExporter.cleanupResource(resource);
-      const resourceType = resource.resourceType;
-      const id = resource.id;
-      const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
-      let resourcePath, resourceContent;
+    this.implementationGuide = bundle.entry
+      .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
+      .resource;
 
-      if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
-        this.implementationGuide = resource;
-      }
+    // Make sure the implementation guide is in XML format... This is a requirement for the fhir ig publisher.
+    this.writeResourceContent(resourcesDir, this.implementationGuide, true);
 
-      // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
-      if (!isXml && resourceType !== 'ImplementationGuide') {
-        resourceContent = JSON.stringify(cleanResource, null, '\t');
-        resourcePath = path.join(resourceDir, id + '.json');
-      } else {
-        resourceContent = this.fhir.objToXml(cleanResource);
-        resourceContent = vkbeautify.xml(resourceContent);
-        resourcePath = path.join(resourceDir, id + '.xml');
-      }
-
-      if (resource.resourceType === 'Media') {
-        const mediaReference = this.getImplementationGuideResource('Media', resource.id);
-
-        // If the Media is not an example, don't save it to the resources folder
-        if (!this.isImplementationGuideReferenceExample(mediaReference)) {
-          continue;
-        }
-      }
-
-      fs.ensureDirSync(resourceDir);
-      fs.writeFileSync(resourcePath, resourceContent);
-    }
+    // Go through all of the other resources and write them to the file system
+    bundle.entry
+      .filter((e) => this.implementationGuide !== e.resource)
+      .forEach((entry) => this.writeResourceContent(resourcesDir, entry.resource, isXml));
 
     this.logger.log('Done writing resources to file system.');
 

@@ -102,6 +102,10 @@ export function createOperationOutcome(severity: string, code: string, diagnosti
 }
 
 export function getExtensionString(obj: any, url: string): string {
+  if (!obj) {
+    return;
+  }
+
   const foundExtension = (obj.extension || []).find((ex) => ex.url === url);
 
   if (foundExtension) {
