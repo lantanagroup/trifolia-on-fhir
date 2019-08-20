@@ -1,7 +1,6 @@
-import {BaseController, GenericResponse} from './base.controller';
+import {BaseController} from './base.controller';
 import {Controller, Get, Header, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
-import {HtmlExporter} from './export/html';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -14,6 +13,7 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
+import {createHtmlExporter} from './export/html.factory';
 
 import * as path from "path";
 import * as tmp from 'tmp';
@@ -143,7 +143,7 @@ export class ExportController extends BaseController {
     @Param('implementationGuideId') implementationGuideId: string) {
 
     const options = new ExportOptions(request.query);
-    const exporter = new HtmlExporter(
+    const exporter = createHtmlExporter(
       this.configService.server,
       this.configService.fhir,
       this.httpService,
@@ -170,7 +170,7 @@ export class ExportController extends BaseController {
   @Get(':implementationGuideId/publish')
   public async publishImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
-    const exporter = new HtmlExporter(
+    const exporter = createHtmlExporter(
       this.configService.server,
       this.configService.fhir,
       this.httpService,

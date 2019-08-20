@@ -135,7 +135,7 @@ export function getDefaultImplementationGuideResourcePath(reference: ResourceRef
     const parsed = parseUrl(reference.reference);
 
     if (parsed) {
-      return `resources/${parsed.resourceType.toLowerCase()}/${parsed.id.toLowerCase()}.xml`;
+      return `${parsed.resourceType.toLowerCase()}/${parsed.id.toLowerCase()}.xml`;
     }
   }
 }
