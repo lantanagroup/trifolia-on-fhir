@@ -10,9 +10,14 @@ The entire implementation guide (including the HTML files, definitions, validati
 
 **Validator Pack and Definitions:**
 
-The following file contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.:
+The validator.pack file is a zip file that contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.
 
-- [Validator Pack](validator.pack)
+It is used:
+- by the validator if you refer to the IG directly by it's canonical URL
+- by the IG publisher if you declare that one IG depends on another
+- by a FHIR server, if you add the IG to server load list
+
+You may [download the validator.pack file here](validator.pack).
 
 In addition there are format specific definitions files.
 - [XML](definitions.xml.zip)
