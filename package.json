@@ -1,6 +1,6 @@
 {
   "name": "trifolia-on-fhir",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
@@ -52,6 +52,7 @@
     "@nrwl/angular": "8.0.0",
     "@nrwl/node": "^8.4.10",
     "@nrwl/workspace": "^8.4.10",
+    "@nrwl/nest": "8.0.0",
     "angular2-cookie": "^1.2.6",
     "auth0-js": "^9.10.2",
     "bootstrap": "^4.3.1",
@@ -122,9 +123,6 @@
     "ts-jest": "24.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "^3.5.3",
-    "@nrwl/workspace": "8.0.0",
-    "@nrwl/nest": "8.0.0",
-    "@nrwl/node": "8.0.0"
+    "typescript": "^3.5.3"
   }
 }
