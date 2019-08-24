@@ -36,8 +36,8 @@ export class HtmlExporter {
   readonly homedir: string;
 
   protected igPublisherLocation: string;
-  protected implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   protected pageInfos: PageInfo[];
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
@@ -67,7 +67,8 @@ export class HtmlExporter {
     return <R4ImplementationGuide> this.implementationGuide;
   }
 
-  protected getControl(bundle: any) {
+  // This is public so it can be unit-tested
+  public getControl(bundle: any) {
     // Override in version-specific class
   }
 

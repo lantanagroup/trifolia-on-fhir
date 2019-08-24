@@ -17,7 +17,7 @@ export class R4HtmlExporter extends HtmlExporter {
     }
   }
 
-  protected getControl(bundle: R4Bundle) {
+  public getControl(bundle: R4Bundle) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(this.r4ImplementationGuide.url);
     let canonicalBase;

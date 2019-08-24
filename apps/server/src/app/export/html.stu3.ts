@@ -27,7 +27,7 @@ export class STU3HtmlExporter extends HtmlExporter {
     }
   }
 
-  protected getControl(bundle: STU3Bundle) {
+  public getControl(bundle: STU3Bundle) {
     const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
     const canonicalBaseMatch = canonicalBaseRegex.exec(this.stu3ImplementationGuide.url);
     const packageIdExtension = (this.stu3ImplementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
