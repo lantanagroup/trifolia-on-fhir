@@ -457,7 +457,7 @@ export class HtmlExporter {
     igPublisherProcess.stdout.on('data', (data) => {
       const message = data.toString()
         .replace(tmp.tmpdir, 'XXX')
-        .replace(tmp.tmpdir.replace(/\\/g, '/'), 'XXX')
+        .replace(tmp.tmpdir.replace(/\\/g, path.sep), 'XXX')
         .replace(this.homedir, 'XXX');
 
       if (message && message.trim().replace(/\./g, '') !== '') {
@@ -573,7 +573,9 @@ export class HtmlExporter {
 
     // Make sure the directory for the resource exists
     const fullResourcePath = path.join(resourcesDir, resourcePath);
-    const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf('/'));
+    const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf(path.sep));
+
+    this.logger.log(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
     fs.ensureDirSync(resourceDir);
 
     return fullResourcePath;
@@ -583,6 +585,8 @@ export class HtmlExporter {
     const cleanResource = BundleExporter.cleanupResource(resource);
     const resourcePath = this.getResourceFilePath(resourcesDir, resource, isXml);
     let resourceContent;
+
+    this.logger.log(`Writing ${resource.resourceType}/${resource.id} to "${resourcePath}.`);
 
     if (!resourcePath) {
       return;
