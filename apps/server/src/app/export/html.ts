@@ -528,22 +528,6 @@ export class HtmlExporter {
     });
   }
 
-  private getImplementationGuideResourceReference(igResource: PackageResourceComponent | ImplementationGuideResourceComponent) {
-    if (!igResource) {
-      return;
-    }
-
-    if (this.fhirVersion === 'stu3') {
-      const obj = <PackageResourceComponent> igResource;
-      return obj.sourceReference ? obj.sourceReference.reference : undefined;
-    } else if (this.fhirVersion === 'r4') {
-      const obj = <ImplementationGuideResourceComponent> igResource;
-      return obj.reference ? obj.reference.reference : undefined;
-    } else {
-      throw new Error('Unexpected FHIR version');
-    }
-  }
-
   private isImplementationGuideReferenceExample(igResource: PackageResourceComponent | ImplementationGuideResourceComponent): boolean {
     if (!igResource) {
       return false;
@@ -567,13 +551,18 @@ export class HtmlExporter {
       return path.join(resourcesDir, 'implementationguide', resource.id.toLowerCase() + '.xml');
     }
 
-    const implementationGuideResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
+    const implementationGuideResource = <ImplementationGuideResourceComponent> this.getImplementationGuideResource(resource.resourceType, resource.id);
     let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
 
     if (!resourcePath) {
       resourcePath = getDefaultImplementationGuideResourcePath({
         reference: `${resource.resourceType}/${resource.id}`
       });
+    }
+
+    if (!resourcePath) {
+      this.sendSocketMessage('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);
+      return;
     }
 
     if (isXml && !resourcePath.endsWith('.xml')) {
@@ -594,6 +583,10 @@ export class HtmlExporter {
     const cleanResource = BundleExporter.cleanupResource(resource);
     const resourcePath = this.getResourceFilePath(resourcesDir, resource, isXml);
     let resourceContent;
+
+    if (!resourcePath) {
+      return;
+    }
 
     if (resourcePath.endsWith('.xml')) {
       resourceContent = this.fhir.objToXml(cleanResource);
