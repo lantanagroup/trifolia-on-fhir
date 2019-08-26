@@ -186,14 +186,14 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Package
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
+            <th>
+              Package <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
             </th>
-            <th>Resource
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
+            <th>
+              Resource <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
             </th>
-            <th>Example?
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.example"></app-tooltip-icon>
+            <th>
+              Example? <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.example"></app-tooltip-icon>
             </th>
             <th class="actions-column-2">
               <div class="pull-right">
@@ -212,14 +212,14 @@
               </select>
             </td>
             <td>
-              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" [isFormGroup]="false" [required]="true" [hideDisplay]="true"></app-fhir-reference>
             </td>
             <td>
               <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-primary" title="Edit this resource" [disabled]="!canEditImplementationGuideResource(ir)" (click)="editImplementationGuideResource(ir)">
+                <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editImplementationGuideResource(ir)">
                   <i class="fa fa-edit"></i>
                 </button>
                 <button type="button" class="btn btn-secondary" title="Remove this resource (and package, if no resources are left in it) from this implementation guide"
@@ -446,7 +446,7 @@
         </table>
       </ng-template>
     </ngb-tab>
-    
+
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>

@@ -1,33 +1,33 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
-  <label>
-    <input type="checkbox" *ngIf="!required || !parentObject.hasOwnProperty(propertyName)" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
-    {{title || 'Reference'}}
-  </label>
+  <label *ngIf="title">{{title}}</label>
   <div class="input-group">
-    <input type="text" class="form-control" [class.is-invalid]="required && !reference" (change)="change.emit()" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
-    <input type="text" class="form-control" *ngIf="!hideDisplay" [class.is-invalid]="required && !display" (change)="change.emit()" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
+    <input type="text" class="form-control" [class.is-invalid]="required && !reference" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="reference" placeholder="Reference" />
+    <input type="text" class="form-control" *ngIf="!hideDisplay" [class.is-invalid]="required && !display" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="display" placeholder="Display" />
     <div class="input-group-append">
       <span *ngIf="prependIconClass" class="input-group-text">
         <i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i>
       </span>
-      <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="open(selectReferenceModal)" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled">
+      <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clearReference()" [disabled]="disabled">
+        <i class="fa fa-times"></i>
+      </button>
+      <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">
         <i class="fa fa-hand-pointer-o"></i>
       </button>
     </div>
   </div>
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
-  <div class="input-group-prepend">
-    <span class="input-group-text" *ngIf="!required || !parentObject.hasOwnProperty(propertyName)">
-      <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, { reference: '', display: '' })" />
-    </span>
+  <div class="input-group-prepend" *ngIf="title">
     <span class="input-group-text" *ngIf="!required">{{title}}</span>
   </div>
-  <input type="text" class="form-control" [class.is-invalid]="required && !reference" (change)="change.emit()" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="reference" placeholder="Reference" />
-  <input type="text" class="form-control" *ngIf="!hideDisplay" [class.is-invalid]="required && !display" (change)="change.emit()" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled" [(ngModel)]="display" placeholder="Display" />
+  <input type="text" class="form-control" [class.is-invalid]="required && !reference" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="reference" placeholder="Reference" />
+  <input type="text" class="form-control" *ngIf="!hideDisplay" [class.is-invalid]="required && !display" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="display" placeholder="Display" />
   <div class="input-group-append">
     <span *ngIf="prependIconClass" class="input-group-text"><i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i></span>
-    <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="open(selectReferenceModal)" [disabled]="!parentObject.hasOwnProperty(propertyName) || disabled">
+    <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clearReference()" [disabled]="disabled">
+      <i class="fa fa-times"></i>
+    </button>
+    <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">
       <i class="fa fa-hand-pointer-o"></i>
     </button>
   </div>

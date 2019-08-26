@@ -25,7 +25,7 @@ import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {BaseComponent} from '../../base.component';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {ResourceModalComponent} from './resource-modal.component';
+import {R4ResourceModalComponent} from './resource-modal.component';
 import {getDefaultImplementationGuideResourcePath} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 class PageDefinition {
@@ -131,7 +131,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   public editResource(resource: ImplementationGuideResourceComponent) {
-    const modalRef = this.modal.open(ResourceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
   }

@@ -19,7 +19,7 @@ import {
   templateUrl: './resource-modal.component.html',
   styleUrls: ['./resource-modal.component.css']
 })
-export class ResourceModalComponent implements OnInit {
+export class R4ResourceModalComponent implements OnInit {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
 

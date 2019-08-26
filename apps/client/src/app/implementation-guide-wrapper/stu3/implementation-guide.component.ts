@@ -26,6 +26,7 @@ import {
 import {ClientHelper} from '../../clientHelper';
 import {BaseComponent} from '../../base.component';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {STU3ResourceModalComponent} from './resource-modal.component';
 
 class PageDefinition {
   public page: PageComponent;
@@ -62,7 +63,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   private resources: ImplementationGuideResource[] = [];
 
   constructor(
-    private modal: NgbModal,
+    private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
@@ -118,7 +119,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public selectPublishedIg(dependency: Extension) {
-    const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
@@ -154,7 +155,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public addResources(destPackage?: PackageComponent) {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
@@ -370,7 +371,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
 
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    this.modal.open(content, {size: 'lg'});
+    this.modalService.open(content, {size: 'lg'});
   }
 
   public tabChange(event) {
@@ -418,7 +419,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg'});
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -584,47 +585,14 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
-
-    if (!confirm('This will redirect you to the "Edit Structure Definition" screen. Any unsaved changes will be lost. Are you sure you want to continue?')) {
-      return;
-    }
-
-    let routeComponent: string;
-
-    switch (parsed.resourceType) {
-      case 'ImplementationGuide':
-        routeComponent = 'implementation-guide';
-        break;
-      case 'StructureDefinition':
-        routeComponent = 'structure-definition';
-        break;
-      case 'CapabilityStatement':
-        routeComponent = 'capability-statement';
-        break;
-      case 'OperationDefinition':
-        routeComponent = 'operation-definition';
-        break;
-      case 'ValueSet':
-        routeComponent = 'value-set';
-        break;
-      case 'CodeSystem':
-        routeComponent = 'code-system';
-        break;
-      case 'Questionnaire':
-        routeComponent = 'questionnaire';
-        break;
-    }
-
-    this.router.navigate([`/${this.configService.fhirServer}/${routeComponent}/${parsed.id}`]);
+    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg'});
+    modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.componentInstance.resource = igResource.resource;
   }
 
   public initResources() {
     this.resources = (this.implementationGuide.package || []).reduce((list, igPackage: PackageComponent) => {
       const packageResources = (igPackage.resource || [])
-        .filter((resource: PackageResourceComponent) => {
-          return !!resource.sourceReference;
-        })
         .map((resource: PackageResourceComponent) => {
           return new ImplementationGuideResource(resource, igPackage);
         })
