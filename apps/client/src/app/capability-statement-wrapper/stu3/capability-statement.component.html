@@ -1,4 +1,5 @@
 <h1>Capability Statement (STU3)</h1>
+<h2 *ngIf="capabilityStatement">{{capabilityStatement.name}}</h2>
 
 <div class="alert alert-danger" *ngIf="csNotFound">Capability Statement with id
   <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!
@@ -961,6 +962,13 @@
   <ngb-tab id="validation" title="Validation">
     <ng-template ngbTabContent>
       <app-validation-results [results]="validation"></app-validation-results>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- Permissions -->
+  <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+    <ng-template ngbTabContent>
+      <app-resource-permissions [meta]="capabilityStatement.meta"></app-resource-permissions>
     </ng-template>
   </ngb-tab>
 
