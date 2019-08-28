@@ -2,6 +2,7 @@
   "extends": "../../tslint.json",
   "rules": {
     "directive-selector": [true, "attribute", "trifolia-fhir", "camelCase"],
-    "component-selector": [true, "element", "trifolia-fhir", "kebab-case"]
+    "component-selector": [true, "element", "trifolia-fhir", "kebab-case"],
+    "nx-enforce-module-boundaries": false
   }
 }
