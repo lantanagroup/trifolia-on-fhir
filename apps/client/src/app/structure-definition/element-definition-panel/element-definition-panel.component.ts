@@ -47,6 +47,47 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
+  get min(): string {
+    if (this.elementTreeModel && this.elementTreeModel.constrainedElement && this.elementTreeModel.constrainedElement.min >= 0) {
+      return this.elementTreeModel.constrainedElement.min.toString();
+    }
+
+    return '';
+  }
+
+  set min(value: string) {
+    if (this.element) {
+      if (value || value == '0') {
+        const valueNum = parseInt(value);
+        this.element.min = valueNum;
+      } else if (!value) {
+        delete this.element.min;
+      }
+    }
+  }
+
+  get max(): string {
+    if (this.element && this.element.max) {
+      if (this.element.max === '*') {
+        return '';
+      }
+
+      return this.element.max;
+    }
+
+    return '';
+  }
+
+  set max(value: string) {
+    if (this.element) {
+      if (value || value == '0') {
+        this.element.max = value.toString();
+      } else if (!value && this.element.max) {
+        delete this.element.max;
+      }
+    }
+  }
+
   focus() {
     if (this.edTabSet) {
       this.edTabSet.select('general');
@@ -64,10 +105,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   toggleMaxUnlimited() {
-    if (!this.element.hasOwnProperty('max')) {
-      return;
-    }
-
     if (this.element.max === '*') {
       this.element.max = '1';
     } else {
@@ -164,12 +201,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get isMinValid() {
-    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+    if (!this.element || typeof this.element.min === 'undefined') {
       return true;
     }
 
-    const maxRequired = this.elementTreeModel.constrainedElement.max || this.elementTreeModel.baseElement.max;
-    const minValue = this.elementTreeModel.constrainedElement.min;
+    const maxRequired = this.element.max || this.elementTreeModel.baseElement.max;
+    const minValue = this.element.min;
 
     if (minValue < this.elementTreeModel.baseElement.min) {
       return false;
@@ -184,12 +221,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get isMaxValid(){
-    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+    if (!this.element || typeof this.element.min === 'undefined') {
       return true;
     }
 
-    const maxValue = this.elementTreeModel.constrainedElement.max;
-    const minRequired = this.elementTreeModel.constrainedElement.min || this.elementTreeModel.baseElement.min;
+    const maxValue = this.element.max;
+    const minRequired = this.element.min || this.elementTreeModel.baseElement.min;
 
     if (maxValue !== undefined && ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
       || (maxValue === "*" && this.elementTreeModel.baseElement.max !== "*"))) {

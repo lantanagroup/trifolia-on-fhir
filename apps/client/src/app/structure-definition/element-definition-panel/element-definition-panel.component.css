@@ -1,3 +1,17 @@
 fieldset {
     padding: 5px;
 }
+
+/* clears the 'X' from Internet Explorer */
+input[type=text]::-ms-clear {  display: none; width : 0; height: 0; }
+input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
+
+/* clears the 'X' from Chrome */
+input[type=text]::-webkit-search-decoration,
+input[type=text]::-webkit-search-cancel-button,
+input[type=text]::-webkit-search-results-button,
+input[type=text]::-webkit-search-results-decoration { display: none; }
+
+.form-control.is-invalid {
+  background-image: none;
+}
