@@ -1,6 +1,6 @@
 import {BaseController} from './base.controller';
 import {BadRequestException, HttpService, InternalServerErrorException} from '@nestjs/common';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
@@ -8,8 +8,6 @@ import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
-
-import nanoid from 'nanoid';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 
 export class BaseFhirController extends BaseController {
@@ -134,7 +132,7 @@ export class BaseFhirController extends BaseController {
     this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
-      data.id = nanoid(8);
+      data.id = generateId();
     } else {
       // Make sure the resource doesn't already exist with the same id
       try {

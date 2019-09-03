@@ -16,7 +16,7 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, createOperationOutcome, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -158,7 +158,7 @@ export class FhirController extends BaseController {
     }
 
     if (entry.request.method === 'POST' && !entry.resource.id) {
-      entry.resource.id = nanoid(8);
+      entry.resource.id = generateId();
     }
 
     const url = fhirServerBase +

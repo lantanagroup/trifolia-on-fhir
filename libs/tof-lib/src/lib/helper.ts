@@ -32,6 +32,10 @@ export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   return defaultMessage || 'An unknown error occurred';
 }
 
+/**
+ * Function that can be used by Array.reduce to flatten a multi-level set of arrays.
+ * @param callback Should return the child array of the elements
+ */
 export function reduceFlatten<T>(callback: (next: T) => any[]) {
   const internalFlatten = (previous: T[], children: T[]) => {
     if (children) {
@@ -48,6 +52,10 @@ export function reduceFlatten<T>(callback: (next: T) => any[]) {
   };
 }
 
+/**
+ * Function that can be used by Array.reduce to get a distinct set of elements.
+ * @param callback The callback is required, and used to indicate what the value of each element is that should be used in the comparison.
+ */
 export function reduceDistinct<T>(callback: (next: T) => any) {
   return (previous: any[], current: T): any[] => {
     const id = callback(current);

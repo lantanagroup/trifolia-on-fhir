@@ -4,7 +4,7 @@ import {ITofRequest, ITofUser} from './models/tof-request';
 import {Bundle, ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AuthGuard} from '@nestjs/passport';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {GetStructureDefinitionModel, StructureDefinitionImplementationGuide, StructureDefinitionOptions} from '../../../client/src/app/shared/structure-definition.service';
 import {TofNotFoundException} from '../not-found-exception';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
@@ -355,7 +355,8 @@ export class StructureDefinitionController extends BaseFhirController {
 
   @Post()
   public create(@Req() request: ITofRequest, @Body() body, @User() user: ITofUser) {
-    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, nanoid(8), body.resource, user, body.options);
+    const newId = generateId();
+    return this.saveStructureDefinition(request.fhirServerBase, request.fhirServerVersion, newId, body.resource, user, body.options);
   }
 
   @Put(':id')

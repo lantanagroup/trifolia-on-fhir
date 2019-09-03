@@ -1,7 +1,7 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -56,7 +56,7 @@ export class PractitionerController extends BaseFhirController {
         if (existingPractitioner && existingPractitioner.id) {
           practitioner.id = existingPractitioner.id;
         } else {
-          practitioner.id = nanoid(8);
+          practitioner.id = generateId();
         }
 
         const practitionerRequest: AxiosRequestConfig = {

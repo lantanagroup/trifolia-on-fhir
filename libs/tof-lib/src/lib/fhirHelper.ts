@@ -1,4 +1,5 @@
 import {OperationOutcome, ResourceReference} from './r4/fhir';
+import nanoid from 'nanoid/generate';
 
 export function joinUrl(...parts: string[]) {
   let url = '';
@@ -142,4 +143,8 @@ export function getDefaultImplementationGuideResourcePath(reference: ResourceRef
       return `${parsed.resourceType.toLowerCase()}/${parsed.id}.xml`;
     }
   }
+}
+
+export function generateId(): string {
+  return nanoid('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
 }
