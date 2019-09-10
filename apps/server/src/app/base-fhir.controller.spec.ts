@@ -11,7 +11,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 nock.disableNetConnect();
 
-jest.mock('nanoid', () => () => {
+jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
 });
 

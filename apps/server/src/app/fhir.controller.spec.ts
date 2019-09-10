@@ -11,7 +11,7 @@ import nock = require('nock');
 import http = require('axios/lib/adapters/http');
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
-jest.mock('nanoid', () => () => {
+jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
 });
 
