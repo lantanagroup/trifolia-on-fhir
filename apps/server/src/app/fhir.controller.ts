@@ -122,16 +122,20 @@ export class FhirController extends BaseController {
           this.logger.log('Checking security for resource');
           this.assertUserCanEdit(userSecurityInfo, originalResource);
         } catch (ex) {
-          if (ex.status === 401) {
-            return {
-              status: 401,
-              data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
-            };
-          } else if (ex.status && ex.status !== 404) {
-            return {
-              status: ex.status,
-              data: createOperationOutcome('fatal', 'processing', `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`)
-            };
+          if (ex.response) {
+            if (ex.response.status === 404) {
+              // Do nothing... It doesn't exist, so the user can create it.
+            } else if (ex.status === 401) {
+              return {
+                status: 401,
+                data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
+              };
+            } else if (ex.response.status !== 404) {
+              return {
+                status: ex.response.status,
+                data: createOperationOutcome('fatal', 'processing', `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`)
+              };
+            }
           } else {
             return {
               status: ex.response.status,
@@ -142,11 +146,13 @@ export class FhirController extends BaseController {
           // Do nothing if the resource is not found... That means this is a create-with-id request
         }
 
-        try {
-          await this.removePermissions(fhirServerBase, originalResource, entry.resource);
-        } catch (ex) {
-          this.logger.error(`Error occurred while removing permissions for resource in transaction: ${ex.message}`, ex.stack);
-          throw ex;
+        if (originalResource) {
+          try {
+            await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+          } catch (ex) {
+            this.logger.error(`Error occurred while removing permissions for resource in transaction: ${ex.message}`, ex.stack);
+            throw ex;
+          }
         }
       }
 
