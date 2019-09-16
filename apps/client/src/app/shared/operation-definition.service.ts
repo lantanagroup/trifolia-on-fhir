@@ -17,11 +17,15 @@ export class OperationDefinitionService {
     }
   }
 
-  public search(page = 1, name?: string) {
+  public search(page = 1, name?: string, implementationGuideId?: string) {
     let url = '/api/operationDefinition?page=' + page + '&';
 
     if (name) {
       url += 'name=' + encodeURIComponent(name) + '&';
+    }
+
+    if (implementationGuideId) {
+      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
     }
 
     url += '?_sort=name';

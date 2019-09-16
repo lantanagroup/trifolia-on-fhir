@@ -21,6 +21,7 @@ export interface ResourceSelection {
   styleUrls: ['./reference-modal.component.css']
 })
 export class FhirReferenceModalComponent implements OnInit {
+  @Input() public modalTitle = 'Select a resource';
   @Input() public resourceType?: string;
   @Input() public hideResourceType?: boolean;
   @Input() public selectMultiple = false;

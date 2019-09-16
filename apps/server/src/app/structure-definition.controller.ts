@@ -112,19 +112,8 @@ export class StructureDefinitionController extends BaseFhirController {
     return found;
   }
 
-  protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
-    const preparedQuery = await super.prepareSearchQuery(user, fhirServerBase, query);
-
-    if (preparedQuery.implementationGuideId) {
-      preparedQuery['_has:ImplementationGuide:resource:_id'] = preparedQuery.implementationGuideId;
-      delete preparedQuery.implementationGuideId;
-    }
-
-    return preparedQuery;
-  }
-
   @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
+  public search(@User() user, @FhirServerBase() fhirServerBase?: string, @Query() query?: any): Promise<any> {
     return super.baseSearch(user, fhirServerBase, query);
   }
 

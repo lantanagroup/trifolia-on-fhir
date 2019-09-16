@@ -18,11 +18,16 @@
           <a class="dropdown-item" routerLink="/">
             <i class="fa fa-home"></i> Home
           </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()">
+          <a class="dropdown-item" (click)="openProject()" *ngIf="!configService.project" title="Open/select an implementation guide project to work on">
+            <i class="far fa-folder"></i> Open project
+          </a>
+          <a class="dropdown-item" (click)="closeProject()" *ngIf="configService.project" title="Close the currently opened project implementation guide">
+            <i class="fas fa-times"></i> Close "{{configService.project.name}}"
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
             <i class="fa fa-upload"></i> Open from computer
           </a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()">
+          <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()" title="Change application settings">
             <i class="fa fa-cog"></i> Settings
           </a>
         </div>
@@ -32,7 +37,8 @@
           Browse/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="browseMenu">
-          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/implementation-guide">Implementation Guides</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/implementation-guide" *ngIf="!configService.project">Implementation Guides</a>
+          <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{configService.project.implementationGuideId}}" *ngIf="configService.project">Implementation Guide</a>
           <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/structure-definition">Profiles/Extensions</a>
           <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/capability-statement">Capability Statements</a>
           <a class="dropdown-item" routerLink="/{{this.configService.fhirServer}}/operation-definition">Operation Definition</a>
@@ -68,6 +74,11 @@
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <ul class="navbar-nav mr-auto">
+        <li class="nav-item" *ngIf="configService.project">
+          <a class="nav-link" href="javascript:void(0)" title="The currently selected project">
+            <div class="badge badge-info">{{configService.project.name}}</div>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
             <div class="badge badge-info">{{fhirServerDisplay}}</div>

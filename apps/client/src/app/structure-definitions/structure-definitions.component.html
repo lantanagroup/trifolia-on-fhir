@@ -28,7 +28,7 @@
                  placeholder="Search complete url"/>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6" *ngIf="!configService.project">
         <label>Implementation Guide</label>
         <app-implementation-guide-typeahead [implementationGuideId]="implementationGuideId" (implementationGuideIdChange)="implementationGuideIdChanged($event)"></app-implementation-guide-typeahead>
       </div>

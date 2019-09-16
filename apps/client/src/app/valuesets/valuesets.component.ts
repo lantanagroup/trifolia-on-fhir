@@ -109,7 +109,11 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     this.results = null;
     this.message = 'Searching value sets...';
 
-    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText)
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      null;
+
+    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText, implementationGuideId)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = '';

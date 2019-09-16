@@ -13,6 +13,10 @@ export class ConfigService {
   public config: ConfigModel;
   public fhirServer: string;
   public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
+  public project?: {
+    implementationGuideId: string,
+    name: string
+  };
   public statusMessage: string;
   public showingIntroduction = false;
   private fhirConformances: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement } = {};

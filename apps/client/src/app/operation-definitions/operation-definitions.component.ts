@@ -74,7 +74,12 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
   public getOperationDefinitions() {
     this.operationDefinitionsBundle = null;
-    this.opDefService.search(this.page, this.nameText)
+
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      null;
+
+    this.opDefService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.operationDefinitionsBundle = results;
       }, (err) => {

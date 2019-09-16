@@ -137,7 +137,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.response = null;
     this.configService.setStatusMessage('Loading structure definitions');
 
-    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.urlText, this.implementationGuideId)
+    // Limit to the currently open project?
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      this.implementationGuideId;
+
+    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.urlText, implementationGuideId)
       .subscribe((response: Bundle) => {
         this.response = response;
         this.configService.setStatusMessage('');

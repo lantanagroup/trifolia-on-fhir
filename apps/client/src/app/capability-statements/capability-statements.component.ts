@@ -75,7 +75,12 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
 
   public getCapabilityStatements() {
     this.capabilityStatementsBundle = null;
-    this.csService.search(this.page, this.nameText)
+
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      null;
+
+    this.csService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.capabilityStatementsBundle = results;
       }, (err) => {

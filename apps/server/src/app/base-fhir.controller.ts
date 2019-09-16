@@ -26,6 +26,11 @@ export class BaseFhirController extends BaseController {
     preparedQuery['_summary'] = true;
     preparedQuery['_count'] = 10;
 
+    if (preparedQuery.implementationGuideId) {
+      preparedQuery['_has:ImplementationGuide:resource:_id'] = preparedQuery.implementationGuideId;
+      delete preparedQuery.implementationGuideId;
+    }
+
     if (preparedQuery.name) {
       preparedQuery['name:contains'] = preparedQuery.name;
       delete preparedQuery.name;

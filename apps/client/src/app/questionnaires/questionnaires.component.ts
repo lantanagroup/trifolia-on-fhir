@@ -80,7 +80,13 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
   }
 
   public getQuestionnaires() {
-    this.questionnaireService.search(this.page, this.nameText)
+    this.questionnairesBundle = null;
+
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      null;
+
+    this.questionnaireService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.questionnairesBundle = results;
       }, (err) => {

@@ -17,6 +17,7 @@ import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-mes
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
+import { FhirReferenceModalComponent, ResourceSelection } from './fhir-edit/reference-modal/reference-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -60,6 +61,24 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       intro.start();
     }, 200);
+  }
+
+  public openProject() {
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'ImplementationGuide';
+    modalRef.componentInstance.hideResourceType = true;
+    modalRef.componentInstance.modalTitle = 'Select an implementation guide';
+
+    modalRef.result.then((selected: ResourceSelection) => {
+      this.configService.project = {
+        implementationGuideId: selected.id,
+        name: selected.display
+      };
+    });
+  }
+
+  public closeProject() {
+    this.configService.project = null;
   }
 
   public get fhirServerDisplay(): string {

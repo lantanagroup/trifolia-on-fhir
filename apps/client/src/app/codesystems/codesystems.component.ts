@@ -90,7 +90,11 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   }
 
   public getCodeSystems() {
-    this.codeSystemService.search(this.page, this.nameText)
+    const implementationGuideId = this.configService.project ?
+      this.configService.project.implementationGuideId :
+      null;
+
+    this.codeSystemService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.codeSystemsBundle = results;
       }, (err) => {
