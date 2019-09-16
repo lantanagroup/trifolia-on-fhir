@@ -5,7 +5,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
 
-  <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
+  <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
     <ngb-tab id="quick">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.quick-tab']">Quick</span>
@@ -449,19 +449,19 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let package of implementationGuide.definition.package; let pi = index">
+          <tr *ngFor="let pkg of implementationGuide.definition.package; let pi = index">
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="id" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="id" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="description" [isFormGroup]="false"></app-fhir-string>
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(ri, 1)">
+                <button type="button" class="btn btn-primary" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(pi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -612,7 +612,7 @@
         </th>
         <th class="actions-column-1">
           <div class="pull-right">
-            <button type="button" class="btn btn-primary" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ version: 'current' })">
+            <button type="button" class="btn btn-primary" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '', version: 'current' })">
               <i class="fa fa-plus"></i>
             </button>
           </div>

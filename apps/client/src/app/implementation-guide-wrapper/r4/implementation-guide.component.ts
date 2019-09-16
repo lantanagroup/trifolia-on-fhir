@@ -24,7 +24,7 @@ import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {BaseComponent} from '../../base.component';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {R4ResourceModalComponent} from './resource-modal.component';
 import {getDefaultImplementationGuideResourcePath} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
@@ -53,8 +53,6 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   public filterResourceQuery: string;
   public igNotFound = false;
   public Globals = Globals;
-
-  private navSubscription: any;
 
   constructor(
     private modal: NgbModal,
@@ -85,9 +83,9 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        const parsedReference = this.fhirService.parseReference(resource.reference.reference);
+        const parsedReference = parseReference(resource.reference.reference);
 
-        if (this.filterResourceType.profile && this.fhirService.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
           return true;
         }
 
@@ -95,7 +93,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        if (this.filterResourceType.example && this.fhirService.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
+        if (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
           return true;
         }
 
@@ -109,9 +107,11 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         const reference = resource.reference && resource.reference.reference ?
           resource.reference.reference.toLowerCase().trim() :
           '';
+        /*
         const name = resource.name ?
           resource.name.toLowerCase().trim() :
           '';
+         */
 
         return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
       });
@@ -146,7 +146,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         this.implementationGuide.definition.resource = [];
       }
 
-      const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+      const allProfilingTypes = Globals.profileTypes.concat(Globals.terminologyTypes);
 
       results.forEach((result: ResourceSelection) => {
         const newReference: ResourceReference = {
@@ -266,9 +266,6 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
         });
     }
-  }
-
-  public tabChange(event) {
   }
 
   public toggleResources(hasResources: boolean) {

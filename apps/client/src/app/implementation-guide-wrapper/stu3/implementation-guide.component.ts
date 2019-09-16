@@ -25,7 +25,7 @@ import {
 } from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ClientHelper} from '../../clientHelper';
 import {BaseComponent} from '../../base.component';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {STU3ResourceModalComponent} from './resource-modal.component';
 
 class PageDefinition {
@@ -174,7 +174,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         destPackage = this.implementationGuide.package[0];
       }
 
-      const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+      const allProfilingTypes = Globals.profileTypes.concat(Globals.terminologyTypes);
 
       if (!destPackage.resource) {
         destPackage.resource = [];
@@ -187,7 +187,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         (this.implementationGuide.package || []).forEach((next: PackageComponent) => {
           const foundNext = (next.resource || []).find((resource: PackageResourceComponent) => {
             if (resource.sourceReference) {
-              const parsed = this.fhirService.parseReference(resource.sourceReference.reference);
+              const parsed = parseReference(resource.sourceReference.reference);
               return parsed.resourceType === result.resourceType && parsed.id === result.id;
             }
           });
@@ -567,7 +567,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public canEditImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
+    const parsed = parseReference(igResource.resource.sourceReference.reference);
 
     if (!parsed) {
       return false;

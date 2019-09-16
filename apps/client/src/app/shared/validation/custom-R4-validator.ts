@@ -4,15 +4,11 @@ import {
   ImplementationGuideResourceComponent
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Severities, ValidatorMessage} from 'fhir/validator';
-import {FhirService} from '../fhir.service';
 import {CustomValidator} from './custom-validator';
-import {groupBy} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { groupBy, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 
 export class CustomR4Validator extends CustomValidator {
-  constructor(fhirService: FhirService) {
-    super(fhirService);
-  }
-
   private getAllPages(implementationGuide: R4ImplementationGuide): ImplementationGuidePageComponent[] {
     const pages: ImplementationGuidePageComponent[] = [];
 
@@ -38,7 +34,7 @@ export class CustomR4Validator extends CustomValidator {
     const groupedResources = groupBy(allResources, (resource: ImplementationGuideResourceComponent) => resource.reference ? resource.reference.reference : null);
     const allPages = this.getAllPages(implementationGuide);
     const groupedPageTitles = groupBy(allPages, (page: ImplementationGuidePageComponent) => page.title);
-    const allProfileTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+    const allProfileTypes = Globals.profileTypes.concat(Globals.terminologyTypes);
 
     if (implementationGuide.url && !implementationGuide.url.endsWith('/' + implementationGuide.id)) {
       messages.push({
@@ -58,7 +54,7 @@ export class CustomR4Validator extends CustomValidator {
           message: `Resource #${index + 1} does not have a reference`
         });
       } else {
-        const parsedReference = this.fhirService.parseReference(resource.reference.reference);
+        const parsedReference = parseReference(resource.reference.reference);
 
         if (resource.exampleBoolean || resource.exampleCanonical) {
           if (parsedReference && allProfileTypes.indexOf(parsedReference.resourceType) >= 0) {

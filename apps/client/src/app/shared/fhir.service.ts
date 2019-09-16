@@ -1,5 +1,5 @@
 import {Injectable, Injector} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpRequest} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {
   Bundle,
   CapabilityStatement,
@@ -29,12 +29,6 @@ import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 
-export class ParsedUrlModel {
-  public resourceType: string;
-  public id: string;
-  public historyId: string;
-}
-
 export interface IResourceGithubDetails {
   owner: string;
   repository: string;
@@ -61,21 +55,18 @@ export class FhirService {
   public valueSets: ValueSet[] = [];
   private customValidator: CustomValidator;
 
-  readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
-  readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
-
   constructor(
     private injector: Injector,
     private configService: ConfigService) {
 
-    this.customValidator = new CustomSTU3Validator(this);
+    this.customValidator = new CustomSTU3Validator();
     this.configService.fhirServerChanged.subscribe(() => {
       this.loadAssets();
 
       if (ConfigService.identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
-        this.customValidator = new CustomR4Validator(this);
+        this.customValidator = new CustomR4Validator();
       } else {            // Assume default of STU3
-        this.customValidator = new CustomSTU3Validator(this);
+        this.customValidator = new CustomSTU3Validator();
       }
     });
   }
@@ -217,20 +208,6 @@ export class FhirService {
     pathExtension.valueString = details.owner + '/' + details.repository + '/' + (details.path.startsWith('/') ? details.path.substring(1) : details.path);
   }
 
-  public parseReference(reference: string): ParsedUrlModel {
-    // This regex is loaded with resource types from both STU3 and R4
-    const parseReferenceRegex = /(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BiologicallyDerivedProduct|BodySite|BodyStructure|Bundle|CapabilityStatement|CarePlan|CareTeam|CatalogEntry|ChargeItem|ChargeItemDefinition|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|CoverageEligibilityRequest|CoverageEligibilityResponse|DataElement|DetectedIssue|Device|DeviceComponent|DeviceDefinition|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EffectEvidenceSynthesis|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|EventDefinition|Evidence|EvidenceVariable|ExampleScenario|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationEvaluation|ImmunizationRecommendation|ImplementationGuide|InsurancePlan|Invoice|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationKnowledge|MedicationRequest|MedicationStatement|MedicinalProduct|MedicinalProductAuthorization|MedicinalProductContraindication|MedicinalProductIndication|MedicinalProductIngredient|MedicinalProductInteraction|MedicinalProductManufactured|MedicinalProductPackaged|MedicinalProductPharmaceutical|MedicinalProductUndesirableEffect|MessageDefinition|MessageHeader|MolecularSequence|NamingSystem|NutritionOrder|Observation|ObservationDefinition|OperationDefinition|OperationOutcome|Organization|OrganizationAffiliation|Parameters|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchDefinition|ResearchElementDefinition|ResearchStudy|ResearchSubject|RiskAssessment|RiskEvidenceSynthesis|Schedule|SearchParameter|Sequence|ServiceDefinition|ServiceRequest|Slot|Specimen|SpecimenDefinition|StructureDefinition|StructureMap|Subscription|Substance|SubstancePolymer|SubstanceReferenceInformation|SubstanceSpecification|SupplyDelivery|SupplyRequest|Task|TerminologyCapabilities|TestReport|TestScript|ValueSet|VerificationResult|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
-    const match = parseReferenceRegex.exec(reference);
-
-    if (match) {
-      return {
-        resourceType: match[1],
-        id: match[3],
-        historyId: match[5]
-      };
-    }
-  }
-
   public getValueSetCodes(valueSetUrl: string): Coding[] {
     let codes: Coding[] = [];
     const foundValueSet = this.valueSets
@@ -273,13 +250,20 @@ export class FhirService {
    * Searches the FHIR server for all resources matching the specified ResourceType
    * @param {string} resourceType
    * @param {string} [searchContent]
-   * @param {boolean} [summary?]
+   * @param {boolean} [summary]
+   * @param {string} [searchUrl]
+   * @param {string} [id]
+   * @param [additionalQuery]
+   * @param {boolean} [separateArrayQuery]
+   * @param {boolean} [sortID]
+   * @param {number} [page]
+   * @param {number} [count]
    */
   public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10) {
     let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
 
     if(page){
-      let offset = (page - 1) * count;
+      const offset = (page - 1) * count;
       url += `_getpagesoffset=${offset.toString()}&`;
     }
 
@@ -377,7 +361,6 @@ export class FhirService {
 
   /**
    * Creates the specified resource on the FHIR server
-   * @param {string} resourceType
    * @param {Resource} resource
    */
   public create(resource: DomainResource) {
