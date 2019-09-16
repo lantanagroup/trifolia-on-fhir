@@ -36,7 +36,7 @@ export class PublishComponent implements OnInit {
   @ViewChild('tabs', { static: true })
   private tabs: NgbTabset;
 
-  @ViewChild('outputEle', { static: true })
+  @ViewChild('outputEle', { static: false })
   private outputEle: ElementRef;
 
   constructor(
