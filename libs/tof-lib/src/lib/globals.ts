@@ -9,6 +9,9 @@ export class Globals {
 
   static readonly authNamespace = 'https://auth0.com';
 
+  static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
+  static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
+
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
@@ -290,15 +293,15 @@ export class Globals {
     const keys = Object.keys(obj);
 
     if (choices) {
-      const foundProperties = keys.filter((key: string) => {
+      const foundChoiceProperties = keys.filter((key: string) => {
         const foundChoice = choices.find((choice: Coding) => {
           return choice.code === propertyName + key;
         });
         return !!foundChoice;
       });
 
-      if (foundProperties.length > 0) {
-        return foundProperties[0];
+      if (foundChoiceProperties.length > 0) {
+        return foundChoiceProperties[0];
       } else {
         return;
       }
@@ -340,7 +343,7 @@ export class Globals {
     }
   }
 
-  static trackByFn(index, item) {
+  static trackByFn(index) {
     return index;
   }
 }

@@ -1,14 +1,10 @@
 import {ImplementationGuide, PackageComponent, PackageResourceComponent, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Severities, ValidatorMessage} from 'fhir/validator';
 import {CustomValidator} from './custom-validator';
-import {FhirService} from '../fhir.service';
-import {groupBy, reduceFlatten} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {groupBy, parseReference, reduceFlatten} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 
 export class CustomSTU3Validator extends CustomValidator {
-  constructor(fhirService: FhirService) {
-    super(fhirService);
-  }
-
   private getAllPages(implementationGuide: ImplementationGuide): PageComponent[] {
     const pages: PageComponent[] = [];
 
@@ -43,10 +39,11 @@ export class CustomSTU3Validator extends CustomValidator {
 
     const exampleTypeResources = allResources.filter((resource: PackageResourceComponent) => {
       const parsedReference = resource.sourceReference && resource.sourceReference.reference ?
-        this.fhirService.parseReference(resource.sourceReference.reference) : null;
+        parseReference(resource.sourceReference.reference) :
+        null;
 
       if (parsedReference) {
-        return this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes).indexOf(parsedReference.resourceType) < 0;
+        return Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(parsedReference.resourceType) < 0;
       }
     });
 
@@ -128,7 +125,7 @@ export class CustomSTU3Validator extends CustomValidator {
           message: `A resource within a package uses a URI ${resource.sourceUri} instead of a relative reference. This resource will not export correctly.`
         });
       }
-    })
+    });
 
     return messages;
   }
