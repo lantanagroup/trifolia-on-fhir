@@ -2,6 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
+// noinspection JSDeprecatedSymbols
 import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuidesComponent} from './implementation-guides/implementation-guides.component';
@@ -47,7 +48,6 @@ import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {QuestionnaireItemModalComponent} from './questionnaire/questionnaire-item-modal.component';
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
-import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 import {MappingModalComponent} from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
@@ -72,8 +72,7 @@ import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/re
  * Authorization header to every request sent to the application server.
  */
 export class AddHeaderInterceptor implements HttpInterceptor {
-  constructor() {
-
+  constructor(private configService: ConfigService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -94,6 +93,12 @@ export class AddHeaderInterceptor implements HttpInterceptor {
       if (fhirServer) {
         headers['fhirServer'] = fhirServer;
       }
+    }
+
+    // Pass the implementation guide (project) to the request so that it knows this request
+    // is within the context of the project
+    if (this.configService.project && this.configService.project.implementationGuideId) {
+      headers['implementationGuideId'] = this.configService.project.implementationGuideId;
     }
 
     const clonedRequest = req.clone({
@@ -182,6 +187,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
   return () => getConfig();
 }
 
+// noinspection JSDeprecatedSymbols
 @NgModule({
   entryComponents: [
     STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
@@ -200,7 +206,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
     ConceptCardComponent, ImplementationGuideViewComponent,
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-    ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
+    ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent
   ],

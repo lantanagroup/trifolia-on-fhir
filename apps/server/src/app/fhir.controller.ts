@@ -28,7 +28,6 @@ import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {parseFhirUrl} from './helper';
 import {Bundle, DomainResource, EntryComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import nanoid from 'nanoid';
 
 export interface ProxyResponse {
   status: number;
@@ -137,11 +136,11 @@ export class FhirController extends BaseController {
               };
             }
           } else {
+            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`);
             return {
               status: ex.response.status,
               data: createOperationOutcome('fatal', 'processing', `A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`)
             };
-            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`);
           }
           // Do nothing if the resource is not found... That means this is a create-with-id request
         }
@@ -177,8 +176,7 @@ export class FhirController extends BaseController {
     };
 
     try {
-      const response = await this.httpService.request(options).toPromise();
-      return response;
+      return await this.httpService.request(options).toPromise();
     } catch (ex) {
       this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
 

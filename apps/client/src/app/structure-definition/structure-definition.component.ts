@@ -1,6 +1,6 @@
 import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {StructureDefinitionOptions, StructureDefinitionService} from '../shared/structure-definition.service';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
@@ -26,7 +26,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: StructureDefinition;
-  public options = new StructureDefinitionOptions();
   public baseStructureDefinition;
   public elements: ElementTreeModel[] = [];
   public selectedElement: ElementTreeModel;
@@ -297,10 +296,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.structureDefinition = null;
     this.elements = [];
 
-    let results;
-
     try {
-      results = await this.strucDefService.getStructureDefinition(sdId).toPromise();
+      this.structureDefinition = await this.strucDefService.getStructureDefinition(sdId).toPromise();
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
@@ -308,12 +305,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
-      throw new Error('The requested StructureDefinition either does not exist or has been deleted');
-    }
-
-    this.structureDefinition = results.resource;
-    this.options = results.options;
     this.nameChanged();
 
     if (!this.structureDefinition.differential) {
@@ -543,21 +534,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.strucDefService.save(this.structureDefinition, this.options)
+    this.strucDefService.save(this.structureDefinition)
       .subscribe((results: StructureDefinition) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['/structure-definition/' + results.id]);
         } else {
-          if (this.options && this.options.implementationGuides) {
-            const removedImplementationGuides = (this.options.implementationGuides || []).filter((implementationGuide) => implementationGuide.isRemoved);
-            for (let i = removedImplementationGuides.length - 1; i > 0; i--) {
-              const index = this.options.implementationGuides.indexOf(removedImplementationGuides[i]);
-              this.options.implementationGuides.splice(index, 1);
-            }
-            (this.options.implementationGuides || []).forEach((implementationGuide) => implementationGuide.isNew = false);
-          }
-
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {

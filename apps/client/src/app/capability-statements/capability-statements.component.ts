@@ -50,7 +50,7 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
 
     this.csService.delete(capabilityStatement.id)
       .subscribe(() => {
-        const entry = (this.capabilityStatementsBundle.entry || []).find((entry) => entry.resource.id === capabilityStatement.id);
+        const entry = (this.capabilityStatementsBundle.entry || []).find((e) => e.resource.id === capabilityStatement.id);
         const index = this.capabilityStatementsBundle.entry.indexOf(entry);
         this.capabilityStatementsBundle.entry.splice(index, 1);
       }, (err) => {
@@ -76,11 +76,7 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
   public getCapabilityStatements() {
     this.capabilityStatementsBundle = null;
 
-    const implementationGuideId = this.configService.project ?
-      this.configService.project.implementationGuideId :
-      null;
-
-    this.csService.search(this.page, this.nameText, implementationGuideId)
+    this.csService.search(this.page, this.nameText)
       .subscribe((results) => {
         this.capabilityStatementsBundle = results;
       }, (err) => {

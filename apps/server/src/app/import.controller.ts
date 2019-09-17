@@ -1,5 +1,14 @@
 import {BaseController} from './base.controller';
-import {BadRequestException, Controller, Get, Headers, HttpService, Param, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Headers,
+  HttpService,
+  Param,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ITofUser} from './models/tof-request';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';

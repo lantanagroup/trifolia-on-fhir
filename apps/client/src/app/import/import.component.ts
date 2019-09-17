@@ -1,6 +1,14 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../shared/import.service';
-import {Bundle, DomainResource, EntryComponent, IssueComponent, Media, OperationOutcome, RequestComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Bundle,
+  DomainResource,
+  EntryComponent,
+  IssueComponent,
+  Media as STU3Media,
+  OperationOutcome,
+  RequestComponent
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
@@ -14,7 +22,6 @@ import {HttpClient} from '@angular/common/http';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
-import {Media as STU3Media} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp'];

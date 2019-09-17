@@ -2,12 +2,13 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
 import {Controller, HttpModule, HttpService} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
-import {Bundle, ImplementationGuide, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {RequestHeaders} from './server.decorators';
 import nock = require('nock');
 import http = require('axios/lib/adapters/http');
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 nock.disableNetConnect();
 
@@ -25,8 +26,8 @@ class TestController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  public search(user: ITofUser, fhirServerBase: string, query?: any) {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(user: ITofUser, fhirServerBase: string, query?: any, @RequestHeaders() headers?) {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   public create(user: ITofUser, fhirServerBase: string, data: any) {

@@ -27,10 +27,6 @@
               </app-fhir-string>
 
               <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
-
-              <app-implementation-guides-panel [showIntro]="sdTabs.activeId === 'general'"
-                                               [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general.implementation-guides'] : undefined"
-                                               [options]="options"></app-implementation-guides-panel>
             </div>
 
             <div class="col-md-3">

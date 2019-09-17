@@ -50,7 +50,7 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
 
     this.questionnaireService.delete(questionnaire.id)
       .subscribe(() => {
-        const entry = (this.questionnairesBundle.entry || []).find((entry) => entry.resource.id === questionnaire.id);
+        const entry = (this.questionnairesBundle.entry || []).find((e) => e.resource.id === questionnaire.id);
         const index = this.questionnairesBundle.entry.indexOf(entry);
         this.questionnairesBundle.entry.splice(index, 1);
       }, (err) => {
@@ -82,11 +82,7 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
   public getQuestionnaires() {
     this.questionnairesBundle = null;
 
-    const implementationGuideId = this.configService.project ?
-      this.configService.project.implementationGuideId :
-      null;
-
-    this.questionnaireService.search(this.page, this.nameText, implementationGuideId)
+    this.questionnaireService.search(this.page, this.nameText)
       .subscribe((results) => {
         this.questionnairesBundle = results;
       }, (err) => {
@@ -96,6 +92,6 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getQuestionnaires();
-    this.configService.fhirServerChanged.subscribe((fhirServer) => this.getQuestionnaires());
+    this.configService.fhirServerChanged.subscribe(() => this.getQuestionnaires());
   }
 }

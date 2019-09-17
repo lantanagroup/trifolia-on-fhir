@@ -72,7 +72,7 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
 
     this.codeSystemService.delete(codeSystem.id)
       .subscribe(() => {
-        const entry = (this.codeSystemsBundle.entry || []).find((entry) => entry.resource.id === codeSystem.id);
+        const entry = (this.codeSystemsBundle.entry || []).find((e) => e.resource.id === codeSystem.id);
         const index = this.codeSystemsBundle.entry.indexOf(entry);
         this.codeSystemsBundle.entry.splice(index, 1);
       }, (err) => {
@@ -90,11 +90,9 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   }
 
   public getCodeSystems() {
-    const implementationGuideId = this.configService.project ?
-      this.configService.project.implementationGuideId :
-      null;
+    this.codeSystemsBundle = null;
 
-    this.codeSystemService.search(this.page, this.nameText, implementationGuideId)
+    this.codeSystemService.search(this.page, this.nameText)
       .subscribe((results) => {
         this.codeSystemsBundle = results;
       }, (err) => {

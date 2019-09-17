@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {FhirService} from './fhir.service';
 import {AuditEventService} from './audit-event.service';
 import {AuthService} from './auth.service';
-import {BinaryService} from './binary.service';
 import {CapabilityStatementService} from './capability-statement.service';
 import {CodeSystemService} from './code-system.service';
 import {ConfigService} from './config.service';
@@ -32,7 +31,6 @@ import {GroupService} from './group.service';
   providers: [
     AuditEventService,
     AuthService,
-    BinaryService,
     CapabilityStatementService,
     CodeSystemService,
     ConfigService,

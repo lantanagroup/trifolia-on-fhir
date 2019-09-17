@@ -65,7 +65,7 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     this.valueSetService.delete(valueSet.id)
       .subscribe(() => {
         this.message = `Successfully deleted value set ${valueSet.title || valueSet.name || 'no-name'} (${valueSet.id})`;
-        const entry = this.results.entry.find((entry) => entry.resource.id === valueSet.id);
+        const entry = this.results.entry.find((e) => e.resource.id === valueSet.id);
         const index = this.results.entry.indexOf(entry);
         this.results.entry.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);
@@ -109,11 +109,7 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     this.results = null;
     this.message = 'Searching value sets...';
 
-    const implementationGuideId = this.configService.project ?
-      this.configService.project.implementationGuideId :
-      null;
-
-    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText, implementationGuideId)
+    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = '';
@@ -124,6 +120,6 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getValueSets();
-    this.configService.fhirServerChanged.subscribe((fhirServer) => this.getValueSets());
+    this.configService.fhirServerChanged.subscribe(() => this.getValueSets());
   }
 }

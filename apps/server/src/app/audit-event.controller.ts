@@ -1,9 +1,8 @@
-import {Controller, Get, HttpService, Param, Query, Req, UseGuards} from '@nestjs/common';
+import {Controller, Get, HttpService, Param, Query, UseGuards} from '@nestjs/common';
 import {BaseFhirController} from './base-fhir.controller';
-import {ITofRequest} from './models/tof-request';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirServerBase, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/auditEvent')
@@ -18,8 +17,8 @@ export class AuditEventController extends BaseFhirController {
   }
 
   @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   @Get(':id')

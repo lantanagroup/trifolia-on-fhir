@@ -6,9 +6,15 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Bundle,
+  DomainResource,
+  ImplementationGuide as STU3ImplementationGuide,
+  PackageResourceComponent
+} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -18,7 +24,7 @@ export class BaseFhirController extends BaseController {
     super(configService, httpService);
   }
 
-  protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any): Promise<any> {
+  protected async prepareSearchQuery(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<any> {
     const userSecurityInfo = this.configService.server.enableSecurity ?
       await this.getUserSecurityInfo(user, fhirServerBase) :
       null;
@@ -26,7 +32,9 @@ export class BaseFhirController extends BaseController {
     preparedQuery['_summary'] = true;
     preparedQuery['_count'] = 10;
 
-    if (preparedQuery.implementationGuideId) {
+    if (headers && headers['implementationguideid'] && !preparedQuery.implementationGuideId) {
+      preparedQuery['_has:ImplementationGuide:resource:_id'] = headers['implementationguideid'];
+    } else if (preparedQuery.implementationGuideId) {
       preparedQuery['_has:ImplementationGuide:resource:_id'] = preparedQuery.implementationGuideId;
       delete preparedQuery.implementationGuideId;
     }
@@ -47,8 +55,8 @@ export class BaseFhirController extends BaseController {
     }
 
     if (preparedQuery.page) {
-      if (parseInt(preparedQuery.page) !== 1) {
-        preparedQuery._getpagesoffset = (parseInt(preparedQuery.page) - 1) * 10;
+      if (Number(preparedQuery.page) !== 1) {
+        preparedQuery._getpagesoffset = (Number(preparedQuery.page) - 1) * 10;
       }
 
       delete preparedQuery.page;
@@ -72,8 +80,8 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any): Promise<Bundle> {
-    const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query);
+  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<Bundle> {
+    const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
@@ -128,12 +136,96 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  protected async baseCreate(baseUrl: string, data: DomainResource, user: ITofUser) {
+  /**
+   * Adds a structure definition to the specified implementation guide
+   * @param fhirServerBase {string}
+   * @param fhirServerVersion {string}
+   * @param resource The structure definition to add (must have an id)
+   * @param implementationGuideId The id of the implementation guide to add the structure definition to
+   * @param user {ITofUser}
+   */
+  private async addToImplementationGuide(fhirServerBase: string, fhirServerVersion: string, resource: DomainResource, implementationGuideId: string, user: ITofUser): Promise<void> {
+    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
+    const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
+    const implementationGuide = igResults.data;
+
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    this.assertUserCanEdit(userSecurityInfo, implementationGuide);
+
+    if (fhirServerVersion !== 'stu3') {        // r4+
+      const r4 = <R4ImplementationGuide>implementationGuide;
+
+      r4.definition = r4.definition || {resource: []};
+      r4.definition.resource = r4.definition.resource || [];
+
+      const foundResource = r4.definition.resource.find((r) => {
+        if (r.reference) {
+          return r.reference.reference === `StructureDefinition/${r.id}`;
+        }
+      });
+
+      if (!foundResource) {
+        r4.definition.resource.push({
+          reference: {
+            reference: `StructureDefinition/${resource.id}`,
+            display: (<any>resource).title || (<any>resource).name
+          }
+        });
+      }
+    } else {                                        // stu3
+      const stu3 = <STU3ImplementationGuide>implementationGuide;
+
+      stu3.package = stu3.package || [];
+
+      const foundInPackages = (stu3.package || []).filter((igPackage) => {
+        return (igPackage.resource || []).filter((r) => {
+          if (r.sourceReference && r.sourceReference.reference) {
+            return r.sourceReference.reference === `StructureDefinition/${r.id}`;
+          }
+        }).length > 0;
+      });
+
+      if (foundInPackages.length === 0) {
+        const newResource: PackageResourceComponent = {
+          name: (<any>resource).title || (<any>resource).name,
+          sourceReference: {
+            reference: `StructureDefinition/${resource.id}`,
+            display: (<any>resource).title || (<any>resource).name
+          },
+          example: false
+        };
+
+        if (stu3.package.length === 0) {
+          stu3.package.push({
+            name: 'Default Package',
+            resource: [newResource]
+          });
+        } else {
+          if (!stu3.package[0].resource) {
+            stu3.package[0].resource = [];
+          }
+
+          stu3.package[0].resource.push(newResource);
+        }
+      }
+    }
+
+    const updateOptions: AxiosRequestConfig = {
+      method: 'PUT',
+      url: igUrl,
+      data: implementationGuide
+    };
+
+    await this.httpService.request(updateOptions).toPromise();
+  }
+
+  protected async baseCreate(fhirServerBase: string, fhirServerVersion: string, data: DomainResource, user: ITofUser, contextImplementationGuideId?: string) {
     if (!data.resourceType) {
       throw new BadRequestException('Expected a FHIR resource');
     }
 
-    const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
+    let alreadyExists = false;
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
@@ -142,20 +234,25 @@ export class BaseFhirController extends BaseController {
       // Make sure the resource doesn't already exist with the same id
       try {
         const existsOptions = <AxiosRequestConfig> {
-          url: buildUrl(baseUrl, this.resourceType, data.id, null, { _summary: true }),
+          url: buildUrl(fhirServerBase, this.resourceType, data.id, null, { _summary: true }),
           method: 'GET'
         };
 
         await this.httpService.request(existsOptions).toPromise();
         this.logger.error(`Attempted to create a ${this.resourceType} with an id of ${data.id} when it already exists`);
-        throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
+
+        alreadyExists = true;
       } catch (ex) {
         // A 404 not found exception SHOULD be thrown
+      }
+
+      if (alreadyExists) {
+        throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
       }
     }
 
     const createOptions = <AxiosRequestConfig> {
-      url: buildUrl(baseUrl, this.resourceType, data.id),
+      url: buildUrl(fhirServerBase, this.resourceType, data.id),
       method: 'PUT',
       data: data
     };
@@ -188,21 +285,29 @@ export class BaseFhirController extends BaseController {
 
       // Get the saved version of the resource (with a unique id)
       const getResults = await this.httpService.request(getOptions).toPromise();
-      return getResults.data;
+      const resource = getResults.data;
+
+      // If we're in the context of an IG and the resource is not another IG or security-related resources
+      // Then add the resource to the IG
+      if (contextImplementationGuideId) {
+        this.addToImplementationGuide(fhirServerBase, fhirServerVersion, resource, contextImplementationGuideId, user);
+      }
+
+      return resource;
     } else {
       throw new InternalServerErrorException(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
     }
   }
 
-  protected async baseUpdate(baseUrl: string, id: string, data: any, user: ITofUser): Promise<any> {
-    const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
+  protected async baseUpdate(fhirServerBase: string, fhirServerVersion: string, id: string, data: any, user: ITofUser, contextImplementationGuideId?: string): Promise<any> {
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
     // Make sure the user can modify the resource based on the permissions
     // stored on the server, first
     try {
       this.logger.trace(`Getting existing ${this.resourceType} to check permissions`);
       const getOptions = <AxiosRequestConfig> {
-        url: buildUrl(baseUrl, this.resourceType, id),
+        url: buildUrl(fhirServerBase, this.resourceType, id),
         method: 'GET'
       };
       const getResults = await this.httpService.request(getOptions).toPromise();
@@ -219,7 +324,7 @@ export class BaseFhirController extends BaseController {
     this.assertUserCanEdit(userSecurityInfo, data);
 
     const options = <AxiosRequestConfig> {
-      url: buildUrl(baseUrl, this.resourceType, id),
+      url: buildUrl(fhirServerBase, this.resourceType, id),
       method: 'PUT',
       data: data
     };
@@ -227,7 +332,15 @@ export class BaseFhirController extends BaseController {
     this.logger.trace(`Updating the ${this.resourceType} on the FHIR server`);
     try {
       const updateResults = await this.httpService.request(options).toPromise();
-      return updateResults.data;
+      const resource = updateResults.data;
+
+      // If we're in the context of an IG and the resource is not another IG or security-related resources
+      // Then add the resource to the IG
+      if (contextImplementationGuideId) {
+        this.addToImplementationGuide(fhirServerBase, fhirServerVersion, resource, contextImplementationGuideId, user);
+      }
+
+      return resource;
     } catch (ex) {
       let message = `Failed to update resource ${this.resourceType}/${id}: ${ex.message}`;
 
