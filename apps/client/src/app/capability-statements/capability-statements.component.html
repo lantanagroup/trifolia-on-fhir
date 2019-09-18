@@ -32,7 +32,7 @@
     <th>Name</th>
     <th class="actions-column-3">
       <div class="pull-right">
-        <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/capability-statement/new" title="Create a new capability statement"
+        <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/new" title="Create a new capability statement"
                 [attr.data-intro]="Globals.introText['browse.add']">
           <i class="fa fa-plus"></i>
         </button>
@@ -41,12 +41,12 @@
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
-  <tr *ngFor="let cs of capabilityStatements; let csi = index">
+  <tr *ngFor="let cs of capabilityStatements">
     <td>{{cs.id}}</td>
     <td>{{cs.name}}</td>
     <td>
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/capability-statement/{{cs.id}}" title="Edit this resource">
+        <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/{{cs.id}}" title="Edit this resource">
           <i class="fa fa-edit"></i>
         </a>
         <button type="button" class="btn btn-secondary" (click)="remove(cs)" [disabled]="!canEdit(cs)" title="Remove this resource">
@@ -80,7 +80,7 @@
   </tbody>
   <tfoot>
   <tr *ngIf="capabilityStatementsBundle && capabilityStatementsBundle.total === 0">
-    <td colspan="3">No capability statements! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/capability-statement/new">here</a>...</td>
+    <td colspan="3">No capability statements! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/capability-statement/new">here</a>...</td>
   </tr>
   <tr *ngIf="capabilityStatementsBundle && capabilityStatementsBundle.total > 0">
     <td colspan="3">

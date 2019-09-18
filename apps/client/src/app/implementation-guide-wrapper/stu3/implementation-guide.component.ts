@@ -49,7 +49,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide;
+  public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
   public validation: ValidatorResponse;
@@ -79,12 +79,12 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public get isNew(): boolean {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('implementationGuideId');
     return !id || id === 'new';
   }
 
   public get isFile(): boolean {
-    return this.route.snapshot.paramMap.get('id') === 'from-file';
+    return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
   public get dependencies(): Extension[] {
@@ -323,7 +323,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   private getImplementationGuide() {
-    const implementationGuideId = this.route.snapshot.paramMap.get('id');
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -331,6 +331,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         this.nameChanged();
         this.initPages();
       } else {
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/']);
         return;
       }
@@ -553,6 +554,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
       .subscribe((results: ImplementationGuide) => {
         if (!this.implementationGuide.id) {
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
@@ -562,26 +564,8 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the implementation guide: ' + getErrorString(err);
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
-  }
-
-  public canEditImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const parsed = parseReference(igResource.resource.sourceReference.reference);
-
-    if (!parsed) {
-      return false;
-    }
-
-    return parsed.id && (
-      parsed.resourceType === 'ImplementationGuide' ||
-      parsed.resourceType === 'StructureDefinition' ||
-      parsed.resourceType === 'CapabilityStatement' ||
-      parsed.resourceType === 'OperationDefinition' ||
-      parsed.resourceType === 'CodeSystem' ||
-      parsed.resourceType === 'ValueSet' ||
-      parsed.resourceType === 'Questionnaire'
-    );
   }
 
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {

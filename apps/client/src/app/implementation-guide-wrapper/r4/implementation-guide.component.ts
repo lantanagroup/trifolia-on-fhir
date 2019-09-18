@@ -93,11 +93,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        if (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
-          return true;
-        }
-
-        return false;
+        return this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0;
       })
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {
@@ -118,12 +114,12 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   public get isNew(): boolean {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('implementationGuideId');
     return !id || id === 'new';
   }
 
   public get isFile(): boolean {
-    return this.route.snapshot.paramMap.get('id') === 'from-file';
+    return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
   public get isFilterResourceTypeAll() {
@@ -230,7 +226,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   private getImplementationGuide() {
-    const implementationGuideId = this.route.snapshot.paramMap.get('id');
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -238,6 +234,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         this.nameChanged();
         this.initPages();
       } else {
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/']);
         return;
       }
@@ -528,6 +525,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
       .subscribe((results: ImplementationGuide) => {
         if (this.isNew) {
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
@@ -537,7 +535,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the implementation guide: ' + getErrorString(err);
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
   }
 

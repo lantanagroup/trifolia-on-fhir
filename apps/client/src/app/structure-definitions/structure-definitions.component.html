@@ -72,7 +72,7 @@
     <th class="contact">Contact</th>
     <th>
       <div class="pull-right">
-        <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/structure-definition/new"
+        <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/structure-definition/new"
            title="Create a new structure definition" [attr.data-intro]="Globals.introText['browse.add']">
           <i class="fa fa-plus"></i>
         </a>
@@ -81,7 +81,7 @@
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
-  <tr *ngFor="let structureDefinition of structureDefinitions; let sdi = index">
+  <tr *ngFor="let structureDefinition of structureDefinitions">
     <td>{{structureDefinition.id}}</td>
     <td>
       {{structureDefinition.title || structureDefinition.name}} <i class="fa fa-comment"
@@ -97,7 +97,7 @@
     <td>
       <div class="pull-right btn-group">
         <a class="btn btn-primary"
-           routerLink="/{{this.configService.fhirServer}}/structure-definition/{{structureDefinition.id}}"
+           routerLink="{{configService.baseSessionUrl}}/structure-definition/{{structureDefinition.id}}"
            title="Edit this resource">
           <i class="fas" [class.fa-edit]="canEdit(structureDefinition)" [class.fa-eye]="!canEdit(structureDefinition)"></i>
         </a>
@@ -146,7 +146,7 @@
   <tfoot>
   <tr *ngIf="response && response.total === 0">
     <td colspan="3">No profiles (structure definitions)! Create one by clicking <a
-      routerLink="/{{this.configService.fhirServer}}/structure-definition/new">here</a>...
+      routerLink="{{configService.baseSessionUrl}}/structure-definition/new">here</a>...
     </td>
   </tr>
   <tr *ngIf="response && response.total > 0">

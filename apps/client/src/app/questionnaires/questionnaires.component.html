@@ -31,7 +31,7 @@
         <th>Name</th>
         <th class="actions-column-3">
             <div class="pull-right">
-                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/questionnaire/new" title="Create a new questionnaire" [attr.data-intro]="Globals.introText['browse.add']">
+                <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/new" title="Create a new questionnaire" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -44,7 +44,7 @@
         <td>{{questionnaire.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
+                <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
                     <i class="fa fa-edit"></i>
                 </a>
                 <button type="button" class="btn btn-secondary" (click)="remove(questionnaire)" [disabled]="!canEdit(questionnaire)" title="Remove this questionnaire">
@@ -78,7 +78,7 @@
     </tbody>
     <tfoot>
     <tr *ngIf="questionnairesBundle && questionnairesBundle.total === 0">
-        <td colspan="3">No questionnaires! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/questionnaire/new">here</a>...</td>
+        <td colspan="3">No questionnaires! Create one by clicking <a routerLink="/{{configService.baseSessionUrl}}/questionnaire/new">here</a>...</td>
     </tr>
     <tr *ngIf="questionnairesBundle && questionnairesBundle.total > 0">
         <td colspan="3">

@@ -28,6 +28,7 @@ import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
+import {publishReplay, refCount} from 'rxjs/operators';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -61,7 +62,10 @@ export class FhirService {
 
     this.customValidator = new CustomSTU3Validator();
     this.configService.fhirServerChanged.subscribe(() => {
-      this.loadAssets();
+      if (this.loaded) {
+        // noinspection JSIgnoredPromiseFromCall
+        this.loadAssets();
+      }
 
       if (ConfigService.identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
         this.customValidator = new CustomR4Validator();
@@ -117,10 +121,10 @@ export class FhirService {
     const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 
     const assetPromises = [
-      this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json'),
-      this.http.get('/assets/' + loadDirectory + '/valuesets.json'),
-      this.http.get('/assets/' + loadDirectory + '/profiles-types.json'),
-      this.http.get('/assets/' + loadDirectory + '/profiles-resources.json')
+      this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json').pipe(publishReplay(1), refCount()),
+      this.http.get('/assets/' + loadDirectory + '/valuesets.json').pipe(publishReplay(1), refCount()),
+      this.http.get('/assets/' + loadDirectory + '/profiles-types.json').pipe(publishReplay(1), refCount()),
+      this.http.get('/assets/' + loadDirectory + '/profiles-resources.json').pipe(publishReplay(1), refCount())
     ];
 
     return new Promise((resolve, reject) => {
@@ -380,10 +384,12 @@ export class FhirService {
     });
   }
 
+  /*
   public validateOnServer(resource: DomainResource): Observable<OperationOutcome> {
     const url = `/api/fhir/${encodeURIComponent(resource.resourceType)}/$validate`;
     return this.http.post<OperationOutcome>(url, resource);
   }
+   */
 
   public getFhirTooltip(fhirPath: string) {
     if (!fhirPath || fhirPath.indexOf('.') < 0 || !this.profiles) {
@@ -499,10 +505,8 @@ export class FhirService {
 
     let additionalMessages = this.customValidator.validateResource(resource, extraData) || [];
 
-    switch (resource.resourceType) {
-      case 'ImplementationGuide':
-        additionalMessages = additionalMessages.concat(
-          this.customValidator.validateImplementationGuide(resource));
+    if (resource.resourceType === 'ImplementationGuide') {
+      additionalMessages = additionalMessages.concat(this.customValidator.validateImplementationGuide(resource));
     }
 
     return additionalMessages;

@@ -57,7 +57,7 @@
     <th *ngIf="configService.isFhirR4">Title</th>
     <th class="actions-column-4">
       <div class="pull-right">
-        <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/implementation-guide/new" title="Create a new implementation guide"
+        <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/implementation-guide/new" title="Create a new implementation guide"
                 [attr.data-intro]="Globals.introText['browse.add']">
           <i class="fa fa-plus"></i>
         </button>
@@ -72,10 +72,10 @@
     <td *ngIf="configService.isFhirR4">{{ig.title}}</td>
     <td>
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}" title="View/Edit this resource">
+        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/implementation-guide/{{ig.id}}" title="View/Edit this resource">
           <i class="fas" [class.fa-edit]="canEdit(ig)" [class.fa-eye]="!canEdit(ig)"></i>
         </a>
-        <a class="btn btn-primary" role="button" routerLink="/{{this.configService.fhirServer}}/implementation-guide/{{ig.id}}/view" title="View the published version of this implementation guide">
+        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/implementation-guide/{{ig.id}}/view" title="View the published version of this implementation guide">
           <i class="fas fa-file"></i>
         </a>
         <button type="button" class="btn btn-secondary" (click)="remove(ig)" [disabled]="!canEdit(ig)" title="Remove this resource">
@@ -113,7 +113,7 @@
   </tbody>
   <tfoot>
   <tr *ngIf="results && results.total === 0">
-    <td colspan="3">No implementation guides! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/implementation-guide/new">here</a>...</td>
+    <td colspan="3">No implementation guides! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/implementation-guide/new">here</a>...</td>
   </tr>
   <tr *ngIf="results && results.total > 0">
     <td colspan="3">

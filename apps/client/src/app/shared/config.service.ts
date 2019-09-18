@@ -19,14 +19,36 @@ export class ConfigService {
   };
   public statusMessage: string;
   public showingIntroduction = false;
-  private fhirConformances: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement } = {};
+  private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement } = {};
 
   constructor(private injector: Injector) {
     this.fhirServer = localStorage.getItem('fhirServer');
   }
 
+  public static identifyRelease(fhirVersion: string): Versions {
+    if (!fhirVersion) {
+      return Versions.STU3;
+    } else if (semver.satisfies(fhirVersion, '>= 3.2.0 <= 4.0.0')) {
+      return Versions.R4;
+    } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.1')) {
+      return Versions.STU3;
+    } else {
+      throw new Error('Unexpected FHIR Version ' + fhirVersion);
+    }
+  }
+
+  public get baseSessionUrl(): string {
+    if (this.fhirServer && this.project && this.project.implementationGuideId) {
+      return `/${this.fhirServer}/${this.project.implementationGuideId}`;
+    } else if (this.fhirServer) {
+      return `/${this.fhirServer}`;
+    } else {
+      return '';
+    }
+  }
+
   public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement {
-    return this.fhirConformances[this.fhirServer];
+    return this.fhirCapabilityStatements[this.fhirServer];
   }
 
   public get titleService(): Title {
@@ -68,6 +90,7 @@ export class ConfigService {
 
         if (this.fhirServer) {
           if (!init) {
+            // noinspection JSIgnoredPromiseFromCall
             this.changeFhirServer(this.fhirServer);
           }
         } else {
@@ -77,44 +100,29 @@ export class ConfigService {
   }
 
   public changeFhirServer(fhirServer?: string) {
-    // Don't do anything if we've already selected this fhir server
+    // Don't do anything if the fhir server hasn't changed
     if (this.fhirServer === fhirServer && this.fhirConformance) {
       return Promise.resolve();
     }
 
-    if (fhirServer) {
-      this.fhirServer = fhirServer;
+    if (!fhirServer) {
+      if (!this.fhirServer) {
+        throw new Error('A fhir server must be specified to change the fhir server');
+      } else {
+        this.fhirServerChanged.emit(this.fhirServer);
+        return Promise.resolve();
+      }
     }
 
-    if (!this.fhirServer) {
-      throw new Error('FHIR Server ID has not been set to a default');
-    }
-
+    this.fhirServer = fhirServer;
     localStorage.setItem('fhirServer', this.fhirServer);
-
-    if (this.fhirConformance) {
-      this.fhirServerChanged.emit(this.fhirServer);
-      return Promise.resolve();
-    }
 
     // Get the conformance statement from the FHIR server and store it
     return this.http.get('/api/config/fhir').toPromise()
       .then((res: STU3CapabilityStatement | R4CapabilityStatement) => {
-        this.fhirConformances[this.fhirServer] = res;
+        this.fhirCapabilityStatements[this.fhirServer] = res;
         this.fhirServerChanged.emit(this.fhirServer);
       });
-  }
-
-  public static identifyRelease(fhirVersion: string): Versions {
-    if (!fhirVersion) {
-      return Versions.STU3;
-    } else if (semver.satisfies(fhirVersion, '>= 3.2.0 <= 4.0.0')) {
-      return Versions.R4;
-    } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.1')) {
-      return Versions.STU3;
-    } else {
-      throw new Error('Unexpected FHIR Version ' + fhirVersion);
-    }
   }
 
   public identifyRelease(): Versions {

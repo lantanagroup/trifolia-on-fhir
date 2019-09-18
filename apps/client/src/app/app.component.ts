@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
 import {RecentItemService} from './shared/recent-item.service';
@@ -17,15 +17,15 @@ import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-mes
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
-import { FhirReferenceModalComponent, ResourceSelection } from './fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from './fhir-edit/reference-modal/reference-modal.component';
+import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Component({
-  selector: 'app-root',
+  selector: 'trifolia-fhir-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public userProfile: any;
   public person: Practitioner;
 
   @ViewChild('navbarToggler', {read: ElementRef, static: true}) navbarToggler: ElementRef;
@@ -74,6 +74,8 @@ export class AppComponent implements OnInit {
         implementationGuideId: selected.id,
         name: selected.display
       };
+      // noinspection JSIgnoredPromiseFromCall
+      this.router.navigate([`${this.configService.fhirServer}/${selected.id}/home`]);
     });
   }
 
@@ -126,19 +128,39 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (window.location.pathname === '/' && this.configService.fhirServer) {
+      // noinspection JSIgnoredPromiseFromCall
+      this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    }
+
     // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
     // This needs to be done in the init method so that the navbarCollapse element exists
     this.router.events.subscribe((event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
 
-      if (event instanceof NavigationStart) {
-        const url = (event.url || '').substring(event.url.startsWith('/') ? 1 : 0);
-        const urlParts = url.split('/');
+      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
+        const fhirServer = event.state.root.firstChild.params.fhirServer;
+        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
-        if (!url) {
-          this.router.navigate([`/${this.configService.fhirServer}/home`]);
-        } else if (this.configService.config && this.configService.config.fhirServers && this.configService.config.fhirServers.find((fhirServer) => fhirServer.id === urlParts[0])) {
-          this.configService.changeFhirServer(urlParts[0]);
+        if (fhirServer) {
+          // noinspection JSIgnoredPromiseFromCall
+          this.configService.changeFhirServer(fhirServer);
+
+          if (implementationGuideId && (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId)) {
+            this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
+              .then((bundle: Bundle) => {
+                if (bundle && bundle.total === 1) {
+                  const ig = <ImplementationGuide>bundle.entry[0].resource;
+                  this.configService.project = {
+                    implementationGuideId: implementationGuideId,
+                    name: ig.title || ig.name
+                  };
+                }
+              })
+              .catch(() => {
+                // TODO: handle this error
+              });
+          }
         }
       }
     });
