@@ -538,7 +538,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       .subscribe((results: StructureDefinition) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate(['/structure-definition/' + results.id]);
+          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';
@@ -576,6 +576,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       const index = this.selectedElement ? this.elements.indexOf(this.selectedElement) : -1;
       let shouldFocus = false;
 
+      // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
       if (event.keyCode === 40) {           // down
         if (!this.selectedElement) {
           this.selectedElement = this.elements[0];
@@ -586,17 +587,21 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
             shouldFocus = true;
           }
         }
-      } else if (event.keyCode === 38) {    // up
-        if (!this.selectedElement) {
-          this.selectedElement = this.elements[0];
-          shouldFocus = true;
-        } else if (index > 0) {
-          this.selectedElement = this.elements[index - 1];
-          shouldFocus = true;
-        }
-      } else if (event.keyCode === 46) {    // delete
-        if (this.selectedElement && this.selectedElement.constrainedElement) {
-          this.removeElementDefinition(this.selectedElement.constrainedElement);
+      } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+        if (event.keyCode === 38) {    // up
+                if (!this.selectedElement) {
+                  this.selectedElement = this.elements[0];
+                  shouldFocus = true;
+                } else if (index > 0) {
+                  this.selectedElement = this.elements[index - 1];
+                  shouldFocus = true;
+                }
+              } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+          if (event.keyCode === 46) {    // delete
+                          if (this.selectedElement && this.selectedElement.constrainedElement) {
+                            this.removeElementDefinition(this.selectedElement.constrainedElement);
+                          }
+                        }
         }
       }
 

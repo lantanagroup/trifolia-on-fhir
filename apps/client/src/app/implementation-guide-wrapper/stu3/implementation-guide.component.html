@@ -93,7 +93,12 @@
                 <label>ID
                   <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
-                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
+                <div [class.input-group]="!isNew">
+                  <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
+                  <div class="input-group-btn" *ngIf="!isNew">
+                    <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
@@ -205,7 +210,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let ir of resources; let iri = index">
+          <tr *ngFor="let ir of resources">
             <td>
               <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)">
                 <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
@@ -355,14 +360,16 @@
 
         <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
           <thead>
-          <th>URI</th>
-          <th class="actions-column-1">
-            <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
+          <tr>
+            <th>URI</th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
           </thead>
           <tbody>
           <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: Globals.trackByFn">

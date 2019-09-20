@@ -18,7 +18,12 @@
           <div class="col-md-6">
             <div class="form-group">
               <label>ID</label>
-              <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+              <div [class.input-group]="!isNew">
+                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+                <div class="input-group-btn" *ngIf="!isNew">
+                  <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -137,8 +137,6 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     public save() {
-        const codeSystemId = this.route.snapshot.paramMap.get('id');
-
         if (!this.validation.valid && !confirm('This code system is not valid, are you sure you want to save?')) {
             return;
         }
@@ -149,16 +147,17 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
         }
 
         this.codeSystemService.save(this.codeSystem)
-            .subscribe((results: CodeSystem) => {
+            .subscribe((codeSystem: CodeSystem) => {
                 if (this.isNew) {
-                    this.router.navigate([`${this.configService.fhirServer}/code-system/${results.id}`]);
+                  // noinspection JSIgnoredPromiseFromCall
+                    this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
                 } else {
-                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, results.id, results.name);
+                    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
                     this.message = 'Your changes have been saved!';
                     setTimeout(() => { this.message = ''; }, 3000);
                 }
             }, (err) => {
-                this.message = 'An error occured while saving the code system: ' + getErrorString(err);
+                this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
             });
     }
 
@@ -171,7 +170,8 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
                 this.nameChanged();
                 this.refreshConcepts();
             } else {
-                this.router.navigate(['/']);
+              // noinspection JSIgnoredPromiseFromCall
+                this.router.navigate([this.configService.baseSessionUrl]);
                 return;
             }
         }

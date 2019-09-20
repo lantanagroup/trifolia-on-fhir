@@ -1,5 +1,5 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {ConceptSetComponent, OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -8,7 +8,6 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
-import {FhirReferenceModalComponent} from '../fhir-edit/reference-modal/reference-modal.component';
 import {FileOpenModalComponent} from '../modals/file-open-modal/file-open-modal.component';
 import {FileModel} from '../models/file-model';
 import {ClientHelper} from '../clientHelper';
@@ -50,16 +49,6 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
 
   public get isFile(): boolean {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
-  }
-
-  public selectIncludeValueSet(include: ConceptSetComponent, index) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
-    modalRef.componentInstance.resourceType = 'ValueSet';
-    modalRef.componentInstance.hideResourceType = true;
-
-    modalRef.result.then((results) => {
-      include.valueSet[index] = results.resource.url;
-    });
   }
 
   public addIncludeEntry(includeTabSet) {
@@ -174,7 +163,8 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     this.valueSetService.save(this.valueSet)
       .subscribe((results: ValueSet) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/value-set/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
           this.message = 'Your changes have been saved!';
@@ -183,19 +173,8 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the value set';
+        this.message = `An error occurred while saving the value set: ${err.message}`;
       });
-  }
-
-  public getIncludeCodes(include: ConceptSetComponent) {
-    const concepts = (include.concept || []).map((concept) => concept.display || concept.code);
-    const ret = concepts.join(', ');
-
-    if (ret.length > 50) {
-      return ret.substring(0, 50) + '...';
-    }
-
-    return ret;
   }
 
   private getValueSet() {
@@ -206,7 +185,8 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
         this.valueSet = <ValueSet>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }

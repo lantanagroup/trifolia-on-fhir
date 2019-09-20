@@ -2,7 +2,6 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
-import {RecentItemService} from './shared/recent-item.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {FileService} from './shared/file.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -35,7 +34,6 @@ export class AppComponent implements OnInit {
     public authService: AuthService,
     public githubService: GithubService,
     public configService: ConfigService,
-    public recentItemService: RecentItemService,
     public fhirService: FhirService,
     private modalService: NgbModal,
     private fileService: FileService,
@@ -81,6 +79,8 @@ export class AppComponent implements OnInit {
 
   public closeProject() {
     this.configService.project = null;
+    // noinspection JSIgnoredPromiseFromCall
+    this.router.navigate([`${this.configService.fhirServer}/home`]);
   }
 
   public get fhirServerDisplay(): string {
@@ -160,6 +160,8 @@ export class AppComponent implements OnInit {
               .catch(() => {
                 // TODO: handle this error
               });
+          } else if (!implementationGuideId) {
+            this.configService.project = null;
           }
         }
       }

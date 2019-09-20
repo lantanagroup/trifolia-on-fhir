@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {HumanName, Identifier, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {PractitionerService} from '../../shared/practitioner.service';
 import {Router} from '@angular/router';
 import {FhirService} from '../../shared/fhir.service';
@@ -8,9 +7,10 @@ import {AuthService} from '../../shared/auth.service';
 import {SocketService} from '../../shared/socket.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from '../../shared/config.service';
 
 @Component({
-  selector: 'app-new-user-modal',
+  selector: 'trifolia-fhir-new-user-modal',
   templateUrl: './new-user-modal.component.html',
   styleUrls: ['./new-user-modal.component.css']
 })
@@ -19,6 +19,7 @@ export class NewUserModalComponent implements OnInit {
   public message: string;
 
   constructor(
+    private configService: ConfigService,
     private socketService: SocketService,
     private authService: AuthService,
     private router: Router,
@@ -49,7 +50,8 @@ export class NewUserModalComponent implements OnInit {
         setTimeout(() => {
           this.socketService.notifyAuthenticated(this.authService.userProfile, updated);
           this.authService.authChanged.emit();
-          this.router.navigate(['/home']);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`/${this.configService.fhirServer}/home`]);
         });
       }, (err) => {
         this.message = getErrorString(err);

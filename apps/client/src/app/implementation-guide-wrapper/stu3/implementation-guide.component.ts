@@ -13,7 +13,6 @@ import {ImplementationGuideService, PublishedGuideModel} from '../../shared/impl
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PageComponentModalComponent} from './page-component-modal.component';
-import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
@@ -27,6 +26,7 @@ import {ClientHelper} from '../../clientHelper';
 import {BaseComponent} from '../../base.component';
 import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {STU3ResourceModalComponent} from './resource-modal.component';
+import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 
 class PageDefinition {
   public page: PageComponent;
@@ -60,6 +60,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   public ClientHelper = ClientHelper;
 
   private navSubscription: any;
+  // noinspection JSMismatchedCollectionQueryUpdate
   private resources: ImplementationGuideResource[] = [];
 
   constructor(
@@ -67,7 +68,6 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     private route: ActivatedRoute,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -116,6 +116,16 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
       const index = this.implementationGuide.extension.indexOf(foundExtension);
       this.implementationGuide.extension.splice(index, 1);
     }
+  }
+
+  public changeId() {
+    if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
+      return;
+    }
+
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'ImplementationGuide';
+    modalRef.componentInstance.originalId = this.implementationGuide.id;
   }
 
   public selectPublishedIg(dependency: Extension) {
@@ -332,7 +342,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         this.initPages();
       } else {
         // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate(['/']);
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }
@@ -350,14 +360,9 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
           this.implementationGuide = <ImplementationGuide>results;
           this.nameChanged();
           this.initPages();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentImplementationGuides,
-            this.implementationGuide.id,
-            this.implementationGuide.name);
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
         });
     }
   }
@@ -552,12 +557,11 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     }
 
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
-      .subscribe((results: ImplementationGuide) => {
-        if (!this.implementationGuide.id) {
+      .subscribe((implementationGuide: ImplementationGuide) => {
+        if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
+          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -643,6 +647,13 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     });
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getImplementationGuide();
+
+    // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
+    this.route.params.subscribe((params) => {
+      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+        this.getImplementationGuide();
+      }
+    });
   }
 
   nameChanged() {

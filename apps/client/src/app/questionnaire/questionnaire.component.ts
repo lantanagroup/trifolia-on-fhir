@@ -95,7 +95,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     this.questionnaireService.save(this.questionnaire)
       .subscribe((results: Questionnaire) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/questionnaire/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentQuestionnaires,
@@ -107,7 +108,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the questionnaire';
+        this.message = `An error occurred while saving the questionnaire: ${err.message}`;
       });
   }
 
@@ -119,7 +120,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         this.questionnaire = <Questionnaire>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }
