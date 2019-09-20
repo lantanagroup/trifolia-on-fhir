@@ -102,7 +102,7 @@ export class BaseController {
     }
 
     if (bundle.total > 1) {
-      new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`)
+      new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`);
       throw new InternalServerErrorException();
     }
 
@@ -149,49 +149,6 @@ export class BaseController {
     if (userSecurityInfo.groups) {
       const foundGroups = userSecurityInfo.groups.filter((group) => {
         return findPermission(resource.meta, 'group', 'read', group.id);
-      });
-
-      if (foundGroups.length > 0) {
-        return;
-      }
-    }
-
-    throw new UnauthorizedException();
-  }
-
-  public assertUserCanEdit(userSecurityInfo: UserSecurityInfo, resource: any) {
-    if (this.configService.fhir && this.configService.fhir.nonEditableResources) {
-      switch (resource.resourceType) {
-        case 'CodeSystem':
-          if (!this.configService.fhir.nonEditableResources.codeSystems) {
-            return;
-          }
-
-          if (this.configService.fhir.nonEditableResources.codeSystems.indexOf(resource.url) >= 0) {
-            throw new BadRequestException(`CodeSystem with URL ${resource.url} cannot be modified.`);
-          }
-          break;
-      }
-    }
-
-    // security is not enabled
-    if (!userSecurityInfo) {
-      return;
-    }
-
-    if (findPermission(resource.meta, 'everyone', 'write')) {
-      return;
-    }
-
-    if (userSecurityInfo.user) {
-      if (findPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id)) {
-        return;
-      }
-    }
-
-    if (userSecurityInfo.groups) {
-      const foundGroups = userSecurityInfo.groups.filter((group) => {
-        return findPermission(resource.meta, 'group', 'write', group.id);
       });
 
       if (foundGroups.length > 0) {

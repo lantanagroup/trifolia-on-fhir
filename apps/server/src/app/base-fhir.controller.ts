@@ -6,15 +6,10 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {
-  Bundle,
-  DomainResource,
-  ImplementationGuide as STU3ImplementationGuide,
-  PackageResourceComponent
-} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {addToImplementationGuide, assertUserCanEdit} from './helper';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -136,89 +131,6 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  /**
-   * Adds a structure definition to the specified implementation guide
-   * @param fhirServerBase {string}
-   * @param fhirServerVersion {string}
-   * @param resource The structure definition to add (must have an id)
-   * @param implementationGuideId The id of the implementation guide to add the structure definition to
-   * @param user {ITofUser}
-   */
-  private async addToImplementationGuide(fhirServerBase: string, fhirServerVersion: string, resource: DomainResource, implementationGuideId: string, user: ITofUser): Promise<void> {
-    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
-    const igResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
-    const implementationGuide = igResults.data;
-
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    this.assertUserCanEdit(userSecurityInfo, implementationGuide);
-
-    if (fhirServerVersion !== 'stu3') {        // r4+
-      const r4 = <R4ImplementationGuide>implementationGuide;
-
-      r4.definition = r4.definition || {resource: []};
-      r4.definition.resource = r4.definition.resource || [];
-
-      const foundResource = r4.definition.resource.find((r) => {
-        if (r.reference) {
-          return r.reference.reference === `StructureDefinition/${r.id}`;
-        }
-      });
-
-      if (!foundResource) {
-        r4.definition.resource.push({
-          reference: {
-            reference: `StructureDefinition/${resource.id}`,
-            display: (<any>resource).title || (<any>resource).name
-          }
-        });
-      }
-    } else {                                        // stu3
-      const stu3 = <STU3ImplementationGuide>implementationGuide;
-
-      stu3.package = stu3.package || [];
-
-      const foundInPackages = (stu3.package || []).filter((igPackage) => {
-        return (igPackage.resource || []).filter((r) => {
-          if (r.sourceReference && r.sourceReference.reference) {
-            return r.sourceReference.reference === `StructureDefinition/${r.id}`;
-          }
-        }).length > 0;
-      });
-
-      if (foundInPackages.length === 0) {
-        const newResource: PackageResourceComponent = {
-          name: (<any>resource).title || (<any>resource).name,
-          sourceReference: {
-            reference: `StructureDefinition/${resource.id}`,
-            display: (<any>resource).title || (<any>resource).name
-          },
-          example: false
-        };
-
-        if (stu3.package.length === 0) {
-          stu3.package.push({
-            name: 'Default Package',
-            resource: [newResource]
-          });
-        } else {
-          if (!stu3.package[0].resource) {
-            stu3.package[0].resource = [];
-          }
-
-          stu3.package[0].resource.push(newResource);
-        }
-      }
-    }
-
-    const updateOptions: AxiosRequestConfig = {
-      method: 'PUT',
-      url: igUrl,
-      data: implementationGuide
-    };
-
-    await this.httpService.request(updateOptions).toPromise();
-  }
-
   protected async baseCreate(fhirServerBase: string, fhirServerVersion: string, data: DomainResource, user: ITofUser, contextImplementationGuideId?: string) {
     if (!data.resourceType) {
       throw new BadRequestException('Expected a FHIR resource');
@@ -290,7 +202,7 @@ export class BaseFhirController extends BaseController {
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
       if (contextImplementationGuideId) {
-        this.addToImplementationGuide(fhirServerBase, fhirServerVersion, resource, contextImplementationGuideId, user);
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuideId);
       }
 
       return resource;
@@ -313,7 +225,7 @@ export class BaseFhirController extends BaseController {
       const getResults = await this.httpService.request(getOptions).toPromise();
 
       this.logger.trace('Checking permissions');
-      this.assertUserCanEdit(userSecurityInfo, getResults.data);
+      assertUserCanEdit(this.configService, userSecurityInfo, getResults.data);
     } catch (ex) {
       // The resource doesn't exist yet and this is a create-on-update operation
     }
@@ -321,7 +233,7 @@ export class BaseFhirController extends BaseController {
     // Make sure the user has granted themselves the ability to edit the resource
     // in the resource they're updating on the server
     this.logger.trace(`Checking that user has granted themselves permissions in the new version of the ${this.resourceType}`);
-    this.assertUserCanEdit(userSecurityInfo, data);
+    assertUserCanEdit(this.configService, userSecurityInfo, data);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(fhirServerBase, this.resourceType, id),
@@ -337,7 +249,7 @@ export class BaseFhirController extends BaseController {
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
       if (contextImplementationGuideId) {
-        this.addToImplementationGuide(fhirServerBase, fhirServerVersion, resource, contextImplementationGuideId, user);
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuideId);
       }
 
       return resource;
@@ -360,7 +272,7 @@ export class BaseFhirController extends BaseController {
     const getResults = await this.httpService.get(getUrl).toPromise();
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
-    await this.assertUserCanEdit(userSecurityInfo, getResults.data);
+    await assertUserCanEdit(this.configService, userSecurityInfo, getResults.data);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null),

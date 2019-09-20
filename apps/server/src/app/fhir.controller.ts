@@ -22,12 +22,13 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, RequestMethod, RequestUrl, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {addToImplementationGuide, assertUserCanEdit, parseFhirUrl} from './helper';
+import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 export interface ProxyResponse {
   status: number;
@@ -72,7 +73,7 @@ export class FhirController extends BaseController {
 
     // Make sure the resource can be edited, by the user
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    this.assertUserCanEdit(userSecurityInfo, resource);
+    assertUserCanEdit(this.configService, userSecurityInfo, resource);
 
     // Change the id of the resource
     resource.id = newId;
@@ -101,7 +102,7 @@ export class FhirController extends BaseController {
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
   }
 
-  private async processBatchEntry(entry: EntryComponent, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+  private async processBatchEntry(entry: EntryComponent, fhirServerBase: string, fhirServerVersion: string, userSecurityInfo: UserSecurityInfo, contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide) {
     // Make sure the user has permission to edit the pre-existing resource
     if (entry.request.method !== 'POST') {
       const id = entry.resource.id;
@@ -119,7 +120,7 @@ export class FhirController extends BaseController {
           originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
 
           this.logger.log('Checking security for resource');
-          this.assertUserCanEdit(userSecurityInfo, originalResource);
+          assertUserCanEdit(this.configService, userSecurityInfo, originalResource);
         } catch (ex) {
           if (ex.response) {
             if (ex.response.status === 404) {
@@ -175,8 +176,10 @@ export class FhirController extends BaseController {
       data: entry.resource
     };
 
+    let batchProcessingResponse;
+
     try {
-      return await this.httpService.request(options).toPromise();
+      batchProcessingResponse = await this.httpService.request(options).toPromise();
     } catch (ex) {
       this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
 
@@ -186,9 +189,18 @@ export class FhirController extends BaseController {
 
       throw ex;
     }
+
+    if (contextImplementationGuide) {
+      this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
+      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide);
+
+      // TODO: Handle DELETE events (remove the resource from the IG).
+    }
+
+    return batchProcessingResponse;
   }
 
-  private async processBatch(bundle: Bundle, fhirServerBase: string, userSecurityInfo: UserSecurityInfo) {
+  private async processBatch(bundle: Bundle, fhirServerBase: string, fhirServerVersion: string, userSecurityInfo: UserSecurityInfo, contextImplementationGuideId?: string) {
     if (!bundle || bundle.resourceType !== 'Bundle') {
       throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
     }
@@ -206,10 +218,29 @@ export class FhirController extends BaseController {
       }
     });
 
+    const contextImplementationGuideUrl = contextImplementationGuideId ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId) : null;
+    let contextImplementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+
+    // If we're within the context of an IG, retrieve the IG once for the entire batch. addToImplementationGuide()
+    // will be called with the concrete IG, and it will only modify the concrete instance of the IG, it will not
+    // immediately persist it.
+    if (contextImplementationGuideId) {
+      this.logger.trace(`Context implementation guide is ${contextImplementationGuideId}. Retrieving the IG to ensure resources are part of the IG.`);
+      const contextImplementationGuideResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(contextImplementationGuideUrl).toPromise();
+      contextImplementationGuide = contextImplementationGuideResults.data;
+    }
+
     const promises = (bundle.entry || []).map((entry) => {
-      return this.processBatchEntry(entry, fhirServerBase, userSecurityInfo);
+      return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide);
     });
     const results = await Promise.all(promises);
+
+    // Now that processing the batch entries is done, persist the context IG back to the server
+    if (contextImplementationGuide) {
+      this.logger.trace(`Updating the context implementation guide ${contextImplementationGuideId} for the batch.`);
+      await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
+    }
+
     const responseBundle: Bundle = {
       resourceType: 'Bundle',
       type: 'batch-response'
@@ -243,7 +274,7 @@ export class FhirController extends BaseController {
     return responseBundle;
   }
 
-  public async proxy(url: string, headers: {[key: string]: any}, method: string, fhirServerBase: string, user: ITofUser, body?): Promise<ProxyResponse> {
+  public async proxy(url: string, headers: {[key: string]: any}, method: string, fhirServerBase: string, fhirServerVersion: string, user: ITofUser, body?): Promise<ProxyResponse> {
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -261,11 +292,12 @@ export class FhirController extends BaseController {
 
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
+    const contextImplementationGuideId = headers.implementationguideid;
 
     if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       try {
-        const responseBundle = await this.processBatch(body, fhirServerBase, userSecurityInfo);
+        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuideId);
         return {
           status: 200,
           data: responseBundle
@@ -321,7 +353,7 @@ export class FhirController extends BaseController {
             await this.removePermissions(fhirServerBase, persistedResource, body);
           }
 
-          this.assertUserCanEdit(userSecurityInfo, persistedResource);
+          assertUserCanEdit(this.configService, userSecurityInfo, persistedResource);
         } catch (ex) {
           if (ex.response && ex.response.status !== 404) {
             throw ex;
@@ -391,10 +423,11 @@ export class FhirController extends BaseController {
     @Headers() headers: {[key: string]: any},
     @RequestMethod() method: string,
     @FhirServerBase() fhirServerBase: string,
+    @FhirServerVersion() fhirServerVersion: string,
     @Res() response: Response,
     @User() user: ITofUser,
     @Body() body?) {
-    const results = await this.proxy(url, headers, method, fhirServerBase, user, body);
+    const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body);
 
     response.status(results.status);
 
