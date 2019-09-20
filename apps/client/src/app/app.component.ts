@@ -26,6 +26,7 @@ import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/f
 })
 export class AppComponent implements OnInit {
   public person: Practitioner;
+  public initialized = false;
 
   @ViewChild('navbarToggler', {read: ElementRef, static: true}) navbarToggler: ElementRef;
   @ViewChild('navbarCollapse', {read: ElementRef, static: true}) navbarCollapse: ElementRef;
@@ -68,10 +69,6 @@ export class AppComponent implements OnInit {
     modalRef.componentInstance.modalTitle = 'Select an implementation guide';
 
     modalRef.result.then((selected: ResourceSelection) => {
-      this.configService.project = {
-        implementationGuideId: selected.id,
-        name: selected.display
-      };
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate([`${this.configService.fhirServer}/${selected.id}/home`]);
     });
@@ -127,15 +124,37 @@ export class AppComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    if (window.location.pathname === '/' && this.configService.fhirServer) {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate([`/${this.configService.fhirServer}/home`]);
+  private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name: string }> {
+    if (!implementationGuideId) {
+      return Promise.resolve(null);
     }
 
+    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId) {
+      return Promise.resolve(this.configService.project);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
+        .then((bundle: Bundle) => {
+          if (bundle && bundle.total === 1) {
+            const ig = <ImplementationGuide>bundle.entry[0].resource;
+
+            resolve({
+              implementationGuideId: implementationGuideId,
+              name: ig.title || ig.name
+            });
+          } else {
+            resolve();
+          }
+        })
+        .catch((err) => reject(err));
+    });
+  }
+
+  async ngOnInit() {
     // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
     // This needs to be done in the init method so that the navbarCollapse element exists
-    this.router.events.subscribe((event) => {
+    this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
 
       if (event instanceof RoutesRecognized && event.state.root.firstChild) {
@@ -143,26 +162,8 @@ export class AppComponent implements OnInit {
         const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
         if (fhirServer) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.configService.changeFhirServer(fhirServer);
-
-          if (implementationGuideId && (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId)) {
-            this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
-              .then((bundle: Bundle) => {
-                if (bundle && bundle.total === 1) {
-                  const ig = <ImplementationGuide>bundle.entry[0].resource;
-                  this.configService.project = {
-                    implementationGuideId: implementationGuideId,
-                    name: ig.title || ig.name
-                  };
-                }
-              })
-              .catch(() => {
-                // TODO: handle this error
-              });
-          } else if (!implementationGuideId) {
-            this.configService.project = null;
-          }
+          this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+          await this.configService.changeFhirServer(fhirServer);
         }
       }
     });
@@ -171,5 +172,9 @@ export class AppComponent implements OnInit {
       const modalRef = this.modalService.open(AdminMessageModalComponent, {backdrop: 'static'});
       modalRef.componentInstance.message = message;
     });
+
+    if (window.location.pathname === '/' && this.configService.fhirServer) {
+      await this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    }
   }
 }
