@@ -217,7 +217,7 @@
               </select>
             </td>
             <td>
-              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" [isFormGroup]="false" [required]="true" [hideDisplay]="true"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" resourceType="StructureDefinition" [isFormGroup]="false" [required]="true" [hideDisplay]="true"></app-fhir-reference>
             </td>
             <td>
               <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>

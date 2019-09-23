@@ -29,6 +29,8 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {addToImplementationGuide, assertUserCanEdit, parseFhirUrl} from './helper';
 import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {parse as parseUrl, format as formatUrl} from 'url';
+import {UrlWithStringQuery} from 'url';
 
 export interface ProxyResponse {
   status: number;
@@ -289,6 +291,21 @@ export class FhirController extends BaseController {
     }
 
     proxyUrl += url;
+
+    if (headers['implementationguideid']) {
+      const parsed: UrlWithStringQuery = parseUrl(proxyUrl);
+
+      if (!parsed.search) {
+        parsed.search = '';
+      }
+
+      if (parsed.search && !parsed.search.endsWith('&')) {
+        parsed.search += '&';
+      }
+
+      parsed.search += `_has:ImplementationGuide:resource:_id=${encodeURIComponent(headers['implementationguideid'])}`;
+      proxyUrl = formatUrl(parsed);
+    }
 
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';

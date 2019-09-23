@@ -79,33 +79,35 @@ export class AddHeaderInterceptor implements HttpInterceptor {
     const tokenExpiresAt = localStorage.getItem('expires_at');
     const token = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('token') : undefined;
     const fhirServer = localStorage.getItem('fhirServer');
-    const headers = {};
+    let headers = req.headers;
 
     if (req.url.startsWith('/')) {
       if (token) {
-        headers['Authorization'] = 'Bearer ' + token;
+        headers = headers.set('Authorization', 'Bearer ' + token);
       }
     }
 
     if (req.url.startsWith('/api/')) {
-      headers['Cache-Control'] = 'no-cache';
+      headers = headers.set('Cache-Control', 'no-cache');
 
       if (fhirServer) {
-        headers['fhirServer'] = fhirServer;
+        headers = headers.set('fhirServer', fhirServer);
+      }
+
+      // Pass the implementation guide (project) to the request so that it knows this request
+      // is within the context of the project
+      if (this.configService.project && this.configService.project.implementationGuideId) {
+        headers = headers.set('implementationGuideId', this.configService.project.implementationGuideId);
+      }
+
+      // Remove the context if the request indicates the context should be ignored
+      if (headers.get('ignoreContext') && headers.get('implementationGuideId')) {
+        headers = headers.delete('implementationGuideId');
+        headers = headers.delete('ignoreContext');
       }
     }
 
-    // Pass the implementation guide (project) to the request so that it knows this request
-    // is within the context of the project
-    if (this.configService.project && this.configService.project.implementationGuideId) {
-      headers['implementationGuideId'] = this.configService.project.implementationGuideId;
-    }
-
-    const clonedRequest = req.clone({
-      setHeaders: headers
-    });
-
-    return next.handle(clonedRequest);
+    return next.handle(req.clone({ headers: headers }));
   }
 }
 
