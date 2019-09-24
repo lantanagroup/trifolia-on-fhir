@@ -41,7 +41,9 @@
           Browse/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="browseMenu">
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Implementation Guide</a>
+          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide/view" *ngIf="configService.project">View Implementation Guide</a>
+          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Edit Implementation Guide</a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/structure-definition">Profiles/Extensions</a>
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/capability-statement">Capability Statements</a>
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/operation-definition">Operation Definition</a>
