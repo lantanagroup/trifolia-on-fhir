@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -185,20 +185,59 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps7"><span class="rvts0"><span class="rvts21">Guidelines and Best Practices</span></span></h1>
+<h1 class="rvps8"><span class="rvts0"><span class="rvts23">Guidelines and Best Practices</span></span></h1>
 <p class="rvps3"><span class="rvts8">Trifolia-on-FHIR has the functionality to allow users to completely customize resources. By following these guidelines, users can ensure the FHIR publisher successfully processes the Implementation Guide. </span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts18">Implementation Guide</span></span></h2>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Implementation Guide</span></span></h2>
+<p class="rvps3"><span class="rvts8">An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher. </span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<p class="rvps3"><span class="rvts8">The ImplementationGuide resource is a single resource that defines the logical content of the IG, along with the important entry pages into the publication, so that the logical package that the IG represents, so that the contents are computable. In particular, validators are able to use the ImplementationGuide resource to validate content against the implementation guide as a whole. The significant conformance expectation introduced by the ImplementationGuide resource is the idea of Default Profiles. Implementations may conform to multiple implementation guides at once, but this requires that the implementation guides are compatible.</span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">The URL of the Implementation Guide must be in the format of </span><span class="rvts22">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts8">. For example: </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
-<li class="rvps3"><span class="rvts8">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8">, the id must be "</span><span class="rvts22">myproject-ig</span><span class="rvts8">". Users can select the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
+<li class="rvps3"><span class="rvts8">The URL of the Implementation Guide must be in the format of </span><span class="rvts24">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts8">. For example: </span><span class="rvts24">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
+<li class="rvps3"><span class="rvts8">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts24">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8">, the id must be "</span><span class="rvts24">myproject-ig</span><span class="rvts8">". Users can select the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
 <li class="rvps3"><span class="rvts8">The Implementation Guide should have a description. The main screen of the FHIR IG Publisher export displays the description.</span></li>
 <li class="rvps3"><span class="rvts8">All contacts in the Implementation Guide appear as authors in the FHIR IG Publisher export.</span></li>
 <li class="rvps3"><span class="rvts8">ToF only exports resources referenced directly within the Implementation Guide resource. Confirm the Implementation Guide resource references all resources.</span></li>
 </ul>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts18">All Resources</span></span></h2>
-<p class="rvps3"><span class="rvts8">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts22">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts8">&nbsp;then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><span class="rvts22">http://myproject.com/someRoot/StructureDefinition/</span><span class="rvts8">.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Resources</span></span></h2>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts31">The FHIR specification defines a set of resources, and an infrastructure for handling resources. In order to use FHIR to create solutions for integration requirements, implementers must map their problems to resources and their content.</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps19"><span class="rvts25">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts26">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts25">&nbsp;then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><a class="rvts27" href="http://myproject.com/someRoot/StructureDefinition/">http://myproject.com/someRoot/StructureDefinition/</a><span class="rvts25">.</span></li>
+</ul>
+<p class="rvps12"><span class="rvts25"><br/></span></p>
+<p class="rvps3"><span class="rvts28"><br/></span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Structure Definitions(Profiles)</span></span></h2>
+<p class="rvps3"><span class="rvts28"><br/></span></p>
+<p class="rvps3"><span class="rvts8">A profile is a definition of a FHIR structure and is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types. </span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<p class="rvps3"><span class="rvts8">The StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. &nbsp;These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation.</span></p>
+<p class="rvps3"><span class="rvts29"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li style="margin-left: 0px" class="rvps13"><span class="rvts30">The Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.</span></li>
+<li style="margin-left: 0px" class="rvps13"><span class="rvts30">When creating a new Structure Definition, user must specify the resource Type</span></li>
+</ul>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Element Definition</span></span></h3>
+<p class="rvps3"><span class="rvts28"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li style="margin-left: 0px" class="rvps14"><span class="rvts8">The profile editor loads the elements from the snapshot of the “base definition” profile. </span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li style="margin-left: 0px" class="rvps20"><span class="rvts8">If the base definition represents a profile that does not yet have a snapshot, it attempts to create a snapshot for the base definition profile.</span></li>
+<li style="margin-left: 0px" class="rvps20"><span class="rvts8">If the base definition has other base definition profiles that are not in the system, the snapshot it returns will simply be the core FHIR profile for the “type” selected (ex: the underlying profile for “Observation”)</span></li>
+<li style="margin-left: 0px" class="rvps15"><span class="rvts8">The “Base Definition” field should allow you to select pre-existing profiles that are based on a matching “type”, or the core FHIR specification’s profile </span><span class="rvts22">for </span><span class="rvts8">the underlying type. </span></li>
+</ul>
+<li style="margin-left: 0px" class="rvps14"><span class="rvts8">Cardinality</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li style="margin-left: 0px" class="rvps16"><span class="rvts8">Users can set the cardinality of an element to an invalid value, but a Warning will appear in the Element Definition form and a Validation Error appears in the Validation tab if the user.</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+<li style="margin-left: 0px" class="rvps17"><span class="rvts8">selects a min cardinality less than the base element's min cardinality.</span></li>
+<li style="margin-left: 0px" class="rvps17"><span class="rvts8">selects a max cardinality greater than the base element's max cardinality.</span><br/><span class="rvts8"><br/></span></li>
+</ul></ul>
+<li style="margin-left: 0px" class="rvps18"><span class="rvts8">Maximum Field Length</span></li>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li style="margin-left: 0px" class="rvps16"><span class="rvts8">maxLength can only be entered when the ElementDefinition.type is a primitive type, with the exception of “boolean” (instant time date dateTime decimal integer string uri base64Binary code id oid unsignedInt positiveInt markdown url canonical uuid).</span></li>
+</ul></ul>
+<p class="rvps16"><span class="rvts8"><br/></span></p>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/feature-tour">Easily create Qt Help files</a></p>
 
             </div>
             

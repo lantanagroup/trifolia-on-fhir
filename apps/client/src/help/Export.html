@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -173,7 +173,7 @@
                         <li>Export/Import</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Bindingvaluestoelementsinaprofil.html" title="Binding values to elements in a profile" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="CodeSystems.html" title="Code Systems" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,20 +185,42 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps7"><span class="rvts0"><span class="rvts21">Export</span></span></h1>
+<h1 class="rvps8"><span class="rvts0"><span class="rvts23">Export</span></span></h1>
 <p class="rvps3"><span class="rvts8">Select Export in the tabbed tool bar on the top of the screen. </span></p>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<p class="rvps3"><span class="rvts8">in order to export artifacts, you must first select the Implementation Guide(IG).</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">The Export page contains form fields that allow users to specify the details of their exports. Users can export the Implementation Guides (IGs) saved under the Browse/Edit tab at the top right side of the screen. Users can export IGs as bundles or HTML with the IG Publisher. Once the form fields are complete, select the Export button on the left side of the scrolling tab at the bottom of the screen.</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">The "IG Publisher Package" generates a package using the published version of the IG to be used with the FHIR IG Publisher. &nbsp;</span></li>
+</ol>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li style="margin-left: 0px" class="rvps21"><span class="rvts8">Users can select either JSON or XML format for the output</span></li>
+<li style="margin-left: 0px" class="rvps21"><span class="rvts8">The "FHIR IG Publisher JAR" can be included in the export package</span></li>
+<li class="rvps3"><span class="rvts8">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export. </span></li>
+<li class="rvps3"><span class="rvts8">After completing the process, the export will automatically download to users' computers in a compressed folder, and tthe user is prompted to download a ZIP package of all files necessary to execute the FHIR IG publisher.</span></li>
+<li class="rvps3"><span class="rvts8">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview. &nbsp;</span></li>
+<li class="rvps3"><span class="rvts8">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts13" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts8">. </span></li>
+</ul></ul>
+<p class="rvps3"><span class="rvts8"><br/></span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="2" class="rvps3"><span class="rvts8">The "Bundle" export format is a Bundle of all resources referenced by the selected implementation guide, including the implementation guide resource</span></li>
+</ol>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
 <li class="rvps3"><span class="rvts8">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts13" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts8">&nbsp;that can be used to import the resources for the implementation guide in another FHIR environment.</span></li>
-<li class="rvps3"><span class="rvts8">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts13" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts8">. Depending on whether you select "Run IG Publisher", the IG Publisher will automatically be executed for the package, and the output from the IG Publisher will be included in the download. If you select </span><span class="rvts20">not </span><span class="rvts8">to execute the IG Publisher, the package will still be produced and can be downloaded.</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export. Users will see the tool processing the export as lines of code executions. After completing the process, the export will automatically download to users' computers in a compressed folder.</span></li>
-<li class="rvps3"><span class="rvts8">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview.</span></li>
+<li class="rvps3"><span class="rvts8">Users can select the type of output, JSON or XML, the bundle will be exported in.</span><br/><span class="rvts8"><br/></span></li>
+</ul></ul>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="3" class="rvps3"><span class="rvts8">The "GitHub" export format places all the resources within the IG into the specified GITHub repository/branch</span></li>
+</ol>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+<li class="rvps3"><span class="rvts8">Only resources that have a repository, branch and path will be exported to GitHub. &nbsp;At least one resource must have GitHub location information specified to export</span></li>
+<li class="rvps3"><span class="rvts8">If the file already exists in GitHub, it will be completely overwritten by this export</span></li>
+<li class="rvps3"><span class="rvts8">When this tab is selected from the Export page, the user will be prompted to enter their GitHub credentials. &nbsp; If the user does not log into GitHub initially, the "Login to GitHub" button can be selected before the export is commenced.</span></li>
+<li class="rvps3"><span class="rvts8">After a user has selected an Implementation Guide, the user must enter a commit message that will be associated with the IG on GitHub.</span></li>
 </ul></ul>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com">Free HTML Help documentation generator</a></p>
 
             </div>
             

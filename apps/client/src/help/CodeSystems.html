@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>REST API</title>
+  <title>Code Systems</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="REST API">
+  <meta name="twitter:title" content="Code Systems">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="REST API" />
+  <meta property="og:title" content="Code Systems" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,33 +163,34 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="TechnicalDetails_RESTAPI"
-		  data-hnd-context="20"
-		  data-hnd-title="REST API"
+		  data-hnd-id="CodeSystems"
+		  data-hnd-context="31"
+		  data-hnd-title="Code Systems"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="TechnicalDetails.html">Technical Details</a></li>
+                        <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="FHIRVersions.html" title="FHIR Versions" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="TechnicalDetails_SecurityandPerm.html" title="Security and Permissions" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Bindingvaluestoelementsinaprofil.html" title="Binding values to elements in a profile" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Export.html" title="Export" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>REST API</h2>
+            <h2>Code Systems</h2>
 
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR's REST API is documented using Swagger. The publicly available installation of Trifolia-on-FHIR exposes the API documentation here: </span><a class="rvts13" href="https://trifolia-fhir.lantanagroup.com/api-docs/" target="_blank">https://trifolia-fhir.lantanagroup.com/api-docs/</a><span class="rvts8">. </span><span class="rvts8">The API described by </span><span class="rvts33">/api-docs</span><span class="rvts8">&nbsp;is the same API that the web application (user interface) uses.</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Multiple FHIR servers</span></span></h2>
-<p class="rvps3"><span class="rvts8">If the ToF installation is configured to support multiple FHIR servers, the first FHIR server is the default in the REST API. If you want to perform REST API operations on a different FHIR server, you must specify a </span><span class="rvts33">fhirserver</span><span class="rvts8">&nbsp;header in each request. The value of the </span><span class="rvts33">fhirserver</span><span class="rvts8">&nbsp;header must align with the </span><span class="rvts33">id</span><span class="rvts8">&nbsp;of one of the FHIR servers returned by </span><span class="rvts33">/api/config</span><span class="rvts8">.</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">FHIR Server Proxy</span></span></h2>
-<p class="rvps3"><span class="rvts8">An </span><span class="rvts33">/api/fhir</span><span class="rvts8">&nbsp;end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation.</span></p>
+<p class="rvps3"><span class="rvts8">The CodeSystem resource is used to declare the existence of and describe a code system or code system supplement and its key properties, and optionally define a part or all of its content.</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts8">Code systems define which codes (symbols and/or expressions) exist, and how they are understood. Value sets select a set of codes from one or more code systems to specify which codes can be used in a particular context. </span></li>
+<li class="rvps3"><span class="rvts8">The CodeSystem resource may list some or all of the concepts in the code system, along with their basic properties (code, display, definition), designations, and additional properties. </span></li>
+<li class="rvps3"><span class="rvts8">Code System resources may also be used to define supplements, that extend an existing code system with additional designations and properties.</span></li>
+</ul>
 <p></p>
 
             </div>

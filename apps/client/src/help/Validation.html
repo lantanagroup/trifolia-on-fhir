@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -185,17 +185,16 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts25">Validation</span></p>
+<p class="rvps3"><span class="rvts36">Validation</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">Trifolia on FHIR utilizes 3 validation methods to provide as much feed-back to IG authors as possible.</span></p>
+<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR uses three validation methods to provide as much feedback to IG authors as possible:</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps8"><span class="rvts26">Real-time UI validation while editing</span><br/><span class="rvts24">This validation checks the base FHIR specification requirements (i.e. cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed, allowing it to update and render to the user in real-time. </span></li>
-<li value="2" class="rvps8"><span class="rvts26">Pre-publish validation</span><br/><span class="rvts24">When publishing an implementation guide from the "Publish" screen, the FHIR Server's </span><a class="rvts27" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation </a><span class="rvts24">is executed for each resource in the implementation guide. This is specific to the FHIR server being utilized by ToF for this IG (ex: HAPI, or the FHIR server instance selected in the top right of ToF).</span></li>
-<li value="3" class="rvps8"><span class="rvts26">HL7 IG Publisher validation</span><br/><span class="rvts24">This validation is performed automatically </span><span class="rvts28">during </span><span class="rvts24">the publish process by the FHIR IG Publisher. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links contained in the package. This validation method cannot be invoked externally/independently of initiating the publish process for an entire IG.</span></li>
+<li value="1" class="rvps19"><span class="rvts37">Real-time UI Validation</span><br/><span class="rvts25">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time. </span></li>
+<li value="2" class="rvps19"><span class="rvts37">Pre-publish Validation</span><br/><span class="rvts25">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts38" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts40" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">&nbsp;</a><span class="rvts25">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
+<li value="3" class="rvps19"><span class="rvts37">HL7 IG Publisher Validation</span><br/><span class="rvts25">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts39">during </span><span class="rvts25">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
 </ol>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/help-authoring-tool">Full-featured multi-format Help generator</a></p>
 
             </div>
             
