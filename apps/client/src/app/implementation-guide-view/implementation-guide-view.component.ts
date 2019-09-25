@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {ConfigService} from '../shared/config.service';
 
 @Component({
-  selector: 'app-implementation-guide-view',
   templateUrl: './implementation-guide-view.component.html',
   styleUrls: ['./implementation-guide-view.component.css']
 })

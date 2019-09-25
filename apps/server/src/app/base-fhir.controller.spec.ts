@@ -7,7 +7,9 @@ import {ConfigService} from './config.service';
 import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {RequestHeaders} from './server.decorators';
+// @ts-ignore
 import nock = require('nock');
+// @ts-ignore
 import http = require('axios/lib/adapters/http');
 
 nock.disableNetConnect();
@@ -31,11 +33,11 @@ class TestController extends BaseFhirController {
   }
 
   public create(user: ITofUser, fhirServerBase: string, data: any) {
-    return super.baseCreate(fhirServerBase, data, user);
+    return super.baseCreate(fhirServerBase, 'r4', data, user);
   }
 
   public update(fhirServerBase: string, id: string, data: any, user: ITofUser) {
-    return super.baseUpdate(fhirServerBase, id, data, user);
+    return super.baseUpdate(fhirServerBase, 'r4', id, data, user);
   }
 
   public delete(fhirServerBase: string, id:  string, user: ITofUser) {

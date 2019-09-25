@@ -5,11 +5,11 @@ import {ConfigService} from './config.service';
 import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
 import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {Bundle, Observation, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Response} from 'express';
-
-import nock = require('nock');
-import http = require('axios/lib/adapters/http');
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+// @ts-ignore
+import nock = require('nock');
+// @ts-ignore
+import http = require('axios/lib/adapters/http');
 
 jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
@@ -18,9 +18,6 @@ jest.mock('nanoid/generate', () => () => {
 nock.disableNetConnect();
 
 const fhirServerBase = 'http://test-fhir-server.com';
-const userPractitionerResponse = createUserPractitionerResponse();
-const userGroupResponse = createUserGroupResponse();
-const testUser = createTestUser();
 
 describe('FhirController', () => {
   let app: TestingModule;
@@ -101,7 +98,7 @@ describe('FhirController', () => {
           .post('/Observation', observation)
           .reply(201, postedResource, replyHeaders);
 
-        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, testUser, observation);
+        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, 'r4', testUser, observation);
 
         expect(results).toBeTruthy();
 
@@ -122,7 +119,7 @@ describe('FhirController', () => {
           .put('/Observation/test-id', updatedObservation)
           .reply(201, updatedObservation, replyHeaders);
 
-        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
+        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, 'r4', testUser, updatedObservation);
 
         expect(results).toBeTruthy();
 
@@ -138,7 +135,7 @@ describe('FhirController', () => {
           .delete('/Observation/test-id')
           .reply(201, null, replyHeaders);
 
-        const results = await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
+        const results = await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, 'r4', testUser);
 
         expect(results).toBeTruthy();
 
@@ -187,7 +184,7 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Observation' }, { 'content-location': 'http://test-fhir-server.com/Observation/test-obs-1/_history/2' });
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, 'r4', testUser, batchBundle);
 
         expect(results).toBeTruthy();
         expect(results.data).toBeTruthy();
@@ -251,7 +248,7 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Observation' }, { 'content-location': 'http://test-fhir-server.com/Observation/test-obs-1/_history/2' });
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, 'r4', testUser, batchBundle);
 
         expect(results).toBeTruthy();
         expect(results.data).toBeTruthy();
@@ -325,7 +322,7 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, 'r4', testUser, batchBundle);
 
         expect(results).toBeTruthy();
 
@@ -407,7 +404,7 @@ describe('FhirController', () => {
           })
           .reply(200);
 
-        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, testUser, batchBundle);
+        const results = await controller.proxy('/', { }, 'POST', fhirServerBase, 'r4', testUser, batchBundle);
 
         expect(results).toBeTruthy();
 
@@ -430,7 +427,7 @@ describe('FhirController', () => {
           })
           .reply(200, { resourceType: 'Bundle' });
 
-        const results = await controller.proxy('/ImplementationGuide', {}, 'GET', fhirServerBase, testUser);
+        const results = await controller.proxy('/ImplementationGuide', {}, 'GET', fhirServerBase, 'r4', testUser);
 
         expect(results).toBeTruthy();
         expect(results.contentType).toBeTruthy();
@@ -471,7 +468,7 @@ describe('FhirController', () => {
           })
           .reply(201, postedResource, replyHeaders);
 
-        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, testUser, newObservation);
+        const results = await controller.proxy('/Observation', {}, 'POST', fhirServerBase, 'r4', testUser, newObservation);
 
         expect(results).toBeTruthy();
 
@@ -517,7 +514,7 @@ describe('FhirController', () => {
           })
           .reply(201, persistedObservation, replyHeaders);
 
-        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
+        const results = await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, 'r4', testUser, updatedObservation);
 
         expect(results).toBeTruthy();
 
@@ -547,7 +544,7 @@ describe('FhirController', () => {
           .reply(200, persistedObservation);
 
         try {
-          await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, testUser, updatedObservation);
+          await controller.proxy('/Observation/test-id', {}, 'PUT', fhirServerBase, 'r4', testUser, updatedObservation);
           throw new Error('Proxy should have thrown an AuthorizationException');
         } catch (ex) {
           expect(ex.status).toBe(401);
@@ -581,7 +578,7 @@ describe('FhirController', () => {
           .delete('/Observation/test-id')
           .reply(200);
 
-        await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
+        await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, 'r4', testUser);
 
         req.done();
       });
@@ -604,7 +601,7 @@ describe('FhirController', () => {
           .reply(200, persistedObservation);
 
         try {
-          await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, testUser);
+          await controller.proxy('/Observation/test-id', {}, 'DELETE', fhirServerBase, 'r4', testUser);
         } catch (ex) {
           expect(ex.status).toBe(401);
         }
