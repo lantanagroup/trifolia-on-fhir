@@ -126,7 +126,7 @@ export class AppComponent implements OnInit {
 
   private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name: string }> {
     if (!implementationGuideId) {
-      return Promise.resolve(null);
+      return Promise.resolve(this.configService.project);
     }
 
     if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId) {
