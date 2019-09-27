@@ -244,7 +244,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
       const newResource: PackageResourceComponent = {
         name: (<any>resource).title || (<any>resource).name,
         sourceReference: {
-          reference: `StructureDefinition/${resource.id}`,
+          reference: `${resource.resourceType}/${resource.id}`,
           display: (<any>resource).title || (<any>resource).name
         },
         example: false
