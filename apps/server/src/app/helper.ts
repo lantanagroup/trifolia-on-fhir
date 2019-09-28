@@ -15,6 +15,7 @@ import {AxiosRequestConfig} from 'axios';
 import {UserSecurityInfo} from './base.controller';
 import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 export const zip = (p): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -192,6 +193,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
   let igUrl;
   let changed = false;
+  const resourceReferenceString = `${resource.resourceType}/${resource.id}`;
 
   if (typeof implementationGuide === 'string') {
     const implementationGuideId = <string>implementationGuide;
@@ -213,16 +215,17 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
     const foundResource = r4.definition.resource.find((r) => {
       if (r.reference) {
-        return r.reference.reference === `StructureDefinition/${r.id}`;
+        return r.reference.reference === resourceReferenceString;
       }
     });
 
     if (!foundResource) {
       r4.definition.resource.push({
         reference: {
-          reference: `StructureDefinition/${resource.id}`,
+          reference: resourceReferenceString,
           display: (<any>resource).title || (<any>resource).name
-        }
+        },
+        exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0
       });
       changed = true;
     }
@@ -234,7 +237,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     const foundInPackages = (stu3.package || []).filter((igPackage) => {
       const foundResources = (igPackage.resource || []).filter((r) => {
         if (r.sourceReference && r.sourceReference.reference) {
-          return r.sourceReference.reference === `StructureDefinition/${resource.id}`;
+          return r.sourceReference.reference === resourceReferenceString;
         }
       });
       return foundResources.length > 0;
@@ -244,10 +247,10 @@ export async function addToImplementationGuide(httpService: HttpService, configS
       const newResource: PackageResourceComponent = {
         name: (<any>resource).title || (<any>resource).name,
         sourceReference: {
-          reference: `${resource.resourceType}/${resource.id}`,
+          reference: resourceReferenceString,
           display: (<any>resource).title || (<any>resource).name
         },
-        example: false
+        example: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0
       };
 
       if (stu3.package.length === 0) {
