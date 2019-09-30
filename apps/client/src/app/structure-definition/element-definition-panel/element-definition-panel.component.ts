@@ -241,13 +241,93 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return true;
   }
 
+  private refreshExamples() {
+    let elementTypes = this.elementTreeModel.constrainedElement ?
+      this.elementTreeModel.constrainedElement.type : [];
+
+    if (!elementTypes || elementTypes.length === 0) {
+      elementTypes = this.elementTreeModel.baseElement.type;
+    }
+
+    for (const type of elementTypes) {
+      if (!type.code) {
+        continue;
+      }
+
+      const propertyName = 'value' + type.code.substring(0, 1).toUpperCase() + type.code.substring(1);
+      const foundExample = this.element.example.find((example) => example.hasOwnProperty(propertyName));
+      let rawValue;
+
+      if (foundExample) {
+        continue;
+      }
+
+      if (type.code === 'boolean') {
+        rawValue = true;
+      } else if (['instant', 'decimal', 'integer', 'unsignedInt', 'positiveInt'].indexOf(type.code) >= 0) {
+        rawValue = 1;
+      } else if (this.fhirService.primitiveTypes.indexOf(type.code) >= 0) {
+        rawValue = '';
+      } else {
+        rawValue = {};
+      }
+
+      const newExample = {
+        label: `Example for ${type.code}`
+      };
+
+      newExample[propertyName] = rawValue;
+      this.element.example.push(newExample);
+    }
+
+    // Remove any examples that aren't valid for the element anymore
+    for (let i = this.element.example.length - 1; i >= 0; i--) {
+      const example = this.element.example[i];
+      const propertyKeys = Object.keys(example);
+      const valuePropertyName = propertyKeys.find((pn) => pn.startsWith('value'));
+
+      // Example doesn't have a value
+      if (!valuePropertyName) {
+        continue;
+      }
+
+      const typeName = valuePropertyName.substring('value'.length);
+      const foundType = elementTypes.find((t) => t.code && t.code.toLowerCase() === typeName.toLowerCase());
+
+      // The type no longer exists on the element, remove the example for it
+      if (!foundType) {
+        this.element.example.splice(i, 1);
+      }
+    }
+  }
+
+  getExampleValueType(example) {
+    const propertyKeys = Object.keys(example);
+    const valuePropertyName = propertyKeys.find((pn) => pn.startsWith('value'));
+    const type = valuePropertyName.substring('value'.length);
+
+    if (['Instant', 'Time', 'Date', 'DateTime', 'Base64Binary', 'Decimal', 'Code', 'String', 'Integer', 'Uri', 'Boolean', 'Url', 'Markdown', 'Id', 'Oid', 'Uuid', 'UnsignedInt', 'PositiveInt'].indexOf(type) >= 0) {
+      return type.substring(0, 1).toLowerCase() + type.substring(1);
+    }
+
+    return type;
+  }
+
+  toggleExample() {
+    if (this.element.example) {
+      delete this.element.example;
+    } else {
+      this.element.example = [];
+      this.refreshExamples();
+    }
+  }
+
   getAllowedType(propertyPrefix: 'fixed'|'pattern'|'minValue'|'maxValue') {
     const dataTypes = this.fhirService.dataTypes;
-    const foundMatchingProperty = dataTypes.find((dt) => {
+    return dataTypes.find((dt) => {
       const caseSensitiveDataType = dt.substring(0, 1).toUpperCase() + dt.substring(1);
       return this.elementTreeModel.baseElement.hasOwnProperty(propertyPrefix + caseSensitiveDataType);
     });
-    return foundMatchingProperty;
   }
 
   ngOnInit() {

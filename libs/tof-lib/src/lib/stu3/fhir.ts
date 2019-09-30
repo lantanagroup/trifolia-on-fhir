@@ -555,12 +555,46 @@ export class TypeRefComponent extends Element {
       }
     }
   }
-
 }
 
 export class ExampleComponent extends Element {
   public label: string;
-  public value: Element;
+  public valueInstant?: number;
+  public valueDecimal?: number;
+  public valueInteger?: number;
+  public valueUnsignedInt?: number;
+  public valuePositiveInt?: number;
+  public valueCode?: string;
+  public valueId?: string;
+  public valueMarkdown?: string;
+  public valueOid?: string;
+  public valueUri?: string;
+  public valueString?: string;
+  public valueBase64Binary?: string;
+  public valueDate?: string;
+  public valueDateTime?: string;
+  public valueBoolean?: boolean;
+  public valueRatio?: Ratio;
+  public valueTiming?: Timing;
+  public valueCoding?: Coding;
+  public valueSignature?: Signature;
+  public valueCodeableConcept?: CodeableConcept;
+  public valueAge?: Age;
+  public valueDistance?: Distance;
+  public valueQuantity?: Quantity;
+  public valueSimpleQuantity?: SimpleQuantity;
+  public valueDuration?: Duration;
+  public valueCount?: Count;
+  public valueMoney?: Money;
+  public valueSampledData?: SampledData;
+  public valueContactPoint?: ContactPoint;
+  public valueAddress?: Address;
+  public valueAnnotation?: Annotation;
+  public valueHumanName?: HumanName;
+  public valueIdentifier?: Identifier;
+  public valueAttachment?: Attachment;
+  public valueRange?: Range;
+  public valuePeriod?: Period;
 
   constructor(obj?: any) {
     super(obj);
@@ -568,12 +602,116 @@ export class ExampleComponent extends Element {
       if (obj.label) {
         this.label = obj.label;
       }
-      if (obj.value) {
-        this.value = new Element(obj.value);
+      if (obj.valueInstant) {
+        this.valueInstant = obj.valueInstant;
+      }
+      if (obj.valueDecimal) {
+        this.valueDecimal = obj.valueDecimal;
+      }
+      if (obj.valueInteger) {
+        this.valueInteger = obj.valueInteger;
+      }
+      if (obj.valueUnsignedInt) {
+        this.valueUnsignedInt = obj.valueUnsignedInt;
+      }
+      if (obj.valuePositiveInt) {
+        this.valuePositiveInt = obj.valuePositiveInt;
+      }
+      if (obj.valueCode) {
+        this.valueCode = obj.valueCode;
+      }
+      if (obj.valueId) {
+        this.valueId = obj.valueId;
+      }
+      if (obj.valueMarkdown) {
+        this.valueMarkdown = obj.valueMarkdown;
+      }
+      if (obj.valueOid) {
+        this.valueOid = obj.valueOid;
+      }
+      if (obj.valueUri) {
+        this.valueUri = obj.valueUri;
+      }
+      if (obj.valueString) {
+        this.valueString = obj.valueString;
+      }
+      if (obj.valueBase64Binary) {
+        this.valueBase64Binary = obj.valueBase64Binary;
+      }
+      if (obj.valueDate) {
+        this.valueDate = obj.valueDate;
+      }
+      if (obj.valueDateTime) {
+        this.valueDateTime = obj.valueDateTime;
+      }
+      if (obj.valueBoolean) {
+        this.valueBoolean = obj.valueBoolean;
+      }
+      if (obj.valueRatio) {
+        this.valueRatio = new Ratio(obj.valueRatio);
+      }
+      if (obj.valueTiming) {
+        this.valueTiming = new Timing(obj.valueTiming);
+      }
+      if (obj.valueCoding) {
+        this.valueCoding = new Coding(obj.valueCoding);
+      }
+      if (obj.valueSignature) {
+        this.valueSignature = new Signature(obj.valueSignature);
+      }
+      if (obj.valueCodeableConcept) {
+        this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept);
+      }
+      if (obj.valueAge) {
+        this.valueAge = new Age(obj.valueAge);
+      }
+      if (obj.valueDistance) {
+        this.valueDistance = new Distance(obj.valueDistance);
+      }
+      if (obj.valueQuantity) {
+        this.valueQuantity = new Quantity(obj.valueQuantity);
+      }
+      if (obj.valueSimpleQuantity) {
+        this.valueSimpleQuantity = new SimpleQuantity(obj.valueSimpleQuantity);
+      }
+      if (obj.valueDuration) {
+        this.valueDuration = new Duration(obj.valueDuration);
+      }
+      if (obj.valueCount) {
+        this.valueCount = new Count(obj.valueCount);
+      }
+      if (obj.valueMoney) {
+        this.valueMoney = new Money(obj.valueMoney);
+      }
+      if (obj.valueSampledData) {
+        this.valueSampledData = new SampledData(obj.valueSampledData);
+      }
+      if (obj.valueContactPoint) {
+        this.valueContactPoint = new ContactPoint(obj.valueContactPoint);
+      }
+      if (obj.valueAddress) {
+        this.valueAddress = new Address(obj.valueAddress);
+      }
+      if (obj.valueAnnotation) {
+        this.valueAnnotation = new Annotation(obj.valueAnnotation);
+      }
+      if (obj.valueHumanName) {
+        this.valueHumanName = new HumanName(obj.valueHumanName);
+      }
+      if (obj.valueIdentifier) {
+        this.valueIdentifier = new Identifier(obj.valueIdentifier);
+      }
+      if (obj.valueAttachment) {
+        this.valueAttachment = new Attachment(obj.valueAttachment);
+      }
+      if (obj.valueRange) {
+        this.valueRange = new Range(obj.valueRange);
+      }
+      if (obj.valuePeriod) {
+        this.valuePeriod = new Period(obj.valuePeriod);
       }
     }
   }
-
 }
 
 export class ConstraintComponent extends Element {

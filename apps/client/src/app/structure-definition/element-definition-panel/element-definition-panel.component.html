@@ -409,8 +409,6 @@
 
         <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value" tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="example" title="Example" tooltipPath="ElementDefinition.example[x]"></app-fhir-choice>
-
         <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')"></app-fhir-choice>
@@ -418,6 +416,35 @@
         <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')"></app-fhir-choice>
+
+        <div class="card">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('example')" (ngModelChange)="toggleExample()" /> Example
+            <div class="pull-right" *ngIf="element.hasOwnProperty('example')">
+              <button type="button" class="btn btn-primary btn-sm" (click)="refreshExamples()" title="Refresh the examples listed here based on the types allowed by the element.">
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <table class="table table-striped" *ngIf="element.hasOwnProperty('example')">
+            <thead>
+            <tr>
+              <th>Label</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let example of element.example; let ei = index">
+              <td>
+                <app-fhir-string [parentObject]="example" propertyName="label" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-choice [parentObject]="example" propertyName="value" [allowedType]="getExampleValueType(example)" [required]="true"></app-fhir-choice>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </ng-template>
     </ngb-tab>
     <ngb-tab id="json">
