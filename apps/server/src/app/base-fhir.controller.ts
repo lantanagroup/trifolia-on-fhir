@@ -213,6 +213,7 @@ export class BaseFhirController extends BaseController {
 
   protected async baseUpdate(fhirServerBase: string, fhirServerVersion: string, id: string, data: any, user: ITofUser, contextImplementationGuideId?: string): Promise<any> {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    let original;
 
     // Make sure the user can modify the resource based on the permissions
     // stored on the server, first
@@ -223,9 +224,10 @@ export class BaseFhirController extends BaseController {
         method: 'GET'
       };
       const getResults = await this.httpService.request(getOptions).toPromise();
+      original = getResults.data;
 
       this.logger.trace('Checking permissions');
-      assertUserCanEdit(this.configService, userSecurityInfo, getResults.data);
+      assertUserCanEdit(this.configService, userSecurityInfo, original);
     } catch (ex) {
       // The resource doesn't exist yet and this is a create-on-update operation
     }
@@ -235,13 +237,15 @@ export class BaseFhirController extends BaseController {
     this.logger.trace(`Checking that user has granted themselves permissions in the new version of the ${this.resourceType}`);
     assertUserCanEdit(this.configService, userSecurityInfo, data);
 
+    const resourceUrl = buildUrl(fhirServerBase, this.resourceType, id);
     const options = <AxiosRequestConfig> {
-      url: buildUrl(fhirServerBase, this.resourceType, id),
+      url: resourceUrl,
       method: 'PUT',
       data: data
     };
 
     this.logger.trace(`Updating the ${this.resourceType} on the FHIR server`);
+
     try {
       const updateResults = await this.httpService.request(options).toPromise();
       const resource = updateResults.data;
@@ -252,7 +256,15 @@ export class BaseFhirController extends BaseController {
         await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuideId);
       }
 
-      return resource;
+      // If this resource existed before now, we should make sure we remove permissions from it as appropriate.
+      if (original) {
+        // have to use "original" because HAPI (maybe other servers) return what you send to it during the update
+        // which is the same as the "data" variable. Need to get what is actually on the server, which is "original"
+        this.removePermissions(fhirServerBase, original, data);
+      }
+
+      const updatedResults = await this.httpService.get(resourceUrl).toPromise();
+      return updatedResults.data;
     } catch (ex) {
       let message = `Failed to update resource ${this.resourceType}/${id}: ${ex.message}`;
 
