@@ -400,6 +400,8 @@ describe('BaseFhirController', () => {
           .query({ member: 'test-user-id', '_summary': 'true' })
           .reply(200, userGroupResponse)
           .put('/ImplementationGuide/test-id', resourceUpdates)
+          .reply(200, resourceUpdates)
+          .get('/ImplementationGuide/test-id')
           .reply(200, resourceUpdates);
 
         const results = await testController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
