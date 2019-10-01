@@ -363,7 +363,7 @@ export class ImportComponent implements OnInit {
 
   private importFiles(tabSet: NgbTabset) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.fhirService.transaction(json, 'application/json')
+    this.fhirService.transaction(json, 'application/json', false)
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;

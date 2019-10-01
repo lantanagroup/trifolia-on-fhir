@@ -393,13 +393,6 @@ describe('FhirController', () => {
             expect(obs).toBeTruthy();
             expect(obs.resourceType).toBe('Observation');
             expect(obs.id).toBe('test-obs-1');
-            expect(obs.meta).toBeTruthy();
-            expect(obs.meta.security).toBeTruthy();
-            expect(obs.meta.security.length).toBe(2);
-
-            // The new resource being updated should make sure the current user has permissions
-            expect(obs.meta.security[0].code).toBe('user^test-user-id^read');
-            expect(obs.meta.security[1].code).toBe('user^test-user-id^write');
             return true;
           })
           .reply(200);

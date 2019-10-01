@@ -376,10 +376,11 @@ export class FhirService {
     return this.http.post<DomainResource>(url, resource);
   }
 
-  public transaction(data: string, contentType: string) {
+  public transaction(data: string, contentType: string, shouldRemovePermissions = true) {
     return this.http.post<DomainResource>('/api/fhir', data, {
       headers: {
-        'Content-Type': contentType
+        'Content-Type': contentType,
+        'shouldRemovePermissions': shouldRemovePermissions.toString()
       }
     });
   }

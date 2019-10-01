@@ -104,13 +104,30 @@ export class FhirController extends BaseController {
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
   }
 
-  private async processBatchEntry(entry: EntryComponent, fhirServerBase: string, fhirServerVersion: string, userSecurityInfo: UserSecurityInfo, contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide) {
+  /**
+   * Processes an individual entry in the batch.
+   * If the resource already exists, checks permissions to make sure the user can edit.
+   * @param entry The entry to process.
+   * @param fhirServerBase The base address of the fhir server.
+   * @param fhirServerVersion The version of the fhir server.
+   * @param userSecurityInfo The security info for the currently logged-in user.
+   * @param contextImplementationGuide The implementation guide this batch should be int he context of. Ensures the entry/resource is added to the ig.
+   * @param shouldRemovePermissions Indicates if permissions should be removed as part of this batch process. Some scenarios (such as importing) don't want permissions removed.
+   */
+  private async processBatchEntry(
+    entry: EntryComponent,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3' | 'r4',
+    userSecurityInfo: UserSecurityInfo,
+    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
+    shouldRemovePermissions = true) {
+
     // Make sure the user has permission to edit the pre-existing resource
     if (entry.request.method !== 'POST') {
       const id = entry.resource.id;
 
       if (!id) {
-        throw new BadRequestException('Transaction entry with a request method of PUT must specify Resource.id');
+        throw new BadRequestException('Batch entry with a request method of PUT must specify Resource.id');
       }
 
       if (this.configService.server.enableSecurity) {
@@ -148,7 +165,7 @@ export class FhirController extends BaseController {
           // Do nothing if the resource is not found... That means this is a create-with-id request
         }
 
-        if (originalResource) {
+        if (originalResource && shouldRemovePermissions) {
           try {
             await this.removePermissions(fhirServerBase, originalResource, entry.resource);
           } catch (ex) {
@@ -156,12 +173,12 @@ export class FhirController extends BaseController {
             throw ex;
           }
         }
-      }
 
-      // Make sure the user has given themselves permissions to edit
-      // the resource they are requesting to be updated
-      if (entry.resource) {
-        this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+        // Make sure the user has given themselves permissions to edit
+        // the resource they are requesting to be updated
+        if (!originalResource && entry.resource) {
+          this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+        }
       }
     }
 
@@ -202,7 +219,23 @@ export class FhirController extends BaseController {
     return batchProcessingResponse;
   }
 
-  private async processBatch(bundle: Bundle, fhirServerBase: string, fhirServerVersion: string, userSecurityInfo: UserSecurityInfo, contextImplementationGuideId?: string) {
+  /**
+   * Process a Bundle[type='batch'] of resources
+   * @param bundle The bundle to process
+   * @param fhirServerBase The base address of the fhir server
+   * @param fhirServerVersion The version of the fhir server
+   * @param userSecurityInfo The security info about the currently logged-in user
+   * @param contextImplementationGuideId The implementation guide that the batch should be executed within context of. Resources are added to the ig.
+   * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
+   */
+  private async processBatch(
+    bundle: Bundle,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3'|'r4',
+    userSecurityInfo: UserSecurityInfo,
+    contextImplementationGuideId?: string,
+    shouldRemovePermissions = true) {
+
     if (!bundle || bundle.resourceType !== 'Bundle') {
       throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
     }
@@ -233,7 +266,7 @@ export class FhirController extends BaseController {
     }
 
     const promises = (bundle.entry || []).map((entry) => {
-      return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide);
+      return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
     });
     const results = await Promise.all(promises);
 
@@ -276,7 +309,27 @@ export class FhirController extends BaseController {
     return responseBundle;
   }
 
-  public async proxy(url: string, headers: {[key: string]: any}, method: string, fhirServerBase: string, fhirServerVersion: string, user: ITofUser, body?): Promise<ProxyResponse> {
+  /**
+   * Proxies the request through the selected/specified FHIR server
+   * @param url
+   * @param headers
+   * @param method
+   * @param fhirServerBase
+   * @param fhirServerVersion
+   * @param user
+   * @param body
+   * @param shouldRemovePermissions
+   */
+  public async proxy(
+    url: string,
+    headers: {[key: string]: any},
+    method: string,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3'|'r4',
+    user: ITofUser,
+    body?,
+    shouldRemovePermissions = true): Promise<ProxyResponse> {
+
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -314,7 +367,7 @@ export class FhirController extends BaseController {
     if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       try {
-        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuideId);
+        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuideId, shouldRemovePermissions);
         return {
           status: 200,
           data: responseBundle
@@ -440,11 +493,13 @@ export class FhirController extends BaseController {
     @Headers() headers: {[key: string]: any},
     @RequestMethod() method: string,
     @FhirServerBase() fhirServerBase: string,
-    @FhirServerVersion() fhirServerVersion: string,
+    @FhirServerVersion() fhirServerVersion: 'stu3'|'r4',
     @Res() response: Response,
     @User() user: ITofUser,
     @Body() body?) {
-    const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body);
+
+    const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
+    const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions);
 
     response.status(results.status);
 

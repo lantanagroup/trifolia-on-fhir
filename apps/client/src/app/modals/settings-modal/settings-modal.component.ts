@@ -23,6 +23,7 @@ export class SettingsModalComponent implements OnInit {
 
   public ok() {
     if (this.fhirServerId !== this.configService.fhirServer) {
+      this.configService.project = null;
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate([`/${this.fhirServerId}/home`]);
     }
