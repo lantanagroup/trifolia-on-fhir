@@ -194,6 +194,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   let igUrl;
   let changed = false;
   const resourceReferenceString = `${resource.resourceType}/${resource.id}`;
+  const shouldPersistIg = typeof implementationGuide === 'string';
 
   if (typeof implementationGuide === 'string') {
     const implementationGuideId = <string>implementationGuide;
@@ -220,12 +221,14 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     });
 
     if (!foundResource) {
+      const display = (<any>resource).title || (<any>resource).name;
       r4.definition.resource.push({
         reference: {
           reference: resourceReferenceString,
-          display: (<any>resource).title || (<any>resource).name
+          display: display
         },
-        exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0
+        exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0,
+        name: display
       });
       changed = true;
     }
@@ -244,11 +247,12 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     });
 
     if (foundInPackages.length === 0) {
+      const display = (<any>resource).title || (<any>resource).name;
       const newResource: PackageResourceComponent = {
-        name: (<any>resource).title || (<any>resource).name,
+        name: display,
         sourceReference: {
           reference: resourceReferenceString,
-          display: (<any>resource).title || (<any>resource).name
+          display: display
         },
         example: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0
       };
@@ -273,7 +277,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   // Only update the resource on the server if the implementation guide passed to us
   // was just a string. Otherwise, the caller is managing the concrete implementation
   // outside of this method and they should be responsible for persisting the changes
-  if (typeof implementationGuide === 'string') {
+  if (shouldPersistIg) {
     const updateOptions: AxiosRequestConfig = {
       method: 'PUT',
       url: igUrl,

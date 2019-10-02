@@ -263,7 +263,7 @@ export class FhirService {
    * @param {number} [page]
    * @param {number} [count]
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10, ignoreContext = false) {
     let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
 
     if(page){
@@ -308,7 +308,15 @@ export class FhirService {
 
     if(sortID) url += '_sort=_id&';
 
-    return this.http.get(url);
+    const options = {
+      headers: {}
+    };
+
+    if (ignoreContext) {
+      options.headers['ignoreContext'] = 'true';
+    }
+
+    return this.http.get(url, options);
   }
 
   /**

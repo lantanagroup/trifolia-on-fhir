@@ -59,7 +59,7 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page)
+    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, true)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = 'Done searching.';
