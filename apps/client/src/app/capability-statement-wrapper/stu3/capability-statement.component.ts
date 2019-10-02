@@ -55,6 +55,14 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.capabilityStatement.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.capabilityStatement.id = this.capabilityStatement.url.substring(lastIndex + 1);
+    }
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the capability statement?')) {
       return;

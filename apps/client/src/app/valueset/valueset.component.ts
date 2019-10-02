@@ -51,6 +51,14 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.valueSet.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.valueSet.id = this.valueSet.url.substring(lastIndex + 1);
+    }
+  }
+
   public addIncludeEntry(includeTabSet) {
     this.valueSet.compose.include.push({});
     setTimeout(() => {

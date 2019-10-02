@@ -1,7 +1,8 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../shared/capability-statement.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CapabilityStatement} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Observable} from 'rxjs';
 import {RecentItemService} from '../../shared/recent-item.service';
@@ -20,7 +21,7 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
   styleUrls: ['./capability-statement.component.css']
 })
 export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement;
+  @Input() public capabilityStatement: CapabilityStatement;
 
   public message: string;
   public validation: any;
@@ -53,6 +54,14 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
 
   public get isFile(): boolean {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
+  }
+
+  public urlChanged() {
+    const lastIndex = this.capabilityStatement.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.capabilityStatement.id = this.capabilityStatement.url.substring(lastIndex + 1);
+    }
   }
 
   public revert() {

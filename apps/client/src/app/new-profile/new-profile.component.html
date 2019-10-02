@@ -5,8 +5,7 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true"
-                           tooltipPath="StructureDefinition.url"></app-fhir-string>
+          <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true" tooltipPath="StructureDefinition.url" (change)="urlChanged()"></app-fhir-string>
         </div>
         <div class="col-md-4">
           <app-fhir-string [parentObject]="structureDefinition" propertyName="id" title="ID" placeholder="Auto generate"

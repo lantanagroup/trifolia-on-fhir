@@ -48,6 +48,14 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.operationDefinition.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.operationDefinition.id = this.operationDefinition.url.substring(lastIndex + 1);
+    }
+  }
+
   public editParameter(parameter: ParameterComponent) {
     const modalInstance = this.modal.open(ParameterModalComponent, {size: 'lg'});
     modalInstance.componentInstance.operationDefinition = this.operationDefinition;

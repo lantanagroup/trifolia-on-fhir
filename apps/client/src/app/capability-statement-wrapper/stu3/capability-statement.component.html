@@ -10,17 +10,13 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL"
-                           tooltipPath="CapabilityStatement.url"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL" tooltipPath="CapabilityStatement.url" (change)="urlChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name"
-                           (change)="nameChanged()" tooltipPath="CapabilityStatement.name"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CapabilityStatement.name"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title"
-                           (change)="nameChanged()" tooltipPath="CapabilityStatement.title"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CapabilityStatement.title"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" title="Publisher"
-                           tooltipPath="CapabilityStatement.publisher"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" title="Publisher" tooltipPath="CapabilityStatement.publisher"></app-fhir-string>
 
           <div class="card">
             <div class="card-header">
@@ -98,8 +94,7 @@
         </div>
 
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO"
-                           *ngIf="isNew"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
 
           <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false"
                          tooltipPath="CapabilityStatement.date"></app-fhir-date>

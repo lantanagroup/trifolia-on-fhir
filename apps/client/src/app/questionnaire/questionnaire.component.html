@@ -7,7 +7,7 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL"></app-fhir-string>
+          <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
 
           <app-fhir-string [parentObject]="questionnaire" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
 

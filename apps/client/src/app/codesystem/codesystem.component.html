@@ -7,7 +7,7 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url"></app-fhir-string>
+          <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url" (change)="urlChanged()"></app-fhir-string>
 
           <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
 

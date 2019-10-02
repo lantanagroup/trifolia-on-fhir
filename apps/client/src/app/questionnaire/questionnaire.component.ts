@@ -74,6 +74,14 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.questionnaire.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.questionnaire.id = this.questionnaire.url.substring(lastIndex + 1);
+    }
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the questionnaire?')) {
       return;
