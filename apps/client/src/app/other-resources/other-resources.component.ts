@@ -34,9 +34,11 @@ export class OtherResourcesComponent implements OnInit {
   public results: Bundle;
   public Globals = Globals;
   public page = 1;
+  public ignoreContext = false;
 
   @ViewChild('tabSet', { static: true })
   public tabSet: NgbTabset;
+
 
   constructor(
     public configService: ConfigService,
@@ -47,7 +49,6 @@ export class OtherResourcesComponent implements OnInit {
       .subscribe(() => {
         this.search();
       });
-
   }
 
   public search() {
@@ -59,7 +60,7 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, true)
+    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = 'Done searching.';
