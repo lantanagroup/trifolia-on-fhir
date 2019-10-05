@@ -70,8 +70,8 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase: string, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 
   @Get(':id/list')

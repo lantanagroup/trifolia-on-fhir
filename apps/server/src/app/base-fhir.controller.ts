@@ -279,12 +279,15 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  protected async baseDelete(baseUrl: string, id: string, user: ITofUser): Promise<any> {
+  protected async baseDelete(baseUrl: string, fhirServerVersion: 'stu3'|'r4', id: string, user: ITofUser): Promise<any> {
     const getUrl = buildUrl(baseUrl, this.resourceType, id);
     const getResults = await this.httpService.get(getUrl).toPromise();
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, baseUrl);
     await assertUserCanEdit(this.configService, userSecurityInfo, getResults.data);
+
+    // TODO: Update 'r4' to actual server version
+    await this.removeReferencesToResource(baseUrl, fhirServerVersion, this.resourceType, id);
 
     const options = <AxiosRequestConfig> {
       url: buildUrl(baseUrl, this.resourceType, id, null),

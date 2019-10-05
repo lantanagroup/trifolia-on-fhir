@@ -124,7 +124,7 @@ export class StructureDefinitionController extends BaseFhirController {
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 }

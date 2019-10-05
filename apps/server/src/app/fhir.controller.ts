@@ -27,10 +27,14 @@ import {ConfigService} from './config.service';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {addToImplementationGuide, assertUserCanEdit, parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Bundle,
+  DomainResource,
+  EntryComponent,
+  ImplementationGuide as STU3ImplementationGuide
+} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {parse as parseUrl, format as formatUrl} from 'url';
-import {UrlWithStringQuery} from 'url';
+import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
 
 export interface ProxyResponse {
   status: number;
@@ -434,6 +438,11 @@ export class FhirController extends BaseController {
         if (body) {
           this.ensureUserCanEdit(userSecurityInfo, body);
         }
+      }
+
+      // Update resources that reference what we're about to delete
+      if (method === 'DELETE') {
+        await this.removeReferencesToResource(fhirServerBase, fhirServerVersion, parsedUrl.resourceType, parsedUrl.id);
       }
     }
 

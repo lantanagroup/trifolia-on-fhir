@@ -1735,10 +1735,12 @@ export class Signature extends Element {
 
 }
 
+export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
+
 export class Bundle extends Resource {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
-  public type: string;
+  public type: BundleTypes;
   public timestamp?: Date;
   public total?: number;
   public link?: BundleLinkComponent[];
@@ -14507,7 +14509,7 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
   public reference: ResourceReference;
   public name?: string;
   public description?: string;
-  public exampleBoolean?: boolean = false;
+  public exampleBoolean? = false;
   public exampleCanonical?: string;
   public package?: string;
 

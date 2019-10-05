@@ -24,7 +24,7 @@ export class Element extends Base {
       }
       if (obj.extension) {
         this.extension = [];
-        for (let o of obj.extension || []) {
+        for (const o of obj.extension || []) {
           this.extension.push(new Extension(o));
         }
       }
@@ -123,13 +123,13 @@ export class Meta extends Element {
       }
       if (obj.security) {
         this.security = [];
-        for (let o of obj.security || []) {
+        for (const o of obj.security || []) {
           this.security.push(new Coding(o));
         }
       }
       if (obj.tag) {
         this.tag = [];
-        for (let o of obj.tag || []) {
+        for (const o of obj.tag || []) {
           this.tag.push(new Coding(o));
         }
       }
@@ -197,19 +197,19 @@ export class DomainResource extends Resource {
       }
       if (obj.contained) {
         this.contained = [];
-        for (let o of obj.contained || []) {
+        for (const o of obj.contained || []) {
           this.contained.push(new DomainResource(o));
         }
       }
       if (obj.extension) {
         this.extension = [];
-        for (let o of obj.extension || []) {
+        for (const o of obj.extension || []) {
           this.extension.push(new Extension(o));
         }
       }
       if (obj.modifierExtension) {
         this.modifierExtension = [];
-        for (let o of obj.modifierExtension || []) {
+        for (const o of obj.modifierExtension || []) {
           this.modifierExtension.push(new Extension(o));
         }
       }
@@ -227,7 +227,7 @@ export class CodeableConcept extends Element {
     if (obj) {
       if (obj.coding) {
         this.coding = [];
-        for (let o of obj.coding || []) {
+        for (const o of obj.coding || []) {
           this.coding.push(new Coding(o));
         }
       }
@@ -355,7 +355,7 @@ export class ContactDetail extends Element {
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -398,7 +398,7 @@ export class BackboneElement extends Element {
     if (obj) {
       if (obj.modifierExtension) {
         this.modifierExtension = [];
-        for (let o of obj.modifierExtension || []) {
+        for (const o of obj.modifierExtension || []) {
           this.modifierExtension.push(new Extension(o));
         }
       }
@@ -488,7 +488,7 @@ export class SlicingComponent extends Element {
     if (obj) {
       if (obj.discriminator) {
         this.discriminator = [];
-        for (let o of obj.discriminator || []) {
+        for (const o of obj.discriminator || []) {
           this.discriminator.push(new DiscriminatorComponent(o));
         }
       }
@@ -833,7 +833,7 @@ export class ElementDefinition extends Element {
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new Coding(o));
         }
       }
@@ -869,7 +869,7 @@ export class ElementDefinition extends Element {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new TypeRefComponent(o));
         }
       }
@@ -890,7 +890,7 @@ export class ElementDefinition extends Element {
       }
       if (obj.example) {
         this.example = [];
-        for (let o of obj.example || []) {
+        for (const o of obj.example || []) {
           this.example.push(new ExampleComponent(o));
         }
       }
@@ -908,7 +908,7 @@ export class ElementDefinition extends Element {
       }
       if (obj.constraint) {
         this.constraint = [];
-        for (let o of obj.constraint || []) {
+        for (const o of obj.constraint || []) {
           this.constraint.push(new ConstraintComponent(o));
         }
       }
@@ -926,7 +926,7 @@ export class ElementDefinition extends Element {
       }
       if (obj.mapping) {
         this.mapping = [];
-        for (let o of obj.mapping || []) {
+        for (const o of obj.mapping || []) {
           this.mapping.push(new ElementDefinitionMappingComponent(o));
         }
       }
@@ -943,7 +943,7 @@ export class SnapshotComponent extends BackboneElement {
     if (obj) {
       if (obj.element) {
         this.element = [];
-        for (let o of obj.element || []) {
+        for (const o of obj.element || []) {
           this.element.push(new ElementDefinition(o));
         }
       }
@@ -960,7 +960,7 @@ export class DifferentialComponent extends BackboneElement {
     if (obj) {
       if (obj.element) {
         this.element = [];
-        for (let o of obj.element || []) {
+        for (const o of obj.element || []) {
           this.element.push(new ElementDefinition(o));
         }
       }
@@ -1008,7 +1008,7 @@ export class StructureDefinition extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -1035,7 +1035,7 @@ export class StructureDefinition extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -1044,13 +1044,13 @@ export class StructureDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -1062,7 +1062,7 @@ export class StructureDefinition extends DomainResource {
       }
       if (obj.keyword) {
         this.keyword = [];
-        for (let o of obj.keyword || []) {
+        for (const o of obj.keyword || []) {
           this.keyword.push(new Coding(o));
         }
       }
@@ -1071,7 +1071,7 @@ export class StructureDefinition extends DomainResource {
       }
       if (obj.mapping) {
         this.mapping = [];
-        for (let o of obj.mapping || []) {
+        for (const o of obj.mapping || []) {
           this.mapping.push(new MappingComponent(o));
         }
       }
@@ -1154,7 +1154,7 @@ export class ParameterComponent extends BackboneElement {
       }
       if (obj.part) {
         this.part = [];
-        for (let o of obj.part || []) {
+        for (const o of obj.part || []) {
           this.part.push(new ParameterComponent(o));
         }
       }
@@ -1210,7 +1210,7 @@ export class Parameters extends Resource {
     if (obj) {
       if (obj.parameter) {
         this.parameter = [];
-        for (let o of obj.parameter || []) {
+        for (const o of obj.parameter || []) {
           this.parameter.push(new ParameterComponent(o));
         }
       }
@@ -1343,7 +1343,7 @@ export class EntryComponent extends BackboneElement {
     if (obj) {
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
@@ -1393,7 +1393,7 @@ export class Flag extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -1514,7 +1514,7 @@ export class ReferenceRangeComponent extends BackboneElement {
       }
       if (obj.appliesTo) {
         this.appliesTo = [];
-        for (let o of obj.appliesTo || []) {
+        for (const o of obj.appliesTo || []) {
           this.appliesTo.push(new CodeableConcept(o));
         }
       }
@@ -1571,7 +1571,7 @@ export class ComponentComponent extends BackboneElement {
       }
       if (obj.referenceRange) {
         this.referenceRange = [];
-        for (let o of obj.referenceRange || []) {
+        for (const o of obj.referenceRange || []) {
           this.referenceRange.push(new ReferenceRangeComponent(o));
         }
       }
@@ -1609,13 +1609,13 @@ export class Observation extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -1624,7 +1624,7 @@ export class Observation extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -1645,7 +1645,7 @@ export class Observation extends DomainResource {
       }
       if (obj.performer) {
         this.performer = [];
-        for (let o of obj.performer || []) {
+        for (const o of obj.performer || []) {
           this.performer.push(new ResourceReference(o));
         }
       }
@@ -1675,19 +1675,19 @@ export class Observation extends DomainResource {
       }
       if (obj.referenceRange) {
         this.referenceRange = [];
-        for (let o of obj.referenceRange || []) {
+        for (const o of obj.referenceRange || []) {
           this.referenceRange.push(new ReferenceRangeComponent(o));
         }
       }
       if (obj.related) {
         this.related = [];
-        for (let o of obj.related || []) {
+        for (const o of obj.related || []) {
           this.related.push(new RelatedComponent(o));
         }
       }
       if (obj.component) {
         this.component = [];
-        for (let o of obj.component || []) {
+        for (const o of obj.component || []) {
           this.component.push(new ComponentComponent(o));
         }
       }
@@ -1732,7 +1732,7 @@ export class Signature extends Element {
     if (obj) {
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new Coding(o));
         }
       }
@@ -1756,10 +1756,12 @@ export class Signature extends Element {
 
 }
 
+export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
+
 export class Bundle extends Resource {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
-  public type: 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
+  public type: BundleTypes;
   public total?: number;
   public link?: LinkComponent[];
   public entry?: EntryComponent[] = [];
@@ -1779,13 +1781,13 @@ export class Bundle extends Resource {
       }
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
       if (obj.entry) {
         this.entry = [];
-        for (let o of obj.entry || []) {
+        for (const o of obj.entry || []) {
           this.entry.push(new EntryComponent(o));
         }
       }
@@ -1963,19 +1965,19 @@ export class ConceptDefinitionComponent extends BackboneElement {
       }
       if (obj.designation) {
         this.designation = [];
-        for (let o of obj.designation || []) {
+        for (const o of obj.designation || []) {
           this.designation.push(new DesignationComponent(o));
         }
       }
       if (obj.property) {
         this.property = [];
-        for (let o of obj.property || []) {
+        for (const o of obj.property || []) {
           this.property.push(new ConceptPropertyComponent(o));
         }
       }
       if (obj.concept) {
         this.concept = [];
-        for (let o of obj.concept || []) {
+        for (const o of obj.concept || []) {
           this.concept.push(new ConceptDefinitionComponent(o));
         }
       }
@@ -2044,7 +2046,7 @@ export class CodeSystem extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -2053,13 +2055,13 @@ export class CodeSystem extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -2092,19 +2094,19 @@ export class CodeSystem extends DomainResource {
       }
       if (obj.filter) {
         this.filter = [];
-        for (let o of obj.filter || []) {
+        for (const o of obj.filter || []) {
           this.filter.push(new FilterComponent(o));
         }
       }
       if (obj.property) {
         this.property = [];
-        for (let o of obj.property || []) {
+        for (const o of obj.property || []) {
           this.property.push(new PropertyComponent(o));
         }
       }
       if (obj.concept) {
         this.concept = [];
-        for (let o of obj.concept || []) {
+        for (const o of obj.concept || []) {
           this.concept.push(new ConceptDefinitionComponent(o));
         }
       }
@@ -2173,13 +2175,13 @@ export class TargetElementComponent extends BackboneElement {
       }
       if (obj.dependsOn) {
         this.dependsOn = [];
-        for (let o of obj.dependsOn || []) {
+        for (const o of obj.dependsOn || []) {
           this.dependsOn.push(new OtherElementComponent(o));
         }
       }
       if (obj.product) {
         this.product = [];
-        for (let o of obj.product || []) {
+        for (const o of obj.product || []) {
           this.product.push(new OtherElementComponent(o));
         }
       }
@@ -2204,7 +2206,7 @@ export class SourceElementComponent extends BackboneElement {
       }
       if (obj.target) {
         this.target = [];
-        for (let o of obj.target || []) {
+        for (const o of obj.target || []) {
           this.target.push(new TargetElementComponent(o));
         }
       }
@@ -2264,7 +2266,7 @@ export class GroupComponent extends BackboneElement {
       }
       if (obj.element) {
         this.element = [];
-        for (let o of obj.element || []) {
+        for (const o of obj.element || []) {
           this.element.push(new SourceElementComponent(o));
         }
       }
@@ -2329,7 +2331,7 @@ export class ConceptMap extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -2338,13 +2340,13 @@ export class ConceptMap extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -2362,7 +2364,7 @@ export class ConceptMap extends DomainResource {
       }
       if (obj.group) {
         this.group = [];
-        for (let o of obj.group || []) {
+        for (const o of obj.group || []) {
           this.group.push(new GroupComponent(o));
         }
       }
@@ -2450,7 +2452,7 @@ export class Account extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -2477,7 +2479,7 @@ export class Account extends DomainResource {
       }
       if (obj.coverage) {
         this.coverage = [];
-        for (let o of obj.coverage || []) {
+        for (const o of obj.coverage || []) {
           this.coverage.push(new CoverageComponent(o));
         }
       }
@@ -2489,7 +2491,7 @@ export class Account extends DomainResource {
       }
       if (obj.guarantor) {
         this.guarantor = [];
-        for (let o of obj.guarantor || []) {
+        for (const o of obj.guarantor || []) {
           this.guarantor.push(new GuarantorComponent(o));
         }
       }
@@ -2514,7 +2516,7 @@ export class Contributor extends Element {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -2754,7 +2756,7 @@ export class Dosage extends Element {
       }
       if (obj.additionalInstruction) {
         this.additionalInstruction = [];
-        for (let o of obj.additionalInstruction || []) {
+        for (const o of obj.additionalInstruction || []) {
           this.additionalInstruction.push(new CodeableConcept(o));
         }
       }
@@ -2867,7 +2869,7 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -2912,31 +2914,31 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new CodeableConcept(o));
         }
       }
       if (obj.contributor) {
         this.contributor = [];
-        for (let o of obj.contributor || []) {
+        for (const o of obj.contributor || []) {
           this.contributor.push(new Contributor(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -2945,13 +2947,13 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.library) {
         this.library = [];
-        for (let o of obj.library || []) {
+        for (const o of obj.library || []) {
           this.library.push(new ResourceReference(o));
         }
       }
@@ -2969,7 +2971,7 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
@@ -2981,13 +2983,13 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.dosage) {
         this.dosage = [];
-        for (let o of obj.dosage || []) {
+        for (const o of obj.dosage || []) {
           this.dosage.push(new Dosage(o));
         }
       }
       if (obj.bodySite) {
         this.bodySite = [];
-        for (let o of obj.bodySite || []) {
+        for (const o of obj.bodySite || []) {
           this.bodySite.push(new CodeableConcept(o));
         }
       }
@@ -2996,7 +2998,7 @@ export class ActivityDefinition extends DomainResource {
       }
       if (obj.dynamicValue) {
         this.dynamicValue = [];
-        for (let o of obj.dynamicValue || []) {
+        for (const o of obj.dynamicValue || []) {
           this.dynamicValue.push(new DynamicValueComponent(o));
         }
       }
@@ -3132,7 +3134,7 @@ export class AdverseEvent extends DomainResource {
       }
       if (obj.reaction) {
         this.reaction = [];
-        for (let o of obj.reaction || []) {
+        for (const o of obj.reaction || []) {
           this.reaction.push(new ResourceReference(o));
         }
       }
@@ -3156,25 +3158,25 @@ export class AdverseEvent extends DomainResource {
       }
       if (obj.suspectEntity) {
         this.suspectEntity = [];
-        for (let o of obj.suspectEntity || []) {
+        for (const o of obj.suspectEntity || []) {
           this.suspectEntity.push(new SuspectEntityComponent(o));
         }
       }
       if (obj.subjectMedicalHistory) {
         this.subjectMedicalHistory = [];
-        for (let o of obj.subjectMedicalHistory || []) {
+        for (const o of obj.subjectMedicalHistory || []) {
           this.subjectMedicalHistory.push(new ResourceReference(o));
         }
       }
       if (obj.referenceDocument) {
         this.referenceDocument = [];
-        for (let o of obj.referenceDocument || []) {
+        for (const o of obj.referenceDocument || []) {
           this.referenceDocument.push(new ResourceReference(o));
         }
       }
       if (obj.study) {
         this.study = [];
-        for (let o of obj.study || []) {
+        for (const o of obj.study || []) {
           this.study.push(new ResourceReference(o));
         }
       }
@@ -3232,7 +3234,7 @@ export class ReactionComponent extends BackboneElement {
       }
       if (obj.manifestation) {
         this.manifestation = [];
-        for (let o of obj.manifestation || []) {
+        for (const o of obj.manifestation || []) {
           this.manifestation.push(new CodeableConcept(o));
         }
       }
@@ -3250,7 +3252,7 @@ export class ReactionComponent extends BackboneElement {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -3282,7 +3284,7 @@ export class AllergyIntolerance extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -3324,13 +3326,13 @@ export class AllergyIntolerance extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.reaction) {
         this.reaction = [];
-        for (let o of obj.reaction || []) {
+        for (const o of obj.reaction || []) {
           this.reaction.push(new ReactionComponent(o));
         }
       }
@@ -3367,7 +3369,7 @@ export class Appointment extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -3379,13 +3381,13 @@ export class Appointment extends DomainResource {
       }
       if (obj.serviceType) {
         this.serviceType = [];
-        for (let o of obj.serviceType || []) {
+        for (const o of obj.serviceType || []) {
           this.serviceType.push(new CodeableConcept(o));
         }
       }
       if (obj.specialty) {
         this.specialty = [];
-        for (let o of obj.specialty || []) {
+        for (const o of obj.specialty || []) {
           this.specialty.push(new CodeableConcept(o));
         }
       }
@@ -3394,13 +3396,13 @@ export class Appointment extends DomainResource {
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.indication) {
         this.indication = [];
-        for (let o of obj.indication || []) {
+        for (const o of obj.indication || []) {
           this.indication.push(new ResourceReference(o));
         }
       }
@@ -3412,7 +3414,7 @@ export class Appointment extends DomainResource {
       }
       if (obj.supportingInformation) {
         this.supportingInformation = [];
-        for (let o of obj.supportingInformation || []) {
+        for (const o of obj.supportingInformation || []) {
           this.supportingInformation.push(new ResourceReference(o));
         }
       }
@@ -3427,7 +3429,7 @@ export class Appointment extends DomainResource {
       }
       if (obj.slot) {
         this.slot = [];
-        for (let o of obj.slot || []) {
+        for (const o of obj.slot || []) {
           this.slot.push(new ResourceReference(o));
         }
       }
@@ -3439,19 +3441,19 @@ export class Appointment extends DomainResource {
       }
       if (obj.incomingReferral) {
         this.incomingReferral = [];
-        for (let o of obj.incomingReferral || []) {
+        for (const o of obj.incomingReferral || []) {
           this.incomingReferral.push(new ResourceReference(o));
         }
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
       if (obj.requestedPeriod) {
         this.requestedPeriod = [];
-        for (let o of obj.requestedPeriod || []) {
+        for (const o of obj.requestedPeriod || []) {
           this.requestedPeriod.push(new Period(o));
         }
       }
@@ -3476,7 +3478,7 @@ export class AppointmentResponse extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -3491,7 +3493,7 @@ export class AppointmentResponse extends DomainResource {
       }
       if (obj.participantType) {
         this.participantType = [];
-        for (let o of obj.participantType || []) {
+        for (const o of obj.participantType || []) {
           this.participantType.push(new CodeableConcept(o));
         }
       }
@@ -3545,7 +3547,7 @@ export class AgentComponent extends BackboneElement {
     if (obj) {
       if (obj.role) {
         this.role = [];
-        for (let o of obj.role || []) {
+        for (const o of obj.role || []) {
           this.role.push(new CodeableConcept(o));
         }
       }
@@ -3578,7 +3580,7 @@ export class AgentComponent extends BackboneElement {
       }
       if (obj.purposeOfUse) {
         this.purposeOfUse = [];
-        for (let o of obj.purposeOfUse || []) {
+        for (const o of obj.purposeOfUse || []) {
           this.purposeOfUse.push(new CodeableConcept(o));
         }
       }
@@ -3603,7 +3605,7 @@ export class SourceComponent extends BackboneElement {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new Coding(o));
         }
       }
@@ -3662,7 +3664,7 @@ export class EntityComponent extends BackboneElement {
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new Coding(o));
         }
       }
@@ -3677,7 +3679,7 @@ export class EntityComponent extends BackboneElement {
       }
       if (obj.detail) {
         this.detail = [];
-        for (let o of obj.detail || []) {
+        for (const o of obj.detail || []) {
           this.detail.push(new DetailComponent(o));
         }
       }
@@ -3707,7 +3709,7 @@ export class AuditEvent extends DomainResource {
       }
       if (obj.subtype) {
         this.subtype = [];
-        for (let o of obj.subtype || []) {
+        for (const o of obj.subtype || []) {
           this.subtype.push(new Coding(o));
         }
       }
@@ -3725,13 +3727,13 @@ export class AuditEvent extends DomainResource {
       }
       if (obj.purposeOfEvent) {
         this.purposeOfEvent = [];
-        for (let o of obj.purposeOfEvent || []) {
+        for (const o of obj.purposeOfEvent || []) {
           this.purposeOfEvent.push(new CodeableConcept(o));
         }
       }
       if (obj.agent) {
         this.agent = [];
-        for (let o of obj.agent || []) {
+        for (const o of obj.agent || []) {
           this.agent.push(new AgentComponent(o));
         }
       }
@@ -3740,7 +3742,7 @@ export class AuditEvent extends DomainResource {
       }
       if (obj.entity) {
         this.entity = [];
-        for (let o of obj.entity || []) {
+        for (const o of obj.entity || []) {
           this.entity.push(new EntityComponent(o));
         }
       }
@@ -3762,7 +3764,7 @@ export class Basic extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -3798,7 +3800,7 @@ export class BodySite extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -3810,7 +3812,7 @@ export class BodySite extends DomainResource {
       }
       if (obj.qualifier) {
         this.qualifier = [];
-        for (let o of obj.qualifier || []) {
+        for (const o of obj.qualifier || []) {
           this.qualifier.push(new CodeableConcept(o));
         }
       }
@@ -3819,7 +3821,7 @@ export class BodySite extends DomainResource {
       }
       if (obj.image) {
         this.image = [];
-        for (let o of obj.image || []) {
+        for (const o of obj.image || []) {
           this.image.push(new Attachment(o));
         }
       }
@@ -3903,7 +3905,7 @@ export class SecurityComponent extends BackboneElement {
       }
       if (obj.service) {
         this.service = [];
-        for (let o of obj.service || []) {
+        for (const o of obj.service || []) {
           this.service.push(new CodeableConcept(o));
         }
       }
@@ -3912,7 +3914,7 @@ export class SecurityComponent extends BackboneElement {
       }
       if (obj.certificate) {
         this.certificate = [];
-        for (let o of obj.certificate || []) {
+        for (const o of obj.certificate || []) {
           this.certificate.push(new CertificateComponent(o));
         }
       }
@@ -4033,7 +4035,7 @@ export class ResourceComponent extends BackboneElement {
       }
       if (obj.interaction) {
         this.interaction = [];
-        for (let o of obj.interaction || []) {
+        for (const o of obj.interaction || []) {
           this.interaction.push(new ResourceInteractionComponent(o));
         }
       }
@@ -4069,7 +4071,7 @@ export class ResourceComponent extends BackboneElement {
       }
       if (obj.searchParam) {
         this.searchParam = [];
-        for (let o of obj.searchParam || []) {
+        for (const o of obj.searchParam || []) {
           this.searchParam.push(new SearchParamComponent(o));
         }
       }
@@ -4138,25 +4140,25 @@ export class RestComponent extends BackboneElement {
       }
       if (obj.resource) {
         this.resource = [];
-        for (let o of obj.resource || []) {
+        for (const o of obj.resource || []) {
           this.resource.push(new ResourceComponent(o));
         }
       }
       if (obj.interaction) {
         this.interaction = [];
-        for (let o of obj.interaction || []) {
+        for (const o of obj.interaction || []) {
           this.interaction.push(new SystemInteractionComponent(o));
         }
       }
       if (obj.searchParam) {
         this.searchParam = [];
-        for (let o of obj.searchParam || []) {
+        for (const o of obj.searchParam || []) {
           this.searchParam.push(new SearchParamComponent(o));
         }
       }
       if (obj.operation) {
         this.operation = [];
-        for (let o of obj.operation || []) {
+        for (const o of obj.operation || []) {
           this.operation.push(new OperationComponent(o));
         }
       }
@@ -4254,7 +4256,7 @@ export class MessagingComponent extends BackboneElement {
     if (obj) {
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new EndpointComponent(o));
         }
       }
@@ -4266,13 +4268,13 @@ export class MessagingComponent extends BackboneElement {
       }
       if (obj.supportedMessage) {
         this.supportedMessage = [];
-        for (let o of obj.supportedMessage || []) {
+        for (const o of obj.supportedMessage || []) {
           this.supportedMessage.push(new SupportedMessageComponent(o));
         }
       }
       if (obj.event) {
         this.event = [];
-        for (let o of obj.event || []) {
+        for (const o of obj.event || []) {
           this.event.push(new EventComponent(o));
         }
       }
@@ -4362,7 +4364,7 @@ export class CapabilityStatement extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -4371,13 +4373,13 @@ export class CapabilityStatement extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -4416,25 +4418,25 @@ export class CapabilityStatement extends DomainResource {
       }
       if (obj.profile) {
         this.profile = [];
-        for (let o of obj.profile || []) {
+        for (const o of obj.profile || []) {
           this.profile.push(new ResourceReference(o));
         }
       }
       if (obj.rest) {
         this.rest = [];
-        for (let o of obj.rest || []) {
+        for (const o of obj.rest || []) {
           this.rest.push(new RestComponent(o));
         }
       }
       if (obj.messaging) {
         this.messaging = [];
-        for (let o of obj.messaging || []) {
+        for (const o of obj.messaging || []) {
           this.messaging.push(new MessagingComponent(o));
         }
       }
       if (obj.document) {
         this.document = [];
-        for (let o of obj.document || []) {
+        for (const o of obj.document || []) {
           this.document.push(new DocumentComponent(o));
         }
       }
@@ -4455,19 +4457,19 @@ export class ActivityComponent extends BackboneElement {
     if (obj) {
       if (obj.outcomeCodeableConcept) {
         this.outcomeCodeableConcept = [];
-        for (let o of obj.outcomeCodeableConcept || []) {
+        for (const o of obj.outcomeCodeableConcept || []) {
           this.outcomeCodeableConcept.push(new CodeableConcept(o));
         }
       }
       if (obj.outcomeReference) {
         this.outcomeReference = [];
-        for (let o of obj.outcomeReference || []) {
+        for (const o of obj.outcomeReference || []) {
           this.outcomeReference.push(new ResourceReference(o));
         }
       }
       if (obj.progress) {
         this.progress = [];
-        for (let o of obj.progress || []) {
+        for (const o of obj.progress || []) {
           this.progress.push(new Annotation(o));
         }
       }
@@ -4510,31 +4512,31 @@ export class CarePlan extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -4546,7 +4548,7 @@ export class CarePlan extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -4567,43 +4569,43 @@ export class CarePlan extends DomainResource {
       }
       if (obj.author) {
         this.author = [];
-        for (let o of obj.author || []) {
+        for (const o of obj.author || []) {
           this.author.push(new ResourceReference(o));
         }
       }
       if (obj.careTeam) {
         this.careTeam = [];
-        for (let o of obj.careTeam || []) {
+        for (const o of obj.careTeam || []) {
           this.careTeam.push(new ResourceReference(o));
         }
       }
       if (obj.addresses) {
         this.addresses = [];
-        for (let o of obj.addresses || []) {
+        for (const o of obj.addresses || []) {
           this.addresses.push(new ResourceReference(o));
         }
       }
       if (obj.supportingInfo) {
         this.supportingInfo = [];
-        for (let o of obj.supportingInfo || []) {
+        for (const o of obj.supportingInfo || []) {
           this.supportingInfo.push(new ResourceReference(o));
         }
       }
       if (obj.goal) {
         this.goal = [];
-        for (let o of obj.goal || []) {
+        for (const o of obj.goal || []) {
           this.goal.push(new ResourceReference(o));
         }
       }
       if (obj.activity) {
         this.activity = [];
-        for (let o of obj.activity || []) {
+        for (const o of obj.activity || []) {
           this.activity.push(new ActivityComponent(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -4632,7 +4634,7 @@ export class CareTeam extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -4641,7 +4643,7 @@ export class CareTeam extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -4659,31 +4661,31 @@ export class CareTeam extends DomainResource {
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.managingOrganization) {
         this.managingOrganization = [];
-        for (let o of obj.managingOrganization || []) {
+        for (const o of obj.managingOrganization || []) {
           this.managingOrganization.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -4732,7 +4734,7 @@ export class ChargeItem extends DomainResource {
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -4750,7 +4752,7 @@ export class ChargeItem extends DomainResource {
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
@@ -4765,7 +4767,7 @@ export class ChargeItem extends DomainResource {
       }
       if (obj.bodysite) {
         this.bodysite = [];
-        for (let o of obj.bodysite || []) {
+        for (const o of obj.bodysite || []) {
           this.bodysite.push(new CodeableConcept(o));
         }
       }
@@ -4786,31 +4788,31 @@ export class ChargeItem extends DomainResource {
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.service) {
         this.service = [];
-        for (let o of obj.service || []) {
+        for (const o of obj.service || []) {
           this.service.push(new ResourceReference(o));
         }
       }
       if (obj.account) {
         this.account = [];
-        for (let o of obj.account || []) {
+        for (const o of obj.account || []) {
           this.account.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.supportingInformation) {
         this.supportingInformation = [];
-        for (let o of obj.supportingInformation || []) {
+        for (const o of obj.supportingInformation || []) {
           this.supportingInformation.push(new ResourceReference(o));
         }
       }
@@ -4944,7 +4946,7 @@ export class DiagnosisComponent extends BackboneElement {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
@@ -5086,13 +5088,13 @@ export class ItemComponent extends BackboneElement {
       }
       if (obj.modifier) {
         this.modifier = [];
-        for (let o of obj.modifier || []) {
+        for (const o of obj.modifier || []) {
           this.modifier.push(new CodeableConcept(o));
         }
       }
       if (obj.programCode) {
         this.programCode = [];
-        for (let o of obj.programCode || []) {
+        for (const o of obj.programCode || []) {
           this.programCode.push(new CodeableConcept(o));
         }
       }
@@ -5116,7 +5118,7 @@ export class ItemComponent extends BackboneElement {
       }
       if (obj.udi) {
         this.udi = [];
-        for (let o of obj.udi || []) {
+        for (const o of obj.udi || []) {
           this.udi.push(new ResourceReference(o));
         }
       }
@@ -5125,19 +5127,19 @@ export class ItemComponent extends BackboneElement {
       }
       if (obj.subSite) {
         this.subSite = [];
-        for (let o of obj.subSite || []) {
+        for (const o of obj.subSite || []) {
           this.subSite.push(new CodeableConcept(o));
         }
       }
       if (obj.encounter) {
         this.encounter = [];
-        for (let o of obj.encounter || []) {
+        for (const o of obj.encounter || []) {
           this.encounter.push(new ResourceReference(o));
         }
       }
       if (obj.detail) {
         this.detail = [];
-        for (let o of obj.detail || []) {
+        for (const o of obj.detail || []) {
           this.detail.push(new DetailComponent(o));
         }
       }
@@ -5184,7 +5186,7 @@ export class Claim extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -5196,7 +5198,7 @@ export class Claim extends DomainResource {
       }
       if (obj.subType) {
         this.subType = [];
-        for (let o of obj.subType || []) {
+        for (const o of obj.subType || []) {
           this.subType.push(new CodeableConcept(o));
         }
       }
@@ -5232,7 +5234,7 @@ export class Claim extends DomainResource {
       }
       if (obj.related) {
         this.related = [];
-        for (let o of obj.related || []) {
+        for (const o of obj.related || []) {
           this.related.push(new RelatedClaimComponent(o));
         }
       }
@@ -5253,31 +5255,31 @@ export class Claim extends DomainResource {
       }
       if (obj.careTeam) {
         this.careTeam = [];
-        for (let o of obj.careTeam || []) {
+        for (const o of obj.careTeam || []) {
           this.careTeam.push(new CareTeamComponent(o));
         }
       }
       if (obj.information) {
         this.information = [];
-        for (let o of obj.information || []) {
+        for (const o of obj.information || []) {
           this.information.push(new SpecialConditionComponent(o));
         }
       }
       if (obj.diagnosis) {
         this.diagnosis = [];
-        for (let o of obj.diagnosis || []) {
+        for (const o of obj.diagnosis || []) {
           this.diagnosis.push(new DiagnosisComponent(o));
         }
       }
       if (obj.procedure) {
         this.procedure = [];
-        for (let o of obj.procedure || []) {
+        for (const o of obj.procedure || []) {
           this.procedure.push(new ProcedureComponent(o));
         }
       }
       if (obj.insurance) {
         this.insurance = [];
-        for (let o of obj.insurance || []) {
+        for (const o of obj.insurance || []) {
           this.insurance.push(new InsuranceComponent(o));
         }
       }
@@ -5292,7 +5294,7 @@ export class Claim extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemComponent(o));
         }
       }
@@ -5353,7 +5355,7 @@ export class AddedItemsDetailComponent extends BackboneElement {
       }
       if (obj.modifier) {
         this.modifier = [];
-        for (let o of obj.modifier || []) {
+        for (const o of obj.modifier || []) {
           this.modifier.push(new CodeableConcept(o));
         }
       }
@@ -5365,7 +5367,7 @@ export class AddedItemsDetailComponent extends BackboneElement {
       }
       if (obj.adjudication) {
         this.adjudication = [];
-        for (let o of obj.adjudication || []) {
+        for (const o of obj.adjudication || []) {
           this.adjudication.push(new AdjudicationComponent(o));
         }
       }
@@ -5402,7 +5404,7 @@ export class AddedItemComponent extends BackboneElement {
       }
       if (obj.modifier) {
         this.modifier = [];
-        for (let o of obj.modifier || []) {
+        for (const o of obj.modifier || []) {
           this.modifier.push(new CodeableConcept(o));
         }
       }
@@ -5414,13 +5416,13 @@ export class AddedItemComponent extends BackboneElement {
       }
       if (obj.adjudication) {
         this.adjudication = [];
-        for (let o of obj.adjudication || []) {
+        for (const o of obj.adjudication || []) {
           this.adjudication.push(new AdjudicationComponent(o));
         }
       }
       if (obj.detail) {
         this.detail = [];
-        for (let o of obj.detail || []) {
+        for (const o of obj.detail || []) {
           this.detail.push(new AddedItemsDetailComponent(o));
         }
       }
@@ -5546,7 +5548,7 @@ export class ClaimResponse extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -5582,19 +5584,19 @@ export class ClaimResponse extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemComponent(o));
         }
       }
       if (obj.addItem) {
         this.addItem = [];
-        for (let o of obj.addItem || []) {
+        for (const o of obj.addItem || []) {
           this.addItem.push(new AddedItemComponent(o));
         }
       }
       if (obj.error) {
         this.error = [];
-        for (let o of obj.error || []) {
+        for (const o of obj.error || []) {
           this.error.push(new ErrorComponent(o));
         }
       }
@@ -5618,19 +5620,19 @@ export class ClaimResponse extends DomainResource {
       }
       if (obj.processNote) {
         this.processNote = [];
-        for (let o of obj.processNote || []) {
+        for (const o of obj.processNote || []) {
           this.processNote.push(new NoteComponent(o));
         }
       }
       if (obj.communicationRequest) {
         this.communicationRequest = [];
-        for (let o of obj.communicationRequest || []) {
+        for (const o of obj.communicationRequest || []) {
           this.communicationRequest.push(new ResourceReference(o));
         }
       }
       if (obj.insurance) {
         this.insurance = [];
-        for (let o of obj.insurance || []) {
+        for (const o of obj.insurance || []) {
           this.insurance.push(new InsuranceComponent(o));
         }
       }
@@ -5651,7 +5653,7 @@ export class InvestigationComponent extends BackboneElement {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ResourceReference(o));
         }
       }
@@ -5705,7 +5707,7 @@ export class ClinicalImpression extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -5738,13 +5740,13 @@ export class ClinicalImpression extends DomainResource {
       }
       if (obj.problem) {
         this.problem = [];
-        for (let o of obj.problem || []) {
+        for (const o of obj.problem || []) {
           this.problem.push(new ResourceReference(o));
         }
       }
       if (obj.investigation) {
         this.investigation = [];
-        for (let o of obj.investigation || []) {
+        for (const o of obj.investigation || []) {
           this.investigation.push(new InvestigationComponent(o));
         }
       }
@@ -5756,31 +5758,31 @@ export class ClinicalImpression extends DomainResource {
       }
       if (obj.finding) {
         this.finding = [];
-        for (let o of obj.finding || []) {
+        for (const o of obj.finding || []) {
           this.finding.push(new FindingComponent(o));
         }
       }
       if (obj.prognosisCodeableConcept) {
         this.prognosisCodeableConcept = [];
-        for (let o of obj.prognosisCodeableConcept || []) {
+        for (const o of obj.prognosisCodeableConcept || []) {
           this.prognosisCodeableConcept.push(new CodeableConcept(o));
         }
       }
       if (obj.prognosisReference) {
         this.prognosisReference = [];
-        for (let o of obj.prognosisReference || []) {
+        for (const o of obj.prognosisReference || []) {
           this.prognosisReference.push(new ResourceReference(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -5831,25 +5833,25 @@ export class Communication extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -5864,13 +5866,13 @@ export class Communication extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
       if (obj.medium) {
         this.medium = [];
-        for (let o of obj.medium || []) {
+        for (const o of obj.medium || []) {
           this.medium.push(new CodeableConcept(o));
         }
       }
@@ -5879,13 +5881,13 @@ export class Communication extends DomainResource {
       }
       if (obj.recipient) {
         this.recipient = [];
-        for (let o of obj.recipient || []) {
+        for (const o of obj.recipient || []) {
           this.recipient.push(new ResourceReference(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new ResourceReference(o));
         }
       }
@@ -5903,25 +5905,25 @@ export class Communication extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.payload) {
         this.payload = [];
-        for (let o of obj.payload || []) {
+        for (const o of obj.payload || []) {
           this.payload.push(new PayloadComponent(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -5976,19 +5978,19 @@ export class CommunicationRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
@@ -6000,7 +6002,7 @@ export class CommunicationRequest extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -6009,7 +6011,7 @@ export class CommunicationRequest extends DomainResource {
       }
       if (obj.medium) {
         this.medium = [];
-        for (let o of obj.medium || []) {
+        for (const o of obj.medium || []) {
           this.medium.push(new CodeableConcept(o));
         }
       }
@@ -6018,13 +6020,13 @@ export class CommunicationRequest extends DomainResource {
       }
       if (obj.recipient) {
         this.recipient = [];
-        for (let o of obj.recipient || []) {
+        for (const o of obj.recipient || []) {
           this.recipient.push(new ResourceReference(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new ResourceReference(o));
         }
       }
@@ -6033,7 +6035,7 @@ export class CommunicationRequest extends DomainResource {
       }
       if (obj.payload) {
         this.payload = [];
-        for (let o of obj.payload || []) {
+        for (const o of obj.payload || []) {
           this.payload.push(new PayloadComponent(o));
         }
       }
@@ -6051,19 +6053,19 @@ export class CommunicationRequest extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -6116,7 +6118,7 @@ export class CompartmentDefinition extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -6128,13 +6130,13 @@ export class CompartmentDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -6146,7 +6148,7 @@ export class CompartmentDefinition extends DomainResource {
       }
       if (obj.resource) {
         this.resource = [];
-        for (let o of obj.resource || []) {
+        for (const o of obj.resource || []) {
           this.resource.push(new ResourceComponent(o));
         }
       }
@@ -6225,7 +6227,7 @@ export class SectionComponent extends BackboneElement {
       }
       if (obj.entry) {
         this.entry = [];
-        for (let o of obj.entry || []) {
+        for (const o of obj.entry || []) {
           this.entry.push(new ResourceReference(o));
         }
       }
@@ -6234,7 +6236,7 @@ export class SectionComponent extends BackboneElement {
       }
       if (obj.section) {
         this.section = [];
-        for (let o of obj.section || []) {
+        for (const o of obj.section || []) {
           this.section.push(new SectionComponent(o));
         }
       }
@@ -6287,7 +6289,7 @@ export class Composition extends DomainResource {
       }
       if (obj.author) {
         this.author = [];
-        for (let o of obj.author || []) {
+        for (const o of obj.author || []) {
           this.author.push(new ResourceReference(o));
         }
       }
@@ -6299,7 +6301,7 @@ export class Composition extends DomainResource {
       }
       if (obj.attester) {
         this.attester = [];
-        for (let o of obj.attester || []) {
+        for (const o of obj.attester || []) {
           this.attester.push(new AttesterComponent(o));
         }
       }
@@ -6308,19 +6310,19 @@ export class Composition extends DomainResource {
       }
       if (obj.relatesTo) {
         this.relatesTo = [];
-        for (let o of obj.relatesTo || []) {
+        for (const o of obj.relatesTo || []) {
           this.relatesTo.push(new RelatesToComponent(o));
         }
       }
       if (obj.event) {
         this.event = [];
-        for (let o of obj.event || []) {
+        for (const o of obj.event || []) {
           this.event.push(new EventComponent(o));
         }
       }
       if (obj.section) {
         this.section = [];
-        for (let o of obj.section || []) {
+        for (const o of obj.section || []) {
           this.section.push(new SectionComponent(o));
         }
       }
@@ -6341,7 +6343,7 @@ export class StageComponent extends BackboneElement {
       }
       if (obj.assessment) {
         this.assessment = [];
-        for (let o of obj.assessment || []) {
+        for (const o of obj.assessment || []) {
           this.assessment.push(new ResourceReference(o));
         }
       }
@@ -6359,13 +6361,13 @@ export class EvidenceComponent extends BackboneElement {
     if (obj) {
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new CodeableConcept(o));
         }
       }
       if (obj.detail) {
         this.detail = [];
-        for (let o of obj.detail || []) {
+        for (const o of obj.detail || []) {
           this.detail.push(new ResourceReference(o));
         }
       }
@@ -6398,7 +6400,7 @@ export class Condition extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -6410,7 +6412,7 @@ export class Condition extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -6422,7 +6424,7 @@ export class Condition extends DomainResource {
       }
       if (obj.bodySite) {
         this.bodySite = [];
-        for (let o of obj.bodySite || []) {
+        for (const o of obj.bodySite || []) {
           this.bodySite.push(new CodeableConcept(o));
         }
       }
@@ -6449,13 +6451,13 @@ export class Condition extends DomainResource {
       }
       if (obj.evidence) {
         this.evidence = [];
-        for (let o of obj.evidence || []) {
+        for (const o of obj.evidence || []) {
           this.evidence.push(new EvidenceComponent(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -6577,37 +6579,37 @@ export class ExceptComponent extends BackboneElement {
       }
       if (obj.actor) {
         this.actor = [];
-        for (let o of obj.actor || []) {
+        for (const o of obj.actor || []) {
           this.actor.push(new ExceptActorComponent(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new CodeableConcept(o));
         }
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new Coding(o));
         }
       }
       if (obj.purpose) {
         this.purpose = [];
-        for (let o of obj.purpose || []) {
+        for (const o of obj.purpose || []) {
           this.purpose.push(new Coding(o));
         }
       }
       if (obj.class) {
         this.class = [];
-        for (let o of obj.class || []) {
+        for (const o of obj.class || []) {
           this.class.push(new Coding(o));
         }
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new Coding(o));
         }
       }
@@ -6616,7 +6618,7 @@ export class ExceptComponent extends BackboneElement {
       }
       if (obj.data) {
         this.data = [];
-        for (let o of obj.data || []) {
+        for (const o of obj.data || []) {
           this.data.push(new ExceptDataComponent(o));
         }
       }
@@ -6657,7 +6659,7 @@ export class Consent extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -6672,25 +6674,25 @@ export class Consent extends DomainResource {
       }
       if (obj.consentingParty) {
         this.consentingParty = [];
-        for (let o of obj.consentingParty || []) {
+        for (const o of obj.consentingParty || []) {
           this.consentingParty.push(new ResourceReference(o));
         }
       }
       if (obj.actor) {
         this.actor = [];
-        for (let o of obj.actor || []) {
+        for (const o of obj.actor || []) {
           this.actor.push(new ActorComponent(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new CodeableConcept(o));
         }
       }
       if (obj.organization) {
         this.organization = [];
-        for (let o of obj.organization || []) {
+        for (const o of obj.organization || []) {
           this.organization.push(new ResourceReference(o));
         }
       }
@@ -6699,7 +6701,7 @@ export class Consent extends DomainResource {
       }
       if (obj.policy) {
         this.policy = [];
-        for (let o of obj.policy || []) {
+        for (const o of obj.policy || []) {
           this.policy.push(new PolicyComponent(o));
         }
       }
@@ -6708,13 +6710,13 @@ export class Consent extends DomainResource {
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new Coding(o));
         }
       }
       if (obj.purpose) {
         this.purpose = [];
-        for (let o of obj.purpose || []) {
+        for (const o of obj.purpose || []) {
           this.purpose.push(new Coding(o));
         }
       }
@@ -6723,13 +6725,13 @@ export class Consent extends DomainResource {
       }
       if (obj.data) {
         this.data = [];
-        for (let o of obj.data || []) {
+        for (const o of obj.data || []) {
           this.data.push(new DataComponent(o));
         }
       }
       if (obj.except) {
         this.except = [];
-        for (let o of obj.except || []) {
+        for (const o of obj.except || []) {
           this.except.push(new ExceptComponent(o));
         }
       }
@@ -6754,7 +6756,7 @@ export class SignatoryComponent extends BackboneElement {
       }
       if (obj.signature) {
         this.signature = [];
-        for (let o of obj.signature || []) {
+        for (const o of obj.signature || []) {
           this.signature.push(new Signature(o));
         }
       }
@@ -6817,7 +6819,7 @@ export class TermAgentComponent extends BackboneElement {
       }
       if (obj.role) {
         this.role = [];
-        for (let o of obj.role || []) {
+        for (const o of obj.role || []) {
           this.role.push(new CodeableConcept(o));
         }
       }
@@ -6903,31 +6905,31 @@ export class TermComponent extends BackboneElement {
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new ResourceReference(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new CodeableConcept(o));
         }
       }
       if (obj.actionReason) {
         this.actionReason = [];
-        for (let o of obj.actionReason || []) {
+        for (const o of obj.actionReason || []) {
           this.actionReason.push(new CodeableConcept(o));
         }
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new Coding(o));
         }
       }
       if (obj.agent) {
         this.agent = [];
-        for (let o of obj.agent || []) {
+        for (const o of obj.agent || []) {
           this.agent.push(new TermAgentComponent(o));
         }
       }
@@ -6936,13 +6938,13 @@ export class TermComponent extends BackboneElement {
       }
       if (obj.valuedItem) {
         this.valuedItem = [];
-        for (let o of obj.valuedItem || []) {
+        for (const o of obj.valuedItem || []) {
           this.valuedItem.push(new TermValuedItemComponent(o));
         }
       }
       if (obj.group) {
         this.group = [];
-        for (let o of obj.group || []) {
+        for (const o of obj.group || []) {
           this.group.push(new TermComponent(o));
         }
       }
@@ -7036,25 +7038,25 @@ export class Contract extends DomainResource {
       }
       if (obj.subject) {
         this.subject = [];
-        for (let o of obj.subject || []) {
+        for (const o of obj.subject || []) {
           this.subject.push(new ResourceReference(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new ResourceReference(o));
         }
       }
       if (obj.authority) {
         this.authority = [];
-        for (let o of obj.authority || []) {
+        for (const o of obj.authority || []) {
           this.authority.push(new ResourceReference(o));
         }
       }
       if (obj.domain) {
         this.domain = [];
-        for (let o of obj.domain || []) {
+        for (const o of obj.domain || []) {
           this.domain.push(new ResourceReference(o));
         }
       }
@@ -7063,19 +7065,19 @@ export class Contract extends DomainResource {
       }
       if (obj.subType) {
         this.subType = [];
-        for (let o of obj.subType || []) {
+        for (const o of obj.subType || []) {
           this.subType.push(new CodeableConcept(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new CodeableConcept(o));
         }
       }
       if (obj.actionReason) {
         this.actionReason = [];
-        for (let o of obj.actionReason || []) {
+        for (const o of obj.actionReason || []) {
           this.actionReason.push(new CodeableConcept(o));
         }
       }
@@ -7087,31 +7089,31 @@ export class Contract extends DomainResource {
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new Coding(o));
         }
       }
       if (obj.agent) {
         this.agent = [];
-        for (let o of obj.agent || []) {
+        for (const o of obj.agent || []) {
           this.agent.push(new AgentComponent(o));
         }
       }
       if (obj.signer) {
         this.signer = [];
-        for (let o of obj.signer || []) {
+        for (const o of obj.signer || []) {
           this.signer.push(new SignatoryComponent(o));
         }
       }
       if (obj.valuedItem) {
         this.valuedItem = [];
-        for (let o of obj.valuedItem || []) {
+        for (const o of obj.valuedItem || []) {
           this.valuedItem.push(new ValuedItemComponent(o));
         }
       }
       if (obj.term) {
         this.term = [];
-        for (let o of obj.term || []) {
+        for (const o of obj.term || []) {
           this.term.push(new TermComponent(o));
         }
       }
@@ -7120,19 +7122,19 @@ export class Contract extends DomainResource {
       }
       if (obj.friendly) {
         this.friendly = [];
-        for (let o of obj.friendly || []) {
+        for (const o of obj.friendly || []) {
           this.friendly.push(new FriendlyLanguageComponent(o));
         }
       }
       if (obj.legal) {
         this.legal = [];
-        for (let o of obj.legal || []) {
+        for (const o of obj.legal || []) {
           this.legal.push(new LegalLanguageComponent(o));
         }
       }
       if (obj.rule) {
         this.rule = [];
-        for (let o of obj.rule || []) {
+        for (const o of obj.rule || []) {
           this.rule.push(new ComputableLanguageComponent(o));
         }
       }
@@ -7175,7 +7177,7 @@ export class Coverage extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -7205,7 +7207,7 @@ export class Coverage extends DomainResource {
       }
       if (obj.payor) {
         this.payor = [];
-        for (let o of obj.payor || []) {
+        for (const o of obj.payor || []) {
           this.payor.push(new ResourceReference(o));
         }
       }
@@ -7226,7 +7228,7 @@ export class Coverage extends DomainResource {
       }
       if (obj.contract) {
         this.contract = [];
-        for (let o of obj.contract || []) {
+        for (const o of obj.contract || []) {
           this.contract.push(new ResourceReference(o));
         }
       }
@@ -7262,7 +7264,7 @@ export class DataElement extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -7289,19 +7291,19 @@ export class DataElement extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -7313,13 +7315,13 @@ export class DataElement extends DomainResource {
       }
       if (obj.mapping) {
         this.mapping = [];
-        for (let o of obj.mapping || []) {
+        for (const o of obj.mapping || []) {
           this.mapping.push(new MappingComponent(o));
         }
       }
       if (obj.element) {
         this.element = [];
-        for (let o of obj.element || []) {
+        for (const o of obj.element || []) {
           this.element.push(new ElementDefinition(o));
         }
       }
@@ -7349,13 +7351,13 @@ export class CodeFilterComponent extends Element {
       }
       if (obj.valueCoding) {
         this.valueCoding = [];
-        for (let o of obj.valueCoding || []) {
+        for (const o of obj.valueCoding || []) {
           this.valueCoding.push(new Coding(o));
         }
       }
       if (obj.valueCodeableConcept) {
         this.valueCodeableConcept = [];
-        for (let o of obj.valueCodeableConcept || []) {
+        for (const o of obj.valueCodeableConcept || []) {
           this.valueCodeableConcept.push(new CodeableConcept(o));
         }
       }
@@ -7403,13 +7405,13 @@ export class DataRequirement extends Element {
       }
       if (obj.codeFilter) {
         this.codeFilter = [];
-        for (let o of obj.codeFilter || []) {
+        for (const o of obj.codeFilter || []) {
           this.codeFilter.push(new CodeFilterComponent(o));
         }
       }
       if (obj.dateFilter) {
         this.dateFilter = [];
-        for (let o of obj.dateFilter || []) {
+        for (const o of obj.dateFilter || []) {
           this.dateFilter.push(new DateFilterComponent(o));
         }
       }
@@ -7480,7 +7482,7 @@ export class DetectedIssue extends DomainResource {
       }
       if (obj.implicated) {
         this.implicated = [];
-        for (let o of obj.implicated || []) {
+        for (const o of obj.implicated || []) {
           this.implicated.push(new ResourceReference(o));
         }
       }
@@ -7492,7 +7494,7 @@ export class DetectedIssue extends DomainResource {
       }
       if (obj.mitigation) {
         this.mitigation = [];
-        for (let o of obj.mitigation || []) {
+        for (const o of obj.mitigation || []) {
           this.mitigation.push(new MitigationComponent(o));
         }
       }
@@ -7564,7 +7566,7 @@ export class Device extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -7603,7 +7605,7 @@ export class Device extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactPoint(o));
         }
       }
@@ -7615,13 +7617,13 @@ export class Device extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.safety) {
         this.safety = [];
-        for (let o of obj.safety || []) {
+        for (const o of obj.safety || []) {
           this.safety.push(new CodeableConcept(o));
         }
       }
@@ -7685,7 +7687,7 @@ export class DeviceComponent extends DomainResource {
       }
       if (obj.operationalStatus) {
         this.operationalStatus = [];
-        for (let o of obj.operationalStatus || []) {
+        for (const o of obj.operationalStatus || []) {
           this.operationalStatus.push(new CodeableConcept(o));
         }
       }
@@ -7697,7 +7699,7 @@ export class DeviceComponent extends DomainResource {
       }
       if (obj.productionSpecification) {
         this.productionSpecification = [];
-        for (let o of obj.productionSpecification || []) {
+        for (const o of obj.productionSpecification || []) {
           this.productionSpecification.push(new ProductionSpecificationComponent(o));
         }
       }
@@ -7776,7 +7778,7 @@ export class DeviceMetric extends DomainResource {
       }
       if (obj.calibration) {
         this.calibration = [];
-        for (let o of obj.calibration || []) {
+        for (const o of obj.calibration || []) {
           this.calibration.push(new CalibrationComponent(o));
         }
       }
@@ -7814,25 +7816,25 @@ export class DeviceRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.priorRequest) {
         this.priorRequest = [];
-        for (let o of obj.priorRequest || []) {
+        for (const o of obj.priorRequest || []) {
           this.priorRequest.push(new ResourceReference(o));
         }
       }
@@ -7874,31 +7876,31 @@ export class DeviceRequest extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.supportingInfo) {
         this.supportingInfo = [];
-        for (let o of obj.supportingInfo || []) {
+        for (const o of obj.supportingInfo || []) {
           this.supportingInfo.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.relevantHistory) {
         this.relevantHistory = [];
-        for (let o of obj.relevantHistory || []) {
+        for (const o of obj.relevantHistory || []) {
           this.relevantHistory.push(new ResourceReference(o));
         }
       }
@@ -7926,7 +7928,7 @@ export class DeviceUseStatement extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -7953,7 +7955,7 @@ export class DeviceUseStatement extends DomainResource {
       }
       if (obj.indication) {
         this.indication = [];
-        for (let o of obj.indication || []) {
+        for (const o of obj.indication || []) {
           this.indication.push(new CodeableConcept(o));
         }
       }
@@ -7962,7 +7964,7 @@ export class DeviceUseStatement extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -8032,13 +8034,13 @@ export class DiagnosticReport extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -8065,31 +8067,31 @@ export class DiagnosticReport extends DomainResource {
       }
       if (obj.performer) {
         this.performer = [];
-        for (let o of obj.performer || []) {
+        for (const o of obj.performer || []) {
           this.performer.push(new PerformerComponent(o));
         }
       }
       if (obj.specimen) {
         this.specimen = [];
-        for (let o of obj.specimen || []) {
+        for (const o of obj.specimen || []) {
           this.specimen.push(new ResourceReference(o));
         }
       }
       if (obj.result) {
         this.result = [];
-        for (let o of obj.result || []) {
+        for (const o of obj.result || []) {
           this.result.push(new ResourceReference(o));
         }
       }
       if (obj.imagingStudy) {
         this.imagingStudy = [];
-        for (let o of obj.imagingStudy || []) {
+        for (const o of obj.imagingStudy || []) {
           this.imagingStudy.push(new ResourceReference(o));
         }
       }
       if (obj.image) {
         this.image = [];
-        for (let o of obj.image || []) {
+        for (const o of obj.image || []) {
           this.image.push(new ImageComponent(o));
         }
       }
@@ -8098,13 +8100,13 @@ export class DiagnosticReport extends DomainResource {
       }
       if (obj.codedDiagnosis) {
         this.codedDiagnosis = [];
-        for (let o of obj.codedDiagnosis || []) {
+        for (const o of obj.codedDiagnosis || []) {
           this.codedDiagnosis.push(new CodeableConcept(o));
         }
       }
       if (obj.presentedForm) {
         this.presentedForm = [];
-        for (let o of obj.presentedForm || []) {
+        for (const o of obj.presentedForm || []) {
           this.presentedForm.push(new Attachment(o));
         }
       }
@@ -8160,7 +8162,7 @@ export class DocumentManifest extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8178,13 +8180,13 @@ export class DocumentManifest extends DomainResource {
       }
       if (obj.author) {
         this.author = [];
-        for (let o of obj.author || []) {
+        for (const o of obj.author || []) {
           this.author.push(new ResourceReference(o));
         }
       }
       if (obj.recipient) {
         this.recipient = [];
-        for (let o of obj.recipient || []) {
+        for (const o of obj.recipient || []) {
           this.recipient.push(new ResourceReference(o));
         }
       }
@@ -8196,13 +8198,13 @@ export class DocumentManifest extends DomainResource {
       }
       if (obj.content) {
         this.content = [];
-        for (let o of obj.content || []) {
+        for (const o of obj.content || []) {
           this.content.push(new ContentComponent(o));
         }
       }
       if (obj.related) {
         this.related = [];
-        for (let o of obj.related || []) {
+        for (const o of obj.related || []) {
           this.related.push(new RelatedComponent(o));
         }
       }
@@ -8228,7 +8230,7 @@ export class ContextComponent extends BackboneElement {
       }
       if (obj.event) {
         this.event = [];
-        for (let o of obj.event || []) {
+        for (const o of obj.event || []) {
           this.event.push(new CodeableConcept(o));
         }
       }
@@ -8246,7 +8248,7 @@ export class ContextComponent extends BackboneElement {
       }
       if (obj.related) {
         this.related = [];
-        for (let o of obj.related || []) {
+        for (const o of obj.related || []) {
           this.related.push(new RelatedComponent(o));
         }
       }
@@ -8283,7 +8285,7 @@ export class DocumentReference extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8310,7 +8312,7 @@ export class DocumentReference extends DomainResource {
       }
       if (obj.author) {
         this.author = [];
-        for (let o of obj.author || []) {
+        for (const o of obj.author || []) {
           this.author.push(new ResourceReference(o));
         }
       }
@@ -8322,7 +8324,7 @@ export class DocumentReference extends DomainResource {
       }
       if (obj.relatesTo) {
         this.relatesTo = [];
-        for (let o of obj.relatesTo || []) {
+        for (const o of obj.relatesTo || []) {
           this.relatesTo.push(new RelatesToComponent(o));
         }
       }
@@ -8331,13 +8333,13 @@ export class DocumentReference extends DomainResource {
       }
       if (obj.securityLabel) {
         this.securityLabel = [];
-        for (let o of obj.securityLabel || []) {
+        for (const o of obj.securityLabel || []) {
           this.securityLabel.push(new CodeableConcept(o));
         }
       }
       if (obj.content) {
         this.content = [];
-        for (let o of obj.content || []) {
+        for (const o of obj.content || []) {
           this.content.push(new ContentComponent(o));
         }
       }
@@ -8382,7 +8384,7 @@ export class EligibilityRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8468,7 +8470,7 @@ export class EligibilityResponse extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8501,7 +8503,7 @@ export class EligibilityResponse extends DomainResource {
       }
       if (obj.insurance) {
         this.insurance = [];
-        for (let o of obj.insurance || []) {
+        for (const o of obj.insurance || []) {
           this.insurance.push(new InsuranceComponent(o));
         }
       }
@@ -8510,7 +8512,7 @@ export class EligibilityResponse extends DomainResource {
       }
       if (obj.error) {
         this.error = [];
-        for (let o of obj.error || []) {
+        for (const o of obj.error || []) {
           this.error.push(new ErrorsComponent(o));
         }
       }
@@ -8583,19 +8585,19 @@ export class HospitalizationComponent extends BackboneElement {
       }
       if (obj.dietPreference) {
         this.dietPreference = [];
-        for (let o of obj.dietPreference || []) {
+        for (const o of obj.dietPreference || []) {
           this.dietPreference.push(new CodeableConcept(o));
         }
       }
       if (obj.specialCourtesy) {
         this.specialCourtesy = [];
-        for (let o of obj.specialCourtesy || []) {
+        for (const o of obj.specialCourtesy || []) {
           this.specialCourtesy.push(new CodeableConcept(o));
         }
       }
       if (obj.specialArrangement) {
         this.specialArrangement = [];
-        for (let o of obj.specialArrangement || []) {
+        for (const o of obj.specialArrangement || []) {
           this.specialArrangement.push(new CodeableConcept(o));
         }
       }
@@ -8661,7 +8663,7 @@ export class Encounter extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8670,7 +8672,7 @@ export class Encounter extends DomainResource {
       }
       if (obj.statusHistory) {
         this.statusHistory = [];
-        for (let o of obj.statusHistory || []) {
+        for (const o of obj.statusHistory || []) {
           this.statusHistory.push(new StatusHistoryComponent(o));
         }
       }
@@ -8679,13 +8681,13 @@ export class Encounter extends DomainResource {
       }
       if (obj.classHistory) {
         this.classHistory = [];
-        for (let o of obj.classHistory || []) {
+        for (const o of obj.classHistory || []) {
           this.classHistory.push(new ClassHistoryComponent(o));
         }
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
@@ -8697,19 +8699,19 @@ export class Encounter extends DomainResource {
       }
       if (obj.episodeOfCare) {
         this.episodeOfCare = [];
-        for (let o of obj.episodeOfCare || []) {
+        for (const o of obj.episodeOfCare || []) {
           this.episodeOfCare.push(new ResourceReference(o));
         }
       }
       if (obj.incomingReferral) {
         this.incomingReferral = [];
-        for (let o of obj.incomingReferral || []) {
+        for (const o of obj.incomingReferral || []) {
           this.incomingReferral.push(new ResourceReference(o));
         }
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
@@ -8724,19 +8726,19 @@ export class Encounter extends DomainResource {
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.diagnosis) {
         this.diagnosis = [];
-        for (let o of obj.diagnosis || []) {
+        for (const o of obj.diagnosis || []) {
           this.diagnosis.push(new DiagnosisComponent(o));
         }
       }
       if (obj.account) {
         this.account = [];
-        for (let o of obj.account || []) {
+        for (const o of obj.account || []) {
           this.account.push(new ResourceReference(o));
         }
       }
@@ -8745,7 +8747,7 @@ export class Encounter extends DomainResource {
       }
       if (obj.location) {
         this.location = [];
-        for (let o of obj.location || []) {
+        for (const o of obj.location || []) {
           this.location.push(new LocationComponent(o));
         }
       }
@@ -8779,7 +8781,7 @@ export class Endpoint extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8797,7 +8799,7 @@ export class Endpoint extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactPoint(o));
         }
       }
@@ -8806,7 +8808,7 @@ export class Endpoint extends DomainResource {
       }
       if (obj.payloadType) {
         this.payloadType = [];
-        for (let o of obj.payloadType || []) {
+        for (const o of obj.payloadType || []) {
           this.payloadType.push(new CodeableConcept(o));
         }
       }
@@ -8840,7 +8842,7 @@ export class EnrollmentRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8887,7 +8889,7 @@ export class EnrollmentResponse extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8940,7 +8942,7 @@ export class EpisodeOfCare extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -8949,19 +8951,19 @@ export class EpisodeOfCare extends DomainResource {
       }
       if (obj.statusHistory) {
         this.statusHistory = [];
-        for (let o of obj.statusHistory || []) {
+        for (const o of obj.statusHistory || []) {
           this.statusHistory.push(new StatusHistoryComponent(o));
         }
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
       if (obj.diagnosis) {
         this.diagnosis = [];
-        for (let o of obj.diagnosis || []) {
+        for (const o of obj.diagnosis || []) {
           this.diagnosis.push(new DiagnosisComponent(o));
         }
       }
@@ -8976,7 +8978,7 @@ export class EpisodeOfCare extends DomainResource {
       }
       if (obj.referralRequest) {
         this.referralRequest = [];
-        for (let o of obj.referralRequest || []) {
+        for (const o of obj.referralRequest || []) {
           this.referralRequest.push(new ResourceReference(o));
         }
       }
@@ -8985,13 +8987,13 @@ export class EpisodeOfCare extends DomainResource {
       }
       if (obj.team) {
         this.team = [];
-        for (let o of obj.team || []) {
+        for (const o of obj.team || []) {
           this.team.push(new ResourceReference(o));
         }
       }
       if (obj.account) {
         this.account = [];
-        for (let o of obj.account || []) {
+        for (const o of obj.account || []) {
           this.account.push(new ResourceReference(o));
         }
       }
@@ -9095,7 +9097,7 @@ export class ExpansionProfile extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -9104,19 +9106,19 @@ export class ExpansionProfile extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.fixedVersion) {
         this.fixedVersion = [];
-        for (let o of obj.fixedVersion || []) {
+        for (const o of obj.fixedVersion || []) {
           this.fixedVersion.push(new FixedVersionComponent(o));
         }
       }
@@ -9251,7 +9253,7 @@ export class BenefitBalanceComponent extends BackboneElement {
       }
       if (obj.financial) {
         this.financial = [];
-        for (let o of obj.financial || []) {
+        for (const o of obj.financial || []) {
           this.financial.push(new BenefitComponent(o));
         }
       }
@@ -9307,7 +9309,7 @@ export class ExplanationOfBenefit extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -9319,7 +9321,7 @@ export class ExplanationOfBenefit extends DomainResource {
       }
       if (obj.subType) {
         this.subType = [];
-        for (let o of obj.subType || []) {
+        for (const o of obj.subType || []) {
           this.subType.push(new CodeableConcept(o));
         }
       }
@@ -9364,7 +9366,7 @@ export class ExplanationOfBenefit extends DomainResource {
       }
       if (obj.related) {
         this.related = [];
-        for (let o of obj.related || []) {
+        for (const o of obj.related || []) {
           this.related.push(new RelatedClaimComponent(o));
         }
       }
@@ -9379,25 +9381,25 @@ export class ExplanationOfBenefit extends DomainResource {
       }
       if (obj.information) {
         this.information = [];
-        for (let o of obj.information || []) {
+        for (const o of obj.information || []) {
           this.information.push(new SupportingInformationComponent(o));
         }
       }
       if (obj.careTeam) {
         this.careTeam = [];
-        for (let o of obj.careTeam || []) {
+        for (const o of obj.careTeam || []) {
           this.careTeam.push(new CareTeamComponent(o));
         }
       }
       if (obj.diagnosis) {
         this.diagnosis = [];
-        for (let o of obj.diagnosis || []) {
+        for (const o of obj.diagnosis || []) {
           this.diagnosis.push(new DiagnosisComponent(o));
         }
       }
       if (obj.procedure) {
         this.procedure = [];
-        for (let o of obj.procedure || []) {
+        for (const o of obj.procedure || []) {
           this.procedure.push(new ProcedureComponent(o));
         }
       }
@@ -9418,13 +9420,13 @@ export class ExplanationOfBenefit extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemComponent(o));
         }
       }
       if (obj.addItem) {
         this.addItem = [];
-        for (let o of obj.addItem || []) {
+        for (const o of obj.addItem || []) {
           this.addItem.push(new AddedItemComponent(o));
         }
       }
@@ -9445,13 +9447,13 @@ export class ExplanationOfBenefit extends DomainResource {
       }
       if (obj.processNote) {
         this.processNote = [];
-        for (let o of obj.processNote || []) {
+        for (const o of obj.processNote || []) {
           this.processNote.push(new NoteComponent(o));
         }
       }
       if (obj.benefitBalance) {
         this.benefitBalance = [];
-        for (let o of obj.benefitBalance || []) {
+        for (const o of obj.benefitBalance || []) {
           this.benefitBalance.push(new BenefitBalanceComponent(o));
         }
       }
@@ -9480,7 +9482,7 @@ export class ConditionComponent extends BackboneElement {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -9515,13 +9517,13 @@ export class FamilyMemberHistory extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
@@ -9563,25 +9565,25 @@ export class FamilyMemberHistory extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.condition) {
         this.condition = [];
-        for (let o of obj.condition || []) {
+        for (const o of obj.condition || []) {
           this.condition.push(new ConditionComponent(o));
         }
       }
@@ -9635,7 +9637,7 @@ export class Goal extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -9644,7 +9646,7 @@ export class Goal extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -9674,25 +9676,25 @@ export class Goal extends DomainResource {
       }
       if (obj.addresses) {
         this.addresses = [];
-        for (let o of obj.addresses || []) {
+        for (const o of obj.addresses || []) {
           this.addresses.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.outcomeCode) {
         this.outcomeCode = [];
-        for (let o of obj.outcomeCode || []) {
+        for (const o of obj.outcomeCode || []) {
           this.outcomeCode.push(new CodeableConcept(o));
         }
       }
       if (obj.outcomeReference) {
         this.outcomeReference = [];
-        for (let o of obj.outcomeReference || []) {
+        for (const o of obj.outcomeReference || []) {
           this.outcomeReference.push(new ResourceReference(o));
         }
       }
@@ -9745,7 +9747,7 @@ export class GraphDefinition extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -9754,13 +9756,13 @@ export class GraphDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -9775,7 +9777,7 @@ export class GraphDefinition extends DomainResource {
       }
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
@@ -9849,7 +9851,7 @@ export class Group extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -9873,13 +9875,13 @@ export class Group extends DomainResource {
       }
       if (obj.characteristic) {
         this.characteristic = [];
-        for (let o of obj.characteristic || []) {
+        for (const o of obj.characteristic || []) {
           this.characteristic.push(new CharacteristicComponent(o));
         }
       }
       if (obj.member) {
         this.member = [];
-        for (let o of obj.member || []) {
+        for (const o of obj.member || []) {
           this.member.push(new MemberComponent(o));
         }
       }
@@ -9937,13 +9939,13 @@ export class GuidanceResponse extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.evaluationMessage) {
         this.evaluationMessage = [];
-        for (let o of obj.evaluationMessage || []) {
+        for (const o of obj.evaluationMessage || []) {
           this.evaluationMessage.push(new ResourceReference(o));
         }
       }
@@ -9955,7 +9957,7 @@ export class GuidanceResponse extends DomainResource {
       }
       if (obj.dataRequirement) {
         this.dataRequirement = [];
-        for (let o of obj.dataRequirement || []) {
+        for (const o of obj.dataRequirement || []) {
           this.dataRequirement.push(new DataRequirement(o));
         }
       }
@@ -10040,7 +10042,7 @@ export class HealthcareService extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -10055,19 +10057,19 @@ export class HealthcareService extends DomainResource {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
       if (obj.specialty) {
         this.specialty = [];
-        for (let o of obj.specialty || []) {
+        for (const o of obj.specialty || []) {
           this.specialty.push(new CodeableConcept(o));
         }
       }
       if (obj.location) {
         this.location = [];
-        for (let o of obj.location || []) {
+        for (const o of obj.location || []) {
           this.location.push(new ResourceReference(o));
         }
       }
@@ -10085,19 +10087,19 @@ export class HealthcareService extends DomainResource {
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
       if (obj.coverageArea) {
         this.coverageArea = [];
-        for (let o of obj.coverageArea || []) {
+        for (const o of obj.coverageArea || []) {
           this.coverageArea.push(new ResourceReference(o));
         }
       }
       if (obj.serviceProvisionCode) {
         this.serviceProvisionCode = [];
-        for (let o of obj.serviceProvisionCode || []) {
+        for (const o of obj.serviceProvisionCode || []) {
           this.serviceProvisionCode.push(new CodeableConcept(o));
         }
       }
@@ -10112,13 +10114,13 @@ export class HealthcareService extends DomainResource {
       }
       if (obj.characteristic) {
         this.characteristic = [];
-        for (let o of obj.characteristic || []) {
+        for (const o of obj.characteristic || []) {
           this.characteristic.push(new CodeableConcept(o));
         }
       }
       if (obj.referralMethod) {
         this.referralMethod = [];
-        for (let o of obj.referralMethod || []) {
+        for (const o of obj.referralMethod || []) {
           this.referralMethod.push(new CodeableConcept(o));
         }
       }
@@ -10127,13 +10129,13 @@ export class HealthcareService extends DomainResource {
       }
       if (obj.availableTime) {
         this.availableTime = [];
-        for (let o of obj.availableTime || []) {
+        for (const o of obj.availableTime || []) {
           this.availableTime.push(new AvailableTimeComponent(o));
         }
       }
       if (obj.notAvailable) {
         this.notAvailable = [];
-        for (let o of obj.notAvailable || []) {
+        for (const o of obj.notAvailable || []) {
           this.notAvailable.push(new NotAvailableComponent(o));
         }
       }
@@ -10142,7 +10144,7 @@ export class HealthcareService extends DomainResource {
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
@@ -10229,13 +10231,13 @@ export class SeriesComponent extends BackboneElement {
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
       if (obj.instance) {
         this.instance = [];
-        for (let o of obj.instance || []) {
+        for (const o of obj.instance || []) {
           this.instance.push(new InstanceComponent(o));
         }
       }
@@ -10261,13 +10263,13 @@ export class StudyComponent extends BackboneElement {
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
       if (obj.series) {
         this.series = [];
-        for (let o of obj.series || []) {
+        for (const o of obj.series || []) {
           this.series.push(new SeriesComponent(o));
         }
       }
@@ -10305,7 +10307,7 @@ export class ImagingManifest extends DomainResource {
       }
       if (obj.study) {
         this.study = [];
-        for (let o of obj.study || []) {
+        for (const o of obj.study || []) {
           this.study.push(new StudyComponent(o));
         }
       }
@@ -10347,7 +10349,7 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -10356,7 +10358,7 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.modalityList) {
         this.modalityList = [];
-        for (let o of obj.modalityList || []) {
+        for (const o of obj.modalityList || []) {
           this.modalityList.push(new Coding(o));
         }
       }
@@ -10371,7 +10373,7 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -10380,13 +10382,13 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.interpreter) {
         this.interpreter = [];
-        for (let o of obj.interpreter || []) {
+        for (const o of obj.interpreter || []) {
           this.interpreter.push(new ResourceReference(o));
         }
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
@@ -10398,13 +10400,13 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.procedureReference) {
         this.procedureReference = [];
-        for (let o of obj.procedureReference || []) {
+        for (const o of obj.procedureReference || []) {
           this.procedureReference.push(new ResourceReference(o));
         }
       }
       if (obj.procedureCode) {
         this.procedureCode = [];
-        for (let o of obj.procedureCode || []) {
+        for (const o of obj.procedureCode || []) {
           this.procedureCode.push(new CodeableConcept(o));
         }
       }
@@ -10416,7 +10418,7 @@ export class ImagingStudy extends DomainResource {
       }
       if (obj.series) {
         this.series = [];
-        for (let o of obj.series || []) {
+        for (const o of obj.series || []) {
           this.series.push(new SeriesComponent(o));
         }
       }
@@ -10452,13 +10454,13 @@ export class ExplanationComponent extends BackboneElement {
     if (obj) {
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonNotGiven) {
         this.reasonNotGiven = [];
-        for (let o of obj.reasonNotGiven || []) {
+        for (const o of obj.reasonNotGiven || []) {
           this.reasonNotGiven.push(new CodeableConcept(o));
         }
       }
@@ -10497,7 +10499,7 @@ export class VaccinationProtocolComponent extends BackboneElement {
       }
       if (obj.targetDisease) {
         this.targetDisease = [];
-        for (let o of obj.targetDisease || []) {
+        for (const o of obj.targetDisease || []) {
           this.targetDisease.push(new CodeableConcept(o));
         }
       }
@@ -10541,7 +10543,7 @@ export class Immunization extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -10592,13 +10594,13 @@ export class Immunization extends DomainResource {
       }
       if (obj.practitioner) {
         this.practitioner = [];
-        for (let o of obj.practitioner || []) {
+        for (const o of obj.practitioner || []) {
           this.practitioner.push(new PractitionerComponent(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -10607,13 +10609,13 @@ export class Immunization extends DomainResource {
       }
       if (obj.reaction) {
         this.reaction = [];
-        for (let o of obj.reaction || []) {
+        for (const o of obj.reaction || []) {
           this.reaction.push(new ReactionComponent(o));
         }
       }
       if (obj.vaccinationProtocol) {
         this.vaccinationProtocol = [];
-        for (let o of obj.vaccinationProtocol || []) {
+        for (const o of obj.vaccinationProtocol || []) {
           this.vaccinationProtocol.push(new VaccinationProtocolComponent(o));
         }
       }
@@ -10697,7 +10699,7 @@ export class RecommendationComponent extends BackboneElement {
       }
       if (obj.dateCriterion) {
         this.dateCriterion = [];
-        for (let o of obj.dateCriterion || []) {
+        for (const o of obj.dateCriterion || []) {
           this.dateCriterion.push(new DateCriterionComponent(o));
         }
       }
@@ -10706,13 +10708,13 @@ export class RecommendationComponent extends BackboneElement {
       }
       if (obj.supportingImmunization) {
         this.supportingImmunization = [];
-        for (let o of obj.supportingImmunization || []) {
+        for (const o of obj.supportingImmunization || []) {
           this.supportingImmunization.push(new ResourceReference(o));
         }
       }
       if (obj.supportingPatientInformation) {
         this.supportingPatientInformation = [];
-        for (let o of obj.supportingPatientInformation || []) {
+        for (const o of obj.supportingPatientInformation || []) {
           this.supportingPatientInformation.push(new ResourceReference(o));
         }
       }
@@ -10732,7 +10734,7 @@ export class ImmunizationRecommendation extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -10741,7 +10743,7 @@ export class ImmunizationRecommendation extends DomainResource {
       }
       if (obj.recommendation) {
         this.recommendation = [];
-        for (let o of obj.recommendation || []) {
+        for (const o of obj.recommendation || []) {
           this.recommendation.push(new RecommendationComponent(o));
         }
       }
@@ -10784,7 +10786,7 @@ export class PackageComponent extends BackboneElement {
       }
       if (obj.resource) {
         this.resource = [];
-        for (let o of obj.resource || []) {
+        for (const o of obj.resource || []) {
           this.resource.push(new PackageResourceComponent(o));
         }
       }
@@ -10843,7 +10845,7 @@ export class PageComponent extends BackboneElement {
       }
       if (obj.page) {
         this.page = [];
-        for (let o of obj.page || []) {
+        for (const o of obj.page || []) {
           this.page.push(new PageComponent(o));
         }
       }
@@ -10899,7 +10901,7 @@ export class ImplementationGuide extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -10908,13 +10910,13 @@ export class ImplementationGuide extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -10926,19 +10928,19 @@ export class ImplementationGuide extends DomainResource {
       }
       if (obj.dependency) {
         this.dependency = [];
-        for (let o of obj.dependency || []) {
+        for (const o of obj.dependency || []) {
           this.dependency.push(new DependencyComponent(o));
         }
       }
       if (obj.package) {
         this.package = [];
-        for (let o of obj.package || []) {
+        for (const o of obj.package || []) {
           this.package.push(new PackageComponent(o));
         }
       }
       if (obj.global) {
         this.global = [];
-        for (let o of obj.global || []) {
+        for (const o of obj.global || []) {
           this.global.push(new GlobalComponent(o));
         }
       }
@@ -11028,7 +11030,7 @@ export class Library extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -11076,31 +11078,31 @@ export class Library extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new CodeableConcept(o));
         }
       }
       if (obj.contributor) {
         this.contributor = [];
-        for (let o of obj.contributor || []) {
+        for (const o of obj.contributor || []) {
           this.contributor.push(new Contributor(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -11109,25 +11111,25 @@ export class Library extends DomainResource {
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.parameter) {
         this.parameter = [];
-        for (let o of obj.parameter || []) {
+        for (const o of obj.parameter || []) {
           this.parameter.push(new ParameterDefinition(o));
         }
       }
       if (obj.dataRequirement) {
         this.dataRequirement = [];
-        for (let o of obj.dataRequirement || []) {
+        for (const o of obj.dataRequirement || []) {
           this.dataRequirement.push(new DataRequirement(o));
         }
       }
       if (obj.content) {
         this.content = [];
-        for (let o of obj.content || []) {
+        for (const o of obj.content || []) {
           this.content.push(new Attachment(o));
         }
       }
@@ -11153,7 +11155,7 @@ export class Linkage extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemComponent(o));
         }
       }
@@ -11183,7 +11185,7 @@ export class List extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -11216,13 +11218,13 @@ export class List extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.entry) {
         this.entry = [];
-        for (let o of obj.entry || []) {
+        for (const o of obj.entry || []) {
           this.entry.push(new EntryComponent(o));
         }
       }
@@ -11279,7 +11281,7 @@ export class Location extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -11306,7 +11308,7 @@ export class Location extends DomainResource {
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -11327,7 +11329,7 @@ export class Location extends DomainResource {
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
@@ -11350,7 +11352,7 @@ export class SupplementalDataComponent extends BackboneElement {
       }
       if (obj.usage) {
         this.usage = [];
-        for (let o of obj.usage || []) {
+        for (const o of obj.usage || []) {
           this.usage.push(new CodeableConcept(o));
         }
       }
@@ -11413,7 +11415,7 @@ export class Measure extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -11458,31 +11460,31 @@ export class Measure extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new CodeableConcept(o));
         }
       }
       if (obj.contributor) {
         this.contributor = [];
-        for (let o of obj.contributor || []) {
+        for (const o of obj.contributor || []) {
           this.contributor.push(new Contributor(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -11491,13 +11493,13 @@ export class Measure extends DomainResource {
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.library) {
         this.library = [];
-        for (let o of obj.library || []) {
+        for (const o of obj.library || []) {
           this.library.push(new ResourceReference(o));
         }
       }
@@ -11512,7 +11514,7 @@ export class Measure extends DomainResource {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
@@ -11542,13 +11544,13 @@ export class Measure extends DomainResource {
       }
       if (obj.group) {
         this.group = [];
-        for (let o of obj.group || []) {
+        for (const o of obj.group || []) {
           this.group.push(new GroupComponent(o));
         }
       }
       if (obj.supplementalData) {
         this.supplementalData = [];
-        for (let o of obj.supplementalData || []) {
+        for (const o of obj.supplementalData || []) {
           this.supplementalData.push(new SupplementalDataComponent(o));
         }
       }
@@ -11599,7 +11601,7 @@ export class MeasureReport extends DomainResource {
       }
       if (obj.group) {
         this.group = [];
-        for (let o of obj.group || []) {
+        for (const o of obj.group || []) {
           this.group.push(new GroupComponent(o));
         }
       }
@@ -11637,13 +11639,13 @@ export class Media extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -11670,7 +11672,7 @@ export class Media extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
@@ -11697,7 +11699,7 @@ export class Media extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -11763,7 +11765,7 @@ export class Medication extends DomainResource {
       }
       if (obj.ingredient) {
         this.ingredient = [];
-        for (let o of obj.ingredient || []) {
+        for (const o of obj.ingredient || []) {
           this.ingredient.push(new IngredientComponent(o));
         }
       }
@@ -11772,7 +11774,7 @@ export class Medication extends DomainResource {
       }
       if (obj.image) {
         this.image = [];
-        for (let o of obj.image || []) {
+        for (const o of obj.image || []) {
           this.image.push(new Attachment(o));
         }
       }
@@ -11843,19 +11845,19 @@ export class MedicationAdministration extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -11876,7 +11878,7 @@ export class MedicationAdministration extends DomainResource {
       }
       if (obj.supportingInformation) {
         this.supportingInformation = [];
-        for (let o of obj.supportingInformation || []) {
+        for (const o of obj.supportingInformation || []) {
           this.supportingInformation.push(new ResourceReference(o));
         }
       }
@@ -11885,7 +11887,7 @@ export class MedicationAdministration extends DomainResource {
       }
       if (obj.performer) {
         this.performer = [];
-        for (let o of obj.performer || []) {
+        for (const o of obj.performer || []) {
           this.performer.push(new PerformerComponent(o));
         }
       }
@@ -11894,19 +11896,19 @@ export class MedicationAdministration extends DomainResource {
       }
       if (obj.reasonNotGiven) {
         this.reasonNotGiven = [];
-        for (let o of obj.reasonNotGiven || []) {
+        for (const o of obj.reasonNotGiven || []) {
           this.reasonNotGiven.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
@@ -11915,13 +11917,13 @@ export class MedicationAdministration extends DomainResource {
       }
       if (obj.device) {
         this.device = [];
-        for (let o of obj.device || []) {
+        for (const o of obj.device || []) {
           this.device.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -11930,7 +11932,7 @@ export class MedicationAdministration extends DomainResource {
       }
       if (obj.eventHistory) {
         this.eventHistory = [];
-        for (let o of obj.eventHistory || []) {
+        for (const o of obj.eventHistory || []) {
           this.eventHistory.push(new ResourceReference(o));
         }
       }
@@ -11956,13 +11958,13 @@ export class SubstitutionComponent extends BackboneElement {
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.responsibleParty) {
         this.responsibleParty = [];
-        for (let o of obj.responsibleParty || []) {
+        for (const o of obj.responsibleParty || []) {
           this.responsibleParty.push(new ResourceReference(o));
         }
       }
@@ -12003,13 +12005,13 @@ export class MedicationDispense extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -12030,19 +12032,19 @@ export class MedicationDispense extends DomainResource {
       }
       if (obj.supportingInformation) {
         this.supportingInformation = [];
-        for (let o of obj.supportingInformation || []) {
+        for (const o of obj.supportingInformation || []) {
           this.supportingInformation.push(new ResourceReference(o));
         }
       }
       if (obj.performer) {
         this.performer = [];
-        for (let o of obj.performer || []) {
+        for (const o of obj.performer || []) {
           this.performer.push(new PerformerComponent(o));
         }
       }
       if (obj.authorizingPrescription) {
         this.authorizingPrescription = [];
-        for (let o of obj.authorizingPrescription || []) {
+        for (const o of obj.authorizingPrescription || []) {
           this.authorizingPrescription.push(new ResourceReference(o));
         }
       }
@@ -12066,19 +12068,19 @@ export class MedicationDispense extends DomainResource {
       }
       if (obj.receiver) {
         this.receiver = [];
-        for (let o of obj.receiver || []) {
+        for (const o of obj.receiver || []) {
           this.receiver.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.dosageInstruction) {
         this.dosageInstruction = [];
-        for (let o of obj.dosageInstruction || []) {
+        for (const o of obj.dosageInstruction || []) {
           this.dosageInstruction.push(new Dosage(o));
         }
       }
@@ -12087,7 +12089,7 @@ export class MedicationDispense extends DomainResource {
       }
       if (obj.detectedIssue) {
         this.detectedIssue = [];
-        for (let o of obj.detectedIssue || []) {
+        for (const o of obj.detectedIssue || []) {
           this.detectedIssue.push(new ResourceReference(o));
         }
       }
@@ -12099,7 +12101,7 @@ export class MedicationDispense extends DomainResource {
       }
       if (obj.eventHistory) {
         this.eventHistory = [];
-        for (let o of obj.eventHistory || []) {
+        for (const o of obj.eventHistory || []) {
           this.eventHistory.push(new ResourceReference(o));
         }
       }
@@ -12170,19 +12172,19 @@ export class MedicationRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -12212,7 +12214,7 @@ export class MedicationRequest extends DomainResource {
       }
       if (obj.supportingInformation) {
         this.supportingInformation = [];
-        for (let o of obj.supportingInformation || []) {
+        for (const o of obj.supportingInformation || []) {
           this.supportingInformation.push(new ResourceReference(o));
         }
       }
@@ -12227,25 +12229,25 @@ export class MedicationRequest extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.dosageInstruction) {
         this.dosageInstruction = [];
-        for (let o of obj.dosageInstruction || []) {
+        for (const o of obj.dosageInstruction || []) {
           this.dosageInstruction.push(new Dosage(o));
         }
       }
@@ -12260,13 +12262,13 @@ export class MedicationRequest extends DomainResource {
       }
       if (obj.detectedIssue) {
         this.detectedIssue = [];
-        for (let o of obj.detectedIssue || []) {
+        for (const o of obj.detectedIssue || []) {
           this.detectedIssue.push(new ResourceReference(o));
         }
       }
       if (obj.eventHistory) {
         this.eventHistory = [];
-        for (let o of obj.eventHistory || []) {
+        for (const o of obj.eventHistory || []) {
           this.eventHistory.push(new ResourceReference(o));
         }
       }
@@ -12301,19 +12303,19 @@ export class MedicationStatement extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -12343,7 +12345,7 @@ export class MedicationStatement extends DomainResource {
       }
       if (obj.derivedFrom) {
         this.derivedFrom = [];
-        for (let o of obj.derivedFrom || []) {
+        for (const o of obj.derivedFrom || []) {
           this.derivedFrom.push(new ResourceReference(o));
         }
       }
@@ -12352,31 +12354,31 @@ export class MedicationStatement extends DomainResource {
       }
       if (obj.reasonNotTaken) {
         this.reasonNotTaken = [];
-        for (let o of obj.reasonNotTaken || []) {
+        for (const o of obj.reasonNotTaken || []) {
           this.reasonNotTaken.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.dosage) {
         this.dosage = [];
-        for (let o of obj.dosage || []) {
+        for (const o of obj.dosage || []) {
           this.dosage.push(new Dosage(o));
         }
       }
@@ -12487,7 +12489,7 @@ export class MessageDefinition extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -12496,13 +12498,13 @@ export class MessageDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -12517,13 +12519,13 @@ export class MessageDefinition extends DomainResource {
       }
       if (obj.parent) {
         this.parent = [];
-        for (let o of obj.parent || []) {
+        for (const o of obj.parent || []) {
           this.parent.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
@@ -12535,7 +12537,7 @@ export class MessageDefinition extends DomainResource {
       }
       if (obj.focus) {
         this.focus = [];
-        for (let o of obj.focus || []) {
+        for (const o of obj.focus || []) {
           this.focus.push(new FocusComponent(o));
         }
       }
@@ -12544,7 +12546,7 @@ export class MessageDefinition extends DomainResource {
       }
       if (obj.allowedResponse) {
         this.allowedResponse = [];
-        for (let o of obj.allowedResponse || []) {
+        for (const o of obj.allowedResponse || []) {
           this.allowedResponse.push(new AllowedResponseComponent(o));
         }
       }
@@ -12628,7 +12630,7 @@ export class MessageHeader extends DomainResource {
       }
       if (obj.destination) {
         this.destination = [];
-        for (let o of obj.destination || []) {
+        for (const o of obj.destination || []) {
           this.destination.push(new MessageDestinationComponent(o));
         }
       }
@@ -12661,7 +12663,7 @@ export class MessageHeader extends DomainResource {
       }
       if (obj.focus) {
         this.focus = [];
-        for (let o of obj.focus || []) {
+        for (const o of obj.focus || []) {
           this.focus.push(new ResourceReference(o));
         }
       }
@@ -12737,7 +12739,7 @@ export class NamingSystem extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -12752,13 +12754,13 @@ export class NamingSystem extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -12767,7 +12769,7 @@ export class NamingSystem extends DomainResource {
       }
       if (obj.uniqueId) {
         this.uniqueId = [];
-        for (let o of obj.uniqueId || []) {
+        for (const o of obj.uniqueId || []) {
           this.uniqueId.push(new UniqueIdComponent(o));
         }
       }
@@ -12828,31 +12830,31 @@ export class OralDietComponent extends BackboneElement {
     if (obj) {
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
       if (obj.schedule) {
         this.schedule = [];
-        for (let o of obj.schedule || []) {
+        for (const o of obj.schedule || []) {
           this.schedule.push(new Timing(o));
         }
       }
       if (obj.nutrient) {
         this.nutrient = [];
-        for (let o of obj.nutrient || []) {
+        for (const o of obj.nutrient || []) {
           this.nutrient.push(new NutrientComponent(o));
         }
       }
       if (obj.texture) {
         this.texture = [];
-        for (let o of obj.texture || []) {
+        for (const o of obj.texture || []) {
           this.texture.push(new TextureComponent(o));
         }
       }
       if (obj.fluidConsistencyType) {
         this.fluidConsistencyType = [];
-        for (let o of obj.fluidConsistencyType || []) {
+        for (const o of obj.fluidConsistencyType || []) {
           this.fluidConsistencyType.push(new CodeableConcept(o));
         }
       }
@@ -12882,7 +12884,7 @@ export class SupplementComponent extends BackboneElement {
       }
       if (obj.schedule) {
         this.schedule = [];
-        for (let o of obj.schedule || []) {
+        for (const o of obj.schedule || []) {
           this.schedule.push(new Timing(o));
         }
       }
@@ -12953,7 +12955,7 @@ export class EnteralFormulaComponent extends BackboneElement {
       }
       if (obj.administration) {
         this.administration = [];
-        for (let o of obj.administration || []) {
+        for (const o of obj.administration || []) {
           this.administration.push(new AdministrationComponent(o));
         }
       }
@@ -12988,7 +12990,7 @@ export class NutritionOrder extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -13009,19 +13011,19 @@ export class NutritionOrder extends DomainResource {
       }
       if (obj.allergyIntolerance) {
         this.allergyIntolerance = [];
-        for (let o of obj.allergyIntolerance || []) {
+        for (const o of obj.allergyIntolerance || []) {
           this.allergyIntolerance.push(new ResourceReference(o));
         }
       }
       if (obj.foodPreferenceModifier) {
         this.foodPreferenceModifier = [];
-        for (let o of obj.foodPreferenceModifier || []) {
+        for (const o of obj.foodPreferenceModifier || []) {
           this.foodPreferenceModifier.push(new CodeableConcept(o));
         }
       }
       if (obj.excludeFoodModifier) {
         this.excludeFoodModifier = [];
-        for (let o of obj.excludeFoodModifier || []) {
+        for (const o of obj.excludeFoodModifier || []) {
           this.excludeFoodModifier.push(new CodeableConcept(o));
         }
       }
@@ -13030,7 +13032,7 @@ export class NutritionOrder extends DomainResource {
       }
       if (obj.supplement) {
         this.supplement = [];
-        for (let o of obj.supplement || []) {
+        for (const o of obj.supplement || []) {
           this.supplement.push(new SupplementComponent(o));
         }
       }
@@ -13115,7 +13117,7 @@ export class OperationDefinition extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -13124,13 +13126,13 @@ export class OperationDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -13163,13 +13165,13 @@ export class OperationDefinition extends DomainResource {
       }
       if (obj.parameter) {
         this.parameter = [];
-        for (let o of obj.parameter || []) {
+        for (const o of obj.parameter || []) {
           this.parameter.push(new ParameterComponent(o));
         }
       }
       if (obj.overload) {
         this.overload = [];
-        for (let o of obj.overload || []) {
+        for (const o of obj.overload || []) {
           this.overload.push(new OverloadComponent(o));
         }
       }
@@ -13222,13 +13224,13 @@ export class OperationOutcome extends DomainResource {
     if (obj) {
       if (obj.issue) {
         this.issue = [];
-        for (let o of obj.issue || []) {
+        for (const o of obj.issue || []) {
           this.issue.push(new IssueComponent(o));
         }
       }
       if (obj.location && obj.location.length > 0) {
         this.location = [];
-        for (let o of obj.location || []) {
+        for (const o of obj.location || []) {
           this.location.push(o);
         }
       }
@@ -13254,7 +13256,7 @@ export class ContactComponent extends BackboneElement {
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -13284,7 +13286,7 @@ export class Organization extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -13293,7 +13295,7 @@ export class Organization extends DomainResource {
       }
       if (obj.type) {
         this.type = [];
-        for (let o of obj.type || []) {
+        for (const o of obj.type || []) {
           this.type.push(new CodeableConcept(o));
         }
       }
@@ -13305,13 +13307,13 @@ export class Organization extends DomainResource {
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
       if (obj.address) {
         this.address = [];
-        for (let o of obj.address || []) {
+        for (const o of obj.address || []) {
           this.address.push(new Address(o));
         }
       }
@@ -13320,13 +13322,13 @@ export class Organization extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactComponent(o));
         }
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
@@ -13400,7 +13402,7 @@ export class Patient extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -13409,13 +13411,13 @@ export class Patient extends DomainResource {
       }
       if (obj.name) {
         this.name = [];
-        for (let o of obj.name || []) {
+        for (const o of obj.name || []) {
           this.name.push(new HumanName(o));
         }
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -13430,7 +13432,7 @@ export class Patient extends DomainResource {
       }
       if (obj.address) {
         this.address = [];
-        for (let o of obj.address || []) {
+        for (const o of obj.address || []) {
           this.address.push(new Address(o));
         }
       }
@@ -13442,13 +13444,13 @@ export class Patient extends DomainResource {
       }
       if (obj.photo) {
         this.photo = [];
-        for (let o of obj.photo || []) {
+        for (const o of obj.photo || []) {
           this.photo.push(new Attachment(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactComponent(o));
         }
       }
@@ -13457,13 +13459,13 @@ export class Patient extends DomainResource {
       }
       if (obj.communication) {
         this.communication = [];
-        for (let o of obj.communication || []) {
+        for (const o of obj.communication || []) {
           this.communication.push(new CommunicationComponent(o));
         }
       }
       if (obj.generalPractitioner) {
         this.generalPractitioner = [];
-        for (let o of obj.generalPractitioner || []) {
+        for (const o of obj.generalPractitioner || []) {
           this.generalPractitioner.push(new ResourceReference(o));
         }
       }
@@ -13472,7 +13474,7 @@ export class Patient extends DomainResource {
       }
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
@@ -13499,7 +13501,7 @@ export class PaymentNotice extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -13613,7 +13615,7 @@ export class PaymentReconciliation extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -13646,7 +13648,7 @@ export class PaymentReconciliation extends DomainResource {
       }
       if (obj.detail) {
         this.detail = [];
-        for (let o of obj.detail || []) {
+        for (const o of obj.detail || []) {
           this.detail.push(new DetailsComponent(o));
         }
       }
@@ -13658,7 +13660,7 @@ export class PaymentReconciliation extends DomainResource {
       }
       if (obj.processNote) {
         this.processNote = [];
-        for (let o of obj.processNote || []) {
+        for (const o of obj.processNote || []) {
           this.processNote.push(new NotesComponent(o));
         }
       }
@@ -13685,19 +13687,19 @@ export class Person extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.name) {
         this.name = [];
-        for (let o of obj.name || []) {
+        for (const o of obj.name || []) {
           this.name.push(new HumanName(o));
         }
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -13709,7 +13711,7 @@ export class Person extends DomainResource {
       }
       if (obj.address) {
         this.address = [];
-        for (let o of obj.address || []) {
+        for (const o of obj.address || []) {
           this.address.push(new Address(o));
         }
       }
@@ -13724,7 +13726,7 @@ export class Person extends DomainResource {
       }
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
@@ -13766,19 +13768,19 @@ export class GoalComponent extends BackboneElement {
       }
       if (obj.addresses) {
         this.addresses = [];
-        for (let o of obj.addresses || []) {
+        for (const o of obj.addresses || []) {
           this.addresses.push(new CodeableConcept(o));
         }
       }
       if (obj.documentation) {
         this.documentation = [];
-        for (let o of obj.documentation || []) {
+        for (const o of obj.documentation || []) {
           this.documentation.push(new RelatedArtifact(o));
         }
       }
       if (obj.target) {
         this.target = [];
-        for (let o of obj.target || []) {
+        for (const o of obj.target || []) {
           this.target.push(new TargetComponent(o));
         }
       }
@@ -13879,19 +13881,19 @@ export class ActionComponent extends BackboneElement {
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new CodeableConcept(o));
         }
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new CodeableConcept(o));
         }
       }
       if (obj.documentation) {
         this.documentation = [];
-        for (let o of obj.documentation || []) {
+        for (const o of obj.documentation || []) {
           this.documentation.push(new RelatedArtifact(o));
         }
       }
@@ -13900,31 +13902,31 @@ export class ActionComponent extends BackboneElement {
       }
       if (obj.triggerDefinition) {
         this.triggerDefinition = [];
-        for (let o of obj.triggerDefinition || []) {
+        for (const o of obj.triggerDefinition || []) {
           this.triggerDefinition.push(new TriggerDefinition(o));
         }
       }
       if (obj.condition) {
         this.condition = [];
-        for (let o of obj.condition || []) {
+        for (const o of obj.condition || []) {
           this.condition.push(new ConditionComponent(o));
         }
       }
       if (obj.input) {
         this.input = [];
-        for (let o of obj.input || []) {
+        for (const o of obj.input || []) {
           this.input.push(new DataRequirement(o));
         }
       }
       if (obj.output) {
         this.output = [];
-        for (let o of obj.output || []) {
+        for (const o of obj.output || []) {
           this.output.push(new DataRequirement(o));
         }
       }
       if (obj.relatedAction) {
         this.relatedAction = [];
-        for (let o of obj.relatedAction || []) {
+        for (const o of obj.relatedAction || []) {
           this.relatedAction.push(new RelatedActionComponent(o));
         }
       }
@@ -13933,7 +13935,7 @@ export class ActionComponent extends BackboneElement {
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
@@ -13963,13 +13965,13 @@ export class ActionComponent extends BackboneElement {
       }
       if (obj.dynamicValue) {
         this.dynamicValue = [];
-        for (let o of obj.dynamicValue || []) {
+        for (const o of obj.dynamicValue || []) {
           this.dynamicValue.push(new DynamicValueComponent(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new ActionComponent(o));
         }
       }
@@ -14015,7 +14017,7 @@ export class PlanDefinition extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14063,31 +14065,31 @@ export class PlanDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new CodeableConcept(o));
         }
       }
       if (obj.contributor) {
         this.contributor = [];
-        for (let o of obj.contributor || []) {
+        for (const o of obj.contributor || []) {
           this.contributor.push(new Contributor(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -14096,25 +14098,25 @@ export class PlanDefinition extends DomainResource {
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.library) {
         this.library = [];
-        for (let o of obj.library || []) {
+        for (const o of obj.library || []) {
           this.library.push(new ResourceReference(o));
         }
       }
       if (obj.goal) {
         this.goal = [];
-        for (let o of obj.goal || []) {
+        for (const o of obj.goal || []) {
           this.goal.push(new GoalComponent(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new ActionComponent(o));
         }
       }
@@ -14134,7 +14136,7 @@ export class QualificationComponent extends BackboneElement {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14170,7 +14172,7 @@ export class Practitioner extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14179,19 +14181,19 @@ export class Practitioner extends DomainResource {
       }
       if (obj.name) {
         this.name = [];
-        for (let o of obj.name || []) {
+        for (const o of obj.name || []) {
           this.name.push(new HumanName(o));
         }
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
       if (obj.address) {
         this.address = [];
-        for (let o of obj.address || []) {
+        for (const o of obj.address || []) {
           this.address.push(new Address(o));
         }
       }
@@ -14203,19 +14205,19 @@ export class Practitioner extends DomainResource {
       }
       if (obj.photo) {
         this.photo = [];
-        for (let o of obj.photo || []) {
+        for (const o of obj.photo || []) {
           this.photo.push(new Attachment(o));
         }
       }
       if (obj.qualification) {
         this.qualification = [];
-        for (let o of obj.qualification || []) {
+        for (const o of obj.qualification || []) {
           this.qualification.push(new QualificationComponent(o));
         }
       }
       if (obj.communication) {
         this.communication = [];
-        for (let o of obj.communication || []) {
+        for (const o of obj.communication || []) {
           this.communication.push(new CodeableConcept(o));
         }
       }
@@ -14245,7 +14247,7 @@ export class PractitionerRole extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14263,43 +14265,43 @@ export class PractitionerRole extends DomainResource {
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new CodeableConcept(o));
         }
       }
       if (obj.specialty) {
         this.specialty = [];
-        for (let o of obj.specialty || []) {
+        for (const o of obj.specialty || []) {
           this.specialty.push(new CodeableConcept(o));
         }
       }
       if (obj.location) {
         this.location = [];
-        for (let o of obj.location || []) {
+        for (const o of obj.location || []) {
           this.location.push(new ResourceReference(o));
         }
       }
       if (obj.healthcareService) {
         this.healthcareService = [];
-        for (let o of obj.healthcareService || []) {
+        for (const o of obj.healthcareService || []) {
           this.healthcareService.push(new ResourceReference(o));
         }
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
       if (obj.availableTime) {
         this.availableTime = [];
-        for (let o of obj.availableTime || []) {
+        for (const o of obj.availableTime || []) {
           this.availableTime.push(new AvailableTimeComponent(o));
         }
       }
       if (obj.notAvailable) {
         this.notAvailable = [];
-        for (let o of obj.notAvailable || []) {
+        for (const o of obj.notAvailable || []) {
           this.notAvailable.push(new NotAvailableComponent(o));
         }
       }
@@ -14308,7 +14310,7 @@ export class PractitionerRole extends DomainResource {
       }
       if (obj.endpoint) {
         this.endpoint = [];
-        for (let o of obj.endpoint || []) {
+        for (const o of obj.endpoint || []) {
           this.endpoint.push(new ResourceReference(o));
         }
       }
@@ -14369,25 +14371,25 @@ export class Procedure extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -14417,7 +14419,7 @@ export class Procedure extends DomainResource {
       }
       if (obj.performer) {
         this.performer = [];
-        for (let o of obj.performer || []) {
+        for (const o of obj.performer || []) {
           this.performer.push(new PerformerComponent(o));
         }
       }
@@ -14426,19 +14428,19 @@ export class Procedure extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.bodySite) {
         this.bodySite = [];
-        for (let o of obj.bodySite || []) {
+        for (const o of obj.bodySite || []) {
           this.bodySite.push(new CodeableConcept(o));
         }
       }
@@ -14447,49 +14449,49 @@ export class Procedure extends DomainResource {
       }
       if (obj.report) {
         this.report = [];
-        for (let o of obj.report || []) {
+        for (const o of obj.report || []) {
           this.report.push(new ResourceReference(o));
         }
       }
       if (obj.complication) {
         this.complication = [];
-        for (let o of obj.complication || []) {
+        for (const o of obj.complication || []) {
           this.complication.push(new CodeableConcept(o));
         }
       }
       if (obj.complicationDetail) {
         this.complicationDetail = [];
-        for (let o of obj.complicationDetail || []) {
+        for (const o of obj.complicationDetail || []) {
           this.complicationDetail.push(new ResourceReference(o));
         }
       }
       if (obj.followUp) {
         this.followUp = [];
-        for (let o of obj.followUp || []) {
+        for (const o of obj.followUp || []) {
           this.followUp.push(new CodeableConcept(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.focalDevice) {
         this.focalDevice = [];
-        for (let o of obj.focalDevice || []) {
+        for (const o of obj.focalDevice || []) {
           this.focalDevice.push(new FocalDeviceComponent(o));
         }
       }
       if (obj.usedReference) {
         this.usedReference = [];
-        for (let o of obj.usedReference || []) {
+        for (const o of obj.usedReference || []) {
           this.usedReference.push(new ResourceReference(o));
         }
       }
       if (obj.usedCode) {
         this.usedCode = [];
-        for (let o of obj.usedCode || []) {
+        for (const o of obj.usedCode || []) {
           this.usedCode.push(new CodeableConcept(o));
         }
       }
@@ -14532,25 +14534,25 @@ export class ProcedureRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
@@ -14571,7 +14573,7 @@ export class ProcedureRequest extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -14604,43 +14606,43 @@ export class ProcedureRequest extends DomainResource {
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
       if (obj.supportingInfo) {
         this.supportingInfo = [];
-        for (let o of obj.supportingInfo || []) {
+        for (const o of obj.supportingInfo || []) {
           this.supportingInfo.push(new ResourceReference(o));
         }
       }
       if (obj.specimen) {
         this.specimen = [];
-        for (let o of obj.specimen || []) {
+        for (const o of obj.specimen || []) {
           this.specimen.push(new ResourceReference(o));
         }
       }
       if (obj.bodySite) {
         this.bodySite = [];
-        for (let o of obj.bodySite || []) {
+        for (const o of obj.bodySite || []) {
           this.bodySite.push(new CodeableConcept(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.relevantHistory) {
         this.relevantHistory = [];
-        for (let o of obj.relevantHistory || []) {
+        for (const o of obj.relevantHistory || []) {
           this.relevantHistory.push(new ResourceReference(o));
         }
       }
@@ -14686,7 +14688,7 @@ export class ProcessRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14722,7 +14724,7 @@ export class ProcessRequest extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemsComponent(o));
         }
       }
@@ -14779,7 +14781,7 @@ export class ProcessResponse extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -14812,19 +14814,19 @@ export class ProcessResponse extends DomainResource {
       }
       if (obj.processNote) {
         this.processNote = [];
-        for (let o of obj.processNote || []) {
+        for (const o of obj.processNote || []) {
           this.processNote.push(new ProcessNoteComponent(o));
         }
       }
       if (obj.error) {
         this.error = [];
-        for (let o of obj.error || []) {
+        for (const o of obj.error || []) {
           this.error.push(new CodeableConcept(o));
         }
       }
       if (obj.communicationRequest) {
         this.communicationRequest = [];
-        for (let o of obj.communicationRequest || []) {
+        for (const o of obj.communicationRequest || []) {
           this.communicationRequest.push(new ResourceReference(o));
         }
       }
@@ -14851,7 +14853,7 @@ export class Provenance extends DomainResource {
     if (obj) {
       if (obj.target) {
         this.target = [];
-        for (let o of obj.target || []) {
+        for (const o of obj.target || []) {
           this.target.push(new ResourceReference(o));
         }
       }
@@ -14869,7 +14871,7 @@ export class Provenance extends DomainResource {
       }
       if (obj.reason) {
         this.reason = [];
-        for (let o of obj.reason || []) {
+        for (const o of obj.reason || []) {
           this.reason.push(new Coding(o));
         }
       }
@@ -14878,19 +14880,19 @@ export class Provenance extends DomainResource {
       }
       if (obj.agent) {
         this.agent = [];
-        for (let o of obj.agent || []) {
+        for (const o of obj.agent || []) {
           this.agent.push(new AgentComponent(o));
         }
       }
       if (obj.entity) {
         this.entity = [];
-        for (let o of obj.entity || []) {
+        for (const o of obj.entity || []) {
           this.entity.push(new EntityComponent(o));
         }
       }
       if (obj.signature) {
         this.signature = [];
-        for (let o of obj.signature || []) {
+        for (const o of obj.signature || []) {
           this.signature.push(new Signature(o));
         }
       }
@@ -14999,7 +15001,7 @@ export class QuestionnaireItemComponent extends BackboneElement {
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new Coding(o));
         }
       }
@@ -15020,7 +15022,7 @@ export class QuestionnaireItemComponent extends BackboneElement {
       }
       if (obj.hasOwnProperty('option')) {
         this.option = [];
-        for (let o of obj.option || []) {
+        for (const o of obj.option || []) {
           this.option.push(new QuestionnaireItemOptionComponent(o));
         }
       }
@@ -15060,7 +15062,7 @@ export class Questionnaire extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -15102,19 +15104,19 @@ export class Questionnaire extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -15123,7 +15125,7 @@ export class Questionnaire extends DomainResource {
       }
       if (obj.code) {
         this.code = [];
-        for (let o of obj.code || []) {
+        for (const o of obj.code || []) {
           this.code.push(new Coding(o));
         }
       }
@@ -15132,7 +15134,7 @@ export class Questionnaire extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new QuestionnaireItemComponent(o));
         }
       }
@@ -15163,13 +15165,13 @@ export class QuestionnaireResponse extends DomainResource {
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.parent) {
         this.parent = [];
-        for (let o of obj.parent || []) {
+        for (const o of obj.parent || []) {
           this.parent.push(new ResourceReference(o));
         }
       }
@@ -15196,7 +15198,7 @@ export class QuestionnaireResponse extends DomainResource {
       }
       if (obj.item) {
         this.item = [];
-        for (let o of obj.item || []) {
+        for (const o of obj.item || []) {
           this.item.push(new ItemComponent(o));
         }
       }
@@ -15236,25 +15238,25 @@ export class ReferralRequest extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
@@ -15275,7 +15277,7 @@ export class ReferralRequest extends DomainResource {
       }
       if (obj.serviceRequested) {
         this.serviceRequested = [];
-        for (let o of obj.serviceRequested || []) {
+        for (const o of obj.serviceRequested || []) {
           this.serviceRequested.push(new CodeableConcept(o));
         }
       }
@@ -15299,19 +15301,19 @@ export class ReferralRequest extends DomainResource {
       }
       if (obj.recipient) {
         this.recipient = [];
-        for (let o of obj.recipient || []) {
+        for (const o of obj.recipient || []) {
           this.recipient.push(new ResourceReference(o));
         }
       }
       if (obj.reasonCode) {
         this.reasonCode = [];
-        for (let o of obj.reasonCode || []) {
+        for (const o of obj.reasonCode || []) {
           this.reasonCode.push(new CodeableConcept(o));
         }
       }
       if (obj.reasonReference) {
         this.reasonReference = [];
-        for (let o of obj.reasonReference || []) {
+        for (const o of obj.reasonReference || []) {
           this.reasonReference.push(new ResourceReference(o));
         }
       }
@@ -15320,19 +15322,19 @@ export class ReferralRequest extends DomainResource {
       }
       if (obj.supportingInfo) {
         this.supportingInfo = [];
-        for (let o of obj.supportingInfo || []) {
+        for (const o of obj.supportingInfo || []) {
           this.supportingInfo.push(new ResourceReference(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.relevantHistory) {
         this.relevantHistory = [];
-        for (let o of obj.relevantHistory || []) {
+        for (const o of obj.relevantHistory || []) {
           this.relevantHistory.push(new ResourceReference(o));
         }
       }
@@ -15360,7 +15362,7 @@ export class RelatedPerson extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -15375,13 +15377,13 @@ export class RelatedPerson extends DomainResource {
       }
       if (obj.name) {
         this.name = [];
-        for (let o of obj.name || []) {
+        for (const o of obj.name || []) {
           this.name.push(new HumanName(o));
         }
       }
       if (obj.telecom) {
         this.telecom = [];
-        for (let o of obj.telecom || []) {
+        for (const o of obj.telecom || []) {
           this.telecom.push(new ContactPoint(o));
         }
       }
@@ -15393,13 +15395,13 @@ export class RelatedPerson extends DomainResource {
       }
       if (obj.address) {
         this.address = [];
-        for (let o of obj.address || []) {
+        for (const o of obj.address || []) {
           this.address.push(new Address(o));
         }
       }
       if (obj.photo) {
         this.photo = [];
-        for (let o of obj.photo || []) {
+        for (const o of obj.photo || []) {
           this.photo.push(new Attachment(o));
         }
       }
@@ -15434,25 +15436,25 @@ export class RequestGroup extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
       if (obj.definition) {
         this.definition = [];
-        for (let o of obj.definition || []) {
+        for (const o of obj.definition || []) {
           this.definition.push(new ResourceReference(o));
         }
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.replaces) {
         this.replaces = [];
-        for (let o of obj.replaces || []) {
+        for (const o of obj.replaces || []) {
           this.replaces.push(new ResourceReference(o));
         }
       }
@@ -15485,13 +15487,13 @@ export class RequestGroup extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new ActionComponent(o));
         }
       }
@@ -15550,7 +15552,7 @@ export class ResearchStudy extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -15559,13 +15561,13 @@ export class ResearchStudy extends DomainResource {
       }
       if (obj.protocol) {
         this.protocol = [];
-        for (let o of obj.protocol || []) {
+        for (const o of obj.protocol || []) {
           this.protocol.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -15574,37 +15576,37 @@ export class ResearchStudy extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
       if (obj.focus) {
         this.focus = [];
-        for (let o of obj.focus || []) {
+        for (const o of obj.focus || []) {
           this.focus.push(new CodeableConcept(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.keyword) {
         this.keyword = [];
-        for (let o of obj.keyword || []) {
+        for (const o of obj.keyword || []) {
           this.keyword.push(new CodeableConcept(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -15613,7 +15615,7 @@ export class ResearchStudy extends DomainResource {
       }
       if (obj.enrollment) {
         this.enrollment = [];
-        for (let o of obj.enrollment || []) {
+        for (const o of obj.enrollment || []) {
           this.enrollment.push(new ResourceReference(o));
         }
       }
@@ -15628,7 +15630,7 @@ export class ResearchStudy extends DomainResource {
       }
       if (obj.site) {
         this.site = [];
-        for (let o of obj.site || []) {
+        for (const o of obj.site || []) {
           this.site.push(new ResourceReference(o));
         }
       }
@@ -15637,13 +15639,13 @@ export class ResearchStudy extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.arm) {
         this.arm = [];
-        for (let o of obj.arm || []) {
+        for (const o of obj.arm || []) {
           this.arm.push(new ArmComponent(o));
         }
       }
@@ -15789,13 +15791,13 @@ export class RiskAssessment extends DomainResource {
       }
       if (obj.basis) {
         this.basis = [];
-        for (let o of obj.basis || []) {
+        for (const o of obj.basis || []) {
           this.basis.push(new ResourceReference(o));
         }
       }
       if (obj.prediction) {
         this.prediction = [];
-        for (let o of obj.prediction || []) {
+        for (const o of obj.prediction || []) {
           this.prediction.push(new PredictionComponent(o));
         }
       }
@@ -15864,7 +15866,7 @@ export class Schedule extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -15876,19 +15878,19 @@ export class Schedule extends DomainResource {
       }
       if (obj.serviceType) {
         this.serviceType = [];
-        for (let o of obj.serviceType || []) {
+        for (const o of obj.serviceType || []) {
           this.serviceType.push(new CodeableConcept(o));
         }
       }
       if (obj.specialty) {
         this.specialty = [];
-        for (let o of obj.specialty || []) {
+        for (const o of obj.specialty || []) {
           this.specialty.push(new CodeableConcept(o));
         }
       }
       if (obj.actor) {
         this.actor = [];
-        for (let o of obj.actor || []) {
+        for (const o of obj.actor || []) {
           this.actor.push(new ResourceReference(o));
         }
       }
@@ -15956,19 +15958,19 @@ export class SearchParameter extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -16013,7 +16015,7 @@ export class SearchParameter extends DomainResource {
       }
       if (obj.component) {
         this.component = [];
-        for (let o of obj.component || []) {
+        for (const o of obj.component || []) {
           this.component.push(new ComponentComponent(o));
         }
       }
@@ -16221,7 +16223,7 @@ export class Sequence extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16251,7 +16253,7 @@ export class Sequence extends DomainResource {
       }
       if (obj.variant) {
         this.variant = [];
-        for (let o of obj.variant || []) {
+        for (const o of obj.variant || []) {
           this.variant.push(new VariantComponent(o));
         }
       }
@@ -16260,7 +16262,7 @@ export class Sequence extends DomainResource {
       }
       if (obj.quality) {
         this.quality = [];
-        for (let o of obj.quality || []) {
+        for (const o of obj.quality || []) {
           this.quality.push(new QualityComponent(o));
         }
       }
@@ -16269,13 +16271,13 @@ export class Sequence extends DomainResource {
       }
       if (obj.repository) {
         this.repository = [];
-        for (let o of obj.repository || []) {
+        for (const o of obj.repository || []) {
           this.repository.push(new RepositoryComponent(o));
         }
       }
       if (obj.pointer) {
         this.pointer = [];
-        for (let o of obj.pointer || []) {
+        for (const o of obj.pointer || []) {
           this.pointer.push(new ResourceReference(o));
         }
       }
@@ -16320,7 +16322,7 @@ export class ServiceDefinition extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16365,31 +16367,31 @@ export class ServiceDefinition extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
       if (obj.topic) {
         this.topic = [];
-        for (let o of obj.topic || []) {
+        for (const o of obj.topic || []) {
           this.topic.push(new CodeableConcept(o));
         }
       }
       if (obj.contributor) {
         this.contributor = [];
-        for (let o of obj.contributor || []) {
+        for (const o of obj.contributor || []) {
           this.contributor.push(new Contributor(o));
         }
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -16398,19 +16400,19 @@ export class ServiceDefinition extends DomainResource {
       }
       if (obj.relatedArtifact) {
         this.relatedArtifact = [];
-        for (let o of obj.relatedArtifact || []) {
+        for (const o of obj.relatedArtifact || []) {
           this.relatedArtifact.push(new RelatedArtifact(o));
         }
       }
       if (obj.trigger) {
         this.trigger = [];
-        for (let o of obj.trigger || []) {
+        for (const o of obj.trigger || []) {
           this.trigger.push(new TriggerDefinition(o));
         }
       }
       if (obj.dataRequirement) {
         this.dataRequirement = [];
-        for (let o of obj.dataRequirement || []) {
+        for (const o of obj.dataRequirement || []) {
           this.dataRequirement.push(new DataRequirement(o));
         }
       }
@@ -16441,7 +16443,7 @@ export class Slot extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16450,13 +16452,13 @@ export class Slot extends DomainResource {
       }
       if (obj.serviceType) {
         this.serviceType = [];
-        for (let o of obj.serviceType || []) {
+        for (const o of obj.serviceType || []) {
           this.serviceType.push(new CodeableConcept(o));
         }
       }
       if (obj.specialty) {
         this.specialty = [];
-        for (let o of obj.specialty || []) {
+        for (const o of obj.specialty || []) {
           this.specialty.push(new CodeableConcept(o));
         }
       }
@@ -16533,7 +16535,7 @@ export class ProcessingComponent extends BackboneElement {
       }
       if (obj.additive) {
         this.additive = [];
-        for (let o of obj.additive || []) {
+        for (const o of obj.additive || []) {
           this.additive.push(new ResourceReference(o));
         }
       }
@@ -16558,7 +16560,7 @@ export class ContainerComponent extends BackboneElement {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16602,7 +16604,7 @@ export class Specimen extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16623,13 +16625,13 @@ export class Specimen extends DomainResource {
       }
       if (obj.parent) {
         this.parent = [];
-        for (let o of obj.parent || []) {
+        for (const o of obj.parent || []) {
           this.parent.push(new ResourceReference(o));
         }
       }
       if (obj.request) {
         this.request = [];
-        for (let o of obj.request || []) {
+        for (const o of obj.request || []) {
           this.request.push(new ResourceReference(o));
         }
       }
@@ -16638,19 +16640,19 @@ export class Specimen extends DomainResource {
       }
       if (obj.processing) {
         this.processing = [];
-        for (let o of obj.processing || []) {
+        for (const o of obj.processing || []) {
           this.processing.push(new ProcessingComponent(o));
         }
       }
       if (obj.container) {
         this.container = [];
-        for (let o of obj.container || []) {
+        for (const o of obj.container || []) {
           this.container.push(new ContainerComponent(o));
         }
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -16714,7 +16716,7 @@ export class StructureMap extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16741,7 +16743,7 @@ export class StructureMap extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -16750,13 +16752,13 @@ export class StructureMap extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -16768,7 +16770,7 @@ export class StructureMap extends DomainResource {
       }
       if (obj.structure) {
         this.structure = [];
-        for (let o of obj.structure || []) {
+        for (const o of obj.structure || []) {
           this.structure.push(new StructureComponent(o));
         }
       }
@@ -16777,7 +16779,7 @@ export class StructureMap extends DomainResource {
       }
       if (obj.group) {
         this.group = [];
-        for (let o of obj.group || []) {
+        for (const o of obj.group || []) {
           this.group.push(new GroupComponent(o));
         }
       }
@@ -16831,7 +16833,7 @@ export class Subscription extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactPoint(o));
         }
       }
@@ -16852,7 +16854,7 @@ export class Subscription extends DomainResource {
       }
       if (obj.tag) {
         this.tag = [];
-        for (let o of obj.tag || []) {
+        for (const o of obj.tag || []) {
           this.tag.push(new Coding(o));
         }
       }
@@ -16876,7 +16878,7 @@ export class Substance extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -16885,7 +16887,7 @@ export class Substance extends DomainResource {
       }
       if (obj.category) {
         this.category = [];
-        for (let o of obj.category || []) {
+        for (const o of obj.category || []) {
           this.category.push(new CodeableConcept(o));
         }
       }
@@ -16897,13 +16899,13 @@ export class Substance extends DomainResource {
       }
       if (obj.instance) {
         this.instance = [];
-        for (let o of obj.instance || []) {
+        for (const o of obj.instance || []) {
           this.instance.push(new InstanceComponent(o));
         }
       }
       if (obj.ingredient) {
         this.ingredient = [];
-        for (let o of obj.ingredient || []) {
+        for (const o of obj.ingredient || []) {
           this.ingredient.push(new IngredientComponent(o));
         }
       }
@@ -16952,13 +16954,13 @@ export class SupplyDelivery extends DomainResource {
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -16985,7 +16987,7 @@ export class SupplyDelivery extends DomainResource {
       }
       if (obj.receiver) {
         this.receiver = [];
-        for (let o of obj.receiver || []) {
+        for (const o of obj.receiver || []) {
           this.receiver.push(new ResourceReference(o));
         }
       }
@@ -17056,7 +17058,7 @@ export class SupplyRequest extends DomainResource {
       }
       if (obj.supplier) {
         this.supplier = [];
-        for (let o of obj.supplier || []) {
+        for (const o of obj.supplier || []) {
           this.supplier.push(new ResourceReference(o));
         }
       }
@@ -17090,7 +17092,7 @@ export class RestrictionComponent extends BackboneElement {
       }
       if (obj.recipient) {
         this.recipient = [];
-        for (let o of obj.recipient || []) {
+        for (const o of obj.recipient || []) {
           this.recipient.push(new ResourceReference(o));
         }
       }
@@ -17152,7 +17154,7 @@ export class Task extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -17161,7 +17163,7 @@ export class Task extends DomainResource {
       }
       if (obj.basedOn) {
         this.basedOn = [];
-        for (let o of obj.basedOn || []) {
+        for (const o of obj.basedOn || []) {
           this.basedOn.push(new ResourceReference(o));
         }
       }
@@ -17170,7 +17172,7 @@ export class Task extends DomainResource {
       }
       if (obj.partOf) {
         this.partOf = [];
-        for (let o of obj.partOf || []) {
+        for (const o of obj.partOf || []) {
           this.partOf.push(new ResourceReference(o));
         }
       }
@@ -17218,7 +17220,7 @@ export class Task extends DomainResource {
       }
       if (obj.performerType) {
         this.performerType = [];
-        for (let o of obj.performerType || []) {
+        for (const o of obj.performerType || []) {
           this.performerType.push(new CodeableConcept(o));
         }
       }
@@ -17230,13 +17232,13 @@ export class Task extends DomainResource {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
       if (obj.relevantHistory) {
         this.relevantHistory = [];
-        for (let o of obj.relevantHistory || []) {
+        for (const o of obj.relevantHistory || []) {
           this.relevantHistory.push(new ResourceReference(o));
         }
       }
@@ -17245,13 +17247,13 @@ export class Task extends DomainResource {
       }
       if (obj.input) {
         this.input = [];
-        for (let o of obj.input || []) {
+        for (const o of obj.input || []) {
           this.input.push(new ParameterComponent(o));
         }
       }
       if (obj.output) {
         this.output = [];
-        for (let o of obj.output || []) {
+        for (const o of obj.output || []) {
           this.output.push(new OutputComponent(o));
         }
       }
@@ -17317,7 +17319,7 @@ export class SetupComponent extends BackboneElement {
     if (obj) {
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new SetupActionComponent(o));
         }
       }
@@ -17360,7 +17362,7 @@ export class TestComponent extends BackboneElement {
       }
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new TestActionComponent(o));
         }
       }
@@ -17391,7 +17393,7 @@ export class TeardownComponent extends BackboneElement {
     if (obj) {
       if (obj.action) {
         this.action = [];
-        for (let o of obj.action || []) {
+        for (const o of obj.action || []) {
           this.action.push(new TeardownActionComponent(o));
         }
       }
@@ -17444,7 +17446,7 @@ export class TestReport extends DomainResource {
       }
       if (obj.participant) {
         this.participant = [];
-        for (let o of obj.participant || []) {
+        for (const o of obj.participant || []) {
           this.participant.push(new ParticipantComponent(o));
         }
       }
@@ -17453,7 +17455,7 @@ export class TestReport extends DomainResource {
       }
       if (obj.test) {
         this.test = [];
-        for (let o of obj.test || []) {
+        for (const o of obj.test || []) {
           this.test.push(new TestComponent(o));
         }
       }
@@ -17548,13 +17550,13 @@ export class MetadataComponent extends BackboneElement {
     if (obj) {
       if (obj.link) {
         this.link = [];
-        for (let o of obj.link || []) {
+        for (const o of obj.link || []) {
           this.link.push(new LinkComponent(o));
         }
       }
       if (obj.capability) {
         this.capability = [];
-        for (let o of obj.capability || []) {
+        for (const o of obj.capability || []) {
           this.capability.push(new CapabilityComponent(o));
         }
       }
@@ -17657,7 +17659,7 @@ export class RuleComponent extends BackboneElement {
       }
       if (obj.param) {
         this.param = [];
-        for (let o of obj.param || []) {
+        for (const o of obj.param || []) {
           this.param.push(new RuleParamComponent(o));
         }
       }
@@ -17696,7 +17698,7 @@ export class RulesetRuleComponent extends BackboneElement {
       }
       if (obj.param) {
         this.param = [];
-        for (let o of obj.param || []) {
+        for (const o of obj.param || []) {
           this.param.push(new RulesetRuleParamComponent(o));
         }
       }
@@ -17717,7 +17719,7 @@ export class RulesetComponent extends BackboneElement {
       }
       if (obj.rule) {
         this.rule = [];
-        for (let o of obj.rule || []) {
+        for (const o of obj.rule || []) {
           this.rule.push(new RulesetRuleComponent(o));
         }
       }
@@ -17787,7 +17789,7 @@ export class TestScript extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -17796,13 +17798,13 @@ export class TestScript extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -17814,13 +17816,13 @@ export class TestScript extends DomainResource {
       }
       if (obj.origin) {
         this.origin = [];
-        for (let o of obj.origin || []) {
+        for (const o of obj.origin || []) {
           this.origin.push(new OriginComponent(o));
         }
       }
       if (obj.destination) {
         this.destination = [];
-        for (let o of obj.destination || []) {
+        for (const o of obj.destination || []) {
           this.destination.push(new DestinationComponent(o));
         }
       }
@@ -17829,31 +17831,31 @@ export class TestScript extends DomainResource {
       }
       if (obj.fixture) {
         this.fixture = [];
-        for (let o of obj.fixture || []) {
+        for (const o of obj.fixture || []) {
           this.fixture.push(new FixtureComponent(o));
         }
       }
       if (obj.profile) {
         this.profile = [];
-        for (let o of obj.profile || []) {
+        for (const o of obj.profile || []) {
           this.profile.push(new ResourceReference(o));
         }
       }
       if (obj.variable) {
         this.variable = [];
-        for (let o of obj.variable || []) {
+        for (const o of obj.variable || []) {
           this.variable.push(new VariableComponent(o));
         }
       }
       if (obj.rule) {
         this.rule = [];
-        for (let o of obj.rule || []) {
+        for (const o of obj.rule || []) {
           this.rule.push(new RuleComponent(o));
         }
       }
       if (obj.ruleset) {
         this.ruleset = [];
-        for (let o of obj.ruleset || []) {
+        for (const o of obj.ruleset || []) {
           this.ruleset.push(new RulesetComponent(o));
         }
       }
@@ -17862,7 +17864,7 @@ export class TestScript extends DomainResource {
       }
       if (obj.test) {
         this.test = [];
-        for (let o of obj.test || []) {
+        for (const o of obj.test || []) {
           this.test.push(new TestComponent(o));
         }
       }
@@ -17890,7 +17892,7 @@ export class ConceptReferenceComponent extends BackboneElement {
       }
       if (obj.designation) {
         this.designation = [];
-        for (let o of obj.designation || []) {
+        for (const o of obj.designation || []) {
           this.designation.push(new DesignationComponent(o));
         }
       }
@@ -17917,13 +17919,13 @@ export class ConceptSetComponent extends BackboneElement {
       }
       if (obj.concept) {
         this.concept = [];
-        for (let o of obj.concept || []) {
+        for (const o of obj.concept || []) {
           this.concept.push(new ConceptReferenceComponent(o));
         }
       }
       if (obj.filter) {
         this.filter = [];
-        for (let o of obj.filter || []) {
+        for (const o of obj.filter || []) {
           this.filter.push(new FilterComponent(o));
         }
       }
@@ -17952,13 +17954,13 @@ export class ComposeComponent extends BackboneElement {
       }
       if (obj.include) {
         this.include = [];
-        for (let o of obj.include || []) {
+        for (const o of obj.include || []) {
           this.include.push(new ConceptSetComponent(o));
         }
       }
       if (obj.exclude) {
         this.exclude = [];
-        for (let o of obj.exclude || []) {
+        for (const o of obj.exclude || []) {
           this.exclude.push(new ConceptSetComponent(o));
         }
       }
@@ -18000,13 +18002,13 @@ export class ContainsComponent extends BackboneElement {
       }
       if (obj.designation) {
         this.designation = [];
-        for (let o of obj.designation || []) {
+        for (const o of obj.designation || []) {
           this.designation.push(new DesignationComponent(o));
         }
       }
       if (obj.contains) {
         this.contains = [];
-        for (let o of obj.contains || []) {
+        for (const o of obj.contains || []) {
           this.contains.push(new ContainsComponent(o));
         }
       }
@@ -18040,13 +18042,13 @@ export class ExpansionComponent extends BackboneElement {
       }
       if (obj.parameter) {
         this.parameter = [];
-        for (let o of obj.parameter || []) {
+        for (const o of obj.parameter || []) {
           this.parameter.push(new ParameterComponent(o));
         }
       }
       if (obj.contains) {
         this.contains = [];
-        for (let o of obj.contains || []) {
+        for (const o of obj.contains || []) {
           this.contains.push(new ContainsComponent(o));
         }
       }
@@ -18085,7 +18087,7 @@ export class ValueSet extends DomainResource {
       }
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -18112,7 +18114,7 @@ export class ValueSet extends DomainResource {
       }
       if (obj.contact) {
         this.contact = [];
-        for (let o of obj.contact || []) {
+        for (const o of obj.contact || []) {
           this.contact.push(new ContactDetail(o));
         }
       }
@@ -18121,13 +18123,13 @@ export class ValueSet extends DomainResource {
       }
       if (obj.useContext) {
         this.useContext = [];
-        for (let o of obj.useContext || []) {
+        for (const o of obj.useContext || []) {
           this.useContext.push(new UsageContext(o));
         }
       }
       if (obj.jurisdiction) {
         this.jurisdiction = [];
-        for (let o of obj.jurisdiction || []) {
+        for (const o of obj.jurisdiction || []) {
           this.jurisdiction.push(new CodeableConcept(o));
         }
       }
@@ -18218,7 +18220,7 @@ export class DispenseComponent extends BackboneElement {
       }
       if (obj.note) {
         this.note = [];
-        for (let o of obj.note || []) {
+        for (const o of obj.note || []) {
           this.note.push(new Annotation(o));
         }
       }
@@ -18243,7 +18245,7 @@ export class VisionPrescription extends DomainResource {
     if (obj) {
       if (obj.identifier) {
         this.identifier = [];
-        for (let o of obj.identifier || []) {
+        for (const o of obj.identifier || []) {
           this.identifier.push(new Identifier(o));
         }
       }
@@ -18267,7 +18269,7 @@ export class VisionPrescription extends DomainResource {
       }
       if (obj.dispense) {
         this.dispense = [];
-        for (let o of obj.dispense || []) {
+        for (const o of obj.dispense || []) {
           this.dispense.push(new DispenseComponent(o));
         }
       }

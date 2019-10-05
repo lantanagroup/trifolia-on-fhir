@@ -4,7 +4,8 @@ import {BadRequestException, HttpService, InternalServerErrorException, Unauthor
 import {ITofRequest, ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
-import {Bundle, DomainResource, Group, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, Group, Practitioner, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
@@ -225,5 +226,142 @@ export class BaseController {
     });
 
     return await Promise.all(promises);
+  }
+
+  /**
+   * Removes references (any many as we are aware of) to the specified resource.
+   * @param baseUrl The base url of the FHIR server to search on
+   * @param fhirServerVersion The version of the currently selected FHIR server. This is needed to know what parameters to use, which vary from version to version.
+   * @param resourceType The resource type of the resource that we want to find references to
+   * @param id The id of the resource that we want to find references to
+   */
+  protected async removeReferencesToResource(baseUrl: string, fhirServerVersion: 'stu3'|'r4', resourceType: string, id: string) {
+    // Searches all properties of the object to find a property that has "reference" set to <resourceType>/<id>
+    // The object/property that contains that "reference" property/value is returned.
+    const findReference = (obj: any) => {
+      if (!obj) return;
+
+      if (obj.reference === `${resourceType}/${id}`) {
+        return obj;
+      }
+
+      const propertyNames = Object.keys(obj);
+
+      for (let i = 0; i < propertyNames.length; i++) {
+        const propertyName = propertyNames[i];
+
+        if (typeof obj[propertyName] === 'object') {
+          const foundReference = findReference(obj[propertyName]);
+
+          if (foundReference) {
+            return foundReference;
+          }
+        }
+      }
+    };
+
+    // Finds a reference to the resource in the specified object/resource and
+    // deletes the reference/display from it.
+    const deleteReferenceForResource = (resource: DomainResource) => {
+      switch (resource.resourceType) {
+        case 'ImplementationGuide':
+          if (fhirServerVersion === 'stu3') {
+            const stu3ImplementationGuide = <STU3ImplementationGuide> resource;
+
+            // Remove package references
+            (stu3ImplementationGuide.package || []).forEach(pkg => {
+              const foundPkgReferences = (pkg.resource || []).filter(res => res.sourceReference && res.sourceReference.reference === `${resourceType}/${id}`);
+              foundPkgReferences.forEach(res => pkg.resource.splice(pkg.resource.indexOf(res), 1));
+            });
+
+            // Remove global references
+            (stu3ImplementationGuide.global || [])
+              .filter(globalRef => globalRef.profile && globalRef.profile.reference === `${resourceType}/${id}`)
+              .forEach(globalRef => stu3ImplementationGuide.global.splice(stu3ImplementationGuide.global.indexOf(globalRef), 1));
+          } else if (fhirServerVersion === 'r4') {
+            const r4ImplementationGuide = <R4ImplementationGuide> resource;
+
+            if (r4ImplementationGuide.definition) {
+              // Remove resource reference
+              (r4ImplementationGuide.definition.resource || [])
+                .filter(res => res.reference && res.reference.reference === `${resourceType}/${id}`)
+                .forEach(res => r4ImplementationGuide.definition.resource.splice(r4ImplementationGuide.definition.resource.indexOf(res), 1));
+
+              // Remove global references
+              (r4ImplementationGuide.global || [])
+                .filter(globalRef => globalRef.profile && globalRef.profile === `${resourceType}/${id}`)
+                .forEach(globalRef => r4ImplementationGuide.global.splice(r4ImplementationGuide.global.indexOf(globalRef), 1));
+            }
+          } else {
+            throw new Error(`Unexpected FHIR server version ${fhirServerVersion} found when deleting references to resource.`);
+          }
+          break;
+        default:
+          const foundReference = findReference(resource);
+
+          if (!foundReference) {
+            console.error('Expected to find a reference to the resource!');
+            return;
+          }
+
+          // Remove the reference and display from the reference, leaving it empty.
+          delete foundReference.reference;
+          delete foundReference.display;
+          break;
+      }
+    };
+
+    // Queries the server for the specified resource type, using the search parameter
+    // to search for the resource by reference.
+    const searchForReference = (searchResourceType: string, searchParameter: string) => {
+      return new Promise(async (resolve) => {
+        const params = {};    // DONT use _summary=true. The results may end up getting used to update the resource.
+        params[searchParameter] = `${resourceType}/${id}`;
+        const searchUrl = buildUrl(baseUrl, searchResourceType, null, null, params);
+
+        const results = await this.httpService.get(searchUrl).toPromise();
+        const bundle: Bundle = results.data;
+        const resources = (bundle.entry || []).map(entry => <DomainResource> entry.resource);
+
+        resolve(resources);
+      });
+    };
+
+    const searchPromises = [];
+
+    // These search parameters apply to both STU3 and R4 servers
+    searchPromises.push(searchForReference('ImplementationGuide', 'resource'));
+
+    // Apply R4-specific search parameters
+    if (fhirServerVersion === 'r4') {
+      searchPromises.push(searchForReference('ImplementationGuide', 'global'));
+    }
+
+    // Concatenate all results into a single array of resources that reference the target
+    const allResults = await Promise.all(searchPromises);
+    const allResources = allResults.reduce((prev, curr) => {
+      return prev.concat(curr);
+    }, []);
+
+    // Delete any references to the target resource
+    allResources.forEach(resource => deleteReferenceForResource(resource));
+
+    // Persist the changes to the resources
+    if (allResources.length > 0) {
+      const transaction = new Bundle();
+      transaction.type = 'transaction';
+      transaction.entry = allResources.map((resource) => {
+        return {
+          resource: resource,
+          fullUrl: buildUrl(baseUrl, resource.resourceType, resource.id),
+          request: {
+            method: 'PUT',
+            url: `${resource.resourceType}/${resource.id}`
+          }
+        };
+      });
+
+      await this.httpService.post<Bundle>(baseUrl, transaction).toPromise();
+    }
   }
 }
