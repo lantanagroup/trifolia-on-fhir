@@ -39,7 +39,7 @@ export class NewProfileComponent implements OnInit {
   public save() {
     this.strucDefService.save(this.structureDefinition)
       .subscribe((results) => {
-        this.route.navigate([`${this.configService.fhirServer}/structure-definition/${results.id}`]);
+        this.route.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
       }, (err) => {
         this.message = getErrorString(err);
       });
