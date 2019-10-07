@@ -9,6 +9,7 @@ export interface ConfigModel {
     clientId: string;
     domain: string;
     scope: string;
+    issuer: string;
   };
   github: {
     clientId: string;

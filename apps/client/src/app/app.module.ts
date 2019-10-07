@@ -64,6 +64,7 @@ import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
+import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
 
 //OSP: Added in move fra Auth0 to angular-oauth2-oidc
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
@@ -223,7 +224,7 @@ const authModuleConfig: OAuthModuleConfig = {
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    OAuthModule.forRoot(authModuleConfig),    //OSP: Added in move fra Auth0 to angular-oauth2-oidc
+    OAuthModule.forRoot(authModuleConfig),
     HttpModule,
     NgbModule.forRoot(),
     FileDropModule,
@@ -248,7 +249,6 @@ const authModuleConfig: OAuthModuleConfig = {
       provide: CookieService,
       useFactory: cookieServiceFactory
     },
-    //OSP: Added in move fra Auth0 to angular-oauth2-oidc
     {
       provide: OAuthModuleConfig,
       useValue: authModuleConfig

@@ -17,7 +17,6 @@ export class AuthService {
   // expiresIn is in seconds
   private readonly fiveMinutesInSeconds = 300;
 
-  //public auth0: any;
   public userProfile: any;
   public practitioner: Practitioner;
   public groups: Group[] = [];
@@ -32,7 +31,6 @@ export class AuthService {
     private modalService: NgbModal,
     private practitionerService: PractitionerService,
     private groupService: GroupService,
-    //OSP: Added in move fra Auth0 to angular-oauth2-oidc
     private oauthService: OAuthService) {
 
     this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'),);
@@ -49,19 +47,17 @@ export class AuthService {
 
   public init() {
 
-    const authConfig: AuthConfig = {
-      issuer: 'https://saml.devtest.systematic-ehealth.com/auth/realms/ehealth',
-      clientId: 'trifolia',
-      redirectUri: window.location.origin + '/login',
-      //redirectUri: 'http://localhost:49366/login',
-      logoutUrl: '',
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      scope: 'openid profile email',
-    };
+    const authConfig: AuthConfig = {};
+    authConfig.issuer = this.configService.config.auth.issuer;
+    authConfig.clientId = this.configService.config.auth.clientId;
+    authConfig.redirectUri = window.location.origin + '/login';
+    authConfig.logoutUrl = window.location.origin + '/logout';
+    authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
+    authConfig.scope = this.configService.config.auth.scope,
     this.oauthService.configure(authConfig)
 
     // For debugging:
-    this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
+    //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
     this.oauthService.loadDiscoveryDocument()
 
@@ -97,7 +93,6 @@ export class AuthService {
 
     // When the FHIR server changes, get the profile for the user on the FHIR server
     // and then notify the socket connection that the user has been authenticated
-
     this.configService.fhirServerChanged.subscribe(async () => {
       await this.getProfile();
 
@@ -108,7 +103,6 @@ export class AuthService {
   }
 
   public login(): void {
-
     if (!this.oauthService) {
       return;
     }
@@ -117,9 +111,6 @@ export class AuthService {
   }
 
   public handleAuthentication(): void {
-
-    console.error('-- handleAuthentication');
-
     if (!this.oauthService) {
       return;
     }
@@ -159,8 +150,6 @@ export class AuthService {
     }
 
     if (this.oauthService) {
-      //OSP: kan flyttes til conf. i app.module
-      // this.oauthService.logoutUrl = '${location.origin}/logout';
       this.oauthService.logOut();
     }
 
@@ -170,10 +159,8 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-
     return new Date().getTime() < this.authExpiresAt;
   }
-
 
   private getAuthUserInfo() : Object {
 
@@ -183,7 +170,6 @@ export class AuthService {
   }
 
   public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
-
     if (!this.isAuthenticated()) {
       return Promise.resolve({userProfile: null, practitioner: null});
     }
@@ -228,7 +214,6 @@ export class AuthService {
 
   private setSession(): void {
 
-    console.error('-- handleAuthentication');
     // Set the time that the access token will expire at
     const expiresAt = JSON.stringify(this.oauthService.getAccessTokenExpiration());
     localStorage.setItem('token', this.oauthService.getAccessToken());
