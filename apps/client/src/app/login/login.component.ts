@@ -36,7 +36,5 @@ export class LoginComponent implements OnInit {
         return;
       }
     }
-
-    this.authService.handleAuthentication();
   }
 }

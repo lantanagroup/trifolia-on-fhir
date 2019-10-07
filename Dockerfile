@@ -1,4 +1,4 @@
-FROM node:12-alpine AS build-ToF
+FROM node:10-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
@@ -29,7 +29,7 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 
 RUN npm prune --production
 
-FROM node:12-alpine
+FROM node:10-alpine
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
 
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/

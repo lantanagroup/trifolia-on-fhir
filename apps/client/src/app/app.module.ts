@@ -65,6 +65,9 @@ import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 
+//OSP: Added in move fra Auth0 to angular-oauth2-oidc
+import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
+
 /**
  * This class is an HTTP interceptor that is responsible for adding an
  * Authorization header to every request sent to the application server.
@@ -180,6 +183,14 @@ export function init(configService: ConfigService, authService: AuthService, fhi
   return () => getConfig();
 }
 
+const authModuleConfig: OAuthModuleConfig = {
+  // Inject "Authorization: Bearer ..." header for these APIs:
+  resourceServer: {
+    allowedUrls: [],
+    sendAccessToken: true,
+  },
+};
+
 @NgModule({
   entryComponents: [
     STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
@@ -212,6 +223,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    OAuthModule.forRoot(authModuleConfig),    //OSP: Added in move fra Auth0 to angular-oauth2-oidc
     HttpModule,
     NgbModule.forRoot(),
     FileDropModule,
@@ -235,6 +247,19 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     }, {
       provide: CookieService,
       useFactory: cookieServiceFactory
+    },
+    //OSP: Added in move fra Auth0 to angular-oauth2-oidc
+    {
+      provide: OAuthModuleConfig,
+      useValue: authModuleConfig
+    },
+    {
+      provide: ValidationHandler,
+      useClass: JwksValidationHandler
+    },
+    {
+      provide: OAuthStorage,
+      useValue: localStorage
     }
   ],
   bootstrap: [AppComponent]

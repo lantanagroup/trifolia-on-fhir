@@ -115,6 +115,7 @@
               "apps/client/src/favicon.ico",
               "apps/client/src/assets",
               "apps/client/src/help",
+              "apps/client/src/silent-refresh.html",
               {
                 "glob": "**/*",
                 "input": "libs/tof-lib/src/assets",
@@ -129,7 +130,6 @@
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
-              "node_modules/auth0-js/build/auth0.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"

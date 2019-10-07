@@ -13,7 +13,7 @@ import * as modulePackage from '../../../../package.json';
 @ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
   }
@@ -32,7 +32,8 @@ export class ConfigController extends BaseController {
       auth: {
         clientId: this.configService.auth.clientId,
         scope: this.configService.auth.scope,
-        domain: this.configService.auth.domain
+        domain: this.configService.auth.domain,
+        issuer: this.configService.auth.issuer
       },
       github: {
         clientId: this.configService.github.clientId
