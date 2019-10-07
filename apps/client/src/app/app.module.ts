@@ -66,9 +66,6 @@ import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
 
-//OSP: Added in move fra Auth0 to angular-oauth2-oidc
-import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc'; // Added
-
 /**
  * This class is an HTTP interceptor that is responsible for adding an
  * Authorization header to every request sent to the application server.
