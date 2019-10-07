@@ -9,6 +9,8 @@ import {
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import nock from 'nock';
+import EventEmitter = NodeJS.EventEmitter;
 
 export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com'): ITofUser {
   return {
@@ -74,4 +76,26 @@ export function createBundle(type: STU3BundleTypes | R4BundleTypes, baseUrl: str
     total: resources.length,
     entry: entries
   };
+}
+
+export function nockPermissions(nockReq: nock.Scope, authUserId = 'test.user', internalUserId = 'test-user-id', userPractitionerResponse?, userGroupResponse?) {
+  return nockReq
+    .get('/Practitioner')
+    .query({ identifier: Globals.authNamespace + '|' + authUserId })
+    .reply(200, userPractitionerResponse || createUserPractitionerResponse)
+    .get('/Group')
+    .query({ member: internalUserId, '_summary': 'true' })
+    .reply(200, userGroupResponse || createUserGroupResponse);
+}
+
+export function nockDelete(nockReq: nock.Scope, resourceReference: string, igResourceResponse, igGlobalResponse) {
+  return nockReq
+    // search for implementation guides that reference it via "resource" search param
+    .get('/ImplementationGuide')
+    .query({ resource: resourceReference})
+    .reply(200, igResourceResponse)
+    // search for implementation guides that reference it via "global" search param
+    .get('/ImplementationGuide')
+    .query({ global: resourceReference})
+    .reply(200, igGlobalResponse);
 }
