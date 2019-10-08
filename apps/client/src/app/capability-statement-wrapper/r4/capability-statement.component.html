@@ -199,54 +199,9 @@
               <div class="card-body" *ngIf="r.hasOwnProperty('security')">
                 <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS"></app-fhir-boolean>
 
-                <app-fhir-string [parentObject]="r.security" propertyName="description"
-                                 title="Description"></app-fhir-string>
+                <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
 
-                <div class="card">
-                  <div class="card-header">
-                    <input type="checkbox" [ngModel]="r.security.hasOwnProperty('certificate')"
-                           (ngModelChange)="Globals.toggleProperty(r.security, 'certificate', [{}])"/>
-                    Certificate
-                  </div>
-                  <table class="table table-striped" *ngIf="r.security.hasOwnProperty('certificate')">
-                    <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Blob</th>
-                      <th>
-                        <div class="pull-right">
-                          <button type="button" class="btn btn-default" title="Add a certificate"
-                                  (click)="r.security.certificate.push({})">
-                            <i class="fa fa-plus"></i>
-                          </button>
-                        </div>
-                      </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let c of r.security.certificate; let ci = index">
-                      <td>
-                        <app-fhir-string [parentObject]="c" propertyName="type" [isFormGroup]="false"></app-fhir-string>
-                      </td>
-                      <td>
-                        <app-fhir-string [parentObject]="c" propertyName="blob" [isFormGroup]="false"></app-fhir-string>
-                      </td>
-                      <td>
-                        <div class="pull-right">
-                          <button type="button" class="btn btn-default" title="Remove this certificate"
-                                  (click)="r.security.certificate.splice(ci, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <p>
-                  Service: TODO
-                </p>
+                <p>Service: TODO</p>
               </div>
             </div>
 
@@ -310,7 +265,7 @@
             <div class="card">
               <div class="card-header">
                 <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')"
-                       (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'transaction' }])"/>
+                       (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'read' }])"/>
                 Interaction(s)
               </div>
               <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
@@ -320,8 +275,7 @@
                   <th>Documentation</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an interaction"
-                              (click)="r.resource.push({ code: 'transaction' })">
+                      <button type="button" class="btn btn-default btn-sm" title="Add an interaction" (click)="r.interaction.push({ code: 'read' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -368,8 +322,7 @@
                   <th>Documentation</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a search param"
-                              (click)="r.searchParam.push({})">
+                      <button type="button" class="btn btn-default btn-sm" title="Add a search param" (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -465,8 +418,7 @@
                   <th>Name</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an compartment"
-                              (click)="r.compartment.push({ name: '', definition: { reference: '', display: '' }})">
+                      <button type="button" class="btn btn-default btn-sm" title="Add a compartment" (click)="r.compartment.push('')">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -476,13 +428,11 @@
                 <tbody>
                 <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
                   <td>
-                    <app-fhir-string [parentObject]="r.compartment" [propertyName]="sii" [isFormGroup]="false"
-                                     [required]="true"></app-fhir-string>
+                    <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false" [required]="true"></app-fhir-string>
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this compartment"
-                              (click)="r.compartment.splice(sii, 1)">
+                      <button type="button" class="btn btn-default btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -626,75 +576,6 @@
                 </tbody>
               </table>
             </div>
-
-            <!-- Events -->
-            <div class="card">
-              <div class="card-header">
-                <input type="checkbox" [ngModel]="messaging.hasOwnProperty('event')"
-                       (ngModelChange)="Globals.toggleProperty(messaging, 'event', [getDefaultMessagingEvent()])"/>
-                Events
-              </div>
-              <table class="table table-striped" *ngIf="messaging.hasOwnProperty('event')">
-                <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Mode</th>
-                  <th>Focus</th>
-                  <th>Request</th>
-                  <th>Response</th>
-                  <th>
-                    <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an event"
-                              (click)="messaging.event.push(getDefaultMessagingEvent())">
-                        <i class="fa fa-plus"></i>
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let event of messaging.event; let eventi = index">
-                  <td>
-                    <select class="form-control"
-                            [ngModel]="Globals.getSelectCoding(event.code, messageEventCodes, true, true)"
-                            (ngModelChange)="event.code = $event">
-                      <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
-                    </select>
-                  </td>
-                  <td>
-                    <app-fhir-select-single-code [parentObject]="event" propertyName="mode" [isFormGroup]="false"
-                                                 [required]="true"
-                                                 valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
-                  </td>
-                  <td>
-                    <app-fhir-select-single-code [parentObject]="event" propertyName="focus" [isFormGroup]="false"
-                                                 [required]="true"
-                                                 valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
-                  </td>
-                  <td>
-                    <app-fhir-reference [parentObject]="event" propertyName="request" [isFormGroup]="false"
-                                        [required]="true" resourceType="StructureDefinition"></app-fhir-reference>
-                  </td>
-                  <td>
-                    <app-fhir-reference [parentObject]="event" propertyName="response" [isFormGroup]="false"
-                                        [required]="true" resourceType="StructureDefinition"></app-fhir-reference>
-                  </td>
-                  <td>
-                    <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Edit this event"
-                              (click)="editEvent(event)">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this event"
-                              (click)="messaging.event.splice(eventi, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
           </ng-template>
         </ngb-tab>
         <ngb-tab [disabled]="true">
@@ -773,7 +654,10 @@
   </ngb-tab>
 
   <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
+  <ngb-tab id="validation">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>

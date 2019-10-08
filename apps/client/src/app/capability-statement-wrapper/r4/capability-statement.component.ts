@@ -1,15 +1,18 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../shared/capability-statement.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CapabilityStatement} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  CapabilityStatement,
+  CapabilityStatementResourceComponent,
+  CapabilityStatementRestComponent,
+  Coding
+} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Observable} from 'rxjs';
 import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {ClientHelper} from '../../clientHelper';
@@ -99,30 +102,14 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
       });
   }
 
-  public editResource(resource: ResourceComponent) {
+  public editResource(resource: CapabilityStatementResourceComponent) {
     const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
     modalRef.componentInstance.resource = resource;
   }
 
-  public copyResource(rest: RestComponent, resource: ResourceComponent) {
-    const resourceCopy = JSON.parse(JSON.stringify(resource));
+  public copyResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent) {
+    const resourceCopy: CapabilityStatementResourceComponent = JSON.parse(JSON.stringify(resource));
     rest.resource.push(resourceCopy);
-  }
-
-  public getDefaultMessagingEvent(): EventComponent {
-    return {
-      code: this.messageEventCodes[0],
-      mode: 'sender',
-      focus: 'Account',
-      request: {reference: '', display: ''},
-      response: {reference: '', display: ''}
-    };
-  }
-
-  public editEvent(event: EventComponent) {
-    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg'});
-    modalRef.componentInstance.event = event;
-
   }
 
   public addRestEntry(restTabSet) {

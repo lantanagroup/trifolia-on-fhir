@@ -173,8 +173,8 @@
             <th>URI</th>
             <th class="actions-column-2">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add a certificate"
-                        (click)="capabilityStatement.implementationGuide.push({})">
+                <button type="button" class="btn btn-default" title="Add an implementation guide"
+                        (click)="capabilityStatement.implementationGuide.push('')">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -192,7 +192,7 @@
                         (click)="selectImplementationGuide(igi)">
                   <i class="fa fa-hand-pointer-o"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Remove this certificate"
+                <button type="button" class="btn btn-default" title="Remove this implementation guide"
                         (click)="capabilityStatement.implementationGuide.splice(igi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
@@ -235,9 +235,8 @@
           <tbody>
           <tr *ngFor="let p of capabilityStatement.profile; let pi = index">
             <td>
-              <app-fhir-reference [parentObject]="capabilityStatement.profile" [propertyName]="pi" [isFormGroup]="false"
-                                  resourceType="StructureDefinition" [required]="true"
-                                  tooltipPath="CapabilityStatement.profile"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="capabilityStatement.profile" propertyName="{{pi}}" [isFormGroup]="false"
+                                  resourceType="StructureDefinition" [required]="true"></app-fhir-reference>
             </td>
             <td>
               <div class="pull-right">
@@ -397,7 +396,7 @@
                   <th class="actions-column-3">
                     <div class="pull-right">
                       <button type="button" class="btn btn-default btn-sm" title="Add a resource"
-                              (click)="r.resource.push({ type: 'Account' })">
+                              (click)="r.resource.push({ type: 'Account', interaction: [] })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -494,7 +493,7 @@
             <div class="card">
               <div class="card-header">
                 <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')"
-                       (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{}])"/>
+                       (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{ name: 'new search param', type: 'number' }])"/>
                 Search Params
                 <app-tooltip-icon tooltipPath="CapabilityStatement.rest.searchParam"></app-tooltip-icon>
               </div>
@@ -520,7 +519,7 @@
                   <th class="actions-column-1">
                     <div class="pull-right">
                       <button type="button" class="btn btn-default btn-sm" title="Add a search param"
-                              (click)="r.searchParam.push({})">
+                              (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -633,7 +632,7 @@
                 <tbody>
                 <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
                   <td>
-                    <app-fhir-string [parentObject]="r.compartment" [propertyName]="sii" [isFormGroup]="false"
+                    <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false"
                                      [required]="true"></app-fhir-string>
                   </td>
                   <td>
@@ -954,7 +953,10 @@
   </ngb-tab>
 
   <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
+  <ngb-tab id="validation">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+    </ng-template>
     <ng-template ngbTabContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>

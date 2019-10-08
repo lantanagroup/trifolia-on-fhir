@@ -3944,7 +3944,7 @@ export class ResourceInteractionComponent extends BackboneElement {
 export class SearchParamComponent extends BackboneElement {
   public name: string;
   public definition?: string;
-  public type: string;
+  public type: 'number'|'date'|'string'|'token'|'reference'|'composite'|'quantity'|'uri';
   public documentation?: string;
 
   constructor(obj?: any) {

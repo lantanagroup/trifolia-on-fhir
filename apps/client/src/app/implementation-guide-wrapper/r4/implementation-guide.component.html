@@ -558,7 +558,8 @@
     <!-- Validation -->
     <ngb-tab id="validation">
       <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span></ng-template>
+        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+      </ng-template>
       <ng-template ngbTabContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
