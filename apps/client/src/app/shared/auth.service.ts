@@ -9,8 +9,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
-
-import {OAuthService, OAuthErrorEvent, AuthConfig} from 'angular-oauth2-oidc'; // Add this import
+import {OAuthService, OAuthErrorEvent, AuthConfig} from 'angular-oauth2-oidc';
 
 @Injectable()
 export class AuthService {

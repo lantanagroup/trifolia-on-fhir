@@ -13,7 +13,6 @@ import * as modulePackage from '../../../../package.json';
 @ApiUseTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
-
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
   }
