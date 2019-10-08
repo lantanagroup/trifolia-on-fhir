@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>FHIR Versions</title>
+  <title>REST API</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="FHIR Versions">
+  <meta name="twitter:title" content="REST API">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="FHIR Versions" />
+  <meta property="og:title" content="REST API" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,9 +163,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="FHIRVersions"
-		  data-hnd-context="15"
-		  data-hnd-title="FHIR Versions"
+		  data-hnd-id="RESTAPI"
+		  data-hnd-context="20"
+		  data-hnd-title="REST API"
 		>
             
                 <div class="navigation">
@@ -173,20 +173,29 @@
                         <li><a href="TechnicalDetails.html">Technical Details</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="SystemRequirements.html" title="System Requirements" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="RESTAPI.html" title="REST API" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="FHIRVersions.html" title="FHIR Versions" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="TechnicalDetails_SecurityandPerm.html" title="Security and Permissions" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>FHIR Versions</h2>
+            <h2>REST API</h2>
 
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps8"><span class="rvts0"><span class="rvts23">FHIR Versions</span></span></h1>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR supports multiple versions of the FHIR standard. ToF currently supports STU3 and R4. Users can select a FHIR server with the drop down menu at the top right of every screen.</span></p>
+<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR's REST API is documented using Swagger. The publicly available installation of Trifolia-on-FHIR exposes custom API documentation at </span><span class="rvts8"></span><a class="rvts13" href="/api-docs" target="_blank">/api-docs</a><span class="rvts8"></span><span class="rvts8">. </span><span class="rvts8">The API described by </span><span class="rvts33">/api-docs</span><span class="rvts8">&nbsp;is the same API that the web application (user interface) uses.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Multiple FHIR servers</span></span></h2>
+<p class="rvps3"><span class="rvts8">If the ToF installation is configured to support multiple FHIR servers, the first FHIR server is the default in the REST API. If you want to perform REST API operations on a different FHIR server, you must specify a </span><span class="rvts33">fhirserver</span><span class="rvts8">&nbsp;header in each request. The value of the </span><span class="rvts33">fhirserver</span><span class="rvts8">&nbsp;header must align with the </span><span class="rvts33">id</span><span class="rvts8">&nbsp;of one of the FHIR servers returnved by </span><span class="rvts33">/api/config</span><span class="rvts8">.</span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">FHIR Server Proxy</span></span></h2>
+<p class="rvps3"><span class="rvts8">An </span><span class="rvts33">/api/fhir</span><span class="rvts8">&nbsp;end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation. The proxy endpoint supports GET, PUT, POST, DELETE requests for individual resources, as well as </span><a class="rvts13" href="http://www.hl7.org/fhir/http.html#transaction" target="_blank">batches</a><span class="rvts8">. Transactions are </span><span class="rvts22">not </span><span class="rvts8">supported by this proxy.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Authentication</span></span></h3>
+<p class="rvps3"><span class="rvts8">Authentication is required to access the REST API. To get an authorization code to use with the REST API, login to the Trifolia-on-FHIR web application and open the settings screen, where the "Authorization Code" is displayed to you. Attach the authorization code in an "Authorization" header prefixed with "Bearer ". For example: "Authorization: Bearer XXXX" where XXXX is your authorization code.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Multiple FHIR Servers</span></span></h3>
+<p class="rvps3"><span class="rvts8">The default FHIR server used for this proxy endpoint is the first FHIR server available in the drop-down of FHIR servers in the settings screen of the application.</span></p>
+<p class="rvps3"><span class="rvts8">If you do not want to use the default/first FHIR server, specify a "fhirserver" header in each request where the value of the header is the id of the FHIR server according to the settings screen in the application.</span></p>
+<p class="rvps3"><span class="rvts8">The settings screen shows you an example of a request using curl for whichever server you have selected.</span></p>
 <p></p>
 
             </div>

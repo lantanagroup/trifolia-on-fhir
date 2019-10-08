@@ -21,6 +21,22 @@ export class SettingsModalComponent implements OnInit {
     return localStorage.getItem('token');
   }
 
+  public get exampleCurl(): string {
+    return `curl -H "Authorization: Bearer ${this.authCode}" -H "fhirserver: ${this.fhirServerId}" ${location.origin}/api/fhir/ImplementationGuide`;
+  }
+
+  public copyToClipboard(value: string, messageEle: HTMLSpanElement) {
+    const x = document.createElement('textarea') as HTMLTextAreaElement;
+    x.value = value;
+    document.body.appendChild(x);
+    x.select();
+    document.execCommand('copy');
+    document.body.removeChild(x);
+
+    messageEle.innerText = 'Copied!';
+    setTimeout(() => messageEle.innerText = '', 3000);
+  }
+
   public ok() {
     if (this.fhirServerId !== this.configService.fhirServer) {
       this.configService.project = null;
