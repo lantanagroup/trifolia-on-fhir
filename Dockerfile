@@ -32,10 +32,12 @@ RUN npm prune --production
 FROM node:10-alpine
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
 
-COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
-COPY --from=build-ToF /build/dist/apps/client/. /ToF/client/
-COPY --from=build-ToF /build/dist/apps/server/. /ToF/server/
-COPY --from=build-ToF /build/dist/apps/tools/. /ToF/tools/
+USER 1000
+
+COPY --from=build-ToF --chown=1000:1000 /build/node_modules/. /ToF/node_modules/
+COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/client/. /ToF/client/
+COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/server/. /ToF/server/
+COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/tools/. /ToF/tools/
 
 WORKDIR /ToF/server
 
