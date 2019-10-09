@@ -1,4 +1,5 @@
-<div class="form-group" *ngIf="isFormGroup && parentObject">
+<!-- standard reference -->
+<div class="form-group" *ngIf="isFormGroup && !isCanonical && parentObject">
   <label *ngIf="title">{{title}}</label>
   <div class="input-group">
     <input type="text" class="form-control" [class.is-invalid]="required && !reference" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="reference" placeholder="Reference" />
@@ -7,7 +8,7 @@
       <span *ngIf="prependIconClass" class="input-group-text">
         <i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i>
       </span>
-      <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clearReference()" [disabled]="disabled">
+      <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clear()" [disabled]="disabled">
         <i class="fa fa-times"></i>
       </button>
       <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">
@@ -16,7 +17,7 @@
     </div>
   </div>
 </div>
-<div class="input-group" *ngIf="!isFormGroup && parentObject">
+<div class="input-group" *ngIf="!isFormGroup && !isCanonical && parentObject">
   <div class="input-group-prepend" *ngIf="title">
     <span class="input-group-text" *ngIf="!required">{{title}}</span>
   </div>
@@ -24,7 +25,41 @@
   <input type="text" class="form-control" *ngIf="!hideDisplay" [class.is-invalid]="required && !display" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="display" placeholder="Display" />
   <div class="input-group-append">
     <span *ngIf="prependIconClass" class="input-group-text"><i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i></span>
-    <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clearReference()" [disabled]="disabled">
+    <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clear()" [disabled]="disabled">
+      <i class="fa fa-times"></i>
+    </button>
+    <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">
+      <i class="fa fa-hand-pointer-o"></i>
+    </button>
+  </div>
+</div>
+
+<!-- canonical reference -->
+<div class="form-group" *ngIf="isFormGroup && isCanonical && parentObject">
+  <label *ngIf="title">{{title}}</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [class.is-invalid]="required && !parentObject[propertyName]" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="parentObject[propertyName]" placeholder="Canonical URL" />
+    <div class="input-group-append">
+      <span *ngIf="prependIconClass" class="input-group-text">
+        <i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i>
+      </span>
+      <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clear()" [disabled]="disabled">
+        <i class="fa fa-times"></i>
+      </button>
+      <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">
+        <i class="fa fa-hand-pointer-o"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="!isFormGroup && isCanonical && parentObject">
+  <div class="input-group-prepend" *ngIf="title">
+    <span class="input-group-text" *ngIf="!required">{{title}}</span>
+  </div>
+  <input type="text" class="form-control" [class.is-invalid]="required && !parentObject[propertyName]" (change)="change.emit()" [disabled]="disabled" [(ngModel)]="parentObject[propertyName]" placeholder="Canonical URL" />
+  <div class="input-group-append">
+    <span *ngIf="prependIconClass" class="input-group-text"><i [attr.class]="prependIconClass" [ngbTooltip]="prependIconTooltip"></i></span>
+    <button type="button" class="btn btn-secondary" title="Clear the reference" (click)="clear()" [disabled]="disabled">
       <i class="fa fa-times"></i>
     </button>
     <button type="button" class="btn btn-secondary" title="Select a resource for the reference" (click)="selectReference()" [disabled]="disabled">

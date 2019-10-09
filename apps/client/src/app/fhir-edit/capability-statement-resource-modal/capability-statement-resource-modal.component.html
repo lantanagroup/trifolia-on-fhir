@@ -16,7 +16,9 @@
     propertyName="documentation"
     title="Documentation"></app-fhir-markdown>
 
+  <!-- R4+ is a canonical url -->
   <app-fhir-reference
+    [isCanonical]="!configService.isFhirSTU3"
     [parentObject]="resource"
     propertyName="profile"
     title="Profile"

@@ -219,8 +219,7 @@
                   <th>Profile</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a resource"
-                              (click)="r.resource.push({ type: 'Account' })">
+                      <button type="button" class="btn btn-default btn-sm" title="Add a resource" (click)="r.resource.push({ type: 'Account' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -238,20 +237,18 @@
                       [parentObject]="res"
                       propertyName="profile"
                       [isFormGroup]="false"
+                      [isCanonical]="true"
                       resourceType="StructureDefinition"></app-fhir-reference>
                   </td>
-                  <td>
+                  <td class="actions-column-3">
                     <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Edit this resource"
-                              (click)="editResource(res)">
+                      <button type="button" class="btn btn-default btn-sm" title="Edit this resource" (click)="editResource(res)">
                         <i class="fa fa-edit"></i>
                       </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Duplicate this resource"
-                              (click)="copyResource(r, res)">
+                      <button type="button" class="btn btn-default btn-sm" title="Duplicate this resource" (click)="copyResource(r, res)">
                         <i class="fa fa-copy"></i>
                       </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this resource"
-                              (click)="r.resource.splice(resi, 1)">
+                      <button type="button" class="btn btn-default btn-sm" title="Remove this resource" (click)="r.resource.splice(resi, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>

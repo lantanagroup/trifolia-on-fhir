@@ -5,7 +5,7 @@ import {
   CapabilityStatement,
   CapabilityStatementResourceComponent,
   CapabilityStatementRestComponent,
-  Coding
+  Coding, StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Observable} from 'rxjs';
@@ -18,6 +18,10 @@ import {ConfigService} from '../../shared/config.service';
 import {ClientHelper} from '../../clientHelper';
 import {AuthService} from '../../shared/auth.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {
+  FhirReferenceModalComponent,
+  ResourceSelection
+} from '../../fhir-edit/reference-modal/reference-modal.component';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -40,7 +44,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
     public route: ActivatedRoute,
     private authService: AuthService,
     private configService: ConfigService,
-    private modalService: NgbModal,
+    private modal: NgbModal,
     private csService: CapabilityStatementService,
     private router: Router,
     private fileService: FileService,
@@ -103,13 +107,23 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
   }
 
   public editResource(resource: CapabilityStatementResourceComponent) {
-    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
     modalRef.componentInstance.resource = resource;
   }
 
   public copyResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent) {
     const resourceCopy: CapabilityStatementResourceComponent = JSON.parse(JSON.stringify(resource));
     rest.resource.push(resourceCopy);
+  }
+
+  public selectResourceProfile(resource: CapabilityStatementResourceComponent) {
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'StructureDefinition';
+    modalRef.componentInstance.hideResourceType = true;
+    modalRef.result.then((selection: ResourceSelection) => {
+      const structureDefinition = <StructureDefinition> selection.resource;
+      resource.profile = structureDefinition.url;
+    });
   }
 
   public addRestEntry(restTabSet) {
