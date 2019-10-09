@@ -39,7 +39,7 @@ export class ManageController extends BaseController {
 
       return {
         socketId: connection.id,
-        userId: connection.userProfile ? connection.userProfile.user_id : null,
+        userId: connection.userProfile ? connection.userProfile.sub : null,
         email: connection.userProfile ? connection.userProfile.email : null,
         practitionerReference: connection.practitioner ? `Practitioner/${connection.practitioner.id}` : null,
         name: name

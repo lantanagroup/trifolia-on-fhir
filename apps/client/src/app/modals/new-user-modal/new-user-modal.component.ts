@@ -26,10 +26,10 @@ export class NewUserModalComponent implements OnInit {
     private practitionerService: PractitionerService) {
 
     this.practitioner = new Practitioner();
-    const identifierSystem = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
+    const identifierSystem = this.authService.userProfile && this.authService.userProfile.sub && this.authService.userProfile.sub.indexOf('auth0|') === 0 ?
       Globals.authNamespace : 'https://trifolia-fhir.lantanagroup.com';
-    const identifierValue = this.authService.userProfile && this.authService.userProfile.user_id && this.authService.userProfile.user_id.indexOf('auth0|') === 0 ?
-      this.authService.userProfile.user_id.substring(6) : this.authService.userProfile.user_id;
+    const identifierValue = this.authService.userProfile && this.authService.userProfile.sub && this.authService.userProfile.sub.indexOf('auth0|') === 0 ?
+      this.authService.userProfile.sub.substring(6) : this.authService.userProfile.sub;
     this.practitioner.identifier = [new Identifier({
       system: identifierSystem,
       value: identifierValue
