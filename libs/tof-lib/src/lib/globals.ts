@@ -8,6 +8,7 @@ export class Globals {
   };
 
   static readonly authNamespace = 'https://auth0.com';
+  static readonly defaultAuthNamespace = 'https://trifolia-fhir.lantanagroup.com';
 
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
