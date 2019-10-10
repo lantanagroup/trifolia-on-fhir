@@ -13,11 +13,8 @@
   },
   "auth": {
     "clientId": "",
-    "domain": "",
     "scope": "",
-    "secret": "",
-    "issuer": "",
-    "userInfoUrl": ""
+    "issuer": ""
   },
   "import": {
     "phinVadsUrl": "https://phinvads.cdc.gov/vocabService/v2"

@@ -7,7 +7,6 @@ export interface ConfigModel {
   enableSecurity: boolean;
   auth: {
     clientId: string;
-    domain: string;
     scope: string;
     issuer: string;
   };
