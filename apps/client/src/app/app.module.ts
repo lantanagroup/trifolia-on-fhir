@@ -64,7 +64,7 @@ import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
-import { OAuthModule, AuthConfig, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
+import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
