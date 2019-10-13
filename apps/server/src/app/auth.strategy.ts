@@ -29,21 +29,22 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         }
       };
 
-      if (this.configService.auth.propagateToken) {
-        this.httpService.axiosRef.interceptors.request.use(function (config) {
-          config.headers.Authorization = `Bearer ${token}`;
-          return config;
-        }, function (err) {
-          return Promise.reject(err);
-        });
-      }
-
       try {
         const results = await this.httpService.request<ITofUser>(options).toPromise();
 
         this.logger.log(`Successfully retrieved user info for code ${token}`);
 
         HttpStrategy.authorizationCodes[token] = results.data;
+
+        if (this.configService.auth.propagateToken) {
+          this.httpService.axiosRef.interceptors.request.use(function (config) {
+            config.headers.Authorization = `Bearer ${token}`;
+            return config;
+          }, function (err) {
+            return Promise.reject(err);
+          });
+        }
+
         return results.data;
       } catch (ex) {
         throw new UnauthorizedException();
