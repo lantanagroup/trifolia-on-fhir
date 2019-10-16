@@ -36,15 +36,6 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
 
         HttpStrategy.authorizationCodes[token] = results.data;
 
-        if (this.configService.auth.propagateToken) {
-          this.httpService.axiosRef.interceptors.request.use(function (config) {
-            config.headers.Authorization = `Bearer ${token}`;
-            return config;
-          }, function (err) {
-            return Promise.reject(err);
-          });
-        }
-
         return results.data;
       } catch (ex) {
         throw new UnauthorizedException();

@@ -58,6 +58,7 @@
     "fhir": "^4.7.0",
     "file-saver": "^2.0.1",
     "fs-extra": "^7.0.1",
+    "hpropagate": "0.0.6",
     "intro.js": "^2.9.3",
     "jquery": "^3.4.0",
     "mustache": "^3.0.1",

@@ -15,9 +15,9 @@
     "clientId": "",
     "scope": "",
     "issuer": "",
-    "userInfoUrl": "",
-    "propagateToken": false
+    "userInfoUrl": ""
   },
+  "headerPropagation": [],
   "import": {
     "phinVadsUrl": "https://phinvads.cdc.gov/vocabService/v2"
   },

@@ -30,13 +30,13 @@ export class ConfigService {
     domain: 'test.auth0.com',
     secret: 'secr3t',
     issuer: 'http://trifolia-on-fhir',
-    userInfoUrl: 'http://test.auth0.com/userinfo',
-    propagateToken: false
+    userInfoUrl: 'http://test.auth0.com/userinfo'
   };
   public github: IGithubConfig = {
     clientId:  'gh-clientid',
     secret: 'secr3t'
   };
+  public headerPropagation: string[];
 
   constructor() {
     // If this is not a unit test, load configs using the config module.
@@ -45,6 +45,7 @@ export class ConfigService {
       this.fhir = config.get('fhir');
       this.auth = config.get('auth');
       this.github = config.get('github');
+      this.headerPropagation = config.get('headerPropagation');
     }
   }
 }

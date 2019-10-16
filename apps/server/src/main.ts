@@ -16,6 +16,7 @@ import * as compression from 'compression';
 import * as fs from 'fs-extra';
 import * as modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
+import hpropagate from 'hpropagate';
 
 const config = new ConfigService();
 
@@ -169,6 +170,12 @@ const fixSwagger = (document) => {
 };
 
 async function bootstrap() {
+  if (config.headerPropagation) {
+    hpropagate({
+      setAndPropagateCorrelationId: false,
+      headersToPropagate: config.headerPropagation
+    });
+  }
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
 
