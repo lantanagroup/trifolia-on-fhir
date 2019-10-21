@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 // noinspection JSDeprecatedSymbols
@@ -71,6 +71,7 @@ import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/re
  * This class is an HTTP interceptor that is responsible for adding an
  * Authorization header to every request sent to the application server.
  */
+@Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
   constructor(private configService: ConfigService) {
   }

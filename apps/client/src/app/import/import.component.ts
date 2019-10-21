@@ -23,6 +23,7 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp'];
 
@@ -63,7 +64,9 @@ export class ImportComponent implements OnInit {
   public activeTab = 'file';
   public vsacCriteria = new VSACImportCriteria();
   public rememberVsacCredentials: boolean;
+  public applyContextPermissions = true;
   public Globals = Globals;
+
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
@@ -319,13 +322,12 @@ export class ImportComponent implements OnInit {
     }
 
     let response;
+    const url = buildUrl('/api/fhir', resource.resourceType, resource.id, null, { applyContextPermissions: this.applyContextPermissions });
 
-    if (resource.resourceType === 'Bundle' && resource.type === 'batch') {
-      response = this.httpClient.post('/api/fhir', resource);
-    } else if (resource.id) {
-      response = this.httpClient.put(`/api/fhir/${resource.resourceType}/${resource.id}`, resource);
+    if (resource.id) {
+      response = this.httpClient.put(url, resource);
     } else {
-      response = this.httpClient.post(`/api/fhir/${resource.resourceType}`, resource);
+      response = this.httpClient.post(url, resource);
     }
 
     response
@@ -363,7 +365,7 @@ export class ImportComponent implements OnInit {
 
   private importFiles(tabSet: NgbTabset) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.fhirService.transaction(json, 'application/json', false)
+    this.fhirService.batch(json, 'application/json', false, this.applyContextPermissions)
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
@@ -537,7 +539,7 @@ export class ImportComponent implements OnInit {
         });
 
         const json = JSON.stringify(bundle, null, '\t');
-        this.fhirService.transaction(json, 'application/json')
+        this.fhirService.batch(json, 'application/json')
           .subscribe((importResults: OperationOutcome | Bundle) => {
             if (importResults.resourceType === 'OperationOutcome') {
               this.outcome = <OperationOutcome>importResults;

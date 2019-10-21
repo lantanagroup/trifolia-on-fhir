@@ -6,10 +6,11 @@ import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {addToImplementationGuide, assertUserCanEdit} from './helper';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions} from './helper';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -131,13 +132,14 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  protected async baseCreate(fhirServerBase: string, fhirServerVersion: string, data: DomainResource, user: ITofUser, contextImplementationGuideId?: string) {
+  protected async baseCreate(fhirServerBase: string, fhirServerVersion: string, data: DomainResource, user: ITofUser, contextImplementationGuideId?: string, applyContextPermissions = true) {
     if (!data.resourceType) {
       throw new BadRequestException('Expected a FHIR resource');
     }
 
     let alreadyExists = false;
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    const contextImplementationGuide = await this.getContextImplementationGuide(fhirServerBase, contextImplementationGuideId);
     this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
@@ -161,6 +163,11 @@ export class BaseFhirController extends BaseController {
       if (alreadyExists) {
         throw new BadRequestException(`A ${this.resourceType} already exists with the id ${data.id}`);
       }
+    }
+
+    // Copy the permissions from the context IG if requested
+    if (contextImplementationGuide && applyContextPermissions) {
+      copyPermissions(contextImplementationGuide, data);
     }
 
     const createOptions = <AxiosRequestConfig> {
@@ -201,8 +208,8 @@ export class BaseFhirController extends BaseController {
 
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
-      if (contextImplementationGuideId) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuideId);
+      if (contextImplementationGuide) {
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide);
       }
 
       return resource;
@@ -211,8 +218,9 @@ export class BaseFhirController extends BaseController {
     }
   }
 
-  protected async baseUpdate(fhirServerBase: string, fhirServerVersion: string, id: string, data: any, user: ITofUser, contextImplementationGuideId?: string): Promise<any> {
+  protected async baseUpdate(fhirServerBase: string, fhirServerVersion: string, id: string, data: any, user: ITofUser, contextImplementationGuideId?: string, applyContextPermissions = false): Promise<any> {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    const contextImplementationGuide = await this.getContextImplementationGuide(fhirServerBase, contextImplementationGuideId);
     let original;
 
     // Make sure the user can modify the resource based on the permissions
@@ -230,6 +238,11 @@ export class BaseFhirController extends BaseController {
       assertUserCanEdit(this.configService, userSecurityInfo, original);
     } catch (ex) {
       // The resource doesn't exist yet and this is a create-on-update operation
+    }
+
+    // Copy the permissions from the context IG if requested
+    if (contextImplementationGuide && applyContextPermissions) {
+      copyPermissions(contextImplementationGuide, data);
     }
 
     // Make sure the user has granted themselves the ability to edit the resource
@@ -252,8 +265,8 @@ export class BaseFhirController extends BaseController {
 
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
-      if (contextImplementationGuideId) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuideId);
+      if (contextImplementationGuide) {
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide);
       }
 
       // If this resource existed before now, we should make sure we remove permissions from it as appropriate.

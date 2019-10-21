@@ -26,7 +26,7 @@ import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from
 import {ConfigService} from './config.service';
 import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, parseFhirUrl} from './helper';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions, parseFhirUrl} from './helper';
 import {
   Bundle,
   DomainResource,
@@ -117,6 +117,7 @@ export class FhirController extends BaseController {
    * @param userSecurityInfo The security info for the currently logged-in user.
    * @param contextImplementationGuide The implementation guide this batch should be int he context of. Ensures the entry/resource is added to the ig.
    * @param shouldRemovePermissions Indicates if permissions should be removed as part of this batch process. Some scenarios (such as importing) don't want permissions removed.
+   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
    */
   private async processBatchEntry(
     entry: EntryComponent,
@@ -124,7 +125,8 @@ export class FhirController extends BaseController {
     fhirServerVersion: 'stu3' | 'r4',
     userSecurityInfo: UserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
-    shouldRemovePermissions = true) {
+    shouldRemovePermissions = true,
+    applyContextPermissions = false) {
 
     // Make sure the user has permission to edit the pre-existing resource
     if (entry.request.method !== 'POST') {
@@ -183,6 +185,11 @@ export class FhirController extends BaseController {
         if (!originalResource && entry.resource) {
           this.ensureUserCanEdit(userSecurityInfo, entry.resource);
         }
+
+        // Copy the permissions from the context ig to the entry/resource
+        if (applyContextPermissions) {
+          copyPermissions(contextImplementationGuide, entry.resource);
+        }
       }
     }
 
@@ -229,16 +236,18 @@ export class FhirController extends BaseController {
    * @param fhirServerBase The base address of the fhir server
    * @param fhirServerVersion The version of the fhir server
    * @param userSecurityInfo The security info about the currently logged-in user
-   * @param contextImplementationGuideId The implementation guide that the batch should be executed within context of. Resources are added to the ig.
+   * @param contextImplementationGuide
    * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
+   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
    */
   private async processBatch(
     bundle: Bundle,
     fhirServerBase: string,
     fhirServerVersion: 'stu3'|'r4',
     userSecurityInfo: UserSecurityInfo,
-    contextImplementationGuideId?: string,
-    shouldRemovePermissions = true) {
+    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
+    shouldRemovePermissions = true,
+    applyContextPermissions = false) {
 
     if (!bundle || bundle.resourceType !== 'Bundle') {
       throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
@@ -257,17 +266,7 @@ export class FhirController extends BaseController {
       }
     });
 
-    const contextImplementationGuideUrl = contextImplementationGuideId ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId) : null;
-    let contextImplementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
-
-    // If we're within the context of an IG, retrieve the IG once for the entire batch. addToImplementationGuide()
-    // will be called with the concrete IG, and it will only modify the concrete instance of the IG, it will not
-    // immediately persist it.
-    if (contextImplementationGuideId) {
-      this.logger.trace(`Context implementation guide is ${contextImplementationGuideId}. Retrieving the IG to ensure resources are part of the IG.`);
-      const contextImplementationGuideResults = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(contextImplementationGuideUrl).toPromise();
-      contextImplementationGuide = contextImplementationGuideResults.data;
-    }
+    const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
 
     const promises = (bundle.entry || []).map((entry) => {
       return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
@@ -276,7 +275,7 @@ export class FhirController extends BaseController {
 
     // Now that processing the batch entries is done, persist the context IG back to the server
     if (contextImplementationGuide) {
-      this.logger.trace(`Updating the context implementation guide ${contextImplementationGuideId} for the batch.`);
+      this.logger.trace(`Updating the context implementation guide ${contextImplementationGuide.id} for the batch.`);
       await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
     }
 
@@ -315,14 +314,15 @@ export class FhirController extends BaseController {
 
   /**
    * Proxies the request through the selected/specified FHIR server
-   * @param url
-   * @param headers
-   * @param method
-   * @param fhirServerBase
-   * @param fhirServerVersion
-   * @param user
-   * @param body
-   * @param shouldRemovePermissions
+   * @param url The full url of the request to proxy. This will be modified to use a different base address for the proxying fhir server.
+   * @param headers Headers for the proxy request. Some headers may be deleted to make the proxy work.
+   * @param method The method of the request to be proxied.
+   * @param fhirServerBase The base address of the fhir server
+   * @param fhirServerVersion The version of the fhir server
+   * @param user The ToF user that is making this request
+   * @param body The data being proxied in the request
+   * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
+   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
    */
   public async proxy(
     url: string,
@@ -332,7 +332,8 @@ export class FhirController extends BaseController {
     fhirServerVersion: 'stu3'|'r4',
     user: ITofUser,
     body?,
-    shouldRemovePermissions = true): Promise<ProxyResponse> {
+    shouldRemovePermissions = true,
+    applyContextPermissions = false): Promise<ProxyResponse> {
 
     if (!user) {
       throw new UnauthorizedException();
@@ -366,12 +367,13 @@ export class FhirController extends BaseController {
 
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
-    const contextImplementationGuideId = headers.implementationguideid;
+    const contextImplementationGuide = headers.implementationguideid ? await this.getContextImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
+    const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : undefined;
 
     if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       try {
-        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuideId, shouldRemovePermissions);
+        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
         return {
           status: 200,
           data: responseBundle
@@ -415,6 +417,11 @@ export class FhirController extends BaseController {
       // When creating, make sure permissions are assigned to the new resource
       if (this.configService.server.enableSecurity) {
         this.ensureUserCanEdit(userSecurityInfo, body);
+
+        // Copy permissions from the context implementation guide
+        if (applyContextPermissions) {
+          copyPermissions(contextImplementationGuide, body);
+        }
       }
     } else if (method === 'PUT' || method === 'DELETE') {
       // When updating, make sure the user can modify the resource in question
@@ -437,6 +444,10 @@ export class FhirController extends BaseController {
 
         if (body) {
           this.ensureUserCanEdit(userSecurityInfo, body);
+
+          if (applyContextPermissions) {
+            copyPermissions(contextImplementationGuide, body);
+          }
         }
       }
 
@@ -474,6 +485,14 @@ export class FhirController extends BaseController {
 
     try {
       const results = await this.httpService.request(options).toPromise();
+
+      // If there is a context implementation guide and this request was for a single resource
+      // (indicated by the fact that the results returned a resource with an id) then add
+      // the resource to the implementation guide
+      if (contextImplementationGuide && results.data.resourceType && results.data.id) {
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide);
+        await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
+      }
 
       return {
         status: results.status,

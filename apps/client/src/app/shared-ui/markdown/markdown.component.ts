@@ -225,7 +225,10 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
   ngAfterContentChecked() {
     if (!this.isVisible && this.textarea.nativeElement.offsetParent != null) {
       this.isVisible = true;
-      this.simplemde.codemirror.refresh();
+
+      if (this.simplemde.codemirror) {
+        this.simplemde.codemirror.refresh();
+      }
     } else if (this.isVisible && this.textarea.nativeElement.offsetParent == null) {
       this.isVisible = false;
     }

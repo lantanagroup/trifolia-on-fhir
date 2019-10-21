@@ -60,13 +60,13 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
-    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId);
+  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
   }
 
   @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
-    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId);
+  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
   }
 
   @Delete(':id')

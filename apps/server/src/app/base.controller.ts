@@ -364,4 +364,14 @@ export class BaseController {
       await this.httpService.post<Bundle>(baseUrl, transaction).toPromise();
     }
   }
+
+  protected async getContextImplementationGuide(fhirServerBase: string, contextImplementationGuideId: string): Promise<STU3ImplementationGuide | R4ImplementationGuide> {
+    if (!contextImplementationGuideId) {
+      return Promise.resolve(undefined);
+    }
+
+    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId);
+    const results = await this.httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
+    return results.data;
+  }
 }
