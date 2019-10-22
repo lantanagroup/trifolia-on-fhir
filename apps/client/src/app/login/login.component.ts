@@ -3,7 +3,6 @@ import {AuthService} from '../shared/auth.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
-  selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -13,7 +12,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService) {
+    public authService: AuthService) {
   }
 
   ngOnInit() {
@@ -36,7 +35,5 @@ export class LoginComponent implements OnInit {
         return;
       }
     }
-
-    this.authService.handleAuthentication();
   }
 }

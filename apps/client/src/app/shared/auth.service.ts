@@ -21,6 +21,8 @@ export class AuthService {
   public groups: Group[] = [];
   public authExpiresAt: number;
   public authChanged: EventEmitter<any>;
+  public authError: string;
+  public loggingIn = false;
   private authTimeout: any;
 
   constructor(
@@ -89,37 +91,39 @@ export class AuthService {
     this.auth0.authorize();
   }
 
-  public handleAuthentication(): void {
+  public handleAuthentication() {
     if (!this.auth0) {
       return;
     }
 
+    this.loggingIn = true;
+    this.authError = undefined;
+
     this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.idToken) {
+      if (!err && authResult && authResult.idToken) {
         window.location.hash = '';
         this.setSession(authResult);
         this.getProfile()
           .then(() => {
-            let path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+            const path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.baseSessionUrl}/home`;
 
-            // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
-            if (path.startsWith('/login')) {
-              path = '/';
-            }
-
-            // noinspection JSIgnoredPromiseFromCall
-            this.router.navigate([path]);
             this.authChanged.emit();
             this.socketService.notifyAuthenticated({
               userProfile: this.userProfile,
               practitioner: this.practitioner
             });
-          });
+
+            if (path && path !== '/' && path !== '/logout' && path !== '/login') {
+              // noinspection JSIgnoredPromiseFromCall
+              this.router.navigate([path]);
+            }
+          })
+          .catch(nextErr => this.authError = nextErr);
       } else if (err) {
-        // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate([`/${this.configService.fhirServer}/home`]);
-        console.error(err);
+        this.authError = err;
       }
+
+      this.loggingIn = false;
     });
   }
 
