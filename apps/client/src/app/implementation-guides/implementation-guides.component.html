@@ -1,4 +1,4 @@
-<h1>Implementation Guides</h1>
+<h1>Select an implementation guide project</h1>
 <app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="card" [attr.data-intro]="Globals.introText['browse.search']">
@@ -55,14 +55,7 @@
     </th>
     <th>Name</th>
     <th *ngIf="configService.isFhirR4">Title</th>
-    <th class="actions-column-4">
-      <div class="pull-right">
-        <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/implementation-guide/new" title="Create a new implementation guide"
-                [attr.data-intro]="Globals.introText['browse.add']">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-    </th>
+    <th class="actions-column-1">&nbsp;</th>
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
@@ -70,20 +63,11 @@
     <td>{{ig.id}}</td>
     <td>{{ig.name}}</td>
     <td *ngIf="configService.isFhirR4">{{ig.title}}</td>
-    <td>
+    <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/implementation-guide/{{ig.id}}" title="View/Edit this resource">
-          <i class="fas" [class.fa-edit]="canEdit(ig)" [class.fa-eye]="!canEdit(ig)"></i>
+        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.id}}/home" title="Select this implementation guide project">
+          <i class="fas fa-hand-pointer"></i>
         </a>
-        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/implementation-guide/{{ig.id}}/view" title="View the published version of this implementation guide">
-          <i class="fas fa-file"></i>
-        </a>
-        <button type="button" class="btn btn-secondary" (click)="remove(ig)" [disabled]="!canEdit(ig)" title="Remove this resource">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="changeId(ig)" [disabled]="!canEdit(ig)" title="Change this resource's ID">
-          <i class="fa fa-id-badge"></i>
-        </button>
       </div>
     </td>
   </tr>
@@ -95,18 +79,9 @@
     <td>Demo Title</td>
     <td>
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
-          <i class="fa fa-edit"></i>
+        <a class="btn btn-primary" role="button" href="javascript:void(0)" title="Select this implementation guide project">
+          <i class="fas fa-hand-pointer"></i>
         </a>
-        <a class="btn btn-primary" href="#" title="View this resource" [attr.data-intro]="Globals.introText['browse.ig.view']">
-          <i class="fa fa-eye"></i>
-        </a>
-        <button type="button" class="btn btn-primary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-        <button type="button" class="btn btn-primary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
-          <i class="fa fa-id-badge"></i>
-        </button>
       </div>
     </td>
   </tr>

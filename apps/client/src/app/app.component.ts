@@ -62,18 +62,6 @@ export class AppComponent implements OnInit {
     }, 200);
   }
 
-  public openProject() {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
-    modalRef.componentInstance.resourceType = 'ImplementationGuide';
-    modalRef.componentInstance.hideResourceType = true;
-    modalRef.componentInstance.modalTitle = 'Select an implementation guide';
-
-    modalRef.result.then((selected: ResourceSelection) => {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate([`${this.configService.fhirServer}/${selected.id}/home`]);
-    });
-  }
-
   public closeProject() {
     this.configService.project = null;
     // noinspection JSIgnoredPromiseFromCall
