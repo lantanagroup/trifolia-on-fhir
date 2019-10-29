@@ -16,12 +16,13 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../shared/fhir.service';
 import {Bundle, Media as STU3Media} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 const MARKDOWN_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MarkdownComponent),
   multi: true
-}
+};
 
 export class NgModelBase implements ControlValueAccessor {
   public onTouchedCallback: () => {};
@@ -80,6 +81,7 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
   @Input() mediaReferences: MediaReference[];
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
 
+  public imagesError: string;
   private images: ImageItem[];
   private isVisible = false;
   private simplemde: SimpleMDE;
@@ -190,6 +192,8 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
     if (this.mediaReferences && this.mediaReferences.length > 0) {
       const ids = this.mediaReferences.map((mr) => mr.id);
 
+      this.imagesError = null;
+
       this.fhirService.search('Media', null, null, null, null, {_id: ids}).toPromise()
         .then((results: Bundle) => {
           this.images = (results.entry || []).map((entry) => {
@@ -202,6 +206,9 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
             imageItem.description = mediaReference.description;
             return imageItem;
           });
+        })
+        .catch((err) => {
+          this.imagesError = getErrorString(err);
         });
     } else {
       this.images = [];

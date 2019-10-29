@@ -35,6 +35,7 @@ import {
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
+import {mergeTokens} from 'codelyzer/angular/styles/cssAst';
 
 export interface ProxyResponse {
   status: number;
@@ -489,7 +490,7 @@ export class FhirController extends BaseController {
       // If there is a context implementation guide and this request was for a single resource
       // (indicated by the fact that the results returned a resource with an id) then add
       // the resource to the implementation guide
-      if (contextImplementationGuide && results.data.resourceType && results.data.id) {
+      if (contextImplementationGuide && results.data.resourceType && results.data.id && ['POST', 'PUT'].indexOf(method) >= 0) {
         await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide);
         await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
       }
