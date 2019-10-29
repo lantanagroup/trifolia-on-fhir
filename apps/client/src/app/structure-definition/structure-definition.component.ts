@@ -198,7 +198,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     const baseProfile = parent ? parent.profile : this.baseStructureDefinition;
     const baseElements = baseProfile.snapshot.element || [];
     let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
-    let parentPath = parent ? parent.profilePath : '';
+    let parentPath = parent ? parent.profilePath || '' : '';
     //const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
     let filtered: ElementDefinition[];
 
@@ -425,6 +425,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.structureDefinition.differential.element.splice(elementIndex + 1, 0, newElement);
 
     const newElementTreeModel = new ElementTreeModel();
+    newElementTreeModel.profile = elementTreeModel.profile;
+    newElementTreeModel.path = elementTreeModel.path;
+    newElementTreeModel.profilePath = elementTreeModel.profilePath;
     newElementTreeModel.baseElement = elementTreeModel.baseElement;
     newElementTreeModel.depth = elementTreeModel.depth;
     newElementTreeModel.hasChildren = elementTreeModel.hasChildren;
