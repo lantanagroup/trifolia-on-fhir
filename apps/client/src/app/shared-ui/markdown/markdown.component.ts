@@ -82,6 +82,9 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
 
   public imagesError: string;
+  public nextImagesUrl: string;
+  public totalImages = 0;
+  public loadingImages = false;
   private images: ImageItem[];
   private isVisible = false;
   private simplemde: SimpleMDE;
@@ -188,15 +191,26 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
     });
   }
 
-  private populateImages() {
+  public loadMoreImages() {
+    const nextPage = (this.images.length / 10) + 1;
+    this.populateImages(nextPage);
+  }
+
+  private populateImages(page = 1) {
+    if (page === 1) {
+      this.images = [];
+    }
+
     if (this.mediaReferences && this.mediaReferences.length > 0) {
       const ids = this.mediaReferences.map((mr) => mr.id);
 
       this.imagesError = null;
+      this.loadingImages = true;
 
-      this.fhirService.search('Media', null, null, null, null, {_id: ids}).toPromise()
+      this.fhirService.search('Media', null, null, null, null, {_id: ids}, false, false, page, 10).toPromise()
         .then((results: Bundle) => {
-          this.images = (results.entry || []).map((entry) => {
+          this.totalImages = results.total;
+          const nextImages = (results.entry || []).map((entry) => {
             const mediaReference = this.mediaReferences.find((mr) => mr.id === entry.resource.id);
             const media = <STU3Media | R4Media> entry.resource;
 
@@ -206,9 +220,18 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
             imageItem.description = mediaReference.description;
             return imageItem;
           });
+
+          this.images = this.images.concat(nextImages);
+
+          if (this.totalImages !== ids.length) {
+            this.imagesError = `The implementation guide references ${ids.length} images (Media resources), but you only have access to ${this.totalImages}.`;
+          }
+
+          this.loadingImages = false;
         })
         .catch((err) => {
           this.imagesError = getErrorString(err);
+          this.loadingImages = false;
         });
     } else {
       this.images = [];
