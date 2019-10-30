@@ -1035,7 +1035,7 @@ export class StructureDefinition extends DomainResource {
   public version?: string;
   public name: string;
   public title?: string;
-  public status: string;
+  public status: 'draft' | 'active' | 'retired' | 'unknown' = 'active';
   public experimental?: boolean;
   public date?: Date;
   public publisher?: string;
@@ -14751,7 +14751,7 @@ export class ImplementationGuide extends DomainResource {
   public copyright?: string;
   public packageId?: string;
   public license?: string;
-  public fhirVersion: string[] = ['3.5.0'];
+  public fhirVersion: string[] = ['4.0.0'];
   public dependsOn?: ImplementationGuideDependsOnComponent[];
   public global?: ImplementationGuideGlobalComponent[];
   public definition?: ImplementationGuideDefinitionComponent;

@@ -7,25 +7,6 @@ layout: fhir-artifact
 type: {{[type]}}
 id: {{[id]}}
 ---
-<!-- ============CONTENT CONTENT=============== -->
-
-<!--{% raw %}
-<ul class="nav nav-tabs">
-	<li class="active"><a href="#">Content</a></li>
-	<li><a href="{{[type]}}-{{[id]}}-definitions.html">Detailed Descriptions</a></li>
-	<li><a href="{{[type]}}-{{[id]}}-mappings.html">Mappings</a></li>
-	<li><a href="{{[type]}}-{{[id]}}.xml.html">XML</a></li>
-	<li><a href="{{[type]}}-{{[id]}}.json.html">JSON</a></li>
-	<li><a href="{{[type]}}-{{[id]}}.ttl.html">Turtle</a></li>
-</ul>
-{% endraw %}-->
-
-<!--{% raw %} simpler links to other pages
-<p>
-Formats: <a href="{{[type]}}-{{[id]}}.html">Narrative</a>, <a href="{{[type]}}-{{[id]}}.xml.html">XML</a>, <a href="{{[type]}}-{{[id]}}.json.html">JSON</a>, <a href="{{[type]}}-{{[id]}}.ttl.html">Turtle</a>
-</p>
-
-{% endraw %}-->
 
 <h2><span class="sectioncount">SD.{{ site.data.structuredefinitions.{{[id]}}.index | plus: 1 }}</span> {{[type]}}-{{[id]}}</h2>
 
@@ -33,14 +14,6 @@ Formats: <a href="{{[type]}}-{{[id]}}.html">Narrative</a>, <a href="{{[type]}}-{
 <a name="introduction"> </a>
 
 {% capture my-include %}{% include {{[id]}}-intro.md id="{{[id]}}" %}{% endcapture %}{{ my-include | markdownify }}
-
-<!-- example here -->
-
-<!--{% raw %}
-<h5>Example: <a href="daf-{{page.code}}-{{page.example}}.html">{{page.tcode}} Example: {{page.example}}</a></h5>
-
-<h5>Example: <a href="{{[title]}}.example.html">{{[title]}} Example</a></h5>
-{% endraw %}-->
 
 <a name="profile"> </a>
 <h3><span class="sectioncount">SD.{{ site.data.structuredefinitions.{{[id]}}.index | plus: 1 }}.1 </span>

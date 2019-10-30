@@ -241,7 +241,7 @@ export class HtmlExporter {
       const profilesData = profiles
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
         .map((profile) => {
-          return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
+          return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, `{% capture profile-intro %}{% include ${profile.id}-intro.md id="{{[id]}}" %}{% endcapture %}{{ profile-intro | markdownify }}`];
         });
       const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
       fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
@@ -254,7 +254,7 @@ export class HtmlExporter {
       const extData = extensions
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
         .map((extension) => {
-          return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
+          return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, `{% capture profile-intro %}{% include ${extension.id}-intro.md id="{{[id]}}" %}{% endcapture %}{{ profile-intro | markdownify }}`];
         });
       const extContent = createTableFromArray(['Name', 'Description'], extData);
       fs.appendFileSync(profilesPath, '### Extensions\n\n' + extContent + '\n\n');
@@ -360,11 +360,7 @@ export class HtmlExporter {
     const searchPath = path.join(rootPath, `source/pages/_includes/${resource.id}-search.md`);
     const summaryPath = path.join(rootPath, `source/pages/_includes/${resource.id}-summary.md`);
 
-    let intro = '---\n' +
-      `title: ${resource.resourceType}-${resource.id}-intro\n` +
-      'layout: default\n' +
-      `active: ${resource.resourceType}-${resource.id}-intro\n` +
-      '---\n\n';
+    let intro = '';
 
     if ((<any>resource).description) {
       intro += (<any>resource).description;

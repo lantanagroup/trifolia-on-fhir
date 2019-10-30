@@ -976,7 +976,7 @@ export class StructureDefinition extends DomainResource {
   public version?: string;
   public name: string;
   public title?: string;
-  public status = 'draft';
+  public status: 'draft' | 'active' | 'retired' | 'unknown' = 'active';
   public experimental?: boolean;
   public date?: Date;
   public publisher?: string;
@@ -10868,7 +10868,7 @@ export class ImplementationGuide extends DomainResource {
   public useContext?: UsageContext[];
   public jurisdiction?: CodeableConcept[];
   public copyright?: string;
-  public fhirVersion?: string;
+  public fhirVersion? = '3.0.2';
   public dependency?: DependencyComponent[];
   public package?: PackageComponent[];
   public global?: GlobalComponent[];

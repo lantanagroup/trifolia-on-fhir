@@ -517,6 +517,11 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   public save() {
+    // Add the new fhir version if they forgot to click the + button
+    if (this.newFhirVersion && this.implementationGuide.fhirVersion) {
+      this.implementationGuide.fhirVersion.push(this.newFhirVersion);
+    }
+
     if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
       return;
     }
