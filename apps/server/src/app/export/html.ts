@@ -135,8 +135,8 @@ export class HtmlExporter {
     const defaultFilePath = path.join(defaultPath, fileName);
     const latestPath = path.join(defaultPath, 'latest');
     const latestFilePath = path.join(latestPath, fileName);
-    const localVersionPath = path.join(latestPath, 'version.info');
-    let versionContent;
+    const localDatePath = path.join(latestPath, 'date.txt');
+    let dateContent;
 
     if (useLatest === true) {
       fs.ensureDirSync(latestPath);
@@ -147,14 +147,15 @@ export class HtmlExporter {
 
       // Check http://build.fhir.org/version.info first
       try {
-        const versionResults = await this.httpService.get('http://build.fhir.org/version.info', { responseType: 'text' }).toPromise();
-        versionContent = versionResults.data;
-        const version = HtmlExporter.getIgPublisherBuildInfo(versionContent);
+        const headResults = await this.httpService.request({
+          method: 'HEAD',
+          url: this.fhirConfig.latestPublisher
+        }).toPromise();
+        dateContent = headResults.headers['date'];
 
-        const localVersionContent = fs.existsSync(localVersionPath) ? fs.readFileSync(localVersionPath).toString() : undefined;
-        const localVersion = HtmlExporter.getIgPublisherBuildInfo(localVersionContent);
+        const localDateContent = fs.existsSync(localDatePath) ? fs.readFileSync(localDatePath).toString() : undefined;
 
-        if (version === localVersion) {
+        if (localDateContent === dateContent) {
           this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
           return latestFilePath;
         }
@@ -172,7 +173,7 @@ export class HtmlExporter {
         this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
 
         fs.writeFileSync(latestFilePath, results.data);
-        fs.writeFileSync(localVersionPath, versionContent);
+        fs.writeFileSync(localDatePath, dateContent);
 
         return latestFilePath;
       } catch (ex) {
