@@ -209,7 +209,7 @@ export class BaseFhirController extends BaseController {
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
       if (contextImplementationGuide) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide);
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide, true);
       }
 
       return resource;
@@ -266,7 +266,7 @@ export class BaseFhirController extends BaseController {
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG
       if (contextImplementationGuide) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide);
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide, true);
       }
 
       // If this resource existed before now, we should make sure we remove permissions from it as appropriate.

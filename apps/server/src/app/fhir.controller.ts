@@ -223,7 +223,7 @@ export class FhirController extends BaseController {
 
     if (contextImplementationGuide) {
       this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
-      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide);
+      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
 
       // TODO: Handle DELETE events (remove the resource from the IG).
     }
@@ -491,8 +491,7 @@ export class FhirController extends BaseController {
       // (indicated by the fact that the results returned a resource with an id) then add
       // the resource to the implementation guide
       if (contextImplementationGuide && results.data.resourceType && results.data.id && ['POST', 'PUT'].indexOf(method) >= 0) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide);
-        await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide,true);
       }
 
       return {
