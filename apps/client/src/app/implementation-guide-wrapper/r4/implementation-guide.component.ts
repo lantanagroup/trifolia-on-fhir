@@ -537,6 +537,14 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
+          // Copy the new permissions to the context so that we other resources create for the ig will adopt the new permissions
+          if (this.configService.project && this.configService.project.implementationGuideId === implementationGuide.id) {
+            // only if the updated implementation guide has security tags
+            if (implementationGuide.meta && implementationGuide.meta.security && implementationGuide.meta.security.length > 0) {
+              this.configService.project.securityTags = implementationGuide.meta.security;
+            }
+          }
+
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';

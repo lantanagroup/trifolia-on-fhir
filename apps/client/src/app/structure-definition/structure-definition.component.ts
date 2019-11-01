@@ -4,7 +4,11 @@ import {StructureDefinitionService} from '../shared/structure-definition.service
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  DifferentialComponent,
+  ElementDefinition,
+  StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
 import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
@@ -21,9 +25,9 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 })
 export class StructureDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   private readonly dataTypes = ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation', 'CodeableConcept', 'Coding', 'Money',
-  'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
-  'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
-  'ParameterDefinition', 'Expression', 'TriggerDefinition'];
+    'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
+    'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
+    'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: StructureDefinition;
   public baseStructureDefinition;
@@ -308,7 +312,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.nameChanged();
 
     if (!this.structureDefinition.differential) {
-      this.structureDefinition.differential = new DifferentialComponent({element: []});
+      this.structureDefinition.differential = new DifferentialComponent({ element: [] });
     }
 
     if (this.structureDefinition.differential.element.length === 0) {
@@ -592,19 +596,19 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         }
       } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
         if (event.keyCode === 38) {    // up
-                if (!this.selectedElement) {
-                  this.selectedElement = this.elements[0];
-                  shouldFocus = true;
-                } else if (index > 0) {
-                  this.selectedElement = this.elements[index - 1];
-                  shouldFocus = true;
-                }
-              } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+          if (!this.selectedElement) {
+            this.selectedElement = this.elements[0];
+            shouldFocus = true;
+          } else if (index > 0) {
+            this.selectedElement = this.elements[index - 1];
+            shouldFocus = true;
+          }
+        } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
           if (event.keyCode === 46) {    // delete
-                          if (this.selectedElement && this.selectedElement.constrainedElement) {
-                            this.removeElementDefinition(this.selectedElement.constrainedElement);
-                          }
-                        }
+            if (this.selectedElement && this.selectedElement.constrainedElement) {
+              this.removeElementDefinition(this.selectedElement.constrainedElement);
+            }
+          }
         }
       }
 

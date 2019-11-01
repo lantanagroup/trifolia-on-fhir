@@ -212,9 +212,15 @@ export class AuthService {
 
   public getDefaultMeta(): Meta {
     const meta = new Meta();
-    if (this.practitioner && this.configService.config.enableSecurity) {
-      addPermission(meta, 'user', 'write', this.practitioner.id);
+
+    if (this.configService.project) {
+      meta.security = this.configService.project.securityTags;
     }
+
+    if (!meta.security || meta.security.length === 0) {
+      addPermission(meta, 'everyone', 'write');
+    }
+
     return meta;
   }
 

@@ -145,8 +145,8 @@ export class HtmlExporter {
 
       this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
 
-      // Check http://build.fhir.org/version.info first
       try {
+        // Get the HEAD information for the fhir ig publisher first, and check if the date is different
         const headResults = await this.httpService.request({
           method: 'HEAD',
           url: this.fhirConfig.latestPublisher

@@ -17,7 +17,7 @@ import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
 import {FhirReferenceModalComponent, ResourceSelection} from './fhir-edit/reference-modal/reference-modal.component';
-import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, Coding, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -112,7 +112,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name: string }> {
+  private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name: string, securityTags: Coding[] }> {
     if (!implementationGuideId) {
       return Promise.resolve(this.configService.project);
     }
@@ -129,7 +129,8 @@ export class AppComponent implements OnInit {
 
             resolve({
               implementationGuideId: implementationGuideId,
-              name: ig.title || ig.name
+              name: ig.title || ig.name,
+              securityTags: ig.meta && ig.meta.security ? ig.meta.security : []
             });
           } else {
             resolve();
