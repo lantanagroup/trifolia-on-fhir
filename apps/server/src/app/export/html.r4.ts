@@ -47,7 +47,7 @@ export class R4HtmlExporter extends HtmlExporter {
         resources: ['source/resources']
       },
       pages: ['pages'],
-      version: '4.0.0',
+      version: '4.0.1',
       'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'sct-edition': 'http://snomed.info/sct/731000124108',
