@@ -162,15 +162,18 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public populateConstrainedElements(elementTreeModels: ElementTreeModel[]) {
     for (let i = 0; i < elementTreeModels.length; i++) {
       const elementTreeModel = elementTreeModels[i];
-      const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
-      const thisId = parentId ? parentId + '.' + elementTreeModel.leafPath : elementTreeModel.leafPath;
-      const constrainedElements = (this.structureDefinition.differential.element || []).filter((element) => {
-        if (element.id === thisId) {
-          // The element is constrained
+      const baseElementId = elementTreeModel.baseElement.id;
+      const baseHasSlicing = elementTreeModel.baseElement.hasOwnProperty('slicing');
+
+      const constrainedElements = (this.structureDefinition.differential.element || []).filter((diffElement) => {
+        const diffHasSlicing = diffElement.hasOwnProperty('slicing');
+
+        if (diffElement.id === baseElementId) {
+          // Simple check for an exact match between the base element's id and the differential element's id
           return true;
-        } else if (element.id.startsWith(thisId + ':')) {
+        } else if (diffElement.id.startsWith(baseElementId + ':') && baseHasSlicing === diffHasSlicing) {
           // the element is constrained with a slice, but we need to make sure the path doesn't represent a child of the slice
-          const after = element.id.substring(thisId.length + 2);
+          const after = diffElement.id.substring(baseElementId.length + 1);
           return after.indexOf('.') < 0;
         }
         return false;
