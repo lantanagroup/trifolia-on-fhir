@@ -69,7 +69,7 @@
     "nanoid": "^2.0.1",
     "ng-diff-match-patch": "^3.0.1",
     "ng2-tree": "^2.0.0-rc.11",
-    "ngx-file-drop": "^6.0.0",
+    "ngx-file-drop": "^6.0.1",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "popper.js": "^1.15.0",

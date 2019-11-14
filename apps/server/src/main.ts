@@ -178,7 +178,6 @@ async function bootstrap() {
     });
   }
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
 
   app.useGlobalFilters(new NotFoundExceptionFilter());
