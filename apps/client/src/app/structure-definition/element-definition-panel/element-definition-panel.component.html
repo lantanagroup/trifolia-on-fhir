@@ -142,10 +142,9 @@
         <!-- Representation -->
         <div class="form-group">
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'representation', ['xmlAttr'])"/>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')" (ngModelChange)="Globals.toggleProperty(element, 'representation', ['xmlAttr'])"/>
             Representation
-            <app-tooltip-icon tooltipPath="ElementDefinition.representation"></app-tooltip-icon>
+            <app-tooltip-icon tooltipKey="ElementDefinition.representation"></app-tooltip-icon>
           </label>
           <div class="pull-right" *ngIf="element.hasOwnProperty('representation')">
             <i class="fa fa-plus clickable" title="Add a type" (click)="element.representation.push('xmlAttr')"></i>

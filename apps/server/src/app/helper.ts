@@ -5,15 +5,15 @@ import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import {BadRequestException, HttpService, UnauthorizedException} from '@nestjs/common';
 import {
-  DomainResource,
+  DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide, DomainResource as R4DomainResource} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {UserSecurityInfo} from './base.controller';
-import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
+import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
@@ -184,8 +184,13 @@ export function getFhirR4Instance() {
  * @param resource The structure definition to add (must have an id)
  * @param userSecurityInfo {UserSecurityInfo}
  * @param implementationGuide The id (or concrete resource) of the implementation guide to add the structure definition to
+ * @param shouldPersistIg Indicates if the ig should be persisted/save during this operation, or if it will be taken care of elsewhere
  */
-export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: DomainResource, userSecurityInfo: UserSecurityInfo, implementationGuide: string|STU3ImplementationGuide|R4ImplementationGuide): Promise<void> {
+export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: STU3DomainResource | R4DomainResource, userSecurityInfo: UserSecurityInfo, implementationGuide: string|STU3ImplementationGuide|R4ImplementationGuide, shouldPersistIg: boolean): Promise<void> {
+  if (typeof implementationGuide === 'string' && shouldPersistIg) {
+    throw new Error('Cannot persist the IG when it is passed as a string. It will not persisted elsewhere.');
+  }
+
   // Don't add implementation guides to other implementation guides (or itself).
   if (resource.resourceType === 'ImplementationGuide') {
     return Promise.resolve();
@@ -194,7 +199,6 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   let igUrl;
   let changed = false;
   const resourceReferenceString = `${resource.resourceType}/${resource.id}`;
-  const shouldPersistIg = typeof implementationGuide === 'string';
 
   if (typeof implementationGuide === 'string') {
     const implementationGuideId = <string>implementationGuide;
@@ -333,4 +337,17 @@ export function assertUserCanEdit(configService: ConfigService, userSecurityInfo
   }
 
   throw new UnauthorizedException();
+}
+
+export function copyPermissions(source: STU3DomainResource | R4DomainResource, destination: STU3DomainResource | R4DomainResource) {
+  if (!destination || !source || !source.meta || !source.meta.security) {
+    return;
+  }
+
+  const sourcePermissions = parsePermissions(source.meta);
+  destination.meta = destination.meta || {};
+
+  sourcePermissions.forEach((permission) => {
+    addPermission(destination.meta, permission.type, permission.permission, permission.id);
+  });
 }

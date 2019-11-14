@@ -138,9 +138,10 @@ export class FhirService {
 
           this.fhir = new Fhir(parser);
 
-          (<Bundle>allAssets[1]).entry.forEach((entry) => this.valueSets.push(<ValueSet>entry.resource));
-          (<Bundle>allAssets[2]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
-          (<Bundle>allAssets[3]).entry.forEach((entry) => this.profiles.push(<StructureDefinition>entry.resource));
+          this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet> entry.resource);
+          this.profiles = (<Bundle>allAssets[2]).entry
+            .concat((<Bundle>allAssets[3]).entry)
+            .map((entry) => <StructureDefinition> entry.resource);
 
           this.loaded = true;
           resolve();
@@ -384,8 +385,14 @@ export class FhirService {
     return this.http.post<DomainResource>(url, resource);
   }
 
-  public transaction(data: string, contentType: string, shouldRemovePermissions = true) {
-    return this.http.post<DomainResource>('/api/fhir', data, {
+  public batch(data: string, contentType: string, shouldRemovePermissions = true, applyContextPermissions = true) {
+    let url = '/api/fhir?';
+
+    if (applyContextPermissions) {
+      url += 'applyContextPermissions=' + encodeURIComponent(applyContextPermissions) + '&';
+    }
+
+    return this.http.post<DomainResource>(url, data, {
       headers: {
         'Content-Type': contentType,
         'shouldRemovePermissions': shouldRemovePermissions.toString()

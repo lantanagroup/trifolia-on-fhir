@@ -1,2 +1,3 @@
-<p *ngIf="loggingIn">You are being logged into Trifolia-on-FHIR...</p>
+<p *ngIf="authService.loggingIn">You are being logged into Trifolia-on-FHIR...</p>
 <div class="alert alert-danger" *ngIf="errorMessage">{{errorMessage}}</div>
+<app-home *ngIf="authService.isAuthenticated()"></app-home>

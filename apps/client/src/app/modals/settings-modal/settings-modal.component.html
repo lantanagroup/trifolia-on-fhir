@@ -8,8 +8,21 @@
   <p>Trifolia-on-FHIR Version <strong>{{configService.config.version}}</strong></p>
 
   <div class="form-group" *ngIf="authCode">
-    <label>Authorization Code</label>
-    <input type="text" class="form-control" readonly="readonly" [ngModel]="authCode"/>
+    <label>
+      Authorization Code
+      <i class="fas fa-cut clickable" (click)="copyToClipboard(authCode, authCodeCopiedEle)"></i>
+      <span class="badge badge-light" #authCodeCopiedEle></span>
+    </label>
+    <pre>{{authCode}}</pre>
+  </div>
+
+  <div class="form-group" *ngIf="authCode">
+    <label>
+      Example FHIR Server Request
+      <i class="fas fa-cut clickable" (click)="copyToClipboard(exampleCurl, exampleCurlCopiedEle)"></i>
+      <span class="badge badge-light" #exampleCurlCopiedEle></span>
+    </label>
+    <pre>{{exampleCurl}}</pre>
   </div>
 
   <div class="form-group">

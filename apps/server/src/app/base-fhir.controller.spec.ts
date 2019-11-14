@@ -2,16 +2,15 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
 import {Controller, HttpModule, HttpService} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
-import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, DomainResource, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from './config.service';
-import {createBundle, createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
+import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {RequestHeaders} from './server.decorators';
 // @ts-ignore
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
-import {DomainResource} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 nock.disableNetConnect();
 
@@ -76,8 +75,6 @@ describe('BaseFhirController', () => {
   let testSDController: TestSDController;
   let app: TestingModule;
   const fhirServerBase = 'http://test-fhir-server.com';
-  const userPractitionerResponse = createUserPractitionerResponse();
-  const userGroupResponse = createUserGroupResponse();
   const testUser = createTestUser();
 
   beforeAll(async () => {
@@ -136,13 +133,9 @@ describe('BaseFhirController', () => {
 
     describe('search', () => {
       it('should have _security in the query params',  async () => {
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/ImplementationGuide')
           // This is the purpose of this test... make sure the _security query param
           // is in the search request to the FHIR server
@@ -168,14 +161,9 @@ describe('BaseFhirController', () => {
           name: 'test'
         };
 
-        const req = nock(fhirServerBase)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           // Request to FHIR server to update the resource
           .put('/ImplementationGuide/test-new-id', (body: ImplementationGuide) => {
             expect(body).toBeTruthy();
@@ -217,14 +205,9 @@ describe('BaseFhirController', () => {
           name: 'test'
         };
 
-        const req = nock(fhirServerBase)
-        // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           // Request to FHIR server to update the resource
           .put('/ImplementationGuide/test-new-id', (body: ImplementationGuide) => {
             expect(body).toBeTruthy();
@@ -266,14 +249,9 @@ describe('BaseFhirController', () => {
           name: 'test'
         };
 
-        const req = nock(fhirServerBase)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           // Request to FHIR server to update the resource
           .put('/ImplementationGuide/test-new-id', (body: ImplementationGuide) => {
             expect(body).toBeTruthy();
@@ -311,16 +289,11 @@ describe('BaseFhirController', () => {
           id: 'test-id'
         };
 
-        const req = nock(fhirServerBase)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/ImplementationGuide/test-id')
-          .reply(200, persistedResource)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse);
+          .reply(200, persistedResource);
 
         try {
           await testIGController.delete(fhirServerBase, 'test-id', testUser);
@@ -347,22 +320,12 @@ describe('BaseFhirController', () => {
           }
         };
 
-        const req = nock(fhirServerBase)
+        const req = nock(fhirServerBase);
+        nockDelete(req, 'ImplementationGuide/test-id', noReferencesBundle, noReferencesBundle);
+        nockPermissions(req);
+        req
           .get('/ImplementationGuide/test-id')
           .reply(200, persistedResource)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
-          .get('/ImplementationGuide')
-          .query({ resource: 'ImplementationGuide/test-id'})
-          .reply(200, noReferencesBundle)
-          .get('/ImplementationGuide')
-          .query({ global: 'ImplementationGuide/test-id'})
-          .reply(200, noReferencesBundle)
           .delete('/ImplementationGuide/test-id')
           .reply(200);
 
@@ -396,24 +359,12 @@ describe('BaseFhirController', () => {
           }
         };
 
-        const req = nock(fhirServerBase)
+        const req = nock(fhirServerBase);
+        nockDelete(req, 'StructureDefinition/test-sd', referencesBundle, createBundle('searchset', fhirServerBase));
+        nockPermissions(req);
+        req
           .get('/StructureDefinition/test-sd')
           .reply(200, persistedResource)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
-          // search for implementation guides that reference it via "resource" search param
-          .get('/ImplementationGuide')
-          .query({ resource: 'StructureDefinition/test-sd'})
-          .reply(200, referencesBundle)
-          // search for implementation guides that reference it via "global" search param
-          .get('/ImplementationGuide')
-          .query({ global: 'StructureDefinition/test-sd'})
-          .reply(200, createBundle('searchset', fhirServerBase))
           .post('/', (transactionBundle) => {
             expect(transactionBundle).toBeTruthy();
             expect(transactionBundle.resourceType).toBe('Bundle');
@@ -454,14 +405,8 @@ describe('BaseFhirController', () => {
           name: 'test-with-updates'
         };
 
-        const req = nock(fhirServerBase)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse);
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
 
         try {
           await testIGController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
@@ -498,16 +443,11 @@ describe('BaseFhirController', () => {
           name: 'test-with-updates'
         };
 
-        const req = nock(fhirServerBase)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/ImplementationGuide/test-id')
           .reply(200, persistedResource)
-          // to check permissions on persisted IG
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
           .put('/ImplementationGuide/test-id', resourceUpdates)
           .reply(200, resourceUpdates)
           .get('/ImplementationGuide/test-id')

@@ -4,7 +4,11 @@ import {StructureDefinitionService} from '../shared/structure-definition.service
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
-import {DifferentialComponent, ElementDefinition, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  DifferentialComponent,
+  ElementDefinition,
+  StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
 import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
@@ -21,9 +25,9 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 })
 export class StructureDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   private readonly dataTypes = ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation', 'CodeableConcept', 'Coding', 'Money',
-  'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
-  'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
-  'ParameterDefinition', 'Expression', 'TriggerDefinition'];
+    'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
+    'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
+    'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: StructureDefinition;
   public baseStructureDefinition;
@@ -158,15 +162,18 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public populateConstrainedElements(elementTreeModels: ElementTreeModel[]) {
     for (let i = 0; i < elementTreeModels.length; i++) {
       const elementTreeModel = elementTreeModels[i];
-      const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
-      const thisId = parentId ? parentId + '.' + elementTreeModel.leafPath : elementTreeModel.leafPath;
-      const constrainedElements = (this.structureDefinition.differential.element || []).filter((element) => {
-        if (element.id === thisId) {
-          // The element is constrained
+      const baseElementId = elementTreeModel.baseElement.id;
+      const baseHasSlicing = elementTreeModel.baseElement.hasOwnProperty('slicing');
+
+      const constrainedElements = (this.structureDefinition.differential.element || []).filter((diffElement) => {
+        const diffHasSlicing = diffElement.hasOwnProperty('slicing');
+
+        if (diffElement.id === baseElementId) {
+          // Simple check for an exact match between the base element's id and the differential element's id
           return true;
-        } else if (element.id.startsWith(thisId + ':')) {
+        } else if (diffElement.id.startsWith(baseElementId + ':') && baseHasSlicing === diffHasSlicing) {
           // the element is constrained with a slice, but we need to make sure the path doesn't represent a child of the slice
-          const after = element.id.substring(thisId.length + 2);
+          const after = diffElement.id.substring(baseElementId.length + 1);
           return after.indexOf('.') < 0;
         }
         return false;
@@ -198,7 +205,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     const baseProfile = parent ? parent.profile : this.baseStructureDefinition;
     const baseElements = baseProfile.snapshot.element || [];
     let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
-    let parentPath = parent ? parent.profilePath : '';
+    let parentPath = parent ? parent.profilePath || '' : '';
     //const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
     let filtered: ElementDefinition[];
 
@@ -308,7 +315,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.nameChanged();
 
     if (!this.structureDefinition.differential) {
-      this.structureDefinition.differential = new DifferentialComponent({element: []});
+      this.structureDefinition.differential = new DifferentialComponent({ element: [] });
     }
 
     if (this.structureDefinition.differential.element.length === 0) {
@@ -425,6 +432,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.structureDefinition.differential.element.splice(elementIndex + 1, 0, newElement);
 
     const newElementTreeModel = new ElementTreeModel();
+    newElementTreeModel.profile = elementTreeModel.profile;
+    newElementTreeModel.path = elementTreeModel.path;
+    newElementTreeModel.profilePath = elementTreeModel.profilePath;
     newElementTreeModel.baseElement = elementTreeModel.baseElement;
     newElementTreeModel.depth = elementTreeModel.depth;
     newElementTreeModel.hasChildren = elementTreeModel.hasChildren;
@@ -589,19 +599,19 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         }
       } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
         if (event.keyCode === 38) {    // up
-                if (!this.selectedElement) {
-                  this.selectedElement = this.elements[0];
-                  shouldFocus = true;
-                } else if (index > 0) {
-                  this.selectedElement = this.elements[index - 1];
-                  shouldFocus = true;
-                }
-              } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+          if (!this.selectedElement) {
+            this.selectedElement = this.elements[0];
+            shouldFocus = true;
+          } else if (index > 0) {
+            this.selectedElement = this.elements[index - 1];
+            shouldFocus = true;
+          }
+        } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
           if (event.keyCode === 46) {    // delete
-                          if (this.selectedElement && this.selectedElement.constrainedElement) {
-                            this.removeElementDefinition(this.selectedElement.constrainedElement);
-                          }
-                        }
+            if (this.selectedElement && this.selectedElement.constrainedElement) {
+              this.removeElementDefinition(this.selectedElement.constrainedElement);
+            }
+          }
         }
       }
 

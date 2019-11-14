@@ -192,7 +192,7 @@ export class STU3HtmlExporter extends HtmlExporter {
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1, tocEntries));
   }
 
-  private writeStu3Pages(rootPath: string) {
+  protected writePages(rootPath: string) {
     // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
     const getPagesList = (theList: PageInfo[], page: PageComponent) => {
       if (!page) {

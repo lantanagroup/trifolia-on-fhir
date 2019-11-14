@@ -2,7 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {FhirController} from './fhir.controller';
 import {HttpModule} from '@nestjs/common';
 import {ConfigService} from './config.service';
-import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
+import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {Bundle, Observation, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
@@ -22,8 +22,6 @@ const fhirServerBase = 'http://test-fhir-server.com';
 describe('FhirController', () => {
   let app: TestingModule;
   let controller: FhirController;
-  const userPractitionerResponse = createUserPractitionerResponse();
-  const userGroupResponse = createUserGroupResponse();
   const testUser = createTestUser();
   const configService = new ConfigService();
 
@@ -131,7 +129,9 @@ describe('FhirController', () => {
           'content-location': fhirServerBase + '/Observation/new-id/_history/3'
         };
 
-        const req = nock(fhirServerBase)
+        const req = nock(fhirServerBase);
+        nockDelete(req, 'Observation/test-id', createBundle('searchset', fhirServerBase), createBundle('searchset', fhirServerBase));
+        req
           .delete('/Observation/test-id')
           .reply(201, null, replyHeaders);
 
@@ -305,13 +305,9 @@ describe('FhirController', () => {
           }]
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/Observation/test-obs-1')
           .reply(200, persistedObs)
           .put('/Observation/test-obs-1', (obs) => {
@@ -358,13 +354,9 @@ describe('FhirController', () => {
 
         let deleteMetaCount = 1;
         const req = nock(fhirServerBase)
-          .persist()
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+          .persist();
+        nockPermissions(req);
+        req
           .get('/Observation/test-obs-1')
           .reply(200, persistedObs)
           .post('/Observation/test-obs-1/$meta-delete', (metaDelete) => {
@@ -405,13 +397,9 @@ describe('FhirController', () => {
       });
 
       it('should make sure searches have _security query param', async () => {
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/ImplementationGuide')
           // The purpose of this test is here... to make sure that the _security
           // query parameter is added to the request to the FHIR server's search
@@ -443,13 +431,9 @@ describe('FhirController', () => {
           status: 'final'
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .post('/Observation', (observation) => {
             expect(observation).toBeTruthy();
             expect(observation.meta).toBeTruthy();
@@ -489,13 +473,9 @@ describe('FhirController', () => {
           'content-location': fhirServerBase + '/Observation/new-id/_history/2'
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .put('/Observation/test-id', (puttedObservation) => {
             expect(puttedObservation).toBeTruthy();
             expect(puttedObservation.meta).toBeTruthy();
@@ -526,13 +506,9 @@ describe('FhirController', () => {
           status: 'final'
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/Observation/test-id')
           .reply(200, persistedObservation);
 
@@ -559,13 +535,10 @@ describe('FhirController', () => {
           status: 'draft'
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockDelete(req, 'Observation/test-id', createBundle('searchset', fhirServerBase), createBundle('searchset', fhirServerBase));
+        nockPermissions(req);
+        req
           .get('/Observation/test-id')
           .reply(200, persistedObservation)
           .delete('/Observation/test-id')
@@ -583,13 +556,9 @@ describe('FhirController', () => {
           status: 'draft'
         };
 
-        const req = nock(fhirServerBase)
-          .get('/Practitioner')
-          .query({ identifier: Globals.authNamespace + '|test.user' })
-          .reply(200, userPractitionerResponse)
-          .get('/Group')
-          .query({ member: 'test-user-id', '_summary': 'true' })
-          .reply(200, userGroupResponse)
+        const req = nock(fhirServerBase);
+        nockPermissions(req);
+        req
           .get('/Observation/test-id')
           .reply(200, persistedObservation);
 

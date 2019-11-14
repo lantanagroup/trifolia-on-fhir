@@ -16,12 +16,13 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../shared/fhir.service';
 import {Bundle, Media as STU3Media} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 
 const MARKDOWN_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MarkdownComponent),
   multi: true
-}
+};
 
 export class NgModelBase implements ControlValueAccessor {
   public onTouchedCallback: () => {};
@@ -80,6 +81,10 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
   @Input() mediaReferences: MediaReference[];
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
 
+  public imagesError: string;
+  public nextImagesUrl: string;
+  public totalImages = 0;
+  public loadingImages = false;
   private images: ImageItem[];
   private isVisible = false;
   private simplemde: SimpleMDE;
@@ -186,13 +191,26 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
     });
   }
 
-  private populateImages() {
+  public loadMoreImages() {
+    const nextPage = (this.images.length / 10) + 1;
+    this.populateImages(nextPage);
+  }
+
+  private populateImages(page = 1) {
+    if (page === 1) {
+      this.images = [];
+    }
+
     if (this.mediaReferences && this.mediaReferences.length > 0) {
       const ids = this.mediaReferences.map((mr) => mr.id);
 
-      this.fhirService.search('Media', null, null, null, null, {_id: ids}).toPromise()
+      this.imagesError = null;
+      this.loadingImages = true;
+
+      this.fhirService.search('Media', null, null, null, null, {_id: ids}, false, false, page, 10).toPromise()
         .then((results: Bundle) => {
-          this.images = (results.entry || []).map((entry) => {
+          this.totalImages = results.total;
+          const nextImages = (results.entry || []).map((entry) => {
             const mediaReference = this.mediaReferences.find((mr) => mr.id === entry.resource.id);
             const media = <STU3Media | R4Media> entry.resource;
 
@@ -202,6 +220,18 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
             imageItem.description = mediaReference.description;
             return imageItem;
           });
+
+          this.images = this.images.concat(nextImages);
+
+          if (this.totalImages !== ids.length) {
+            this.imagesError = `The implementation guide references ${ids.length} images (Media resources), but you only have access to ${this.totalImages}.`;
+          }
+
+          this.loadingImages = false;
+        })
+        .catch((err) => {
+          this.imagesError = getErrorString(err);
+          this.loadingImages = false;
         });
     } else {
       this.images = [];
@@ -225,7 +255,10 @@ export class MarkdownComponent extends NgModelBase implements AfterContentChecke
   ngAfterContentChecked() {
     if (!this.isVisible && this.textarea.nativeElement.offsetParent != null) {
       this.isVisible = true;
-      this.simplemde.codemirror.refresh();
+
+      if (this.simplemde.codemirror) {
+        this.simplemde.codemirror.refresh();
+      }
     } else if (this.isVisible && this.textarea.nativeElement.offsetParent == null) {
       this.isVisible = false;
     }

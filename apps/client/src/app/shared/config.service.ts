@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
 import {CapabilityStatement as STU3CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CapabilityStatement as R4CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {CapabilityStatement as R4CapabilityStatement, Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
@@ -15,7 +15,8 @@ export class ConfigService {
   public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
   public project?: {
     implementationGuideId: string,
-    name: string
+    name: string,
+    securityTags: Coding[]
   };
   public statusMessage: string;
   public showingIntroduction = false;

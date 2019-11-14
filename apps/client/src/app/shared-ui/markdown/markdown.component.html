@@ -10,6 +10,8 @@
     </button>
   </div>
   <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="imagesError">{{imagesError}}</div>
+    <div class="alert alert-info" *ngIf="loadingImages">Loading images...</div>
     <table class="table table-striped">
       <thead>
       <tr>
@@ -26,11 +28,18 @@
         <td>{{image.description}}</td>
         <td>
           <button type="button" class="btn btn-primary" title="Select this image" (click)="modal.close(image)">
-            <i class="fa fa-hand-pointer-o"></i>
+            <i class="fas fa-hand-pointer"></i>
           </button>
         </td>
       </tr>
       </tbody>
+      <tfoot *ngIf="totalImages !== images.length">
+      <tr>
+        <td colspan="4">
+          <button type="button" class="btn btn-primary" (click)="loadMoreImages()" [disabled]="loadingImages">Load more...</button>
+        </td>
+      </tr>
+      </tfoot>
       <tfoot *ngIf="!images || images.length === 0">
       <tr>
         <td colspan="4">

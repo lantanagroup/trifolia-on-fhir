@@ -1,5 +1,9 @@
 <h1>Import</h1>
 
+<p *ngIf="configService.project">
+  <input type="checkbox" [(ngModel)]="applyContextPermissions" /> Apply permissions of context implementation guide to imported resources.
+</p>
+
 <ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
   <ngb-tab id="file">
     <ng-template ngbTabTitle>

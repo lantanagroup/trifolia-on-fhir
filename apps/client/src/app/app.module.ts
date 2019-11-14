@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 // noinspection JSDeprecatedSymbols
@@ -72,6 +72,7 @@ import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OA
  * This class is an HTTP interceptor that is responsible for adding an
  * Authorization header to every request sent to the application server.
  */
+@Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
   constructor(private configService: ConfigService) {
   }
@@ -123,8 +124,8 @@ const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: ':fhirServer/home', component: HomeComponent},
   {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  //{path: ':fhirServer/implementation-guide', component: ImplementationGuidesComponent},
   {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
+  {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
   {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
   {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},

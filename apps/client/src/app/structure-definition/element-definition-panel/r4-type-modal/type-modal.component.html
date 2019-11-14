@@ -22,7 +22,7 @@
             <input type="text" class="form-control" [(ngModel)]="type.profile[pi]" />
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default" title="Select a profile" (click)="selectProfile(type.profile, pi)">
-                    <i class="fa fa-hand-pointer-o"></i>
+                    <i class="fas fa-hand-pointer"></i>
                 </button>
                 <button type="button" class="btn btn-default" title="Remove this profile" (click)="type.profile.splice(pi, 1)">
                     <i class="fas fa-trash-alt"></i>
@@ -42,7 +42,7 @@
             <input type="text" class="form-control" [(ngModel)]="type.targetProfile[tpi]" />
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default" title="Select a target profile" (click)="selectProfile(type.targetProfile, tpi)">
-                    <i class="fa fa-hand-pointer-o"></i>
+                    <i class="fas fa-hand-pointer"></i>
                 </button>
                 <button type="button" class="btn btn-default" title="Remove this target profile" (click)="type.targetProfile.splice(tpi, 1)">
                     <i class="fas fa-trash-alt"></i>

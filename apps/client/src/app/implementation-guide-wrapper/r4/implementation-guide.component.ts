@@ -517,6 +517,11 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   public save() {
+    // Add the new fhir version if they forgot to click the + button
+    if (this.newFhirVersion && this.implementationGuide.fhirVersion) {
+      this.implementationGuide.fhirVersion.push(this.newFhirVersion);
+    }
+
     if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
       return;
     }
@@ -532,6 +537,14 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
+          // Copy the new permissions to the context so that we other resources create for the ig will adopt the new permissions
+          if (this.configService.project && this.configService.project.implementationGuideId === implementationGuide.id) {
+            // only if the updated implementation guide has security tags
+            if (implementationGuide.meta && implementationGuide.meta.security && implementationGuide.meta.security.length > 0) {
+              this.configService.project.securityTags = implementationGuide.meta.security;
+            }
+          }
+
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';

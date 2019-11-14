@@ -47,7 +47,7 @@ export class R4HtmlExporter extends HtmlExporter {
         resources: ['source/resources']
       },
       pages: ['pages'],
-      version: '4.0.0',
+      version: '4.0.1',
       'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'sct-edition': 'http://snomed.info/sct/731000124108',
@@ -89,10 +89,6 @@ export class R4HtmlExporter extends HtmlExporter {
       },
       resources: {}
     };
-
-    if (this.r4ImplementationGuide.fhirVersion && this.r4ImplementationGuide.fhirVersion.length > 0) {
-      control.version = this.r4ImplementationGuide.fhirVersion[0];
-    }
 
     if (this.r4ImplementationGuide.version) {
       control['fixed-business-version'] = this.r4ImplementationGuide.version;

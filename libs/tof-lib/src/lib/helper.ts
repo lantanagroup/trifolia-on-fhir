@@ -154,6 +154,35 @@ export function ensureSecurity(meta: Meta) {
   }
 }
 
+export interface SecurityPermission {
+  type: 'user'|'group'|'everyone';
+  permission: 'read'|'write';
+  id?: string;
+}
+
+export function parsePermissions(meta: Meta): SecurityPermission[] {
+  return (meta.security || [])
+    .filter((security) => {
+      return security.system === Globals.securityDelim && security.code;
+    })
+    .map((security) => {
+      const parts = security.code.split(Globals.securityDelim);
+
+      if (parts.length === 2) {
+        return {
+          type: <any> parts[0],
+          permission: <any> parts[1]
+        };
+      } else if (parts.length === 3) {
+        return {
+          type: <any> parts[0],
+          permission: <any> parts[1],
+          id: parts[2]
+        };
+      }
+    });
+}
+
 export function findPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
   if (!meta) {
     return false;

@@ -1,245 +1,322 @@
 <div class="modal-header">
-    <h4 class="modal-title">Edit Resource</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
+  <h4 class="modal-title">Edit Resource</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 <div class="modal-body" *ngIf="resource">
-    <app-fhir-select-single-code
-            [parentObject]="resource"
-            propertyName="type"
-            title="Type"
-            valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
+  <app-fhir-select-single-code
+    [parentObject]="resource"
+    propertyName="type"
+    title="Type"
+    valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
 
-    <app-fhir-reference
-            [parentObject]="resource"
-            propertyName="profile"
-            title="Profile"
-            resourceType="StructureDefinition"></app-fhir-reference>
+  <app-fhir-markdown
+    [parentObject]="resource"
+    propertyName="documentation"
+    title="Documentation"></app-fhir-markdown>
 
-    <app-fhir-markdown
-            [parentObject]="resource"
-            propertyName="documentation"
-            title="Documentation"></app-fhir-markdown>
+  <!-- R4+ is a canonical url -->
+  <app-fhir-reference
+    [isCanonical]="!configService.isFhirSTU3"
+    [parentObject]="resource"
+    propertyName="profile"
+    title="Profile"
+    resourceType="StructureDefinition"
+    [hideResourceType]="true"></app-fhir-reference>
 
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('interaction')" (ngModelChange)="Globals.toggleProperty(resource, 'interaction', [{ code: 'read' }])" />
-            Interaction(s)
-        </div>
-        <table class="table table-striped" *ngIf="resource.hasOwnProperty('interaction')">
-            <thead>
-            <tr>
-                <th>Code</th>
-                <th title="Extension: http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation">Expectation</th>
-                <th>Documentation</th>
-                <th>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Add an interaction" (click)="resource.interaction.push({ code: 'read' })">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let i of resource.interaction; let ii = index">
-                <td>
-                    <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/system-restful-interaction"></app-fhir-select-single-code>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <input type="checkbox" [ngModel]="interactionHasExpectation(i)" (ngModelChange)="toggleInteractionExpectation(i)" />
-                        </div>
-                        <select class="form-control" [ngModel]="getInteractionExpectation(i)" (ngModelChange)="setInteractionExpectation(i, $event)">
-                            <option>SHALL</option>
-                            <option>SHOULD</option>
-                            <option>MAY</option>
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <app-fhir-string [parentObject]="i" propertyName="documentation" [isFormGroup]="false" [required]="false"></app-fhir-string>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Remove this interaction" (click)="resource.interaction.splice(ii, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+  <div class="card" *ngIf="configService.isFhirR4">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="r4Resource.hasOwnProperty('supportedProfile')" (ngModelChange)="Globals.toggleProperty(r4Resource, 'supportedProfile', [''])"/>
+      Supported Profiles
     </div>
+    <table class="table table-striped" *ngIf="r4Resource.hasOwnProperty('supportedProfile')">
+      <thead>
+      <tr>
+        <th>Profile</th>
+        <th class="actions-column-1">
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add a supported profile" (click)="r4Resource.supportedProfile.push('')">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let sp of r4Resource.supportedProfile; let spi = index; trackBy: Globals.trackByFn">
+        <td>
+          <div class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="r4Resource.supportedProfile[spi]" />
+            <div class="input-group-append">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectSupportedProfile(spi)">
+                  <i class="fas fa-hand-pointer"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default" title="Remove this supported profile" (click)="r4Resource.supportedProfile.splice(spi, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="versioning" title="Versioning" valueSetUrl="http://hl7.org/fhir/ValueSet/versioning-policy"></app-fhir-select-single-code>
-
-    <app-fhir-boolean [parentObject]="resource" propertyName="readHistory" title="Read History"></app-fhir-boolean>
-
-    <app-fhir-boolean [parentObject]="resource" propertyName="updateCreate" title="Update Create"></app-fhir-boolean>
-
-    <app-fhir-boolean [parentObject]="resource" propertyName="conditionalCreate" title="Conditional Create"></app-fhir-boolean>
-
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalRead" title="Conditional Read" valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-read-status"></app-fhir-select-single-code>
-
-    <app-fhir-boolean [parentObject]="resource" propertyName="conditionalUpdate" title="Conditional Update"></app-fhir-boolean>
-
-    <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalDelete" title="Conditional Delete" valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-delete-status"></app-fhir-select-single-code>
-
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('referencePolicy')" (ngModelChange)="Globals.toggleProperty(resource, 'referencePolicy', ['literal'])" />
-            Reference Policy
-        </div>
-        <table class="table table-striped" *ngIf="resource.hasOwnProperty('referencePolicy')">
-            <thead>
-            <tr>
-                <th>Code</th>
-                <th>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Add a reference policy" (click)="resource.referencePolicy.push('literal')">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let rp of resource.referencePolicy; let rpi = index">
-                <td>
-                    <app-fhir-select-single-code [parentObject]="resource.referencePolicy" [propertyName]="rpi" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/reference-handling-policy"></app-fhir-select-single-code>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Remove this reference policy" (click)="resource.referencePolicy.splice(rpi, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('interaction')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'interaction', [{ code: 'read' }])"/>
+      Interaction(s)
     </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('interaction')">
+      <thead>
+      <tr>
+        <th>Code</th>
+        <th title="Extension: http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation">Expectation</th>
+        <th>Documentation</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add an interaction"
+                    (click)="resource.interaction.push({ code: 'read' })">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let i of resource.interaction; let ii = index">
+        <td>
+          <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/system-restful-interaction"></app-fhir-select-single-code>
+        </td>
+        <td>
+          <div class="input-group">
+            <div class="input-group-addon">
+              <input type="checkbox" [ngModel]="interactionHasExpectation(i)"
+                     (ngModelChange)="toggleInteractionExpectation(i)"/>
+            </div>
+            <select class="form-control" [ngModel]="getInteractionExpectation(i)"
+                    (ngModelChange)="setInteractionExpectation(i, $event)">
+              <option>SHALL</option>
+              <option>SHOULD</option>
+              <option>MAY</option>
+            </select>
+          </div>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="i" propertyName="documentation" [isFormGroup]="false"
+                           [required]="false"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Remove this interaction"
+                    (click)="resource.interaction.splice(ii, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchInclude')" (ngModelChange)="Globals.toggleProperty(resource, 'searchInclude', [''])" />
-            Search Include(s)
-        </div>
-        <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchInclude')">
-            <thead>
-            <tr>
-                <th>Value</th>
-                <th>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Add a search include" (click)="resource.searchInclude.push('')">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let si of resource.searchInclude; let sii = index; trackBy: Globals.trackByFn">
-                <td>
-                    <app-fhir-string [parentObject]="resource.searchInclude" [propertyName]="sii" [isFormGroup]="false" [required]="false"></app-fhir-string>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Remove this search include" (click)="resource.searchInclude.splice(sii, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+  <app-fhir-select-single-code [parentObject]="resource" propertyName="versioning" title="Versioning"
+                               valueSetUrl="http://hl7.org/fhir/ValueSet/versioning-policy"></app-fhir-select-single-code>
 
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchRevInclude')" (ngModelChange)="Globals.toggleProperty(resource, 'searchRevInclude', [''])" />
-            Search Reverse Include(s)
-        </div>
-        <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchRevInclude')">
-            <thead>
-            <tr>
-                <th>Value</th>
-                <th>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Add a search reverse  include" (click)="resource.searchRevInclude.push('')">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let si of resource.searchRevInclude; let sii = index; trackBy: Globals.trackByFn">
-                <td>
-                    <app-fhir-string [parentObject]="resource.searchRevInclude" [propertyName]="sii" [isFormGroup]="false" [required]="false"></app-fhir-string>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Remove this search reverse include" (click)="resource.searchRevInclude.splice(sii, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+  <app-fhir-boolean [parentObject]="resource" propertyName="readHistory" title="Read History"></app-fhir-boolean>
 
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchParam')" (ngModelChange)="Globals.toggleProperty(resource, 'searchParam', [{}])" />
-            Search Params
-        </div>
-        <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchParam')">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Definition</th>
-                <th>Type</th>
-                <th>Documentation</th>
-                <th>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Add a search param" (click)="resource.searchParam.push({})">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let si of resource.searchParam; let sii = index; trackBy: Globals.trackByFn">
-                <td>
-                    <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
-                </td>
-                <td>
-                    <app-fhir-string [parentObject]="si" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
-                </td>
-                <td>
-                    <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
-                </td>
-                <td>
-                    <app-fhir-string [parentObject]="si" propertyName="documentation" [isFormGroup]="false"></app-fhir-string>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default btn-sm" title="Remove this search param" (click)="resource.searchParam.splice(sii, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+  <app-fhir-boolean [parentObject]="resource" propertyName="updateCreate" title="Update Create"></app-fhir-boolean>
+
+  <app-fhir-boolean [parentObject]="resource" propertyName="conditionalCreate"
+                    title="Conditional Create"></app-fhir-boolean>
+
+  <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalRead" title="Conditional Read"
+                               valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-read-status"></app-fhir-select-single-code>
+
+  <app-fhir-boolean [parentObject]="resource" propertyName="conditionalUpdate"
+                    title="Conditional Update"></app-fhir-boolean>
+
+  <app-fhir-select-single-code [parentObject]="resource" propertyName="conditionalDelete" title="Conditional Delete"
+                               valueSetUrl="http://hl7.org/fhir/ValueSet/conditional-delete-status"></app-fhir-select-single-code>
+
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('referencePolicy')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'referencePolicy', ['literal'])"/>
+      Reference Policy
     </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('referencePolicy')">
+      <thead>
+      <tr>
+        <th>Code</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add a reference policy"
+                    (click)="resource.referencePolicy.push('literal')">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let rp of resource.referencePolicy; let rpi = index">
+        <td>
+          <app-fhir-select-single-code [parentObject]="resource.referencePolicy" propertyName="{{rpi}}"
+                                       [isFormGroup]="false"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/reference-handling-policy"></app-fhir-select-single-code>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Remove this reference policy"
+                    (click)="resource.referencePolicy.splice(rpi, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchInclude')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'searchInclude', [''])"/>
+      Search Include(s)
+    </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchInclude')">
+      <thead>
+      <tr>
+        <th>Value</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add a search include"
+                    (click)="resource.searchInclude.push('')">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let si of resource.searchInclude; let sii = index; trackBy: Globals.trackByFn">
+        <td>
+          <app-fhir-string [parentObject]="resource.searchInclude" propertyName="{{sii}}" [isFormGroup]="false"
+                           [required]="false"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Remove this search include"
+                    (click)="resource.searchInclude.splice(sii, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchRevInclude')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'searchRevInclude', [''])"/>
+      Search Reverse Include(s)
+    </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchRevInclude')">
+      <thead>
+      <tr>
+        <th>Value</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add a search reverse  include"
+                    (click)="resource.searchRevInclude.push('')">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let si of resource.searchRevInclude; let sri = index; trackBy: Globals.trackByFn">
+        <td>
+          <app-fhir-string [parentObject]="resource.searchRevInclude" propertyName="{{sri}}" [isFormGroup]="false"
+                           [required]="false"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Remove this search reverse include"
+                    (click)="resource.searchRevInclude.splice(sri, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('searchParam')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'searchParam', [{}])"/>
+      Search Params
+    </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('searchParam')">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Definition</th>
+        <th>Type</th>
+        <th>Documentation</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Add a search param"
+                    (click)="resource.searchParam.push({ name: 'new search param', type: 'number' })">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let si of resource.searchParam; let sii = index; trackBy: Globals.trackByFn">
+        <td>
+          <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
+                           [required]="true"></app-fhir-string>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="si" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
+          <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false"
+                                       valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="si" propertyName="documentation" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" title="Remove this search param"
+                    (click)="resource.searchParam.splice(sii, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

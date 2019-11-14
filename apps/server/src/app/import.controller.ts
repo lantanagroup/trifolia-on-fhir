@@ -33,7 +33,14 @@ export class ImportController extends BaseController {
   }
 
   @Get('vsac/:id')
-  public async importVsacValueSet(@FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion, @User() user: ITofUser, @Headers('vsacauthorization') vsacAuthorization: string, @Param('id') id: string) {
+  public async importVsacValueSet(
+    @FhirServerBase() fhirServerBase: string,
+    @FhirServerVersion() fhirServerVersion,
+    @User() user: ITofUser,
+    @Headers('vsacauthorization') vsacAuthorization: string,
+    @Param('id') id: string,
+    @Param('applyContextPermissions') applyContextPermissions = true) {
+
     if (!vsacAuthorization) {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
     }
@@ -69,7 +76,7 @@ export class ImportController extends BaseController {
     try {
       const proxyUrl = `/${vsacResults.data.resourceType}/${vsacResults.data.id}`;
       const fhirProxy = new FhirController(this.httpService, this.configService);
-      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data);
+      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data, applyContextPermissions);
       return proxyResults.data;
     } catch (ex) {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);

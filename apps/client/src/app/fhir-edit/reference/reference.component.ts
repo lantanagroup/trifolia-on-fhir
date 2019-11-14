@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ResourceReference} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {FhirReferenceModalComponent} from '../reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from '../reference-modal/reference-modal.component';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -11,6 +11,7 @@ import {Subject} from 'rxjs';
   styleUrls: ['./reference.component.css']
 })
 export class FhirReferenceComponent implements OnInit {
+  @Input() public isCanonical = false;
   @Input() public parentObject: any;
   @Input() public propertyName: string;
   @Input() public isFormGroup = true;
@@ -37,6 +38,8 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   get reference(): string {
+    if (this.isCanonical) return '';
+
     if (this.parentObject[this.propertyName]) {
       return this.parentObject[this.propertyName].reference;
     }
@@ -44,6 +47,8 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   set reference(value: string) {
+    if (this.isCanonical) return;
+
     if (value && !this.parentObject[this.propertyName]) {
       this.parentObject[this.propertyName] = {};
     }
@@ -58,6 +63,8 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   get display(): string {
+    if (this.isCanonical) return '';
+
     if (this.parentObject[this.propertyName]) {
       return this.parentObject[this.propertyName].display;
     }
@@ -65,6 +72,8 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   set display(value: string) {
+    if (this.isCanonical) return;
+
     if (value && !this.parentObject[this.propertyName]) {
       this.parentObject[this.propertyName] = {};
     }
@@ -83,14 +92,19 @@ export class FhirReferenceComponent implements OnInit {
     modalRef.componentInstance.resourceType = this.resourceType;
     modalRef.componentInstance.hideResourceType = this.hideResourceType;
 
-    modalRef.result.then((results: any) => {
-      this.reference = `${results.resourceType}/${results.id}`;
-      this.display = results.display;
+    modalRef.result.then((results: ResourceSelection) => {
+      if (!this.isCanonical) {
+        this.reference = `${results.resourceType}/${results.id}`;
+        this.display = results.display;
+      } else {
+        this.parentObject[this.propertyName] = results.resource.url || results.fullUrl;
+      }
+
       this.changeDebouncer.next(this.parentObject[this.propertyName]);
     });
   }
 
-  clearReference() {
+  clear() {
     delete this.parentObject[this.propertyName];
   }
 
