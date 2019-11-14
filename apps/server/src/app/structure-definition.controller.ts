@@ -51,6 +51,7 @@ export class StructureDefinitionController extends BaseFhirController {
    */
   @Get('base')
   public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string) {
+    /* COMMENTING OUT THIS LOGIC. The Profile Editor does not handle profiles derived from other profiles correctly, for now.
     // Recursive function to get all base profiles for a given url
     const getNextBase = async (baseUrl: string, list: StructureDefinition[] = []) => {
       const foundBaseProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
@@ -101,6 +102,21 @@ export class StructureDefinitionController extends BaseFhirController {
     }
 
     return found;
+     */
+
+    // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot based on the core spec
+    if (!type) {
+      throw new Error(`Can't find one or more base profiles for ${url} and no type is specified to fall back on`);
+    }
+
+    const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + type;
+    const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+
+    if (!baseTypeProfile) {
+      throw new Error(`Can't find base profile for ${baseUrl}`);
+    }
+
+    return baseTypeProfile;
   }
 
   @Get()

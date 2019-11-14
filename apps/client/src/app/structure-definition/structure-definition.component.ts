@@ -171,7 +171,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         if (diffElement.id === baseElementId) {
           // Simple check for an exact match between the base element's id and the differential element's id
           return true;
-        } else if (diffElement.id.startsWith(baseElementId + ':') && baseHasSlicing === diffHasSlicing) {
+        } else if (diffElement.id.startsWith(baseElementId + ':')) {
           // the element is constrained with a slice, but we need to make sure the path doesn't represent a child of the slice
           const after = diffElement.id.substring(baseElementId.length + 1);
           return after.indexOf('.') < 0;
