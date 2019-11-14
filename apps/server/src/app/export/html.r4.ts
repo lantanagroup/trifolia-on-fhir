@@ -90,10 +90,6 @@ export class R4HtmlExporter extends HtmlExporter {
       resources: {}
     };
 
-    if (this.r4ImplementationGuide.fhirVersion && this.r4ImplementationGuide.fhirVersion.length > 0) {
-      control.version = this.r4ImplementationGuide.fhirVersion[0];
-    }
-
     if (this.r4ImplementationGuide.version) {
       control['fixed-business-version'] = this.r4ImplementationGuide.version;
     }
