@@ -74,6 +74,14 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.questionnaire.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.questionnaire.id = this.questionnaire.url.substring(lastIndex + 1);
+    }
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the questionnaire?')) {
       return;
@@ -95,7 +103,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
     this.questionnaireService.save(this.questionnaire)
       .subscribe((results: Questionnaire) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/questionnaire/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentQuestionnaires,
@@ -107,7 +116,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the questionnaire';
+        this.message = `An error occurred while saving the questionnaire: ${err.message}`;
       });
   }
 
@@ -119,7 +128,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
         this.questionnaire = <Questionnaire>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }

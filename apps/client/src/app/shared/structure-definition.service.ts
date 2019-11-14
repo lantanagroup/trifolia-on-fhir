@@ -5,32 +5,6 @@ import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/s
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 
-export class StructureDefinitionImplementationGuide {
-  constructor(id?: string, name?: string) {
-    this.id = id;
-    this.name = name;
-  }
-
-  public id: string;
-  public name: string;
-  public isRemoved = false;
-  public isNew = false;
-}
-
-export class StructureDefinitionOptions {
-  public implementationGuides: StructureDefinitionImplementationGuide[] = [];
-}
-
-export class GetStructureDefinitionModel {
-  public resource: StructureDefinition;
-  public options?: StructureDefinitionOptions;
-
-  constructor(resource?: StructureDefinition, options?: StructureDefinitionOptions) {
-    this.resource = resource;
-    this.options = options;
-  }
-}
-
 @Injectable()
 export class StructureDefinitionService {
 
@@ -73,19 +47,17 @@ export class StructureDefinitionService {
     return this.http.get<Bundle>(url);
   }
 
-  public getStructureDefinition(id: string): Observable<GetStructureDefinitionModel> {
+  public getStructureDefinition(id: string): Observable<StructureDefinition> {
     if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<GetStructureDefinitionModel>((observer) => {
-          observer.next({
-            resource: <StructureDefinition>this.fileService.file.resource
-          });
+        return new Observable<StructureDefinition>((observer) => {
+          observer.next(<StructureDefinition> this.fileService.file.resource);
         });
       }
     }
 
     const url = '/api/structureDefinition/' + encodeURIComponent(id);
-    return this.http.get<GetStructureDefinitionModel>(url);
+    return this.http.get<StructureDefinition>(url);
   }
 
   public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<StructureDefinition> {
@@ -98,18 +70,14 @@ export class StructureDefinitionService {
     return this.http.get<StructureDefinition>(url);
   }
 
-  public save(structureDefinition: StructureDefinition, options?: StructureDefinitionOptions): Observable<StructureDefinition> {
+  public save(structureDefinition: StructureDefinition): Observable<StructureDefinition> {
     let url = '/api/structureDefinition';
-    const body = {
-      resource: structureDefinition,
-      options: options
-    };
 
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);
-      return this.http.put<StructureDefinition>(url, body);
+      return this.http.put<StructureDefinition>(url, structureDefinition);
     } else {
-      return this.http.post<StructureDefinition>(url, body);
+      return this.http.post<StructureDefinition>(url, structureDefinition);
     }
   }
 

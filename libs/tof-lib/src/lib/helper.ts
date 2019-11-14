@@ -2,6 +2,12 @@ import {Coding, DomainResource, HumanName, Meta, Practitioner} from './stu3/fhir
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
 
+export class ParsedUrlModel {
+  public resourceType: string;
+  public id: string;
+  public historyId: string;
+}
+
 export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   if (err && err.error) {
     if (err.error.message) {
@@ -32,6 +38,10 @@ export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   return defaultMessage || 'An unknown error occurred';
 }
 
+/**
+ * Function that can be used by Array.reduce to flatten a multi-level set of arrays.
+ * @param callback Should return the child array of the elements
+ */
 export function reduceFlatten<T>(callback: (next: T) => any[]) {
   const internalFlatten = (previous: T[], children: T[]) => {
     if (children) {
@@ -48,6 +58,10 @@ export function reduceFlatten<T>(callback: (next: T) => any[]) {
   };
 }
 
+/**
+ * Function that can be used by Array.reduce to get a distinct set of elements.
+ * @param callback The callback is required, and used to indicate what the value of each element is that should be used in the comparison.
+ */
 export function reduceDistinct<T>(callback: (next: T) => any) {
   return (previous: any[], current: T): any[] => {
     const id = callback(current);
@@ -260,10 +274,72 @@ export function getStringFromBlob(theBlob: Blob): Promise<string> {
       const reader = new FileReader();
       reader.onload = function () {
         resolve(<string> reader.result);
-      }
+      };
       reader.readAsText(theBlob);
     } catch (ex) {
       reject(ex.message);
     }
   });
+}
+
+export function createTableFromArray(headers, data): string {
+  let output = '<table>\n<thead>\n<tr>\n';
+
+  headers.forEach((header) => {
+    output += `<th>${header}</th>\n`;
+  });
+
+  output += '</tr>\n</thead>\n<tbody>\n';
+
+  data.forEach((row: string[]) => {
+    output += '<tr>\n';
+
+    row.forEach((cell) => {
+      output += `<td>${cell}</td>\n`;
+    });
+
+    output += '</tr>\n';
+  });
+
+  output += '</tbody>\n</table>\n';
+
+  return output;
+}
+
+ export function getDisplayName(name: string | HumanName): string {
+  if (!name) {
+    return;
+  }
+
+  if (typeof name === 'string') {
+    return <string>name;
+  }
+
+  let display = name.family;
+
+  if (name.given) {
+    if (display) {
+      display += ', ';
+    } else {
+      display = '';
+    }
+
+    display += name.given.join(' ');
+  }
+
+  return display;
+}
+
+export function parseReference(reference: string): ParsedUrlModel {
+  // This regex is loaded with resource types from both STU3 and R4
+  const parseReferenceRegex = /(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BiologicallyDerivedProduct|BodySite|BodyStructure|Bundle|CapabilityStatement|CarePlan|CareTeam|CatalogEntry|ChargeItem|ChargeItemDefinition|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|CoverageEligibilityRequest|CoverageEligibilityResponse|DataElement|DetectedIssue|Device|DeviceComponent|DeviceDefinition|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EffectEvidenceSynthesis|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|EventDefinition|Evidence|EvidenceVariable|ExampleScenario|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationEvaluation|ImmunizationRecommendation|ImplementationGuide|InsurancePlan|Invoice|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationKnowledge|MedicationRequest|MedicationStatement|MedicinalProduct|MedicinalProductAuthorization|MedicinalProductContraindication|MedicinalProductIndication|MedicinalProductIngredient|MedicinalProductInteraction|MedicinalProductManufactured|MedicinalProductPackaged|MedicinalProductPharmaceutical|MedicinalProductUndesirableEffect|MessageDefinition|MessageHeader|MolecularSequence|NamingSystem|NutritionOrder|Observation|ObservationDefinition|OperationDefinition|OperationOutcome|Organization|OrganizationAffiliation|Parameters|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchDefinition|ResearchElementDefinition|ResearchStudy|ResearchSubject|RiskAssessment|RiskEvidenceSynthesis|Schedule|SearchParameter|Sequence|ServiceDefinition|ServiceRequest|Slot|Specimen|SpecimenDefinition|StructureDefinition|StructureMap|Subscription|Substance|SubstancePolymer|SubstanceReferenceInformation|SubstanceSpecification|SupplyDelivery|SupplyRequest|Task|TerminologyCapabilities|TestReport|TestScript|ValueSet|VerificationResult|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
+  const match = parseReferenceRegex.exec(reference);
+
+  if (match) {
+    return {
+      resourceType: match[1],
+      id: match[3],
+      historyId: match[5]
+    };
+  }
 }

@@ -2,7 +2,7 @@
 
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['export.implementationGuide']">
+<div class="form-group" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"
@@ -49,6 +49,17 @@
               <option [ngValue]="false">No</option>
             </select>
           </div>
+        </div>
+
+        <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
+          <app-fhir-boolean
+            [parentObject]="options"
+            propertyName="useLatest"
+            [required]="true"
+            [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
+            title="Use latest FHIR IG Publisher?">
+          </app-fhir-boolean>
+          <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR. If Publish fails to run, try re-running with 'No' selected for this option.</div>
         </div>
       </div>
     </ng-template>

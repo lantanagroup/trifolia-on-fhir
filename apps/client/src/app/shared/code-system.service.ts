@@ -20,11 +20,15 @@ export class CodeSystemService {
         }
     }
 
-    public search(page = 1, name?: string) {
+    public search(page = 1, name?: string, implementationGuideId?: string) {
         let url = '/api/codeSystem?page=' + page + '&';
 
         if (name) {
-            url += 'name=' + encodeURIComponent(name) + '&';
+            url += `name=${encodeURIComponent(name)}&`;
+        }
+        
+        if (implementationGuideId) {
+          url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
         }
 
         url += '_sort=name';

@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CookieService} from 'angular2-cookie/core';
 import {NgModel} from '@angular/forms';
+import {Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-fhir-string',
@@ -21,21 +23,25 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
 
-  @ViewChild('formGroupModel')
+  @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
 
-  @ViewChild('model')
+  @ViewChild('model', { static: true })
   private model: NgModel;
 
   /**
    * Indicates that the value of the component should be remembered in cookies
    */
   @Input() cookieKey?: string;
+
+  private changeEvent = new Subject();
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private cookieService: CookieService) {
 
+    this.changeEvent.pipe(debounceTime(500))
+      .subscribe((value: string) => this.change.emit(value));
   }
 
   public get value() {
@@ -74,10 +80,6 @@ export class FhirStringComponent implements OnInit {
         this.cookieService.put(this.cookieKey, newValue);
       }
     }
-  }
-
-  public onChanged() {
-    this.change.emit(this.parentObject[this.propertyName]);
   }
 
   ngOnInit() {

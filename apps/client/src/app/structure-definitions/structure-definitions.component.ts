@@ -5,7 +5,7 @@ import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {Bundle, ImplementationGuide, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import 'rxjs/add/operator/debounceTime';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
@@ -26,7 +26,6 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public urlText: string;
   public titleText: string;
   public criteriaChangedEvent = new Subject();
-  public implementationGuidesBundle: Bundle;
   public implementationGuideId: string = null;
   public showMoreSearch = false;
   public Globals = Globals;
@@ -57,14 +56,6 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     });
   }
 
-  public get implementationGuides() {
-    if (!this.implementationGuidesBundle || !this.implementationGuidesBundle.entry) {
-      return [];
-    }
-
-    return this.implementationGuidesBundle.entry.map((entry) => <ImplementationGuide>entry.resource);
-  }
-
   public remove(structureDefinition: StructureDefinition) {
     if (!confirm(`Are you sure you want to delete the structure definition ${structureDefinition.name}`)) {
       return;
@@ -73,7 +64,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.structureDefinitionService.delete(structureDefinition.id)
       .subscribe(() => {
         this.message = `Successfully deleted structure definition ${structureDefinition.name} (${structureDefinition.id})`;
-        const entry = (this.response.entry || []).find((entry) => entry.resource.id === structureDefinition.id);
+        const entry = (this.response.entry || []).find((e) => e.resource.id === structureDefinition.id);
         const index = this.response.entry.indexOf(entry);
         this.response.entry.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);
@@ -146,15 +137,6 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
       });
   }
 
-  public getImplementationGuides() {
-    this.implementationGuideService.getImplementationGuides()
-      .subscribe((results) => {
-        this.implementationGuidesBundle = results;
-      }, (err) => {
-        this.configService.handleError(err, 'Error loading implementation guides.');
-      });
-  }
-
   public getContactDisplay(structureDefinition: StructureDefinition) {
     if (structureDefinition.contact && structureDefinition.contact.length > 0) {
       const contact = structureDefinition.contact[0];
@@ -171,11 +153,10 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
 
   private initData() {
     this.getStructureDefinitions();
-    this.getImplementationGuides();
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe((fhirServer) => this.initData());
+    this.configService.fhirServerChanged.subscribe(() => this.initData());
     this.initData();
   }
 }

@@ -1,7 +1,8 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
 import {CapabilityStatementService} from '../../shared/capability-statement.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CapabilityStatement} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Observable} from 'rxjs';
 import {RecentItemService} from '../../shared/recent-item.service';
@@ -20,7 +21,7 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
   styleUrls: ['./capability-statement.component.css']
 })
 export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement;
+  @Input() public capabilityStatement: CapabilityStatement;
 
   public message: string;
   public validation: any;
@@ -55,6 +56,14 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.capabilityStatement.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.capabilityStatement.id = this.capabilityStatement.url.substring(lastIndex + 1);
+    }
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the capability statement?')) {
       return;
@@ -76,7 +85,8 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
     this.csService.save(this.capabilityStatement)
       .subscribe((results: CapabilityStatement) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/capability-statement/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
           this.message = 'Your changes have been saved!';
@@ -85,7 +95,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the capability statement';
+        this.message = `An error occurred while saving the capability statement: ${err.message}`;
       });
   }
 
@@ -141,7 +151,8 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
         this.capabilityStatement = <CapabilityStatement>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }

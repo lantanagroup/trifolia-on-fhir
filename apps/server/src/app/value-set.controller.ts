@@ -7,8 +7,9 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))
@@ -16,9 +17,9 @@ import {ConfigService} from './config.service';
 @ApiOAuth2Auth()
 export class ValueSetController extends BaseFhirController {
   resourceType = 'ValueSet';
-  
+
   protected readonly logger = new TofLogger(ValueSetController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
@@ -28,7 +29,7 @@ export class ValueSetController extends BaseFhirController {
     return new Promise((resolve, reject) => {
       this.logger.log(`Beginning request to expand value set ${id}`);
 
-      const getOptions = {
+      const getOptions: AxiosRequestConfig = {
         url: buildUrl(request.fhirServerBase, 'ValueSet', id),
         method: 'GET'
       };
@@ -40,7 +41,7 @@ export class ValueSetController extends BaseFhirController {
           const valueSet = results.data;
           this.logger.log('Retrieved value set content for expand');
 
-          const expandOptions = {
+          const expandOptions: AxiosRequestConfig = {
             url: buildUrl(this.configService.fhir.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
             method: 'POST',
             data: valueSet
@@ -51,14 +52,16 @@ export class ValueSetController extends BaseFhirController {
         })
         .then((results) => {
           this.logger.log('FHIR server responded with expanded value set');
+          resolve(results.data);
           return results.data;
-        });
+        })
+        .catch((err) => reject(err));
     });
   }
 
   @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   @Get(':id')
@@ -67,17 +70,17 @@ export class ValueSetController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerBase() fhirServerBase, @User() user, @Body() body) {
-    return super.baseCreate(fhirServerBase, body, user);
+  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId);
   }
 
   @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @Param('id') id: string, @Body() body, @User() user) {
-    return super.baseUpdate(fhirServerBase, id, body, user);
+  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId);
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 }

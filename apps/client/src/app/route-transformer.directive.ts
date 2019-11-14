@@ -10,10 +10,11 @@ export class RouteTransformerDirective {
     @HostListener('click', ['$event'])
     public onClick(event) {
         if (event.target.tagName === 'A') {
+          // noinspection JSIgnoredPromiseFromCall
             this.router.navigate([event.target.getAttribute('href')]);
             event.preventDefault();
         } else {
             return;
         }
     }
-};
+}

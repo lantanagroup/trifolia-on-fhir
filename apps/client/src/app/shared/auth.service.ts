@@ -1,10 +1,9 @@
 import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PractitionerService} from './practitioner.service';
-import {Group, HumanName, Identifier, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
-import {NewUserModalComponent} from '../modals/new-user-modal/new-user-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
@@ -153,7 +152,8 @@ export class AuthService {
     }
 
     // Go back to the home route
-    this.router.navigate(['/']);
+    // noinspection JSIgnoredPromiseFromCall
+    this.router.navigate([`/${this.configService.fhirServer}/home`]);
     this.authChanged.emit();
   }
 

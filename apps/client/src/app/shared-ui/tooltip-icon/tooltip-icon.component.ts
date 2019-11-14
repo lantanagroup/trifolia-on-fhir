@@ -12,6 +12,7 @@ export class TooltipIconComponent implements OnInit {
     @Input() tooltipKey: string;
     @Input() tooltipPath: string;
     @Input() showAsAlert = false;
+    @Input() showAsExclamation = false;
     @Input() alertTitle: string;
 
     public tooltip: string;

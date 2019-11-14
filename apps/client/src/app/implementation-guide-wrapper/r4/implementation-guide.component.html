@@ -5,7 +5,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
 
-  <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
+  <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
     <ngb-tab id="quick">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.quick-tab']">Quick</span>
@@ -18,7 +18,12 @@
           <div class="col-md-6">
             <div class="form-group">
               <label>ID</label>
-              <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+              <div [class.input-group]="!isNew">
+                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
+                <div class="input-group-btn" *ngIf="!isNew">
+                  <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -64,7 +69,7 @@
               <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: Globals.trackByFn">
                 <input type="text" class="form-control" [ngModel]="fhirVersion" readonly="readonly"/>
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
+                  <button type="button" class="btn btn-primary" title="Remove this FHIR version" (click)="implementationGuide.fhirVersion.splice(fvi, 1)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
@@ -81,7 +86,7 @@
                   <option>1.6.0</option>
                 </select>
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
+                  <button type="button" class="btn btn-primary" [disabled]="!newFhirVersion" (click)="addNewFhirVersion()" title="Add this FHIR version">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
@@ -112,17 +117,16 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="btn-group-toggle" data-toggle="buttons">
-                          <label class="btn" [class.btn-default]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
+                          <label class="btn" [class.btn-primary]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
                             All
                           </label>
-                          <label class="btn" [class.btn-default]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
+                          <label class="btn" [class.btn-primary]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
                             Profiles
                           </label>
-                          <label class="btn" [class.btn-default]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology"
-                                 (click)="toggleFilterResourceType('terminology')">
+                          <label class="btn" [class.btn-primary]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')">
                             Terminology
                           </label>
-                          <label class="btn" [class.btn-default]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
+                          <label class="btn" [class.btn-primary]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
                             Examples
                           </label>
                         </div>
@@ -139,7 +143,7 @@
                   <th>Example?</th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default" (click)="addResources()" title="Add existing resources to this implementation guide">
+                      <button type="button" class="btn btn-primary" (click)="addResources()" title="Add existing resources to this implementation guide">
                         <i class="fa fa-hand-pointer-o"></i>
                       </button>
                     </div>
@@ -149,18 +153,29 @@
                 <tbody>
                 <tr *ngFor="let resource of resources; let ri = index">
                   <td>
-                    <i class="fa fa-copy" *ngIf="isDuplicateResource(resource)" title="This is a duplicate"></i>
-                    <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                    <app-fhir-reference
+                      [parentObject]="resource"
+                      propertyName="reference"
+                      [hideDisplay]="true"
+                      [isFormGroup]="false"
+                      [required]="true"
+                      [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                      prependIconTooltip="This is a duplicate">
+                    </app-fhir-reference>
                   </td>
                   <td>
                     <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
                   </td>
                   <td>
-                    <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')"></app-fhir-boolean>
+                    <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
                   </td>
                   <td>
-                    <div class="pull-right">
-                      <button type="button" class="btn btn-default" (click)="removeResource(resource)">
+                    <div class="btn-group pull-right">
+                      <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-primary" (click)="removeResource(resource)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -189,28 +204,32 @@
                 <tbody>
                 <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="p.page.title"
-                           [class.is-invalid]="!p.page.title"/>
+                    <input type="text" class="form-control" [(ngModel)]="p.page.title" [class.is-invalid]="!p.page.title"/>
                   </td>
                   <td>
-                    <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
-                                                 [isFormGroup]="false"></app-fhir-select-single-code>
+                    <app-fhir-select-single-code
+                      [parentObject]="p.page"
+                      propertyName="generation"
+                      [required]="true"
+                      valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
+                      [isFormGroup]="false">
+                    </app-fhir-select-single-code>
                   </td>
                   <td>
                     <div class="btn-group pull-right">
-                      <button type="button" class="btn btn-default" (click)="editPage(p)" title="Edit this page">
+                      <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                         <i class="fa fa-edit"></i>
                       </button>
-                      <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
+                      <button type="button" class="btn btn-primary" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
                         <i class="fas fa-trash-alt"></i>
                       </button>
-                      <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add child page">
+                      <button type="button" class="btn btn-primary" (click)="addChildPage(p)" title="Add child page">
                         <i class="fa fa-plus"></i>
                       </button>
-                      <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move up">
+                      <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move up">
                         <i class="fa fa-arrow-up"></i>
                       </button>
-                      <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move up">
+                      <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move up">
                         <i class="fa fa-arrow-down"></i>
                       </button>
                     </div>
@@ -323,19 +342,19 @@
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" (click)="editPage(p)" title="Edit this page">
+                <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                   <i class="fa fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
+                <button type="button" class="btn btn-primary" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
                   <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add a page as a child of this page">
+                <button type="button" class="btn btn-primary" (click)="addChildPage(p)" title="Add a page as a child of this page">
                   <i class="fa fa-plus"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
+                <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
                   <i class="fa fa-arrow-up"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
+                <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
                   <i class="fa fa-arrow-down"></i>
                 </button>
               </div>
@@ -390,7 +409,7 @@
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Remove global"
+                <button type="button" class="btn btn-primary" title="Remove global"
                         (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -426,7 +445,7 @@
             </th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add a package to the implementation guide"
+                <button type="button" class="btn btn-primary" title="Add a package to the implementation guide"
                         (click)="implementationGuide.definition.package.push({ id: 'new-id', name: 'New Package' })">
                   <i class="fa fa-plus"></i>
                 </button>
@@ -435,19 +454,19 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let package of implementationGuide.definition.package; let pi = index">
+          <tr *ngFor="let pkg of implementationGuide.definition.package; let pi = index">
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="id" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="id" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="package" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="pkg" propertyName="description" [isFormGroup]="false"></app-fhir-string>
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(ri, 1)">
+                <button type="button" class="btn btn-primary" title="Remove this package from the implementation guide" (click)="implementationGuide.definition.package.splice(pi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -478,20 +497,12 @@
               <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.name"></app-tooltip-icon>
             </th>
             <th>
-              Description
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
-            </th>
-            <th style="width: 150px;">
               Example?
               <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.example[x]"></app-tooltip-icon>
             </th>
-            <th style="width: 225px;">
-              Package
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.package"></app-tooltip-icon>
-            </th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add existing resources to this implementation guide" (click)="addResources()">
+                <button type="button" class="btn btn-primary" title="Add existing resources to this implementation guide" (click)="addResources()">
                   <i class="fa fa-hand-pointer-o"></i>
                 </button>
               </div>
@@ -501,26 +512,29 @@
           <tbody>
           <tr *ngFor="let resource of implementationGuide.definition.resource; let ri = index">
             <td>
-              <app-fhir-reference [parentObject]="resource" propertyName="reference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+              <app-fhir-reference
+                [parentObject]="resource"
+                propertyName="reference"
+                [hideDisplay]="true"
+                [isFormGroup]="false"
+                [required]="true"
+                [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                prependIconTooltip="This is a duplicate">
+              </app-fhir-reference>
             </td>
             <td>
               <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="resource" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')"></app-fhir-boolean>
+              <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
             </td>
             <td>
-              <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false"></app-fhir-boolean>
-            </td>
-            <td>
-              <select class="form-control" [(ngModel)]="resource.package">
-                <option [ngValue]="undefined">Unspecified</option>
-                <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
-              </select>
-            </td>
-            <td>
-              <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Remove this resource from the implementation guide" (click)="implementationGuide.definition.resource.splice(ri, 1)">
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-primary" title="Remove this resource from the implementation guide" (click)="implementationGuide.definition.resource.splice(ri, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -531,6 +545,7 @@
       </ng-template>
     </ngb-tab>
 
+    <!-- Permissions -->
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
@@ -603,7 +618,7 @@
         </th>
         <th class="actions-column-1">
           <div class="pull-right">
-            <button type="button" class="btn btn-default" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ version: 'current' })">
+            <button type="button" class="btn btn-primary" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '', version: 'current' })">
               <i class="fa fa-plus"></i>
             </button>
           </div>
@@ -616,7 +631,7 @@
           <div class="input-group">
             <input type="text" class="form-control" [class.is-invalid]="!dependsOn.uri" [(ngModel)]="dependsOn.uri"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependsOn)">
+              <button type="button" class="btn btn-primary" (click)="selectPublishedIg(dependsOn)">
                 <i class="fa fa-hand-pointer-o"></i>
               </button>
             </div>
@@ -637,7 +652,7 @@
         </td>
         <td>
           <div class="pull-right">
-            <button type="button" class="btn btn-default" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
+            <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>

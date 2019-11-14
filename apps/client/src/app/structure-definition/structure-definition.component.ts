@@ -1,6 +1,6 @@
-import {Component, DoCheck, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {StructureDefinitionOptions, StructureDefinitionService} from '../shared/structure-definition.service';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
@@ -26,7 +26,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: StructureDefinition;
-  public options = new StructureDefinitionOptions();
   public baseStructureDefinition;
   public elements: ElementTreeModel[] = [];
   public selectedElement: ElementTreeModel;
@@ -35,8 +34,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public sdNotFound = false;
   public Globals = Globals;
 
-  @ViewChild('edPanel') edPanel: ElementDefinitionPanelComponent;
-  @ViewChild('sdTabs') sdTabs: NgbTabset;
+  @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
+  @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
 
   private navSubscription: any;
 
@@ -58,6 +57,20 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.document.body.classList.add('structure-definition');
   }
 
+  static isChildOfElement(target: ElementTreeModel, parent: ElementTreeModel): boolean {
+    let current = target.parent;
+
+    while (current) {
+      if (current === parent) {
+        return true;
+      }
+
+      current = current.parent;
+    }
+
+    return false;
+  }
+
   ngOnDestroy() {
     this.document.body.classList.remove('structure-definition');
     if (this.navSubscription) {
@@ -68,6 +81,26 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
   public get isFile(): boolean {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
+  }
+
+  public toggleMappings() {
+    if (this.structureDefinition.mapping) {
+      if (this.structureDefinition.mapping.length > 0) {
+        const foundElementsWithMappings = this.structureDefinition.differential.element.filter(e => e.mapping && e.mapping.length > 0);
+
+        if (foundElementsWithMappings.length > 0) {
+          if (!confirm(`This will remove ${foundElementsWithMappings.length} element mappings from this profile. Are you sure you want to continue?`)) {
+            return;
+          }
+
+          foundElementsWithMappings.forEach((e) => delete e.mapping);
+        }
+
+        delete this.structureDefinition.mapping;
+      }
+    } else {
+      this.structureDefinition.mapping = [{ identity: '' }];
+    }
   }
 
   public toggleSelectedElement(element?: ElementTreeModel, disableDeselect = false) {
@@ -122,7 +155,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.configService.setTitle(`StructureDefinition - ${this.structureDefinition.title || this.structureDefinition.name || 'no-name'}`);
   }
 
-  public populateConstrainedElements(elementTreeModels: ElementTreeModel[], sliceName: string) {
+  public populateConstrainedElements(elementTreeModels: ElementTreeModel[]) {
     for (let i = 0; i < elementTreeModels.length; i++) {
       const elementTreeModel = elementTreeModels[i];
       const parentId = elementTreeModel.parent ? elementTreeModel.parent.id : '';
@@ -165,9 +198,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     const baseProfile = parent ? parent.profile : this.baseStructureDefinition;
     const baseElements = baseProfile.snapshot.element || [];
     let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
-    const parentPath = parent ? parent.profilePath : '';
-    const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
+    let parentPath = parent ? parent.profilePath : '';
+    //const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
     let filtered: ElementDefinition[];
+
+    if (parent && parent.baseElement && parent.baseElement.contentReference && parent.baseElement.contentReference.startsWith('#')) {
+      parentPath = parent.baseElement.contentReference.substring(1);
+    }
 
     if (parentPath.endsWith('[x]')) {
       // this is a choice element, the child elements are the types of the choice
@@ -189,6 +226,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     for (let i = 0; i < filtered.length; i++) {
+      const baseElement = JSON.parse(JSON.stringify(filtered[i]));
       const position = baseElements.indexOf(filtered[i]);
       const leafProperty = filtered[i].path.indexOf('.') > 0 ?
         filtered[i].path.substring(filtered[i].path.lastIndexOf('.') + 1) :
@@ -196,11 +234,20 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
       const newElement = new ElementTreeModel();
       newElement.parent = parent;
-      newElement.baseElement = filtered[i];
+      newElement.baseElement = baseElement;
       newElement.depth = parent ? parent.depth + 1 : 1;
       newElement.position = position;
 
-      if (newElement.type && this.dataTypes.indexOf(newElement.type) >= 0) {
+      if (filtered[i].contentReference) {
+        newElement.hasChildren = true;
+
+        // The base element's path and id most reflect the action depth of the path so that the logic to identifying
+        // what constrained elements apply to this base element works.
+        if (newElement.parent) {
+          newElement.baseElement.path = newElement.parent.baseElement.path + '.' + newElement.displayId;
+          newElement.baseElement.id = newElement.parent.baseElement.id + '.' + newElement.displayId;
+        }
+      } else if (newElement.type && this.dataTypes.indexOf(newElement.type) >= 0) {
         newElement.hasChildren = true;
       } else {
         newElement.hasChildren = (baseElements || []).filter((element: ElementDefinition) => {
@@ -229,7 +276,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       }
 
       const newElements = [newElement];
-      this.populateConstrainedElements(newElements, parentSliceName);
+      this.populateConstrainedElements(newElements);
 
       for (let x = 0; x < newElements.length; x++) {
         this.elements.splice(nextIndex, 0, newElements[x]);
@@ -249,10 +296,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.structureDefinition = null;
     this.elements = [];
 
-    let results;
-
     try {
-      results = await this.strucDefService.getStructureDefinition(sdId).toPromise();
+      this.structureDefinition = await this.strucDefService.getStructureDefinition(sdId).toPromise();
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
@@ -260,12 +305,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    if (!results.resource || results.resource.resourceType !== 'StructureDefinition') {
-      throw new Error('The requested StructureDefinition either does not exist or has been deleted');
-    }
-
-    this.structureDefinition = results.resource;
-    this.options = results.options;
     this.nameChanged();
 
     if (!this.structureDefinition.differential) {
@@ -366,20 +405,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     return found.length > 0;
   }
 
-  private isChildOfElement(target: ElementTreeModel, parent: ElementTreeModel): boolean {
-    let current = target.parent;
-
-    while (current) {
-      if (current === parent) {
-        return true;
-      }
-
-      current = current.parent;
-    }
-
-    return false;
-  }
-
   public sliceElement(elementTreeModel: ElementTreeModel, event?) {
     // Collapse the element so the tree doesn't look screwed up when we mess with it
     if (elementTreeModel.expanded) {
@@ -412,7 +437,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     // Include any children of the current elementTreeModel in the index
     for (let i = elementTreeModelIndex + 1; i < this.elements.length; i++) {
       const nextElementTreeModel = this.elements[i];
-      if (this.isChildOfElement(nextElementTreeModel, elementTreeModel)) {
+      if (StructureDefinitionComponent.isChildOfElement(nextElementTreeModel, elementTreeModel)) {
         nextElementTreeModel.parent = newElementTreeModel;
         // TODO: nextElementTreeModel.displayId = nextElementTreeModel.displayId + ':' + newSliceName;
         nextElementTreeModel.constrainedElement.id = nextElementTreeModel.constrainedElement.id + ':' + newSliceName;
@@ -469,16 +494,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     const elementId = element.id;
     const sliceName = elementId.indexOf(':') >= 0 ? elementId.substring(elementId.indexOf(':') + 1) : '';
 
+    // noinspection UnnecessaryLocalVariableJS
     const filtered = (this.structureDefinition.differential.element || []).filter((nextElement) => {
       const isBase = nextElement.id.startsWith(elementId + '.');
       const isLeaf = nextElement.id.split('.').length === elementId.split('.').length + 1;
       const isSlice = nextElement.id.endsWith(':' + sliceName);
 
-      if (!isBase || !isLeaf) {
-        return false;
-      }
-
-      if (sliceName && !isSlice) {
+      // noinspection RedundantIfStatementJS
+      if (!isBase || !isLeaf || (sliceName && !isSlice)) {
         return false;
       }
 
@@ -497,6 +520,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
+    // noinspection JSIgnoredPromiseFromCall
     this.getStructureDefinition();
   }
 
@@ -510,20 +534,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.strucDefService.save(this.structureDefinition, this.options)
+    this.strucDefService.save(this.structureDefinition)
       .subscribe((results: StructureDefinition) => {
         if (!this.structureDefinition.id) {
-          this.router.navigate(['/structure-definition/' + results.id]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
         } else {
-          if (this.options && this.options.implementationGuides) {
-            const removedImplementationGuides = (this.options.implementationGuides || []).filter((implementationGuide) => implementationGuide.isRemoved);
-            for (let i = removedImplementationGuides.length - 1; i > 0; i--) {
-              const index = this.options.implementationGuides.indexOf(removedImplementationGuides[i]);
-              this.options.implementationGuides.splice(index, 1);
-            }
-            (this.options.implementationGuides || []).forEach((implementationGuide) => implementationGuide.isNew = false);
-          }
-
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
@@ -538,9 +554,11 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/structure-definition/')) {
+        // noinspection JSIgnoredPromiseFromCall
         this.getStructureDefinition();
       }
     });
+    // noinspection JSIgnoredPromiseFromCall
     this.getStructureDefinition();
   }
 
@@ -558,6 +576,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       const index = this.selectedElement ? this.elements.indexOf(this.selectedElement) : -1;
       let shouldFocus = false;
 
+      // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
       if (event.keyCode === 40) {           // down
         if (!this.selectedElement) {
           this.selectedElement = this.elements[0];
@@ -568,17 +587,21 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
             shouldFocus = true;
           }
         }
-      } else if (event.keyCode === 38) {    // up
-        if (!this.selectedElement) {
-          this.selectedElement = this.elements[0];
-          shouldFocus = true;
-        } else if (index > 0) {
-          this.selectedElement = this.elements[index - 1];
-          shouldFocus = true;
-        }
-      } else if (event.keyCode === 46) {    // delete
-        if (this.selectedElement && this.selectedElement.constrainedElement) {
-          this.removeElementDefinition(this.selectedElement.constrainedElement);
+      } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+        if (event.keyCode === 38) {    // up
+                if (!this.selectedElement) {
+                  this.selectedElement = this.elements[0];
+                  shouldFocus = true;
+                } else if (index > 0) {
+                  this.selectedElement = this.elements[index - 1];
+                  shouldFocus = true;
+                }
+              } else { // noinspection JSDeprecatedSymbols,JSDeprecatedSymbols
+          if (event.keyCode === 46) {    // delete
+                          if (this.selectedElement && this.selectedElement.constrainedElement) {
+                            this.removeElementDefinition(this.selectedElement.constrainedElement);
+                          }
+                        }
         }
       }
 

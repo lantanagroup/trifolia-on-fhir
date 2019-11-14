@@ -39,7 +39,7 @@ const components = [
   exports: components,
   imports: [
     CommonModule,
-    NgbModule.forRoot(),
+    NgbModule,
     FormsModule,
     SharedModule,
     DiffMatchPatchModule

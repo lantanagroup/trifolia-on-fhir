@@ -14,6 +14,14 @@
           </select>
         </div>
 
+        <div class="form-group" *ngIf="configService.project">
+          <label>Only show resources for the project (the context implementation guide)?</label>
+          <select class="form-control" [(ngModel)]="ignoreContext">
+            <option [ngValue]="false">Yes</option>
+            <option [ngValue]="true">No</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label>Content</label>
           <input type="text" class="form-control" [(ngModel)]="searchContent" (keyup.enter)="search()" />
@@ -25,6 +33,8 @@
           <input type="text" class="form-control" [(ngModel)]="searchUrl" (keyup.enter)="search()" />
           <span class="help-block">This field only applies if the selected resource type has a "URL" field. Searching by URL requires an exact match.</span>
         </div>
+
+        <p class="alert alert-info">This screen searches all resources on the server, regardless of whether they are associated with the implementation guide you have selected as a project from File > "Open Project". Keep in mind that you will only see resources that you have been granted permissions to.</p>
 
         <p>
           <button type="button" class="btn btn-primary"
@@ -40,6 +50,15 @@
       <span [attr.data-intro]="Globals.introText['other.search-results-tab']">Search Results</span>
     </ng-template>
     <ng-template ngbTabContent>
+      <div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['other.search-results-paging']">
+        <ngb-pagination class="d-flex justify-content-center"
+                        *ngIf="results && results.total > 0"
+                        [maxSize]="5"
+                        [collectionSize]="results.total"
+                        [(page)]="page"
+                        [boundaryLinks]="true"
+                        (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+      </div>
       <table class="table table-striped" *ngIf="results">
         <thead>
         <tr>
@@ -63,6 +82,18 @@
           </td>
         </tr>
         </tbody>
+        <tfoot>
+        <tr *ngIf="results && results.total === 0">
+          <td colspan="3">No results match the search criteria!</td>
+        </tr>
+        <tr *ngIf="results && results.total > 0">
+          <td colspan="6">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total"
+                            [(page)]="page" [boundaryLinks]="true"
+                            (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+          </td>
+        </tr>
+        </tfoot>
       </table>
     </ng-template>
   </ngb-tab>

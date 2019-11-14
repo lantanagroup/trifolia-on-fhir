@@ -1,5 +1,6 @@
 import {HtmlExporter} from './html';
 import {ImplementationGuide, Bundle} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {STU3HtmlExporter} from './html.stu3';
 
 jest.mock('config', () => {
   return {
@@ -11,32 +12,38 @@ jest.mock('config', () => {
 
 describe('HtmlExporter', () => {
   describe('getStu3Control', () => {
-    const ig: ImplementationGuide = {
-      resourceType: 'ImplementationGuide',
-      url: 'http://test.com/test/ig',
-      name: 'TestIg',
-      status: 'active',
-      extension: [{
-        extension: [{
-          url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
-          valueUri: 'http://some.com/uri'
-        }, {
-          url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
-          valueString: 'test-dependency'
-        }, {
-          url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
-          valueString: '1.2.3'
-        }],
-        url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency'
-      }]
-    };
     const bundle: Bundle = {
       resourceType: 'Bundle',
-      type: 'collection'
+      type: 'collection',
+      entry: [{
+        resource: <ImplementationGuide> {
+          resourceType: 'ImplementationGuide',
+          url: 'http://test.com/test/ig',
+          name: 'TestIg',
+          status: 'active',
+          extension: [{
+            extension: [{
+              url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
+              valueUri: 'http://some.com/uri'
+            }, {
+              url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
+              valueString: 'test-dependency'
+            }, {
+              url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
+              valueString: '1.2.3'
+            }],
+            url: 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency'
+          }]
+        }
+      }]
     };
-    const control = HtmlExporter.getStu3Control(ig, bundle, '3.6.0');
+
+    const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, null, null);
 
     it('should create a basic control format', () => {
+      htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
+      const control = htmlExporter.getControl(bundle);
+
       expect(control).toBeTruthy();
       expect(control.defaults).toBeTruthy();
       expect(control.canonicalBase).toEqual('http://test.com/test');
@@ -55,6 +62,9 @@ describe('HtmlExporter', () => {
     });
 
     it('should create a control file with dependencies', () => {
+      htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
+      const control = htmlExporter.getControl(bundle);
+
       expect(control).toBeTruthy();
       expect(control.dependencyList).toBeTruthy();
       expect(control.dependencyList.length).toEqual(1);
@@ -64,9 +74,11 @@ describe('HtmlExporter', () => {
     });
 
     it('should not create a dependency without both a name and location', () => {
-      const igCopy: ImplementationGuide = JSON.parse(JSON.stringify(ig));
-      igCopy.extension[0].extension.splice(1, 1);   // name is an extension at index 1 within the dependency extension
-      const newControl = HtmlExporter.getStu3Control(igCopy, bundle, '3.6.0');
+      const bundleCopy: Bundle = JSON.parse(JSON.stringify(bundle));
+      bundleCopy.entry[0].resource.extension[0].extension.splice(1, 1);   // name is an extension at index 1 within the dependency extension
+
+      htmlExporter.implementationGuide = <ImplementationGuide> bundleCopy.entry[0].resource;
+      const newControl = htmlExporter.getControl(bundleCopy);
 
       expect(newControl).toBeTruthy();
       expect(newControl.dependencyList).toBeTruthy();
@@ -74,9 +86,11 @@ describe('HtmlExporter', () => {
     });
 
     it('should not require a version for dependencies', () => {
-      const igCopy: ImplementationGuide = JSON.parse(JSON.stringify(ig));
-      igCopy.extension[0].extension.splice(2, 1);   // name is an extension at index 1 within the dependency extension
-      const newControl = HtmlExporter.getStu3Control(igCopy, bundle, '3.6.0');
+      const bundleCopy: Bundle = JSON.parse(JSON.stringify(bundle));
+      bundleCopy.entry[0].resource.extension[0].extension.splice(2, 1);   // name is an extension at index 1 within the dependency extension
+
+      htmlExporter.implementationGuide = <ImplementationGuide> bundleCopy.entry[0].resource;
+      const newControl = htmlExporter.getControl(bundleCopy);
 
       expect(newControl).toBeTruthy();
       expect(newControl.dependencyList).toBeTruthy();

@@ -32,7 +32,7 @@
         <th>Name</th>
         <th class="actions-column-3">
             <div class="pull-right">
-                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/operation-definition/new" title="Create a new operation definition" [attr.data-intro]="Globals.introText['browse.add']">
+                <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/operation-definition/new" title="Create a new operation definition" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -45,7 +45,7 @@
         <td>{{od.name}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/operation-definition/{{od.id}}">
+                <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/operation-definition/{{od.id}}">
                     <i class="fa fa-edit"></i>
                 </a>
                 <button type="button" class="btn btn-secondary" (click)="remove(od)" [disabled]="!canEdit(od)" title="Remove this resource">
@@ -79,7 +79,7 @@
     </tbody>
     <tfoot>
     <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total === 0">
-        <td colspan="3">No operation definitions! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/operation-definition/new">here</a>...</td>
+        <td colspan="3">No operation definitions! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/operation-definition/new">here</a>...</td>
     </tr>
     <tr *ngIf="operationDefinitionsBundle && operationDefinitionsBundle.total > 0">
         <td colspan="3">

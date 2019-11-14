@@ -17,6 +17,7 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
+import {AuthService} from '../shared/auth.service';
 
 describe('StructureDefinitionComponent', () => {
   let component: StructureDefinitionComponent;
@@ -32,7 +33,7 @@ describe('StructureDefinitionComponent', () => {
         BrowserModule,
         RouterTestingModule,
         HttpClientTestingModule,
-        NgbModule.forRoot(),
+        NgbModule,
         FormsModule
       ],
       providers: [
@@ -42,6 +43,7 @@ describe('StructureDefinitionComponent', () => {
         FhirService,
         FileService,
         CookieService,
+        AuthService,
         {
           provide: ActivatedRoute,
           useValue: {

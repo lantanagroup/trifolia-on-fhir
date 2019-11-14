@@ -1,14 +1,7 @@
 import {Severities, ValidatorMessage} from 'fhir/validator';
-import {FhirService} from '../fhir.service';
 
 export abstract class CustomValidator {
-    protected fhirService: FhirService;
-
-    protected constructor(fhirService: FhirService) {
-        this.fhirService = fhirService;
-    }
-
-    private validateGenerateImplementationGuide(implementationGuide: any): ValidatorMessage[] {
+    static validateGenerateImplementationGuide(implementationGuide: any): ValidatorMessage[] {
         const messages: ValidatorMessage[] = [];
         const nameRegex = /^[A-Z][A-Za-z0-9_]+$/g;
 
@@ -23,7 +16,7 @@ export abstract class CustomValidator {
 
         return messages;
     }
-    
+
     private validateGenericStructureDefinition(structureDefinition: any, extraData?: any): ValidatorMessage[] {
         const messages: ValidatorMessage[] = [];
         const nameRegex = /^[A-Z][A-Za-z0-9_]+$/g;
@@ -53,6 +46,7 @@ export abstract class CustomValidator {
             const elementMaxRequired = element.max || (foundBaseElement && foundBaseElement.max);
             const elementMinRequired = element.min || (foundBaseElement && foundBaseElement.min);
 
+            // tslint:disable-next-line:radix
             if (elementMaxRequired && elementMaxRequired !== "*" && element.min > parseInt(elementMaxRequired)) {
               messages.push({
                 severity: Severities.Error,
@@ -73,6 +67,7 @@ export abstract class CustomValidator {
               });
             }
 
+            // tslint:disable-next-line:radix
             if(element.max && elementMinRequired && element.max !== "*" && element.max < parseInt(elementMinRequired)){
               messages.push({
                 severity: Severities.Error,
@@ -121,7 +116,7 @@ export abstract class CustomValidator {
           });
         }
 
-        return messages;    
+        return messages;
     }
 
     public validateResource(resource: any, extraData?: any): ValidatorMessage[] {
@@ -130,7 +125,7 @@ export abstract class CustomValidator {
         }
 
         if (resource.resourceType === 'ImplementationGuide') {
-            return this.validateGenerateImplementationGuide(resource);
+            return CustomValidator.validateGenerateImplementationGuide(resource);
         } else if (resource.resourceType === 'StructureDefinition') {
             return this.validateGenericStructureDefinition(resource, extraData);
         }

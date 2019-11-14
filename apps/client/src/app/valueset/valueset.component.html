@@ -7,7 +7,7 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL" tooltipPath="ValueSet.url"></app-fhir-string>
+          <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL" tooltipPath="ValueSet.url" (change)="urlChanged()"></app-fhir-string>
 
           <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="ValueSet.name"></app-fhir-string>
 

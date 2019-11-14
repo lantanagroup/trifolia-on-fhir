@@ -1,14 +1,24 @@
 import {BaseController} from './base.controller';
-import {BadRequestException, Controller, Get, Headers, HttpService, Param, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Headers,
+  HttpService,
+  Param,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ITofUser} from './models/tof-request';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {TofLogger} from './tof-logger';
 import {FhirController} from './fhir.controller';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, User} from './server.decorators';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
+import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -23,12 +33,12 @@ export class ImportController extends BaseController {
   }
 
   @Get('vsac/:id')
-  public async importVsacValueSet(@FhirServerBase() fhirServerBase: string, @User() user: ITofUser, @Headers('vsacauthorization') vsacAuthorization: string, @Param('id') id: string) {
+  public async importVsacValueSet(@FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion, @User() user: ITofUser, @Headers('vsacauthorization') vsacAuthorization: string, @Param('id') id: string) {
     if (!vsacAuthorization) {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
     }
 
-    const options = {
+    const options: AxiosRequestConfig = {
       method: 'GET',
       url: buildUrl(this.vsacBaseUrl, 'ValueSet', id),
       headers: {
@@ -59,7 +69,7 @@ export class ImportController extends BaseController {
     try {
       const proxyUrl = `/${vsacResults.data.resourceType}/${vsacResults.data.id}`;
       const fhirProxy = new FhirController(this.httpService, this.configService);
-      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, user, vsacResults.data);
+      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data);
       return proxyResults.data;
     } catch (ex) {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);

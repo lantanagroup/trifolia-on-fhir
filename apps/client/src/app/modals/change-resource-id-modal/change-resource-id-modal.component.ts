@@ -3,9 +3,10 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../shared/fhir.service';
 import {RecentItemService} from '../../shared/recent-item.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from '../../shared/config.service';
+import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-change-resource-id-modal',
   templateUrl: './change-resource-id-modal.component.html',
   styleUrls: ['./change-resource-id-modal.component.css']
 })
@@ -17,6 +18,8 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
+    private router: Router,
+    private configService: ConfigService,
     private fhirService: FhirService,
     private recentItemService: RecentItemService) {
   }
@@ -27,6 +30,11 @@ export class ChangeResourceIdModalComponent implements OnInit {
         const cookieKey = this.recentItemService.getCookieKey(this.resourceType);
         if (cookieKey) {
           this.recentItemService.changeId(cookieKey, this.originalId, this.newId);
+        }
+
+        if (this.resourceType === 'ImplementationGuide' && this.originalId === this.configService.project.implementationGuideId) {
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.fhirServer}/${this.newId}/implementation-guide`]);
         }
 
         this.activeModal.close(this.newId);

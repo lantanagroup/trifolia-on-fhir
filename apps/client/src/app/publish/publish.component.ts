@@ -16,7 +16,6 @@ import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
-  selector: 'app-publish',
   templateUrl: './publish.component.html',
   styleUrls: ['./publish.component.css']
 })
@@ -33,10 +32,10 @@ export class PublishComponent implements OnInit {
 
   private packageId;
 
-  @ViewChild('tabs')
+  @ViewChild('tabs', { static: true })
   private tabs: NgbTabset;
 
-  @ViewChild('outputEle')
+  @ViewChild('outputEle', { static: false })
   private outputEle: ElementRef;
 
   constructor(
@@ -45,7 +44,7 @@ export class PublishComponent implements OnInit {
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService,
     private cookieService: CookieService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private exportService: ExportService) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
@@ -97,11 +96,11 @@ export class PublishComponent implements OnInit {
       }),
       tap(() => this.searching = false)
     );
-  }
+  };
 
   public searchFormatter = (ig: ImplementationGuide) => {
     return `${ig.name} (id: ${ig.id})`;
-  }
+  };
 
   public clearImplementationGuide() {
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
@@ -132,10 +131,15 @@ export class PublishComponent implements OnInit {
         this.packageId = packageId;
       }, (err) => {
         this.message = getErrorString(err);
+        this.inProgress = false;
       });
   }
 
   public ngOnInit() {
+    if (this.configService.project) {
+      this.options.implementationGuideId = this.configService.project.implementationGuideId;
+    }
+
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe((implementationGuide: ImplementationGuide) => {
@@ -167,11 +171,13 @@ export class PublishComponent implements OnInit {
                 this.inProgress = false;
               });
           }
+        } else if (data.status === 'error') {
+          this.inProgress = false;
+          this.message = 'An error occurred. Please review the status tab.';
         }
       }
     }, (err) => {
       this.socketOutput += 'An error occurred while communicating with the server for the export: ' + getErrorString(err);
     });
   }
-
 }

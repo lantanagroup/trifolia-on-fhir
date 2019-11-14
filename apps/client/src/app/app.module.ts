@@ -2,6 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
+// noinspection JSDeprecatedSymbols
 import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuidesComponent} from './implementation-guides/implementation-guides.component';
@@ -47,7 +48,6 @@ import {QuestionnaireComponent} from './questionnaire/questionnaire.component';
 import {QuestionnaireItemModalComponent} from './questionnaire/questionnaire-item-modal.component';
 import {ImplementationGuideWrapperComponent} from './implementation-guide-wrapper/implementation-guide-wrapper.component';
 import {RouteTransformerDirective} from './route-transformer.directive';
-import {ImplementationGuidesPanelComponent} from './structure-definition/implementation-guides-panel/implementation-guides-panel.component';
 import {MappingModalComponent} from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
 import {TreeModule} from 'ng2-tree';
@@ -64,6 +64,8 @@ import {ModalsModule} from './modals/modals.module';
 import {SharedUiModule} from './shared-ui/shared-ui.module';
 import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
+import {R4ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
+import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/resource-modal.component';
 import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
 
 /**
@@ -71,35 +73,42 @@ import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OA
  * Authorization header to every request sent to the application server.
  */
 export class AddHeaderInterceptor implements HttpInterceptor {
-  constructor() {
-
+  constructor(private configService: ConfigService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const tokenExpiresAt = localStorage.getItem('expires_at');
     const token = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('token') : undefined;
     const fhirServer = localStorage.getItem('fhirServer');
-    const headers = {};
+    let headers = req.headers;
 
     if (req.url.startsWith('/')) {
       if (token) {
-        headers['Authorization'] = 'Bearer ' + token;
+        headers = headers.set('Authorization', 'Bearer ' + token);
       }
     }
 
     if (req.url.startsWith('/api/')) {
-      headers['Cache-Control'] = 'no-cache';
+      headers = headers.set('Cache-Control', 'no-cache');
 
       if (fhirServer) {
-        headers['fhirServer'] = fhirServer;
+        headers = headers.set('fhirServer', fhirServer);
+      }
+
+      // Pass the implementation guide (project) to the request so that it knows this request
+      // is within the context of the project
+      if (this.configService.project && this.configService.project.implementationGuideId) {
+        headers = headers.set('implementationGuideId', this.configService.project.implementationGuideId);
+      }
+
+      // Remove the context if the request indicates the context should be ignored
+      if (headers.get('ignoreContext') && headers.get('implementationGuideId')) {
+        headers = headers.delete('implementationGuideId');
+        headers = headers.delete('ignoreContext');
       }
     }
 
-    const clonedRequest = req.clone({
-      setHeaders: headers
-    });
-
-    return next.handle(clonedRequest);
+    return next.handle(req.clone({ headers: headers }));
   }
 }
 
@@ -111,37 +120,37 @@ export function cookieServiceFactory() {
  * The routes in the client application.
  */
 const appRoutes: Routes = [
+  {path: 'login', component: LoginComponent},
   {path: ':fhirServer/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide', component: ImplementationGuidesComponent},
+  {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
+  //{path: ':fhirServer/implementation-guide', component: ImplementationGuidesComponent},
   {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
-  {path: ':fhirServer/implementation-guide/:id/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/implementation-guide/:id', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/structure-definition', component: StructureDefinitionsComponent},
-  {path: ':fhirServer/structure-definition/new', component: NewProfileComponent},
-  {path: ':fhirServer/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/capability-statement', component: CapabilityStatementsComponent},
-  {path: ':fhirServer/capability-statement/new', component: CapabilityStatementWrapperComponent},
-  {path: ':fhirServer/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/operation-definition', component: OperationDefinitionsComponent},
-  {path: ':fhirServer/operation-definition/new', component: OperationDefinitionComponent},
-  {path: ':fhirServer/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/value-set', component: ValuesetsComponent},
-  {path: ':fhirServer/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/code-system', component: CodesystemsComponent},
-  {path: ':fhirServer/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/questionnaire', component: QuestionnairesComponent},
-  {path: ':fhirServer/questionnaire/new', component: QuestionnaireComponent},
-  {path: ':fhirServer/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
+  {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
+  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
+  {path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent},
+  {path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent},
+  {path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent},
+  {path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent},
+  {path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent},
+  {path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent},
+  {path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent},
+  {path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent},
+  {path: ':fhirServer/:implementationGuideId/export', component: ExportComponent},
+  {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
   {path: ':fhirServer/other-resources', component: OtherResourcesComponent},
-  {path: ':fhirServer/publish', component: PublishComponent},
-  {path: ':fhirServer/publish/:id', component: PublishComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/export', component: ExportComponent},
-  {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users', component: UsersComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
-  {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
-  {path: 'login', component: LoginComponent}
+  {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'}
 ];
 
 /**
@@ -189,12 +198,13 @@ const authModuleConfig: OAuthModuleConfig = {
   },
 };
 
+// noinspection JSDeprecatedSymbols
 @NgModule({
   entryComponents: [
     STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component
+    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -207,9 +217,9 @@ const authModuleConfig: OAuthModuleConfig = {
     OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
     ConceptCardComponent, ImplementationGuideViewComponent,
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-    ImplementationGuideWrapperComponent, RouteTransformerDirective, ImplementationGuidesPanelComponent,
+    ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -223,7 +233,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HttpClientModule,
     OAuthModule.forRoot(authModuleConfig),
     HttpModule,
-    NgbModule.forRoot(),
+    NgbModule,
     FileDropModule,
     TreeModule,
     SharedModule,

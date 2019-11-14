@@ -42,80 +42,67 @@
           </div>
         </div>
 
-        <!-- Code -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'code', [])"/>
-            Code
-            <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
-          </label>
-          <div class="pull-right" *ngIf="element.hasOwnProperty('code')">
-            <i class="fa fa-plus" title="Add a code" (click)="element.code.push({})"></i>
-          </div>
-          <div class="input-group" *ngFor="let c of element.code; let i = index" [attr.data-index]="i">
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'system', '')"/>
-            </div>
-            <input type="text" class="form-control" placeholder="system"
-                   [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system"/>
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'code', '')"/>
-            </div>
-            <input type="text" class="form-control" placeholder="code"
-                   [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code"/>
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'display', '')"/>
-            </div>
-            <input type="text" class="form-control" placeholder="display"
-                   [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-default clickable" (click)="element.code.splice(i, 1)"
-                      title="Remove this code"><i class="fas fa-trash-alt"></i></button>
+        <div class="row">
+          <div class="col-md-5">
+            <!-- Min -->
+            <div class="form-group">
+              <label>
+                Min <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
+              </label>
+              <div class="input-group">
+                <input type="number" class="form-control" [(ngModel)]="min" [class.is-invalid]="!isMinValid" />
+                <div class="input-group-append">
+                  <button type="button" class="btn btn-secondary" (click)="min = undefined">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="help-block" *ngIf="!isMinValid">The minimum cardinality cannot be less than the base profile's minimum cardinality or greater than the base profile's maximum cardinality.</div>
             </div>
           </div>
-          <div *ngIf="element.code && element.code.length == 0">No codes</div>
-        </div>
-
-        <!-- Min -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('min')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'min', elementTreeModel.min)"/>
-            Min
-            <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
-          </label>
-          <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('min')"
-                 [(ngModel)]="element.min"
-                 [class.is-invalid]="!isMinValid" />
-          <div class="help-block" *ngIf="!isMinValid">The minimum cardinality cannot be less than the base profile's minimum cardinality or greater than the
-            base profile's maximum cardinality.</div>
-        </div>
-
-        <!-- Max -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('max')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'max', elementTreeModel.max)"
-                   min="{{elementTreeModel.baseElement.min}}"
-                   max="{{elementTreeModel.baseElement.max === '*' ? '' : elementTreeModel.baseElement.max}}"/>
-            Max
-            <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
-          </label>
-          <div class="input-group">
-            <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('max') || element.max === '*'"
-                   [ngModel]="element.max" (ngModelChange)="element.max=$event.toString()"
-                   [class.is-invalid]="!isMaxValid"/>
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="element.max === '*'" (ngModelChange)="toggleMaxUnlimited()"
-                     [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
-              Unlimited
+          <div class="col-md-7">
+            <!-- Max -->
+            <div class="form-group">
+              <label>
+                Max <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
+              </label>
+              <div class="input-group">
+                <input type="number" class="form-control" [disabled]="element.max === '*'" [(ngModel)]="max" [class.is-invalid]="!isMaxValid"/>
+                <div class="input-group-append">
+                  <button type="button" class="btn btn-secondary" (click)="max = undefined">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <div class="input-group-text">
+                    <input type="checkbox" [ngModel]="element.max === '*'" (ngModelChange)="toggleMaxUnlimited()"
+                           [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
+                    Unlimited
+                  </div>
+                </div>
+                <div class="help-block" *ngIf="!isMaxValid">The maximum cardinality cannot be more than the base profile's maximum cardinality or less than the
+                  base profile's minimum cardinality.</div>
+              </div>
             </div>
-            <div class="help-block" *ngIf="!isMaxValid">The maximum cardinality cannot be more than the base profile's maximum cardinality or less than the
-              base profile's minimum cardinality.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="element.mustSupport"/>
+                Must support
+                <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
+              </label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" *ngIf="structureDefinition.type == 'Extension'">
+              <label>
+                <input type="checkbox" [(ngModel)]="element.isModifier"/>
+                Is modifier
+                <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -152,7 +139,7 @@
           <div *ngIf="element.type && element.type.length == 0">No types</div>
         </div>
 
-        <!-- representation -->
+        <!-- Representation -->
         <div class="form-group">
           <label>
             <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
@@ -182,19 +169,11 @@
         </div>
 
         <div class="form-group">
-          <input type="number" class="form-control" [disabled]="!element.hasOwnProperty('maxLength')"
-                 [(ngModel)]="element.maxLength"/>
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('maxLength')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'maxLength', 0)"
-                   [disabled]="!isPrimitiveExceptBoolean()"/>
-            Max Length
-            <app-tooltip-icon tooltipKey="ElementDefinition.maxLength"></app-tooltip-icon>
+            Max Length <app-tooltip-icon tooltipKey="ElementDefinition.maxLength"></app-tooltip-icon>
           </label>
+          <input type="number" class="form-control" [disabled]="!element.maxLength && !isPrimitiveExceptBoolean()" [(ngModel)]="element.maxLength"/>
         </div>
-
-        <app-fhir-string [parentObject]="element" propertyName="contentReference" title="Content Reference"
-                         tooltipPath="ElementDefinition.contentReference"></app-fhir-string>
 
         <div class="card">
           <div class="card-header">
@@ -237,32 +216,7 @@
 
         <div class="form-group">
           <label>
-            <input type="checkbox" [(ngModel)]="element.mustSupport"/>
-            Must support
-            <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [(ngModel)]="element.isModifier"/>
-            Is modifier
-            <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [(ngModel)]="element.isSummary"/>
-            Is summary
-            <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
             Constraint
             <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
           </label>
@@ -271,17 +225,54 @@
           </button>
         </div>
 
+        <!-- Mapping -->
         <div class="form-group">
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')" (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}])"/>
             Mapping
             <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
           </label>
           <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
-          <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('mapping')"
-                  (click)="editMappings()">Edit
-          </button>
+          <button type="button" class="btn btn-primary btn-sm" *ngIf="element.hasOwnProperty('mapping')" (click)="editMappings()" [disabled]="!structureDefinition.mapping || structureDefinition.mapping.length === 0">Edit</button>
+          <app-tooltip-icon *ngIf="element.hasOwnProperty('mapping') && (!structureDefinition.mapping || structureDefinition.mapping.length === 0)" [showAsExclamation]="true" tooltipKey="sd.no-mappings"></app-tooltip-icon>
+        </div>
+
+        <!-- Code -->
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
+                   (ngModelChange)="Globals.toggleProperty(element, 'code', [])"/>
+            Code
+            <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
+          </label>
+          <div class="pull-right" *ngIf="element.hasOwnProperty('code')">
+            <i class="fa fa-plus" title="Add a code" (click)="element.code.push({})"></i>
+          </div>
+          <div class="input-group" *ngFor="let c of element.code; let i = index" [attr.data-index]="i">
+            <div class="input-group-addon">
+              <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
+                     (ngModelChange)="Globals.toggleProperty(c, 'system', '')"/>
+            </div>
+            <input type="text" class="form-control" placeholder="system"
+                   [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system"/>
+            <div class="input-group-addon">
+              <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
+                     (ngModelChange)="Globals.toggleProperty(c, 'code', '')"/>
+            </div>
+            <input type="text" class="form-control" placeholder="code"
+                   [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code"/>
+            <div class="input-group-addon">
+              <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
+                     (ngModelChange)="Globals.toggleProperty(c, 'display', '')"/>
+            </div>
+            <input type="text" class="form-control" placeholder="display"
+                   [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display"/>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default clickable" (click)="element.code.splice(i, 1)"
+                      title="Remove this code"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+          <div *ngIf="element.code && element.code.length == 0">No codes</div>
         </div>
       </ng-template>
     </ngb-tab>
@@ -368,11 +359,27 @@
         <app-fhir-string [parentObject]="element" propertyName="label" title="Label"
                          tooltipPath="ElementDefinition.label"></app-fhir-string>
 
-        <app-fhir-string [parentObject]="element" propertyName="alias" title="Alias"
-                         tooltipPath="ElementDefinition.alias"></app-fhir-string>
-
-        <app-fhir-string [parentObject]="element" propertyName="orderMeaning" title="Order meaning"
-                         tooltipPath="ElementDefinition.orderMeaning"></app-fhir-string>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')"
+                   (ngModelChange)="toggleAlias()"/>
+            Alias
+            <app-tooltip-icon tooltipPath="ElementDefinition.alias"></app-tooltip-icon>
+          </label>
+          <div class="pull-right" *ngIf="element.alias">
+            <i class="fa fa-plus clickable" title="Add an alias" (click)="element.alias.push('')"></i>
+          </div>
+          <div class="input-group" *ngFor="let a of element.alias; let ai = index; trackBy: Globals.trackByFn" [attr.data-index]="ai">
+            <input type="text" class="form-control" [(ngModel)]="element.alias[ai]"
+                    [disabled]="!element.hasOwnProperty('alias')"/>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default clickable" (click)="element.alias.splice(ai, 1)"
+                      title="Remove this alias">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"
                            tooltipPath="ElementDefinition.definition"></app-fhir-markdown>
@@ -383,7 +390,7 @@
         <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"
                            [displayOnly]="true" tooltipPath="ElementDefinition.requirements"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
+        <app-fhir-markdown *ngIf="structureDefinition.type == 'Extension'" [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
                            [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing"></app-fhir-markdown>
       </ng-template>
     </ngb-tab>
@@ -402,8 +409,6 @@
 
         <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value" tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="example" title="Example" tooltipPath="ElementDefinition.example[x]"></app-fhir-choice>
-
         <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')"></app-fhir-choice>
@@ -411,6 +416,35 @@
         <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')"></app-fhir-choice>
+
+        <div class="card">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="element.hasOwnProperty('example')" (ngModelChange)="toggleExample()" /> Example
+            <div class="pull-right" *ngIf="element.hasOwnProperty('example')">
+              <button type="button" class="btn btn-primary btn-sm" (click)="refreshExamples()" title="Refresh the examples listed here based on the types allowed by the element.">
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <table class="table table-striped" *ngIf="element.hasOwnProperty('example')">
+            <thead>
+            <tr>
+              <th>Label</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let example of element.example; let ei = index">
+              <td>
+                <app-fhir-string [parentObject]="example" propertyName="label" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-choice [parentObject]="example" propertyName="value" [allowedType]="getExampleValueType(example)" [required]="true"></app-fhir-choice>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </ng-template>
     </ngb-tab>
     <ngb-tab id="json">

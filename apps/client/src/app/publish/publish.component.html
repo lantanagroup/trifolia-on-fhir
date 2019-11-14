@@ -2,7 +2,7 @@
   When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.
 </div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']">
+<div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"

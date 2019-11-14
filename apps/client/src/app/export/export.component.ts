@@ -24,14 +24,13 @@ import {getErrorString, getStringFromBlob} from '../../../../../libs/tof-lib/src
 export class ExportComponent implements OnInit {
   public message: string;
   public socketOutput = '';
-  private packageId;
   public githubResourcesBundle: Bundle;
   public githubCommitMessage: string;
   public searching = false;
   public activeTabId = 'html';
   public Globals = Globals;
 
-  @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
+  @ViewChild('githubPanel', { static: true }) githubPanel: ExportGithubPanelComponent;
 
   public options = new ExportOptions();
   public selectedImplementationGuide: ImplementationGuide;
@@ -44,7 +43,7 @@ export class ExportComponent implements OnInit {
     private cookieService: CookieService,
     private githubService: GithubService,
     private fhirService: FhirService,
-    private configService: ConfigService) {
+    public configService: ConfigService) {
 
     this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
@@ -77,6 +76,7 @@ export class ExportComponent implements OnInit {
         break;
       case 'github':
         this.options.exportFormat = ExportFormats.GitHub;
+        // noinspection JSIgnoredPromiseFromCall
         this.getImplementationGuideResources();
         break;
       default:
@@ -96,6 +96,7 @@ export class ExportComponent implements OnInit {
       this.cookieService.put(cookieKey, implementationGuide.id);
 
       if (this.options.exportFormat === ExportFormats.GitHub) {
+        // noinspection JSIgnoredPromiseFromCall
         this.getImplementationGuideResources();
       }
     } else if (this.cookieService.get(cookieKey)) {
@@ -117,11 +118,11 @@ export class ExportComponent implements OnInit {
       }),
       tap(() => this.searching = false)
     );
-  }
+  };
 
   public searchFormatter = (ig: ImplementationGuide) => {
     return `${ig.name} (id: ${ig.id})`;
-  }
+  };
 
   public clearImplementationGuide() {
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
@@ -152,11 +153,7 @@ export class ExportComponent implements OnInit {
         return this.fhirService.getResourceGithubDetails(entry.resource).hasAllDetails();
       });
 
-      if (filtered.length === 0 || !this.githubCommitMessage) {
-        return true;
-      }
-
-      return false;
+      return !!(filtered.length === 0 || !this.githubCommitMessage);
     }
 
     return !this.options.responseFormat;
@@ -233,6 +230,10 @@ export class ExportComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.configService.project) {
+      this.options.implementationGuideId = this.configService.project.implementationGuideId;
+    }
+
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe((implementationGuide: ImplementationGuide) => {

@@ -55,6 +55,14 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.capabilityStatement.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.capabilityStatement.id = this.capabilityStatement.url.substring(lastIndex + 1);
+    }
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the capability statement?')) {
       return;
@@ -76,7 +84,8 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     this.csService.save(this.capabilityStatement)
       .subscribe((results: CapabilityStatement) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/capability-statement/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
           this.message = 'Your changes have been saved!';
@@ -85,7 +94,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the capability statement';
+        this.message = `An error occurred while saving the capability statement: ${err.message}`;
       });
   }
 
@@ -156,7 +165,8 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
         this.capabilityStatement = <CapabilityStatement>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }

@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ResourceReference} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirReferenceModalComponent} from '../reference-modal/reference-modal.component';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-fhir-reference',
@@ -18,11 +19,21 @@ export class FhirReferenceComponent implements OnInit {
   @Input() public required: boolean;
   @Input() public hideResourceType?: boolean;
   @Input() public disabled: boolean;
+  @Input() public hideDisplay = false;
+  @Input() public prependIconClass: string;
+  @Input() public prependIconTooltip: string;
+
+  @Output() public change = new EventEmitter<any>();
+  private changeDebouncer = new Subject();
 
   public Globals = Globals;
 
   constructor(
     private modalService: NgbModal) {
+
+    this.changeDebouncer
+      .debounceTime(100)
+      .subscribe((v) => this.change.emit(v));
   }
 
   get reference(): string {
@@ -33,11 +44,17 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   set reference(value: string) {
-    if (!this.parentObject[this.propertyName]) {
-      return;
+    if (value && !this.parentObject[this.propertyName]) {
+      this.parentObject[this.propertyName] = {};
     }
 
-    this.parentObject[this.propertyName].reference = value;
+    if (!value && !this.parentObject[this.propertyName].display) {
+      delete this.parentObject[this.propertyName];
+      this.changeDebouncer.next(undefined);
+    } else if (value) {
+      this.parentObject[this.propertyName].reference = value;
+      this.changeDebouncer.next(this.parentObject[this.propertyName]);
+    }
   }
 
   get display(): string {
@@ -48,23 +65,33 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   set display(value: string) {
-    if (!this.parentObject[this.propertyName]) {
-      return;
+    if (value && !this.parentObject[this.propertyName]) {
+      this.parentObject[this.propertyName] = {};
     }
 
-    this.parentObject[this.propertyName].display = value;
+    if (!value && !this.parentObject[this.propertyName].reference) {
+      delete this.parentObject[this.propertyName];
+      this.changeDebouncer.next(undefined);
+    } else if (value) {
+      this.parentObject[this.propertyName].display = value;
+      this.changeDebouncer.next(this.parentObject[this.propertyName]);
+    }
   }
 
-  open(content) {
+  selectReference() {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.resourceType = this.resourceType;
     modalRef.componentInstance.hideResourceType = this.hideResourceType;
 
     modalRef.result.then((results: any) => {
-      const reference: ResourceReference = this.parentObject[this.propertyName];
-      reference.reference = results.resourceType + '/' + results.id;
-      reference.display = results.display;
+      this.reference = `${results.resourceType}/${results.id}`;
+      this.display = results.display;
+      this.changeDebouncer.next(this.parentObject[this.propertyName]);
     });
+  }
+
+  clearReference() {
+    delete this.parentObject[this.propertyName];
   }
 
   ngOnInit() {

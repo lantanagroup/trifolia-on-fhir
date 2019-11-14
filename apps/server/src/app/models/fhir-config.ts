@@ -1,9 +1,8 @@
-
 export interface IFhirConfigServer {
   id: string;
   name: string;
   uri: string;
-  version: 'stu3'|'r4';
+  version: 'stu3'|'r4'
   short?: string;
 }
 

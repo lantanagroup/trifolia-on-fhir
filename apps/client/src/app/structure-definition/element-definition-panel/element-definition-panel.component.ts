@@ -30,8 +30,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public definedTypeCodes: Coding[] = [];
   public Globals = Globals;
 
-  @ViewChild('edTabSet') edTabSet: NgbTabset;
-  @ViewChild('idTextField') idTextField: ElementRef;
+  @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
+  @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
 
   constructor(
     private modalService: NgbModal,
@@ -47,6 +47,47 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
+  get min(): string {
+    if (this.elementTreeModel && this.elementTreeModel.constrainedElement && this.elementTreeModel.constrainedElement.min >= 0) {
+      return this.elementTreeModel.constrainedElement.min.toString();
+    }
+
+    return '';
+  }
+
+  set min(value: string) {
+    if (this.element) {
+      if (value || value == '0') {
+        const valueNum = parseInt(value);
+        this.element.min = valueNum;
+      } else if (!value) {
+        delete this.element.min;
+      }
+    }
+  }
+
+  get max(): string {
+    if (this.element && this.element.max) {
+      if (this.element.max === '*') {
+        return '';
+      }
+
+      return this.element.max;
+    }
+
+    return '';
+  }
+
+  set max(value: string) {
+    if (this.element) {
+      if (value || value == '0') {
+        this.element.max = value.toString();
+      } else if (!value && this.element.max) {
+        delete this.element.max;
+      }
+    }
+  }
+
   focus() {
     if (this.edTabSet) {
       this.edTabSet.select('general');
@@ -58,15 +99,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   editMappings() {
-    const modalRef = this.modalService.open(MappingModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl'});
     modalRef.componentInstance.mappings = this.element.mapping;
+    modalRef.componentInstance.structureDefinition = this.structureDefinition;
   }
 
   toggleMaxUnlimited() {
-    if (!this.element.hasOwnProperty('max')) {
-      return;
-    }
-
     if (this.element.max === '*') {
       this.element.max = '1';
     } else {
@@ -138,6 +176,20 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return '';
   }
 
+  toggleAlias() {
+    if(!this.element){
+      return;
+    }
+    if(this.element.hasOwnProperty('alias')){
+      delete this.element.alias;
+    }else{
+      this.element.alias = [];
+      this.element.alias.push('');
+    }
+  }
+
+
+
   addType() {
     this.element.type.push({code: this.getDefaultType()});
   }
@@ -149,12 +201,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get isMinValid() {
-    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+    if (!this.element || typeof this.element.min === 'undefined') {
       return true;
     }
 
-    const maxRequired = this.elementTreeModel.constrainedElement.max || this.elementTreeModel.baseElement.max;
-    const minValue = this.elementTreeModel.constrainedElement.min;
+    const maxRequired = this.element.max || this.elementTreeModel.baseElement.max;
+    const minValue = this.element.min;
 
     if (minValue < this.elementTreeModel.baseElement.min) {
       return false;
@@ -169,12 +221,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get isMaxValid(){
-    if (!this.elementTreeModel.constrainedElement || typeof this.elementTreeModel.constrainedElement.min === 'undefined') {
+    if (!this.element || typeof this.element.min === 'undefined') {
       return true;
     }
 
-    const maxValue = this.elementTreeModel.constrainedElement.max;
-    const minRequired = this.elementTreeModel.constrainedElement.min || this.elementTreeModel.baseElement.min;
+    const maxValue = this.element.max;
+    const minRequired = this.element.min || this.elementTreeModel.baseElement.min;
 
     if (maxValue !== undefined && ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
       || (maxValue === "*" && this.elementTreeModel.baseElement.max !== "*"))) {
@@ -189,13 +241,93 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return true;
   }
 
+  private refreshExamples() {
+    let elementTypes = this.elementTreeModel.constrainedElement ?
+      this.elementTreeModel.constrainedElement.type : [];
+
+    if (!elementTypes || elementTypes.length === 0) {
+      elementTypes = this.elementTreeModel.baseElement.type;
+    }
+
+    for (const type of elementTypes) {
+      if (!type.code) {
+        continue;
+      }
+
+      const propertyName = 'value' + type.code.substring(0, 1).toUpperCase() + type.code.substring(1);
+      const foundExample = this.element.example.find((example) => example.hasOwnProperty(propertyName));
+      let rawValue;
+
+      if (foundExample) {
+        continue;
+      }
+
+      if (type.code === 'boolean') {
+        rawValue = true;
+      } else if (['instant', 'decimal', 'integer', 'unsignedInt', 'positiveInt'].indexOf(type.code) >= 0) {
+        rawValue = 1;
+      } else if (this.fhirService.primitiveTypes.indexOf(type.code) >= 0) {
+        rawValue = '';
+      } else {
+        rawValue = {};
+      }
+
+      const newExample = {
+        label: `Example for ${type.code}`
+      };
+
+      newExample[propertyName] = rawValue;
+      this.element.example.push(newExample);
+    }
+
+    // Remove any examples that aren't valid for the element anymore
+    for (let i = this.element.example.length - 1; i >= 0; i--) {
+      const example = this.element.example[i];
+      const propertyKeys = Object.keys(example);
+      const valuePropertyName = propertyKeys.find((pn) => pn.startsWith('value'));
+
+      // Example doesn't have a value
+      if (!valuePropertyName) {
+        continue;
+      }
+
+      const typeName = valuePropertyName.substring('value'.length);
+      const foundType = elementTypes.find((t) => t.code && t.code.toLowerCase() === typeName.toLowerCase());
+
+      // The type no longer exists on the element, remove the example for it
+      if (!foundType) {
+        this.element.example.splice(i, 1);
+      }
+    }
+  }
+
+  getExampleValueType(example) {
+    const propertyKeys = Object.keys(example);
+    const valuePropertyName = propertyKeys.find((pn) => pn.startsWith('value'));
+    const type = valuePropertyName.substring('value'.length);
+
+    if (['Instant', 'Time', 'Date', 'DateTime', 'Base64Binary', 'Decimal', 'Code', 'String', 'Integer', 'Uri', 'Boolean', 'Url', 'Markdown', 'Id', 'Oid', 'Uuid', 'UnsignedInt', 'PositiveInt'].indexOf(type) >= 0) {
+      return type.substring(0, 1).toLowerCase() + type.substring(1);
+    }
+
+    return type;
+  }
+
+  toggleExample() {
+    if (this.element.example) {
+      delete this.element.example;
+    } else {
+      this.element.example = [];
+      this.refreshExamples();
+    }
+  }
+
   getAllowedType(propertyPrefix: 'fixed'|'pattern'|'minValue'|'maxValue') {
     const dataTypes = this.fhirService.dataTypes;
-    const foundMatchingProperty = dataTypes.find((dt) => {
+    return dataTypes.find((dt) => {
       const caseSensitiveDataType = dt.substring(0, 1).toUpperCase() + dt.substring(1);
       return this.elementTreeModel.baseElement.hasOwnProperty(propertyPrefix + caseSensitiveDataType);
     });
-    return foundMatchingProperty;
   }
 
   ngOnInit() {

@@ -63,7 +63,7 @@ export class ImportGithubPanelComponent implements OnInit {
   public loadingRepositories = true;
   public Globals = Globals;
 
-  @ViewChild('treeComponent') treeComponent;
+  @ViewChild('treeComponent', { static: true }) treeComponent;
 
   constructor(
     private fhirService: FhirService,

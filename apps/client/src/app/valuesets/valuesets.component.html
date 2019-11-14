@@ -35,7 +35,7 @@
         <th>URL</th>
         <th class="actions-column-4">
             <div class="pull-right">
-                <button type="button" class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/new" title="Create a new value set" [attr.data-intro]="Globals.introText['browse.add']">
+                <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/value-set/new" title="Create a new value set" [attr.data-intro]="Globals.introText['browse.add']">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -49,10 +49,10 @@
         <td>{{vs.url}}</td>
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/{{vs.id}}" title="Edit this value set">
+                <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/value-set/{{vs.id}}" title="Edit this value set">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a class="btn btn-primary" routerLink="/{{this.configService.fhirServer}}/value-set/{{vs.id}}/expand" title="Expand this value set">
+                <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/value-set/{{vs.id}}/expand" title="Expand this value set">
                     <i class="fa fa-expand"></i>
                 </a>
                 <button type="button" class="btn btn-secondary" (click)="remove(vs)" [disabled]="!canEdit(vs)" title="Remove this value set">
@@ -90,7 +90,7 @@
     </tbody>
     <tfoot>
     <tr *ngIf="results && results.total === 0">
-        <td colspan="3">No value sets! Create one by clicking <a routerLink="/{{this.configService.fhirServer}}/value-set/new">here</a>...</td>
+        <td colspan="3">No value sets! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/value-set/new">here</a>...</td>
     </tr>
     <tr *ngIf="results && results.total > 0">
         <td colspan="4">

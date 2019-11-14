@@ -1,58 +1,63 @@
 <div class="modal-header">
-  <h4 class="modal-title">Select a resource</h4>
+  <h4 class="modal-title">{{modalTitle}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
-  <div class="form-group">
-    <div class="input-group" *ngIf="!resourceType || !hideResourceType">
-      <div class="input-group-addon">Type</div>
-      <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
-        <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="resourceType === 'StructureDefinition'">
+  <div class="row">
+    <!-- Type -->
     <div class="col-md-12">
-      <label>Where to search</label>
-      <select class="form-control" [(ngModel)]="selectedSearchLocation" (ngModelChange)="criteriaChangedEvent.next($event)">
-        <option value="base">Base Resources</option>
-        <option value="server">Resources on the server</option>
-      </select>
+      <div class="input-group" *ngIf="!resourceType || !hideResourceType">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Type</div>
+        </div>
+        <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
+          <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Where (only applies to StructureDefinition resources) -->
+    <div class="col-md-12" *ngIf="resourceType === 'StructureDefinition'">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Where</div>
+        </div>
+        <select class="form-control" [(ngModel)]="selectedSearchLocation" (ngModelChange)="criteriaChangedEvent.next($event)">
+          <option value="base">Base Resources</option>
+          <option value="server">Resources on the server</option>
+        </select>
+      </div>
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-6" *ngIf="showContentSearch">
-      <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)"
-             placeholder="Search"/>
+      <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Search"/>
     </div>
 
     <div class="col-md-6" *ngIf="showNameSearch">
-      <input type="text" class="form-control" [(ngModel)]="nameSearch"
-             (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter name"/>
+      <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter name"/>
     </div>
 
     <div class="col-md-6" *ngIf="showTitleSearch">
-      <input type="text" class="form-control" [(ngModel)]="titleSearch"
-             (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by title"/>
+      <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by title"/>
     </div>
 
     <div class="col-md-6" *ngIf="!!resourceType">
-      <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)"
-             placeholder="Filter by ID"/>
+      <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by ID"/>
     </div>
   </div>
 
   <div class="alert alert-info" *ngIf="message">{{message}}</div>
-
+  <p *ngIf="searching"><em>Searching...</em></p>
   <table class="table" *ngIf="results">
     <thead>
     <tr>
       <th *ngIf="selectMultiple"></th>
-      <th>Resources</th>
+      <th>Id</th>
+      <th>Title/Name</th>
       <th *ngIf="!selectMultiple">&nbsp;</th>
     </tr>
     </thead>
@@ -61,33 +66,39 @@
       <td *ngIf="selectMultiple">
         <input type="checkbox" [ngModel]="isSelected(e)" (ngModelChange)="setSelected(e, $event)"/>
       </td>
-      <td>
-        {{e.resource | fhirDisplay}}
-        <sub>{{e.resource.resourceType}}/{{e.resource.id}}</sub>
-      </td>
+      <td>{{e.resource.id}}</td>
+      <td>{{e.resource | fhirDisplay}}</td>
       <td *ngIf="!selectMultiple">
         <div class="pull-right">
-          <button type="button" class="btn btn-primary" (click)="select(e, c)">Select</button>
+          <button type="button" class="btn btn-primary" (click)="select(e)">Select</button>
         </div>
       </td>
     </tr>
     <tr *ngIf="results.entry.length < results.total">
-      <td colspan="2">
-        <a href="javascript:void()" (click)="criteriaChanged(true)">Load More</a>
+      <td colspan="3">
+        <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a>
       </td>
     </tr>
     </tbody>
-    <tfoot>
+    <tfoot *ngIf="results.entry.length > 0">
     <tr>
-      <th colspan="2">Showing {{results.entry.length}} of {{results.total}} results</th>
+      <th colspan="3">Showing {{results.entry.length}} of {{results.total}} results</th>
+    </tr>
+    </tfoot>
+    <tfoot *ngIf="results.entry.length === 0">
+    <tr>
+      <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
     </tr>
     </tfoot>
   </table>
 </div>
 <div class="modal-footer">
+  <div class="pull-left" *ngIf="configService.project && selectedSearchLocation === 'server'">
+    <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the "{{configService.project.name}}" implementation guide.
+  </div>
   <div class="pull-left" *ngIf="selected.length > 0">
     Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
-    [ <a href="javascript:void()" (click)="selected.splice(0, selected.length)">clear</a> ]
+    [ <a href="javascript:void(0)" (click)="selected.splice(0, selected.length)">clear</a> ]
   </div>
   <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple"
           [disabled]="selected.length === 0">OK

@@ -14,7 +14,7 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 })
 export class ExportGithubPanelComponent implements OnChanges {
   @Input() resourcesBundle: Bundle;
-  @ViewChild('treeComponent') treeComponent;
+  @ViewChild('treeComponent', { static: true }) treeComponent;
   public message: string;
   public checkedIds: string[] = [];
   public isChanging: boolean;

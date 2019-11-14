@@ -1,15 +1,14 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import nanoid from 'nanoid';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 
 @Controller('api/practitioner')
@@ -56,10 +55,10 @@ export class PractitionerController extends BaseFhirController {
         if (existingPractitioner && existingPractitioner.id) {
           practitioner.id = existingPractitioner.id;
         } else {
-          practitioner.id = nanoid(8);
+          practitioner.id = generateId();
         }
 
-        const practitionerRequest = {
+        const practitionerRequest: AxiosRequestConfig = {
           url: buildUrl(fhirServerBase, this.resourceType, practitioner.id),
           method: 'PUT',
           data: practitioner
@@ -100,8 +99,8 @@ export class PractitionerController extends BaseFhirController {
 
   @Get()
   @ApiImplicitQuery({ name: 'name', type: 'string', required: false, description: 'Filter results by name' })
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   @Get(':id')
@@ -110,17 +109,17 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerBase() fhirServerBase, @User() user, @Body() body) {
-    return super.baseCreate(fhirServerBase, body, user);
+  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
   }
 
   @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @Param('id') id: string, @Body() body, @User() user) {
-    return super.baseUpdate(fhirServerBase, id, body, user);
+  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 }

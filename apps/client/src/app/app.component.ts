@@ -1,8 +1,7 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
-import {RecentItemService} from './shared/recent-item.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {FileService} from './shared/file.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -17,24 +16,25 @@ import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-mes
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
+import {FhirReferenceModalComponent, ResourceSelection} from './fhir-edit/reference-modal/reference-modal.component';
+import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Component({
-  selector: 'app-root',
+  selector: 'trifolia-fhir-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public userProfile: any;
   public person: Practitioner;
+  public initialized = false;
 
-  @ViewChild('navbarToggler', {read: ElementRef}) navbarToggler: ElementRef;
-  @ViewChild('navbarCollapse', {read: ElementRef}) navbarCollapse: ElementRef;
+  @ViewChild('navbarToggler', {read: ElementRef, static: true}) navbarToggler: ElementRef;
+  @ViewChild('navbarCollapse', {read: ElementRef, static: true}) navbarCollapse: ElementRef;
 
   constructor(
     public authService: AuthService,
     public githubService: GithubService,
     public configService: ConfigService,
-    public recentItemService: RecentItemService,
     public fhirService: FhirService,
     private modalService: NgbModal,
     private fileService: FileService,
@@ -60,6 +60,24 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       intro.start();
     }, 200);
+  }
+
+  public openProject() {
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'ImplementationGuide';
+    modalRef.componentInstance.hideResourceType = true;
+    modalRef.componentInstance.modalTitle = 'Select an implementation guide';
+
+    modalRef.result.then((selected: ResourceSelection) => {
+      // noinspection JSIgnoredPromiseFromCall
+      this.router.navigate([`${this.configService.fhirServer}/${selected.id}/home`]);
+    });
+  }
+
+  public closeProject() {
+    this.configService.project = null;
+    // noinspection JSIgnoredPromiseFromCall
+    this.router.navigate([`${this.configService.fhirServer}/home`]);
   }
 
   public get fhirServerDisplay(): string {
@@ -106,20 +124,46 @@ export class AppComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name: string }> {
+    if (!implementationGuideId) {
+      return Promise.resolve(this.configService.project);
+    }
+
+    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId) {
+      return Promise.resolve(this.configService.project);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
+        .then((bundle: Bundle) => {
+          if (bundle && bundle.total === 1) {
+            const ig = <ImplementationGuide>bundle.entry[0].resource;
+
+            resolve({
+              implementationGuideId: implementationGuideId,
+              name: ig.title || ig.name
+            });
+          } else {
+            resolve();
+          }
+        })
+        .catch((err) => reject(err));
+    });
+  }
+
+  async ngOnInit() {
     // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
     // This needs to be done in the init method so that the navbarCollapse element exists
-    this.router.events.subscribe((event) => {
+    this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
 
-      if (event instanceof NavigationStart) {
-        const url = (event.url || '').substring(event.url.startsWith('/') ? 1 : 0);
-        const urlParts = url.split('/');
+      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
+        const fhirServer = event.state.root.firstChild.params.fhirServer;
+        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
-        if (!url) {
-          this.router.navigate([`/${this.configService.fhirServer}/home`]);
-        } else if (this.configService.config && this.configService.config.fhirServers && this.configService.config.fhirServers.find((fhirServer) => fhirServer.id === urlParts[0])) {
-          this.configService.changeFhirServer(urlParts[0]);
+        if (fhirServer) {
+          this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+          await this.configService.changeFhirServer(fhirServer);
         }
       }
     });
@@ -128,5 +172,9 @@ export class AppComponent implements OnInit {
       const modalRef = this.modalService.open(AdminMessageModalComponent, {backdrop: 'static'});
       modalRef.componentInstance.message = message;
     });
+
+    if (window.location.pathname === '/' && this.configService.fhirServer) {
+      await this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    }
   }
 }

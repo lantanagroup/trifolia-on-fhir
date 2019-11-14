@@ -2,23 +2,19 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {spawn} from 'child_process';
 import {
+  ContactDetail,
   DomainResource,
-  HumanName,
-  Bundle as STU3Bundle,
-  Binary as STU3Binary,
-  ImplementationGuide as STU3ImplementationGuide,
-  PageComponent,
   Extension,
-  ContactDetail, Media, PackageResourceComponent
+  ImplementationGuide as STU3ImplementationGuide,
+  Media,
+  PackageResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  Binary as R4Binary,
-  Bundle as R4Bundle,
   ImplementationGuide as R4ImplementationGuide,
-  ImplementationGuidePageComponent, ImplementationGuideResourceComponent
+  ImplementationGuidePageComponent,
+  ImplementationGuideResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IServerConfig} from '../models/server-config';
 import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
@@ -27,422 +23,73 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
+import {createTableFromArray, getDisplayName, reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
-
-interface TableOfContentsEntry {
-  level: number;
-  fileName: string;
-  title: string;
-}
-
-interface FhirControlDependency {
-  location: string;
-  name: string;
-  version: string;
-  package: string;
-}
-
-interface FhirControl {
-  tool: string;
-  source: string;
-  'npm-name': string;
-  license: string;
-  paths: {
-    qa: string;
-    temp: string;
-    output: string;
-    txCache: string;
-    specification: string;
-    pages: string[];
-    resources: string[];
-  };
-  version?: string;
-  'fixed-business-version'?: string;
-  pages: string[];
-  'extension-domains': string[];
-  'allowed-domains': string[];
-  'sct-edition': string;
-  canonicalBase: string;
-  defaults?: {
-    [key: string]: {
-      'template-base'?: string;
-      'template-mappings'?: string;
-      'template-defns'?: string;
-      'template-format'?: string;
-      content?: boolean;
-      script?: boolean;
-      profiles?: boolean;
-    };
-  };
-  dependencyList?: FhirControlDependency[];
-  resources?: {
-    [key: string]: {
-      base?: string;
-      defns?: string;
-    };
-  };
-}
-
-class PageInfo {
-  page: PageComponent | ImplementationGuidePageComponent;
-  fileName: string;
-  content: string;
-  shouldAutoGenerate: boolean;
-
-  get finalFileName() {
-    if (this.fileName && this.fileName.endsWith('.md')) {
-      return this.fileName.substring(0, this.fileName.lastIndexOf('.')) + '.html';
-    }
-  }
-}
-
-export class ExportResults {
-  rootPath: string;
-  packageId: string;
-}
+import {PageInfo, TableOfContentsEntry} from './html.models';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getExtensionString
+} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class HtmlExporter {
-  readonly httpService: HttpService;
-  readonly logger: Logger;
-  readonly fhirServerBase: string;
-  readonly fhirServerId: string;
-  readonly fhirVersion: string;
-  readonly fhir: FhirModule;
-  readonly io: Server;
-  readonly socketId: string;
-  readonly implementationGuideId: string;
-  readonly serverConfig: IServerConfig;
-  readonly fhirConfig: IFhirConfig;
-
   readonly homedir: string;
 
-  private igPublisherLocation: string;
-  private implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  protected igPublisherLocation: string;
+  protected pageInfos: PageInfo[];
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
 
   // TODO: Refactor so that there aren't so many constructor params
-  constructor(serverConfig: IServerConfig, fhirConfig: IFhirConfig, httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: FhirModule, io: Server, socketId: string, implementationGuideId: string) {
-    this.serverConfig = serverConfig;
-    this.fhirConfig = fhirConfig;
-    this.httpService = httpService;
-    this.logger = logger;
-    this.fhirServerBase = fhirServerBase;
-    this.fhirServerId = fhirServerId;
-    this.fhirVersion = fhirVersion;
-    this.fhir = fhir;
-    this.io = io;
-    this.socketId = socketId;
-    this.implementationGuideId = implementationGuideId;
+  constructor(
+    protected serverConfig: IServerConfig,
+    protected fhirConfig: IFhirConfig,
+    protected httpService: HttpService,
+    protected logger: Logger,
+    protected fhirServerBase: string,
+    protected fhirServerId: string,
+    protected fhirVersion: string,
+    protected fhir: FhirModule,
+    protected io: Server,
+    protected socketId: string,
+    protected implementationGuideId: string) {
 
     this.homedir = require('os').homedir();
   }
 
-  private get stu3ImplementationGuide(): STU3ImplementationGuide {
+  protected get stu3ImplementationGuide(): STU3ImplementationGuide {
     return <STU3ImplementationGuide> this.implementationGuide;
   }
 
-  private get r4ImplementationGuide(): R4ImplementationGuide {
+  protected get r4ImplementationGuide(): R4ImplementationGuide {
     return <R4ImplementationGuide> this.implementationGuide;
   }
 
-  static getStu3Control(implementationGuide: STU3ImplementationGuide, bundle: STU3Bundle, version) {
-    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
-    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
-    const packageIdExtension = (implementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
-    let canonicalBase;
-
-    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
-    } else {
-      canonicalBase = canonicalBaseMatch[1];
-    }
-
-    // TODO: Extract npm-name from IG extension.
-    // currently, IG resource has to be in XML format for the IG Publisher
-    const control = <FhirControl>{
-      tool: 'jekyll',
-      source: 'implementationguide/' + implementationGuide.id + '.xml',
-      'npm-name': packageIdExtension && packageIdExtension.valueString ? packageIdExtension.valueString : implementationGuide.id + '-npm',
-      license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
-      paths: {
-        qa: 'generated_output/qa',
-        temp: 'generated_output/temp',
-        output: 'output',
-        txCache: 'generated_output/txCache',
-        specification: 'http://hl7.org/fhir/STU3',
-        pages: [
-          'framework',
-          'source/pages'
-        ],
-        resources: ['source/resources']
-      },
-      pages: ['pages'],
-      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'sct-edition': 'http://snomed.info/sct/731000124108',
-      canonicalBase: canonicalBase,
-      defaults: {
-        'Location': {'template-base': 'ex.html'},
-        'ProcedureRequest': {'template-base': 'ex.html'},
-        'Organization': {'template-base': 'ex.html'},
-        'MedicationStatement': {'template-base': 'ex.html'},
-        'SearchParameter': {'template-base': 'base.html'},
-        'StructureDefinition': {
-          'template-mappings': 'sd-mappings.html',
-          'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
-        },
-        'Immunization': {'template-base': 'ex.html'},
-        'Patient': {'template-base': 'ex.html'},
-        'StructureMap': {
-          'content': false,
-          'script': false,
-          'template-base': 'ex.html',
-          'profiles': false
-        },
-        'ConceptMap': {'template-base': 'base.html'},
-        'Practitioner': {'template-base': 'ex.html'},
-        'OperationDefinition': {'template-base': 'base.html'},
-        'CodeSystem': {'template-base': 'base.html'},
-        'Communication': {'template-base': 'ex.html'},
-        'Any': {
-          'template-format': 'format.html',
-          'template-base': 'base.html'
-        },
-        'PractitionerRole': {'template-base': 'ex.html'},
-        'ValueSet': {'template-base': 'base.html'},
-        'CapabilityStatement': {'template-base': 'base.html'},
-        'Observation': {'template-base': 'ex.html'}
-      },
-      resources: {}
-    };
-
-
-    if (implementationGuide.fhirVersion) {
-      control.version = implementationGuide.fhirVersion;
-    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
-      control.version = version;
-    }
-
-    if (implementationGuide.version) {
-      control['fixed-business-version'] = implementationGuide.version;
-    }
-
-    // Set the dependencyList based on the extensions in the IG
-    const dependencyExtensions = (implementationGuide.extension || []).filter((extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
-
-    // R4 ImplementationGuide.dependsOn
-    control.dependencyList = dependencyExtensions
-      .filter((dependencyExtension) => {
-        const locationExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
-        const nameExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
-
-        return !!locationExtension && !!locationExtension.valueUri && !!nameExtension && !!nameExtension.valueString;
-      })
-      .map((dependencyExtension) => {
-        const locationExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
-        const nameExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
-        const versionExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-version']);
-
-        return <FhirControlDependency>{
-          location: locationExtension ? locationExtension.valueUri : '',
-          name: nameExtension ? nameExtension.valueString : '',
-          version: versionExtension ? versionExtension.valueString : ''
-        };
-      });
-
-    // Define the resources in the control and what templates they should use
-    if (bundle && bundle.entry) {
-      for (let i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
-
-        if (resource.resourceType === 'ImplementationGuide') {
-          continue;
-        }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-          base: resource.resourceType + '-' + resource.id + '.html',
-          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
-      }
-    }
-
-    return control;
+  // This is public so it can be unit-tested
+  public getControl(bundle: any) {
+    // Override in version-specific class
   }
 
-  public static getR4Control(implementationGuide: R4ImplementationGuide, bundle: R4Bundle, version: string) {
-    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
-    const canonicalBaseMatch = canonicalBaseRegex.exec(implementationGuide.url);
-    let canonicalBase;
-
-    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-      canonicalBase = implementationGuide.url.substring(0, implementationGuide.url.lastIndexOf('/'));
-    } else {
-      canonicalBase = canonicalBaseMatch[1];
-    }
-
-    // currently, IG resource has to be in XML format for the IG Publisher
-    const control = <FhirControl>{
-      tool: 'jekyll',
-      source: 'implementationguide/' + implementationGuide.id + '.xml',
-      'npm-name': implementationGuide.packageId || implementationGuide.id + '-npm',
-      license: implementationGuide.license || 'CC0-1.0',
-      paths: {
-        qa: 'generated_output/qa',
-        temp: 'generated_output/temp',
-        output: 'output',
-        txCache: 'generated_output/txCache',
-        specification: 'http://hl7.org/fhir/R4/',
-        pages: [
-          'framework',
-          'source/pages'
-        ],
-        resources: ['source/resources']
-      },
-      pages: ['pages'],
-      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'sct-edition': 'http://snomed.info/sct/731000124108',
-      canonicalBase: canonicalBase,
-      defaults: {
-        'Location': {'template-base': 'ex.html'},
-        'ProcedureRequest': {'template-base': 'ex.html'},
-        'Organization': {'template-base': 'ex.html'},
-        'MedicationStatement': {'template-base': 'ex.html'},
-        'SearchParameter': {'template-base': 'base.html'},
-        'StructureDefinition': {
-          'template-mappings': 'sd-mappings.html',
-          'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html'
-        },
-        'Immunization': {'template-base': 'ex.html'},
-        'Patient': {'template-base': 'ex.html'},
-        'StructureMap': {
-          'content': false,
-          'script': false,
-          'template-base': 'ex.html',
-          'profiles': false
-        },
-        'ConceptMap': {'template-base': 'base.html'},
-        'Practitioner': {'template-base': 'ex.html'},
-        'OperationDefinition': {'template-base': 'base.html'},
-        'CodeSystem': {'template-base': 'base.html'},
-        'Communication': {'template-base': 'ex.html'},
-        'Any': {
-          'template-format': 'format.html',
-          'template-base': 'base.html'
-        },
-        'PractitionerRole': {'template-base': 'ex.html'},
-        'ValueSet': {'template-base': 'base.html'},
-        'CapabilityStatement': {'template-base': 'base.html'},
-        'Observation': {'template-base': 'ex.html'}
-      },
-      resources: {}
-    };
-
-    if (implementationGuide.fhirVersion && implementationGuide.fhirVersion.length > 0) {
-      control.version = implementationGuide.fhirVersion[0];
-    } else if (version) {                       // Use the version of the FHIR server the resources are coming from
-      control.version = version;
-    }
-
-    if (implementationGuide.version) {
-      control['fixed-business-version'] = implementationGuide.version;
-    }
-
-    control.dependencyList = (implementationGuide.dependsOn || [])
-      .filter((dependsOn) => {
-        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
-        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
-
-        return !!locationExtension && !!locationExtension.valueString && !!nameExtension && !!nameExtension.valueString;
-      })
-      .map((dependsOn) => {
-        const locationExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location');
-        const nameExtension = (dependsOn.extension || []).find((dependencyExtension) => dependencyExtension.url === 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name');
-
-        return {
-          location: locationExtension ? locationExtension.valueString : '',
-          name: nameExtension ? nameExtension.valueString : '',
-          version: dependsOn.version,
-          package: dependsOn.packageId
-        };
-      });
-
-    // Define the resources in the control and what templates they should use
-    if (bundle && bundle.entry) {
-      for (let i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
-
-        if (resource.resourceType === 'ImplementationGuide') {
-          continue;
-        }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-          base: resource.resourceType + '-' + resource.id + '.html',
-          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
-      }
-    }
-
-    return control;
+  protected writePages(rootPath: string) {
+    // Override with version-specific class
   }
 
-  private getDisplayName(name: string | HumanName): string {
-    if (!name) {
-      return;
-    }
-
-    if (typeof name === 'string') {
-      return <string>name;
-    }
-
-    let display = name.family;
-
-    if (name.given) {
-      if (display) {
-        display += ', ';
-      } else {
-        display = '';
-      }
-
-      display += name.given.join(' ');
-    }
-
-    return display;
+  /**
+   * Finds the resource within the ImplementationGuide, which contains information
+   * on how the resource is used within the implementation guide. This is separate logic
+   * because the structure of ImplementationGuide is majorly different between STU3
+   * and R4.
+   * @param resourceType {string}
+   * @param id {string}
+   */
+  protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
+    // Override with version-specific class
+    return;
   }
 
-
-  private createTableFromArray(headers, data) {
-    let output = '<table>\n<thead>\n<tr>\n';
-
-    headers.forEach((header) => {
-      output += `<th>${header}</th>\n`;
-    });
-
-    output += '</tr>\n</thead>\n<tbody>\n';
-
-    data.forEach((row: string[]) => {
-      output += '<tr>\n';
-
-      row.forEach((cell) => {
-        output += `<td>${cell}</td>\n`;
-      });
-
-      output += '</tr>\n';
-    });
-
-    output += '</tbody>\n</table>\n';
-
-    return output;
-  }
-
-  private sendSocketMessage(status, message, shouldLog?: boolean) {
+  protected sendSocketMessage(status: 'error'|'progress'|'complete', message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
       return;
@@ -461,58 +108,82 @@ export class HtmlExporter {
     }
   }
 
-  private getIgPublisher(useLatest: boolean): Promise<string> {
-    return new Promise((resolve) => {
-      const fileName = 'org.hl7.fhir.igpublisher.jar';
-      const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
-      const defaultFilePath = path.join(defaultPath, fileName);
+  static getIgPublisherBuildInfo(content: string): string {
+    if (!content) {
+      return;
+    }
 
-      if (useLatest === true) {
-        this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
+    const lines = content.replace(/\r/g, '').split('\n');
 
-        this.sendSocketMessage('progress', 'Downloading latest FHIR IG publisher');
+    if (lines.length < 6) {
+      return;
+    }
 
-        // TODO: Check http://build.fhir.org/version.info first
+    const buildId = lines.find(l => l.split('=')[0] === 'buildId');
+    const buildIdSplit = buildId.split('=');
 
-        // TODO: Set config on GET request to return binary
-        this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise()
-          .then((results) => {
-            this.logger.log('Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists');
+    if (buildIdSplit.length !== 2) {
+      return;
+    }
 
-            const latestPath = path.join(defaultPath, 'latest');
-            fs.ensureDirSync(latestPath);
-
-            // noinspection JSUnresolvedFunction
-            const latestFilePath = path.join(latestPath, fileName);
-
-            this.logger.log('Saving FHIR IG publisher to ' + latestFilePath);
-
-            fs.writeFileSync(latestFilePath, results.data);
-
-            resolve(latestFilePath);
-          })
-          .catch((err) => {
-            this.logger.error(`Error getting latest version of FHIR IG publisher: ${err}`);
-            this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
-            resolve(defaultFilePath);
-          });
-      } else {
-        this.logger.log('Using built-in version of FHIR IG publisher for export');
-        this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
-        resolve(defaultFilePath);
-      }
-    });
+    return buildIdSplit[1];
   }
 
-  private getFhirControlVersion(fhirServerConfig) {
-    const configVersion = fhirServerConfig ? fhirServerConfig.version : null;
+  private async getIgPublisher(useLatest: boolean): Promise<string> {
+    const fileName = 'org.hl7.fhir.igpublisher.jar';
+    const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
+    const defaultFilePath = path.join(defaultPath, fileName);
+    const latestPath = path.join(defaultPath, 'latest');
+    const latestFilePath = path.join(latestPath, fileName);
+    const localVersionPath = path.join(latestPath, 'version.info');
+    let versionContent;
 
-    // Add more logic case statements as needed
-    switch (configVersion) {
-      case 'stu3':
-        return '3.0.1';
-      default:
-        return '4.0.0';
+    if (useLatest === true) {
+      fs.ensureDirSync(latestPath);
+
+      this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
+
+      this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
+
+      // Check http://build.fhir.org/version.info first
+      try {
+        const versionResults = await this.httpService.get('http://build.fhir.org/version.info', { responseType: 'text' }).toPromise();
+        versionContent = versionResults.data;
+        const version = HtmlExporter.getIgPublisherBuildInfo(versionContent);
+
+        const localVersionContent = fs.existsSync(localVersionPath) ? fs.readFileSync(localVersionPath).toString() : undefined;
+        const localVersion = HtmlExporter.getIgPublisherBuildInfo(localVersionContent);
+
+        if (version === localVersion) {
+          this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
+          return latestFilePath;
+        }
+
+        this.sendSocketMessage('progress', 'Server does not have the latest version of the IG publisher... Downloading.', true);
+      } catch (ex) {
+        this.logger.error(`Error getting version information about the FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading version info for the latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
+      }
+
+      try {
+        const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
+
+        this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
+
+        fs.writeFileSync(latestFilePath, results.data);
+        fs.writeFileSync(localVersionPath, versionContent);
+
+        return latestFilePath;
+      } catch (ex) {
+        this.logger.error(`Error getting latest version of FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
+      }
+    } else {
+      this.logger.log('Using built-in version of FHIR IG publisher for export');
+      this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
+      return defaultFilePath;
     }
   }
 
@@ -560,7 +231,7 @@ export class HtmlExporter {
           const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
           return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
         });
-        const authorsContent = '### Authors\n\n' + this.createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
         fs.appendFileSync(indexPath, authorsContent);
       }
     }
@@ -572,7 +243,7 @@ export class HtmlExporter {
         .map((profile) => {
           return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, profile.description || ''];
         });
-      const profilesTable = this.createTableFromArray(['Name', 'Description'], profilesData);
+      const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
       fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
     } else {
       fs.appendFileSync(profilesPath, '**No profiles are defined for this implementation guide**\n\n');
@@ -585,7 +256,7 @@ export class HtmlExporter {
         .map((extension) => {
           return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, extension.description || ''];
         });
-      const extContent = this.createTableFromArray(['Name', 'Description'], extData);
+      const extContent = createTableFromArray(['Name', 'Description'], extData);
       fs.appendFileSync(profilesPath, '### Extensions\n\n' + extContent + '\n\n');
     } else {
       fs.appendFileSync(profilesPath, '### Extensions\n\n**No extensions are defined for this implementation guide**\n\n');
@@ -628,7 +299,7 @@ export class HtmlExporter {
         .map((capabilityStatement) => {
           return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
         });
-      const capContent = this.createTableFromArray(['Name', 'Description'], csData);
+      const capContent = createTableFromArray(['Name', 'Description'], csData);
       fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + capContent);
     } else {
       fs.appendFileSync(csPath, '**No capability statements are defined for this implementation guide**');
@@ -638,23 +309,32 @@ export class HtmlExporter {
     if (otherResources.length > 0) {
       const oData = otherResources
         .sort((a, b) => {
-          const aDisplay = a.title || this.getDisplayName(a.name) || a.id || '';
+          const aDisplay = a.title || getDisplayName(a.name) || a.id || '';
           const aCompare = a.resourceType + aDisplay;
-          const bDisplay = b.title || this.getDisplayName(b.name) || b.id || '';
+          const bDisplay = b.title || getDisplayName(b.name) || b.id || '';
           const bCompare = b.resourceType + bDisplay;
           return aCompare.localeCompare(bCompare);
         })
         .map((resource) => {
-          const name = resource.title || this.getDisplayName(resource.name) || resource.id;
+          const name = resource.title || getDisplayName(resource.name) || resource.id;
           return [resource.resourceType, `<a href="${resource.resourceType}-${resource.id}.html">${name}</a>`];
         });
-      const oContent = this.createTableFromArray(['Type', 'Name'], oData);
+      const oContent = createTableFromArray(['Type', 'Name'], oData);
       fs.appendFileSync(otherPath, '### Other Resources\n\n' + oContent);
     } else {
       fs.appendFileSync(otherPath, '**No examples are defined for this implementation guide**');
     }
   }
 
+  /**
+   * The IG Publisher template references several additional markdown files for each profile. This method
+   * creates each of the additional files. They are:
+   * <ID>-intro.md
+   * <ID>-search.md
+   * <ID>.summary.md
+   * @param rootPath
+   * @param resource
+   */
   private writeFilesForResources(rootPath: string, resource: DomainResource) {
     if (!resource || !resource.resourceType || resource.resourceType === 'ImplementationGuide') {
       return;
@@ -695,36 +375,7 @@ export class HtmlExporter {
     fs.writeFileSync(summaryPath, '');
   }
 
-  private writeStu3Page(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
-    const pageInfo = pageList.find(next => next.page === page);
-    const pageIndex = pageList.indexOf(pageInfo);
-    const previousPage = pageIndex === 0 ? null : pageList[pageIndex - 1];
-    const nextPage = pageIndex === pageList.length - 1 ? null : pageList[pageIndex + 1];
-    const previousPageLink = previousPage ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
-      null;
-    const nextPageLink = nextPage ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
-      null;
-
-    if (page.kind !== 'toc' && pageInfo.content) {
-      const newPagePath = path.join(pagesPath, pageInfo.fileName);
-
-      const content = '---\n' +
-        `title: ${page.title}\n` +
-        'layout: default\n' +
-        `active: ${page.title}\n` +
-        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
-
-      fs.writeFileSync(newPagePath, content);
-    }
-
-    // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: page.kind === 'page' && pageInfo.fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeStu3Page(pagesPath, subPage, level + 1, tocEntries, pageList));
-  }
-
-  private getPageExtension(page: ImplementationGuidePageComponent) {
+  protected getPageExtension(page: ImplementationGuidePageComponent) {
     switch (page.generation) {
       case 'html':
       case 'generated':
@@ -736,38 +387,7 @@ export class HtmlExporter {
     }
   }
 
-  private writeR4Page(pagesPath: string, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[], pageList: PageInfo[]) {
-    const pageInfo = pageList.find(next => next.page === page);
-    const pageInfoIndex = pageList.indexOf(pageInfo);
-    const previousPage = pageInfoIndex > 0 ? pageList[pageInfoIndex - 1] : null;
-    const nextPage = pageInfoIndex < pageList.length - 1 ? pageList[pageInfoIndex + 1] : null;
-    const fileName = pageInfo.fileName;
-
-    const previousPageLink = previousPage ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
-      null;
-    const nextPageLink = nextPage ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
-      null;
-
-    if (pageInfo.content && pageInfo.fileName) {
-      const newPagePath = path.join(pagesPath, fileName);
-
-      // noinspection JSUnresolvedFunction
-      const content = '---\n' +
-        `title: ${page.title}\n` +
-        'layout: default\n' +
-        `active: ${page.title}\n` +
-        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
-      fs.writeFileSync(newPagePath, content);
-    }
-
-    // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writeR4Page(pagesPath, subPage, level + 1, tocEntries, pageList));
-  }
-
-  private generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
+  protected generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
     const tocPath = path.join(rootPath, 'source/pages/toc.md');
     let tocContent = '';
 
@@ -797,122 +417,6 @@ export class HtmlExporter {
 
     if (tocContent) {
       fs.appendFileSync(tocPath, tocContent);
-    }
-  }
-
-  private writeStu3Pages(rootPath: string) {
-    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
-    const getPagesList = (theList: PageInfo[], page: PageComponent) => {
-      if (!page) {
-        return theList;
-      }
-
-      const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
-      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-
-      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-          const contained = (this.stu3ImplementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
-          const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
-
-          if (binary) {
-            pageInfo.fileName = page.source ?
-              page.source
-                .trim()
-                .replace(/—/g, '')
-                .replace(/[/\\]/g, '_')
-                .replace(/ /g, '_') :
-              null;
-            pageInfo.content = Buffer.from(binary.content, 'base64').toString();
-          }
-        }
-      }
-
-      theList.push(pageInfo);
-
-      (page.page || []).forEach((next) => getPagesList(theList, next));
-
-      return theList;
-    };
-
-    const tocEntries = [];
-    const pageList: PageInfo[] = getPagesList([], this.stu3ImplementationGuide.page);
-    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
-
-    if (rootPageInfo) {
-      const pagesPath = path.join(rootPath, 'source/pages');
-      fs.ensureDirSync(pagesPath);
-
-      this.writeStu3Page(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries, pageList);
-      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, rootPageInfo.content);
-    }
-  }
-
-  private writeR4Pages(rootPath: string) {
-    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
-    const getPagesList = (theList: PageInfo[], page: ImplementationGuidePageComponent) => {
-      if (!page) {
-        return theList;
-      }
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-
-      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-
-      if (page.nameReference && page.nameReference.reference) {
-        const reference = page.nameReference.reference;
-
-        if (reference.startsWith('#')) {
-          const contained = (this.r4ImplementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
-          const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
-
-          if (binary && binary.data) {
-            pageInfo.fileName = page.title
-              .trim()
-              .replace(/—/g, '')
-              .replace(/[/\\]/g, '_')
-              .replace(/ /g, '_');
-
-            if (pageInfo.fileName.indexOf('.') < 0) {
-              pageInfo.fileName += this.getPageExtension(page);
-            }
-          }
-
-          if (binary && binary.data) {
-            pageInfo.content = Buffer.from(binary.data, 'base64').toString();
-          }
-        }
-      } else if (page.nameUrl) {
-        pageInfo.fileName = page.nameUrl;
-      }
-
-      theList.push(pageInfo);
-
-      (page.page || []).forEach((next) => getPagesList(theList, next));
-
-      return theList;
-    };
-
-    const pageList = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
-    const rootPageInfo = pageList.length > 0 ? pageList[0] : null;
-    const tocEntries = [];
-
-    if (rootPageInfo) {
-      const pagesPath = path.join(rootPath, 'source/pages');
-      fs.ensureDirSync(pagesPath);
-
-      this.writeR4Page(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries, pageList);
-
-      // Append TOC Entries to the toc.md file in the template
-      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, {fileName: rootPageInfo.fileName, content: rootPageInfo.content});
     }
   }
 
@@ -953,7 +457,7 @@ export class HtmlExporter {
     igPublisherProcess.stdout.on('data', (data) => {
       const message = data.toString()
         .replace(tmp.tmpdir, 'XXX')
-        .replace(tmp.tmpdir.replace(/\\/g, '/'), 'XXX')
+        .replace(tmp.tmpdir.replace(/\\/g, path.sep), 'XXX')
         .replace(this.homedir, 'XXX');
 
       if (message && message.trim().replace(/\./g, '') !== '') {
@@ -1004,7 +508,7 @@ export class HtmlExporter {
             this.logger.error(err);
             this.sendSocketMessage('error', 'Error copying contents to deployment path.');
           } else {
-            const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/implementation-guide/${this.implementationGuideId}/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
+            const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
             this.sendSocketMessage('complete', finalMessage, true);
           }
 
@@ -1024,22 +528,6 @@ export class HtmlExporter {
     });
   }
 
-  private getImplementationGuideResourceReference(igResource: PackageResourceComponent | ImplementationGuideResourceComponent) {
-    if (!igResource) {
-      return;
-    }
-
-    if (this.fhirVersion === 'stu3') {
-      const obj = <PackageResourceComponent> igResource;
-      return obj.sourceReference ? obj.sourceReference.reference : undefined;
-    } else if (this.fhirVersion === 'r4') {
-      const obj = <ImplementationGuideResourceComponent> igResource;
-      return obj.reference ? obj.reference.reference : undefined;
-    } else {
-      throw new Error('Unexpected FHIR version');
-    }
-  }
-
   private isImplementationGuideReferenceExample(igResource: PackageResourceComponent | ImplementationGuideResourceComponent): boolean {
     if (!igResource) {
       return false;
@@ -1056,36 +544,73 @@ export class HtmlExporter {
     }
   }
 
-  /**
-   * Finds the resource within the ImplementationGuide, which contains information
-   * on how the resource is used within the implementation guide. This is separate logic
-   * because the structure of ImplementationGuide is majorly different between STU3
-   * and R4.
-   * @param resourceType {string}
-   * @param id {string}
-   */
-  private getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
-    if (this.fhirVersion === 'stu3') {
-      if (this.stu3ImplementationGuide.package) {
-        for (let i = 0; i < this.stu3ImplementationGuide.package.length; i++) {
-          const pkg = this.stu3ImplementationGuide.package[i];
-          const found = (pkg.resource || [])
-            .find(res => res.sourceReference && res.sourceReference.reference === `${resourceType}/${id}`);
-
-          if (found) {
-            return found;
-          }
-        }
-      }
-    } else if (this.fhirVersion === 'r4') {
-      if (this.r4ImplementationGuide.definition) {
-        const found = (this.r4ImplementationGuide.definition.resource || [])
-          .find(res => res.reference && res.reference.reference === `${resourceType}/${id}`);
-        return found;
-      }
-    } else {
-      throw new Error('Unexpected FHIR version');
+  private getResourceFilePath(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+    // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
+    if (resource === this.implementationGuide) {
+      fs.ensureDirSync(path.join(resourcesDir, 'implementationguide'));
+      return path.join(resourcesDir, 'implementationguide', resource.id.toLowerCase() + '.xml');
     }
+
+    const implementationGuideResource = <ImplementationGuideResourceComponent> this.getImplementationGuideResource(resource.resourceType, resource.id);
+    let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
+
+    if (!resourcePath) {
+      resourcePath = getDefaultImplementationGuideResourcePath({
+        reference: `${resource.resourceType}/${resource.id}`
+      });
+    }
+
+    if (!resourcePath) {
+      this.sendSocketMessage('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);
+      return;
+    }
+
+    if (isXml && !resourcePath.endsWith('.xml')) {
+      resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf('.')) + '.xml';
+    } else if (!isXml && !resourcePath.endsWith('.json')) {
+      resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf('.')) + '.json';
+    }
+
+    // Make sure the directory for the resource exists
+    const fullResourcePath = path.join(resourcesDir, resourcePath);
+    const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf(path.sep));
+
+    this.logger.log(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
+    fs.ensureDirSync(resourceDir);
+
+    return fullResourcePath;
+  }
+
+  private writeResourceContent(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+    const cleanResource = BundleExporter.cleanupResource(resource);
+    const resourcePath = this.getResourceFilePath(resourcesDir, resource, isXml);
+    let resourceContent;
+
+    this.logger.log(`Writing ${resource.resourceType}/${resource.id} to "${resourcePath}.`);
+
+    if (!resourcePath) {
+      return;
+    }
+
+    if (resourcePath.endsWith('.xml')) {
+      resourceContent = this.fhir.objToXml(cleanResource);
+      resourceContent = vkbeautify.xml(resourceContent);
+    } else if (resourcePath.endsWith('.json')) {
+      resourceContent = JSON.stringify(cleanResource, null, '\t');
+    } else {
+      throw new Error(`Unexpected resource file path extension: ${resourcePath}`);
+    }
+
+    if (resource.resourceType === 'Media') {
+      const mediaReference = this.getImplementationGuideResource('Media', resource.id);
+
+      // If the Media is not an example, don't save it to the resources folder
+      if (!this.isImplementationGuideReferenceExample(mediaReference)) {
+        return;
+      }
+    }
+
+    fs.writeFileSync(resourcePath, resourceContent);
   }
 
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
@@ -1122,40 +647,17 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-    for (let i = 0; i < bundle.entry.length; i++) {
-      const resource = bundle.entry[i].resource;
-      const cleanResource = BundleExporter.cleanupResource(resource);
-      const resourceType = resource.resourceType;
-      const id = resource.id;
-      const resourceDir = path.join(resourcesDir, resourceType.toLowerCase());
-      let resourcePath, resourceContent;
+    this.implementationGuide = bundle.entry
+      .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
+      .resource;
 
-      if (resourceType === 'ImplementationGuide' && id === this.implementationGuideId) {
-        this.implementationGuide = resource;
-      }
+    // Make sure the implementation guide is in XML format... This is a requirement for the fhir ig publisher.
+    this.writeResourceContent(resourcesDir, this.implementationGuide, true);
 
-      // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
-      if (!isXml && resourceType !== 'ImplementationGuide') {
-        resourceContent = JSON.stringify(cleanResource, null, '\t');
-        resourcePath = path.join(resourceDir, id + '.json');
-      } else {
-        resourceContent = this.fhir.objToXml(cleanResource);
-        resourceContent = vkbeautify.xml(resourceContent);
-        resourcePath = path.join(resourceDir, id + '.xml');
-      }
-
-      if (resource.resourceType === 'Media') {
-        const mediaReference = this.getImplementationGuideResource('Media', resource.id);
-
-        // If the Media is not an example, don't save it to the resources folder
-        if (!this.isImplementationGuideReferenceExample(mediaReference)) {
-          continue;
-        }
-      }
-
-      fs.ensureDirSync(resourceDir);
-      fs.writeFileSync(resourcePath, resourceContent);
-    }
+    // Go through all of the other resources and write them to the file system
+    bundle.entry
+      .filter((e) => this.implementationGuide !== e.resource)
+      .forEach((entry) => this.writeResourceContent(resourcesDir, entry.resource, isXml));
 
     this.logger.log('Done writing resources to file system.');
 
@@ -1163,11 +665,7 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    if (fhirServerConfig.version === 'stu3') {
-      control = HtmlExporter.getStu3Control(<STU3ImplementationGuide> this.implementationGuide, <STU3Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
-    } else {
-      control = HtmlExporter.getR4Control(<R4ImplementationGuide> this.implementationGuide, <R4Bundle><any>bundle, this.getFhirControlVersion(fhirServerConfig));
-    }
+    control = this.getControl(bundle);
 
     this.logger.log('Copying IG Publisher template/framework to temp directory');
 
@@ -1185,16 +683,11 @@ export class HtmlExporter {
     (bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
 
     this.logger.log('Updating the IG publisher templates for the resources');
-
     this.updateTemplates(this.rootPath, bundle, this.implementationGuide);
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
-    if (fhirServerConfig.version === 'stu3') {
-      this.writeStu3Pages(this.rootPath);
-    } else {
-      this.writeR4Pages(this.rootPath);
-    }
+    this.writePages(this.rootPath);
 
     this.igPublisherLocation = await this.getIgPublisher(useLatest);
 

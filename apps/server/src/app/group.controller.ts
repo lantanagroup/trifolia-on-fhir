@@ -1,9 +1,21 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpService,
+  Param,
+  Post,
+  Put,
+  Query,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Group as STU3Group} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -17,16 +29,16 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 @ApiOAuth2Auth()
 export class GroupController extends BaseFhirController {
   resourceType = 'Group';
-  
+
   protected readonly logger = new TofLogger(GroupController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
 
   @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   @ApiOperation({
@@ -261,17 +273,19 @@ export class GroupController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerBase() fhirServerBase, @User() user, @Body() body) {
-    return super.baseCreate(fhirServerBase, body, user);
+  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+    // Omitting context implementation guide id because it does not apply to Group
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
   }
 
   @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @Param('id') id: string, @Body() body, @User() user) {
-    return super.baseUpdate(fhirServerBase, id, body, user);
+  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+    // Omitting context implementation guide id because it does not apply to the group
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 }

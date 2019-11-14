@@ -21,18 +21,18 @@ export const FhirInstance = createParamDecorator((data, req: ITofRequest) => {
   return req.fhir;
 });
 
-export const IoInstance = createParamDecorator((data, req: ITofRequest) => {
-  return req.io;
-});
-
-export const IoConnections = createParamDecorator((data, req: ITofRequest) => {
-  return req.ioConnections;
-});
-
 export const RequestUrl = createParamDecorator((data, req: ITofRequest) => {
   return req.url;
 });
 
 export const RequestMethod = createParamDecorator((data, req: ITofRequest) => {
   return req.method;
+});
+
+export const RequestHeaders = createParamDecorator((data, req: ITofRequest) => {
+  if (data) {
+    return req.headers[data.toLowerCase()];
+  } else {
+    return req.headers;
+  }
 });

@@ -35,7 +35,7 @@ const modalComponents = [
     SharedModule,
     SharedUiModule,
     FhirEditModule,
-    NgbModule.forRoot()
+    NgbModule
   ]
 })
 export class ModalsModule {

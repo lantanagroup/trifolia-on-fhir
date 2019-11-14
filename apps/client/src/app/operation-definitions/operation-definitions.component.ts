@@ -55,11 +55,11 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
     this.opDefService.delete(operationDefinition.id)
       .subscribe(() => {
-        const entry = (this.operationDefinitionsBundle.entry || []).find((entry) => entry.resource.id === operationDefinition.id);
+        const entry = (this.operationDefinitionsBundle.entry || []).find((e) => e.resource.id === operationDefinition.id);
         const index = this.operationDefinitionsBundle.entry.indexOf(entry);
         this.operationDefinitionsBundle.entry.splice(index, 1);
       }, (err) => {
-        this.configService.handleError(err, 'An error cocurred while deleting the operation definition');
+        this.configService.handleError(err, 'An error occurred while deleting the operation definition');
       });
   }
 
@@ -74,6 +74,7 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
   public getOperationDefinitions() {
     this.operationDefinitionsBundle = null;
+
     this.opDefService.search(this.page, this.nameText)
       .subscribe((results) => {
         this.operationDefinitionsBundle = results;
@@ -90,6 +91,6 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getOperationDefinitions();
-    this.configService.fhirServerChanged.subscribe((fhirServer) => this.getOperationDefinitions());
+    this.configService.fhirServerChanged.subscribe(() => this.getOperationDefinitions());
   }
 }

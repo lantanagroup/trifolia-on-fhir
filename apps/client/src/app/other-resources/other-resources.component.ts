@@ -7,6 +7,8 @@ import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 class OpenedResource {
   resource: DomainResource;
@@ -22,6 +24,7 @@ class OpenedResource {
   styleUrls: ['./other-resources.component.css']
 })
 export class OtherResourcesComponent implements OnInit {
+  public criteriaChangedEvent = new Subject();
   public resourceTypes: Coding[];
   public searchResourceType: string;
   public searchContent: string;
@@ -30,14 +33,22 @@ export class OtherResourcesComponent implements OnInit {
   public openedResources: OpenedResource[] = [];
   public results: Bundle;
   public Globals = Globals;
+  public page = 1;
+  public ignoreContext = false;
 
-  @ViewChild('tabSet')
+  @ViewChild('tabSet', { static: true })
   public tabSet: NgbTabset;
+
 
   constructor(
     public configService: ConfigService,
     private fhirService: FhirService,
     private modalService: NgbModal) {
+
+    this.criteriaChangedEvent.pipe(debounceTime(500))
+      .subscribe(() => {
+        this.search();
+      });
   }
 
   public search() {
@@ -45,9 +56,11 @@ export class OtherResourcesComponent implements OnInit {
       return;
     }
 
+    if(this.tabSet.activeId === "criteria") this.page = 1;
+
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true)
+    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = 'Done searching.';

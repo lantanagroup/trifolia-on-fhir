@@ -44,6 +44,7 @@ export class FileService {
         }
 
         this.file = file;
+      // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([navLocation]);
     }
 

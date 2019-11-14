@@ -11,7 +11,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/builders:node-build",
+          "builder": "@nrwl/node:build",
           "options": {
             "outputPath": "dist/apps/server",
             "main": "apps/server/src/main.ts",
@@ -42,7 +42,7 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/builders:node-execute",
+          "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "server:build"
           }
@@ -54,13 +54,11 @@
               "apps/server/tsconfig.app.json",
               "apps/server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
-          "builder": "@nrwl/builders:jest",
+          "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/server/jest.config.js",
             "tsConfig": "apps/server/tsconfig.spec.json"
@@ -81,13 +79,11 @@
               "libs/tof-lib/tsconfig.lib.json",
               "libs/tof-lib/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
-          "builder": "@nrwl/builders:jest",
+          "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/tof-lib/jest.config.js",
             "tsConfig": "libs/tof-lib/tsconfig.spec.json"
@@ -188,13 +184,11 @@
               "apps/client/tsconfig.app.json",
               "apps/client/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
-          "builder": "@nrwl/builders:jest",
+          "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/client/jest.config.js",
             "tsConfig": "apps/client/tsconfig.spec.json",
@@ -224,9 +218,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "apps/client-e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -239,14 +231,12 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/builders:node-build",
+          "builder": "@nrwl/node:build",
           "options": {
             "outputPath": "dist/apps/tools",
             "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
-            "assets": [
-              "apps/tools/src/assets"
-            ]
+            "assets": ["apps/tools/src/assets"]
           },
           "configurations": {
             "production": {
@@ -257,7 +247,7 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/builders:node-execute",
+          "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "tools:build"
           }
@@ -269,13 +259,11 @@
               "apps/tools/tsconfig.app.json",
               "apps/tools/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
-          "builder": "@nrwl/builders:jest",
+          "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/tools/jest.config.js",
             "tsConfig": "apps/tools/tsconfig.spec.json"
@@ -289,7 +277,7 @@
       "typescriptMismatch": false,
       "versionMismatch": false
     },
-    "defaultCollection": "@nrwl/schematics"
+    "defaultCollection": "@nrwl/angular"
   },
   "schematics": {}
 }

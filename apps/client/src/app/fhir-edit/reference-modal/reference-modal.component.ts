@@ -7,6 +7,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from '../../shared/config.service';
 
 export interface ResourceSelection {
   resourceType: string;
@@ -17,16 +18,16 @@ export interface ResourceSelection {
 }
 
 @Component({
-  selector: 'app-fhir-reference-modal',
   templateUrl: './reference-modal.component.html',
   styleUrls: ['./reference-modal.component.css']
 })
 export class FhirReferenceModalComponent implements OnInit {
+  @Input() public modalTitle = 'Select a resource';
   @Input() public resourceType?: string;
   @Input() public hideResourceType?: boolean;
   @Input() public selectMultiple = false;
   @Input() public allowCoreProfiles = true;
-  @Input() public selectedSearchLocation: string;
+  @Input() public selectedSearchLocation: 'base' | 'server' = 'server';
   public idSearch?: string;
   public contentSearch?: string;
   public criteriaChangedEvent: Subject<string> = new Subject<string>();
@@ -39,10 +40,12 @@ export class FhirReferenceModalComponent implements OnInit {
   public titleSearchTypes: string[] = [];
   public message: string;
   public baseResourceLength: number;
-
+  public ignoreContext = false;
+  public searching = false;
 
   constructor(
     public activeModal: NgbActiveModal,
+    public configService: ConfigService,
     private http: HttpClient,
     private fhirService: FhirService) {
 
@@ -51,6 +54,14 @@ export class FhirReferenceModalComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged())
       .subscribe(() => this.criteriaChanged());
+  }
+
+  public get resourcesFromContext(): boolean {
+    return !this.ignoreContext;
+  }
+
+  public set resourcesFromContext(value: boolean) {
+    this.ignoreContext = !value;
   }
 
   public get showContentSearch() {
@@ -109,8 +120,6 @@ export class FhirReferenceModalComponent implements OnInit {
       return;
     }
 
-
-
     const nonContentResourceTypes = this.nameSearchTypes.concat(this.titleSearchTypes);
     let url = '/api/fhir/' + this.resourceType + '?_summary=true&_count=10&';
 
@@ -134,7 +143,17 @@ export class FhirReferenceModalComponent implements OnInit {
       url += '_id=' + encodeURIComponent(this.idSearch) + '&';
     }
     if(this.selectedSearchLocation === 'server') {
-      this.http.get(url)
+      const options = {
+        headers: {}
+      };
+
+      if (this.ignoreContext) {
+        options.headers['ignoreContext'] = 'true';
+      }
+
+      this.searching = true;
+
+      this.http.get(url, options)
         .subscribe((results: Bundle) => {
           // If we are loading more results from the server, then concatenate the entries
           if (this.results) {
@@ -142,10 +161,9 @@ export class FhirReferenceModalComponent implements OnInit {
           } else {
             this.results = results;
           }
-
         }, (err) => {
           this.message = getErrorString(err);
-        });
+        }, () => this.searching = false);
     }
     // Search base resources loaded in memory
     else if (this.selectedSearchLocation === 'base') {
@@ -196,7 +214,6 @@ export class FhirReferenceModalComponent implements OnInit {
 
   ngOnInit() {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
-    this.selectedSearchLocation = "server";
     this.criteriaChanged();
     this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
     this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');

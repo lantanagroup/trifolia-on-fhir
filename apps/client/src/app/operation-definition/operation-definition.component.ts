@@ -48,6 +48,14 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public urlChanged() {
+    const lastIndex = this.operationDefinition.url.lastIndexOf('/');
+
+    if (lastIndex > 0 && this.isNew) {
+      this.operationDefinition.id = this.operationDefinition.url.substring(lastIndex + 1);
+    }
+  }
+
   public editParameter(parameter: ParameterComponent) {
     const modalInstance = this.modal.open(ParameterModalComponent, {size: 'lg'});
     modalInstance.componentInstance.operationDefinition = this.operationDefinition;
@@ -75,7 +83,8 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
     this.opDefService.save(this.operationDefinition)
       .subscribe((results: OperationDefinition) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/operation-definition/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';
@@ -84,7 +93,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the operation definition';
+        this.message = `An error occurred while saving the operation definition: ${err.message}`;
       });
   }
 
@@ -96,7 +105,8 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
         this.operationDefinition = <OperationDefinition>this.fileService.file.resource;
         this.nameChanged();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }

@@ -1,10 +1,9 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/capabilityStatement')
@@ -13,16 +12,16 @@ import {ConfigService} from './config.service';
 @ApiOAuth2Auth()
 export class CapabilityStatementController extends BaseFhirController {
   resourceType = 'CapabilityStatement';
-  
+
   protected readonly logger = new TofLogger(CapabilityStatementController.name);
-  
+
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
 
   @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   @Get(':id')
@@ -31,17 +30,17 @@ export class CapabilityStatementController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerBase() fhirServerBase, @User() user, @Body() body) {
-    return super.baseCreate(fhirServerBase, body, user);
+  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId);
   }
 
   @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @Param('id') id: string, @Body() body, @User() user) {
-    return super.baseUpdate(fhirServerBase, id, body, user);
+  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId);
   }
 
   @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, id, user);
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
 }

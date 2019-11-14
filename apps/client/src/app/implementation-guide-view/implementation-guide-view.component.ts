@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {ConfigService} from '../shared/config.service';
 
 @Component({
-  selector: 'app-implementation-guide-view',
   templateUrl: './implementation-guide-view.component.html',
   styleUrls: ['./implementation-guide-view.component.css']
 })
@@ -18,7 +17,7 @@ export class ImplementationGuideViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.implementationGuideId = this.route.snapshot.paramMap.get('id');
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
     this.implementationGuideOutputUrl = `/igs/${this.configService.fhirServer}/${this.implementationGuideId}/index.html`;
     this.implementationGuideQAUrl = `/igs/${this.configService.fhirServer}/${this.implementationGuideId}/qa.html`;
   }

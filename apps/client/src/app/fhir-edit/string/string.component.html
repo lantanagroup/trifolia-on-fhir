@@ -7,9 +7,10 @@
     <input type="text" class="form-control"
            #formGroupModel="ngModel"
            placeholder="{{placeholder}}"
+           [disabled]="disabled"
            [pattern]="pattern"
            [(ngModel)]="value"
-           (change)="onChanged()"
+           (keyup)="changeEvent.next(parentObject[propertyName])"
            [class.is-invalid]="!isValid" />
 
     <span class="help-block" *ngIf="value && patternMessage && formGroupModel.errors?.pattern">{{patternMessage}}</span>
@@ -22,9 +23,10 @@
     <input type="text" class="form-control"
            #model="ngModel"
            placeholder="{{placeholder}}"
+           [disabled]="disabled"
            [pattern]="pattern"
            [(ngModel)]="value"
-           (change)="onChanged()"
+           (keyup)="changeEvent.next(parentObject[propertyName])"
            [class.is-invalid]="!isValid" />
 
     <span class="help-block" *ngIf="value && patternMessage && model.errors?.pattern">{{patternMessage}}</span>

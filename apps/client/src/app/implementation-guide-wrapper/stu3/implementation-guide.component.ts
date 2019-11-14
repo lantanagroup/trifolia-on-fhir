@@ -13,7 +13,6 @@ import {ImplementationGuideService, PublishedGuideModel} from '../../shared/impl
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PageComponentModalComponent} from './page-component-modal.component';
-import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
@@ -25,7 +24,9 @@ import {
 } from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ClientHelper} from '../../clientHelper';
 import {BaseComponent} from '../../base.component';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import {STU3ResourceModalComponent} from './resource-modal.component';
+import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 
 class PageDefinition {
   public page: PageComponent;
@@ -48,7 +49,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide;
+  public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
   public validation: ValidatorResponse;
@@ -59,14 +60,14 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   public ClientHelper = ClientHelper;
 
   private navSubscription: any;
+  // noinspection JSMismatchedCollectionQueryUpdate
   private resources: ImplementationGuideResource[] = [];
 
   constructor(
-    private modal: NgbModal,
+    private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -78,12 +79,12 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public get isNew(): boolean {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('implementationGuideId');
     return !id || id === 'new';
   }
 
   public get isFile(): boolean {
-    return this.route.snapshot.paramMap.get('id') === 'from-file';
+    return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
   public get dependencies(): Extension[] {
@@ -117,8 +118,18 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     }
   }
 
+  public changeId() {
+    if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
+      return;
+    }
+
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'ImplementationGuide';
+    modalRef.componentInstance.originalId = this.implementationGuide.id;
+  }
+
   public selectPublishedIg(dependency: Extension) {
-    const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
@@ -154,7 +165,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public addResources(destPackage?: PackageComponent) {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
@@ -173,7 +184,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         destPackage = this.implementationGuide.package[0];
       }
 
-      const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+      const allProfilingTypes = Globals.profileTypes.concat(Globals.terminologyTypes);
 
       if (!destPackage.resource) {
         destPackage.resource = [];
@@ -186,7 +197,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         (this.implementationGuide.package || []).forEach((next: PackageComponent) => {
           const foundNext = (next.resource || []).find((resource: PackageResourceComponent) => {
             if (resource.sourceReference) {
-              const parsed = this.fhirService.parseReference(resource.sourceReference.reference);
+              const parsed = parseReference(resource.sourceReference.reference);
               return parsed.resourceType === result.resourceType && parsed.id === result.id;
             }
           });
@@ -322,7 +333,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   private getImplementationGuide() {
-    const implementationGuideId = this.route.snapshot.paramMap.get('id');
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -330,7 +341,8 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
         this.nameChanged();
         this.initPages();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }
@@ -348,14 +360,9 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
           this.implementationGuide = <ImplementationGuide>results;
           this.nameChanged();
           this.initPages();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentImplementationGuides,
-            this.implementationGuide.id,
-            this.implementationGuide.name);
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
         });
     }
   }
@@ -370,7 +377,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
 
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    this.modal.open(content, {size: 'lg'});
+    this.modalService.open(content, {size: 'lg'});
   }
 
   public tabChange(event) {
@@ -418,7 +425,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg'});
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -550,81 +557,30 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     }
 
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
-      .subscribe((results: ImplementationGuide) => {
-        if (!this.implementationGuide.id) {
-          this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
+      .subscribe((implementationGuide: ImplementationGuide) => {
+        if (this.isNew) {
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the implementation guide: ' + getErrorString(err);
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
   }
 
-  public canEditImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
-
-    if (!parsed) {
-      return false;
-    }
-
-    return parsed.id && (
-      parsed.resourceType === 'ImplementationGuide' ||
-      parsed.resourceType === 'StructureDefinition' ||
-      parsed.resourceType === 'CapabilityStatement' ||
-      parsed.resourceType === 'OperationDefinition' ||
-      parsed.resourceType === 'CodeSystem' ||
-      parsed.resourceType === 'ValueSet' ||
-      parsed.resourceType === 'Questionnaire'
-    );
-  }
-
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const parsed = this.fhirService.parseReference(igResource.resource.sourceReference.reference);
-
-    if (!confirm('This will redirect you to the "Edit Structure Definition" screen. Any unsaved changes will be lost. Are you sure you want to continue?')) {
-      return;
-    }
-
-    let routeComponent: string;
-
-    switch (parsed.resourceType) {
-      case 'ImplementationGuide':
-        routeComponent = 'implementation-guide';
-        break;
-      case 'StructureDefinition':
-        routeComponent = 'structure-definition';
-        break;
-      case 'CapabilityStatement':
-        routeComponent = 'capability-statement';
-        break;
-      case 'OperationDefinition':
-        routeComponent = 'operation-definition';
-        break;
-      case 'ValueSet':
-        routeComponent = 'value-set';
-        break;
-      case 'CodeSystem':
-        routeComponent = 'code-system';
-        break;
-      case 'Questionnaire':
-        routeComponent = 'questionnaire';
-        break;
-    }
-
-    this.router.navigate([`/${this.configService.fhirServer}/${routeComponent}/${parsed.id}`]);
+    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg'});
+    modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.componentInstance.resource = igResource.resource;
   }
 
   public initResources() {
     this.resources = (this.implementationGuide.package || []).reduce((list, igPackage: PackageComponent) => {
       const packageResources = (igPackage.resource || [])
-        .filter((resource: PackageResourceComponent) => {
-          return !!resource.sourceReference;
-        })
         .map((resource: PackageResourceComponent) => {
           return new ImplementationGuideResource(resource, igPackage);
         })
@@ -691,6 +647,13 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     });
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getImplementationGuide();
+
+    // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
+    this.route.params.subscribe((params) => {
+      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+        this.getImplementationGuide();
+      }
+    });
   }
 
   nameChanged() {

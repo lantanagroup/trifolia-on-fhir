@@ -93,7 +93,12 @@
                 <label>ID
                   <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
-                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
+                <div [class.input-group]="!isNew">
+                  <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
+                  <div class="input-group-btn" *ngIf="!isNew">
+                    <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
@@ -186,14 +191,14 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Package
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
+            <th>
+              Package <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
             </th>
-            <th>Resource
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
+            <th>
+              Resource <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
             </th>
-            <th>Example?
-              <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.example"></app-tooltip-icon>
+            <th>
+              Example? <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.example"></app-tooltip-icon>
             </th>
             <th class="actions-column-2">
               <div class="pull-right">
@@ -205,21 +210,21 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let ir of resources; let iri = index">
+          <tr *ngFor="let ir of resources">
             <td>
               <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)">
                 <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
               </select>
             </td>
             <td>
-              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" resourceType="StructureDefinition" [isFormGroup]="false" [required]="true" [hideDisplay]="true"></app-fhir-reference>
             </td>
             <td>
               <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-primary" title="Edit this resource" [disabled]="!canEditImplementationGuideResource(ir)" (click)="editImplementationGuideResource(ir)">
+                <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editImplementationGuideResource(ir)">
                   <i class="fa fa-edit"></i>
                 </button>
                 <button type="button" class="btn btn-secondary" title="Remove this resource (and package, if no resources are left in it) from this implementation guide"
@@ -355,14 +360,16 @@
 
         <table class="table" *ngIf="implementationGuide.hasOwnProperty('binary')">
           <thead>
-          <th>URI</th>
-          <th class="actions-column-1">
-            <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
+          <tr>
+            <th>URI</th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
           </thead>
           <tbody>
           <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: Globals.trackByFn">
@@ -446,7 +453,7 @@
         </table>
       </ng-template>
     </ngb-tab>
-    
+
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>

@@ -22,12 +22,16 @@ export class QuestionnaireService {
         }
     }
 
-    public search(page = 1, name?: string) {
+    public search(page = 1, name?: string, implementationGuideId?: string) {
         let url = '/api/questionnaire?page=' + encodeURIComponent(page.toString()) + '&';
 
         if (name) {
             url += 'name=' + encodeURIComponent(name) + '&';
         }
+
+      if (implementationGuideId) {
+        url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+      }
 
         return this.http.get<Bundle>(url);
     }

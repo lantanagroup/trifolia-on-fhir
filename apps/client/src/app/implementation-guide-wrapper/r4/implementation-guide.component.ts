@@ -17,14 +17,16 @@ import {ImplementationGuideService, PublishedGuideModel} from '../../shared/impl
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {PageComponentModalComponent} from './page-component-modal.component';
-import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {BaseComponent} from '../../base.component';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import {R4ResourceModalComponent} from './resource-modal.component';
+import {getDefaultImplementationGuideResourcePath} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -52,13 +54,10 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   public igNotFound = false;
   public Globals = Globals;
 
-  private navSubscription: any;
-
   constructor(
     private modal: NgbModal,
     private router: Router,
     private implementationGuideService: ImplementationGuideService,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -83,9 +82,9 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        const parsedReference = this.fhirService.parseReference(resource.reference.reference);
+        const parsedReference = parseReference(resource.reference.reference);
 
-        if (this.filterResourceType.profile && this.fhirService.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
           return true;
         }
 
@@ -93,11 +92,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           return true;
         }
 
-        if (this.filterResourceType.example && this.fhirService.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) {
-          return true;
-        }
-
-        return false;
+        return this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0;
       })
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {
@@ -107,25 +102,43 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         const reference = resource.reference && resource.reference.reference ?
           resource.reference.reference.toLowerCase().trim() :
           '';
+        /*
         const name = resource.name ?
           resource.name.toLowerCase().trim() :
           '';
+         */
 
         return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
       });
   }
 
   public get isNew(): boolean {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('implementationGuideId');
     return !id || id === 'new';
   }
 
   public get isFile(): boolean {
-    return this.route.snapshot.paramMap.get('id') === 'from-file';
+    return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
   public get isFilterResourceTypeAll() {
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+  }
+
+  public editResource(resource: ImplementationGuideResourceComponent) {
+    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resource = resource;
+    modalRef.componentInstance.implementationGuide = this.implementationGuide;
+  }
+
+  public changeId() {
+    if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
+      return;
+    }
+
+    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'ImplementationGuide';
+    modalRef.componentInstance.originalId = this.implementationGuide.id;
   }
 
   public addResources() {
@@ -138,14 +151,20 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         this.implementationGuide.definition.resource = [];
       }
 
-      const allProfilingTypes = this.fhirService.profileTypes.concat(this.fhirService.terminologyTypes);
+      const allProfilingTypes = Globals.profileTypes.concat(Globals.terminologyTypes);
 
       results.forEach((result: ResourceSelection) => {
+        const newReference: ResourceReference = {
+          reference: result.resourceType + '/' + result.id,
+          display: result.display
+        };
+
         this.implementationGuide.definition.resource.push({
-          reference: {
-            reference: result.resourceType + '/' + result.id,
-            display: result.display
-          },
+          extension: [{
+            url: Globals.extensionUrls['extension-ig-resource-file-path'],
+            valueString: getDefaultImplementationGuideResourcePath(newReference)
+          }],
+          reference: newReference,
           name: result.display,
           exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
         });
@@ -216,7 +235,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   private getImplementationGuide() {
-    const implementationGuideId = this.route.snapshot.paramMap.get('id');
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -224,7 +243,8 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
         this.nameChanged();
         this.initPages();
       } else {
-        this.router.navigate(['/']);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([this.configService.baseSessionUrl]);
         return;
       }
     }
@@ -242,19 +262,11 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
           this.implementationGuide = <ImplementationGuide>results;
           this.nameChanged();
           this.initPages();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentImplementationGuides,
-            this.implementationGuide.id,
-            this.implementationGuide.name);
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentImplementationGuides, implementationGuideId);
         });
     }
-  }
-
-  public tabChange(event) {
   }
 
   public toggleResources(hasResources: boolean) {
@@ -515,18 +527,18 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     }
 
     this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
-      .subscribe((results: ImplementationGuide) => {
+      .subscribe((implementationGuide: ImplementationGuide) => {
         if (this.isNew) {
-          this.router.navigate([`${this.configService.fhirServer}/implementation-guide/${results.id}`]);
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentImplementationGuides, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
         }
       }, (err) => {
-        this.message = 'An error occured while saving the implementation guide: ' + getErrorString(err);
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
   }
 
@@ -559,6 +571,13 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   ngOnInit() {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getImplementationGuide();
+
+    // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
+    this.route.params.subscribe((params) => {
+      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+        this.getImplementationGuide();
+      }
+    });
   }
 
   nameChanged() {

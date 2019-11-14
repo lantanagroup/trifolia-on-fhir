@@ -1,6 +1,14 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ImportService, VSACImportCriteria} from '../shared/import.service';
-import {Bundle, DomainResource, EntryComponent, IssueComponent, Media, OperationOutcome, RequestComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Bundle,
+  DomainResource,
+  EntryComponent,
+  IssueComponent,
+  Media as STU3Media,
+  OperationOutcome,
+  RequestComponent
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
@@ -14,7 +22,6 @@ import {HttpClient} from '@angular/common/http';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
-import {Media as STU3Media} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp'];
@@ -60,7 +67,7 @@ export class ImportComponent implements OnInit {
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
-  @ViewChild('importGithubPanel')
+  @ViewChild('importGithubPanel', { static: true })
   private importGithubPanel: ImportGithubPanelComponent;
 
   constructor(
@@ -229,7 +236,7 @@ export class ImportComponent implements OnInit {
 
   private getFileBundle(): Bundle {
     const bundle = new Bundle();
-    bundle.type = 'transaction';
+    bundle.type = 'batch';
     bundle.entry = this.files
       .filter((importFile: ImportFileModel) => {
         return importFile.contentType === ContentTypes.Json ||
@@ -313,7 +320,7 @@ export class ImportComponent implements OnInit {
 
     let response;
 
-    if (resource.resourceType === 'Bundle' && (resource.type === 'transaction' || resource.type === 'batch')) {
+    if (resource.resourceType === 'Bundle' && resource.type === 'batch') {
       response = this.httpClient.post('/api/fhir', resource);
     } else if (resource.id) {
       response = this.httpClient.put(`/api/fhir/${resource.resourceType}/${resource.id}`, resource);
@@ -356,7 +363,7 @@ export class ImportComponent implements OnInit {
 
   private importFiles(tabSet: NgbTabset) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.fhirService.transaction(json, 'application/json')
+    this.fhirService.transaction(json, 'application/json', false)
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;

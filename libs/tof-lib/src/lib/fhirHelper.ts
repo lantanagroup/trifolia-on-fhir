@@ -1,7 +1,5 @@
-import {ParseConformance} from 'fhir/parseConformance';
-import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import {OperationOutcome, ResourceReference} from './r4/fhir';
+import nanoid from 'nanoid/generate';
 
 export function joinUrl(...parts: string[]) {
   let url = '';
@@ -75,7 +73,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 }
 
 export function parseUrl(url: string, base?: string) {
-  const parseUrlRegex = /(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|Medication|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|PractitionerRole|Practitioner|ProcedureRequest|Procedure|ProcessRequest|ProcessResponse|Provenance|QuestionnaireResponse|Questionnaire|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestReport|TestScript|ValueSet|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
+  const parseUrlRegex = /(Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|Medication|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|PractitionerRole|Practitioner|ProcedureRequest|Procedure|ProcessRequest|ProcessResponse|Provenance|QuestionnaireResponse|Questionnaire|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|ServiceRequest|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestReport|TestScript|ValueSet|VisionPrescription)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
 
   if (base && base.lastIndexOf('/') === base.length-1) {
     base = base.substring(0, base.length - 1);
@@ -93,41 +91,60 @@ export function parseUrl(url: string, base?: string) {
   }
 }
 
-function getJsonFromFile(relativePath: string) {
-  const actualPath = path.join(__dirname, relativePath);
-  const contentStream = fs.readFileSync(actualPath);
-  const content = contentStream.toString('utf8');
-  return JSON.parse(content);
+export function createOperationOutcome(severity: string, code: string, diagnostics: string) {
+  return <OperationOutcome> {
+    resourceType: 'OperationOutcome',
+    issue: [{
+      severity: severity,
+      code: code,
+      diagnostics: diagnostics
+    }]
+  };
 }
 
-export function getFhirStu3Instance() {
-  const parser = new ParseConformance(false, FhirVersions.STU3);
-  const valueSets = getJsonFromFile('assets/stu3/valuesets.json');
-  const types = getJsonFromFile('assets/stu3/profiles-types.json');
-  const resources = getJsonFromFile('assets/stu3/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/stu3/codesystem-iso3166.json');
+export function getExtensionString(obj: any, url: string): string {
+  if (!obj) {
+    return;
+  }
 
-  parser.parseBundle(valueSets);
-  parser.parseBundle(types);
-  parser.parseBundle(resources);
-  parser.loadCodeSystem(iso3166);
+  const foundExtension = (obj.extension || []).find((ex) => ex.url === url);
 
-  const fhir = new Fhir(parser);
-  return fhir;
+  if (foundExtension) {
+    return foundExtension.valueString;
+  }
 }
 
-export function getFhirR4Instance() {
-  const parser = new ParseConformance(false, FhirVersions.R4);
-  const valueSets = getJsonFromFile('assets/r4/valuesets.json');
-  const types = getJsonFromFile('assets/r4/profiles-types.json');
-  const resources = getJsonFromFile('assets/r4/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/r4/codesystem-iso3166.json');
+export function setExtensionString(obj: any, url: string, value: string) {
+  let foundExtension = (obj.extension || []).find((ex) => ex.url === url);
 
-  parser.parseBundle(valueSets);
-  parser.parseBundle(types);
-  parser.parseBundle(resources);
-  parser.loadCodeSystem(iso3166);
+  if (value) {
+    if (!foundExtension) {
+      if (!obj.extension) {
+        obj.extension = [];
+      }
 
-  const fhir = new Fhir(parser);
-  return fhir;
+      foundExtension = { url: url };
+      obj.extension.push(foundExtension);
+    }
+
+    foundExtension.valueString = value;
+  } else if (!value && foundExtension) {
+    const index = obj.extension.indexOf(foundExtension);
+    obj.extension.splice(index, 1);
+  }
+}
+
+
+export function getDefaultImplementationGuideResourcePath(reference: ResourceReference) {
+  if (reference && reference.reference) {
+    const parsed = parseUrl(reference.reference);
+
+    if (parsed) {
+      return `${parsed.resourceType.toLowerCase()}/${parsed.id}.xml`;
+    }
+  }
+}
+
+export function generateId(): string {
+  return nanoid('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
 }

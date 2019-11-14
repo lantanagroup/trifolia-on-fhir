@@ -2,48 +2,78 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
 import {Controller, HttpModule, HttpService} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
-import {Bundle, ImplementationGuide, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from './config.service';
-import {createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
-import nock = require('nock');
-import http = require('axios/lib/adapters/http');
+import {createBundle, createTestUser, createUserGroupResponse, createUserPractitionerResponse} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {RequestHeaders} from './server.decorators';
+// @ts-ignore
+import nock = require('nock');
+// @ts-ignore
+import http = require('axios/lib/adapters/http');
+import {DomainResource} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 nock.disableNetConnect();
 
-jest.mock('nanoid', () => () => {
+jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
 });
 
 const mockConfigService = new ConfigService();
 
-@Controller('test')
-class TestController extends BaseFhirController {
+@Controller('implementationGuide')
+class TestIGController extends BaseFhirController {
   resourceType = 'ImplementationGuide';     // No particular reason to use ImplementationGuide
 
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
   }
 
-  public search(user: ITofUser, fhirServerBase: string, query?: any) {
-    return super.baseSearch(user, fhirServerBase, query);
+  public search(user: ITofUser, fhirServerBase: string, query?: any, @RequestHeaders() headers?) {
+    return super.baseSearch(user, fhirServerBase, query, headers);
   }
 
   public create(user: ITofUser, fhirServerBase: string, data: any) {
-    return super.baseCreate(fhirServerBase, data, user);
+    return super.baseCreate(fhirServerBase, 'r4', data, user);
   }
 
   public update(fhirServerBase: string, id: string, data: any, user: ITofUser) {
-    return super.baseUpdate(fhirServerBase, id, data, user);
+    return super.baseUpdate(fhirServerBase, 'r4', id, data, user);
   }
 
   public delete(fhirServerBase: string, id:  string, user: ITofUser) {
-    return super.baseDelete(fhirServerBase, id, user);
+    return super.baseDelete(fhirServerBase, 'r4', id, user);
+  }
+}
+
+@Controller('structureDefinition')
+class TestSDController extends BaseFhirController {
+  resourceType = 'StructureDefinition';     // No particular reason to use ImplementationGuide
+
+  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+    super(httpService, configService);
+  }
+
+  public search(user: ITofUser, fhirServerBase: string, query?: any, @RequestHeaders() headers?) {
+    return super.baseSearch(user, fhirServerBase, query, headers);
+  }
+
+  public create(user: ITofUser, fhirServerBase: string, data: any) {
+    return super.baseCreate(fhirServerBase, 'r4', data, user);
+  }
+
+  public update(fhirServerBase: string, id: string, data: any, user: ITofUser) {
+    return super.baseUpdate(fhirServerBase, 'r4', id, data, user);
+  }
+
+  public delete(fhirServerBase: string, id:  string, user: ITofUser) {
+    return super.baseDelete(fhirServerBase, 'r4', id, user);
   }
 }
 
 describe('BaseFhirController', () => {
-  let testController: TestController;
+  let testIGController: TestIGController;
+  let testSDController: TestSDController;
   let app: TestingModule;
   const fhirServerBase = 'http://test-fhir-server.com';
   const userPractitionerResponse = createUserPractitionerResponse();
@@ -52,7 +82,7 @@ describe('BaseFhirController', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      controllers: [TestController],
+      controllers: [TestIGController, TestSDController],
       providers: [{
         provide: ConfigService,
         useValue: mockConfigService
@@ -61,7 +91,8 @@ describe('BaseFhirController', () => {
         adapter: http
       })]
     }).compile();
-    testController = app.get<TestController>(TestController);
+    testIGController = app.get<TestIGController>(TestIGController);
+    testSDController = app.get<TestSDController>(TestSDController);
   });
 
   /*
@@ -88,7 +119,7 @@ describe('BaseFhirController', () => {
         })
         .reply(200, { responseType: 'Bundle' });
 
-      const results = await testController.search(testUser, fhirServerBase);
+      const results = await testIGController.search(testUser, fhirServerBase);
 
       req.done();     // Make sure there are no outstanding requests
 
@@ -122,7 +153,7 @@ describe('BaseFhirController', () => {
           })
           .reply(200, { resourceType: 'Bundle' });
 
-        const results = await testController.search(testUser, fhirServerBase);
+        const results = await testIGController.search(testUser, fhirServerBase);
 
         req.done();     // Make sure there are no outstanding requests
 
@@ -166,7 +197,7 @@ describe('BaseFhirController', () => {
             name: 'test'
           });
 
-        const results = <ImplementationGuide> await testController.create(testUser, fhirServerBase, newResource);
+        const results = <ImplementationGuide> await testIGController.create(testUser, fhirServerBase, newResource);
 
         req.done();
 
@@ -215,7 +246,7 @@ describe('BaseFhirController', () => {
             name: 'test'
           });
 
-        const results = <ImplementationGuide> await testController.create(testUser, fhirServerBase, newResource);
+        const results = <ImplementationGuide> await testIGController.create(testUser, fhirServerBase, newResource);
 
         req.done();
 
@@ -264,7 +295,7 @@ describe('BaseFhirController', () => {
             name: 'test'
           });
 
-        const results = <ImplementationGuide> await testController.create(testUser, fhirServerBase, newResource);
+        const results = <ImplementationGuide> await testIGController.create(testUser, fhirServerBase, newResource);
 
         req.done();
 
@@ -292,7 +323,7 @@ describe('BaseFhirController', () => {
           .reply(200, userGroupResponse);
 
         try {
-          await testController.delete(fhirServerBase, 'test-id', testUser);
+          await testIGController.delete(fhirServerBase, 'test-id', testUser);
           throw new Error('Expected UnauthorizedException to be thrown.');
         } catch (ex) {
           expect(ex.response).toBeTruthy();
@@ -304,6 +335,7 @@ describe('BaseFhirController', () => {
       });
 
       it('should succeed when the user has permissions', async () => {
+        const noReferencesBundle = createBundle('searchset', fhirServerBase);
         const persistedResource = {
           resourceType: 'ImplementationGuide',
           id: 'test-id',
@@ -325,10 +357,90 @@ describe('BaseFhirController', () => {
           .get('/Group')
           .query({ member: 'test-user-id', '_summary': 'true' })
           .reply(200, userGroupResponse)
+          .get('/ImplementationGuide')
+          .query({ resource: 'ImplementationGuide/test-id'})
+          .reply(200, noReferencesBundle)
+          .get('/ImplementationGuide')
+          .query({ global: 'ImplementationGuide/test-id'})
+          .reply(200, noReferencesBundle)
           .delete('/ImplementationGuide/test-id')
           .reply(200);
 
-        await testController.delete(fhirServerBase, 'test-id', testUser);
+        await testIGController.delete(fhirServerBase, 'test-id', testUser);
+
+        req.done();
+      });
+
+      it('should remove references to the resource and persist before deleting', async () => {
+        const refIg = <DomainResource> {
+          resourceType: 'ImplementationGuide',
+          id: 'test-reference-ig',
+          definition: {
+            resource: [{
+              reference: {
+                reference: 'StructureDefinition/test-sd',
+                display: 'test sd'
+              }
+            }]
+          }
+        };
+        const referencesBundle = createBundle('searchset', fhirServerBase, refIg);
+        const persistedResource = {
+          resourceType: 'StructureDefinition',
+          id: 'test-sd',
+          meta: {
+            security: [
+              { system: Globals.securitySystem, code: 'user^test-user-id^read' },
+              { system: Globals.securitySystem, code: 'user^test-user-id^write' }
+            ]
+          }
+        };
+
+        const req = nock(fhirServerBase)
+          .get('/StructureDefinition/test-sd')
+          .reply(200, persistedResource)
+          // to check permissions on persisted IG
+          .get('/Practitioner')
+          .query({ identifier: Globals.authNamespace + '|test.user' })
+          .reply(200, userPractitionerResponse)
+          .get('/Group')
+          .query({ member: 'test-user-id', '_summary': 'true' })
+          .reply(200, userGroupResponse)
+          // search for implementation guides that reference it via "resource" search param
+          .get('/ImplementationGuide')
+          .query({ resource: 'StructureDefinition/test-sd'})
+          .reply(200, referencesBundle)
+          // search for implementation guides that reference it via "global" search param
+          .get('/ImplementationGuide')
+          .query({ global: 'StructureDefinition/test-sd'})
+          .reply(200, createBundle('searchset', fhirServerBase))
+          .post('/', (transactionBundle) => {
+            expect(transactionBundle).toBeTruthy();
+            expect(transactionBundle.resourceType).toBe('Bundle');
+            expect(transactionBundle.type).toBe('transaction');
+            expect(transactionBundle.entry).toBeTruthy();
+            expect(transactionBundle.entry.length).toBe(1);
+            expect(transactionBundle.entry[0].resource).toBeTruthy();
+            expect(transactionBundle.entry[0].resource.resourceType).toBe('ImplementationGuide');
+
+            // Expect the request for the entry to be for an update to the IG
+            expect(transactionBundle.entry[0].request).toBeTruthy();
+            expect(transactionBundle.entry[0].request.method).toBe('PUT');
+            expect(transactionBundle.entry[0].request.url).toBe('ImplementationGuide/test-reference-ig');
+
+            // Make sure the IG is modified
+            const ig = <ImplementationGuide> transactionBundle.entry[0].resource;
+            expect(ig.definition).toBeTruthy();
+            expect(ig.definition.resource).toBeTruthy();
+            expect(ig.definition.resource.length).toBe(0);
+
+            return true;
+          })
+          .reply(200)
+          .delete('/StructureDefinition/test-sd')
+          .reply(200);
+
+        await testSDController.delete(fhirServerBase, 'test-sd', testUser);
 
         req.done();
       });
@@ -352,7 +464,7 @@ describe('BaseFhirController', () => {
           .reply(200, userGroupResponse);
 
         try {
-          await testController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
+          await testIGController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
           throw new Error('Expected UnauthorizedException to be thrown.');
         } catch (ex) {
           expect(ex.response).toBeTruthy();
@@ -397,9 +509,11 @@ describe('BaseFhirController', () => {
           .query({ member: 'test-user-id', '_summary': 'true' })
           .reply(200, userGroupResponse)
           .put('/ImplementationGuide/test-id', resourceUpdates)
+          .reply(200, resourceUpdates)
+          .get('/ImplementationGuide/test-id')
           .reply(200, resourceUpdates);
 
-        const results = await testController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
+        const results = await testIGController.update(fhirServerBase, 'test-id', resourceUpdates, testUser);
 
         req.done();
 

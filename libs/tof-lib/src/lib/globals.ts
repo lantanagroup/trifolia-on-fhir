@@ -10,6 +10,9 @@ export class Globals {
   static readonly authNamespace = 'https://auth0.com';
   static readonly defaultAuthNamespace = 'https://trifolia-fhir.lantanagroup.com';
 
+  static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
+  static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
+
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
@@ -25,7 +28,8 @@ export class Globals {
     'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
-    'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager'
+    'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
+    'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path'
   };
 
   static readonly introText = {
@@ -97,6 +101,7 @@ export class Globals {
     'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.',
     'other.open-resource-tab': 'Each resource that you open will show in a separate tab like this.',
     'other.search-results-tab': 'After you click the search button, the results are shown here.',
+    'other.search-results-paging': 'A limited number of items are shown on this screen. Here you can navigate between multiple pages of items.',
     'other.search-criteria': 'Specify your search criteria in this tab.',
     'other.search.resource-type': 'A resource type must be selected before searching.',
     'other.search.search-btn': 'Click this button to start the search.',
@@ -131,7 +136,11 @@ export class Globals {
     'name.validation.failed': 'Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.',
     'resource.move': 'To change the ID of this resource, go back to the browse screen for the resource and click the "Change ID" button.',
     'sd.baseDefinition': 'Definition that this type is constrained/specialized from. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different base definition and/or type.',
-    'sd.type': 'Type defined or constrained by this structure. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different type and/or base definition.'
+    'sd.type': 'Type defined or constrained by this structure. This cannot be changed from this screen because the elements defined in the profile may be invalid with a different type and/or base definition.',
+    'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.',
+    'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
+    'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
+    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.'
   };
 
   static readonly cookieKeys = {
@@ -285,15 +294,15 @@ export class Globals {
     const keys = Object.keys(obj);
 
     if (choices) {
-      const foundProperties = keys.filter((key: string) => {
+      const foundChoiceProperties = keys.filter((key: string) => {
         const foundChoice = choices.find((choice: Coding) => {
           return choice.code === propertyName + key;
         });
         return !!foundChoice;
       });
 
-      if (foundProperties.length > 0) {
-        return foundProperties[0];
+      if (foundChoiceProperties.length > 0) {
+        return foundChoiceProperties[0];
       } else {
         return;
       }
@@ -335,7 +344,7 @@ export class Globals {
     }
   }
 
-  static trackByFn(index, item) {
+  static trackByFn(index) {
     return index;
   }
 }
