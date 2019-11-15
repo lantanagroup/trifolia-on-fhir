@@ -92,6 +92,14 @@ export class ResourcePermissionsComponent implements OnInit {
           )
       )
     );
+  };
+
+  getIdentifierDisplay(user: Practitioner) {
+    const identifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
+
+    if (identifier) {
+      return identifier.value;
+    }
   }
 
   copyTypeaheadFormatter = (resource: any) => {

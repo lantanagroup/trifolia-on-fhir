@@ -90,7 +90,10 @@ export class PractitionerController extends BaseFhirController {
 
   @Get('user')
   public async getUsers(@FhirServerBase() fhirServerBase: string, @Query() query) {
-    query.identifier = `${Globals.authNamespace}|`;
+    if (query.name) {
+      query['name:contains'] = query.name;
+      delete query.name;
+    }
 
     const url = buildUrl(fhirServerBase, 'Practitioner', null, null, query);
     const results = await this.httpService.get<Bundle>(url).toPromise();

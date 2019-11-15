@@ -156,7 +156,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let u of foundUsers">
-            <td>{{getHumanNamesDisplay(u.name)}}</td>
+            <td title="{{getIdentifierDisplay(u)}}">{{getHumanNamesDisplay(u.name)}}</td>
             <td>{{getPractitionerEmail(u)}}</td>
             <td class="actions-column-1">
               <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id)">
