@@ -149,8 +149,8 @@ export class FhirController extends BaseController {
           assertUserCanEdit(this.configService, userSecurityInfo, originalResource);
         } catch (ex) {
           if (ex.response) {
-            if (ex.response.status === 404) {
-              // Do nothing... It doesn't exist, so the user can create it.
+            if (ex.response.status === 404 || ex.response.status === 410) {
+              // Do nothing... It doesn't exist or has been deleted, so the user can create it.
             } else if (ex.status === 401) {
               return {
                 status: 401,
