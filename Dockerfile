@@ -38,8 +38,6 @@ RUN rm -rf /var/cache/apk/*
 
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
 
-COPY local.json /ToF/server/config/local.json
-
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 COPY --from=build-ToF /build/dist/apps/client/. /ToF/client/
 COPY --from=build-ToF /build/dist/apps/server/. /ToF/server/
