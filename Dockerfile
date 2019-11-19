@@ -1,9 +1,10 @@
+# Using Version 10 due to build errors with Version 12
 FROM node:12-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
 # (Java is used to executed the FHIR IG Publisher)
-RUN apk add --no-cache --virtual .gyp python make g++ openjdk8-jre
+RUN apk add --no-cache --virtual python make .gyp gcc g++ openjdk8-jre build-base
 
 RUN mkdir /build
 
@@ -30,7 +31,14 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 RUN npm prune --production
 
 FROM node:12-alpine
+
+RUN apk update && apk --update add ruby-full ruby-dev build-base
+RUN gem install jekyll bundler
+RUN rm -rf /var/cache/apk/*
+
 RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
+
+COPY local.json /ToF/server/config/local.json
 
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 COPY --from=build-ToF /build/dist/apps/client/. /ToF/client/
