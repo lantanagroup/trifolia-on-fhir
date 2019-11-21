@@ -17,6 +17,7 @@ import * as modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import {getFhirR4Instance, getFhirStu3Instance} from './app/helper';
+import hpropagate from 'hpropagate';
 
 const config = new ConfigService();
 
@@ -170,6 +171,12 @@ const fixSwagger = (document) => {
 };
 
 async function bootstrap() {
+  if (config.headerPropagation) {
+    hpropagate({
+      setAndPropagateCorrelationId: false,
+      headersToPropagate: config.headerPropagation
+    });
+  }
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const globalPrefix = 'api';
 
@@ -205,7 +212,7 @@ async function bootstrap() {
     .setTitle('Trifolia-on-FHIR API')
     .setVersion(modulePackage.version)
     .setBasePath('/api')
-    .addOAuth2('implicit', `https://${config.auth.domain}/authorize`, `https://${config.auth.domain}/oauth/token`)
+    .addOAuth2('implicit', `https://${config.auth.domain}/authorize`, `https://${config.auth.domain}/oauth/token`)//todo fix to oidc
     .build();
   const document = fixSwagger(SwaggerModule.createDocument(app, options));
   SwaggerModule.setup('api-docs', app, document, {

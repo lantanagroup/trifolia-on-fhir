@@ -29,7 +29,7 @@ export class PractitionerController extends BaseFhirController {
     return this.getMyPractitioner(user, fhirServerBase, true)
       .then((existingPractitioner) => {
         const authUser = user.sub;
-        let system = '';
+        let system = Globals.defaultAuthNamespace;
         let value = authUser;
 
         if (authUser.startsWith('auth0|')) {

@@ -1,6 +1,5 @@
 import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import * as auth0 from 'auth0-js';
 import {PractitionerService} from './practitioner.service';
 import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
@@ -9,13 +8,13 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
+import {OAuthService, OAuthErrorEvent, AuthConfig} from 'angular-oauth2-oidc';
 
 @Injectable()
 export class AuthService {
   // expiresIn is in seconds
   private readonly fiveMinutesInSeconds = 300;
 
-  public auth0: any;
   public userProfile: any;
   public practitioner: Practitioner;
   public groups: Group[] = [];
@@ -31,8 +30,10 @@ export class AuthService {
     private configService: ConfigService,
     private modalService: NgbModal,
     private practitionerService: PractitionerService,
-    private groupService: GroupService) {
-    this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
+    private groupService: GroupService,
+    private oauthService: OAuthService) {
+
+    this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'),);
     this.authChanged = new EventEmitter();
   }
 
@@ -45,19 +46,37 @@ export class AuthService {
   }
 
   public init() {
-    if (this.authExpiresAt) {
-      this.setSessionTimer();
-    }
 
-    if (this.configService.config && this.configService.config.auth) {
-      this.auth0 = new auth0.WebAuth({
-        clientID: this.configService.config.auth.clientId,
-        domain: this.configService.config.auth.domain,
-        responseType: 'token',
-        redirectUri: location.origin + '/login?pathname=' + encodeURIComponent(location.pathname),
-        scope: this.configService.config.auth.scope
-      });
-    }
+    const authConfig: AuthConfig = {};
+    authConfig.issuer = this.configService.config.auth.issuer;
+    authConfig.clientId = this.configService.config.auth.clientId;
+    authConfig.redirectUri = window.location.origin + '/login';
+    authConfig.logoutUrl = window.location.origin + '/logout';
+    authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
+    authConfig.scope = this.configService.config.auth.scope,
+    this.oauthService.configure(authConfig)
+
+    // For debugging:
+    //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
+
+    this.oauthService.loadDiscoveryDocument()
+
+    // See if the hash fragment contains tokens (when user got redirected back)
+    .then(() => this.oauthService.tryLogin())
+
+    // If we're still not logged in yet, try with a silent refresh:
+    .then(() => {
+      if (!this.oauthService.hasValidAccessToken()) {
+        return this.oauthService.silentRefresh();
+      }
+    })
+
+    // Set the user session and context
+    .then(() => {
+      this.handleAuthentication();
+    });
+
+    this.oauthService.setupAutomaticSilentRefresh();
 
     this.authChanged.subscribe(() => {
       if (this.isAuthenticated()) {
@@ -84,47 +103,36 @@ export class AuthService {
   }
 
   public login(): void {
-    if (!this.auth0) {
+    if (!this.oauthService) {
       return;
     }
 
-    this.auth0.authorize();
+    this.oauthService.initImplicitFlow();
   }
 
-  public handleAuthentication() {
-    if (!this.auth0) {
+  public handleAuthentication(): void {
+    if (!this.oauthService) {
       return;
     }
 
-    this.loggingIn = true;
-    this.authError = undefined;
+    if(this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()){
+      window.location.hash = '';
+      this.setSession();
 
-    this.auth0.parseHash((err, authResult) => {
-      if (!err && authResult && authResult.idToken) {
-        window.location.hash = '';
-        this.setSession(authResult);
-        this.getProfile()
-          .then(() => {
-            const path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.baseSessionUrl}/home`;
+      let path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
 
-            this.authChanged.emit();
-            this.socketService.notifyAuthenticated({
-              userProfile: this.userProfile,
-              practitioner: this.practitioner
-            });
-
-            if (path && path !== '/' && path !== '/logout' && path !== '/login') {
-              // noinspection JSIgnoredPromiseFromCall
-              this.router.navigate([path]);
-            }
-          })
-          .catch(nextErr => this.authError = nextErr);
-      } else if (err) {
-        this.authError = err;
+      // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
+      if (path.startsWith('/login')) {
+        path = '/';
       }
 
-      this.loggingIn = false;
-    });
+      this.router.navigate([path]);
+      this.authChanged.emit();
+      this.socketService.notifyAuthenticated({
+        userProfile: this.userProfile,
+        practitioner: this.practitioner
+      });
+    }
   }
 
   public logout(): void {
@@ -141,10 +149,8 @@ export class AuthService {
       clearTimeout(this.authTimeout);
     }
 
-    if (this.auth0) {
-      this.auth0.logout({
-        returnTo: `${location.origin}/logout`
-      });
+    if (this.oauthService) {
+      this.oauthService.logOut();
     }
 
     // Go back to the home route
@@ -157,31 +163,19 @@ export class AuthService {
     return new Date().getTime() < this.authExpiresAt;
   }
 
-  private async getAuthUserInfo(accessToken: string) {
-    return new Promise((resolve, reject) => {
-      this.auth0.client.userInfo(accessToken, (userInfoErr, userProfile) => {
-        if (userInfoErr) {
-          reject(userInfoErr);
-          return;
-        }
+  private getAuthUserInfo() : Object {
 
-        resolve(userProfile);
-      });
-    });
+    if(this.oauthService.hasValidIdToken()){
+      return this.oauthService.getIdentityClaims();
+    }
   }
 
   public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
-    if (!this.auth0 || !this.isAuthenticated()) {
+    if (!this.isAuthenticated()) {
       return Promise.resolve({userProfile: null, practitioner: null});
     }
 
-    const accessToken = localStorage.getItem('token');
-
-    if (!accessToken) {
-      throw new Error('Access token must exist to fetch profile');
-    }
-
-    this.userProfile = await this.getAuthUserInfo(accessToken);
+    this.userProfile = this.getAuthUserInfo();
 
     try {
       this.practitioner = await this.practitionerService.getMe().toPromise();
@@ -224,43 +218,15 @@ export class AuthService {
     return meta;
   }
 
-  private setSessionTimer() {
-    if (!this.auth0) {
-      return;
-    }
 
-    const expiresIn = (this.authExpiresAt - new Date().getTime()) / 1000;
+  private setSession(): void {
 
-    if (expiresIn > this.fiveMinutesInSeconds) {
-      if (this.authTimeout) {
-        clearTimeout(this.authTimeout);
-      }
-
-      const nextTimeout = (expiresIn - this.fiveMinutesInSeconds) * 1000;
-      this.authTimeout = setTimeout(() => {
-        this.authTimeout = null;
-        this.auth0.checkSession({
-          scope: this.configService.config.auth.scope
-        }, (err, nextAuthResult) => {
-          if (err) {
-            console.log(err);
-            alert('An error occurred while renewing your authentication session');
-          } else {
-            this.setSession(nextAuthResult);
-          }
-        });
-      }, nextTimeout);
-    }
-  }
-
-  private setSession(authResult): void {
     // Set the time that the access token will expire at
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('token', authResult.accessToken);
-    localStorage.setItem('id_token', authResult.idToken);
+    const expiresAt = JSON.stringify(this.oauthService.getAccessTokenExpiration());
+    localStorage.setItem('token', this.oauthService.getAccessToken());
+    localStorage.setItem('id_token', this.oauthService.getIdToken());
     localStorage.setItem('expires_at', expiresAt);
-    this.authExpiresAt = JSON.parse(expiresAt);
+    this.authExpiresAt = this.oauthService.getAccessTokenExpiration();
 
-    this.setSessionTimer();
   }
 }

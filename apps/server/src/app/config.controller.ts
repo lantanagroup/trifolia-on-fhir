@@ -33,7 +33,7 @@ export class ConfigController extends BaseController {
       auth: {
         clientId: this.configService.auth.clientId,
         scope: this.configService.auth.scope,
-        domain: this.configService.auth.domain
+        issuer: this.configService.auth.issuer
       },
       github: {
         clientId: this.configService.github.clientId

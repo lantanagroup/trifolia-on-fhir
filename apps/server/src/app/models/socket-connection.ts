@@ -4,7 +4,7 @@ export interface ISocketConnection {
   id: string;
   practitioner?: Practitioner;
   userProfile?: {
-    'user_id': string;
+    sub: string;
     email: string;
     // Add more properties as needed
   }

@@ -36,6 +36,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         this.logger.log(`Successfully retrieved user info for code ${token}`);
 
         HttpStrategy.authorizationCodes[token] = results.data;
+
         return results.data;
       } catch (ex) {
         throw new UnauthorizedException();

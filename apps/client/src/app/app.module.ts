@@ -66,6 +66,7 @@ import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 import {R4ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
 import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/resource-modal.component';
+import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -190,6 +191,14 @@ export function init(configService: ConfigService, authService: AuthService, fhi
   return () => getConfig();
 }
 
+const authModuleConfig: OAuthModuleConfig = {
+  // Inject "Authorization: Bearer ..." header for these APIs:
+  resourceServer: {
+    allowedUrls: [],
+    sendAccessToken: true,
+  },
+};
+
 // noinspection JSDeprecatedSymbols
 @NgModule({
   entryComponents: [
@@ -223,6 +232,7 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    OAuthModule.forRoot(authModuleConfig),
     HttpModule,
     NgbModule,
     FileDropModule,
@@ -246,6 +256,18 @@ export function init(configService: ConfigService, authService: AuthService, fhi
     }, {
       provide: CookieService,
       useFactory: cookieServiceFactory
+    },
+    {
+      provide: OAuthModuleConfig,
+      useValue: authModuleConfig
+    },
+    {
+      provide: ValidationHandler,
+      useClass: JwksValidationHandler
+    },
+    {
+      provide: OAuthStorage,
+      useValue: localStorage
     }
   ],
   bootstrap: [AppComponent]

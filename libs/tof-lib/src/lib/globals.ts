@@ -8,6 +8,7 @@ export class Globals {
   };
 
   static readonly authNamespace = 'https://auth0.com';
+  static readonly defaultAuthNamespace = 'https://trifolia-fhir.lantanagroup.com';
 
   static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];

@@ -36,6 +36,7 @@ export class ConfigService {
     clientId:  'gh-clientid',
     secret: 'secr3t'
   };
+  public headerPropagation: string[];
 
   constructor() {
     // If this is not a unit test, load configs using the config module.
@@ -44,6 +45,7 @@ export class ConfigService {
       this.fhir = config.get('fhir');
       this.auth = config.get('auth');
       this.github = config.get('github');
+      this.headerPropagation = config.get('headerPropagation');
     }
   }
 }

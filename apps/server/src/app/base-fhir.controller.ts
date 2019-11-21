@@ -136,6 +136,9 @@ export class BaseFhirController extends BaseController {
     if (!data.resourceType) {
       throw new BadRequestException('Expected a FHIR resource');
     }
+    if (Object.keys(data.meta).length == 0) {
+      delete data.meta;
+    }
 
     let alreadyExists = false;
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
