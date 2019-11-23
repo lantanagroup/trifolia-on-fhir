@@ -50,11 +50,12 @@ export class AuthService {
     const authConfig: AuthConfig = {};
     authConfig.issuer = this.configService.config.auth.issuer;
     authConfig.clientId = this.configService.config.auth.clientId;
-    authConfig.redirectUri = window.location.origin + '/login';
+    authConfig.redirectUri = window.location.origin + '/login?pathname=%2Flogin'; //window.location.origin + '/login';
     authConfig.logoutUrl = window.location.origin + '/logout';
     authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
     authConfig.scope = this.configService.config.auth.scope,
     this.oauthService.configure(authConfig)
+
 
     // For debugging:
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
@@ -126,8 +127,11 @@ export class AuthService {
         path = '/';
       }
 
-      this.router.navigate([path]);
+      if (path && path !== '/' && path !== '/logout' && path !== '/login') {
+        this.router.navigate([path]);
+      }
       this.authChanged.emit();
+      this.getProfile();
       this.socketService.notifyAuthenticated({
         userProfile: this.userProfile,
         practitioner: this.practitioner
@@ -136,15 +140,6 @@ export class AuthService {
   }
 
   public logout(): void {
-    // Remove tokens and expiry time from localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
-    this.userProfile = null;
-    this.practitioner = null;
-    this.authExpiresAt = null;
-    this.socketService.authInfoSent = false;
-
     if (this.authTimeout) {
       clearTimeout(this.authTimeout);
     }
@@ -155,6 +150,7 @@ export class AuthService {
 
     // Go back to the home route
     // noinspection JSIgnoredPromiseFromCall
+    
     this.router.navigate([`/${this.configService.fhirServer}/home`]);
     this.authChanged.emit();
   }
@@ -164,7 +160,6 @@ export class AuthService {
   }
 
   private getAuthUserInfo() : Object {
-
     if(this.oauthService.hasValidIdToken()){
       return this.oauthService.getIdentityClaims();
     }
@@ -176,9 +171,10 @@ export class AuthService {
     }
 
     this.userProfile = this.getAuthUserInfo();
-
     try {
+
       this.practitioner = await this.practitionerService.getMe().toPromise();
+
     } catch (ex) {
       console.error(ex);
       this.practitioner = null;
