@@ -46,16 +46,16 @@ export class AuthService {
   }
 
   public init() {
-
     const authConfig: AuthConfig = {};
     authConfig.issuer = this.configService.config.auth.issuer;
     authConfig.clientId = this.configService.config.auth.clientId;
-    authConfig.redirectUri = window.location.origin + '/login?pathname=%2Flogin'; //window.location.origin + '/login';
+    authConfig.redirectUri = window.location.origin + '/login';
     authConfig.logoutUrl = window.location.origin + '/logout';
     authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
-    authConfig.scope = this.configService.config.auth.scope,
-    this.oauthService.configure(authConfig)
+    authConfig.scope = this.configService.config.auth.scope;
+    authConfig.requireHttps = false;
 
+    this.oauthService.configure(authConfig)
 
     // For debugging:
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
@@ -150,7 +150,7 @@ export class AuthService {
 
     // Go back to the home route
     // noinspection JSIgnoredPromiseFromCall
-    
+
     this.router.navigate([`/${this.configService.fhirServer}/home`]);
     this.authChanged.emit();
   }
