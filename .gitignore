@@ -50,4 +50,5 @@ dist.zip
 config/local.json
 manifest.txt
 node_modules_1/
-apps/server/src/config/local.json
+apps/server/src/config/local-keycloak.json
+apps/server/src/config/local-okta.json

@@ -195,7 +195,6 @@ export class HtmlExporter {
 
     const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
-    const fhirServerConfig = this.fhirConfig.servers.find((server: IFhirConfigServer) => server.id === this.fhirServerId);
     let control, bundle;
 
     this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}`);
@@ -437,7 +436,7 @@ export class HtmlExporter {
     const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
     const distinctResources = (bundle.entry || [])
       .map((entry) => <DomainResource> entry.resource)
-      .reduce(reduceDistinct((resource: DomainResource) => resource.id), []);
+      .reduce(reduceDistinct((resource: DomainResource) => resource.resourceType + '_' + resource.id), []);
     const valueSets = distinctResources.filter((resource) => resource.resourceType === 'ValueSet');
     const terminologyPath = path.join(rootPath, 'source/pages/terminology.md');
     const codeSystems = distinctResources.filter((resource) => resource.resourceType === 'CodeSystem');
