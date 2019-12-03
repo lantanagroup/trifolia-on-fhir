@@ -30,7 +30,7 @@ export class ConfigService {
     domain: 'test.auth0.com',
     secret: 'secr3t',
     issuer: 'http://trifolia-on-fhir',
-    userInfoUrl: 'http://test.auth0.com/userinfo'
+    jwksUri: ''
   };
   public github: IGithubConfig = {
     clientId:  'gh-clientid',

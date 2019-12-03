@@ -15,7 +15,7 @@
     "clientId": "",
     "scope": "",
     "issuer": "",
-    "userInfoUrl": ""
+    "jwksUri": ""
   },
   "headerPropagation": [],
   "import": {

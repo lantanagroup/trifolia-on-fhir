@@ -54,6 +54,7 @@ export class AuthService {
     authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
     authConfig.scope = this.configService.config.auth.scope;
     authConfig.requireHttps = false;
+    authConfig.requestAccessToken = true;
 
     this.oauthService.configure(authConfig)
 
@@ -216,13 +217,11 @@ export class AuthService {
 
 
   private setSession(): void {
-
     // Set the time that the access token will expire at
     const expiresAt = JSON.stringify(this.oauthService.getAccessTokenExpiration());
     localStorage.setItem('token', this.oauthService.getAccessToken());
     localStorage.setItem('id_token', this.oauthService.getIdToken());
     localStorage.setItem('expires_at', expiresAt);
     this.authExpiresAt = this.oauthService.getAccessTokenExpiration();
-
   }
 }

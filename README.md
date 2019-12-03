@@ -41,13 +41,25 @@ dist/server/config/production.json
 NODE_ENV=production
 ```
 
+### Authentication
+
+See the Wiki's [Authentication](https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication) page for information on how to configure authentication in ToF. 
+
 ## FHIR Server Requirements
 
-* Must support creating resources via a PUT with an "id" property 
+* Must be either an STU3 or R4 server
+* Must support creating resources via a PUT with an ID
+* Must support the $validate operation
+* Must support the $meta-delete operation
+* Must support ImplementationGuide search query parameters:
+  * resource
+  * global
+* Must support _has (reverse chaining) search criteria. For example: GET /StructureDefinition?_has:ImplementationGuide:resource:_id=<IG_ID>
+* Must support _include search criteria to get a list of all resources related to an implementation guide. For example: GET /ImplementationGuide?_id=some-ig-id&_include=ImplementationGuide:resource&ImplementationGuide:global
 
 ## Features/functionality
 * FHIR Versions
-    * DSTU3
+    * STU3
     * R4
 * Switch between FHIR servers
 * OAuth2 Authentication
@@ -74,4 +86,4 @@ NODE_ENV=production
 
 ## Additional
 
-See the [WIKI](https://github.com/lantanagroup/trifolia-on-fhir/wiki) for more information.
+See the [WIKI](https://github.com/lantanagroup/trifolia-on-fhir/wiki) and [Help Documentation](https://trifolia-fhir-dev.lantanagroup.com/help) for more information.

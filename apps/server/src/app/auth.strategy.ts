@@ -4,43 +4,66 @@ import {HttpService, Injectable, UnauthorizedException} from '@nestjs/common';
 import {ITofUser} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
-import {AxiosRequestConfig} from 'axios';
+import jwksClient, { CertSigningKey } from 'jwks-rsa';
+
+const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
   static authorizationCodes: {[token: string]: ITofUser} = {};
 
   private readonly logger = new TofLogger(HttpStrategy.name);
+  private readonly jwksClient;
 
   constructor(private httpService: HttpService, private configService: ConfigService) {
     super();
+
+    this.jwksClient = jwksClient({
+      jwksUri: this.configService.auth.jwksUri
+    });
+  }
+
+  async verify(token: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const getKey = (header, callback) => {
+        this.jwksClient.getSigningKey(header.kid, (err, key: any) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          const signingKey = key.publicKey || key.rsaPublicKey;
+          callback(null, signingKey);
+        });
+      }
+
+      const profile = jwt.verify(token, getKey, (err, decoded) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(decoded);
+        }
+      });
+    });
   }
 
   async validate(token: string) {
-    if (HttpStrategy.authorizationCodes[token]) {
-      return HttpStrategy.authorizationCodes[token];
-    } else {
-      this.logger.log(`Authorization code not found in cache. Requesting from identity provider. Code: ${token}`);
+    try {
+      const profile = await this.verify(token);
 
-      const options: AxiosRequestConfig = {
-        method: 'GET',
-        url: this.configService.auth.userInfoUrl,
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      };
-
-      try {
-        const results = await this.httpService.request<ITofUser>(options).toPromise();
-
-        this.logger.log(`Successfully retrieved user info for code ${token}`);
-
-        HttpStrategy.authorizationCodes[token] = results.data;
-
-        return results.data;
-      } catch (ex) {
-        throw new UnauthorizedException();
+      if (profile.roles) {
+        // For auth0 and keycloak, roles is a top-level property
+        // For auth0, it is assigned by the "Auth0 Authorization" extension in the auth0 dashboard
+        // For keycloak, configuration must be changed for "Client Scopes" > roles > Mappers > "client roles" to have the "token claim name" be assigned to the top-level "roles" property
+        profile.isAdmin = profile.roles.indexOf('admin') >= 0;
+      }  else {
+        profile.isAdmin = false;
       }
+
+      return profile;
+    } catch (ex) {
+      this.logger.error('Token validation failed: ' + ex.message);
+      throw ex;
     }
   }
 }

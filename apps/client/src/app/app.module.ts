@@ -79,13 +79,13 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const tokenExpiresAt = localStorage.getItem('expires_at');
-    const token = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('token') : undefined;
+    const idToken = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('id_token') : undefined;     // id_token = jwt
     const fhirServer = localStorage.getItem('fhirServer');
     let headers = req.headers;
 
     if (req.url.startsWith('/')) {
-      if (token) {
-        headers = headers.set('Authorization', 'Bearer ' + token);
+      if (idToken) {
+        headers = headers.set('Authorization', 'Bearer ' + idToken);
       }
     }
 

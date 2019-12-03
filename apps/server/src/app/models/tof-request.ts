@@ -4,24 +4,46 @@ import * as SocketIO from 'socket.io';
 import {ISocketConnection} from './socket-connection';
 
 export interface ITofUser {
-  app_metadata?: any;
-  clientID: string;
-  created_at?: string;
-  email: string;
-  email_verified?: boolean;
-  identities?: [{
-    connection: string;
-    isSocial: boolean;
-    provider: string;
-    user_id: string;
-  }];
-  name: string;
-  nickname?: string;
-  picture?: string;
   sub: string;
-  updated_at?: string;
-  user_id?: string;
+  email?: string;
+  name?: string;
+  isAdmin: boolean;   // set by ToF
 }
+
+/*
+For auth0.com:
+
+{
+  "email": "XXXXX",
+  "picture": "XXXXX",
+  "nickname": "XXXXX",
+  "name": "XXXXX",
+  "app_metadata": {},
+  "roles": [
+    "admin"
+  ],
+  "email_verified": true,
+  "clientID": "XXXXX",
+  "user_id": "auth0|XXXXX",
+  "identities": [
+    {
+      "user_id": "XXXXX",
+      "provider": "auth0",
+      "connection": "Username-Password-Authentication",
+      "isSocial": false
+    }
+  ],
+  "updated_at": "2019-12-03T21:58:24.287Z",
+  "created_at": "2016-09-27T15:42:52.173Z",
+  "iss": "https://XXXXX.auth0.com/",
+  "sub": "auth0|XXXXX",
+  "aud": "XXXXX",
+  "iat": 1575410305,
+  "exp": 1575446305,
+  "at_hash": "XXXXX",
+  "nonce": "XXXXX"
+}
+ */
 
 export interface ITofRequest extends Request {
   fhirServerId: string;

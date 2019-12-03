@@ -5,5 +5,5 @@ export interface IAuthConfig {
   scope?: string;
   secret: string;
   issuer: string;
-  userInfoUrl: string;
+  jwksUri: string;
 }

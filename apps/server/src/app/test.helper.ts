@@ -12,12 +12,12 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import nock from 'nock';
 import EventEmitter = NodeJS.EventEmitter;
 
-export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com'): ITofUser {
+export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com', isAdmin = false): ITofUser {
   return {
-    clientID: 'test',
     email: email,
     name: name,
-    sub: `auth0|${userId}`
+    sub: `auth0|${userId}`,
+    isAdmin: isAdmin
   };
 }
 
