@@ -4,6 +4,7 @@ export interface ITofUser {
   email?: string;
   name?: string;
   isAdmin: boolean;   // set by ToF
+  roles?: string[];
 }
 
 /*

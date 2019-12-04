@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ConfigService} from '../../shared/config.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
+import {OAuthService} from 'angular-oauth2-oidc';
 
 @Component({
   templateUrl: './settings-modal.component.html',
@@ -13,12 +14,13 @@ export class SettingsModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
+    private oauthService: OAuthService,
     private router: Router) {
 
   }
 
   public get authCode(): string {
-    return localStorage.getItem('token');
+    return this.oauthService.hasValidIdToken() ? this.oauthService.getIdToken() : 'N/A';
   }
 
   public get exampleCurl(): string {

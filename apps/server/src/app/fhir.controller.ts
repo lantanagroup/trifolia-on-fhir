@@ -390,8 +390,8 @@ export class FhirController extends BaseController {
         if (userSecurityInfo) {
           const securityTags = [`everyone${Globals.securityDelim}read`];
 
-          if (userSecurityInfo.user) {
-            securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.user.id}${Globals.securityDelim}read`);
+          if (userSecurityInfo.practitioner) {
+            securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.practitioner.id}${Globals.securityDelim}read`);
           }
 
           userSecurityInfo.groups.forEach((group) => {

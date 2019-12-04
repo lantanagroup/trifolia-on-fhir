@@ -29,8 +29,12 @@ export class NewUserModalComponent implements OnInit {
     this.practitioner = new Practitioner();
     const identifierSystem = this.authService.userProfile && this.authService.userProfile.sub && this.authService.userProfile.sub.indexOf('auth0|') === 0 ?
       Globals.authNamespace : Globals.defaultAuthNamespace;
-    const identifierValue = this.authService.userProfile && this.authService.userProfile.sub && this.authService.userProfile.sub.indexOf('auth0|') === 0 ?
-      this.authService.userProfile.sub.substring(6) : this.authService.userProfile.sub;
+    let identifierValue = this.authService.userProfile ? this.authService.userProfile.sub || '' : '';
+
+    if (identifierValue.indexOf('auth0|') === 0) {
+      identifierValue = identifierValue.substring(6);
+    }
+
     this.practitioner.identifier = [new Identifier({
       system: identifierSystem,
       value: identifierValue

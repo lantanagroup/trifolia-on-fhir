@@ -16,7 +16,6 @@ export class AuthService {
   public userProfile: ITofUser;
   public practitioner: Practitioner;
   public groups: Group[] = [];
-  public authExpiresAt: number;
   public authChanged: EventEmitter<any>;
   public loggingIn = false;
 
@@ -29,7 +28,6 @@ export class AuthService {
     private groupService: GroupService,
     private oauthService: OAuthService) {
 
-    this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
     this.authChanged = new EventEmitter();
   }
 
@@ -68,19 +66,19 @@ export class AuthService {
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
     this.oauthService.loadDiscoveryDocument()
-
-      // See if the hash fragment contains tokens (when user got redirected back)
-      .then(() => this.oauthService.tryLogin())
-
-      // If we're still not logged in yet, try with a silent refresh:
       .then(() => {
-        if (!this.oauthService.hasValidAccessToken()) {
+        // See if the hash fragment contains tokens (when user got redirected back)
+        return this.oauthService.tryLogin();
+      })
+      .then(() => {
+        // If we're still not logged in yet, try with a silent refresh:
+        const validAccessToken = this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken();
+        if (!validAccessToken) {
           return this.oauthService.silentRefresh();
         }
       })
-
-      // Set the user session and context
       .then(() => {
+        // Set the user session and context
         this.handleAuthentication();
       });
 
@@ -125,7 +123,6 @@ export class AuthService {
 
     if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
       window.location.hash = '';
-      this.setSession();
 
       let path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
 
@@ -160,12 +157,20 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    return new Date().getTime() < this.authExpiresAt;
+    return this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken();
   }
 
   private getAuthUserInfo(): ITofUser {
     if (this.oauthService.hasValidIdToken()) {
-      return <ITofUser> this.oauthService.getIdentityClaims();
+      const userProfile = <ITofUser> this.oauthService.getIdentityClaims();
+
+      if (userProfile.roles && userProfile.roles.indexOf('admin') >= 0) {
+        userProfile.isAdmin = true;
+      } else {
+        userProfile.isAdmin = false;
+      }
+
+      return userProfile;
     }
   }
 
@@ -175,10 +180,9 @@ export class AuthService {
     }
 
     this.userProfile = this.getAuthUserInfo();
+
     try {
-
       this.practitioner = await this.practitionerService.getMe().toPromise();
-
     } catch (ex) {
       console.error(ex);
       this.practitioner = null;
@@ -222,15 +226,5 @@ export class AuthService {
     }
 
     return meta;
-  }
-
-
-  private setSession(): void {
-    // Set the time that the access token will expire at
-    const expiresAt = JSON.stringify(this.oauthService.getAccessTokenExpiration());
-    localStorage.setItem('token', this.oauthService.getAccessToken());
-    localStorage.setItem('id_token', this.oauthService.getIdToken());
-    localStorage.setItem('expires_at', expiresAt);
-    this.authExpiresAt = this.oauthService.getAccessTokenExpiration();
   }
 }

@@ -59,11 +59,11 @@ export class BaseFhirController extends BaseController {
     }
 
     // Security search
-    if (userSecurityInfo) {
+    if (userSecurityInfo && !user.isAdmin) {
       const securityTags = [`everyone${Globals.securityDelim}read`];
 
-      if (userSecurityInfo.user) {
-        securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.user.id}${Globals.securityDelim}read`);
+      if (userSecurityInfo.practitioner) {
+        securityTags.push(`user${Globals.securityDelim}${userSecurityInfo.practitioner.id}${Globals.securityDelim}read`);
       }
 
       userSecurityInfo.groups.forEach((group) => {
@@ -136,13 +136,15 @@ export class BaseFhirController extends BaseController {
     if (!data.resourceType) {
       throw new BadRequestException('Expected a FHIR resource');
     }
-    if (Object.keys(data.meta).length == 0) {
+
+    if (Object.keys(data.meta).length === 0) {
       delete data.meta;
     }
 
     let alreadyExists = false;
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     const contextImplementationGuide = await this.getContextImplementationGuide(fhirServerBase, contextImplementationGuideId);
+
     this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {

@@ -19,7 +19,8 @@ export interface GenericResponse {
 }
 
 export interface UserSecurityInfo {
-  user?: Practitioner;
+  user?: ITofUser;
+  practitioner?: Practitioner;
   groups?: Group[];
 }
 
@@ -117,10 +118,11 @@ export class BaseController {
     }
 
     const userSecurityInfo: UserSecurityInfo = {
-      user: await this.getMyPractitioner(user, fhirServerBase)
+      user: user,
+      practitioner: await this.getMyPractitioner(user, fhirServerBase)
     };
 
-    const groupsUrl = buildUrl(fhirServerBase, 'Group', null, null, {member: userSecurityInfo.user.id, _summary: true});
+    const groupsUrl = buildUrl(fhirServerBase, 'Group', null, null, {member: userSecurityInfo.practitioner.id, _summary: true});
     const groupsOptions: AxiosRequestConfig = {
       url: groupsUrl,
       method: 'GET',
@@ -136,26 +138,35 @@ export class BaseController {
   }
 
   public async assertViewingAllowed(resource: any, user: ITofUser, fhirServerBase: string) {
-    if (!this.configService.server.enableSecurity || findPermission(resource.meta, 'everyone', 'read')) {
+    // Don't bother... security is not enabled
+    if (!this.configService.server.enableSecurity || user.isAdmin) {
+      return;
+    }
+
+    // User is an admin, they should have access to everything
+    if (user.isAdmin) {
+      return;
+    }
+
+    // Resource allows everyone
+    if (findPermission(resource.meta, 'everyone', 'read')) {
       return;
     }
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
-    if (userSecurityInfo.user) {
-      if (findPermission(resource.meta, 'user', 'read', userSecurityInfo.user.id)) {
-        return;
-      }
+    // Resource allows this user/practitioner
+    if (userSecurityInfo.practitioner && findPermission(resource.meta, 'user', 'read', userSecurityInfo.practitioner.id)) {
+      return;
     }
 
-    if (userSecurityInfo.groups) {
-      const foundGroups = userSecurityInfo.groups.filter((group) => {
-        return findPermission(resource.meta, 'group', 'read', group.id);
-      });
+    const foundGroups = (userSecurityInfo.groups || []).filter((group) => {
+      return findPermission(resource.meta, 'group', 'read', group.id);
+    });
 
-      if (foundGroups.length > 0) {
-        return;
-      }
+    // User is associated with a group that is permitted to view the resource
+    if (foundGroups.length > 0) {
+      return;
     }
 
     throw new UnauthorizedException();
@@ -166,13 +177,24 @@ export class BaseController {
     const foundGroup = userSecurityInfo.groups.find((group) => {
       return findPermission(resource.meta, 'group', permission, group.id);
     });
-    const foundUser = findPermission(resource.meta, 'user', permission, userSecurityInfo.user.id);
+    const foundUser = findPermission(resource.meta, 'user', permission, userSecurityInfo.practitioner.id);
 
     return foundEveryone || foundGroup || foundUser;
   }
 
+  /**
+   * Adds the user to the resource for both read and write permissions, if the user doesn't
+   * already have read/write permissions.
+   * @param userSecurityInfo
+   * @param resource
+   */
   protected ensureUserCanEdit(userSecurityInfo: UserSecurityInfo, resource: DomainResource) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
+      return;
+    }
+
+    // Don't need to add permissions for an admin user, because they already have access to everything
+    if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
       return;
     }
 
@@ -181,12 +203,12 @@ export class BaseController {
 
     // Make sure user can read
     if (!this.userHasPermission(userSecurityInfo, 'read', resource)) {
-      addPermission(resource.meta, 'user', 'read', userSecurityInfo.user.id);
+      addPermission(resource.meta, 'user', 'read', userSecurityInfo.practitioner.id);
     }
 
     // Make sure user can write
     if (!this.userHasPermission(userSecurityInfo, 'write', resource)) {
-      addPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id);
+      addPermission(resource.meta, 'user', 'write', userSecurityInfo.practitioner.id);
     }
   }
 

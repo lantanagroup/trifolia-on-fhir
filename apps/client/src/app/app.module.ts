@@ -66,7 +66,14 @@ import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 import {R4ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
 import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/resource-modal.component';
-import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OAuthModuleConfig } from 'angular-oauth2-oidc';
+import {
+  OAuthModule,
+  JwksValidationHandler,
+  ValidationHandler,
+  OAuthStorage,
+  OAuthModuleConfig,
+  OAuthService
+} from 'angular-oauth2-oidc';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -74,18 +81,16 @@ import { OAuthModule, JwksValidationHandler, ValidationHandler, OAuthStorage, OA
  */
 @Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private oauthService: OAuthService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const tokenExpiresAt = localStorage.getItem('expires_at');
-    const idToken = tokenExpiresAt && new Date().getTime() < JSON.parse(tokenExpiresAt) ? localStorage.getItem('id_token') : undefined;     // id_token = jwt
     const fhirServer = localStorage.getItem('fhirServer');
     let headers = req.headers;
 
     if (req.url.startsWith('/')) {
-      if (idToken) {
-        headers = headers.set('Authorization', 'Bearer ' + idToken);
+      if (this.oauthService.getIdToken()) {
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
       }
     }
 

@@ -11,12 +11,19 @@ export class BaseComponent {
   }
 
   private canReadOrWrite(resource: DomainResource, permission: 'read'|'write') {
-    if (!resource || !this.configService.config || !this.authService.practitioner) {
-      return false;
-    }
-
+    // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;
+    }
+
+    // User is an admin, should have access to everything
+    if (this.authService.userProfile.isAdmin) {
+      return true;
+    }
+
+    // Basic error checking to make sure we have the info we need to proceed
+    if (!resource || !this.configService.config || !this.authService.practitioner) {
+      return false;
     }
 
     const foundEveryone = findPermission(resource.meta, 'everyone', permission);

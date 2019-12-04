@@ -10,7 +10,10 @@ import {
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ImplementationGuide as R4ImplementationGuide, DomainResource as R4DomainResource} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  DomainResource as R4DomainResource,
+  ImplementationGuide as R4ImplementationGuide
+} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {UserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
@@ -296,6 +299,12 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
+/**
+ * Asserts that the user has the permissions necessary on the resource to edit the resource.
+ * @param configService
+ * @param userSecurityInfo
+ * @param resource
+ */
 export function assertUserCanEdit(configService: ConfigService, userSecurityInfo: UserSecurityInfo, resource: any) {
   if (configService.fhir && configService.fhir.nonEditableResources) {
     switch (resource.resourceType) {
@@ -316,12 +325,17 @@ export function assertUserCanEdit(configService: ConfigService, userSecurityInfo
     return;
   }
 
+  // User is an admin
+  if (userSecurityInfo && userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
+    return;
+  }
+
   if (findPermission(resource.meta, 'everyone', 'write')) {
     return;
   }
 
-  if (userSecurityInfo.user) {
-    if (findPermission(resource.meta, 'user', 'write', userSecurityInfo.user.id)) {
+  if (userSecurityInfo.practitioner) {
+    if (findPermission(resource.meta, 'user', 'write', userSecurityInfo.practitioner.id)) {
       return;
     }
   }
@@ -339,6 +353,11 @@ export function assertUserCanEdit(configService: ConfigService, userSecurityInfo
   throw new UnauthorizedException();
 }
 
+/**
+ * Copies permissions from the source resource to the destination resource
+ * @param source
+ * @param destination
+ */
 export function copyPermissions(source: STU3DomainResource | R4DomainResource, destination: STU3DomainResource | R4DomainResource) {
   if (!destination || !source || !source.meta || !source.meta.security) {
     return;
