@@ -1,7 +1,6 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
 import {Controller, HttpModule, HttpService} from '@nestjs/common';
-import {ITofUser} from './models/tof-request';
 import {Bundle, DomainResource, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
@@ -11,6 +10,7 @@ import {RequestHeaders} from './server.decorators';
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 nock.disableNetConnect();
 

@@ -24,7 +24,6 @@ import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, parseFhirUrl} from './helper';
 import {
@@ -36,6 +35,7 @@ import {
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
 import {mergeTokens} from 'codelyzer/angular/styles/cssAst';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 export interface ProxyResponse {
   status: number;

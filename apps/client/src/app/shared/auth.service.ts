@@ -8,21 +8,17 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
-import {OAuthService, OAuthErrorEvent, AuthConfig} from 'angular-oauth2-oidc';
+import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
+import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 
 @Injectable()
 export class AuthService {
-  // expiresIn is in seconds
-  private readonly fiveMinutesInSeconds = 300;
-
-  public userProfile: any;
+  public userProfile: ITofUser;
   public practitioner: Practitioner;
   public groups: Group[] = [];
   public authExpiresAt: number;
   public authChanged: EventEmitter<any>;
-  public authError: string;
   public loggingIn = false;
-  private authTimeout: any;
 
   constructor(
     private injector: Injector,
@@ -33,14 +29,24 @@ export class AuthService {
     private groupService: GroupService,
     private oauthService: OAuthService) {
 
-    this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'),);
+    this.authExpiresAt = JSON.parse(localStorage.getItem('expires_at'));
     this.authChanged = new EventEmitter();
   }
 
+  /**
+   * This is handled manually instead of with automatic dependency injection because there
+   * are circular dependencies. Using the injector allows us to bypass those circular dependencies
+   * until run-time.
+   */
   private get activatedRoute(): ActivatedRoute {
     return this.injector.get(ActivatedRoute);
   }
 
+  /**
+   * This is handled manually instead of with automatic dependency injection because there
+   * are circular dependencies. Using the injector allows us to bypass those circular dependencies
+   * until run-time.
+   */
   public get router(): Router {
     return this.injector.get(Router);
   }
@@ -56,27 +62,27 @@ export class AuthService {
     authConfig.requireHttps = false;
     authConfig.requestAccessToken = true;
 
-    this.oauthService.configure(authConfig)
+    this.oauthService.configure(authConfig);
 
     // For debugging:
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
     this.oauthService.loadDiscoveryDocument()
 
-    // See if the hash fragment contains tokens (when user got redirected back)
-    .then(() => this.oauthService.tryLogin())
+      // See if the hash fragment contains tokens (when user got redirected back)
+      .then(() => this.oauthService.tryLogin())
 
-    // If we're still not logged in yet, try with a silent refresh:
-    .then(() => {
-      if (!this.oauthService.hasValidAccessToken()) {
-        return this.oauthService.silentRefresh();
-      }
-    })
+      // If we're still not logged in yet, try with a silent refresh:
+      .then(() => {
+        if (!this.oauthService.hasValidAccessToken()) {
+          return this.oauthService.silentRefresh();
+        }
+      })
 
-    // Set the user session and context
-    .then(() => {
-      this.handleAuthentication();
-    });
+      // Set the user session and context
+      .then(() => {
+        this.handleAuthentication();
+      });
 
     this.oauthService.setupAutomaticSilentRefresh();
 
@@ -117,7 +123,7 @@ export class AuthService {
       return;
     }
 
-    if(this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()){
+    if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
       window.location.hash = '';
       this.setSession();
 
@@ -131,6 +137,7 @@ export class AuthService {
       if (path && path !== '/' && path !== '/logout' && path !== '/login') {
         this.router.navigate([path]);
       }
+
       this.authChanged.emit();
       this.getProfile();
       this.socketService.notifyAuthenticated({
@@ -141,10 +148,6 @@ export class AuthService {
   }
 
   public logout(): void {
-    if (this.authTimeout) {
-      clearTimeout(this.authTimeout);
-    }
-
     if (this.oauthService) {
       this.oauthService.logOut();
     }
@@ -160,15 +163,15 @@ export class AuthService {
     return new Date().getTime() < this.authExpiresAt;
   }
 
-  private getAuthUserInfo() : Object {
-    if(this.oauthService.hasValidIdToken()){
-      return this.oauthService.getIdentityClaims();
+  private getAuthUserInfo(): ITofUser {
+    if (this.oauthService.hasValidIdToken()) {
+      return <ITofUser> this.oauthService.getIdentityClaims();
     }
   }
 
   public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
     if (!this.isAuthenticated()) {
-      return Promise.resolve({userProfile: null, practitioner: null});
+      return Promise.resolve({ userProfile: null, practitioner: null });
     }
 
     this.userProfile = this.getAuthUserInfo();
@@ -184,7 +187,7 @@ export class AuthService {
     try {
       this.groups = await this.groupService.getMembership()
         .pipe(map(groupsBundle =>
-          (groupsBundle.entry || []).map(entry => <Group> entry.resource)
+          (groupsBundle.entry || []).map(entry => <Group>entry.resource)
         ))
         .toPromise();
     } catch (ex) {
@@ -201,6 +204,12 @@ export class AuthService {
     };
   }
 
+  /**
+   * Creates a default "meta" object that can be assigned to new resources.
+   * Currently defaults the security tags to include "everyone" with both "read" and "write" access.
+   * That *could* be changed to be specific to the currently logged-in user, which is why this method
+   * exists on the AuthService.
+   */
   public getDefaultMeta(): Meta {
     const meta = new Meta();
 

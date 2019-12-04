@@ -10,7 +10,6 @@ import {
   UseGuards
 } from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {ITofUser} from './models/tof-request';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {TofLogger} from './tof-logger';
@@ -19,6 +18,7 @@ import {FhirServerBase, FhirServerVersion, User} from './server.decorators';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {AxiosRequestConfig} from 'axios';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))

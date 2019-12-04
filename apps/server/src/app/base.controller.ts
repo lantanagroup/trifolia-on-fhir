@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import {addPermission, findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {BadRequestException, HttpService, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
-import {ITofRequest, ITofUser} from './models/tof-request';
+import {ITofRequest} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
 import {Bundle, DomainResource, Group, Practitioner, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -9,6 +9,7 @@ import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 export interface GenericResponse {
   status?: number;

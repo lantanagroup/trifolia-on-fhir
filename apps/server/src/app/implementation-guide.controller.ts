@@ -1,6 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {ITofUser} from './models/tof-request';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
@@ -8,6 +7,7 @@ import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHe
 import {ConfigService} from './config.service';
 import {BundleExporter} from './export/bundle';
 import {getHumanNameDisplay, getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))

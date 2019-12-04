@@ -1,4 +1,4 @@
-import {ITofUser} from './models/tof-request';
+
 import {BundleTypes as STU3BundleTypes, Bundle as STU3Bundle, DomainResource as STU3DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   BundleTypes as R4BundleTypes,
@@ -11,6 +11,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import nock from 'nock';
 import EventEmitter = NodeJS.EventEmitter;
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com', isAdmin = false): ITofUser {
   return {

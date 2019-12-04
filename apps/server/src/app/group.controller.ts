@@ -20,8 +20,8 @@ import {ConfigService} from './config.service';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Group as STU3Group} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Group} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {ITofUser} from './models/tof-request';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/group')
 @UseGuards(AuthGuard('bearer'))

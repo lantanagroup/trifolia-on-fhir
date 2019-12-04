@@ -1,17 +1,14 @@
 import {Strategy} from 'passport-http-bearer';
 import {PassportStrategy} from '@nestjs/passport';
-import {HttpService, Injectable, UnauthorizedException} from '@nestjs/common';
-import {ITofUser} from './models/tof-request';
+import {HttpService, Injectable} from '@nestjs/common';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
-import jwksClient, { CertSigningKey } from 'jwks-rsa';
+import jwksClient from 'jwks-rsa';
 
 const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
-  static authorizationCodes: {[token: string]: ITofUser} = {};
-
   private readonly logger = new TofLogger(HttpStrategy.name);
   private readonly jwksClient;
 

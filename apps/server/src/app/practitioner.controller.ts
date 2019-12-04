@@ -1,6 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {ITofUser} from './models/tof-request';
 import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
@@ -10,6 +9,7 @@ import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
