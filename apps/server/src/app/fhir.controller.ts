@@ -343,7 +343,7 @@ export class FhirController extends BaseController {
     headers = headers || {};
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    const userIsAdmin = userSecurityInfo.user && userSecurityInfo.user.isAdmin;
+    const userIsAdmin = userSecurityInfo && userSecurityInfo.user && userSecurityInfo.user.isAdmin;
     let proxyUrl = fhirServerBase;
 
     if (proxyUrl.endsWith('/')) {

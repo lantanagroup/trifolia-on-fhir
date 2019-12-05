@@ -137,7 +137,7 @@ export class BaseFhirController extends BaseController {
       throw new BadRequestException('Expected a FHIR resource');
     }
 
-    if (Object.keys(data.meta).length === 0) {
+    if (!data.meta || Object.keys(data.meta).length === 0) {
       delete data.meta;
     }
 
