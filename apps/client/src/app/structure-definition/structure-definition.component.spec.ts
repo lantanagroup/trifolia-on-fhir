@@ -24,8 +24,8 @@ describe('StructureDefinitionComponent', () => {
   let fixture: ComponentFixture<StructureDefinitionComponent>;
   let httpClient: HttpTestingController;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [StructureDefinitionComponent],
       imports: [
         DiffMatchPatchModule,
@@ -55,7 +55,7 @@ describe('StructureDefinitionComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     httpClient = TestBed.get(HttpTestingController);
