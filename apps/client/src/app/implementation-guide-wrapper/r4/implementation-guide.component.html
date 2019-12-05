@@ -98,8 +98,14 @@
           </div>
 
           <div class="col-md-12">
-            <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"
-                               tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+            <app-fhir-markdown
+              [parentObject]="implementationGuide"
+              [isOptional]="true"
+              [mediaReferences]="mediaReferences"
+              propertyName="description"
+              title="Description"
+              tooltipPath="ImplementationGuide.description">
+            </app-fhir-markdown>
           </div>
 
           <div class="col-md-12">

@@ -17,6 +17,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {Bundle, Media as STU3Media} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 const MARKDOWN_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -60,12 +61,6 @@ class ImageItem {
   name: string;
   title?: string;
   description?: string;
-};
-
-export class MediaReference {
-  id: string;
-  name: string;     // this becomes ImageItem.title
-  description: string;
 }
 
 @Component({

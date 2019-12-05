@@ -3,6 +3,7 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MarkdownModalComponent} from '../../modals/markdown-modal/markdown-modal.component';
 import {FhirService} from '../../shared/fhir.service';
+import {MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
   selector: 'app-fhir-markdown',
@@ -20,6 +21,7 @@ export class FhirMarkdownComponent implements OnInit {
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
   @Input() displayOnly = false;
+  @Input() mediaReferences?: MediaReference[];
 
   public Globals = Globals;
 

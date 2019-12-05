@@ -2,10 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Binary, ImplementationGuide, ImplementationGuidePageComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {MediaReference} from '../../shared-ui/markdown/markdown.component';
+import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
-  selector: 'app-fhir-page-component-modal',
   templateUrl: './page-component-modal.component.html',
   styleUrls: ['./page-component-modal.component.css']
 })
@@ -21,21 +20,7 @@ export class PageComponentModalComponent implements OnInit {
   }
 
   public getMediaReferences(): MediaReference[] {
-    if (!this.implementationGuide || !this.implementationGuide.definition) {
-      return [];
-    }
-
-    return (this.implementationGuide.definition.resource || [])
-      .filter((resource) => {
-        return resource.reference && resource.reference.reference && resource.reference.reference.startsWith('Media/');
-      })
-      .map((resource) => {
-        const mediaRef = new MediaReference();
-        mediaRef.id = resource.reference.reference.substring('Media/'.length);
-        mediaRef.name = resource.name;
-        mediaRef.description = resource.description;
-        return mediaRef;
-      });
+    return getImplementationGuideMediaReferences('r4', this.implementationGuide);
   }
 
   public setPage(value: ImplementationGuidePageComponent) {

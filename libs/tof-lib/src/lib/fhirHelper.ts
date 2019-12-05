@@ -1,4 +1,5 @@
-import {OperationOutcome, ResourceReference} from './r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
+import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 
 export function joinUrl(...parts: string[]) {
@@ -147,4 +148,54 @@ export function getDefaultImplementationGuideResourcePath(reference: ResourceRef
 
 export function generateId(): string {
   return nanoid('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
+}
+
+export class MediaReference {
+  id: string;
+  name: string;     // this becomes ImageItem.title
+  description: string;
+}
+
+export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
+  if (!implementationGuide) {
+    return [];
+  }
+
+  switch (fhirVersion) {
+    case 'stu3':
+      const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
+      const mediaReferences: MediaReference[] = [];
+
+      (stu3ImplementationGuide.package || []).forEach((pkg) => {
+        (pkg.resource || [])
+          .filter((resource) => resource.sourceReference && resource.sourceReference.reference && resource.sourceReference.reference.startsWith('Media/'))
+          .forEach((resource) => {
+            const mediaRef = new MediaReference();
+            mediaRef.id = resource.sourceReference.reference.substring('Media/'.length);
+            mediaRef.name = resource.name;
+            mediaRef.description = resource.description;
+            mediaReferences.push(mediaRef);
+          });
+      });
+
+      return mediaReferences;
+    default:
+      const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
+
+      if (!r4ImplementationGuide.definition) {
+        return [];
+      }
+
+      return (r4ImplementationGuide.definition.resource || [])
+        .filter((resource) => {
+          return resource.reference && resource.reference.reference && resource.reference.reference.startsWith('Media/');
+        })
+        .map((resource) => {
+          const mediaRef = new MediaReference();
+          mediaRef.id = resource.reference.reference.substring('Media/'.length);
+          mediaRef.name = resource.name;
+          mediaRef.description = resource.description;
+          return mediaRef;
+        });
+  }
 }

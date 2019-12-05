@@ -18,7 +18,7 @@ export interface GenericResponse {
   content: any;
 }
 
-export interface UserSecurityInfo {
+export interface IUserSecurityInfo {
   user?: ITofUser;
   practitioner?: Practitioner;
   groups?: Group[];
@@ -112,12 +112,12 @@ export class BaseController {
     return <Practitioner>bundle.entry[0].resource;
   }
 
-  public async getUserSecurityInfo(user: ITofUser, fhirServerBase: string): Promise<UserSecurityInfo> {
+  public async getUserSecurityInfo(user: ITofUser, fhirServerBase: string): Promise<IUserSecurityInfo> {
     if (!this.configService.server.enableSecurity) {
       return Promise.resolve(null);
     }
 
-    const userSecurityInfo: UserSecurityInfo = {
+    const userSecurityInfo: IUserSecurityInfo = {
       user: user,
       practitioner: await this.getMyPractitioner(user, fhirServerBase)
     };
@@ -172,7 +172,7 @@ export class BaseController {
     throw new UnauthorizedException();
   }
 
-  protected userHasPermission(userSecurityInfo: UserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
     const foundEveryone = findPermission(resource.meta, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
       return findPermission(resource.meta, 'group', permission, group.id);
@@ -188,7 +188,7 @@ export class BaseController {
    * @param userSecurityInfo
    * @param resource
    */
-  protected ensureUserCanEdit(userSecurityInfo: UserSecurityInfo, resource: DomainResource) {
+  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: DomainResource) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
       return;
     }

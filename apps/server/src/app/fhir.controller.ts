@@ -1,4 +1,4 @@
-import {BaseController, UserSecurityInfo} from './base.controller';
+import {BaseController, IUserSecurityInfo} from './base.controller';
 import {
   All,
   BadRequestException,
@@ -124,7 +124,7 @@ export class FhirController extends BaseController {
     entry: EntryComponent,
     fhirServerBase: string,
     fhirServerVersion: 'stu3' | 'r4',
-    userSecurityInfo: UserSecurityInfo,
+    userSecurityInfo: IUserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
     shouldRemovePermissions = true,
     applyContextPermissions = false) {
@@ -245,7 +245,7 @@ export class FhirController extends BaseController {
     bundle: Bundle,
     fhirServerBase: string,
     fhirServerVersion: 'stu3'|'r4',
-    userSecurityInfo: UserSecurityInfo,
+    userSecurityInfo: IUserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
     shouldRemovePermissions = true,
     applyContextPermissions = false) {
@@ -343,6 +343,7 @@ export class FhirController extends BaseController {
     headers = headers || {};
 
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    const userIsAdmin = userSecurityInfo.user && userSecurityInfo.user.isAdmin;
     let proxyUrl = fhirServerBase;
 
     if (proxyUrl.endsWith('/')) {
@@ -387,7 +388,7 @@ export class FhirController extends BaseController {
       // When searching, add _security query parameter
       if (this.configService.server.enableSecurity) {
         // Security search
-        if (userSecurityInfo) {
+        if (userSecurityInfo && !userIsAdmin) {
           const securityTags = [`everyone${Globals.securityDelim}read`];
 
           if (userSecurityInfo.practitioner) {

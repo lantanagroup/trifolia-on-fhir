@@ -15,7 +15,7 @@ import {
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
-import {UserSecurityInfo} from './base.controller';
+import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
@@ -185,11 +185,11 @@ export function getFhirR4Instance() {
  * @param fhirServerBase {string}
  * @param fhirServerVersion {string}
  * @param resource The structure definition to add (must have an id)
- * @param userSecurityInfo {UserSecurityInfo}
+ * @param userSecurityInfo {IUserSecurityInfo}
  * @param implementationGuide The id (or concrete resource) of the implementation guide to add the structure definition to
  * @param shouldPersistIg Indicates if the ig should be persisted/save during this operation, or if it will be taken care of elsewhere
  */
-export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: STU3DomainResource | R4DomainResource, userSecurityInfo: UserSecurityInfo, implementationGuide: string|STU3ImplementationGuide|R4ImplementationGuide, shouldPersistIg: boolean): Promise<void> {
+export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: STU3DomainResource | R4DomainResource, userSecurityInfo: IUserSecurityInfo, implementationGuide: string|STU3ImplementationGuide|R4ImplementationGuide, shouldPersistIg: boolean): Promise<void> {
   if (typeof implementationGuide === 'string' && shouldPersistIg) {
     throw new Error('Cannot persist the IG when it is passed as a string. It will not persisted elsewhere.');
   }
@@ -305,7 +305,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
  * @param userSecurityInfo
  * @param resource
  */
-export function assertUserCanEdit(configService: ConfigService, userSecurityInfo: UserSecurityInfo, resource: any) {
+export function assertUserCanEdit(configService: ConfigService, userSecurityInfo: IUserSecurityInfo, resource: any) {
   if (configService.fhir && configService.fhir.nonEditableResources) {
     switch (resource.resourceType) {
       case 'CodeSystem':

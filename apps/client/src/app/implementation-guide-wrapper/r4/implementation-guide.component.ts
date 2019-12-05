@@ -25,7 +25,10 @@ import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/re
 import {BaseComponent} from '../../base.component';
 import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {R4ResourceModalComponent} from './resource-modal.component';
-import {getDefaultImplementationGuideResourcePath} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getImplementationGuideMediaReferences, MediaReference
+} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 
 class PageDefinition {
@@ -67,6 +70,10 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+  }
+
+  public get mediaReferences(): MediaReference[] {
+    return getImplementationGuideMediaReferences('r4', this.implementationGuide);
   }
 
   public get resources(): ImplementationGuideResourceComponent[] {
