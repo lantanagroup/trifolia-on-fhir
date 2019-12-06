@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="6353edb6-309e-4f05-b1de-adfd5f96b620" activeEnvironment="Default" name="ToF" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="498ed81f-1392-45ca-b471-681bb274668d" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://hapi4-dev.lantanagroup.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint></con:endpoints><con:resource name="Implementation Guide" path="/ImplementationGuide/{id}" id="3dd71995-1156-44ce-a75e-69638159aca8"><con:settings/><con:parameters><con:parameter><con:name>id</con:name><con:style>TEMPLATE</con:style></con:parameter></con:parameters><con:method name="Search" id="16c4f244-3202-4e5e-838e-6a79c23c1ea0" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:met="https://hapi4-dev.lantanagroup.com/baseR4/metadata">met:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:met="https://hapi4-dev.lantanagroup.com/baseR4/metadata">met:Fault</con:element></con:representation><con:request name="Request 1" id="27b8ea63-7ada-4e0f-a6cd-46a11447e243" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/metadata</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Create" id="8b7926f4-a563-4aac-b7e5-a1f5e8a84be4" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="5191f418-7d1b-414b-849d-3820cdadc66f" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request></con:method><con:method name="Update" id="fdb3491d-33aa-4f08-acba-6fccef97b731" method="PUT"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:b="https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/%7B%23TestCase%23id%7D">b:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>201</con:status><con:params/><con:element xmlns:b="https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/%7B%23TestCase%23id%7D">b:Response</con:element></con:representation><con:request name="Request 1" id="353eb8a5-4d63-442f-8902-e9f09a769ac5" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="Delete" id="4a1fb0b1-cfd2-4e63-b4d4-57747bb02179" method="DELETE"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:imp="https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/">imp:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:imp="https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/">imp:Response</con:element></con:representation><con:request name="Request 1" id="f60b1120-7e45-49db-a28f-005e46aebcc2" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="StructureDefinition" path="/StructureDefinition/{id}" id="8bc664d4-e80f-44c6-b122-66ae523e8843"><con:settings/><con:parameters><con:parameter><con:name>id</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Search" id="d8936d92-733f-4a89-9818-fffeb61f836a" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:str="https://hapi4-dev.lantanagroup.com/baseR4/StructureDefinition/">str:Response</con:element></con:representation><con:request name="Request 1" id="b228d671-bfc5-429f-8aaa-be4b79cfe4cd" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/StructureDefinition/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request></con:method><con:method name="Create" id="e32e25e2-2ebe-47de-ad5a-3da0bc172d70" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="a9a5e2dd-684d-4b2b-9512-f8963986e7bb" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request></con:method><con:method name="Update" id="1a130a8f-3929-4a0b-bf36-3d33537709f6" method="PUT"><con:settings/><con:parameters/><con:request name="Request 1" id="5a30fb7c-3e18-4bd3-821e-f54b76f65970" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request></con:method><con:method name="Delete" id="0588cd1b-00d6-49a0-890d-f0d5ea1efc32" method="DELETE"><con:settings/><con:parameters/><con:request name="Request 1" id="d04a5799-d5fe-4afc-b724-d79efae2e4aa" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="Implementation Guide Validation" path="/ImplementationGuide/{id}/$validate" id="80af3a86-1ed4-4824-80ab-6c0cd7700008"><con:settings/><con:parameters><con:parameter><con:name>id</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:method name="Method 1" id="ad178ec0-5fe2-4e2e-8a42-518885e2ce0d" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:val="https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/a49198/$validate">val:Response</con:element></con:representation><con:request name="Request 1" id="6bb20c9b-f03c-4254-80be-1a89f801e34c" mediaType="application/json"><con:settings/><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:resource name="Metadata" path="/metadata" id="e67867f8-0951-4800-a15d-d6fc84b7f7d2"><con:settings/><con:parameters/><con:method name="Method 1" id="9551d3c1-186f-45b5-be65-6686acba9ee6" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/fhir+json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:met="https://hapi4-dev.lantanagroup.com/baseR4/metadata">met:Response</con:element></con:representation><con:request name="Request 1" id="d2eb25e9-af38-4ceb-be87-5ba45efb0664" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/metadata</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="291b0e8c-a0dc-4e28-8796-c0b677731298" name="FHIR Server Requirements"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="f92aa0d9-1ea2-4040-a7de-2d10e41c7be3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create from update" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create IG as update" id="929aa88e-4a19-4b1e-a8ea-d1ff7d62f5bf"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/ImplementationGuide/{id}" methodName="Update" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create IG as update" id="5191f418-7d1b-414b-849d-3820cdadc66f" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content-Type" value="application/json" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request><![CDATA[{
+  "resourceType": "ImplementationGuide",
+  "id": "${#TestCase#id}",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: example</p><p><b>url</b>: <b>http://hl7.org/fhir/us/daf</b></p><p><b>version</b>: 0</p><p><b>name</b>: Data Access Framework (DAF)</p><p><b>status</b>: draft</p><p><b>experimental</b>: false</p><p><b>date</b>: 01/01/2015</p><p><b>publisher</b>: ONC / HL7 Joint project</p><p><b>contact</b>: , </p><p><b>description</b>: The Data Access Framework (DAF) Initiative leverages the HL7 FHIR standards to standardize access to Meaningful Use Stage 2 structured information both within the organization and from external organizations</p><p><b>jurisdiction</b>: United States of America <span>(Details : {urn:iso:std:iso:3166 code 'US' = 'United States of America)</span></p><p><b>copyright</b>: Published by ONC under the standard FHIR license (CC0)</p><p><b>packageId</b>: hl7.fhir.us.daf</p><p><b>license</b>: CC0-1.0</p><p><b>fhirVersion</b>: 4.0.1</p><h3>DependsOns</h3><table><tr><td>-</td><td><b>Uri</b></td></tr><tr><td>*</td><td><a>http://hl7.org/fhir/ImplementationGuide/uscore</a></td></tr></table><h3>Globals</h3><table><tr><td>-</td><td><b>Type</b></td><td><b>Profile</b></td></tr><tr><td>*</td><td>Patient</td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td></tr></table><blockquote><p><b>definition</b></p><h3>Groupings</h3><table><tr><td>-</td><td><b>Name</b></td><td><b>Description</b></td></tr><tr><td>*</td><td>test</td><td>Base package (not broken up into multiple packages)</td></tr></table><h3>Resources</h3><table><tr><td>-</td><td><b>Reference</b></td><td><b>Name</b></td><td><b>Description</b></td><td><b>Example[x]</b></td></tr><tr><td>*</td><td><a>Patient/test</a></td><td>Test Example</td><td>A test example to show how an implementation guide works</td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td></tr></table><blockquote><p><b>page</b></p><p><b>name</b>: <a>patient-example.html</a></p><p><b>title</b>: Example Patient Page</p><p><b>generation</b>: html</p><h3>Pages</h3><table><tr><td>-</td></tr><tr><td>*</td></tr></table></blockquote><h3>Parameters</h3><table><tr><td>-</td><td><b>Code</b></td><td><b>Value</b></td></tr><tr><td>*</td><td>apply</td><td>version</td></tr></table></blockquote><blockquote><p><b>manifest</b></p><p><b>rendering</b>: <a>http://hl7.org/fhir/us/daf</a></p><h3>Resources</h3><table><tr><td>-</td><td><b>Reference</b></td><td><b>Example[x]</b></td><td><b>RelativePath</b></td></tr><tr><td>*</td><td><a>Patient/test</a></td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td><td><a>patient-test.html#patient-test</a></td></tr></table><h3>Pages</h3><table><tr><td>-</td><td><b>Name</b></td><td><b>Title</b></td><td><b>Anchor</b></td></tr><tr><td>*</td><td>patient-test.html</td><td>Test Patient Example</td><td>patient-test</td></tr></table><p><b>image</b>: fhir.png</p><p><b>other</b>: fhir.css</p></blockquote></div>"
+  },
+  "url": "http://hl7.org/fhir/us/daf",
+  "version": "0",
+  "name": "Data Access Framework (DAF)",
+  "status": "draft",
+  "experimental": false,
+  "date": "2015-01-01",
+  "publisher": "ONC / HL7 Joint project",
+  "contact": [
+    {
+      "name": "ONC",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.healthit.gov"
+        }
+      ]
+    },
+    {
+      "name": "HL7",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://hl7.org/fhir"
+        }
+      ]
+    }
+  ],
+  "description": "The Data Access Framework (DAF) Initiative leverages the HL7 FHIR standards to standardize access to Meaningful Use Stage 2 structured information both within the organization and from external organizations",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "copyright": "Published by ONC under the standard FHIR license (CC0)",
+  "packageId": "hl7.fhir.us.daf",
+  "license": "CC0-1.0",
+  "fhirVersion": [
+    "4.0.0"
+  ],
+  "dependsOn": [
+    {
+      "uri": "http://hl7.org/fhir/ImplementationGuide/uscore"
+    }
+  ],
+  "global": [
+    {
+      "type": "Patient",
+      "profile": "http://hl7.org/fhir/us/core/StructureDefinition/patient"
+    }
+  ],
+  "definition": {
+    "grouping": [
+      {
+        "name": "test",
+        "description": "Base package (not broken up into multiple packages)"
+      }
+    ],
+    "resource": [
+      {
+        "reference": {
+          "reference": "Patient/test"
+        },
+        "name": "Test Example",
+        "description": "A test example to show how an implementation guide works",
+        "exampleCanonical": "http://hl7.org/fhir/us/core/StructureDefinition/patient"
+      }
+    ],
+    "page": {
+      "nameUrl": "patient-example.html",
+      "title": "Example Patient Page",
+      "generation": "html",
+      "page": [
+        {
+          "nameUrl": "list.html",
+          "title": "Value Set Page",
+          "generation": "html"
+        }
+      ]
+    },
+    "parameter": [
+      {
+        "code": "apply",
+        "value": "version"
+      }
+    ]
+  },
+  "manifest": {
+    "rendering": "http://hl7.org/fhir/us/daf",
+    "resource": [
+      {
+        "reference": {
+          "reference": "Patient/test"
+        },
+        "exampleCanonical": "http://hl7.org/fhir/us/core/StructureDefinition/patient",
+        "relativePath": "patient-test.html#patient-test"
+      }
+    ],
+    "page": [
+      {
+        "name": "patient-test.html",
+        "title": "Test Patient Example",
+        "anchor": [
+          "patient-test",
+          "tx",
+          "uml"
+        ]
+      }
+    ],
+    "image": [
+      "fhir.png"
+    ],
+    "other": [
+      "fhir.css"
+    ]
+  }
+}]]></con:request><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/%7B%23TestCase%23id%7D</con:originalUri><con:assertion type="JsonPath Match" id="f4c122dc-111e-4e5b-881f-27f05fca6147" name="Check that it returns an ImplementationGuide resource"><con:configuration><path>resourceType</path><content>ImplementationGuide</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="c61ceafe-9957-4b0d-9afd-9ea2c5ac1909" name="Make sure it returns a last updated property"><con:configuration><path>meta.lastUpdated</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="f857bf84-98c3-49fc-a78b-5f7ac1755f67" name="Expect it to be the first version of the resource"><con:configuration><path>meta.versionId</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="f0442e7b-9eb8-420e-ab58-20974ab8deb0" name="JsonPath Match"><con:configuration><path>id</path><content>${#TestCase#id}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="${#TestCase#id}" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Delete the IG" id="e163fd8b-dabd-4f0a-bb54-060fb8b5ec54"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/ImplementationGuide/{id}" methodName="Delete" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Delete the IG" id="f60b1120-7e45-49db-a28f-005e46aebcc2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="580aab06-a33e-46d0-a9ca-35ceb632f96d" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="${#TestCase#id}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:setupScript>testCase.setPropertyValue("id", "a" + String.valueOf(Math.random()).substring(2, 7))</con:setupScript><con:properties><con:property><con:name>id</con:name><con:value>a99531</con:value></con:property></con:properties></con:testCase><con:testCase id="979dbe02-8d93-4638-8f37-68afcdcacc14" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="$validate" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create IG" id="4e6ab966-090e-4471-9228-f2fa18cde5c0"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/ImplementationGuide/{id}" methodName="Update" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create IG" id="5191f418-7d1b-414b-849d-3820cdadc66f" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content-Type" value="application/json" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request><![CDATA[{
+  "resourceType": "ImplementationGuide",
+  "id": "${#TestCase#id}",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: example</p><p><b>url</b>: <b>http://hl7.org/fhir/us/daf</b></p><p><b>version</b>: 0</p><p><b>name</b>: Data Access Framework (DAF)</p><p><b>status</b>: draft</p><p><b>experimental</b>: false</p><p><b>date</b>: 01/01/2015</p><p><b>publisher</b>: ONC / HL7 Joint project</p><p><b>contact</b>: , </p><p><b>description</b>: The Data Access Framework (DAF) Initiative leverages the HL7 FHIR standards to standardize access to Meaningful Use Stage 2 structured information both within the organization and from external organizations</p><p><b>jurisdiction</b>: United States of America <span>(Details : {urn:iso:std:iso:3166 code 'US' = 'United States of America)</span></p><p><b>copyright</b>: Published by ONC under the standard FHIR license (CC0)</p><p><b>packageId</b>: hl7.fhir.us.daf</p><p><b>license</b>: CC0-1.0</p><p><b>fhirVersion</b>: 4.0.1</p><h3>DependsOns</h3><table><tr><td>-</td><td><b>Uri</b></td></tr><tr><td>*</td><td><a>http://hl7.org/fhir/ImplementationGuide/uscore</a></td></tr></table><h3>Globals</h3><table><tr><td>-</td><td><b>Type</b></td><td><b>Profile</b></td></tr><tr><td>*</td><td>Patient</td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td></tr></table><blockquote><p><b>definition</b></p><h3>Groupings</h3><table><tr><td>-</td><td><b>Name</b></td><td><b>Description</b></td></tr><tr><td>*</td><td>test</td><td>Base package (not broken up into multiple packages)</td></tr></table><h3>Resources</h3><table><tr><td>-</td><td><b>Reference</b></td><td><b>Name</b></td><td><b>Description</b></td><td><b>Example[x]</b></td></tr><tr><td>*</td><td><a>Patient/test</a></td><td>Test Example</td><td>A test example to show how an implementation guide works</td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td></tr></table><blockquote><p><b>page</b></p><p><b>name</b>: <a>patient-example.html</a></p><p><b>title</b>: Example Patient Page</p><p><b>generation</b>: html</p><h3>Pages</h3><table><tr><td>-</td></tr><tr><td>*</td></tr></table></blockquote><h3>Parameters</h3><table><tr><td>-</td><td><b>Code</b></td><td><b>Value</b></td></tr><tr><td>*</td><td>apply</td><td>version</td></tr></table></blockquote><blockquote><p><b>manifest</b></p><p><b>rendering</b>: <a>http://hl7.org/fhir/us/daf</a></p><h3>Resources</h3><table><tr><td>-</td><td><b>Reference</b></td><td><b>Example[x]</b></td><td><b>RelativePath</b></td></tr><tr><td>*</td><td><a>Patient/test</a></td><td><a>http://hl7.org/fhir/us/core/StructureDefinition/patient</a></td><td><a>patient-test.html#patient-test</a></td></tr></table><h3>Pages</h3><table><tr><td>-</td><td><b>Name</b></td><td><b>Title</b></td><td><b>Anchor</b></td></tr><tr><td>*</td><td>patient-test.html</td><td>Test Patient Example</td><td>patient-test</td></tr></table><p><b>image</b>: fhir.png</p><p><b>other</b>: fhir.css</p></blockquote></div>"
+  },
+  "url": "http://hl7.org/fhir/us/daf",
+  "version": "0",
+  "name": "Data Access Framework (DAF)",
+  "status": "draft",
+  "experimental": false,
+  "date": "2015-01-01",
+  "publisher": "ONC / HL7 Joint project",
+  "contact": [
+    {
+      "name": "ONC",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.healthit.gov"
+        }
+      ]
+    },
+    {
+      "name": "HL7",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://hl7.org/fhir"
+        }
+      ]
+    }
+  ],
+  "description": "The Data Access Framework (DAF) Initiative leverages the HL7 FHIR standards to standardize access to Meaningful Use Stage 2 structured information both within the organization and from external organizations",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "copyright": "Published by ONC under the standard FHIR license (CC0)",
+  "packageId": "hl7.fhir.us.daf",
+  "license": "CC0-1.0",
+  "fhirVersion": [
+    "4.0.0"
+  ],
+  "dependsOn": [
+    {
+      "uri": "http://hl7.org/fhir/ImplementationGuide/uscore"
+    }
+  ],
+  "global": [
+    {
+      "type": "Patient",
+      "profile": "http://hl7.org/fhir/us/core/StructureDefinition/patient"
+    }
+  ],
+  "definition": {
+    "grouping": [
+      {
+        "name": "test",
+        "description": "Base package (not broken up into multiple packages)"
+      }
+    ],
+    "resource": [
+      {
+        "reference": {
+          "reference": "Patient/test"
+        },
+        "name": "Test Example",
+        "description": "A test example to show how an implementation guide works",
+        "exampleCanonical": "http://hl7.org/fhir/us/core/StructureDefinition/patient"
+      }
+    ],
+    "page": {
+      "nameUrl": "patient-example.html",
+      "title": "Example Patient Page",
+      "generation": "html",
+      "page": [
+        {
+          "nameUrl": "list.html",
+          "title": "Value Set Page",
+          "generation": "html"
+        }
+      ]
+    },
+    "parameter": [
+      {
+        "code": "apply",
+        "value": "version"
+      }
+    ]
+  },
+  "manifest": {
+    "rendering": "http://hl7.org/fhir/us/daf",
+    "resource": [
+      {
+        "reference": {
+          "reference": "Patient/test"
+        },
+        "exampleCanonical": "http://hl7.org/fhir/us/core/StructureDefinition/patient",
+        "relativePath": "patient-test.html#patient-test"
+      }
+    ],
+    "page": [
+      {
+        "name": "patient-test.html",
+        "title": "Test Patient Example",
+        "anchor": [
+          "patient-test",
+          "tx",
+          "uml"
+        ]
+      }
+    ],
+    "image": [
+      "fhir.png"
+    ],
+    "other": [
+      "fhir.css"
+    ]
+  }
+}]]></con:request><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/%7B%23TestCase%23id%7D</con:originalUri><con:assertion type="JsonPath Match" id="f4c122dc-111e-4e5b-881f-27f05fca6147" name="Check that it returns an ImplementationGuide resource"><con:configuration><path>resourceType</path><content>ImplementationGuide</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="c61ceafe-9957-4b0d-9afd-9ea2c5ac1909" name="Make sure it returns a last updated property"><con:configuration><path>meta.lastUpdated</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="f857bf84-98c3-49fc-a78b-5f7ac1755f67" name="Expect it to be the first version of the resource"><con:configuration><path>meta.versionId</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="f0442e7b-9eb8-420e-ab58-20974ab8deb0" name="JsonPath Match"><con:configuration><path>id</path><content>${#TestCase#id}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="${#TestCase#id}" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Validate the IG" id="c4ebde3d-948c-499d-8099-e90e5fdbcd87"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/ImplementationGuide/{id}/$validate" methodName="Method 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Validate the IG" id="6bb20c9b-f03c-4254-80be-1a89f801e34c" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/a49198/$validate</con:originalUri><con:assertion type="JsonPath Match" id="793c718c-202f-4183-a451-efb54cc4fa20" name="Returns an OperationOutcome resource"><con:configuration><path>resourceType</path><content>OperationOutcome</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Valid HTTP Status Codes" id="601d7356-1fe1-4ed8-aeb5-f32acd6de363" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="${#TestCase#id}" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Delete the IG" id="eb60e873-46c7-4261-a112-dc10c3eb1c65"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/ImplementationGuide/{id}" methodName="Delete" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Delete the IG" id="f60b1120-7e45-49db-a28f-005e46aebcc2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/ImplementationGuide/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="580aab06-a33e-46d0-a9ca-35ceb632f96d" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="id" value="${#TestCase#id}" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:setupScript>testCase.setPropertyValue("id", "a" + String.valueOf(Math.random()).substring(2, 7))</con:setupScript><con:properties><con:property><con:name>id</con:name><con:value>a77053</con:value></con:property></con:properties></con:testCase><con:testCase id="dbecbee3-6f09-48f2-a54a-8e7f15f5e2d3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Check capabilities" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Get Metadata" id="8c445943-ab41-47f0-858c-21df4d723adf"><con:settings/><con:config service="https://hapi4-dev.lantanagroup.com" resourcePath="/metadata" methodName="Method 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get Metadata" id="d2eb25e9-af38-4ceb-be87-5ba45efb0664" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://hapi4-dev.lantanagroup.com/baseR4</con:endpoint><con:request/><con:originalUri>https://hapi4-dev.lantanagroup.com/baseR4/metadata</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>

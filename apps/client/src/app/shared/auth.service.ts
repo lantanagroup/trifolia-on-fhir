@@ -54,7 +54,7 @@ export class AuthService {
     authConfig.issuer = this.configService.config.auth.issuer;
     authConfig.clientId = this.configService.config.auth.clientId;
     authConfig.redirectUri = window.location.origin + '/login';
-    authConfig.logoutUrl = window.location.origin + '/logout';
+    //authConfig.logoutUrl = window.location.origin + '/logout';
     authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
     authConfig.scope = this.configService.config.auth.scope;
     authConfig.requireHttps = false;
@@ -65,18 +65,7 @@ export class AuthService {
     // For debugging:
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
-    this.oauthService.loadDiscoveryDocument()
-      .then(() => {
-        // See if the hash fragment contains tokens (when user got redirected back)
-        return this.oauthService.tryLogin();
-      })
-      .then(() => {
-        // If we're still not logged in yet, try with a silent refresh:
-        const validAccessToken = this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken();
-        if (!validAccessToken) {
-          return this.oauthService.silentRefresh();
-        }
-      })
+    this.oauthService.loadDiscoveryDocumentAndTryLogin()
       .then(() => {
         // Set the user session and context
         this.handleAuthentication();
