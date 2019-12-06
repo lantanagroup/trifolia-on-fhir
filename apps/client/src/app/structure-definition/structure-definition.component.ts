@@ -18,6 +18,7 @@ import {ElementDefinitionPanelComponent} from './element-definition-panel/elemen
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {element} from 'protractor';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -176,6 +177,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           const after = diffElement.id.substring(baseElementId.length + 1);
           return after.indexOf('.') < 0;
         }
+
+        if (elementTreeModel.basePath === diffElement.path) {
+          if (elementTreeModel.parent && elementTreeModel.parent.constrainedId && diffElement.id && diffElement.id.startsWith(elementTreeModel.parent.constrainedId)) {
+            return true;
+          }
+        }
+
         return false;
       });
 

@@ -30,6 +30,30 @@ export class ElementTreeModel {
     return leafId;
   }
 
+  get basePath(): string {
+    if (this.baseElement) {
+      return this.baseElement.path;
+    }
+  }
+
+  get constrainedPath(): string {
+    if (this.constrainedElement) {
+      return this.constrainedElement.path;
+    }
+  }
+
+  get baseId(): string {
+    if (this.baseElement) {
+      return this.baseElement.id;
+    }
+  }
+
+  get constrainedId(): string {
+    if (this.constrainedElement) {
+      return this.constrainedElement.id;
+    }
+  }
+
   get id(): string {
     if (this.constrainedElement) {
       return this.constrainedElement.id;
