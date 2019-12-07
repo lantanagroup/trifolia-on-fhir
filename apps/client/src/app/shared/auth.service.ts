@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable, Injector} from '@angular/core';
+import {EventEmitter, Injectable, Injector, ComponentFactoryResolver} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PractitionerService} from './practitioner.service';
 import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -8,8 +8,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
-import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
+import {AuthConfig, OAuthService, OAuthEvent} from 'angular-oauth2-oidc';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Injectable()
 export class AuthService {
@@ -62,10 +63,13 @@ export class AuthService {
 
     this.oauthService.configure(authConfig);
 
+
     // For debugging:
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
-    this.oauthService.loadDiscoveryDocumentAndTryLogin()
+    this.oauthService.loadDiscoveryDocumentAndTryLogin({
+      onTokenReceived: () => this.router.navigateByUrl(decodeURIComponent(this.oauthService.state)),
+    })
       .then(() => {
         // Set the user session and context
         this.handleAuthentication();
@@ -101,8 +105,7 @@ export class AuthService {
     if (!this.oauthService) {
       return;
     }
-
-    this.oauthService.initImplicitFlow();
+    this.oauthService.initImplicitFlow(encodeURIComponent(this.router.url));
   }
 
   public handleAuthentication(): void {
@@ -111,13 +114,19 @@ export class AuthService {
     }
 
     if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
-      window.location.hash = '';
 
-      let path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+      window.location.hash = '';
+      let path;
+      if(!this.oauthService.state || this.oauthService.state !== 'undefined'){
+        path = this.oauthService.state;
+      }else{
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+      }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
       if (path.startsWith('/login')) {
-        path = '/';
+        //path = '/';
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
       }
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login') {
