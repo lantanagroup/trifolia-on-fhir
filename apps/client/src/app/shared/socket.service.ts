@@ -13,7 +13,7 @@ export class HtmlExportStatus {
     providedIn: 'root'
 })
 export class SocketService implements OnDestroy {
-    readonly socket: Socket = io(location.href);
+    readonly socket: Socket = io(location.origin);
     public onHtmlExport = new EventEmitter<HtmlExportStatus>();
     public onMessage = new EventEmitter<string>();
     public onConnected = new EventEmitter<null>();
