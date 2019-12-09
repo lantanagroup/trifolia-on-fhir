@@ -43,6 +43,20 @@ export class AppComponent implements OnInit {
     private cookieService: CookieService,
     private socketService: SocketService) {
 
+
+      this.router.events.subscribe(async (event) => {
+        this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
+        if (event instanceof RoutesRecognized && event.state.root.firstChild) {
+          const fhirServer = event.state.root.firstChild.params.fhirServer;
+          const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
+  
+          if (fhirServer) {
+            await this.configService.changeFhirServer(fhirServer);
+            this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+          }
+        }
+      });
+
   }
 
   public startIntro() {
@@ -121,7 +135,7 @@ export class AppComponent implements OnInit {
       return Promise.resolve(this.configService.project);
     }
 
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
         .then((bundle: Bundle) => {
           if (bundle && bundle.total === 1) {
@@ -143,19 +157,24 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
     // This needs to be done in the init method so that the navbarCollapse element exists
+
+    /* Remove this commented block if constructor subscription is working fine.
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-
       if (event instanceof RoutesRecognized && event.state.root.firstChild) {
         const fhirServer = event.state.root.firstChild.params.fhirServer;
         const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
         if (fhirServer) {
+
           this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+
           await this.configService.changeFhirServer(fhirServer);
+
         }
       }
     });
+    */
 
     this.socketService.onMessage.subscribe((message) => {
       const modalRef = this.modalService.open(AdminMessageModalComponent, {backdrop: 'static'});
