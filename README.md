@@ -41,6 +41,49 @@ dist/server/config/production.json
 NODE_ENV=production
 ```
 
+### Using NGINX as a reverse proxy for ToF
+
+There are some rules in NGINX that are specific for WebSoocket to work properly. Specifically (proxy_http_version 1.1 & proxy_set_header Connection "Upgrade"). These are used to ensure that websocket will communicate through the proxy seemlessly to the upstream server.
+
+Comments are in the configuration below to help illustrate the intent of each directive.
+
+```
+server {
+        listen 80;
+        server_name tof.example.com;
+
+        location / {
+                # Always return HTTPS
+                return 301 https://$host$request_uri;
+        }
+}
+
+server {
+        listen          443 ssl;
+        server_name     tof.example.com;
+        error_log       /var/log/nginx/trifolia-fhir-error.log warn;
+		
+        location / {
+                proxy_pass          http://someserver.local:49366;
+
+                proxy_http_version  1.1;                                          # Because the WebSocket protocol uses the Upgrade header
+                proxy_set_header    Host              $host;                      # Pass the proxied address to the upstream server
+                proxy_set_header    X-Real-Ip         $remote_addr;               # Pass the origianl IP of the client
+                proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for; 
+                proxy_set_header    X-Forwarded-Proto $scheme;                    # Pass original protocol
+                proxy_set_header    Upgrade           $http_upgrade;              # Upgrade connection if needed (needed by Websocket)
+                proxy_set_header    Connection        "Upgrade";                  # Needed for WebSocket as an upgrade to HTTP protocol
+
+                proxy_read_timeout  600s;                                         # Timeout for larger files
+
+                proxy_buffers       16 4k;                                        # Buffers for larger files
+                proxy_buffer_size   16k;
+
+                client_max_body_size 200M;                                        # Request Entity Too Large
+        }
+}
+```
+
 ### Authentication
 
 See the Wiki's [Authentication](https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication) page for information on how to configure authentication in ToF. 
