@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -31,10 +31,10 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -188,7 +188,7 @@
 <p class="rvps3"><span class="rvts8">A ValueSet resource instances specifies a set of codes drawn from one or more code systems, intended for use in a particular context. Value sets link between CodeSystem definitions and their use in [coded elements](terminologies.html). When using value sets, proper differentiation between a code system and a value set is important. This is one very common area where significant clinical safety risks occur in practice.</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Value sets used by an implementation guide </span><span class="rvts22">should</span><span class="rvts8">&nbsp;have a "compose" defined which asserts either the enumerated codes that should be included in the value sets, or asserts other value sets that should be included (making the value set a "wrapper" of sorts).</span></li>
+<li class="rvps3"><span class="rvts8">Value sets used by an implementation guide </span><span class="rvts19">should</span><span class="rvts8">&nbsp;have a "compose" defined which asserts either the enumerated codes that should be included in the value sets, or asserts other value sets that should be included (making the value set a "wrapper" of sorts).</span></li>
 <li class="rvps3"><span class="rvts8">Enumerated codes are shown/edited in the "Compose" tab's "Concepts" section. This section is paged, showing five (5) codes at a time. You may search for a concept by either the code or display values by entering text in the "Code (search)" and "Display (search)" fields shown at the top of the table.</span></li>
 <li class="rvps3"><span class="rvts8">Additional fields (such as the "Designations") may be modified for each concept by clicking the "Edit" button.</span></li>
 </ul>
@@ -203,7 +203,7 @@
 </ul>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">The "Value Sets" section allows you to indicate what value sets should be included in this value set. Each entry in the "Value Sets" section represents the canonical URL of the value set (ValueSet.url).</span></p>
-<p class="rvps3"><span class="rvts8">When publishing an implementation guide which has a value set that references other value sets, those </span><span class="rvts22">other </span><span class="rvts8">value sets must be available to the FHIR IG Publisher via one of the following methods:</span></p>
+<p class="rvps3"><span class="rvts8">When publishing an implementation guide which has a value set that references other value sets, those </span><span class="rvts19">other </span><span class="rvts8">value sets must be available to the FHIR IG Publisher via one of the following methods:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
 <li class="rvps3"><span class="rvts8">Included in the implementation guide itself (via a resource referenced in the ImplementationGuide resource)</span></li>
 <li class="rvps3"><span class="rvts8">The ValueSet is publicly available by the URL of the value set (e.x. putting the URL of the value set in a browser should return the ValueSet in either XML or JSON format)</span></li>
@@ -241,14 +241,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
-  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
   <script src="vendors/uri-1.19.1/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
   <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
@@ -266,8 +265,6 @@
   <!-- Scripts -->
   <script>
     $(function() {
-      // Instanciate FastClick
-      Origami.fastclick(document.body);
       // Create the app
       var app = new Hnd.App();
       // Update translations

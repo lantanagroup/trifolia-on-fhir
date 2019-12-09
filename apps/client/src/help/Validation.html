@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -31,10 +31,10 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -185,14 +185,14 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts36">Validation</span></p>
+<p class="rvps3"><span class="rvts35">Validation</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">Trifolia-on-FHIR uses three validation methods to provide as much feedback to IG authors as possible:</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps19"><span class="rvts37">Real-time UI Validation</span><br/><span class="rvts25">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time. </span></li>
-<li value="2" class="rvps19"><span class="rvts37">Pre-publish Validation</span><br/><span class="rvts25">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts38" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts40" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">&nbsp;</a><span class="rvts25">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
-<li value="3" class="rvps19"><span class="rvts37">HL7 IG Publisher Validation</span><br/><span class="rvts25">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts39">during </span><span class="rvts25">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
+<li value="1" class="rvps19"><span class="rvts36">Real-time UI Validation</span><br/><span class="rvts24">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time. </span></li>
+<li value="2" class="rvps19"><span class="rvts36">Pre-publish Validation</span><br/><span class="rvts24">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts37" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts39" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">&nbsp;</a><span class="rvts24">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
+<li value="3" class="rvps19"><span class="rvts36">HL7 IG Publisher Validation</span><br/><span class="rvts24">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts38">during </span><span class="rvts24">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
 </ol>
 <p></p>
 
@@ -226,14 +226,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
-  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
   <script src="vendors/uri-1.19.1/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
   <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
@@ -251,8 +250,6 @@
   <!-- Scripts -->
   <script>
     $(function() {
-      // Instanciate FastClick
-      Origami.fastclick(document.body);
       // Create the app
       var app = new Hnd.App();
       // Update translations

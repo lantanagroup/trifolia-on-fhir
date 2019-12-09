@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -31,10 +31,10 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -186,16 +186,19 @@
                 
 <p></p>
 <p class="rvps3"><span class="rvts16">Release 1.5.0</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Project/Context</span></span></h2>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Project/Context</span></span></h3>
 <p class="rvps3"><span class="rvts8">After logging in, users must now select a project (an ImplementationGuide) to work with prior to seeing any Browse screens. All screens (except Browse &gt; Other Resources) have been modified to respect the context of the project the user has selected, and will only show resources that are related to that project. When creating new resources or importing resources from an external source (such as a file on your computer), they are automatically associated with the project that you are working on.</span></p>
 <p class="rvps3"><span class="rvts8">Note that permissions still apply; if you don't have permission to access a resource, you won't see it in the browse screens.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Authentication</span></span></h3>
+<p class="rvps3"><span class="rvts8">Behind-the-scenes, how ToF handles authentication has changed quite a bit. ToF used to be bound specifically to auth0.com so that only auth0.com can be used as an authentication provider. Now, however, we have replaced that functionality with more generic functionality to allow </span><span class="rvts19">any </span><span class="rvts8">OAuth2-compatible authentication provider to be used with Trifolia-on-FHIR. We have specifically tested authentication with </span><a class="rvts13" href="http://auth0.com" target="_blank">auth0.com</a><span class="rvts8">, </span><a class="rvts13" href="https://www.keycloak.org/" target="_blank">KeyCloak</a><span class="rvts8">, and </span><a class="rvts13" href="https://www.okta.com/">Okta</a><span class="rvts8">.</span></p>
+<p class="rvps3"><span class="rvts8">Additionally, we have added support for an "administrator" role that allows you to configure specific users to be an administrator of ToF. These administrators have complete access over the installation of ToF. More information on configuring various authentication providers and how to setup administrator users can be found on the ToF GitHub repository's WIKI: </span><a class="rvts13" href="https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication" target="_blank">https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication</a><span class="rvts8">.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Paging "Other Resources"</span></span></h3>
 <p class="rvps3"><span class="rvts8">Prior to this release, the screen would only show the first 10 resources stored on the server. Now, users are given paging options when there are multiple pages of resources.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Profile Mappings</span></span></h3>
 <p class="rvps3"><span class="rvts8">Enhancements have been made to the "Edit Profile" screen that make it easier for users to construct mappings within the profile.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log</span></span></h3>
-<p class="rvps7"><span class="rvts8"><br/></span></p>
-<div class="rvps7"><table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
+<p class="rvps6"><span class="rvts8"><br/></span></p>
+<div class="rvps6"><table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
 <tr valign="top">
 <td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Key</span></p>
 </td>
@@ -205,96 +208,161 @@
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-231" target="_blank">TRIFFHIR-231</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-231" target="_blank">TRIFFHIR-231</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">New Feature</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Select Project/ImplementationGuide Context</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-236" target="_blank">TRIFFHIR-236</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Profile editor doesn't allow expanding PlanDefinition.action.action</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Select Project/ImplementationGuide Context</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-214" target="_blank">TRIFFHIR-214</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-199" target="_blank">TRIFFHIR-199</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Change the element definition panel's alias property to repeat (allow multiple)</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-232" target="_blank">TRIFFHIR-232</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Cannot set value set binding on R4 profile's element</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Add an administrative role that overrides all permissions</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-243" target="_blank">TRIFFHIR-243</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-244" target="_blank">TRIFFHIR-244</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">"Add" button for R4 capability statement REST tabs doesn't work</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-190" target="_blank">TRIFFHIR-190</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">User interface allows profiling fields that shouldn't be profiled</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Make authentication generic to OAuth 2.0, not bound specifically to auth0.com</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-188" target="_blank">TRIFFHIR-188</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-236" target="_blank">TRIFFHIR-236</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Add support for paging in the "Other Resources" screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-233" target="_blank">TRIFFHIR-233</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Element mappings reference profile mappings</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Profile editor doesn't allow expanding PlanDefinition.action.action</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-240" target="_blank">TRIFFHIR-240</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-214" target="_blank">TRIFFHIR-214</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Automatically delete IG references when deleting resources</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-239" target="_blank">TRIFFHIR-239</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">ID of new resources should match the leaf/end of the URL</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Change the element definition panel's alias property to repeat (allow multiple)</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-242" target="_blank">TRIFFHIR-242</a></p>
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-232" target="_blank">TRIFFHIR-232</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Add "supported profiles" to R4 capability statement editing screen</span></p>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Cannot set value set binding on R4 profile's element</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-243" target="_blank">TRIFFHIR-243</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">"Add" button for R4 capability statement REST tabs doesn't work</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-249" target="_blank">TRIFFHIR-249</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Can't expand a brand new slice</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-246" target="_blank">TRIFFHIR-246</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">ServiceRequest vs. ServiceDefinition for CapabilityStatement &gt; REST &gt; Resource &gt; Type</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-251" target="_blank">TRIFFHIR-251</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Multiple publish boxes on published implementation guide's main page</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-254" target="_blank">TRIFFHIR-254</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Defect</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Change editor to only display constraints in the current profile's differential, regardless of base profile</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-190" target="_blank">TRIFFHIR-190</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">User interface allows profiling fields that shouldn't be profiled</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-188" target="_blank">TRIFFHIR-188</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Add support for paging in the "Other Resources" screen</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-233" target="_blank">TRIFFHIR-233</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Element mappings reference profile mappings</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-240" target="_blank">TRIFFHIR-240</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Automatically delete IG references when deleting resources</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-239" target="_blank">TRIFFHIR-239</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Automatically set ID of new resources to the leaf/end of the URL</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-242" target="_blank">TRIFFHIR-242</a></p>
+</td>
+<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Add "supported profiles" to R4 capability statement editing screen</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-253" target="_blank">TRIFFHIR-253</a></p>
+</td>
+<td width="117" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Getting latest ig publisher doesn't work due to HL7/FHIR process changes</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="118" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts13" href="https://trifolia.atlassian.net/browse/TRIFFHIR-200" target="_blank">TRIFFHIR-200</a></p>
+</td>
+<td width="117" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Improvement</span></p>
+</td>
+<td width="545" height="17" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts15">Automatically associate new resources to IG in context</span></p>
 </td>
 </tr>
 </table>
 </div>
-<p class="rvps3"><span class="rvts19"><br/></span></p>
+<p class="rvps6"><span class="rvts8"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps3"><span class="rvts17"><br/></span></p>
 <p></p>
 
             </div>
@@ -327,14 +395,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
-  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
   <script src="vendors/uri-1.19.1/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
   <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
@@ -352,8 +419,6 @@
   <!-- Scripts -->
   <script>
     $(function() {
-      // Instanciate FastClick
-      Origami.fastclick(document.body);
       // Create the app
       var app = new Hnd.App();
       // Update translations
