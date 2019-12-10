@@ -6,8 +6,29 @@ import {
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as path from "path";
 import * as fs from 'fs-extra';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class R4HtmlExporter extends HtmlExporter {
+
+  protected removeNonExampleMedia() {
+    if (!this.r4ImplementationGuide.definition) {
+      return;
+    }
+
+    const resourcesToRemove = (this.r4ImplementationGuide.definition.resource || []).filter(resource => {
+      if (!resource.reference || !resource.reference.reference) {
+        return false;
+      }
+
+      const parsed = parseReference(resource.reference.reference);
+      return parsed.resourceType === 'Media' && !resource.exampleBoolean && !resource.exampleCanonical;
+    });
+
+    resourcesToRemove.forEach(resource => {
+      const index = this.r4ImplementationGuide.definition.resource.indexOf(resource);
+      this.r4ImplementationGuide.definition.resource.splice(index, index >= 0 ? 1 : 0);
+    });
+  }
 
   protected getImplementationGuideResource(resourceType: string, id: string): ImplementationGuideResourceComponent {
     if (this.r4ImplementationGuide.definition) {
@@ -118,8 +139,11 @@ export class R4HtmlExporter extends HtmlExporter {
       for (let i = 0; i < bundle.entry.length; i++) {
         const entry = bundle.entry[i];
         const resource = entry.resource;
+        const igResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
+        const isExample = igResource ? igResource.exampleBoolean || igResource.exampleCanonical : false;
 
-        if (resource.resourceType === 'ImplementationGuide') {
+        // Skip adding the ImplementationGuide and Media images for using the narrative to the control file's resources
+        if (resource.resourceType === 'ImplementationGuide' || (resource.resourceType === 'Media' && !isExample)) {
           continue;
         }
 

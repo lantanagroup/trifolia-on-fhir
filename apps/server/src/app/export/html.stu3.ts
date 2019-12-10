@@ -3,15 +3,34 @@ import {FhirControl, FhirControlDependency, PageInfo, TableOfContentsEntry} from
 import {
   Binary as STU3Binary,
   Bundle as STU3Bundle,
-  DomainResource, Extension, PackageResourceComponent,
+  DomainResource,
+  Extension,
+  PackageResourceComponent,
   PageComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import * as path from "path";
+import * as path from 'path';
 import * as fs from 'fs-extra';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class STU3HtmlExporter extends HtmlExporter {
+  protected removeNonExampleMedia() {
+    (this.stu3ImplementationGuide.package || []).forEach(pkg => {
+      const resourcesToRemove = (pkg.resource || []).filter(resource => {
+        if (!resource.sourceReference || !resource.sourceReference.reference) {
+          return false;
+        }
+
+        const parsed = parseReference(resource.sourceReference.reference);
+        return parsed.resourceType === 'Media' && !resource.example && !resource.exampleFor;
+      });
+
+      resourcesToRemove.forEach(resource => {
+        const index = pkg.resource.indexOf(resource);
+        pkg.resource.splice(index, index >= 0 ? 1 : 0);
+      });
+    });
+  }
 
   protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent {
     if (this.stu3ImplementationGuide.package) {
@@ -59,7 +78,7 @@ export class STU3HtmlExporter extends HtmlExporter {
         resources: ['source/resources']
       },
       pages: ['pages'],
-      version: '3.0.1',
+      version: '3.0.2',
       'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
       'sct-edition': 'http://snomed.info/sct/731000124108',
@@ -102,10 +121,6 @@ export class STU3HtmlExporter extends HtmlExporter {
       resources: {}
     };
 
-    if (this.stu3ImplementationGuide.fhirVersion) {
-      control.version = this.stu3ImplementationGuide.fhirVersion;
-    }
-
     if (this.stu3ImplementationGuide.version) {
       control['fixed-business-version'] = this.stu3ImplementationGuide.version;
     }
@@ -138,8 +153,11 @@ export class STU3HtmlExporter extends HtmlExporter {
       for (let i = 0; i < bundle.entry.length; i++) {
         const entry = bundle.entry[i];
         const resource = entry.resource;
+        const igResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
+        const isExample = igResource ? igResource.example || igResource.exampleFor : false;
 
-        if (resource.resourceType === 'ImplementationGuide') {
+        // Skip adding the ImplementationGuide and Media images for using the narrative to the control file's resources
+        if (resource.resourceType === 'ImplementationGuide' || (resource.resourceType === 'Media' && !isExample)) {
           continue;
         }
 

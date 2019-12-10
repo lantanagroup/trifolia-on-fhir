@@ -225,6 +225,8 @@ export class HtmlExporter {
       .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
       .resource;
 
+    this.removeNonExampleMedia();
+
     // Make sure the implementation guide is in XML format... This is a requirement for the fhir ig publisher.
     this.writeResourceContent(resourcesDir, this.implementationGuide, true);
 
@@ -364,6 +366,14 @@ export class HtmlExporter {
     if (tocContent) {
       fs.appendFileSync(tocPath, tocContent);
     }
+  }
+
+  /**
+   * Removes Media resources from the implementation guide that are not an example.
+   * Those Media resources are meant to be exported as images in the file
+   * structure, rather than actual Media resources.
+   */
+  protected removeNonExampleMedia() {
   }
 
   private async getIgPublisher(useLatest: boolean): Promise<string> {
