@@ -184,6 +184,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           }
         }
 
+        if (elementTreeModel.path === diffElement.path) {
+          return true;
+        }
+
         return false;
       });
 
