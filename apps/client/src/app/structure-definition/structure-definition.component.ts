@@ -430,9 +430,11 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.toggleElementExpand(elementTreeModel);
     }
 
-    elementTreeModel.constrainedElement.slicing = {
-      rules: 'open'
-    };
+    if (!elementTreeModel.constrainedElement.slicing) {
+      elementTreeModel.constrainedElement.slicing = {
+        rules: 'open'
+      };
+    }
 
     const newSliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
     const newElement = new ElementDefinition();
