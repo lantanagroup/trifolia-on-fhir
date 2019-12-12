@@ -388,7 +388,7 @@ export class BaseController {
     }
   }
 
-  protected async getContextImplementationGuide(fhirServerBase: string, contextImplementationGuideId: string): Promise<STU3ImplementationGuide | R4ImplementationGuide> {
+  protected async getImplementationGuide(fhirServerBase: string, contextImplementationGuideId: string): Promise<STU3ImplementationGuide | R4ImplementationGuide> {
     if (!contextImplementationGuideId) {
       return Promise.resolve(undefined);
     }

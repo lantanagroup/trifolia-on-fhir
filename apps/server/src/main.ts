@@ -188,8 +188,13 @@ async function bootstrap() {
   app.use(bodyParser.json({
     limit: config.server.maxRequestSizeMegabytes.toString() + 'mb'
   }));
+  app.use(bodyParser.text({
+    type: ['text/plain'],
+    limit: config.server.maxRequestSizeMegabytes.toString() + 'mb'
+  }));
   app.use(bodyParser.raw({
-    type: ['application/octet-stream', 'application/binary']
+    type: ['application/octet-stream', 'application/binary'],
+    limit: config.server.maxRequestSizeMegabytes.toString() + 'mb'
   }));
   app.use(bodyParser.urlencoded({
     limit: config.server.maxRequestSizeMegabytes.toString() + 'mb',

@@ -369,7 +369,7 @@ export class FhirController extends BaseController {
 
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
-    const contextImplementationGuide = headers.implementationguideid ? await this.getContextImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
+    const contextImplementationGuide = headers.implementationguideid ? await this.getImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
     const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : undefined;
 
     if (isBatch && !parsedUrl.resourceType) {

@@ -143,7 +143,7 @@ export class BaseFhirController extends BaseController {
 
     let alreadyExists = false;
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    const contextImplementationGuide = await this.getContextImplementationGuide(fhirServerBase, contextImplementationGuideId);
+    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
 
     this.ensureUserCanEdit(userSecurityInfo, data);
 
@@ -225,7 +225,7 @@ export class BaseFhirController extends BaseController {
 
   protected async baseUpdate(fhirServerBase: string, fhirServerVersion: string, id: string, data: any, user: ITofUser, contextImplementationGuideId?: string, applyContextPermissions = false): Promise<any> {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    const contextImplementationGuide = await this.getContextImplementationGuide(fhirServerBase, contextImplementationGuideId);
+    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
     let original;
 
     // Make sure the user can modify the resource based on the permissions
