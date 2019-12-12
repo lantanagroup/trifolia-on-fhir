@@ -44,78 +44,80 @@ import {FhirEditNumberComponent} from './number/number.component';
 import {NarrativeComponent} from './narrative/narrative.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {SharedUiModule} from '../shared-ui/shared-ui.module';
+import {FhirEditIdentifierCardComponent} from './identifier-card/identifier-card.component';
 
 const components = [
+  FhirAddressModalComponent,
+  FhirAttachmentComponent,
+  FhirAttachmentModalComponent,
+  FhirBooleanComponent,
+  FhirCapabilityStatementResourceModalComponent,
+  FhirChoiceComponent,
+  FhirCodeableConceptModalComponent,
+  FhirCodesystemConceptModalComponent,
+  FhirCodingModalComponent,
+  FhirContactModalComponent,
+  FhirContactPointModalComponent,
+  FhirDateComponent,
+  FhirHumanNameComponent,
+  FhirHumanNameModalComponent,
+  FhirHumanNamesComponent,
+  FhirIdentifierComponent,
+  FhirIdentifierModalComponent,
+  FhirMarkdownComponent,
+  FhirMaxCardinalityComponent,
+  FhirMessagingEventModalComponent,
+  FhirMultiContactComponent,
+  FhirMultiIdentifierComponent,
+  FhirMultiJurisdictionComponent,
+  FhirMultiUseContextComponent,
+  NarrativeComponent,
+  FhirEditNumberComponent,
+  FhirPeriodComponent,
+  FhirPractitionerComponent,
+  FhirQuantityComponent,
+  FhirRangeComponent,
+  FhirRangeModalComponent,
+  FhirRatioComponent,
+  FhirRatioModalComponent,
+  FhirReferenceComponent,
+  FhirReferenceModalComponent,
+  FhirSelectMultiCodingComponent,
+  FhirSelectSingleCodeComponent,
+  FhirStringComponent,
+  FhirValueSetIncludeConceptModalComponent,
+  FhirEditIdentifierCardComponent
+];
+
+@NgModule({
+  entryComponents: [
     FhirAddressModalComponent,
-    FhirAttachmentComponent,
     FhirAttachmentModalComponent,
-    FhirBooleanComponent,
     FhirCapabilityStatementResourceModalComponent,
-    FhirChoiceComponent,
     FhirCodeableConceptModalComponent,
     FhirCodesystemConceptModalComponent,
     FhirCodingModalComponent,
     FhirContactModalComponent,
     FhirContactPointModalComponent,
-    FhirDateComponent,
-    FhirHumanNameComponent,
     FhirHumanNameModalComponent,
-    FhirHumanNamesComponent,
-    FhirIdentifierComponent,
     FhirIdentifierModalComponent,
     FhirMarkdownComponent,
-    FhirMaxCardinalityComponent,
     FhirMessagingEventModalComponent,
-    FhirMultiContactComponent,
-    FhirMultiIdentifierComponent,
-    FhirMultiJurisdictionComponent,
-    FhirMultiUseContextComponent,
-    NarrativeComponent,
-    FhirEditNumberComponent,
-    FhirPeriodComponent,
-    FhirPractitionerComponent,
-    FhirQuantityComponent,
-    FhirRangeComponent,
     FhirRangeModalComponent,
-    FhirRatioComponent,
     FhirRatioModalComponent,
-    FhirReferenceComponent,
     FhirReferenceModalComponent,
-    FhirSelectMultiCodingComponent,
-    FhirSelectSingleCodeComponent,
-    FhirStringComponent,
     FhirValueSetIncludeConceptModalComponent
-];
-
-@NgModule({
-    entryComponents: [
-        FhirAddressModalComponent,
-        FhirAttachmentModalComponent,
-        FhirCapabilityStatementResourceModalComponent,
-        FhirCodeableConceptModalComponent,
-        FhirCodesystemConceptModalComponent,
-        FhirCodingModalComponent,
-        FhirContactModalComponent,
-        FhirContactPointModalComponent,
-        FhirHumanNameModalComponent,
-        FhirIdentifierModalComponent,
-        FhirMarkdownComponent,
-        FhirMessagingEventModalComponent,
-        FhirRangeModalComponent,
-        FhirRatioModalComponent,
-        FhirReferenceModalComponent,
-        FhirValueSetIncludeConceptModalComponent
-    ],
-    declarations: components,
-    exports: components,
-    imports: [
-        FormsModule,
-        CommonModule,
-        NgbModule,
-        SharedModule,
-        SharedUiModule,
-        AngularEditorModule
-    ]
+  ],
+  declarations: components,
+  exports: components,
+  imports: [
+    FormsModule,
+    CommonModule,
+    NgbModule,
+    SharedModule,
+    SharedUiModule,
+    AngularEditorModule
+  ]
 })
 export class FhirEditModule {
 }

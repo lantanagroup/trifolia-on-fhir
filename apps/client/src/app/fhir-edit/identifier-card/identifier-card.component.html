@@ -1,0 +1,70 @@
+<div class="card">
+  <div class="card-header">
+    Identifier(s)
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary btn-sm" title="Add a new identifier" (click)="addIdentifier()">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </div>
+  <table class="table table-striped" *ngIf="identifiers.length > 0">
+    <thead>
+    <tr>
+      <th>Use</th>
+      <th>System</th>
+      <th>Value</th>
+      <th class="actions-column-2">
+        &nbsp;
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let identifier of identifiers; let ii = index">
+      <td>
+        <app-fhir-select-single-code [parentObject]="identifier" propertyName="use" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use" [required]="false" [isFormGroup]="false"></app-fhir-select-single-code>
+      </td>
+      <td>
+        <app-fhir-string [parentObject]="identifier" propertyName="system" [isFormGroup]="false"></app-fhir-string>
+      </td>
+      <td>
+        <app-fhir-string [parentObject]="identifier" propertyName="value" [isFormGroup]="false"></app-fhir-string>
+      </td>
+      <td>
+        <div class="pull-right btn-group">
+          <button type="button" class="btn btn-primary" title="Edit additional properties for this identifier" (click)="openModal(modalContent, identifier)">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button type="button" class="btn btn-primary" title="Remove this identifier" (click)="identifiers.splice(ii, 1)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Identifier</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-fhir-select-single-code [parentObject]="modalIdentifier" propertyName="use" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use" [required]="false" title="Use"></app-fhir-select-single-code>
+
+    <app-fhir-select-multi-coding [parentObject]="modalIdentifier" propertyName="type" title="Type"></app-fhir-select-multi-coding>
+
+    <app-fhir-string [parentObject]="modalIdentifier" propertyName="system" title="System"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="modalIdentifier" propertyName="value" title="Value"></app-fhir-string>
+
+    <app-fhir-edit-period [parentObject]="modalIdentifier" propertyName="period" title="Period"></app-fhir-edit-period>
+
+    <app-fhir-reference [parentObject]="modalIdentifier" propertyName="assigner" resourceType="Organization" [hideResourceType]="true" title="Assigner"></app-fhir-reference>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">OK</button>
+  </div>
+</ng-template>

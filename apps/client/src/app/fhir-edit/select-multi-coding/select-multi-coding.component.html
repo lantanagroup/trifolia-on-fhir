@@ -1,51 +1,51 @@
 <div class="card" *ngIf="parentObject">
-    <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)"
-               (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{}])"/>
-        {{title || 'Coding'}}
-        <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
+  <div class="card-header">
+    {{title || 'Coding'}}
+    <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary btn-sm" title="Add a {{title || 'coding'}}" (click)="addCoding()">
+        <i class="fa fa-plus"></i>
+      </button>
     </div>
-    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
-        <thead>
-        <tr>
-            <th *ngIf="codes && codes.length > 0">Type</th>
-            <th>Code</th>
-            <th class="actions-column-1">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'coding'}}" (click)="parentObject[propertyName].push({})">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
-            <td *ngIf="codes && codes.length > 0">
-                <select class="form-control" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event)">
-                    <option value="custom">Custom</option>
-                    <option value="pre">Pre-defined</option>
-                </select>
-            </td>
-            <td>
-                <div class="input-group" *ngIf="getCodeType(c) === 'custom'">
-                    <input type="text" class="form-control" [ngModel]="getCode(ci)" (ngModelChange)="setCode(ci, $event)" placeholder="Code"/>
-                    <input type="text" class="form-control" [ngModel]="getDisplay(ci)" (ngModelChange)="setDisplay(ci, $event)" placeholder="Display"/>
-                    <input type="text" class="form-control" [ngModel]="getSystem(ci)" (ngModelChange)="setSystem(ci, $event)" placeholder="System"/>
-                </div>
-                <select class="form-control" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCoding(ci)"
-                        (ngModelChange)="setCoding(ci, $event)">
-                    <option *ngFor="let o of codes" [ngValue]="o">{{o.display || o.code}}</option>
-                </select>
-            </td>
-            <td>
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'code'}}" (click)="parentObject[propertyName].splice(ci, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  </div>
+  <table class="table table-striped" *ngIf="coding.length > 0">
+    <thead>
+    <tr *ngIf="codes && codes.length > 0">
+      <th>Type</th>
+      <th>Code</th>
+      <th class="actions-column-1">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
+      <td *ngIf="codes && codes.length > 0">
+        <select class="form-control" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event)">
+          <option value="custom">Custom</option>
+          <option value="pre">Pre-defined</option>
+        </select>
+      </td>
+      <td>
+        <div class="input-group" *ngIf="getCodeType(c) === 'custom'">
+          <input type="text" class="form-control" [ngModel]="getCode(ci)" (ngModelChange)="setCode(ci, $event)"
+                 placeholder="Code"/>
+          <input type="text" class="form-control" [ngModel]="getDisplay(ci)" (ngModelChange)="setDisplay(ci, $event)"
+                 placeholder="Display"/>
+          <input type="text" class="form-control" [ngModel]="getSystem(ci)" (ngModelChange)="setSystem(ci, $event)"
+                 placeholder="System"/>
+        </div>
+        <select class="form-control" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCoding(ci)"
+                (ngModelChange)="setCoding(ci, $event)">
+          <option *ngFor="let o of codes" [ngValue]="o">{{o.display || o.code}}</option>
+        </select>
+      </td>
+      <td>
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary btn-sm" title="Remove this {{title || 'code'}}" (click)="coding.splice(ci, 1)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>

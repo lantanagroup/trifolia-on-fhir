@@ -30,7 +30,7 @@ export class FhirDateComponent implements OnInit {
 
   public get value(): any {
     if (!this.parentObject) {
-      return;
+      return '';
     }
 
     return this.parentObject[this.propertyName];

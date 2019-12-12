@@ -14,6 +14,8 @@
           <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CodeSystem.title"></app-fhir-string>
 
           <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher" tooltipPath="CodeSystem.publisher"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
         </div>
         <div class="col-md-4">
           <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
@@ -27,20 +29,21 @@
           <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version" tooltipPath="CodeSystem.version"></app-fhir-string>
 
           <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental" tooltipPath="CodeSystem.experimental"></app-fhir-boolean>
+
+          <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional" tooltipPath="CodeSystem.compositional"></app-fhir-boolean>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
+          <trifolia-fhir-identifier-card [parentObject]="codeSystem" propertyName="identifier"></trifolia-fhir-identifier-card>
+        </div>
+        <div class="col-md-3">
           <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive" tooltipPath="CodeSystem.caseSensitive"></app-fhir-boolean>
 
           <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date" tooltipPath="CodeSystem.date"></app-fhir-date>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
-
           <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="Globals.codeSystemHierarchyMeaningCodes"
                                        tooltipPath="CodeSystem.hierarchyMeaning"></app-fhir-select-single-code>
         </div>
-        <div class="col-md-6">
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional" tooltipPath="CodeSystem.compositional"></app-fhir-boolean>
-
+        <div class="col-md-4">
           <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed" tooltipPath="CodeSystem.versionNeeded"></app-fhir-boolean>
 
           <div class="form-group">
