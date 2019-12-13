@@ -176,12 +176,12 @@ export class STU3HtmlExporter extends HtmlExporter {
     const pageIndex = this.pageInfos.indexOf(pageInfo);
     const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
     const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage ?
+    const previousPageLink = previousPage && previousPage.finalFileName ?
       `[Previous Page](${previousPage.finalFileName})\n\n` :
-      null;
-    const nextPageLink = nextPage ?
+      undefined;
+    const nextPageLink = nextPage && nextPage.finalFileName ?
       `\n\n[Next Page](${nextPage.finalFileName})` :
-      null;
+      undefined;
 
     if (page.kind !== 'toc' && pageInfo.content) {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -200,7 +200,7 @@ export class STU3HtmlExporter extends HtmlExporter {
         `title: ${page.title}\n` +
         'layout: default\n' +
         `active: ${page.title}\n` +
-        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
+        `---\n\n${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`;
 
       fs.writeFileSync(newPagePath, content);
     }

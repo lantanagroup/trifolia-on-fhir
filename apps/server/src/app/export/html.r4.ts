@@ -164,12 +164,12 @@ export class R4HtmlExporter extends HtmlExporter {
     const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
 
-    const previousPageLink = previousPage ?
+    const previousPageLink = previousPage && previousPage.finalFileName ?
       `[Previous Page](${previousPage.finalFileName})\n\n` :
-      null;
-    const nextPageLink = nextPage ?
+      undefined;
+    const nextPageLink = nextPage && nextPage.finalFileName ?
       `\n\n[Next Page](${nextPage.finalFileName})` :
-      null;
+      undefined;
 
     if (pageInfo.content && pageInfo.fileName) {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -189,7 +189,7 @@ export class R4HtmlExporter extends HtmlExporter {
         `title: ${page.title}\n` +
         'layout: default\n' +
         `active: ${page.title}\n` +
-        `---\n\n${previousPageLink}${pageInfo.content}${nextPageLink}`;
+        `---\n\n${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`;
       fs.writeFileSync(newPagePath, content);
     }
 
