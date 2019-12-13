@@ -63,6 +63,16 @@
       <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
       </li>
+      <li class="nav-item dropdown" *ngIf="authService.userProfile.isAdmin">
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Manage <span class="sr-only">(current)</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="manageMenu">
+          <a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/user">
+            Users
+          </a>
+        </div>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Help <span class="sr-only">(current)</span>

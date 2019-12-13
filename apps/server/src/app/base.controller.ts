@@ -58,9 +58,9 @@ export class BaseController {
     }
   }
 
-  protected assertAdmin(request: ITofRequest) {
-    if (request.headers['admin-code'] !== this.configService.server.adminCode) {
-      throw new UnauthorizedException('You are not authenticated as an admin');
+  protected assertAdmin(user: ITofUser) {
+    if (!user.isAdmin) {
+      throw new UnauthorizedException('This operation requires administrative privileges.');
     }
   }
 
