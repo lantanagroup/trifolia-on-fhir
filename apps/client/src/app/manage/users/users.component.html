@@ -9,9 +9,9 @@
           <th>Id</th>
           <th>Identifier</th>
           <th>Name</th>
-          <th>
+          <th class="actions-column-1">
             <div class="pull-right">
-              <button type="button" class="btn btn-primary" (click)="refresh()">Refresh</button>
+              <button type="button" class="btn btn-primary" (click)="refreshUsers()">Refresh</button>
             </div>
           </th>
         </tr>
@@ -19,12 +19,26 @@
         <tbody>
         <tr *ngFor="let u of users">
           <td>{{u.id}}</td>
-          <td>{{u.identifier}}</td>
-          <td>{{u.name}}</td>
+          <td>{{getDisplayIdentifier(u.identifier)}}</td>
+          <td>{{getDisplayName(u.name)}}</td>
           <td></td>
         </tr>
         </tbody>
+        <tfoot>
+        <tr>
+          <th colspan="4">Showing 10 of {{totalUsers}} users.</th>
+        </tr>
+        </tfoot>
       </table>
+
+      <ngb-pagination
+        class="d-flex justify-content-center"
+        [maxSize]="5"
+        [collectionSize]="totalUsers"
+        [(page)]="usersPage"
+        [boundaryLinks]="true"
+        (pageChange)="usersPageChanged.next()">
+      </ngb-pagination>
     </ng-template>
   </ngb-tab>
 

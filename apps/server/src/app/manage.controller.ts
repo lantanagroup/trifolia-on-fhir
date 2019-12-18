@@ -1,5 +1,16 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, HttpService, Post, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpService,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
@@ -26,22 +37,31 @@ export class ManageController extends BaseController {
   }
 
   @Get('user')
-  async getUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string): Promise<UserModel[]> {
+  async getUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('count') count = 10, @Query('page') page = 1): Promise<{ total: number, users: UserModel[] }> {
     this.assertAdmin(user);
 
-    const url = buildUrl(fhirServerBase, 'Practitioner', null, null, { _summary: true });
+    const params = {
+      _count: count,
+      _getpagesoffset: (page - 1) * count,
+      _summary: true
+    };
+
+    const url = buildUrl(fhirServerBase, 'Practitioner', null, null, params);
     const results = await this.httpService.get(url).toPromise();
     const bundle = <Bundle> results.data;
 
-    return (bundle.entry || []).map(entry => {
-      const practitioner = <Practitioner> entry.resource;
+    return {
+      total: bundle.total,
+      users: (bundle.entry || []).map(entry => {
+        const practitioner = <Practitioner> entry.resource;
 
-      return <UserModel> {
-        id: practitioner.id,
-        identifier: practitioner.identifier,
-        name: practitioner.name
-      };
-    });
+        return <UserModel> {
+          id: practitioner.id,
+          identifier: practitioner.identifier,
+          name: practitioner.name
+        };
+      })
+    };
   }
 
   @Get('user/active')

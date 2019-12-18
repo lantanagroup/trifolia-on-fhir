@@ -1,6 +1,7 @@
 import {Coding, DomainResource, HumanName, Meta, Practitioner} from './stu3/fhir';
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
+import {Identifier} from './r4/fhir';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -335,28 +336,53 @@ export function createTableFromArray(headers, data): string {
   return output;
 }
 
- export function getDisplayName(name: string | HumanName): string {
+ export function getDisplayName(name: string | HumanName | Array<HumanName>): string {
   if (!name) {
     return;
+  }
+
+  if (name instanceof Array && name.length > 0) {
+    return getDisplayName(name[0]);
   }
 
   if (typeof name === 'string') {
     return <string>name;
   }
 
-  let display = name.family;
+  const humanName = <HumanName> name;
+  let display = humanName.family;
 
-  if (name.given) {
+  if (humanName.given) {
     if (display) {
       display += ', ';
     } else {
       display = '';
     }
 
-    display += name.given.join(' ');
+    display += humanName.given.join(' ');
   }
 
   return display;
+}
+
+export function getDisplayIdentifier(identifier: Identifier | Array<Identifier>) {
+  if (!identifier) {
+    return '';
+  }
+
+  if (identifier instanceof Array && identifier.length > 0) {
+    return getDisplayIdentifier(identifier[0]);
+  }
+
+  const obj = <Identifier> identifier;
+
+  if (obj.system && obj.value) {
+    return `${obj.value} (${obj.system})`;
+  } else if (obj.value) {
+    return obj.value;
+  } else if (obj.system) {
+    return obj.system;
+  }
 }
 
 export function parseReference(reference: string): ParsedUrlModel {

@@ -12,8 +12,9 @@ export class ManageService {
     return await this.http.get<ActiveUserModel[]>('/api/manage/user/active').toPromise();
   }
 
-  async getUsers() {
-    return await this.http.get<UserModel[]>('/api/manage/user').toPromise();
+  async getUsers(count = 10, page = 1) {
+    const url = `/api/manage/user?count=${encodeURIComponent(count)}&page=${encodeURIComponent(page)}`;
+    return await this.http.get<{ total: number, users: UserModel[] }>(url).toPromise();
   }
 
   async sendMessageToActiveUsers(message: string) {
