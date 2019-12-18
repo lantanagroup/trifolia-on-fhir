@@ -30,6 +30,7 @@ export class ConfigController extends BaseController {
       supportUrl: this.configService.server.supportUrl,
       fhirServers: this.configService.fhir.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
       enableSecurity: this.configService.server.enableSecurity,
+      bannerMessage: this.configService.server.bannerMessage,
       auth: {
         clientId: this.configService.auth.clientId,
         scope: this.configService.auth.scope,
