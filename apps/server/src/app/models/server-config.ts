@@ -11,6 +11,7 @@ export interface IServerConfig {
   publishedIgsDirectory?: string;
   enableSecurity: boolean;
   maxRequestSizeMegabytes: number;
+  bannerMessage?: string;
 }
 
 export function createTestServerConfig(adminCode: string, enableSecurity = false): IServerConfig {
