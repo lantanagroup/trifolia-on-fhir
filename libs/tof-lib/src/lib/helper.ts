@@ -1,4 +1,5 @@
-import {Coding, DomainResource, HumanName, Meta, Practitioner} from './stu3/fhir';
+import {Coding, DomainResource, HumanName as STU3HumanName, Meta, Practitioner} from './stu3/fhir';
+import {HumanName as R4HumanName} from './r4/fhir';
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
 import {Identifier} from './r4/fhir';
@@ -127,7 +128,7 @@ export function getResourceSecurity(resource: DomainResource): ResourceSecurityM
   return [];
 }
 
-export function getHumanNameDisplay(humanName: HumanName) {
+export function getHumanNameDisplay(humanName: STU3HumanName | R4HumanName) {
   if (humanName.family && humanName.given && humanName.given.length > 0) {
     return humanName.family + ', ' + humanName.given[0];
   } else if (humanName.family) {
@@ -137,7 +138,7 @@ export function getHumanNameDisplay(humanName: HumanName) {
   }
 }
 
-export function getHumanNamesDisplay(humanNames: HumanName[]) {
+export function getHumanNamesDisplay(humanNames: (STU3HumanName | R4HumanName)[]) {
   if (!humanNames || humanNames.length === 0) {
     return 'Unspecified';
   } else {
@@ -336,7 +337,7 @@ export function createTableFromArray(headers, data): string {
   return output;
 }
 
- export function getDisplayName(name: string | HumanName | Array<HumanName>): string {
+ export function getDisplayName(name: string | STU3HumanName | Array<STU3HumanName> | R4HumanName | Array<R4HumanName>): string {
   if (!name) {
     return;
   }
@@ -349,7 +350,7 @@ export function createTableFromArray(headers, data): string {
     return <string>name;
   }
 
-  const humanName = <HumanName> name;
+  const humanName = <STU3HumanName | R4HumanName> name;
   let display = humanName.family;
 
   if (humanName.given) {
@@ -365,24 +366,26 @@ export function createTableFromArray(headers, data): string {
   return display;
 }
 
-export function getDisplayIdentifier(identifier: Identifier | Array<Identifier>) {
+export function getDisplayIdentifier(identifier: Identifier | Array<Identifier>, ignoreSystem = false) {
   if (!identifier) {
     return '';
   }
 
   if (identifier instanceof Array && identifier.length > 0) {
-    return getDisplayIdentifier(identifier[0]);
+    return getDisplayIdentifier(identifier[0], ignoreSystem);
   }
 
   const obj = <Identifier> identifier;
 
-  if (obj.system && obj.value) {
+  if (!ignoreSystem && obj.system && obj.value) {
     return `${obj.value} (${obj.system})`;
   } else if (obj.value) {
     return obj.value;
-  } else if (obj.system) {
+  } else if (!ignoreSystem && obj.system) {
     return obj.system;
   }
+
+  return '';
 }
 
 export function parseReference(reference: string): ParsedUrlModel {

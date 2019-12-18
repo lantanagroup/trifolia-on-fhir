@@ -2,7 +2,7 @@ import {BaseController} from './base.controller';
 import {
   Body,
   Controller,
-  Get,
+  Get, Header,
   HttpService,
   Param,
   Post,
@@ -19,8 +19,10 @@ import {ConfigService} from './config.service';
 import {FhirServerBase, User} from './server.decorators';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, Practitioner as R4Practitioner, ContactPoint as R4ContactPoint} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ContactPoint as STU3ContactPoint, Practitioner as STU3Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {UserModel} from '../../../../libs/tof-lib/src/lib/user-model';
+import {getDisplayIdentifier, getDisplayName} from '../../../../libs/tof-lib/src/lib/helper';
 
 interface MessageRequest {
   message: string;
@@ -34,6 +36,45 @@ export class ManageController extends BaseController {
 
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
+  }
+
+  @Get('user/download')
+  @Header('Content-Type', 'text/plain')
+  @Header('Content-Disposition', 'attachment; filename="users.csv"')
+  async downloadUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string) {
+    this.assertAdmin(user);
+
+    let practitioners: (STU3Practitioner | R4Practitioner)[] = [];
+
+    const getNext = async (url: string) => {
+      const bundle = await this.httpService.get<Bundle>(url).toPromise();
+      practitioners = practitioners.concat((bundle.data.entry || []).map(entry => <STU3Practitioner | R4Practitioner> entry.resource));
+      const nextLink = (bundle.data.link || []).find(link => link.relation === 'next');
+
+      if (nextLink) {
+        await getNext(nextLink.url);
+      }
+    };
+
+    const initialUrl = buildUrl(fhirServerBase, 'Practitioner', null, null, { _count: 50 });
+    await getNext(initialUrl);
+
+    let response = 'Identifier, Name, Email\n';
+
+    practitioners
+      .filter(practitioner => practitioner.name && practitioner.name.length > 0)
+      .forEach(practitioner => {
+        const cells = [ getDisplayIdentifier(practitioner.identifier, true).replace(/,/g, ' '), getDisplayName(practitioner.name).replace(/, /g, ' ') ];
+
+        const emailTelecoms: (STU3ContactPoint | R4ContactPoint)[] = (practitioner.telecom || []);
+        const emailTelecom = emailTelecoms.find(telecom => telecom.system === 'email');
+
+        cells.push(emailTelecom && emailTelecom.value ? emailTelecom.value.replace('mailto:', '') : '');
+
+        response += `${cells.join('\t')}\n`;
+      });
+
+    return response;
   }
 
   @Get('user')
@@ -53,7 +94,7 @@ export class ManageController extends BaseController {
     return {
       total: bundle.total,
       users: (bundle.entry || []).map(entry => {
-        const practitioner = <Practitioner> entry.resource;
+        const practitioner = <STU3Practitioner | R4Practitioner> entry.resource;
 
         return <UserModel> {
           id: practitioner.id,
