@@ -9,7 +9,8 @@
     "logFileName": "logs/tof.log",
     "logLevel": "all",
     "maxLogSizeKB": 1024,
-    "maxRequestSizeMegabytes": 50
+    "maxRequestSizeMegabytes": 50,
+    "latestIgPublisherPath": "assets/ig-publisher/latest/"
   },
   "auth": {
     "clientId": "",
