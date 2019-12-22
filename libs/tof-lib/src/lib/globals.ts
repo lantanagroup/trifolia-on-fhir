@@ -29,7 +29,8 @@ export class Globals {
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
     'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path',
-    'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation'
+    'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation',
+    'extension-ig-page-nav-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu'
   };
 
   static readonly introText = {
