@@ -41,46 +41,6 @@ export class PageComponentModalComponent implements OnInit {
     }
   }
 
-  public get autoGenerate(): boolean {
-    const autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (autoGenerateExtension) {
-      return autoGenerateExtension.valueBoolean === true;
-    }
-
-    return false;
-  }
-
-  public set autoGenerate(value: boolean) {
-    if (!this.page.extension) {
-      this.page.extension = [];
-    }
-
-    let autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (!autoGenerateExtension) {
-      autoGenerateExtension = {
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: false
-      };
-      this.page.extension.push(autoGenerateExtension);
-    }
-
-    autoGenerateExtension.valueBoolean = value;
-
-    if (value && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
-      const foundBinary = (this.implementationGuide.contained || []).find((contained) => contained.id === this.page.nameReference.reference.substring(1));
-
-      if (foundBinary) {
-        const index = this.implementationGuide.contained.indexOf(foundBinary);
-        this.implementationGuide.contained.splice(index, 1);
-        delete this.page.nameReference;
-        this.page.nameUrl = 'toc.md';
-        this.pageBinary = null;
-      }
-    }
-  }
-
   public get nameType(): string {
     if (this.page.hasOwnProperty('nameReference')) {
       return 'Reference';

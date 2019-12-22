@@ -59,7 +59,6 @@ export class PageInfo {
   page: PageComponent | ImplementationGuidePageComponent;
   fileName: string;
   content: string;
-  shouldAutoGenerate: boolean;
 
   get finalFileName() {
     if (this.fileName && this.fileName.endsWith('.md')) {

@@ -93,11 +93,9 @@ export class STU3HtmlExporter extends HtmlExporter {
       }
 
       const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
-      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
 
       const pageInfo = new PageInfo();
       pageInfo.page = page;
-      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
 
       if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
         const reference = contentExtension.valueReference.reference;
@@ -133,7 +131,6 @@ export class STU3HtmlExporter extends HtmlExporter {
       fs.ensureDirSync(pagesPath);
 
       this.writePage(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries);
-      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, rootPageInfo.content);
     }
   }
 }

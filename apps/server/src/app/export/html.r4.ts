@@ -130,9 +130,6 @@ export class R4HtmlExporter extends HtmlExporter {
       const pageInfo = new PageInfo();
       pageInfo.page = page;
 
-      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-
       if (page.nameReference && page.nameReference.reference) {
         const reference = page.nameReference.reference;
 
@@ -172,8 +169,5 @@ export class R4HtmlExporter extends HtmlExporter {
     fs.ensureDirSync(pagesPath);
 
     this.writePage(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries);
-
-    // Append TOC Entries to the toc.md file in the template
-    //this.generateTableOfContents(rootPath, tocEntries, this.pageInfos[0].shouldAutoGenerate, {fileName: this.pageInfos[0].fileName, content: this.pageInfos[0].content});
   }
 }

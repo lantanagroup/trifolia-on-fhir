@@ -142,28 +142,6 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     this.implementationGuide.extension.splice(index);
   }
 
-  public pageKindChanged(page: PageComponent) {
-    let autoGenExtension = (page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (page.kind === 'toc') {
-      if (!page.extension) {
-        page.extension = [];
-      }
-
-      if (autoGenExtension && !autoGenExtension.valueBoolean) {
-        autoGenExtension.valueBoolean = true;
-      } else if (!autoGenExtension) {
-        autoGenExtension = new Extension();
-        autoGenExtension.url = Globals.extensionUrls['extension-ig-page-auto-generate-toc'];
-        autoGenExtension.valueBoolean = true;
-        page.extension.push(autoGenExtension);
-      }
-    } else if (autoGenExtension) {
-      const extIndex = page.extension.indexOf(autoGenExtension);
-      page.extension.splice(extIndex, 1);
-    }
-  }
-
   public addResources(destPackage?: PackageComponent) {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
@@ -406,16 +384,11 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
 
   public toggleRootPage(value: boolean) {
     if (value && !this.implementationGuide.page) {
-      const newPage = new PageComponent();
-      newPage.kind = 'toc';
-      newPage.title = 'Table of Contents';
-      newPage.format = 'markdown';
-      newPage.extension = [{
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: true
-      }];
-      newPage.source = 'toc.md';
-      this.implementationGuide.page = newPage;
+      this.implementationGuide.page = new PageComponent();
+      this.implementationGuide.page.kind = 'page';
+      this.implementationGuide.page.title = 'New Page';
+      this.implementationGuide.page.format = 'markdown';
+      this.implementationGuide.page.source = 'newPage.md';
     } else if (!value && this.implementationGuide.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.page);
       this.removePage(foundPageDef);

@@ -44,49 +44,6 @@ export class PageComponentModalComponent implements OnInit {
     }
   }
 
-  public get autoGenerate(): boolean {
-    const autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (autoGenerateExtension) {
-      return autoGenerateExtension.valueBoolean === true;
-    }
-
-    return false;
-  }
-
-  public set autoGenerate(value: boolean) {
-    if (!this.page.extension) {
-      this.page.extension = [];
-    }
-
-    let autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (!autoGenerateExtension) {
-      autoGenerateExtension = {
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: false
-      };
-      this.page.extension.push(autoGenerateExtension);
-    }
-
-    autoGenerateExtension.valueBoolean = value;
-
-    const foundIgPageContentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
-
-    if (value && foundIgPageContentExtension && foundIgPageContentExtension.valueReference && foundIgPageContentExtension.valueReference.reference && foundIgPageContentExtension.valueReference.reference.startsWith('#')) {
-      const foundBinary = (this.implementationGuide.contained || []).find((contained) => contained.id === foundIgPageContentExtension.valueReference.reference.substring(1));
-
-      if (foundBinary) {
-        const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
-        const extensionIndex = this.page.extension.indexOf(foundIgPageContentExtension);
-
-        this.implementationGuide.contained.splice(binaryIndex, 1);
-        this.page.extension.splice(extensionIndex, 1);
-        this.pageBinary = null;
-      }
-    }
-  }
-
   public get pageContent() {
     if (!this.pageBinary || !this.pageBinary.content) {
       return '';

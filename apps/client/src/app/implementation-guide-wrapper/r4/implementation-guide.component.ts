@@ -324,17 +324,10 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     }
 
     if (value && !this.implementationGuide.definition.page) {
-      const newPage = new ImplementationGuidePageComponent();
-      newPage.title = 'Table of Contents';
-      newPage.generation = 'generated';
-      newPage.nameUrl = 'toc.md';
-
-      newPage.extension = [{
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: true
-      }];
-
-      this.implementationGuide.definition.page = newPage;
+      this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
+      this.implementationGuide.definition.page.title = 'New Page';
+      this.implementationGuide.definition.page.generation = 'markdown';
+      this.implementationGuide.definition.page.nameUrl = 'newPage.md';
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);
