@@ -46,7 +46,7 @@ export class STU3HtmlExporter extends HtmlExporter {
     }
   }
 
-  private writePage(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
+  private writePage(pagesPath: string, page: PageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
     const pageIndex = this.pageInfos.indexOf(pageInfo);
     const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
@@ -80,12 +80,10 @@ export class STU3HtmlExporter extends HtmlExporter {
       fs.writeFileSync(newPagePath, content);
     }
 
-    // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: page.kind === 'page' && pageInfo.fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1, tocEntries));
+    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
   }
 
-  protected writePages(rootPath: string) {
+  protected populatePageInfos() {
     // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
     const getPagesList = (theList: PageInfo[], page: PageComponent) => {
       if (!page) {
@@ -122,15 +120,27 @@ export class STU3HtmlExporter extends HtmlExporter {
       return theList;
     };
 
-    const tocEntries = [];
+    if (!this.stu3ImplementationGuide.page || this.stu3ImplementationGuide.page.source !== 'index.html') {
+      const originalFirstPage = this.stu3ImplementationGuide.page;
+      this.stu3ImplementationGuide.page = {
+        title: 'IG Home Page',
+        source: 'index.html',
+        kind: 'page',
+        page: originalFirstPage ? [originalFirstPage] : []
+      };
+    }
+
     this.pageInfos = getPagesList([], this.stu3ImplementationGuide.page);
+  }
+
+  protected writePages(rootPath: string) {
     const rootPageInfo = this.pageInfos.length > 0 ? this.pageInfos[0] : null;
 
     if (rootPageInfo) {
-      const pagesPath = path.join(rootPath, 'source/pages');
+      const pagesPath = path.join(rootPath, 'input/pagecontent');
       fs.ensureDirSync(pagesPath);
 
-      this.writePage(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries);
+      this.writePage(pagesPath, <PageComponent> rootPageInfo.page, 1);
     }
   }
 }

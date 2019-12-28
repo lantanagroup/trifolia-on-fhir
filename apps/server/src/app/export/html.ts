@@ -2,9 +2,7 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {spawn} from 'child_process';
 import {
-  ContactDetail,
   DomainResource,
-  Extension,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
   PackageResourceComponent
@@ -23,7 +21,6 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {createTableFromArray, getDisplayName, reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
 import {PageInfo, TableOfContentsEntry} from './html.models';
 import {
@@ -31,6 +28,7 @@ import {
   getExtensionString
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -211,6 +209,10 @@ export class HtmlExporter {
     });
   }
 
+  protected populatePageInfos() {
+    // DO NOTHING. Should be overridden by subclasses.
+  }
+
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -262,6 +264,8 @@ export class HtmlExporter {
     } else if (this.fhirVersion === 'r4') {
       this.r4ImplementationGuide.fhirVersion = ['4.0.1'];
     }
+
+    this.populatePageInfos();
 
     // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
     // to the ig that needs to get written.
@@ -475,13 +479,49 @@ export class HtmlExporter {
    * with links to the resources in the implementation guide.
    * @param rootPath
    * @param bundle
-   * @param implementationGuide
    */
   protected updateTemplates(rootPath: string, bundle) {
     fs.ensureDirSync(path.join(rootPath, 'input/includes'));
+
+    const allPageMenuNames = this.pageInfos
+      .filter(pi => {
+        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+        return !!extension && extension.valueString;
+      })
+      .map(pi => {
+        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+        return extension.valueString;
+      });
+    const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
+      if (init.indexOf(next) < 0) init.push(next);
+      return init;
+    }, []);
+    const pageMenuContent = distinctPageMenuNames.map(pmn => {
+      const pageMenuItems = this.pageInfos
+        .filter(pi => {
+          const extensions = <IExtension[]> (pi.page.extension || []);
+          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+          return extension && extension.valueString === pmn;
+        })
+        .map(pi => {
+          const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
+          return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+        });
+
+      return '  <li class="dropdown">\n' +
+        `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
+        '      </b>\n' +
+        '    </a>\n' +
+        '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
+        '    </ul>\n' +
+        '  </li>';
+    });
+
     const menuContent = '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
       '  <li><a href="index.html">IG Home</a></li>\n' +
-      '  <li><a href="toc.html">Table of Contents</a></li>\n' +
+      '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
       '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
       '</ul>\n';
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
@@ -585,7 +625,7 @@ export class HtmlExporter {
     // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
     if (resource === this.implementationGuide) {
       fs.ensureDirSync(inputDir);
-      return path.join(inputDir, resource.id.toLowerCase() + (isXml ? '.xml' : '.json'));
+      return path.join(inputDir, resource.id + (isXml ? '.xml' : '.json'));
     }
 
     const implementationGuideResource = <ImplementationGuideResourceComponent> this.getImplementationGuideResource(resource.resourceType, resource.id);

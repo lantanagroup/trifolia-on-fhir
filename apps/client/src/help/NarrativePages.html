@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Adding images to pages</title>
+  <title>Narrative Pages</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -21,11 +21,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Adding images to pages">
+  <meta name="twitter:title" content="Narrative Pages">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Adding images to pages" />
+  <meta property="og:title" content="Narrative Pages" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
@@ -163,9 +163,9 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="AddingImages"
-		  data-hnd-context="29"
-		  data-hnd-title="Adding images to pages"
+		  data-hnd-id="NarrativePages"
+		  data-hnd-context="33"
+		  data-hnd-title="Narrative Pages"
 		>
             
                 <div class="navigation">
@@ -173,18 +173,23 @@
                         <li>Authoring</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="AuthoringValuesets.html" title="Value sets" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Bindingvaluestoelementsinaprofil.html" title="Binding values to elements in a profile" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="CodeSystems.html" title="Code Systems" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Export.html" title="Export" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Adding images to pages</h2>
+            <h2>Narrative Pages</h2>
 
             <div class="main-content">
                 
 <p></p>
+<p class="rvps3"><span class="rvts8">An implementation guide can (and should) contain narrative pages that explain the use-case for the implementation guide and any special requirements for the implementation guide. You can add these narrative pages in the "Edit Implementation Guide" screen under the "Narrative/Pages" tab.</span></p>
+<p class="rvps3"><span class="rvts8">The content of the pages is markdown, and the ToF user interface provides a WYSIWYG editor that is based on markdown syntax. The WYSIWYG editor supports basic markdown syntax, such as bold, italics, underline, headings, etc. More advanced markdown functionality (such as tables) may not display correctly in the editor, but will be supported during the publish process; even though the WYSIWYG editor doesn't show the tables, it may look like a table after you have published your implementation guide.</span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Navigation Menus</span></span></h2>
+<p class="rvps3"><span class="rvts8">Each page in the implementation guide can be associated with a top-level navigation menu. Edit the page, and specify a name for the top-level navigation menu. When you edit additional pages and begin typing the same menu name, the already-existing menu name will be shown as a suggestion for selection. Each unique page name will show up as a top-level navigation menu after you have published your implementation guides, and any pages that are associated with that menu will be shown as options within that menu.</span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Images</span></span></h2>
 <p class="rvps3"><span class="rvts8">To add one or more images to pages in your implementation guide, follow these steps:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
 <li value="1" class="rvps3"><span class="rvts8">Import your images via the "Import" screen. You may drag-and-drop the images into the "Import" screen's "File" tab.</span><br/><span class="rvts8">These images will be imported as "Media" resources. The "id" of the Media resource will be based on the filename of the image, and the exact filename will be stored as an "identifier" in the Media.</span></li>
@@ -200,6 +205,9 @@
 <li class="rvps3"><span class="rvts8">.PNG</span></li>
 <li class="rvps3"><span class="rvts8">.BMP</span></li>
 </ul>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Technical Notes</span></span></h2>
+<p class="rvps3"><span class="rvts8">When the IG is being exported or published, the pages in the IG have to be in a specific order. The first/root page of the IG </span><span class="rvts19">has </span><span class="rvts8">to be an index.html file. If the first page in an IG is </span><span class="rvts19">not </span><span class="rvts8">an index.html file, then ToF automatically adds one and makes the root page of the IG a child page of the new index.html page.</span></p>
+<p class="rvps3"><span class="rvts8">Because the ImplementationGuide resource does not have any properties for storing the content of each page, ToF creates contained Binary resources within the ImplementationGuide resource.</span></p>
 <p></p>
 
             </div>

@@ -1,4 +1,5 @@
 import '../date-extensions';
+import {IExtension} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -33,7 +34,7 @@ export class Element extends Base {
 
 }
 
-export class Extension extends Element {
+export class Extension extends Element implements IExtension {
   public url: string;
   public valueCode?: string;
   public valueCodeableConcept?: CodeableConcept;

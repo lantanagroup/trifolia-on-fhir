@@ -39,7 +39,7 @@ export class R4HtmlExporter extends HtmlExporter {
     }
   }
 
-  private writePage(pagesPath: string, page: ImplementationGuidePageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
+  private writePage(pagesPath: string, page: ImplementationGuidePageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
     const pageInfoIndex = this.pageInfos.indexOf(pageInfo);
     const previousPage = pageInfoIndex > 0 ? this.pageInfos[pageInfoIndex - 1] : null;
@@ -69,58 +69,10 @@ export class R4HtmlExporter extends HtmlExporter {
       fs.writeFileSync(newPagePath, `${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`);
     }
 
-    // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1, tocEntries));
+    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
   }
 
-  protected updateTemplates(rootPath: string, bundle) {
-    if (!this.r4ImplementationGuide.definition) {
-      this.r4ImplementationGuide.definition = {
-        resource: []
-      };
-    }
-
-    if (!this.r4ImplementationGuide.definition.page || this.r4ImplementationGuide.definition.page.nameUrl !== 'index.html') {
-      const originalFirstPage = this.r4ImplementationGuide.definition.page;
-      this.r4ImplementationGuide.definition.page = {
-        title: 'IG Home Page',
-        nameUrl: 'index.html',
-        generation: 'markdown',
-        page: originalFirstPage ? [originalFirstPage] : []
-      };
-    }
-
-    // always automatically create index.md, it might be overwritten by writePages()
-    if (this.r4ImplementationGuide) {
-      const pagesPath = path.join(rootPath, 'input/pagecontent');
-      fs.ensureDirSync(pagesPath);
-
-      const indexPath = path.join(pagesPath, 'index.md');
-
-      fs.appendFileSync(indexPath, '<a name="intro"> </a>\n### Introduction\n\n');
-
-      if (this.r4ImplementationGuide.description) {
-        const descriptionContent = '### Description\n\n' + this.r4ImplementationGuide.description + '\n\n';
-        fs.appendFileSync(indexPath, descriptionContent);
-      } else {
-        fs.appendFileSync(indexPath, 'This implementation guide does not have a description, yet.');
-      }
-
-      if (this.r4ImplementationGuide.contact) {
-        const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
-          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-        });
-        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-        fs.appendFileSync(indexPath, authorsContent);
-      }
-    }
-
-    super.updateTemplates(rootPath, bundle);
-  }
-
-  protected writePages(rootPath: string) {
+  protected populatePageInfos() {
     // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
     const getPagesList = (theList: PageInfo[], page: ImplementationGuidePageComponent) => {
       if (!page) {
@@ -162,12 +114,59 @@ export class R4HtmlExporter extends HtmlExporter {
       return theList;
     };
 
-    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
-    const tocEntries = [];
+    if (!this.r4ImplementationGuide.definition.page || this.r4ImplementationGuide.definition.page.nameUrl !== 'index.html') {
+      const originalFirstPage = this.r4ImplementationGuide.definition.page;
+      this.r4ImplementationGuide.definition.page = {
+        title: 'IG Home Page',
+        nameUrl: 'index.html',
+        generation: 'markdown',
+        page: originalFirstPage ? [originalFirstPage] : []
+      };
+    }
 
+    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+  }
+
+  protected updateTemplates(rootPath: string, bundle) {
+    if (!this.r4ImplementationGuide.definition) {
+      this.r4ImplementationGuide.definition = {
+        resource: []
+      };
+    }
+
+    // always automatically create index.md, it might be overwritten by writePages()
+    if (this.r4ImplementationGuide) {
+      const pagesPath = path.join(rootPath, 'input/pagecontent');
+      fs.ensureDirSync(pagesPath);
+
+      const indexPath = path.join(pagesPath, 'index.md');
+
+      fs.appendFileSync(indexPath, '<a name="intro"> </a>\n### Introduction\n\n');
+
+      if (this.r4ImplementationGuide.description) {
+        const descriptionContent = '### Description\n\n' + this.r4ImplementationGuide.description + '\n\n';
+        fs.appendFileSync(indexPath, descriptionContent);
+      } else {
+        fs.appendFileSync(indexPath, 'This implementation guide does not have a description, yet.');
+      }
+
+      if (this.r4ImplementationGuide.contact) {
+        const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
+          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
+          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+        });
+        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+        fs.appendFileSync(indexPath, authorsContent);
+      }
+    }
+
+    super.updateTemplates(rootPath, bundle);
+  }
+
+  protected writePages(rootPath: string) {
     const pagesPath = path.join(rootPath, 'input/pagecontent');
     fs.ensureDirSync(pagesPath);
 
-    this.writePage(pagesPath, this.r4ImplementationGuide.definition.page, 1, tocEntries);
+    this.writePage(pagesPath, this.r4ImplementationGuide.definition.page, 1);
   }
 }

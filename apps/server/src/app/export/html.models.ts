@@ -60,6 +60,14 @@ export class PageInfo {
   fileName: string;
   content: string;
 
+  get title() {
+    if (this.page) {
+      return this.page.title;
+    }
+
+    return this.fileName;
+  }
+
   get finalFileName() {
     if (this.fileName && this.fileName.endsWith('.md')) {
       return this.fileName.substring(0, this.fileName.lastIndexOf('.')) + '.html';
