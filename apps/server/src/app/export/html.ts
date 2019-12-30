@@ -96,7 +96,12 @@ export class HtmlExporter {
     }
   }
 
-  // This is public so it can be unit-tested
+  /**
+   * Returns the contents of the control file. This is now the ig.ini file in the root
+   * of the html export package.
+   * @param bundle The bundle that contains all resources in the IG
+   * @param format The format that the user selected for the export
+   */
   public getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${this.getExtensionFromFormat(format)}\n` +
@@ -104,7 +109,7 @@ export class HtmlExporter {
       'usage-stats-opt-out = false\n' +
       'copyrightyear = 2019+\n' +
       'license = CC0-1.0\n' +
-      `version = ${this.implementationGuide.version}\n` +
+      `version = ${this.implementationGuide.version || '1.0.0'}\n` +
       'ballotstatus = CI Build\n' +
       'fhirspec = http://build.fhir.org/\n' +
       '#excludexml = Yes\n' +
