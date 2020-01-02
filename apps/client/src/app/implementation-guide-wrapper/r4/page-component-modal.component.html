@@ -22,7 +22,7 @@
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
                                [required]="true"></app-fhir-select-single-code>
 
-  <div class="form-group">
+  <div class="form-group" *ngIf="page.generation !== 'generated'">
     <label>
       <input type="checkbox" [(ngModel)]="hasPageNavMenu" /> Show on top nav menu
     </label>

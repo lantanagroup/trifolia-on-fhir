@@ -504,24 +504,31 @@ export class HtmlExporter {
       return init;
     }, []);
     const pageMenuContent = distinctPageMenuNames.map(pmn => {
-      const pageMenuItems = this.pageInfos
+      const menuPages = this.pageInfos
         .filter(pi => {
           const extensions = <IExtension[]> (pi.page.extension || []);
           const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-          return extension && extension.valueString === pmn;
-        })
-        .map(pi => {
-          const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
-          return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+          return extension && extension.valueString === pmn && pi.fileName;
         });
 
-      return '  <li class="dropdown">\n' +
-        `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
-        '      </b>\n' +
-        '    </a>\n' +
-        '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
-        '    </ul>\n' +
-        '  </li>';
+      if (menuPages.length === 1) {
+        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
+        return `  <li><a href="${fileName}">${menuPages[0].title}</a></li>\n`;
+      } else {
+        const pageMenuItems = menuPages
+          .map(pi => {
+            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
+            return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+          });
+
+        return '  <li class="dropdown">\n' +
+          `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
+          '      </b>\n' +
+          '    </a>\n' +
+          '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
+          '    </ul>\n' +
+          '  </li>';
+      }
     });
 
     const menuContent = '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
