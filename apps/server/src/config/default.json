@@ -15,6 +15,7 @@
   "auth": {
     "clientId": "",
     "scope": "",
+    "logoutUrl": "",
     "issuer": "",
     "jwksUri": ""
   },
