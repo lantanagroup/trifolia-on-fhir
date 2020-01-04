@@ -71,9 +71,6 @@ export class FhirController extends BaseController {
 
     this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
 
-    this.logger.log('*****CURRENT OPTIONS before' + currentOptions.url);
-
-
     // Get the current state of the resource
     const getResponse = await this.httpService.request(currentOptions).toPromise();
     const resource = getResponse.data;
@@ -99,24 +96,15 @@ export class FhirController extends BaseController {
       method: 'DELETE'
     };
 
-    this.logger.log('Sending PUT request to FHIR server with the new resource ID');
-    this.logger.log('*****CURRENT OPTIONS after' + currentOptions.url);
-
     // Create the new resource with the new id
     await this.httpService.request(createOptions).toPromise();
 
-    // ok, lets try to call call update references
-    //await this.updateReferencesToResource(fhirServerBase, 'stu3', resourceType, currentId, newId);
-
     const searchForReference = (searchResourceType: string, searchParameter: string) => {
-      this.logger.log('*****ENTERED FOR SEARCH');
 
       return new Promise(async (resolve) => {
-        //const searchUrl = buildUrl(fhirServerBase, 'ImplementationGuide', null, null, { _has: currentId});
         const params = {};    // DONT use _summary=true. The results may end up getting used to update the resource.
         params[searchParameter] = `${resourceType}/${currentId}`;
         const searchUrl = buildUrl(fhirServerBase, searchResourceType, null, null, params);
-        this.logger.log('*****URL:' + searchUrl);
 
         const results = await this.httpService.get(searchUrl).toPromise();
         const bundle: Bundle = results.data;
@@ -130,10 +118,7 @@ export class FhirController extends BaseController {
     // These search parameters apply to both STU3 and R4 servers
     searchPromises.push(searchForReference('ImplementationGuide', 'resource'));
 
-    
-
     const allResults = await Promise.all(searchPromises);
-    this.logger.log('*****ALL RESULTS' + allResults);
 
     const allResources = allResults.reduce((prev, curr) => {
       return prev.concat(curr);
