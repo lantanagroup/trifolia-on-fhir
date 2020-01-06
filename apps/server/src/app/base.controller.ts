@@ -173,6 +173,10 @@ export class BaseController {
   }
 
   protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+    if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
+      return true;
+    }
+
     const foundEveryone = findPermission(resource.meta, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
       return findPermission(resource.meta, 'group', permission, group.id);

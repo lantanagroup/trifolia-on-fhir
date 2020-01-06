@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
@@ -8,6 +8,11 @@ import {ConfigService} from './config.service';
 import {BundleExporter} from './export/bundle';
 import {getHumanNameDisplay, getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {copyPermissions} from './helper';
+import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {FhirController} from './fhir.controller';
+import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -95,5 +100,38 @@ export class ImplementationGuideController extends BaseFhirController {
 
       return ret;
     });
+  }
+
+  @Post(':id/copy-permissions')
+  public async copyPermissions(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string): Promise<number> {
+    const exporter = new BundleExporter(this.httpService, this.logger, fhirServerBase, fhirServerId, fhirServerVersion, fhir, id);
+    const bundle = await exporter.getBundle(false, true);
+    const usi = await this.getUserSecurityInfo(user, fhirServerBase);
+
+    const igEntry = (bundle.entry || []).find(e => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === id);
+
+    if (!igEntry) {
+      this.logger.error(`No ImplementationGuide entry was found in the bundle returned by the BundleExporter for implementation guide id ${id}`);
+      throw new InternalServerErrorException('Could not find the implementation guide requested');
+    }
+
+    const ig = <STU3ImplementationGuide | R4ImplementationGuide> igEntry.resource;
+    const resources = (bundle.entry || [])
+      .filter(e => {
+        if (!e.resource || e.resource === ig) return false;
+        return this.userHasPermission(usi, 'write', e.resource);
+      })
+      .map(e => e.resource);
+
+    const updated = resources
+      .map(r => {
+        copyPermissions(ig, r);
+        const url = buildUrl(fhirServerBase, r.resourceType, r.id);
+        return this.httpService.put(url, r).toPromise();
+      });
+
+    await Promise.all(updated);
+
+    return updated.length;
   }
 }
