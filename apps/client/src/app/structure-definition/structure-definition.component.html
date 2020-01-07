@@ -265,10 +265,10 @@
           <thead>
           <tr>
             <th class="element-name">Element/Attribute</th>
-            <th class="element-properties">Properties</th>
-            <th class="element-type">Type</th>
+            <th class="element-properties">Flags</th>
             <th class="element-cardinality">Cardinality</th>
-            <th class="element-binding">Binding</th>
+            <th class="element-type">Type</th>
+            <th class="element-binding">Description & Constraints</th>
           </tr>
           </thead>
           <tbody>
@@ -295,9 +295,9 @@
               <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
             </td>
-            <td class="element-type">{{e.typeDisplay}}</td>
             <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
-            <td class="element-binding">{{e.binding}}</td>
+            <td class="element-type">{{e.typeDisplay}}</td>
+            <td class="element-binding">{{e.constraints}}</td>
           </tr>
           <tr>
             <td colspan="6">&nbsp;</td>

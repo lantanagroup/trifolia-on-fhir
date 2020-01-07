@@ -58,10 +58,11 @@ export class FhirController extends BaseController {
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser): Promise<any> {
+  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser, @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
+
 
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
@@ -95,10 +96,85 @@ export class FhirController extends BaseController {
       method: 'DELETE'
     };
 
-    this.logger.log('Sending PUT request to FHIR server with the new resource ID');
-
     // Create the new resource with the new id
     await this.httpService.request(createOptions).toPromise();
+
+    const searchForReference = (searchResourceType: string, searchParameter: string) => {
+
+      return new Promise(async (resolve) => {
+        const params = {};    // DONT use _summary=true. The results may end up getting used to update the resource.
+        params[searchParameter] = `${resourceType}/${currentId}`;
+        const searchUrl = buildUrl(fhirServerBase, searchResourceType, null, null, params);
+
+        const results = await this.httpService.get(searchUrl).toPromise();
+        const bundle: Bundle = results.data;
+        const resources = (bundle.entry || []).map(entry => <DomainResource> entry.resource);
+
+        resolve(resources);
+      });
+    };
+
+    const searchPromises = [];
+    // These search parameters apply to both STU3 and R4 servers
+    searchPromises.push(searchForReference('ImplementationGuide', 'resource'));
+    if (fhirVersion === 'r4') {
+      searchPromises.push(searchForReference('ImplementationGuide', 'global'));
+    }
+
+    const allResults = await Promise.all(searchPromises);
+
+    const allResources = allResults.reduce((prev, curr) => {
+      return prev.concat(curr);
+    }, []);
+
+    const findReference = (obj: any) => {
+      if (!obj) return;
+
+      if (obj.reference === `${resourceType}/${currentId}`) {
+        return obj;
+      }
+
+      const propertyNames = Object.keys(obj);
+
+      for (let i = 0; i < propertyNames.length; i++) {
+        const propertyName = propertyNames[i];
+
+        if (typeof obj[propertyName] === 'object') {
+          const foundReference = findReference(obj[propertyName]);
+
+          if (foundReference) {
+            return foundReference;
+          }
+        }
+      }
+    };
+
+    allResults.forEach(resource => {
+      const foundReference = findReference(resource);
+      if(foundReference){
+        foundReference.reference =  `${resourceType}/${newId}`;
+        foundReference.display = newId;
+      }
+    }
+    );
+
+    // Persist the changes to the resources
+    if (allResources.length > 0) {
+      const transaction = new Bundle();
+      transaction.type = 'transaction';
+      transaction.entry = allResources.map((resource) => {
+        return {
+          resource: resource,
+          fullUrl: buildUrl(fhirServerBase, resource.resourceType, resource.id),
+          request: {
+            method: 'PUT',
+            url: `${resource.resourceType}/${resource.id}`
+          }
+        };
+      });
+      await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
+    }
+
 
     this.logger.log('Sending DELETE request to FHIR server for original resource');
 
