@@ -96,12 +96,17 @@ span.rvts17
 }
 span.rvts18
 {
+ font-size: 11pt;
+ font-family: 'Calibri';
  font-weight: bold;
  color: #000000;
 }
-span.rvts19
+a.rvts19, span.rvts19
 {
- font-style: italic;
+ font-size: 11pt;
+ font-family: 'Calibri';
+ color: #000000;
+ text-decoration: underline;
 }
 span.rvts20
 {
@@ -116,115 +121,124 @@ span.rvts21
 }
 span.rvts22
 {
- font-size: 16pt;
- font-weight: bold;
+ font-style: italic;
 }
 span.rvts23
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-size: 16pt;
+ font-weight: bold;
 }
 span.rvts24
 {
+ font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts25
 {
+}
+span.rvts26
+{
  font-family: 'Courier New', 'Courier', monospace;
 }
-a.rvts26, span.rvts26
+a.rvts27, span.rvts27
 {
  font-family: 'Courier New', 'Courier', monospace;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts27
+span.rvts28
 {
  font-family: 'Times New Roman', 'Times', serif;
 }
-span.rvts28
+span.rvts29
 {
  color: #0c5460;
  background-color: #d1ecf1;
 }
-span.rvts29
+span.rvts30
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
 }
-span.rvts30
-{
-}
 span.rvts31
 {
- font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts32
 {
- font-weight: bold;
+ font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts33
 {
- font-size: 11pt;
  font-weight: bold;
 }
 span.rvts34
 {
+ font-size: 11pt;
+ font-weight: bold;
+}
+span.rvts35
+{
  font-weight: bold;
  color: #c00000;
 }
-span.rvts35
+span.rvts36
 {
  font-size: 14pt;
  font-style: italic;
  font-weight: bold;
 }
-span.rvts36
+span.rvts37
 {
  font-weight: bold;
 }
-a.rvts37, span.rvts37
+a.rvts38, span.rvts38
 {
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts38
+span.rvts39
 {
  font-style: italic;
 }
-a.rvts39, span.rvts39
+a.rvts40, span.rvts40
 {
  color: #0000ff;
  text-decoration: none;
 }
-span.rvts40
-{
- font-style: italic;
- font-weight: bold;
-}
 span.rvts41
 {
  font-style: italic;
+ font-weight: bold;
 }
 span.rvts42
 {
  font-style: italic;
- font-weight: bold;
 }
 span.rvts43
 {
+ font-style: italic;
  font-weight: bold;
- color: #000000;
 }
 span.rvts44
 {
+ font-weight: bold;
  color: #000000;
 }
 span.rvts45
+{
+ font-weight: bold;
+ color: #000000;
+}
+span.rvts46
+{
+ color: #000000;
+}
+span.rvts47
 {
  font-size: 13pt;
  font-style: italic;
  font-weight: bold;
 }
-a.rvts46, span.rvts46
+a.rvts48, span.rvts48
 {
  font-size: 11pt;
  font-family: 'Calibri';
