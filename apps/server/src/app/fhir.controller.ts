@@ -58,7 +58,7 @@ export class FhirController extends BaseController {
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser): Promise<any> {
+  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser, @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
@@ -117,6 +117,9 @@ export class FhirController extends BaseController {
     const searchPromises = [];
     // These search parameters apply to both STU3 and R4 servers
     searchPromises.push(searchForReference('ImplementationGuide', 'resource'));
+    if (fhirVersion === 'r4') {
+      searchPromises.push(searchForReference('ImplementationGuide', 'global'));
+    }
 
     const allResults = await Promise.all(searchPromises);
 
@@ -147,14 +150,14 @@ export class FhirController extends BaseController {
     };
 
     allResults.forEach(resource => {
-      const foundReference = findReference(resource); 
+      const foundReference = findReference(resource);
       if(foundReference){
         foundReference.reference =  `${resourceType}/${newId}`;
         foundReference.display = newId;
       }
     }
     );
-    
+
     // Persist the changes to the resources
     if (allResources.length > 0) {
       const transaction = new Bundle();
@@ -171,7 +174,7 @@ export class FhirController extends BaseController {
       });
       await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
     }
-    
+
 
     this.logger.log('Sending DELETE request to FHIR server for original resource');
 

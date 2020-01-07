@@ -61,12 +61,14 @@ describe('FhirController', () => {
         .reply(200, persistedResource)
         .get('/ImplementationGuide?resource=StructureDefinition%2Ftest')
         .reply(200, persistedResource)
+        .get('/ImplementationGuide?global=StructureDefinition%2Ftest')
+        .reply(200, persistedResource)
         .put('/StructureDefinition/new-test-id')
         .reply(200)
         .delete('/StructureDefinition/test')
         .reply(200);
 
-      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser);
+      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, 'r4');
 
       req.done();
       expect(results).toBeTruthy();
