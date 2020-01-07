@@ -22,7 +22,7 @@
     <label>Source</label>
     <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
   </div>
-  
+
   <div class="form-group">
     <label>
       <input type="checkbox" [(ngModel)]="hasPageNavMenu"/> Show on top nav menu
@@ -30,7 +30,7 @@
     <input type="text" class="form-control" [(ngModel)]="pageNavMenu" [disabled]="!hasPageNavMenu" [ngbTypeahead]="pageNavMenuSearch"/>
   </div>
 
-  <div class="form-group" *ngIf="!autoGenerate">
+  <div class="form-group">
     <label>Content</label>
     <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></app-markdown>
     <div class="help-block" *ngIf="!pageBinary">

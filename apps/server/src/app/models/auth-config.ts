@@ -6,4 +6,5 @@ export interface IAuthConfig {
   secret: string;
   issuer: string;
   jwksUri: string;
+  logoutUrl?: string;
 }

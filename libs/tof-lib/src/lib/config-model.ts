@@ -13,6 +13,7 @@ export interface ConfigModel {
     clientId: string;
     scope: string;
     issuer: string;
+    logoutUrl?: string;
   };
   github: {
     clientId: string;

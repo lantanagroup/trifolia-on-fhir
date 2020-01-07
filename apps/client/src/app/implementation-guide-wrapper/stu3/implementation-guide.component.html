@@ -459,7 +459,7 @@
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 
