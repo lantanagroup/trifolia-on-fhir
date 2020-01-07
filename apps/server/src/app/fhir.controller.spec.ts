@@ -19,6 +19,7 @@ nock.disableNetConnect();
 
 const fhirServerBase = 'http://test-fhir-server.com';
 
+
 describe('FhirController', () => {
   let app: TestingModule;
   let controller: FhirController;
@@ -40,6 +41,7 @@ describe('FhirController', () => {
   });
 
   describe('change-id', () => {
+
     beforeEach(() => {
       configService.server.enableSecurity = false;
       nock.cleanAll();
@@ -57,6 +59,8 @@ describe('FhirController', () => {
       const req = nock(fhirServerBase)
         .get('/StructureDefinition/test')
         .reply(200, persistedResource)
+        .get('/ImplementationGuide?resource=StructureDefinition%2Ftest')
+        .reply(200, persistedResource)
         .put('/StructureDefinition/new-test-id')
         .reply(200)
         .delete('/StructureDefinition/test')
@@ -65,7 +69,6 @@ describe('FhirController', () => {
       const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser);
 
       req.done();
-
       expect(results).toBeTruthy();
     });
   });
