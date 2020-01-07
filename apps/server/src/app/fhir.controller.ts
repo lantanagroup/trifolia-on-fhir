@@ -148,8 +148,10 @@ export class FhirController extends BaseController {
 
     allResults.forEach(resource => {
       const foundReference = findReference(resource); 
-      foundReference.reference =  `${resourceType}/${newId}`;
-      foundReference.display = newId;
+      if(foundReference){
+        foundReference.reference =  `${resourceType}/${newId}`;
+        foundReference.display = newId;
+      }
     }
     );
     
