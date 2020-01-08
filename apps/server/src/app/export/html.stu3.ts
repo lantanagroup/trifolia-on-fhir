@@ -1,16 +1,8 @@
 import {HtmlExporter} from './html';
-import {FhirControl, FhirControlDependency, PageInfo, TableOfContentsEntry} from './html.models';
-import {
-  Binary as STU3Binary,
-  Bundle as STU3Bundle,
-  DomainResource,
-  Extension,
-  PackageResourceComponent,
-  PageComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PageInfo} from './html.models';
+import {Binary as STU3Binary, DomainResource, PackageResourceComponent, PageComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class STU3HtmlExporter extends HtmlExporter {

@@ -14,7 +14,7 @@ import {
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
 import {IServerConfig} from '../models/server-config';
-import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
+import {IFhirConfig} from '../models/fhir-config';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import * as path from 'path';
@@ -22,7 +22,7 @@ import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {Formats} from '../models/export-options';
-import {PageInfo, TableOfContentsEntry} from './html.models';
+import {PageInfo} from './html.models';
 import {
   getDefaultImplementationGuideResourcePath,
   getExtensionString
@@ -57,35 +57,14 @@ export class HtmlExporter {
   }
 
   protected get stu3ImplementationGuide(): STU3ImplementationGuide {
-    return <STU3ImplementationGuide> this.implementationGuide;
+    return <STU3ImplementationGuide>this.implementationGuide;
   }
 
   protected get r4ImplementationGuide(): R4ImplementationGuide {
-    return <R4ImplementationGuide> this.implementationGuide;
+    return <R4ImplementationGuide>this.implementationGuide;
   }
 
-  static getIgPublisherBuildInfo(content: string): string {
-    if (!content) {
-      return;
-    }
-
-    const lines = content.replace(/\r/g, '').split('\n');
-
-    if (lines.length < 6) {
-      return;
-    }
-
-    const buildId = lines.find(l => l.split('=')[0] === 'buildId');
-    const buildIdSplit = buildId.split('=');
-
-    if (buildIdSplit.length !== 2) {
-      return;
-    }
-
-    return buildIdSplit[1];
-  }
-
-  private getExtensionFromFormat(format: Formats) {
+  private static getExtensionFromFormat(format: Formats) {
     switch (format) {
       case 'application/fhir+xml':
       case 'application/xml':
@@ -104,7 +83,7 @@ export class HtmlExporter {
    */
   public getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
-      `ig = input/${this.implementationGuideId}${this.getExtensionFromFormat(format)}\n` +
+      `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +
       'usage-stats-opt-out = false\n' +
       'copyrightyear = 2019+\n' +
@@ -118,7 +97,8 @@ export class HtmlExporter {
       '#excludeMaps = Yes\n';
   }
 
-  public async publish(format: Formats, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
+  // noinspection JSUnusedLocalSymbols
+  public async publish(format: Formats, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean) {
     if (!this.packageId) {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
@@ -201,9 +181,9 @@ export class HtmlExporter {
           if (!downloadOutput) {
             this.logger.log(`User indicated they don't need to download. Removing temporary directory ${this.rootPath}`);
 
-            fs.emptyDir(this.rootPath, (err) => {
+            fs.emptyDir(this.rootPath, (emptyErr) => {
               if (err) {
-                this.logger.error(err);
+                this.logger.error(emptyErr);
               } else {
                 this.logger.log(`Done removing temporary directory ${this.rootPath}`);
               }
@@ -261,9 +241,6 @@ export class HtmlExporter {
 
     this.removeNonExampleMedia();
 
-    // Make sure the implementation guide is in XML format... This is a requirement for the fhir ig publisher.
-    const igWithFixedVesion = JSON.parse(JSON.stringify(this.implementationGuide));
-
     if (this.fhirVersion === 'stu3') {
       this.stu3ImplementationGuide.fhirVersion = '3.0.2';
     } else if (this.fhirVersion === 'r4') {
@@ -317,6 +294,7 @@ export class HtmlExporter {
       fs.copySync(this.igPublisherLocation, destJarPath);
 
       // Create .sh and .bat files for easy execution of the IG publisher jar
+      // noinspection SpellCheckingInspection
       const shContent = '#!/bin/bash\n' +
         'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
         'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
@@ -329,6 +307,7 @@ export class HtmlExporter {
     this.logger.log(`Done creating HTML export for IG ${this.implementationGuideId}`);
   }
 
+  // noinspection JSUnusedLocalSymbols
   protected writePages(rootPath: string) {
     // Override with version-specific class
   }
@@ -346,7 +325,7 @@ export class HtmlExporter {
     return;
   }
 
-  protected sendSocketMessage(status: 'error'|'progress'|'complete', message, shouldLog?: boolean) {
+  protected sendSocketMessage(status: 'error' | 'progress' | 'complete', message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
       return;
@@ -376,39 +355,6 @@ export class HtmlExporter {
         return '.md';
       default:
         return '.md';
-    }
-  }
-
-  protected generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
-    const tocPath = path.join(rootPath, 'input/pagecontent/toc.md');
-    let tocContent = '';
-
-    if (shouldAutoGenerate) {
-      tocEntries.forEach((entry) => {
-        let fileName = entry.fileName;
-
-        if (fileName && fileName.endsWith('.md')) {
-          fileName = fileName.substring(0, fileName.length - 3) + '.html';
-        }
-
-        for (let i = 1; i < entry.level; i++) {
-          tocContent += '    ';
-        }
-
-        tocContent += '* ';
-
-        if (fileName) {
-          tocContent += `<a href="${fileName}">${entry.title}</a>\n`;
-        } else {
-          tocContent += `${entry.title}\n`;
-        }
-      });
-    } else if (content) {
-      tocContent = content;
-    }
-
-    if (tocContent) {
-      fs.appendFileSync(tocPath, tocContent);
     }
   }
 
@@ -459,6 +405,7 @@ export class HtmlExporter {
       }
 
       try {
+        // noinspection SpellCheckingInspection
         const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
 
         this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
@@ -490,12 +437,12 @@ export class HtmlExporter {
 
     const allPageMenuNames = this.pageInfos
       .filter(pi => {
-        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extensions = <IExtension[]>(pi.page.extension || []);
         const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
         return !!extension && extension.valueString;
       })
       .map(pi => {
-        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extensions = <IExtension[]>(pi.page.extension || []);
         const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
         return extension.valueString;
       });
@@ -506,7 +453,7 @@ export class HtmlExporter {
     const pageMenuContent = distinctPageMenuNames.map(pmn => {
       const menuPages = this.pageInfos
         .filter(pi => {
-          const extensions = <IExtension[]> (pi.page.extension || []);
+          const extensions = <IExtension[]>(pi.page.extension || []);
           const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
           return extension && extension.valueString === pmn && pi.fileName;
         });
@@ -597,11 +544,12 @@ export class HtmlExporter {
               let nextPath = dirSplit[i];
 
               if (nextPath.indexOf('~') > 0) {
-                const beforeCurley = nextPath.substring(0, nextPath.indexOf('~'));
+                const beforeCurly = nextPath.substring(0, nextPath.indexOf('~'));
                 const files = fs.readdirSync(basePath);
-                const filtered = files.filter(n => n.toLowerCase().startsWith(beforeCurley.toLowerCase()));
-                const curleyCount = parseInt(nextPath.substring(nextPath.indexOf('~') + 1, nextPath.indexOf('~') + 2));
-                nextPath = filtered[curleyCount - 1];
+                const filtered = files.filter(n => n.toLowerCase().startsWith(beforeCurly.toLowerCase()));
+                // tslint:disable-next-line:radix
+                const curlyCount = parseInt(nextPath.substring(nextPath.indexOf('~') + 1, nextPath.indexOf('~') + 2));
+                nextPath = filtered[curlyCount - 1];
               }
 
               basePath = path.join(basePath, nextPath);
@@ -623,10 +571,10 @@ export class HtmlExporter {
     }
 
     if (this.fhirVersion === 'stu3') {
-      const obj = <PackageResourceComponent> igResource;
+      const obj = <PackageResourceComponent>igResource;
       return obj.example || !!obj.exampleFor;
     } else if (this.fhirVersion === 'r4') {
-      const obj = <ImplementationGuideResourceComponent> igResource;
+      const obj = <ImplementationGuideResourceComponent>igResource;
       return obj.exampleBoolean || !!obj.exampleCanonical;
     } else {
       throw new Error('Unexpected FHIR version');
@@ -640,7 +588,7 @@ export class HtmlExporter {
       return path.join(inputDir, resource.id + (isXml ? '.xml' : '.json'));
     }
 
-    const implementationGuideResource = <ImplementationGuideResourceComponent> this.getImplementationGuideResource(resource.resourceType, resource.id);
+    const implementationGuideResource = <ImplementationGuideResourceComponent>this.getImplementationGuideResource(resource.resourceType, resource.id);
     let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
 
     if (!resourcePath) {
