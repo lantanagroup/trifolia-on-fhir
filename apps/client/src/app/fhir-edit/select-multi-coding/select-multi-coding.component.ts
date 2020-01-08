@@ -27,14 +27,22 @@ export class FhirSelectMultiCodingComponent implements OnInit {
   }
 
   public get coding(): Coding[] {
-    if (this.parentObject && this.parentObject[this.propertyName]) {
-      return this.parentObject[this.propertyName];
+    if (!this.parentObject[this.propertyName]) {
+      return [];
     }
 
-    return [];
+    return this.parentObject[this.propertyName];
   }
 
-  public getCodeType(code: Coding) {
+  addCoding() {
+    if (!this.parentObject[this.propertyName]) {
+      this.parentObject[this.propertyName] = [];
+    }
+
+    this.coding.push({});
+  }
+
+  getCodeType(code: Coding) {
     if (!this.codes || this.codes.length === 0) {
       return 'custom';
     }
@@ -48,7 +56,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     return 'custom';
   }
 
-  public setCodeType(codeIndex, value: 'pre' | 'custom') {
+  setCodeType(codeIndex, value: 'pre' | 'custom') {
     if (!this.parentObject.hasOwnProperty(this.propertyName)) {
       return;
     }
@@ -64,7 +72,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public getCoding(codeIndex): Coding {
+  getCoding(codeIndex): Coding {
     const code = this.coding[codeIndex];
     const foundOption = Globals.getSelectCoding(code, this.codes, this.matchSystem, this.matchCode);
 
@@ -73,12 +81,12 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public setCoding(codeIndex, value: Coding) {
+  setCoding(codeIndex, value: Coding) {
     const code = this.coding[codeIndex];
     Object.assign(code, value);
   }
 
-  public getCode(index: number): string {
+  getCode(index: number): string {
     const coding = this.coding[index];
 
     if (coding) {
@@ -86,7 +94,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public setCode(index: number, value) {
+  setCode(index: number, value) {
     const coding = this.coding[index];
 
     if (coding) {
@@ -98,7 +106,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public getDisplay(index: number): string {
+  getDisplay(index: number): string {
     const coding = this.coding[index];
 
     if (coding) {
@@ -106,7 +114,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public setDisplay(index: number, value) {
+  setDisplay(index: number, value) {
     const coding = this.coding[index];
 
     if (coding) {
@@ -118,7 +126,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public getSystem(index: number): string {
+  getSystem(index: number): string {
     const coding = this.coding[index];
 
     if (coding) {
@@ -126,7 +134,7 @@ export class FhirSelectMultiCodingComponent implements OnInit {
     }
   }
 
-  public setSystem(index: number, value) {
+  setSystem(index: number, value) {
     const coding = this.coding[index];
 
     if (coding) {

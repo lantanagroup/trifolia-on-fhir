@@ -13,79 +13,7 @@
 
           <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="ValueSet.title"></app-fhir-string>
 
-          <div class="card">
-            <div class="card-header">
-              <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('identifier')" (ngModelChange)="Globals.toggleProperty(valueSet, 'identifier', [{ use: 'official', value: ''}])"/>
-              Identifier(s)
-              <app-tooltip-icon tooltipPath="ValueSet.identifier"></app-tooltip-icon>
-            </div>
-            <table class="table table-striped" *ngIf="valueSet.hasOwnProperty('identifier')">
-              <thead>
-              <tr>
-                <th>Use
-                  <app-tooltip-icon tooltipPath="Identifier.use"></app-tooltip-icon>
-                </th>
-                <th>System
-                  <app-tooltip-icon tooltipPath="Identifier.system"></app-tooltip-icon>
-                </th>
-                <th>Value
-                  <app-tooltip-icon tooltipPath="Identifier.value"></app-tooltip-icon>
-                </th>
-                <th>
-                  <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add an identifier" (click)="valueSet.identifier.push({ use: 'official', value: '' })">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                  </div>
-                </th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let identifier of valueSet.identifier; let ii = index">
-                <td>
-                  <div class="input-group">
-                    <div class="input-group-addon">
-                      <input type="checkbox" [ngModel]="identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', 'official')"/>
-                    </div>
-                    <select class="form-control" [disabled]="!identifier.hasOwnProperty('use')" [(ngModel)]="identifier.use">
-                      <option value="usual">Usual</option>
-                      <option value="official">Official</option>
-                      <option value="temp">Temporary</option>
-                      <option value="secondary">Secondary</option>
-                      <option value="old">Old</option>
-                    </select>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <div class="input-group-addon">
-                      <input type="checkbox" [ngModel]="identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', '')"/>
-                    </div>
-                    <input type="text" class="form-control" [disabled]="!identifier.hasOwnProperty('system')" [(ngModel)]="identifier.system"/>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <div class="input-group-addon">
-                      <input type="checkbox" [ngModel]="identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')"/>
-                    </div>
-                    <input type="text" class="form-control" [disabled]="!identifier.hasOwnProperty('value')" [(ngModel)]="identifier.value"/>
-                  </div>
-                </td>
-                <td>
-                  <div class="pull-right btn-group">
-                    <button type="button" class="btn btn-default btn-sm" title="Edit this identifier">
-                      <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this identifier" (click)="valueSet.identifier.splice(ii, 1)">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+          <trifolia-fhir-identifier-card [parentObject]="valueSet" propertyName="identifier"></trifolia-fhir-identifier-card>
 
           <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext" tooltipPath="ValueSet.useContext"></app-fhir-multi-use-context>
         </div>
@@ -187,7 +115,7 @@
   <!-- Permissions -->
   <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabContent>
-      <app-resource-permissions [meta]="valueSet.meta"></app-resource-permissions>
+      <trifolia-fhir-resource-permissions [resource]="valueSet"></trifolia-fhir-resource-permissions>
     </ng-template>
   </ngb-tab>
 

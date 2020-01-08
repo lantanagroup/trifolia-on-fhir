@@ -4,6 +4,9 @@ import * as Yargs from 'yargs';
 import {RemoveExtras} from './removeExtras';
 import {UserListCommand} from './user-list';
 
+const usersFormat = 'users <server>';
+const usersDescription = 'Gets a list of users from the specified FHIR server';
+
 const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
 const modifyPermissionDescription = 'Adds/removes a permission to one or all resources';
 
@@ -13,7 +16,7 @@ const removeExtensionsDescription = 'Removes specified extensions from all resou
 const removeExtrasFormat = 'remove-extras <directory>';
 const removeExtrasDescription = 'Removes extra properties from resources that aren\'t used by ToF. This should typically be executed only be ToF developers on resources in the tof-lib assets folder.';
 
-const userListFormat = 'user-list';
+const userListFormat = 'users';
 const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
 const argv = Yargs
@@ -100,10 +103,17 @@ const argv = Yargs
         description: 'The fhir server(s) to search for users in. Specify this parameter for each FHIR server to include.',
         multiple: true,
         required: true
+      })
+      .option('auth0export', {
+        description: 'A file exported from the Auth0 import/export plugin that should provide additional data to this tool.'
+      })
+      .option('csv', {
+        description: 'Dump the results as a CSV',
+        boolean: true
       });
   }, async (args: any) => {
     const command = new UserListCommand(args);
-    command.execute();
+    await command.execute();
   })
   .help('help')
   .demandCommand()

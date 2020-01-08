@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
+import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Injectable()
 export class StructureDefinitionService {
@@ -47,37 +48,37 @@ export class StructureDefinitionService {
     return this.http.get<Bundle>(url);
   }
 
-  public getStructureDefinition(id: string): Observable<StructureDefinition> {
+  public getStructureDefinition(id: string): Observable<STU3StructureDefinition | R4StructureDefinition> {
     if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<StructureDefinition>((observer) => {
-          observer.next(<StructureDefinition> this.fileService.file.resource);
+        return new Observable<STU3StructureDefinition | R4StructureDefinition>((observer) => {
+          observer.next(<STU3StructureDefinition | R4StructureDefinition> this.fileService.file.resource);
         });
       }
     }
 
     const url = '/api/structureDefinition/' + encodeURIComponent(id);
-    return this.http.get<StructureDefinition>(url);
+    return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
   }
 
-  public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<StructureDefinition> {
+  public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<STU3StructureDefinition | R4StructureDefinition> {
     let url = `/api/structureDefinition/base?url=${encodeURIComponent(baseDefinition)}&`;
 
     if (type) {
       url += `type=${encodeURIComponent(type)}&`;
     }
 
-    return this.http.get<StructureDefinition>(url);
+    return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
   }
 
-  public save(structureDefinition: StructureDefinition): Observable<StructureDefinition> {
+  public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition> {
     let url = '/api/structureDefinition';
 
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);
-      return this.http.put<StructureDefinition>(url, structureDefinition);
+      return this.http.put<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
     } else {
-      return this.http.post<StructureDefinition>(url, structureDefinition);
+      return this.http.post<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
     }
   }
 

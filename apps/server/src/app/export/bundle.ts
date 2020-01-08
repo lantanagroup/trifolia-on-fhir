@@ -50,7 +50,9 @@ export class BundleExporter {
           const fixPage = (page: ImplementationGuidePageComponent) => {
             if (page.nameReference && page.title) {
               delete page.nameReference;
-              page.nameUrl = page.title.replace(/ /g, '_') + '.html';
+              page.nameUrl = page.title
+                .replace(/[/\\—,() ]/g, '') +
+                '.html';
             }
 
             (page.page || []).forEach((next) => fixPage(next));

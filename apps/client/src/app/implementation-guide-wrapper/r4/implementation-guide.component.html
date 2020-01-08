@@ -194,60 +194,6 @@
               </table>
             </div>
           </div>
-
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-                <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.page" (ngModelChange)="toggleRootPage($event)"/>
-                Pages
-              </div>
-
-              <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
-                <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Generation</th>
-                  <th class="actions-column-5">&nbsp;</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
-                  <td>
-                    <input type="text" class="form-control" [(ngModel)]="p.page.title" [class.is-invalid]="!p.page.title"/>
-                  </td>
-                  <td>
-                    <app-fhir-select-single-code
-                      [parentObject]="p.page"
-                      propertyName="generation"
-                      [required]="true"
-                      valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
-                      [isFormGroup]="false">
-                    </app-fhir-select-single-code>
-                  </td>
-                  <td>
-                    <div class="btn-group pull-right">
-                      <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary" (click)="addChildPage(p)" title="Add child page">
-                        <i class="fa fa-plus"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move up">
-                        <i class="fa fa-arrow-up"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move up">
-                        <i class="fa fa-arrow-down"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       </ng-template>
     </ngb-tab>
@@ -323,54 +269,64 @@
 
         <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
 
-        <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.page" (ngModelChange)="toggleRootPage($event)"/> Implementation guide has pages
-
-        <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
-          <thead>
-          <tr>
-            <th>
-              Title
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
-            </th>
-            <th>
-              Generation
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.generation"></app-tooltip-icon>
-            </th>
-            <th class="actions-column-5">&nbsp;</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
-            <td>
-              <input type="text" class="form-control" [(ngModel)]="p.page.title"
-                     [class.is-invalid]="!p.page.title"/>
-            </td>
-            <td>
-              <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
-                                           [isFormGroup]="false"></app-fhir-select-single-code>
-            </td>
-            <td>
-              <div class="btn-group pull-right">
-                <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
-                  <i class="fa fa-edit"></i>
-                </button>
-                <button type="button" class="btn btn-primary" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-                <button type="button" class="btn btn-primary" (click)="addChildPage(p)" title="Add a page as a child of this page">
-                  <i class="fa fa-plus"></i>
-                </button>
-                <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
-                  <i class="fa fa-arrow-up"></i>
-                </button>
-                <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
-                  <i class="fa fa-arrow-down"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <div class="card">
+          <div class="card-header">Pages</div>
+          <div class="card-body" *ngIf="implementationGuide.definition && !implementationGuide.definition.page">
+            <button type="button" class="btn btn-primary" (click)="toggleRootPage(true)">
+              Add a narrative page
+            </button>
+          </div>
+          <table class="table" *ngIf="implementationGuide.definition && implementationGuide.definition.page">
+            <thead>
+            <tr>
+              <th>
+                Title
+                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
+              </th>
+              <th>
+                Generation
+                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.generation"></app-tooltip-icon>
+              </th>
+              <th class="actions-column-5">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
+              <td>
+                <input type="text" class="form-control" [(ngModel)]="p.page.title"
+                       [class.is-invalid]="!p.page.title"/>
+              </td>
+              <td>
+                <app-fhir-select-single-code [parentObject]="p.page" propertyName="generation" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
+                                             [isFormGroup]="false"></app-fhir-select-single-code>
+              </td>
+              <td>
+                <div class="btn-group pull-right">
+                  <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" [disabled]="pages.length === 1" (click)="removePage(p)" title="Remove this page and all children">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p)">New Generic Page</a>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads')">New "Downloads" Page</a>
+                  </div>
+                  <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
+                    <i class="fa fa-arrow-up"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
+                    <i class="fa fa-arrow-down"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </ng-template>
     </ngb-tab>
 
@@ -560,7 +516,7 @@
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 

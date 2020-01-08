@@ -18,6 +18,7 @@ describe('HtmlExporter', () => {
       entry: [{
         resource: <ImplementationGuide> {
           resourceType: 'ImplementationGuide',
+          id: 'test-ig',
           url: 'http://test.com/test/ig',
           name: 'TestIg',
           status: 'active',
@@ -38,51 +39,46 @@ describe('HtmlExporter', () => {
       }]
     };
 
-    const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, null, null);
+    const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, null, 'test-ig');
 
-    it('should create a basic control format', () => {
+    it('should create a basic control file content with a default version', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
-      const control = htmlExporter.getControl(bundle);
-
-      expect(control).toBeTruthy();
-      expect(control.defaults).toBeTruthy();
-      expect(control.canonicalBase).toEqual('http://test.com/test');
-      expect(control['extension-domains']).toEqual(['https://trifolia-on-fhir.lantanagroup.com']);
-      expect(control['allowed-domains']).toEqual(['https://trifolia-on-fhir.lantanagroup.com']);
-      expect(control.pages).toBeTruthy();
-      expect(control.pages.length).toEqual(1);
-      expect(control.pages[0]).toEqual('pages');
-      expect(control.paths).toBeTruthy();
-      expect(control.paths.qa).toEqual('generated_output/qa');
-      expect(control.paths.temp).toEqual('generated_output/temp');
-      expect(control.paths.txCache).toEqual('generated_output/txCache');
-      expect(control.paths.output).toEqual('output');
-      expect(control.paths.resources).toEqual(['source/resources']);
-      expect(control.paths.pages).toEqual(['framework', 'source/pages']);
+      delete htmlExporter.implementationGuide.version;
+      const control = htmlExporter.getControl(bundle, 'xml');
+      const expected = '[IG]\n' +
+        'ig = input/test-ig.xml\n' +
+        'template = hl7.fhir.template\n' +
+        'usage-stats-opt-out = false\n' +
+        'copyrightyear = 2019+\n' +
+        'license = CC0-1.0\n' +
+        'version = 1.0.0\n' +
+        'ballotstatus = CI Build\n' +
+        'fhirspec = http://build.fhir.org/\n' +
+        '#excludexml = Yes\n' +
+        '#excludejson = Yes\n' +
+        '#excludettl = Yes\n' +
+        '#excludeMaps = Yes\n';
+      expect(control).toEqual(expected);
     });
 
-    it('should create a control file with dependencies', () => {
+    it('should create a control file format with json extension and non-default version', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
-      const control = htmlExporter.getControl(bundle);
-
-      expect(control).toBeTruthy();
-      expect(control.dependencyList).toBeTruthy();
-      expect(control.dependencyList.length).toEqual(1);
-      expect(control.dependencyList[0].location).toEqual('http://some.com/uri');
-      expect(control.dependencyList[0].name).toEqual('test-dependency');
-      expect(control.dependencyList[0].version).toEqual('1.2.3');
-    });
-
-    it('should not create a dependency without both a name and location', () => {
-      const bundleCopy: Bundle = JSON.parse(JSON.stringify(bundle));
-      bundleCopy.entry[0].resource.extension[0].extension.splice(1, 1);   // name is an extension at index 1 within the dependency extension
-
-      htmlExporter.implementationGuide = <ImplementationGuide> bundleCopy.entry[0].resource;
-      const newControl = htmlExporter.getControl(bundleCopy);
-
-      expect(newControl).toBeTruthy();
-      expect(newControl.dependencyList).toBeTruthy();
-      expect(newControl.dependencyList.length).toEqual(0);
+      htmlExporter.implementationGuide.version = '1.1.0';
+      const control = htmlExporter.getControl(bundle, 'json');
+      const expected = '[IG]\n' +
+        'ig = input/test-ig.json\n' +
+        'template = hl7.fhir.template\n' +
+        'usage-stats-opt-out = false\n' +
+        'copyrightyear = 2019+\n' +
+        'license = CC0-1.0\n' +
+        'version = 1.1.0\n' +
+        'ballotstatus = CI Build\n' +
+        'fhirspec = http://build.fhir.org/\n' +
+        '#excludexml = Yes\n' +
+        '#excludejson = Yes\n' +
+        '#excludettl = Yes\n' +
+        '#excludeMaps = Yes\n';
+      expect(control).toEqual(expected);
     });
 
     it('should not require a version for dependencies', () => {
@@ -90,11 +86,9 @@ describe('HtmlExporter', () => {
       bundleCopy.entry[0].resource.extension[0].extension.splice(2, 1);   // name is an extension at index 1 within the dependency extension
 
       htmlExporter.implementationGuide = <ImplementationGuide> bundleCopy.entry[0].resource;
-      const newControl = htmlExporter.getControl(bundleCopy);
+      const newControl = htmlExporter.getControl(bundleCopy, 'xml');
 
       expect(newControl).toBeTruthy();
-      expect(newControl.dependencyList).toBeTruthy();
-      expect(newControl.dependencyList.length).toEqual(1);
     });
   });
 });

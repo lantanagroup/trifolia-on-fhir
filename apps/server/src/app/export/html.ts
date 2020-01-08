@@ -2,9 +2,7 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {spawn} from 'child_process';
 import {
-  ContactDetail,
   DomainResource,
-  Extension,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
   PackageResourceComponent
@@ -23,7 +21,6 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {createTableFromArray, getDisplayName, reduceDistinct} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Formats} from '../models/export-options';
 import {PageInfo, TableOfContentsEntry} from './html.models';
 import {
@@ -31,6 +28,7 @@ import {
   getExtensionString
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -87,9 +85,37 @@ export class HtmlExporter {
     return buildIdSplit[1];
   }
 
-  // This is public so it can be unit-tested
-  public getControl(bundle: any) {
-    // Override in version-specific class
+  private getExtensionFromFormat(format: Formats) {
+    switch (format) {
+      case 'application/fhir+xml':
+      case 'application/xml':
+      case 'xml':
+        return '.xml';
+      default:
+        return '.json';
+    }
+  }
+
+  /**
+   * Returns the contents of the control file. This is now the ig.ini file in the root
+   * of the html export package.
+   * @param bundle The bundle that contains all resources in the IG
+   * @param format The format that the user selected for the export
+   */
+  public getControl(bundle: any, format: Formats) {
+    return '[IG]\n' +
+      `ig = input/${this.implementationGuideId}${this.getExtensionFromFormat(format)}\n` +
+      'template = hl7.fhir.template\n' +
+      'usage-stats-opt-out = false\n' +
+      'copyrightyear = 2019+\n' +
+      'license = CC0-1.0\n' +
+      `version = ${this.implementationGuide.version || '1.0.0'}\n` +
+      'ballotstatus = CI Build\n' +
+      'fhirspec = http://build.fhir.org/\n' +
+      '#excludexml = Yes\n' +
+      '#excludejson = Yes\n' +
+      '#excludettl = Yes\n' +
+      '#excludeMaps = Yes\n';
   }
 
   public async publish(format: Formats, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, testCallback?: (message, err?) => void) {
@@ -188,6 +214,10 @@ export class HtmlExporter {
     });
   }
 
+  protected populatePageInfos() {
+    // DO NOTHING. Should be overridden by subclasses.
+  }
+
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -201,7 +231,7 @@ export class HtmlExporter {
 
     try {
       this.rootPath = await this.createTempDirectory();
-      this.controlPath = path.join(this.rootPath, 'ig.json');
+      this.controlPath = path.join(this.rootPath, 'ig.ini');
       this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
     } catch (ex) {
       this.logger.error(`Error while creating temporary directory for export: ${ex.message}`, ex.stack);
@@ -217,7 +247,11 @@ export class HtmlExporter {
       throw ex;
     }
 
-    const resourcesDir = path.join(this.rootPath, 'source/resources');
+    const inputDir = path.join(this.rootPath, 'input');
+    fs.ensureDirSync(inputDir);
+
+    // Create the empty ignoreWarnings.txt file
+    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), '');
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
@@ -225,13 +259,30 @@ export class HtmlExporter {
       .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
       .resource;
 
+    this.removeNonExampleMedia();
+
     // Make sure the implementation guide is in XML format... This is a requirement for the fhir ig publisher.
-    this.writeResourceContent(resourcesDir, this.implementationGuide, true);
+    const igWithFixedVesion = JSON.parse(JSON.stringify(this.implementationGuide));
+
+    if (this.fhirVersion === 'stu3') {
+      this.stu3ImplementationGuide.fhirVersion = '3.0.2';
+    } else if (this.fhirVersion === 'r4') {
+      this.r4ImplementationGuide.fhirVersion = ['4.0.1'];
+    }
+
+    this.populatePageInfos();
+
+    // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
+    // to the ig that needs to get written.
+    this.logger.log('Updating the IG publisher templates for the resources');
+    this.updateTemplates(this.rootPath, bundle);
+
+    this.writeResourceContent(inputDir, this.implementationGuide, isXml);
 
     // Go through all of the other resources and write them to the file system
     bundle.entry
       .filter((e) => this.implementationGuide !== e.resource)
-      .forEach((entry) => this.writeResourceContent(resourcesDir, entry.resource, isXml));
+      .forEach((entry) => this.writeResourceContent(inputDir, entry.resource, isXml));
 
     this.logger.log('Done writing resources to file system.');
 
@@ -239,25 +290,18 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    control = this.getControl(bundle);
-
-    this.logger.log('Copying IG Publisher template/framework to temp directory');
-
-    // Copy the contents of the ig-publisher-template folder to the export temporary folder
-    const templatePath = path.join(__dirname, 'assets', 'ig-publisher-template');
-    fs.copySync(templatePath, this.rootPath);
+    control = this.getControl(bundle, format);
 
     this.logger.log('Saving the control file to the temp directory');
 
     // Write the ig.json file to the export temporary folder
-    const controlContent = JSON.stringify(control, null, '\t');
-    fs.writeFileSync(this.controlPath, controlContent);
+    fs.writeFileSync(this.controlPath, control);
+
+    // Make sure ROOT/input/pagecontent exists for writeFilesForResources()
+    fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
 
     // Write the intro, summary and search MD files for each resource
     (bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
-
-    this.logger.log('Updating the IG publisher templates for the resources');
-    this.updateTemplates(this.rootPath, bundle, this.implementationGuide);
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
@@ -328,13 +372,15 @@ export class HtmlExporter {
         return '.html';
       case 'xml':
         return '.xml';
+      case 'markdown':
+        return '.md';
       default:
         return '.md';
     }
   }
 
   protected generateTableOfContents(rootPath: string, tocEntries: TableOfContentsEntry[], shouldAutoGenerate: boolean, content) {
-    const tocPath = path.join(rootPath, 'source/pages/toc.md');
+    const tocPath = path.join(rootPath, 'input/pagecontent/toc.md');
     let tocContent = '';
 
     if (shouldAutoGenerate) {
@@ -366,14 +412,22 @@ export class HtmlExporter {
     }
   }
 
+  /**
+   * Removes Media resources from the implementation guide that are not an example.
+   * Those Media resources are meant to be exported as images in the file
+   * structure, rather than actual Media resources.
+   */
+  protected removeNonExampleMedia() {
+  }
+
   private async getIgPublisher(useLatest: boolean): Promise<string> {
     const fileName = 'org.hl7.fhir.igpublisher.jar';
     const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);
-    const latestPath = path.join(defaultPath, 'latest');
+    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher/latest/');
     const latestFilePath = path.join(latestPath, fileName);
-    const localDatePath = path.join(latestPath, 'date.txt');
-    let dateContent;
+    const localContentLengthPath = path.join(latestPath, 'size.txt');
+    let contentLength;
 
     if (useLatest === true) {
       fs.ensureDirSync(latestPath);
@@ -388,11 +442,11 @@ export class HtmlExporter {
           method: 'HEAD',
           url: this.fhirConfig.latestPublisher
         }).toPromise();
-        dateContent = headResults.headers['date'];
+        contentLength = headResults.headers['content-length'];
 
-        const localDateContent = fs.existsSync(localDatePath) ? fs.readFileSync(localDatePath).toString() : undefined;
+        const localContentLengthContent = fs.existsSync(localContentLengthPath) ? fs.readFileSync(localContentLengthPath).toString() : undefined;
 
-        if (localDateContent === dateContent) {
+        if (localContentLengthContent === contentLength) {
           this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
           return latestFilePath;
         }
@@ -410,7 +464,7 @@ export class HtmlExporter {
         this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
 
         fs.writeFileSync(latestFilePath, results.data);
-        fs.writeFileSync(localDatePath, dateContent);
+        fs.writeFileSync(localContentLengthPath, contentLength);
 
         return latestFilePath;
       } catch (ex) {
@@ -430,146 +484,66 @@ export class HtmlExporter {
    * with links to the resources in the implementation guide.
    * @param rootPath
    * @param bundle
-   * @param implementationGuide
    */
-  private updateTemplates(rootPath, bundle, implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
-    const mainResourceTypes = ['ImplementationGuide', 'ValueSet', 'CodeSystem', 'StructureDefinition', 'CapabilityStatement'];
-    const distinctResources = (bundle.entry || [])
-      .map((entry) => <DomainResource> entry.resource)
-      .reduce(reduceDistinct((resource: DomainResource) => resource.resourceType + '_' + resource.id), []);
-    const valueSets = distinctResources.filter((resource) => resource.resourceType === 'ValueSet');
-    const terminologyPath = path.join(rootPath, 'source/pages/terminology.md');
-    const codeSystems = distinctResources.filter((resource) => resource.resourceType === 'CodeSystem');
-    const profiles = distinctResources.filter((resource) => resource.resourceType === 'StructureDefinition' && (!resource.baseDefinition || !resource.baseDefinition.endsWith('Extension')));
-    const profilesPath = path.join(rootPath, 'source/pages/profiles.md');
-    const extensions = distinctResources.filter((resource) => resource.resourceType === 'StructureDefinition' && resource.baseDefinition && resource.baseDefinition.endsWith('Extension'));
-    const capabilityStatements = distinctResources.filter((resource) => resource.resourceType === 'CapabilityStatement');
-    const csPath = path.join(rootPath, 'source/pages/capstatements.md');
-    const otherResources = distinctResources.filter((resource) => {
-      // If the resource is Media, only show it in the "Other" page if it is an example
-      if (resource.resourceType === 'Media') {
-        const igResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
-        return this.isImplementationGuideReferenceExample(igResource);
-      }
+  protected updateTemplates(rootPath: string, bundle) {
+    fs.ensureDirSync(path.join(rootPath, 'input/includes'));
 
-      return mainResourceTypes.indexOf(resource.resourceType) < 0;
+    const allPageMenuNames = this.pageInfos
+      .filter(pi => {
+        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+        return !!extension && extension.valueString;
+      })
+      .map(pi => {
+        const extensions = <IExtension[]> (pi.page.extension || []);
+        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+        return extension.valueString;
+      });
+    const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
+      if (init.indexOf(next) < 0) init.push(next);
+      return init;
+    }, []);
+    const pageMenuContent = distinctPageMenuNames.map(pmn => {
+      const menuPages = this.pageInfos
+        .filter(pi => {
+          const extensions = <IExtension[]> (pi.page.extension || []);
+          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+          return extension && extension.valueString === pmn && pi.fileName;
+        });
+
+      if (menuPages.length === 1) {
+        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
+        return `  <li><a href="${fileName}">${menuPages[0].title}</a></li>\n`;
+      } else {
+        const pageMenuItems = menuPages
+          .map(pi => {
+            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
+            return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+          });
+
+        return '  <li class="dropdown">\n' +
+          `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
+          '      </b>\n' +
+          '    </a>\n' +
+          '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
+          '    </ul>\n' +
+          '  </li>';
+      }
     });
-    const otherPath = path.join(rootPath, 'source/pages/other.md');
 
-    if (implementationGuide) {
-      const indexPath = path.join(rootPath, 'source/pages/index.md');
-
-      if (implementationGuide.description) {
-        const descriptionContent = '### Description\n\n' + implementationGuide.description + '\n\n';
-        fs.appendFileSync(indexPath, descriptionContent);
-      }
-
-      if (implementationGuide.contact) {
-        const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-        });
-        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-        fs.appendFileSync(indexPath, authorsContent);
-      }
-    }
-
-    // Profiles
-    if (profiles.length > 0) {
-      const profilesData = profiles
-        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-        .map((profile) => {
-          return [`<a href="StructureDefinition-${profile.id}.html">${profile.name}</a>`, `{% capture profile-intro %}{% include ${profile.id}-intro.md id="{{[id]}}" %}{% endcapture %}{{ profile-intro | markdownify }}`];
-        });
-      const profilesTable = createTableFromArray(['Name', 'Description'], profilesData);
-      fs.appendFileSync(profilesPath, '### Profiles\n\n' + profilesTable + '\n\n');
-    } else {
-      fs.appendFileSync(profilesPath, '**No profiles are defined for this implementation guide**\n\n');
-    }
-
-    // Extensions
-    if (extensions.length > 0) {
-      const extData = extensions
-        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-        .map((extension) => {
-          return [`<a href="StructureDefinition-${extension.id}.html">${extension.name}</a>`, `{% capture profile-intro %}{% include ${extension.id}-intro.md id="{{[id]}}" %}{% endcapture %}{{ profile-intro | markdownify }}`];
-        });
-      const extContent = createTableFromArray(['Name', 'Description'], extData);
-      fs.appendFileSync(profilesPath, '### Extensions\n\n' + extContent + '\n\n');
-    } else {
-      fs.appendFileSync(profilesPath, '### Extensions\n\n**No extensions are defined for this implementation guide**\n\n');
-    }
-
-    // Value Sets
-    let vsContent = '### Value Sets\n\n';
-
-    if (valueSets.length > 0) {
-      valueSets
-        .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
-        .forEach((valueSet) => {
-          vsContent += `- [${valueSet.title || valueSet.name}](ValueSet-${valueSet.id}.html)\n`;
-        });
-    } else {
-      vsContent += '**No value sets are defined for this implementation guide**\n\n';
-    }
-
-    fs.appendFileSync(terminologyPath, vsContent + '\n\n');
-
-    // Code Systems
-    let csContent = '### Code Systems\n\n';
-
-    if (codeSystems.length > 0) {
-      codeSystems
-        .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
-        .forEach((codeSystem) => {
-          csContent += `- [${codeSystem.title || codeSystem.name}](CodeSystem-${codeSystem.id}.html)\n`;
-        });
-    } else {
-      csContent += '**No code systems are defined for this implementation guide**\n\n';
-    }
-
-    fs.appendFileSync(terminologyPath, csContent + '\n\n');
-
-    // Capability Statements
-    if (capabilityStatements.length > 0) {
-      const csData = capabilityStatements
-        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-        .map((capabilityStatement) => {
-          return [`<a href="CapabilityStatement-${capabilityStatement.id}.html">${capabilityStatement.name}</a>`, capabilityStatement.description || ''];
-        });
-      const capContent = createTableFromArray(['Name', 'Description'], csData);
-      fs.appendFileSync(csPath, '### CapabilityStatements\n\n' + capContent);
-    } else {
-      fs.appendFileSync(csPath, '**No capability statements are defined for this implementation guide**');
-    }
-
-    // Other Resources
-    if (otherResources.length > 0) {
-      const oData = otherResources
-        .sort((a, b) => {
-          const aDisplay = a.title || getDisplayName(a.name) || a.id || '';
-          const aCompare = a.resourceType + aDisplay;
-          const bDisplay = b.title || getDisplayName(b.name) || b.id || '';
-          const bCompare = b.resourceType + bDisplay;
-          return aCompare.localeCompare(bCompare);
-        })
-        .map((resource) => {
-          const name = resource.title || getDisplayName(resource.name) || resource.id;
-          return [resource.resourceType, `<a href="${resource.resourceType}-${resource.id}.html">${name}</a>`];
-        });
-      const oContent = createTableFromArray(['Type', 'Name'], oData);
-      fs.appendFileSync(otherPath, '### Other Resources\n\n' + oContent);
-    } else {
-      fs.appendFileSync(otherPath, '**No examples are defined for this implementation guide**');
-    }
+    const menuContent = '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
+      '  <li><a href="index.html">IG Home</a></li>\n' +
+      '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
+      '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
+      '</ul>\n';
+    fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 
   /**
    * The IG Publisher template references several additional markdown files for each profile. This method
    * creates each of the additional files. They are:
-   * <ID>-intro.md
-   * <ID>-search.md
-   * <ID>.summary.md
+   * <RESOURCE_TYPE>-<ID>-intro.md
+   * <RESOURCE_TYPE>-<ID>.notes.md
    * @param rootPath
    * @param resource
    */
@@ -582,7 +556,7 @@ export class HtmlExporter {
       const fileNameIdentifier = ((<Media>resource).identifier || []).find(id => !!id.value);
 
       if (fileNameIdentifier && (<Media>resource).content && (<Media>resource).content.data) {
-        const outputPath = path.join(this.rootPath, 'source/pages', fileNameIdentifier.value);
+        const outputPath = path.join(this.rootPath, 'input/pagecontent', fileNameIdentifier.value);
 
         try {
           fs.writeFileSync(outputPath, new Buffer((<Media>resource).content.data, 'base64'));
@@ -594,27 +568,49 @@ export class HtmlExporter {
       return;
     }
 
-    const introPath = path.join(rootPath, `source/pages/_includes/${resource.id}-intro.md`);
-    const searchPath = path.join(rootPath, `source/pages/_includes/${resource.id}-search.md`);
-    const summaryPath = path.join(rootPath, `source/pages/_includes/${resource.id}-summary.md`);
+    /* Add this back in when ToF's UI captures this information
+    const introPath = path.join(rootPath, `input/pagecontent/${resource.resourceType}-${resource.id}-intro.md`);
+    const notesPath = path.join(rootPath, `input/pagecontent/${resource.resourceType}-${resource.id}-notes.md`);
 
-    let intro = '';
-
-    if ((<any>resource).description) {
-      intro += (<any>resource).description;
-    }
-
-    fs.writeFileSync(introPath, intro);
-    fs.writeFileSync(searchPath, '');
-    fs.writeFileSync(summaryPath, '');
+    fs.writeFileSync(introPath, '');
+    fs.writeFileSync(notesPath, '');
+     */
   }
 
+  /**
+   * Uses the 'tmp' module to create a temporary directory on the system to store files for the export.
+   * A good amount of this code is related to windows, and resolving the short directory naming that
+   * windows occasionally decides to use (ex: "C:\users\sean~1.mci" instead of "c:\users\sean.mcilvenna")
+   * The windows-short-dir-name screws up the IG Publisher, so it needs to be converted to a full path
+   */
   private createTempDirectory(): Promise<string> {
     return new Promise((resolve, reject) => {
       tmp.dir((tmpDirErr, rootPath) => {
         if (tmpDirErr) {
           reject(tmpDirErr);
         } else {
+          if (rootPath.indexOf('~') > 0) {
+            const dirSplit = rootPath.split(path.sep);
+            let basePath = dirSplit[0];
+
+            for (let i = 1; i < dirSplit.length; i++) {
+              let nextPath = dirSplit[i];
+
+              if (nextPath.indexOf('~') > 0) {
+                const beforeCurley = nextPath.substring(0, nextPath.indexOf('~'));
+                const files = fs.readdirSync(basePath);
+                const filtered = files.filter(n => n.toLowerCase().startsWith(beforeCurley.toLowerCase()));
+                const curleyCount = parseInt(nextPath.substring(nextPath.indexOf('~') + 1, nextPath.indexOf('~') + 2));
+                nextPath = filtered[curleyCount - 1];
+              }
+
+              basePath = path.join(basePath, nextPath);
+            }
+
+            resolve(basePath);
+            return;
+          }
+
           resolve(rootPath);
         }
       });
@@ -637,11 +633,11 @@ export class HtmlExporter {
     }
   }
 
-  private getResourceFilePath(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+  private getResourceFilePath(inputDir: string, resource: DomainResource, isXml: boolean) {
     // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
     if (resource === this.implementationGuide) {
-      fs.ensureDirSync(path.join(resourcesDir, 'implementationguide'));
-      return path.join(resourcesDir, 'implementationguide', resource.id.toLowerCase() + '.xml');
+      fs.ensureDirSync(inputDir);
+      return path.join(inputDir, resource.id + (isXml ? '.xml' : '.json'));
     }
 
     const implementationGuideResource = <ImplementationGuideResourceComponent> this.getImplementationGuideResource(resource.resourceType, resource.id);
@@ -665,7 +661,7 @@ export class HtmlExporter {
     }
 
     // Make sure the directory for the resource exists
-    const fullResourcePath = path.join(resourcesDir, resourcePath);
+    const fullResourcePath = path.join(inputDir, 'resources', resourcePath);
     const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf(path.sep));
 
     this.logger.log(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
@@ -674,9 +670,9 @@ export class HtmlExporter {
     return fullResourcePath;
   }
 
-  private writeResourceContent(resourcesDir: string, resource: DomainResource, isXml: boolean) {
+  private writeResourceContent(inputDir: string, resource: DomainResource, isXml: boolean) {
     const cleanResource = BundleExporter.cleanupResource(resource);
-    const resourcePath = this.getResourceFilePath(resourcesDir, resource, isXml);
+    const resourcePath = this.getResourceFilePath(inputDir, resource, isXml);
     let resourceContent;
 
     this.logger.log(`Writing ${resource.resourceType}/${resource.id} to "${resourcePath}.`);

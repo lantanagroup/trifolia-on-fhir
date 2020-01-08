@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Binary, ImplementationGuide, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Extension, Binary, ImplementationGuide, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Observable} from 'rxjs';
+import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -14,10 +16,56 @@ export class PageComponentModalComponent implements OnInit {
   public implementationGuide: ImplementationGuide;
   public pageBinary: Binary;
   public Globals = Globals;
+  public pageNavMenus: string[];
 
   constructor(public activeModal: NgbActiveModal) {
 
   }
+
+  public get hasPageNavMenu(): boolean {
+    const extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+    return !!extension;
+  }
+
+  public set hasPageNavMenu(value: boolean) {
+    let extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+    if (value && !extension) {
+      this.page.extension = this.page.extension || [];
+      this.page.extension.push(new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'], valueString: '' }));
+    } else if (!value && extension) {
+      const index = this.page.extension.indexOf(extension);
+      this.page.extension.splice(index, 1);
+    }
+  }
+
+  public get pageNavMenu(): string {
+    const extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+    if (extension) {
+      return extension.valueString;
+    }
+  }
+
+  public set pageNavMenu(value: string) {
+    let extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+    if (!extension) {
+      this.page.extension = this.page.extension || [];
+      extension = new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'] });
+      this.page.extension.push(extension);
+    }
+
+    extension.valueString = value;
+  }
+
+  pageNavMenuSearch = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? [] : this.pageNavMenus.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10)),
+      distinct()
+    );
 
   public getMediaReferences(): MediaReference[] {
     return getImplementationGuideMediaReferences('stu3', this.implementationGuide);
@@ -38,51 +86,8 @@ export class PageComponentModalComponent implements OnInit {
 
         if (reference.startsWith('#')) {
           // Find the Binary in the contained resources
-          this.pageBinary = <Binary> (this.implementationGuide.contained || []).find((extension) => extension.id === reference.substring(1));
+          this.pageBinary = <Binary>(this.implementationGuide.contained || []).find((extension) => extension.id === reference.substring(1));
         }
-      }
-    }
-  }
-
-  public get autoGenerate(): boolean {
-    const autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (autoGenerateExtension) {
-      return autoGenerateExtension.valueBoolean === true;
-    }
-
-    return false;
-  }
-
-  public set autoGenerate(value: boolean) {
-    if (!this.page.extension) {
-      this.page.extension = [];
-    }
-
-    let autoGenerateExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (!autoGenerateExtension) {
-      autoGenerateExtension = {
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: false
-      };
-      this.page.extension.push(autoGenerateExtension);
-    }
-
-    autoGenerateExtension.valueBoolean = value;
-
-    const foundIgPageContentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
-
-    if (value && foundIgPageContentExtension && foundIgPageContentExtension.valueReference && foundIgPageContentExtension.valueReference.reference && foundIgPageContentExtension.valueReference.reference.startsWith('#')) {
-      const foundBinary = (this.implementationGuide.contained || []).find((contained) => contained.id === foundIgPageContentExtension.valueReference.reference.substring(1));
-
-      if (foundBinary) {
-        const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
-        const extensionIndex = this.page.extension.indexOf(foundIgPageContentExtension);
-
-        this.implementationGuide.contained.splice(binaryIndex, 1);
-        this.page.extension.splice(extensionIndex, 1);
-        this.pageBinary = null;
       }
     }
   }
@@ -157,5 +162,27 @@ export class PageComponentModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    const allPages: PageComponent[] = [];
+    const getPages = (parent: PageComponent) => {
+      allPages.push(parent);
+      (parent.page || []).forEach(p => getPages(p));
+    };
+
+    if (this.implementationGuide.page) {
+      getPages(this.implementationGuide.page);
+    }
+
+    this.pageNavMenus = allPages
+      .filter(p => {
+        const extension = (p.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+        return !!extension;
+      })
+      .map(p => {
+        const extension = (p.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+        if (extension) {
+          return extension.valueString;
+        }
+      });
   }
 }

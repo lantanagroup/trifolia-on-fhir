@@ -1,0 +1,78 @@
+<h2>Users</h2>
+
+<ngb-tabset>
+  <ngb-tab title="Users">
+    <ng-template ngbTabContent>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Id</th>
+          <th>Identifier</th>
+          <th>Name</th>
+          <th class="actions-column-1">
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="refreshUsers()">Refresh</button>
+            </div>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let u of users">
+          <td>{{u.id}}</td>
+          <td>{{getDisplayIdentifier(u.identifier)}}</td>
+          <td>{{getDisplayName(u.name)}}</td>
+          <td></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <th colspan="4">Showing 10 of {{totalUsers}} users.</th>
+        </tr>
+        </tfoot>
+      </table>
+
+      <ngb-pagination
+        class="d-flex justify-content-center"
+        [maxSize]="5"
+        [collectionSize]="totalUsers"
+        [(page)]="usersPage"
+        [boundaryLinks]="true"
+        (pageChange)="usersPageChanged.next()">
+      </ngb-pagination>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab title="Active Users">
+    <ng-template ngbTabContent>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>User Id</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="refresh()">Refresh</button>
+            </div>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let au of activeUsers">
+          <td>{{au.userId}}</td>
+          <td>{{au.name}}</td>
+          <td>{{au.email}}</td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab title="Broadcast Message">
+    <ng-template ngbTabContent>
+      <textarea class="form-control" #messageToBroadcast></textarea>
+      <button type="button" class="btn btn-primary" (click)="broadcastMessage(messageToBroadcast.value)">Broadcast!</button>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>

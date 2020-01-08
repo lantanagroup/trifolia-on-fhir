@@ -5,10 +5,13 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../models/element-tree-model';
 import {
   Coding,
-  ElementDefinition,
+  ElementDefinition as STU3ElementDefinition, ExampleComponent,
   StructureDefinition,
   TypeRefComponent
 } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  ElementDefinition as R4ElementDefinition, ElementDefinitionExampleComponent, ElementDefinitionTypeRefComponent
+} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../shared/config.service';
@@ -41,7 +44,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   }
 
-  get element(): ElementDefinition {
+  get element(): STU3ElementDefinition | R4ElementDefinition {
     if (this.elementTreeModel) {
       return this.elementTreeModel.constrainedElement;
     }
@@ -155,10 +158,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   private getTypes(): Coding[] {
-    const baseTypes = this.elementTreeModel.baseElement.type || [];
-    const elementTreeModelTypes = this.element.type || [];
+    const types = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.baseElement.type;
+    const baseTypes = types || [];
 
-    const filtered = baseTypes.filter((baseType: TypeRefComponent) => {
+    const elementTreeModelTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> (this.element.type || []);
+
+    const filtered = baseTypes.filter((baseType: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
       const typeAlreadySelected = elementTreeModelTypes.find((type: TypeRefComponent) => type.code === baseType.code);
       return !typeAlreadySelected;        // Only return definedTypeCodes that are no found in the list of types in the element
     });
@@ -191,7 +196,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
 
   addType() {
-    this.element.type.push({code: this.getDefaultType()});
+    let elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.element.type;
+    elementTypes.push({code: this.getDefaultType()});
   }
 
   isPrimitiveExceptBoolean() {
@@ -243,10 +249,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   private refreshExamples() {
     let elementTypes = this.elementTreeModel.constrainedElement ?
-      this.elementTreeModel.constrainedElement.type : [];
+      <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.constrainedElement.type : [];
+
+    let elementExamples = <(ExampleComponent | ElementDefinitionExampleComponent)[]> this.element.example;
 
     if (!elementTypes || elementTypes.length === 0) {
-      elementTypes = this.elementTreeModel.baseElement.type;
+      elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.baseElement.type;
     }
 
     for (const type of elementTypes) {
@@ -255,7 +263,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
       }
 
       const propertyName = 'value' + type.code.substring(0, 1).toUpperCase() + type.code.substring(1);
-      const foundExample = this.element.example.find((example) => example.hasOwnProperty(propertyName));
+      const foundExample = elementExamples.find((example) => example.hasOwnProperty(propertyName));
       let rawValue;
 
       if (foundExample) {

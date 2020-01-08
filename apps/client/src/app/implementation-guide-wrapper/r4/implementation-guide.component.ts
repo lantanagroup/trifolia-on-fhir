@@ -324,17 +324,10 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     }
 
     if (value && !this.implementationGuide.definition.page) {
-      const newPage = new ImplementationGuidePageComponent();
-      newPage.title = 'Table of Contents';
-      newPage.generation = 'generated';
-      newPage.nameUrl = 'toc.md';
-
-      newPage.extension = [{
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: true
-      }];
-
-      this.implementationGuide.definition.page = newPage;
+      this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
+      this.implementationGuide.definition.page.title = 'Home Page';
+      this.implementationGuide.definition.page.generation = 'markdown';
+      this.implementationGuide.definition.page.nameUrl = 'index.md';
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);
@@ -371,7 +364,7 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     return 'New Page ' + (titles.length + 1).toString();
   }
 
-  public addChildPage(pageDef: PageDefinition) {
+  public addChildPage(pageDef: PageDefinition, template?: 'downloads') {
     if (!this.implementationGuide.contained) {
       this.implementationGuide.contained = [];
     }
@@ -382,12 +375,29 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
 
     const newBinary = new Binary();
     newBinary.contentType = 'text/markdown';
-    newBinary.data = btoa('No page content yet');
     newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
     this.implementationGuide.contained.push(newBinary);
 
+    if (template === 'downloads') {
+      newBinary.data = 'KipGdWxsIEltcGxlbWVudGF0aW9uIEd1aWRlKioKClRoZSBlbnRpcmUgaW1wbGVtZW50YXRpb24gZ3VpZGUgKGluY2x1ZGluZyB0aGUgSFRNTCBmaWxlcywgZGVmaW5pdGlvbnMsIHZhbGlkYXRpb24gaW5mb3JtYXRpb24sIGV0Yy4pIG1heSBiZSBkb3dubG9hZGVkIFtoZXJlXShmdWxsLWlnLnppcCkuCgoqKlZhbGlkYXRvciBQYWNrIGFuZCBEZWZpbml0aW9ucyoqCgpUaGUgdmFsaWRhdG9yLnBhY2sgZmlsZSBpcyBhIHppcCBmaWxlIHRoYXQgY29udGFpbnMgYWxsIHRoZSB2YWx1ZSBzZXRzLCBwcm9maWxlcywgZXh0ZW5zaW9ucywgbGlzdCBvZiBwYWdlcyBhbmQgdXJscyBpbiB0aGUgSUcsIGV0YyBkZWZpbmVkIGFzIHBhcnQgb2YgdGhlIHRoaXMgSW1wbGVtZW50YXRpb24gR3VpZGVzLgoKSXQgaXMgdXNlZDoKCiogYnkgdGhlIHZhbGlkYXRvciBpZiB5b3UgcmVmZXIgdG8gdGhlIElHIGRpcmVjdGx5IGJ5IGl04oCZcyBjYW5vbmljYWwgVVJMCiogYnkgdGhlIElHIHB1Ymxpc2hlciBpZiB5b3UgZGVjbGFyZSB0aGF0IG9uZSBJRyBkZXBlbmRzIG9uIGFub3RoZXIKKiBieSBhIEZISVIgc2VydmVyLCBpZiB5b3UgYWRkIHRoZSBJRyB0byBzZXJ2ZXIgbG9hZCBsaXN0CgpZb3UgbWF5IFtkb3dubG9hZCB0aGUgdmFsaWRhdG9yLnBhY2tdKHZhbGlkYXRvci5wYWNrKSBmaWxlIGhlcmUuCgpJbiBhZGRpdGlvbiB0aGVyZSBhcmUgZm9ybWF0IHNwZWNpZmljIGRlZmluaXRpb25zIGZpbGVzLgoKKiBbWE1MXShkZWZpbml0aW9ucy54bWwuemlwKQoqIFtKU09OXShkZWZpbml0aW9ucy5qc29uLnppcCkKKiBbVFRMXShkZWZpbml0aW9ucy50dGwuemlwKQoKKipFeGFtcGxlczoqKiBhbGwgdGhlIGV4YW1wbGVzIHRoYXQgYXJlIHVzZWQgaW4gdGhpcyBJbXBsZW1lbnRhdGlvbiBHdWlkZSBhdmFpbGFibGUgZm9yIGRvd25sb2FkOgoKKiBbWE1MXShleGFtcGxlcy54bWwuemlwKQoqIFtKU09OXShleGFtcGxlcy5qc29uLnppcCkKKiBbVFRsXShleGFtcGxlcy50dGwuemlwKQ==';
+    } else {
+      newBinary.data = btoa('No page content yet');
+    }
+
     const newPage = new ImplementationGuidePageComponent();
-    newPage.title = this.getNewPageTitle();
+
+    if (template === 'downloads') {
+      newPage.title = 'Downloads';
+      newPage.extension = newPage.extension || [];
+      const extension = (newPage.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+      if (!extension) {
+        newPage.extension.push(new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'], valueString: 'Downloads' }));
+      }
+    } else {
+      newPage.title = this.getNewPageTitle();
+    }
+
     newPage.generation = 'markdown';
     newPage.nameReference = new ResourceReference();
     newPage.nameReference.reference = '#' + newBinary.id;

@@ -19,7 +19,6 @@ import {CodesystemsComponent} from './codesystems/codesystems.component';
 import {CodesystemComponent} from './codesystem/codesystem.component';
 import {LoginComponent} from './login/login.component';
 import {StructureDefinitionsComponent} from './structure-definitions/structure-definitions.component';
-import {UsersComponent} from './users/users.component';
 import {UserComponent} from './user/user.component';
 import {NewProfileComponent} from './new-profile/new-profile.component';
 import {CookieService} from 'angular2-cookie/core';
@@ -74,6 +73,7 @@ import {
   OAuthModuleConfig,
   OAuthService
 } from 'angular-oauth2-oidc';
+import {UsersComponent} from './manage/users/users.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -154,9 +154,9 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/export', component: ExportComponent},
   {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
   {path: ':fhirServer/other-resources', component: OtherResourcesComponent},
-  {path: ':fhirServer/users', component: UsersComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
-  {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'}
+  {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'}
 ];
 
 /**

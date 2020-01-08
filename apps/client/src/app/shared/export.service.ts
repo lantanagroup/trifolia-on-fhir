@@ -10,7 +10,7 @@ export class ExportOptions {
   public responseFormat?: 'application/json' | 'application/xml' = 'application/xml';
   public useTerminologyServer? = true;
   public useLatest? = true;
-  public downloadOutput? = true;       // Only applies to HTML exports
+  public downloadOutput? = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
 }
 

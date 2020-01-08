@@ -1,10 +1,28 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, HttpService, Post, Req, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get, Header,
+  HttpService,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
+import {FhirServerBase, User} from './server.decorators';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Bundle, Practitioner as R4Practitioner, ContactPoint as R4ContactPoint} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ContactPoint as STU3ContactPoint, Practitioner as STU3Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {UserModel} from '../../../../libs/tof-lib/src/lib/user-model';
+import {getDisplayIdentifier, getDisplayName} from '../../../../libs/tof-lib/src/lib/helper';
 
 interface MessageRequest {
   message: string;
@@ -20,8 +38,77 @@ export class ManageController extends BaseController {
     super(configService, httpService);
   }
 
+  @Get('user/download')
+  @Header('Content-Type', 'text/plain')
+  @Header('Content-Disposition', 'attachment; filename="users.csv"')
+  async downloadUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string) {
+    this.assertAdmin(user);
+
+    let practitioners: (STU3Practitioner | R4Practitioner)[] = [];
+
+    const getNext = async (url: string) => {
+      const bundle = await this.httpService.get<Bundle>(url).toPromise();
+      practitioners = practitioners.concat((bundle.data.entry || []).map(entry => <STU3Practitioner | R4Practitioner> entry.resource));
+      const nextLink = (bundle.data.link || []).find(link => link.relation === 'next');
+
+      if (nextLink) {
+        await getNext(nextLink.url);
+      }
+    };
+
+    const initialUrl = buildUrl(fhirServerBase, 'Practitioner', null, null, { _count: 50 });
+    await getNext(initialUrl);
+
+    let response = 'Identifier, Name, Email\n';
+
+    practitioners
+      .filter(practitioner => practitioner.name && practitioner.name.length > 0)
+      .forEach(practitioner => {
+        const cells = [ getDisplayIdentifier(practitioner.identifier, true).replace(/,/g, ' '), getDisplayName(practitioner.name).replace(/, /g, ' ') ];
+
+        const emailTelecoms: (STU3ContactPoint | R4ContactPoint)[] = (practitioner.telecom || []);
+        const emailTelecom = emailTelecoms.find(telecom => telecom.system === 'email');
+
+        cells.push(emailTelecom && emailTelecom.value ? emailTelecom.value.replace('mailto:', '') : '');
+
+        response += `${cells.join('\t')}\n`;
+      });
+
+    return response;
+  }
+
+  @Get('user')
+  async getUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('count') count = 10, @Query('page') page = 1): Promise<{ total: number, users: UserModel[] }> {
+    this.assertAdmin(user);
+
+    const params = {
+      _count: count,
+      _getpagesoffset: (page - 1) * count,
+      _summary: true
+    };
+
+    const url = buildUrl(fhirServerBase, 'Practitioner', null, null, params);
+    const results = await this.httpService.get(url).toPromise();
+    const bundle = <Bundle> results.data;
+
+    return {
+      total: bundle.total,
+      users: (bundle.entry || []).map(entry => {
+        const practitioner = <STU3Practitioner | R4Practitioner> entry.resource;
+
+        return <UserModel> {
+          id: practitioner.id,
+          identifier: practitioner.identifier,
+          name: practitioner.name
+        };
+      })
+    };
+  }
+
   @Get('user/active')
-  getActiveUsers(@Req() request: ITofRequest) {
+  getActiveUsers(@Req() request: ITofRequest, @User() user: ITofUser) {
+    this.assertAdmin(user);
+
     const connections = request.ioConnections.map((connection: ISocketConnection) => {
       let name;
 
@@ -50,8 +137,9 @@ export class ManageController extends BaseController {
   }
 
   @Post('user/active/message')
-  sendMessageToActiveUsers(@Req() request: ITofRequest, @Body() body: MessageRequest) {
-    this.assertAdmin(request);
-    request.io.emit('message', body.message);
+  sendMessageToActiveUsers(@Req() req: ITofRequest, @Body() body: MessageRequest, @User() user: ITofUser) {
+    this.assertAdmin(user);
+
+    req.io.emit('message', body.message);
   }
 }

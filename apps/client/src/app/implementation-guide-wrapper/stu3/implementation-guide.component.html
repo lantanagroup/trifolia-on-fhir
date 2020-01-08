@@ -418,7 +418,7 @@
                      [class.is-invalid]="!p.page.title"/>
             </td>
             <td>
-              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="pageKindChanged(p.page)">
+              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
                 <option value="page">Page</option>
                 <option value="example">Example</option>
                 <option value="list">List</option>
@@ -459,7 +459,7 @@
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 

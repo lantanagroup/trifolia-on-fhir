@@ -58,9 +58,9 @@ export class BaseController {
     }
   }
 
-  protected assertAdmin(request: ITofRequest) {
-    if (request.headers['admin-code'] !== this.configService.server.adminCode) {
-      throw new UnauthorizedException('You are not authenticated as an admin');
+  protected assertAdmin(user: ITofUser) {
+    if (!user.isAdmin) {
+      throw new UnauthorizedException('This operation requires administrative privileges.');
     }
   }
 
@@ -173,6 +173,10 @@ export class BaseController {
   }
 
   protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+    if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
+      return true;
+    }
+
     const foundEveryone = findPermission(resource.meta, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
       return findPermission(resource.meta, 'group', permission, group.id);
@@ -388,7 +392,7 @@ export class BaseController {
     }
   }
 
-  protected async getContextImplementationGuide(fhirServerBase: string, contextImplementationGuideId: string): Promise<STU3ImplementationGuide | R4ImplementationGuide> {
+  protected async getImplementationGuide(fhirServerBase: string, contextImplementationGuideId: string): Promise<STU3ImplementationGuide | R4ImplementationGuide> {
     if (!contextImplementationGuideId) {
       return Promise.resolve(undefined);
     }

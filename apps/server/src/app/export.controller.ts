@@ -17,6 +17,9 @@ import {createHtmlExporter} from './export/html.factory';
 
 import * as path from "path";
 import * as tmp from 'tmp';
+import {FhirServerBase, FhirServerId, FhirServerVersion} from './server.decorators';
+import {Fhir} from 'fhir/fhir';
+import {MSWordExporter} from './export/msword';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -134,6 +137,19 @@ export class ExportController extends BaseController {
       this.logger.error(`Error during bundle export: ${ex.message}`, ex.stack);
       throw ex;
     }
+  }
+
+  @Post(':implementationGuideId/msword')
+  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string) {
+    const bundleExporter = new BundleExporter(this.httpService, this.logger, req.fhirServerBase, req.fhirServerId, req.fhirServerVersion, req.fhir, implementationGuideId);
+    const bundle = await bundleExporter.getBundle(true);
+
+    const msWordExporter = new MSWordExporter();
+    const results = await msWordExporter.export(bundle);
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', 'attachment; filename=ig.docx');
+    res.send(Buffer.from(results));
   }
 
   @Post(':implementationGuideId/html')

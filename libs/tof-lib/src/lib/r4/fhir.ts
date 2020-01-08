@@ -1,3 +1,5 @@
+import {IExtension} from '../fhirInterfaces';
+
 export class Base {
   public fhir_comments?: string[];
 
@@ -11,7 +13,7 @@ export class Base {
 
 }
 
-export class Extension {
+export class Extension implements IExtension {
   public id?: string;
   public extension?: Extension[];
   public url: string;

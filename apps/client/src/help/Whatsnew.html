@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -31,10 +31,10 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -185,121 +185,98 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.5.0</span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Project/Context</span></span></h2>
-<p class="rvps3"><span class="rvts8">After logging in, users must now select a project (an ImplementationGuide) to work with prior to seeing any Browse screens. All screens (except Browse &gt; Other Resources) have been modified to respect the context of the project the user has selected, and will only show resources that are related to that project. When creating new resources or importing resources from an external source (such as a file on your computer), they are automatically associated with the project that you are working on.</span></p>
-<p class="rvps3"><span class="rvts8">Note that permissions still apply; if you don't have permission to access a resource, you won't see it in the browse screens.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Paging "Other Resources"</span></span></h3>
-<p class="rvps3"><span class="rvts8">Prior to this release, the screen would only show the first 10 resources stored on the server. Now, users are given paging options when there are multiple pages of resources.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Profile Mappings</span></span></h3>
-<p class="rvps3"><span class="rvts8">Enhancements have been made to the "Edit Profile" screen that make it easier for users to construct mappings within the profile.</span></p>
+<p class="rvps3"><span class="rvts16">Release 1.6.0</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">New Publication Template</span></span></h3>
+<p class="rvps3"><span class="rvts8">HL7 has been working on an official style/look/feel/brand/template for implementation guides. ToF now supports this new template. Using the new template, you will see a more consistent look and feel to published implementation guides, as well as a simplified export format. There is no longer a "framework" folder in the export that has 300+ files in it.</span></p>
+<p class="rvps3"><span class="rvts8">The new template also provides some flexibility with the top (red) navigation bar. When editing a page in the implementation guide, users can select "Show on top nav menu" and indicate the name of the menu they would like the page to appear under, to customize the navigation of the implementation guide. See </span><a class="rvts13" href="NarrativePages.html">Narrative Pages</a><span class="rvts8">&nbsp;for more information.</span></p>
+<p class="rvps3"><span class="rvts8">The new template automatically generates a table of contents and an "Artifact Index" page.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Permissions for Implementation Guides</span></span></h3>
+<p class="rvps3"><span class="rvts8">There is a new option to copy permissions for an implementation guide to resources within the implementation guide. This functionality is primarily for scenarios where the permissions to the implementation guide have changed, and those changes need to be propagated down to the resources within the implementation guide. Note: You cannot change permissions for a resource you don't already have access to; if you don't have access to one or more of the resources within the IG, you won't be able to copy permissions from the IG to that/those resources. See </span><a class="rvts13" href="SecurityandPermissions.html#IGPermissions">Security and Permissions</a><span class="rvts8">&nbsp;for more information.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Admin Role</span></span></h3>
+<p class="rvps3"><span class="rvts8">For those who have their own installation of ToF: An admin role has been created that allows you to specify users that are administrators of the system. In this case, the admin users have full control over ToF. They can list users who have logged into ToF and they can broadcast messages to users that are currently logged in. This is to pave the way for additional administrative functionality (such as reporting) in the future.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log</span></span></h3>
-<p class="rvps7"><span class="rvts8"><br/></span></p>
-<div class="rvps7"><table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
+<div class="rvps6"><table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Key</span></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Issue key</span></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Type</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Issue Type</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Summary</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts18">Summary</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-231" target="_blank">TRIFFHIR-231</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-295" target="_blank">TRIFFHIR-295</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">New Feature</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Select Project/ImplementationGuide Context</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-236" target="_blank">TRIFFHIR-236</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Profile editor doesn't allow expanding PlanDefinition.action.action</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Copy permissions from IG to child resources</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-214" target="_blank">TRIFFHIR-214</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-262" target="_blank">TRIFFHIR-262</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Change the element definition panel's alias property to repeat (allow multiple)</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-232" target="_blank">TRIFFHIR-232</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Cannot set value set binding on R4 profile's element</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Use the new official FHIR template</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-243" target="_blank">TRIFFHIR-243</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-261" target="_blank">TRIFFHIR-261</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Defect</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">New Feature</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">"Add" button for R4 capability statement REST tabs doesn't work</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-190" target="_blank">TRIFFHIR-190</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">User interface allows profiling fields that shouldn't be profiled</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Basic admin functionality to list users, active users, broadcast a message</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-188" target="_blank">TRIFFHIR-188</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-260" target="_blank">TRIFFHIR-260</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Improvement</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Add support for paging in the "Other Resources" screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-233" target="_blank">TRIFFHIR-233</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Element mappings reference profile mappings</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Support specifying identifiers on CodeSystem</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-240" target="_blank">TRIFFHIR-240</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-227" target="_blank">TRIFFHIR-227</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Improvement</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Automatically delete IG references when deleting resources</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-239" target="_blank">TRIFFHIR-239</a></p>
-</td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
-</td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">ID of new resources should match the leaf/end of the URL</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Change how user adds resources to an IG from the "Edit IG" screen</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="118" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-242" target="_blank">TRIFFHIR-242</a></p>
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-291" target="_blank">TRIFFHIR-291</a></p>
 </td>
-<td width="117" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Improvement</span></p>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Defect</span></p>
 </td>
-<td width="545" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts19">Add "supported profiles" to R4 capability statement editing screen</span></p>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">ToF not preserving XHTML lang tag</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-258" target="_blank">TRIFFHIR-258</a></p>
+</td>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Defect</span></p>
+</td>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Adding a new slice to an already sliced element removes slice's discriminator</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="93" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-256" target="_blank">TRIFFHIR-256</a></p>
+</td>
+<td width="100" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Defect</span></p>
+</td>
+<td width="608" height="19" valign="top" style="padding: 0px;"><p class="rvps3"><span class="rvts17">Media images should not be included in ImplementationGuide resource when exported</span></p>
 </td>
 </tr>
 </table>
 </div>
-<p class="rvps3"><span class="rvts19"><br/></span></p>
+<p class="rvps3"><span class="rvts17"><br/></span></p>
+<p class="rvps3"><span class="rvts17"><br/></span></p>
 <p></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2019 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2020 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -327,14 +304,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
-  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
   <script src="vendors/uri-1.19.1/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
   <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
@@ -352,8 +328,6 @@
   <!-- Scripts -->
   <script>
     $(function() {
-      // Instanciate FastClick
-      Origami.fastclick(document.body);
       // Create the app
       var app = new Hnd.App();
       // Update translations

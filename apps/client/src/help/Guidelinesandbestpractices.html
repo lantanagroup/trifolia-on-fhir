@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.3.0.298">
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -31,10 +31,10 @@
   <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
 
   <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.0/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -187,7 +187,7 @@
 <p></p>
 <h1 class="rvps8"><span class="rvts0"><span class="rvts23">Guidelines and Best Practices</span></span></h1>
 <p class="rvps3"><span class="rvts8">Trifolia-on-FHIR has the functionality to allow users to completely customize resources. By following these guidelines, users can ensure the FHIR publisher successfully processes the Implementation Guide. </span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Implementation Guide</span></span></h2>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Implementation Guide</span></span></h2>
 <p class="rvps3"><span class="rvts8">An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher. </span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">The ImplementationGuide resource is a single resource that defines the logical content of the IG, along with the important entry pages into the publication, so that the logical package that the IG represents, so that the contents are computable. In particular, validators are able to use the ImplementationGuide resource to validate content against the implementation guide as a whole. The significant conformance expectation introduced by the ImplementationGuide resource is the idea of Default Profiles. Implementations may conform to multiple implementation guides at once, but this requires that the implementation guides are compatible.</span></p>
@@ -199,14 +199,14 @@
 <li class="rvps3"><span class="rvts8">All contacts in the Implementation Guide appear as authors in the FHIR IG Publisher export.</span></li>
 <li class="rvps3"><span class="rvts8">ToF only exports resources referenced directly within the Implementation Guide resource. Confirm the Implementation Guide resource references all resources.</span></li>
 </ul>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Resources</span></span></h2>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts31">The FHIR specification defines a set of resources, and an infrastructure for handling resources. In order to use FHIR to create solutions for integration requirements, implementers must map their problems to resources and their content.</span></span></h2>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Resources</span></span></h2>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts31">The FHIR specification defines a set of resources, and an infrastructure for handling resources. In order to use FHIR to create solutions for integration requirements, implementers must map their problems to resources and their content.</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
 <li class="rvps19"><span class="rvts25">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts26">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts25">&nbsp;then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><a class="rvts27" href="http://myproject.com/someRoot/StructureDefinition/">http://myproject.com/someRoot/StructureDefinition/</a><span class="rvts25">.</span></li>
 </ul>
 <p class="rvps12"><span class="rvts25"><br/></span></p>
 <p class="rvps3"><span class="rvts28"><br/></span></p>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Structure Definitions(Profiles)</span></span></h2>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts20">Structure Definitions(Profiles)</span></span></h2>
 <p class="rvps3"><span class="rvts28"><br/></span></p>
 <p class="rvps3"><span class="rvts8">A profile is a definition of a FHIR structure and is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types. </span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
@@ -241,7 +241,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2019 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2020 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -269,14 +269,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="vendors/jquery-3.3.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.0/js/bootstrap.min.js"></script>
-  <script src="vendors/fastclick-1.0.6/fastclick.min.js"></script>
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
   <script src="vendors/uri-1.19.1/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.0/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   
   <!-- Headroom -->
   <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
@@ -294,8 +293,6 @@
   <!-- Scripts -->
   <script>
     $(function() {
-      // Instanciate FastClick
-      Origami.fastclick(document.body);
       // Create the app
       var app = new Hnd.App();
       // Update translations
