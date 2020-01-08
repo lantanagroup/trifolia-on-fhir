@@ -3299,7 +3299,7 @@ class CapabilityStatement extends DomainResource {
         this.status = 'draft';
         this.date = new Date().formatFhir();
         this.kind = 'instance';
-        this.fhirVersion = '3.0.1';
+        this.fhirVersion = '3.0.2';
         this.acceptUnknown = 'no';
         this.format = ['application/json'];
         if (obj) {
