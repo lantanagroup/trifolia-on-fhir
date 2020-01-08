@@ -11584,7 +11584,7 @@ class ImplementationGuide extends DomainResource {
         super(obj);
         this.resourceType = 'ImplementationGuide';
         this.status = 'draft';
-        this.fhirVersion = ['3.5.0'];
+        this.fhirVersion = ['4.0.1'];
         if (obj) {
             if (obj.hasOwnProperty('url')) {
                 this.url = obj.url;
