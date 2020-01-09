@@ -1,10 +1,7 @@
 import {HtmlExporter} from './html';
-import {FhirControl, PageInfo, TableOfContentsEntry} from './html.models';
-import {
-  Binary as R4Binary, Bundle as R4Bundle,
-  ImplementationGuidePageComponent, ImplementationGuideResourceComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import * as path from "path";
+import {PageInfo} from './html.models';
+import {Binary as R4Binary, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import * as path from 'path';
 import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ContactDetail} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
