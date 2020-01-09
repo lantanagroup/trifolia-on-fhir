@@ -727,21 +727,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         this.selectedElement = currentElement;
       }
     }
-    // search this.elements for ElementTreeModel that has baseElement or constrainedElement === found
-
-    // if found, set this.selectedElement to the element found in this.elements
-
-    // if not found:
-
-    // split found.path by "." and walk through each segment of the path
-
-    // for each segment of the path, find a matching this.element, if it is not expanded, then call this.expandElement() on the segment
-
-    // when done with all the segments, we should now have a ElementTreeModel that matches the baseElement or constraintElement in this.elements
-
-    // set this.selectedElement to the matching ElementTreeModel from this.elements
-
-
   }
 
   @HostListener('window:keydown', ['$event'])
