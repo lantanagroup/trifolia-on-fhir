@@ -113,7 +113,7 @@
   "packageId": "hl7.fhir.us.daf",
   "license": "CC0-1.0",
   "fhirVersion": [
-    "4.0.0"
+    "4.0.1"
   ],
   "dependsOn": [
     {
@@ -267,7 +267,7 @@ testCase.getTestStepByName("Expunge the IG" ).disabled = new Boolean(testCase.te
   "packageId": "hl7.fhir.us.daf",
   "license": "CC0-1.0",
   "fhirVersion": [
-    "4.0.0"
+    "4.0.1"
   ],
   "dependsOn": [
     {
@@ -431,7 +431,7 @@ testCase.getTestStepByName("Expunge the IG" ).disabled = new Boolean(testCase.te
   "packageId": "hl7.fhir.us.daf",
   "license": "CC0-1.0",
   "fhirVersion": [
-    "4.0.0"
+    "4.0.1"
   ],
   "dependsOn": [
     {
@@ -843,7 +843,7 @@ testCase.getTestStepByName("Expunge the IG" ).disabled = new Boolean(testCase.te
   "packageId": "hl7.fhir.us.daf",
   "license": "CC0-1.0",
   "fhirVersion": [
-    "4.0.0"
+    "4.0.1"
   ],
   "dependsOn": [
     {
@@ -1131,7 +1131,7 @@ testCase.getTestStepByName("Expunge the Profile" ).disabled = new Boolean(testCa
   "packageId": "hl7.fhir.us.daf",
   "license": "CC0-1.0",
   "fhirVersion": [
-    "4.0.0"
+    "4.0.1"
   ],
   "dependsOn": [
     {
