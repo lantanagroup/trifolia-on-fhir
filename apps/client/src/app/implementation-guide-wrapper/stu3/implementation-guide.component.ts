@@ -142,10 +142,10 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     this.implementationGuide.extension.splice(index);
   }
   public removeImplementationGuide() {
-    if (!confirm(`Are you sure you want to delete implementation guide "${this.implementationGuide.name || 'not named'}" with id ${this.implementationGuide.id}?`)) {
-      return;
+    if (!confirm("are you sure you want to delete this implementation guide"))
+      delete this.implementationGuide;
     }
-   }
+   
   public addResources(destPackage?: PackageComponent) {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
