@@ -141,7 +141,11 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     const index = this.implementationGuide.extension.indexOf(dependency);
     this.implementationGuide.extension.splice(index);
   }
-
+  public removeImplementationGuide() {
+    if (!confirm(`Are you sure you want to delete implementation guide "${this.implementationGuide.name || 'not named'}" with id ${this.implementationGuide.id}?`)) {
+      return;
+    }
+   }
   public addResources(destPackage?: PackageComponent) {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
@@ -216,6 +220,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
 
     return newDependency;
   }
+  
 
   public getDependencyLocation(dependency: Extension): string {
     const locationExtension = (dependency.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-location']);
@@ -588,6 +593,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     newPackage.resource.push(igResource.resource);
     this.initResources();
   }
+  
 
   private initPage(page: PageComponent, level = 0, parent?: PageComponent) {
     if (!page) {
