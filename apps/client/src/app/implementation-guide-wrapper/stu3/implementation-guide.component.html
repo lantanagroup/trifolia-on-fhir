@@ -123,13 +123,21 @@
               <app-fhir-string [parentObject]="implementationGuide" propertyName="fhirVersion" title="FHIR Version"></app-fhir-string>
 
               <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
+              <div class="container">
+                <div class="btn-holder">
+                <button 
+                type="button"  
+                (click)="removeImplementationGuide()">
+                Delete Implementation Guide
+                </button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
       </ng-template>
     </ngb-tab>
-    <button type="button" class="btn btn-default" click="remove(ImplementationGuide)">
-      <i class="fa fa-plus">DELETE</i>
+    
     <!-- Globals -->
     <ngb-tab id="globals">
       <ng-template ngbTabTitle>
