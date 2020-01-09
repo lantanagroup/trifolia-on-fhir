@@ -261,6 +261,14 @@
             </div>
           </div>
         </div>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search elements" [ngModel]="elementSearch" (ngModelChange)="elementSearchChanged($event)"/>
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-primary" title="Search" (click)="getSearchElement()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
         <table class="table table-striped elements">
           <thead>
           <tr>
