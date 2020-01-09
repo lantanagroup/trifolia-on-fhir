@@ -79,8 +79,8 @@
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.1</a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.1</a>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.0</a>
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">3.5.0</a>
                     <div role="separator" class="dropdown-divider"></div>
                     <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.2'">3.0.2</a>
                     <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.1'">3.0.1</a>
@@ -187,6 +187,13 @@
                       <button type="button" class="btn btn-primary" (click)="removeResource(resource)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
+                    </div>
+                    <div class="container">
+                      <div class="btn-holder">
+                        <button 
+                      type="button"  href="javascript:void(0)"routerLink="{{configService.baseSessionUrl}}/home" (click)="removeImplementationGuide()"  
+                       >Delete Implementation Guide</button>
+                      </div>
                     </div>
                   </td>
                 </tr>

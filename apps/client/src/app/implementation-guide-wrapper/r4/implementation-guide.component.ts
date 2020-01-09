@@ -223,7 +223,10 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
       this.implementationGuide.definition.resource.splice(index, 1);
     }
   }
-
+  public removeImplementationGuide() {
+    if (!confirm("are you sure you want to delete this implementation guide"))
+      delete this.implementationGuide;
+    }
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg'});
     modalRef.result.then((guide: PublishedGuideModel) => {
