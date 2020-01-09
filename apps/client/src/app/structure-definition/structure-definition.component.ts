@@ -5,12 +5,13 @@ import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {
+  ConstraintComponent,
   DifferentialComponent,
   ElementDefinition as STU3ElementDefinition,
   StructureDefinition as STU3StructureDefinition, TypeRefComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  ElementDefinition as R4ElementDefinition, ElementDefinitionTypeRefComponent,
+  ElementDefinition as R4ElementDefinition, ElementDefinitionConstraintComponent, ElementDefinitionTypeRefComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
@@ -41,6 +42,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public message: string;
   public sdNotFound = false;
   public Globals = Globals;
+  public elementSearch: string;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
   @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
@@ -617,6 +619,129 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         baseStructureDefinition: this.baseStructureDefinition
       });
     }
+  }
+
+  public elementSearchChanged(value: string) {
+    this.elementSearch = value;
+  }
+
+  public checkForMatchingElement(element: STU3ElementDefinition | R4ElementDefinition){
+    //Check the following places for a matching string: path, id,
+    //constraint.requirements, binding.valueSetUri (or binding.valueset),
+    //type.code, type.profile, type.targetProfile, and sliceName
+    if(element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
+      || element.path.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) return true;
+
+    let checkConstraint = false;
+    if(<ConstraintComponent[]> element.constraint){
+      for(let i = 0; i < element.constraint.length; i++){
+        if((<ConstraintComponent> element.constraint[i]).requirements && (<ConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+          checkConstraint = true;
+          break;
+        }
+      }
+    }
+    else if(<ElementDefinitionConstraintComponent[]> element.constraint){
+      for(let i = 0; i < element.constraint.length; i++){
+        if((<ElementDefinitionConstraintComponent> element.constraint[i]).requirements
+          && (<ElementDefinitionConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+          checkConstraint = true;
+          break;
+        }
+      }
+    }
+    if(checkConstraint) return true;
+
+    let checkBinding = false;
+    if((<STU3ElementDefinition> element).binding && (<STU3ElementDefinition> element).binding.valueSetUri){
+      checkBinding = (<STU3ElementDefinition> element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    }
+    else if((<R4ElementDefinition> element).binding && (<R4ElementDefinition> element).binding.valueSet){
+      checkBinding = (<R4ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    }
+    if(checkBinding) return true;
+
+    if(element.type){
+      let types = this.configService.isFhirSTU3 ? <TypeRefComponent[]> element.type : <ElementDefinitionTypeRefComponent[]> element.type;
+      for(let i = 0; i < types.length; i++){
+        if(types[i].code.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+          return true;
+        }
+        if(types[i].targetProfile){
+          for(let j = 0; j < types[i].targetProfile.length; j++){
+            if(types[i].targetProfile[j].toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+              return true;
+            }
+          }
+        }
+        if(types[i].profile){
+          for(let j = 0; j < types[i].profile.length; j++){
+            if(types[i].profile[j].toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+      return true;
+    }
+  }
+
+  getSearchElement(){
+    const structureDefElements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    let found = structureDefElements.find((element) => {
+      return this.checkForMatchingElement(element);
+    });
+    if(!found){
+      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
+      found = baseStructDefElements.find((element) => {
+        return this.checkForMatchingElement(element);
+      });
+    }
+    if(found){
+      const model = this.elements.find((element) => {
+        const foundPath = found.path;
+        const elementPath = element.path;
+        return foundPath === elementPath;
+      });
+
+      if(model){
+        this.selectedElement = model;
+      }
+      else {
+        let pathElements = found.path.split(".");
+        let currentPath = "";
+        let currentElement;
+        for (let i = 0; i < pathElements.length; i++) {
+          currentPath = currentPath == "" ? pathElements[i] : currentPath + "." + pathElements[i];
+          currentElement = this.elements.find(e => {
+            return e.path === currentPath;
+          });
+          //Expand all elements that are on the path except the last one
+          if (i != pathElements.length - 1 && !currentElement.expanded) {
+            this.toggleElementExpand(currentElement);
+          }
+        }
+        this.selectedElement = currentElement;
+      }
+    }
+    // search this.elements for ElementTreeModel that has baseElement or constrainedElement === found
+
+    // if found, set this.selectedElement to the element found in this.elements
+
+    // if not found:
+
+    // split found.path by "." and walk through each segment of the path
+
+    // for each segment of the path, find a matching this.element, if it is not expanded, then call this.expandElement() on the segment
+
+    // when done with all the segments, we should now have a ElementTreeModel that matches the baseElement or constraintElement in this.elements
+
+    // set this.selectedElement to the matching ElementTreeModel from this.elements
+
+
   }
 
   @HostListener('window:keydown', ['$event'])
