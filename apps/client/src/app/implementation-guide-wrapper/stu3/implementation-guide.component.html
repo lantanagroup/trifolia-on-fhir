@@ -125,11 +125,9 @@
               <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
               <div class="container">
                 <div class="btn-holder">
-                <button 
-                type="button"  
-                (click)="removeImplementationGuide()">
-                Delete Implementation Guide
-                </button>
+               	 <button 
+                type="button"  href="javascript:void(0)"routerLink="{{configService.baseSessionUrl}}/home" (click)="removeImplementationGuide()"  
+				         >Delete Implementation Guide</button>
                 </div>
               </div>
             </div>
