@@ -36,12 +36,12 @@
 
   <div class="form-group">
     <label>
-      Package <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.package"></app-tooltip-icon>
-      <i *ngIf="!enablePackage" class="fas fa-exclamation-circle" ngbTooltip="You cannot select a package for the resource because the implementation guide does not define any packages."></i>
+      Group <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.groupingId"></app-tooltip-icon>
+      <i *ngIf="!enableGroups" class="fas fa-exclamation-circle" ngbTooltip="You cannot select a group for the resource because the implementation guide does not define any groups."></i>
     </label>
-    <select class="form-control" [(ngModel)]="resource.package" [disabled]="!enablePackage">
+    <select class="form-control" [(ngModel)]="resource.groupingId" [disabled]="!enableGroups">
       <option [ngValue]="undefined">Unspecified</option>
-      <option *ngFor="let o of implementationGuide.definition.package" [ngValue]="o.id">{{o.name}} ({{o.id}})</option>
+      <option *ngFor="let g of implementationGuide.definition.grouping" [ngValue]="g.id">{{g.name}} ({{g.id}})</option>
     </select>
   </div>
 </div>

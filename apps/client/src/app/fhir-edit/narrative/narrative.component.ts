@@ -44,7 +44,6 @@ interface ImplementationGuideView extends ResourceView {
   resources?: [{
     reference?: string;
     display?: string;
-    package?: string;
   }];
 }
 
@@ -179,8 +178,7 @@ export class NarrativeComponent implements OnInit {
           view.resources = view.resources || <any>[];
           view.resources.push({
             reference: next.sourceReference ? next.sourceReference.reference : undefined,
-            display: next.name ? next.name : (next.sourceReference ? next.sourceReference.display : undefined),
-            package: igPackage.name
+            display: next.name ? next.name : (next.sourceReference ? next.sourceReference.display : undefined)
           });
         });
       });
@@ -199,8 +197,7 @@ export class NarrativeComponent implements OnInit {
           view.resources = <any> (r4ImplementationGuide.definition.resource || []).map((next) => {
             return {
               reference: next.reference ? next.reference.reference : undefined,
-              display: next.name ? next.name : (next.reference ? next.reference.display : undefined),
-              package: next.package
+              display: next.name ? next.name : (next.reference ? next.reference.display : undefined)
             };
           });
         }
