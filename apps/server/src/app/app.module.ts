@@ -17,6 +17,7 @@ import {QuestionnaireController} from './questionnaire.controller';
 import {ConfigService} from './config.service';
 import {GroupController} from './group.controller';
 import {GithubController} from './github.controller';
+import { ExportService } from './export.service';
 
 @Module({
   imports: [HttpModule],
@@ -40,7 +41,8 @@ import {GithubController} from './github.controller';
   ],
   providers: [
     HttpStrategy,
-    ConfigService
+    ConfigService,
+    ExportService
   ],
 })
 export class AppModule {}

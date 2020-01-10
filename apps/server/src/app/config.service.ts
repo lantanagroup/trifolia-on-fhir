@@ -5,6 +5,7 @@ import {IFhirConfig} from './models/fhir-config';
 import * as config from 'config';
 import {IAuthConfig} from './models/auth-config';
 import {IGithubConfig} from './models/github-config';
+import { IPublishConfig } from './models/publish-config';
 
 @Injectable()
 export class ConfigService {
@@ -35,6 +36,10 @@ export class ConfigService {
   public github: IGithubConfig = {
     clientId:  'gh-clientid',
     secret: 'secr3t'
+  };
+  public publish: IPublishConfig = {
+    queueLimit: 2,
+    timeOut: 5000
   };
   public headerPropagation: string[];
 
