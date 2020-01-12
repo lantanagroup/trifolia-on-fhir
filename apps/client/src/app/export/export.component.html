@@ -36,6 +36,7 @@
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat">
               <option value="application/json">JSON</option>
+              <option value="application/msword">MSWORD</option>
               <option value="application/xml">XML</option>
             </select>
           </div>
@@ -77,6 +78,7 @@
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
               <option value="application/json">JSON</option>
+              <option value="application/msword">MSWORD</option>
               <option value="application/xml">XML</option>
             </select>
           </div>

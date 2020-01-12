@@ -7,7 +7,7 @@ import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server
 export class ExportOptions {
   public implementationGuideId: string;
   public exportFormat = ExportFormats.HTML;
-  public responseFormat?: 'application/json' | 'application/xml' = 'application/xml';
+  public responseFormat?: 'application/json' | 'application/xml' | 'application/msword';
   public useTerminologyServer? = true;
   public useLatest? = true;
   public downloadOutput? = false;       // Only applies to HTML exports
@@ -36,6 +36,16 @@ export class ExportService {
 
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
+
+  public exportMsWord(options: ExportOptions) {
+    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/msword?`;
+
+    if (options.responseFormat) {
+      url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
+    }
+    return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
+  }
+
 
   public exportHtml(options: ExportOptions) {
     let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/html?`;

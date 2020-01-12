@@ -198,18 +198,33 @@ export class ExportComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
-    const extension = (this.options.responseFormat === 'application/xml' ? '.xml' : '.json');
+
+    const extension = this.options.responseFormat === 'application/xml' ? '.xml' : this.options.responseFormat === 'application/msword' ? '.docx' : '.json';
+
+
+    console.log("*****EXTENSION:" + extension);
 
     try {
       switch (this.options.exportFormat) {
         case ExportFormats.HTML:
-          this.exportService.exportHtml(this.options)
+          //Need to discuss the difference between HTML vs Bundle
+          if(extension === '.docx'){
+            this.exportService.exportMsWord(this.options)
             .subscribe((response) => {
-              saveAs(response.body, igName + '.zip');
+              saveAs(response.body, igName + extension);
               this.message = 'Done exporting.';
             }, (err) => {
               this.message = getErrorString(err);
             });
+          }else{
+            this.exportService.exportHtml(this.options)
+              .subscribe((response) => {
+                saveAs(response.body, igName + '.zip');
+                this.message = 'Done exporting.';
+              }, (err) => {
+                this.message = getErrorString(err);
+              });
+            }
           break;
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
