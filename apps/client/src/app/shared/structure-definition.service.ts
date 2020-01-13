@@ -20,7 +20,7 @@ export class StructureDefinitionService {
     return this.http.get<string[]>(url);
   }
 
-  public getStructureDefinitions(page?: number, nameText?: string, urlText?: string, implementationGuideId?: string, titleText?: string): Observable<Bundle> {
+  public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string): Observable<Bundle> {
     let url = '/api/structureDefinition?';
 
     if (page) {
@@ -29,6 +29,10 @@ export class StructureDefinitionService {
 
     if (nameText) {
       url += `name=${encodeURIComponent(nameText)}&`;
+    }
+
+    if(IDText){
+      url += `_id=${encodeURIComponent(IDText)}&`;
     }
 
     if (urlText) {
