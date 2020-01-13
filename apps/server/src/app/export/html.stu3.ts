@@ -43,11 +43,11 @@ export class STU3HtmlExporter extends HtmlExporter {
     const pageIndex = this.pageInfos.indexOf(pageInfo);
     const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
     const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage && previousPage.finalFileName ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
+    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
+      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
       undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
+    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
+      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
     if (page.kind !== 'toc' && pageInfo.content) {

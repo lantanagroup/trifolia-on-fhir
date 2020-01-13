@@ -43,11 +43,11 @@ export class R4HtmlExporter extends HtmlExporter {
     const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
 
-    const previousPageLink = previousPage && previousPage.finalFileName ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
+    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
+      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
       undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
+    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
+      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
     if (pageInfo.content && pageInfo.fileName) {
