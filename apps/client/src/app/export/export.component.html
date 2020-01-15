@@ -36,7 +36,6 @@
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat">
               <option value="application/json">JSON</option>
-              <option value="application/msword">MSWORD</option>
               <option value="application/xml">XML</option>
             </select>
           </div>
@@ -78,8 +77,26 @@
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
               <option value="application/json">JSON</option>
-              <option value="application/msword">MSWORD</option>
               <option value="application/xml">XML</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="MsWord" id="msword">
+    <ng-template ngbTabContent>
+      <div class="alert alert-info">The "MsWord" document export contains all resources referenced by the selected
+        implementation guide, including the implementation guide resource.
+      </div>
+
+      <div class="row" [attr.data-intro]="Globals.introText['export.msword']">
+        <div class="col-md-6">
+          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
+               [attr.data-intro]="Globals.introText['export.mswordOutput']">
+            <label>Output Format</label>
+            <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+              <option value="application/msword">MSWORD</option>
             </select>
           </div>
         </div>

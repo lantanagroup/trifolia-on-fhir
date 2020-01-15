@@ -72,14 +72,30 @@ export class MSWordExporter {
       }));
 
       bundle.entry
-        .filter(entry => entry.resource && (entry.resource.resourceType === 'StructureDefinition' ||
-              entry.resource.resourceType === 'ValueSet' ||
-              entry.resource.resourceType === 'CodeSystem'))
+        .filter(entry => entry.resource && (entry.resource.resourceType === 'StructureDefinition'))
         .forEach((entry) => {
           const extensionUrlKeys = Object.keys(Globals.extensionUrls);
           const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
           const keys = Object.keys(entry.resource);
+          const structureDefinition: StructureDefinition = <StructureDefinition> entry.resource;  // we can do this because we know entry.resource will be a StructureDefinition because of the filter
+/*
+          this.body.push(new Paragraph({ text: `Name: ${structureDefinition.name}` }));    // name is required, so we can expect it to be populated with a value
+          if (structureDefinition.title) {
+            this.body.push(new Paragraph({ text: `Title: ${structureDefinition.title` });
+           }
 
+    if (structureDefinition.differential) {
+      (structureDefinition.differential.element || []).forEach((element, eIndex) => {
+        this.body.push(new Paragraph({ text: \`Element ${eIndex + 1}\` });
+        this.body.push(new Paragraph({ text: \`Path: ${element.path}\` });
+        // more fields...
+      });
+
+
+
+          );    // name is required, so we can expect it to be populated with a value
+
+*/
           keys.forEach((key) => {
             //if(key === 'name' || 'url' || 'description'){
             const table = new Table({
@@ -105,9 +121,116 @@ export class MSWordExporter {
           this.body.push(new Paragraph({
             text: ""
           }));
-         // const structureDefinition = <StructureDefinition> entry.resource;
           }
         );
+
+      bundle.entry
+        .filter(entry => entry.resource && (entry.resource.resourceType === 'ValueSet'))
+        .forEach((entry) => {
+            const extensionUrlKeys = Object.keys(Globals.extensionUrls);
+            const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
+            const keys = Object.keys(entry.resource);
+
+            keys.forEach((key) => {
+              //if(key === 'name' || 'url' || 'description'){
+              const table = new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [new Paragraph(key)],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                      new TableCell({
+                        children: [new Paragraph(entry.resource[key])],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                    ]
+                  })
+                ]
+              });
+              this.body.push(table);
+              //}
+            });
+
+            this.body.push(new Paragraph({
+              text: ""
+            }));
+          }
+        );
+
+      bundle.entry
+        .filter(entry => entry.resource && (entry.resource.resourceType === 'CodeSystem'))
+        .forEach((entry) => {
+            const extensionUrlKeys = Object.keys(Globals.extensionUrls);
+            const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
+            const keys = Object.keys(entry.resource);
+
+            keys.forEach((key) => {
+              //if(key === 'name' || 'url' || 'description'){
+              const table = new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [new Paragraph(key)],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                      new TableCell({
+                        children: [new Paragraph(entry.resource[key])],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                    ]
+                  })
+                ]
+              });
+              this.body.push(table);
+              //}
+            });
+
+            this.body.push(new Paragraph({
+              text: ""
+            }));
+            // const structureDefinition = <StructureDefinition> entry.resource;
+          }
+        );
+
+      bundle.entry
+        .filter(entry => entry.resource && (entry.resource.resourceType === 'CapabilityStatement'))
+        .forEach((entry) => {
+            const extensionUrlKeys = Object.keys(Globals.extensionUrls);
+            const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
+            const keys = Object.keys(entry.resource);
+
+            keys.forEach((key) => {
+              //if(key === 'name' || 'url' || 'description'){
+              const table = new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [new Paragraph(key)],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                      new TableCell({
+                        children: [new Paragraph(entry.resource[key])],
+                        verticalAlign: VerticalAlign.CENTER,
+                      }),
+                    ]
+                  })
+                ]
+              });
+              this.body.push(table);
+              //}
+            });
+
+            this.body.push(new Paragraph({
+              text: ""
+            }));
+            // const structureDefinition = <StructureDefinition> entry.resource;
+          }
+        );
+
     }
 
     (bundle.entry || [])

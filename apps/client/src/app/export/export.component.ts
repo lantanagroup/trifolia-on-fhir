@@ -1,21 +1,21 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {saveAs} from 'file-saver';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {ExportFormats} from '../models/export-formats.enum';
-import {SocketService} from '../shared/socket.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'angular2-cookie/core';
-import {ConfigService} from '../shared/config.service';
-import {Bundle, DomainResource, ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {FileModel, GithubService} from '../shared/github.service';
-import {FhirService} from '../shared/fhir.service';
-import {Observable} from 'rxjs';
-import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {AuthService} from '../shared/auth.service';
-import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import {getErrorString, getStringFromBlob} from '../../../../../libs/tof-lib/src/lib/helper';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { saveAs } from 'file-saver';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { ExportFormats } from '../models/export-formats.enum';
+import { SocketService } from '../shared/socket.service';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { CookieService } from 'angular2-cookie/core';
+import { ConfigService } from '../shared/config.service';
+import { Bundle, DomainResource, ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { FileModel, GithubService } from '../shared/github.service';
+import { FhirService } from '../shared/fhir.service';
+import { Observable } from 'rxjs';
+import { ExportGithubPanelComponent } from '../export-github-panel/export-github-panel.component';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from '../shared/auth.service';
+import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { getErrorString, getStringFromBlob } from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   templateUrl: './export.component.html',
@@ -73,6 +73,9 @@ export class ExportComponent implements OnInit {
         break;
       case 'bundle':
         this.options.exportFormat = ExportFormats.Bundle;
+        break;
+      case 'msword':
+        this.options.exportFormat = ExportFormats.MSWORD;
         break;
       case 'github':
         this.options.exportFormat = ExportFormats.GitHub;
@@ -202,29 +205,17 @@ export class ExportComponent implements OnInit {
     const extension = this.options.responseFormat === 'application/xml' ? '.xml' : this.options.responseFormat === 'application/msword' ? '.docx' : '.json';
 
 
-    console.log("*****EXTENSION:" + extension);
-
     try {
       switch (this.options.exportFormat) {
         case ExportFormats.HTML:
           //Need to discuss the difference between HTML vs Bundle
-          if(extension === '.docx'){
-            this.exportService.exportMsWord(this.options)
-            .subscribe((response) => {
-              saveAs(response.body, igName + extension);
-              this.message = 'Done exporting.';
-            }, (err) => {
-              this.message = getErrorString(err);
-            });
-          }else{
-            this.exportService.exportHtml(this.options)
+          this.exportService.exportHtml(this.options)
               .subscribe((response) => {
                 saveAs(response.body, igName + '.zip');
                 this.message = 'Done exporting.';
               }, (err) => {
                 this.message = getErrorString(err);
               });
-            }
           break;
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
@@ -235,6 +226,15 @@ export class ExportComponent implements OnInit {
               this.message = getErrorString(err);
             });
           break;
+        case ExportFormats.MSWORD:
+            this.exportService.exportMsWord(this.options)
+              .subscribe((response) => {
+                saveAs(response.body, igName + extension);
+                this.message = 'Done exporting.';
+              }, (err) => {
+                this.message = getErrorString(err);
+              });
+            break;
         case ExportFormats.GitHub:
           this.exportGithub();
           break;
