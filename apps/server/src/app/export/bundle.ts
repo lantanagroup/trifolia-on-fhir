@@ -21,7 +21,7 @@ export class BundleExporter {
     this.fhirServerId = fhirServerId;
     this.fhirVersion = fhirVersion;
     this.fhir = fhir;
-    this.implementationGuideId = implementationGuideId
+    this.implementationGuideId = implementationGuideId;
   }
 
   /**
