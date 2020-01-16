@@ -113,8 +113,22 @@ export class MSWordExporter {
 
           if (structureDefinition.differential) {
             (structureDefinition.differential.element || []).forEach((element, eIndex) => {
-                this.body.push(new Paragraph({ text: `Element ${eIndex + 1}` }));
-                this.body.push(new Paragraph({ text: `Path: ${element.path}` }));
+                if(element.id === 'Extension'){
+                  this.body.push(new Paragraph({ text: `Element ${eIndex + 1}` }));
+                  this.body.push(new Paragraph({ text: `Id ${element.id}` }));
+                  this.body.push(new Paragraph({ text: `Path: ${element.path}` }));
+                }
+                if(element.id === 'Extension.url') {
+                  this.body.push(new Paragraph({ text: `Element ${eIndex + 1}` }));
+                  this.body.push(new Paragraph({ text: `Extension.url ${element.id}` }));
+                  this.body.push(new Paragraph({ text: `Path: ${element.path}` }));
+                }
+                if(element.id === 'Extension.value[x]') {
+                  this.body.push(new Paragraph({ text: `Element ${eIndex + 1}` }));
+                  this.body.push(new Paragraph({ text: `Extension.value[x] ${element.id}` }));
+                  this.body.push(new Paragraph({ text: `Path: ${element.path}` }));
+                }
+                this.body.push(new Paragraph({ text: `Fixed: ${element.fixed}` }));
                 this.body.push(new Paragraph({ text: `Min: ${element.min}` }));
                 this.body.push(new Paragraph({ text: `Max: ${element.max}` }));
                 this.body.push(new Paragraph({ text: `Must support: ${element.mustSupport}` }));
