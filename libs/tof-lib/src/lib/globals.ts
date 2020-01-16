@@ -94,6 +94,7 @@ export class Globals {
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
     'publish.publish-btn': 'When you are satisfied with the options, press this button to start the publication process.',
+    'publish.cancel-btn': 'When you\'re placed in queue and wish to cancel the publication process, press this button.',
     'ig.quick-tab': 'This tab has the most important fields that are needed to create a basic implementation guide. Other fields are represented in additional tabs, categorized according to their use/purpose.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',

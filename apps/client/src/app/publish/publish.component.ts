@@ -135,6 +135,18 @@ export class PublishComponent implements OnInit {
       });
   }
 
+  public cancel(){
+    this.tabs.select('status');
+
+    this.exportService.cancel(this.packageId)
+      .subscribe((packageId: string) => {
+        this.packageId = packageId;
+        this.inProgress = false;
+      }, (err) => {
+        this.message = getErrorString(err);
+    });
+  }
+
   public ngOnInit() {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
@@ -149,17 +161,11 @@ export class PublishComponent implements OnInit {
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {
-        this.socketOutput += data.message === "Done. You will be prompted to download the package in a moment." ? data.message : data.message.trim() + "...\n";
+        if (data.status === 'queue') {
+          // check the value of message to see that the number is greater than 0
 
-        if (!data.message.endsWith('\n')) {
-          this.socketOutput += '\r\n';
-        }
-
-        if (this.autoScroll && this.outputEle) {
-          setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
-        }
-
-        if (data.status === 'complete') {
+          // enable cancel button if queue is greater than 0
+        } else if (data.status === 'complete') {
           this.message = 'Done exporting';
 
           if (this.options.downloadOutput) {
@@ -174,6 +180,16 @@ export class PublishComponent implements OnInit {
         } else if (data.status === 'error') {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';
+        } else {
+          this.socketOutput += data.message ? data.message.trim() : "";
+
+          if (!data.message.endsWith('\n')) {
+            this.socketOutput += '\r\n';
+          }
+
+          if (this.autoScroll && this.outputEle) {
+            setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
+          }
         }
       }
     }, (err) => {

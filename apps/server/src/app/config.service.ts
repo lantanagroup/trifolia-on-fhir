@@ -50,6 +50,7 @@ export class ConfigService {
       this.fhir = config.get('fhir');
       this.auth = config.get('auth');
       this.github = config.get('github');
+      this.publish = config.get('publish');
       this.headerPropagation = config.get('headerPropagation');
     }
   }

@@ -83,6 +83,11 @@ export class ExportService {
     return this.http.get(url, {responseType: 'text'});
   }
 
+  public cancel(packageId: string){
+    let url = `/api/export/${packageId}/cancel`;
+    return this.http.post(url, null);
+  }
+
   public getPackage(packageId: string) {
     const url = '/api/export/' + packageId;
     return this.http.get(url, {observe: 'response', responseType: 'blob'});
