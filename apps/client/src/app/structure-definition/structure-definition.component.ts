@@ -5,10 +5,15 @@ import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../models/element-tree-model';
 import {
+  ConstraintComponent,
   DifferentialComponent,
-  ElementDefinition,
-  StructureDefinition
+  ElementDefinition as STU3ElementDefinition,
+  StructureDefinition as STU3StructureDefinition, TypeRefComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  ElementDefinition as R4ElementDefinition, ElementDefinitionConstraintComponent, ElementDefinitionTypeRefComponent,
+  StructureDefinition as R4StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
 import {FhirService} from '../shared/fhir.service';
 import {FileService} from '../shared/file.service';
@@ -18,7 +23,6 @@ import {ElementDefinitionPanelComponent} from './element-definition-panel/elemen
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {element} from 'protractor';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -30,7 +34,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
-  @Input() public structureDefinition: StructureDefinition;
+  @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public baseStructureDefinition;
   public elements: ElementTreeModel[] = [];
   public selectedElement: ElementTreeModel;
@@ -38,6 +42,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public message: string;
   public sdNotFound = false;
   public Globals = Globals;
+  public elementSearch: string;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
   @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
@@ -91,7 +96,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public toggleMappings() {
     if (this.structureDefinition.mapping) {
       if (this.structureDefinition.mapping.length > 0) {
-        const foundElementsWithMappings = this.structureDefinition.differential.element.filter(e => e.mapping && e.mapping.length > 0);
+        const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+        const foundElementsWithMappings = elements.filter(e => e.mapping && e.mapping.length > 0);
 
         if (foundElementsWithMappings.length > 0) {
           if (!confirm(`This will remove ${foundElementsWithMappings.length} element mappings from this profile. Are you sure you want to continue?`)) {
@@ -166,7 +172,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       const baseElementId = elementTreeModel.baseElement.id;
       const baseHasSlicing = elementTreeModel.baseElement.hasOwnProperty('slicing');
 
-      const constrainedElements = (this.structureDefinition.differential.element || []).filter((diffElement) => {
+      const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+      const constrainedElements = (elements || []).filter((diffElement) => {
         const diffHasSlicing = diffElement.hasOwnProperty('slicing');
 
         if (diffElement.id === baseElementId) {
@@ -213,21 +220,21 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     if (!parent) {
       this.elements = [];
     }
-
+    let filtered = [];
     const baseProfile = parent ? parent.profile : this.baseStructureDefinition;
     const baseElements = baseProfile.snapshot.element || [];
     let nextIndex = parent ? this.elements.indexOf(parent) + 1 : 0;
     let parentPath = parent ? parent.profilePath || '' : '';
     //const parentSliceName = parent && parent.displayId.indexOf(':') > 0 ? parent.displayId.substring(parent.displayId.indexOf(':') + 1) : null;
-    let filtered: ElementDefinition[];
 
     if (parent && parent.baseElement && parent.baseElement.contentReference && parent.baseElement.contentReference.startsWith('#')) {
       parentPath = parent.baseElement.contentReference.substring(1);
     }
 
     if (parentPath.endsWith('[x]')) {
+      const types = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> parent.baseElement.type;
       // this is a choice element, the child elements are the types of the choice
-      filtered = (parent.baseElement.type || []).map((type) => {
+      filtered = (types || []).map((type) => {
         return {
           path: parentPath.substring(0, parentPath.lastIndexOf('[x]')) + type.code
         };
@@ -269,7 +276,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       } else if (newElement.type && this.dataTypes.indexOf(newElement.type) >= 0) {
         newElement.hasChildren = true;
       } else {
-        newElement.hasChildren = (baseElements || []).filter((element: ElementDefinition) => {
+        newElement.hasChildren = (baseElements || []).filter((element: STU3ElementDefinition | R4ElementDefinition) => {
           return element.path.startsWith(filtered[i].path + '.') &&
             element.path.split('.').length === (filtered[i].path.split('.').length + 1);
         }).length > 0;
@@ -331,7 +338,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     if (this.structureDefinition.differential.element.length === 0) {
-      this.structureDefinition.differential.element.push({
+      const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+      elements.push({
         id: this.structureDefinition.type,
         path: this.structureDefinition.type
       });
@@ -362,17 +370,18 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
     const thisElementIndex = this.elements.indexOf(elementTreeModel);
     const previousConstrainedSiblings = this.elements.filter((e, i) => e.parent === elementTreeModel.parent && e.constrainedElement && i < thisElementIndex);
 
     if (previousConstrainedSiblings.length === 0) {
       // no siblings have been constrained. place this new constraint immediately following the parent
       const parentConstraint = elementTreeModel.parent.constrainedElement;
-      const parentIndex = this.structureDefinition.differential.element.indexOf(parentConstraint);
+      const parentIndex = elements.indexOf(<STU3ElementDefinition> parentConstraint);
       return parentIndex + 1;
     } else {
       const previousConstrainedSibling = previousConstrainedSiblings[previousConstrainedSiblings.length - 1];
-      const previousConstrainedIndex = this.structureDefinition.differential.element.indexOf(previousConstrainedSibling.constrainedElement);
+      const previousConstrainedIndex = elements.indexOf(previousConstrainedSibling.constrainedElement);
       return previousConstrainedIndex + 1;
     }
   }
@@ -383,7 +392,15 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     const leafElementName = elementTreeModel.baseElement.id.substring(elementTreeModel.baseElement.id.lastIndexOf('.') + 1);
-    const constrainedElement = new ElementDefinition();
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    let constrainedElement: STU3ElementDefinition | R4ElementDefinition;
+
+    if (this.configService.isFhirSTU3) {
+      constrainedElement = new STU3ElementDefinition();
+    } else {
+      constrainedElement = new R4ElementDefinition();
+    }
+
     constrainedElement.id = elementTreeModel.parent ?
       `${elementTreeModel.parent.id}.${leafElementName}` :
       elementTreeModel.baseElement.path;
@@ -393,7 +410,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     elementTreeModel.constrainedElement = constrainedElement;
 
     const newIndex = this.calculateConstraintPosition(elementTreeModel);
-    this.structureDefinition.differential.element.splice(newIndex, 0, constrainedElement);
+    elements.splice(newIndex, 0, constrainedElement);
 
     if (this.selectedElement !== elementTreeModel) {
       this.toggleSelectedElement(elementTreeModel);
@@ -417,7 +434,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    const found = (this.structureDefinition.differential.element || []).filter((element) => {
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    const found = (elements || []).filter((element) => {
       return element.id.indexOf(elementTreeModel.id + ':') === 0;
     });
 
@@ -437,13 +455,20 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     const newSliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
-    const newElement = new ElementDefinition();
+    let newElement: STU3ElementDefinition | R4ElementDefinition;
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+
+    if (this.configService.isFhirSTU3) {
+      newElement = new STU3ElementDefinition();
+    } else {
+      newElement = new R4ElementDefinition();
+    }
     newElement.id = elementTreeModel.constrainedElement.id + ':' + newSliceName;
     newElement.path = elementTreeModel.constrainedElement.path;
     newElement.sliceName = newSliceName;
 
-    const elementIndex = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
-    this.structureDefinition.differential.element.splice(elementIndex + 1, 0, newElement);
+    const elementIndex = elements.indexOf(<STU3ElementDefinition> elementTreeModel.constrainedElement);
+    elements.splice(elementIndex + 1, 0, newElement);
 
     const newElementTreeModel = new ElementTreeModel();
     newElementTreeModel.profile = elementTreeModel.profile;
@@ -477,7 +502,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  public removeElementDefinition(element: ElementDefinition, event?, shouldConfirm = true) {
+  public removeElementDefinition(element: STU3ElementDefinition | R4ElementDefinition, event?, shouldConfirm = true) {
     if (shouldConfirm && !confirm('Are you sure you want to remove the constraints for this element?')) {
       return;
     }
@@ -486,7 +511,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     childElementDefinitions.forEach((childElementDefinition) => this.removeElementDefinition(childElementDefinition, null, false));
 
-    const elementIndex = this.structureDefinition.differential.element.indexOf(element);
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    const elementIndex = elements.indexOf(<STU3ElementDefinition> element);
     this.structureDefinition.differential.element.splice(elementIndex, 1);
 
     const foundElementTreeModel = this.elements.find((elementTreeModel: ElementTreeModel) =>
@@ -514,12 +540,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  private getChildElementDefinitions(element: ElementDefinition): ElementDefinition[] {
+  private getChildElementDefinitions(element: STU3ElementDefinition | R4ElementDefinition): (STU3ElementDefinition | R4ElementDefinition)[] {
     const elementId = element.id;
     const sliceName = elementId.indexOf(':') >= 0 ? elementId.substring(elementId.indexOf(':') + 1) : '';
+    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
 
     // noinspection UnnecessaryLocalVariableJS
-    const filtered = (this.structureDefinition.differential.element || []).filter((nextElement) => {
+    const filtered = (elements || []).filter((nextElement) => {
       const isBase = nextElement.id.startsWith(elementId + '.');
       const isLeaf = nextElement.id.split('.').length === elementId.split('.').length + 1;
       const isSlice = nextElement.id.endsWith(':' + sliceName);
@@ -559,7 +586,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.strucDefService.save(this.structureDefinition)
-      .subscribe((results: StructureDefinition) => {
+      .subscribe((results: STU3StructureDefinition | R4StructureDefinition) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
@@ -591,6 +618,114 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.validation = this.fhirService.validate(this.structureDefinition, {
         baseStructureDefinition: this.baseStructureDefinition
       });
+    }
+  }
+
+  public elementSearchChanged(value: string) {
+    this.elementSearch = value;
+  }
+
+  public checkForMatchingElement(element: STU3ElementDefinition | R4ElementDefinition){
+    //Check the following places for a matching string: path, id,
+    //constraint.requirements, binding.valueSetUri (or binding.valueset),
+    //type.code, type.profile, type.targetProfile, and sliceName
+    if(element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
+      || element.path.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) return true;
+
+    let checkConstraint = false;
+    if(<ConstraintComponent[]> element.constraint){
+      for(let i = 0; i < element.constraint.length; i++){
+        if((<ConstraintComponent> element.constraint[i]).requirements && (<ConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+          checkConstraint = true;
+          break;
+        }
+      }
+    }
+    else if(<ElementDefinitionConstraintComponent[]> element.constraint){
+      for(let i = 0; i < element.constraint.length; i++){
+        if((<ElementDefinitionConstraintComponent> element.constraint[i]).requirements
+          && (<ElementDefinitionConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+          checkConstraint = true;
+          break;
+        }
+      }
+    }
+    if(checkConstraint) return true;
+
+    let checkBinding = false;
+    if((<STU3ElementDefinition> element).binding && (<STU3ElementDefinition> element).binding.valueSetUri){
+      checkBinding = (<STU3ElementDefinition> element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    }
+    else if((<R4ElementDefinition> element).binding && (<R4ElementDefinition> element).binding.valueSet){
+      checkBinding = (<R4ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    }
+    if(checkBinding) return true;
+
+    if(element.type){
+      let types = this.configService.isFhirSTU3 ? <TypeRefComponent[]> element.type : <ElementDefinitionTypeRefComponent[]> element.type;
+      for(let i = 0; i < types.length; i++){
+        if(types[i].code.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+          return true;
+        }
+        if(types[i].targetProfile){
+          for(let j = 0; j < types[i].targetProfile.length; j++){
+            if(types[i].targetProfile[j].toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+              return true;
+            }
+          }
+        }
+        if(types[i].profile){
+          for(let j = 0; j < types[i].profile.length; j++){
+            if(types[i].profile[j].toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+      return true;
+    }
+  }
+
+  getSearchElement(){
+    const structureDefElements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    let found = structureDefElements.find((element) => {
+      return this.checkForMatchingElement(element);
+    });
+    if(!found){
+      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
+      found = baseStructDefElements.find((element) => {
+        return this.checkForMatchingElement(element);
+      });
+    }
+    if(found){
+      const model = this.elements.find((element) => {
+        const foundPath = found.path;
+        const elementPath = element.path;
+        return foundPath === elementPath;
+      });
+
+      if(model){
+        this.selectedElement = model;
+      }
+      else {
+        let pathElements = found.path.split(".");
+        let currentPath = "";
+        let currentElement;
+        for (let i = 0; i < pathElements.length; i++) {
+          currentPath = currentPath == "" ? pathElements[i] : currentPath + "." + pathElements[i];
+          currentElement = this.elements.find(e => {
+            return e.path === currentPath;
+          });
+          //Expand all elements that are on the path except the last one
+          if (i != pathElements.length - 1 && !currentElement.expanded) {
+            this.toggleElementExpand(currentElement);
+          }
+        }
+        this.selectedElement = currentElement;
+      }
     }
   }
 

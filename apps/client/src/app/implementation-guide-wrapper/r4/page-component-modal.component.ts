@@ -49,7 +49,7 @@ export class PageComponentModalComponent implements OnInit {
     }
   }
 
-  public get nameType(): string {
+  public get nameType(): 'Url'|'Reference' {
     if (this.page.hasOwnProperty('nameReference')) {
       return 'Reference';
     } else if (this.page.hasOwnProperty('nameUrl')) {
@@ -57,16 +57,16 @@ export class PageComponentModalComponent implements OnInit {
     }
   }
 
-  public set nameType(value: string) {
+  public set nameType(value: 'Url'|'Reference') {
     if (this.nameType === value) {
       return;
     }
 
-    if (this.nameType === 'Reference') {
+    if (this.nameType === 'Reference' && value === 'Url') {
       delete this.page.nameReference;
       this.pageBinary = null;
       this.page.nameUrl = '';
-    } else if (this.nameType === 'Url') {
+    } else if (this.nameType === 'Url' && value === 'Reference') {
       delete this.page.nameUrl;
       this.page.nameReference = { reference: '', display: '' };
     }
@@ -133,15 +133,29 @@ export class PageComponentModalComponent implements OnInit {
       distinct()
     );
 
+  public  initializePageContent() {
+    this.implementationGuide.contained = this.implementationGuide.contained || [];
+
+    const newBinary = new Binary();
+    newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
+    newBinary.contentType = 'text/markdown';
+    newBinary.data = '';
+    this.implementationGuide.contained.push(newBinary);
+
+    this.nameType = 'Reference';
+    this.page.nameReference.reference = '#' + newBinary.id;
+    this.page.nameReference.display = 'Page content ' + newBinary.id;
+
+    this.pageBinary = newBinary;
+  }
+
   public importFile(file: File) {
     const reader = new FileReader();
 
     reader.onload = (e: any) => {
       const result = e.target.result;
 
-      if (!this.implementationGuide.contained) {
-        this.implementationGuide.contained = [];
-      }
+      this.implementationGuide.contained = this.implementationGuide.contained || [];
 
       const newBinary = new Binary();
       newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();

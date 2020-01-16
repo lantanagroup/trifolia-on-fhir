@@ -11,6 +11,7 @@ import {map} from 'rxjs/operators';
 import {AuthConfig, OAuthService, OAuthEvent} from 'angular-oauth2-oidc';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import {log} from 'util';
 
 @Injectable()
 export class AuthService {
@@ -51,11 +52,27 @@ export class AuthService {
   }
 
   public init() {
+    let logoutUrl = this.configService.config.auth.logoutUrl;
+
+    if (logoutUrl) {
+      if (logoutUrl.indexOf('?') < 0) {
+        logoutUrl += '?';
+      }
+
+      if (!logoutUrl.endsWith('?')) {
+        logoutUrl += '&';
+      }
+
+      logoutUrl += 'returnTo=' + encodeURIComponent(window.location.origin + '/logout') +
+        '&client_id=' + encodeURIComponent(this.configService.config.auth.clientId);
+    }
+
     const authConfig: AuthConfig = {};
     authConfig.issuer = this.configService.config.auth.issuer;
     authConfig.clientId = this.configService.config.auth.clientId;
     authConfig.redirectUri = window.location.origin + '/login';
-    //authConfig.logoutUrl = window.location.origin + '/logout';
+    authConfig.postLogoutRedirectUri = window.location.origin + '/logout';
+    authConfig.logoutUrl = logoutUrl;
     authConfig.silentRefreshRedirectUri = window.location.origin + '/silent-refresh.html';
     authConfig.scope = this.configService.config.auth.scope;
     authConfig.requireHttps = false;

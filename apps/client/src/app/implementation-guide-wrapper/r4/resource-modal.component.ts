@@ -23,9 +23,9 @@ export class R4ResourceModalComponent implements OnInit {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
 
-  get enablePackage() {
-    return this.resource.package ||
-      (this.implementationGuide.definition.package && this.implementationGuide.definition.package.length > 0);
+  get enableGroups() {
+    return this.resource.groupingId ||
+      (this.implementationGuide.definition.grouping && this.implementationGuide.definition.grouping.length > 0);
   }
 
   get enableExampleCanonical() {

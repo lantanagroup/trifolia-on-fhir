@@ -1,9 +1,13 @@
-import {ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent,
+  ElementDefinitionTypeRefComponent
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class ElementTreeModel {
-  public constrainedElement?: ElementDefinition;
-  public baseElement: ElementDefinition;
+  public constrainedElement?: STU3ElementDefinition | R4ElementDefinition;
+  public baseElement: STU3ElementDefinition | R4ElementDefinition;
   public depth: number;
   public expanded = false;
   public hasChildren = false;
@@ -84,10 +88,10 @@ export class ElementTreeModel {
     return false;
   }
 
-  private getTypeRefDisplay(typeRefs: TypeRefComponent[]): string {
+  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
     const typeCounts = {};
 
-    typeRefs.forEach((type: TypeRefComponent) => {
+    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
       if (typeCounts.hasOwnProperty(type.code)) {
         typeCounts[type.code]++;
       } else {
@@ -109,8 +113,7 @@ export class ElementTreeModel {
   }
 
   get type(): string {
-    const types = this.constrainedElement ? this.constrainedElement.type : this.baseElement.type;
-
+    const types = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> (this.constrainedElement ? this.constrainedElement.type : this.baseElement.type);
     if (types) {
       const uniqueTypes: string[] = types.reduce((previous, current) => {
         if (previous.indexOf(current.code) < 0) {
@@ -129,14 +132,13 @@ export class ElementTreeModel {
     const constrainedElement = this.constrainedElement;
 
     if (constrainedElement && constrainedElement.type && constrainedElement.type.length > 0) {
-      return this.getTypeRefDisplay(constrainedElement.type);
+      return this.getTypeRefDisplay(<(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> constrainedElement.type);
     }
 
     if (!this.baseElement.type) {
       return '';
     }
-
-    return this.getTypeRefDisplay(this.baseElement.type);
+    return this.getTypeRefDisplay(<(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> (<STU3ElementDefinition | R4ElementDefinition> this.baseElement).type);
   }
 
   get isSlice(): boolean {
@@ -174,26 +176,31 @@ export class ElementTreeModel {
     return this.baseElement.max;
   }
 
-  private getBindingComponentDisplay(component: ElementDefinitionBindingComponent) {
+  private getBindingComponentDisplay(component: ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent) {
     if (!component) {
       return '';
     }
 
     let valueSetDisplay;
-
-    if (component.valueSetUri) {
-      valueSetDisplay = component.valueSetUri;
-    } else if (component.valueSetReference) {
-      if (component.valueSetReference.reference && component.valueSetReference.display) {
-        valueSetDisplay = component.valueSetReference.reference + ' (' + component.valueSetReference.display + ')';
-      } else if (component.valueSetReference.reference) {
-        valueSetDisplay = component.valueSetReference.reference;
-      } else if (component.valueSetReference.display) {
-        valueSetDisplay = component.valueSetReference.display;
+    //STU3 display data
+    if (component && (<ElementDefinitionBindingComponent> component).valueSetUri) {
+      valueSetDisplay = (<ElementDefinitionBindingComponent> component).valueSetUri;
+    } else if (component && (<ElementDefinitionBindingComponent> component).valueSetReference) {
+      if ((<ElementDefinitionBindingComponent> component).valueSetReference.reference && (<ElementDefinitionBindingComponent> component).valueSetReference.display) {
+        valueSetDisplay = (<ElementDefinitionBindingComponent> component).valueSetReference.reference + ' (' + (<ElementDefinitionBindingComponent> component).valueSetReference.display + ')';
+      } else if ((<ElementDefinitionBindingComponent> component).valueSetReference.reference) {
+        valueSetDisplay = (<ElementDefinitionBindingComponent> component).valueSetReference.reference;
+      } else if ((<ElementDefinitionBindingComponent> component).valueSetReference.display) {
+        valueSetDisplay = (<ElementDefinitionBindingComponent> component).valueSetReference.display;
       }
     }
 
-    if (component.strength && valueSetDisplay) {
+    //R4 display data
+    else if (component && (<ElementDefinitionElementDefinitionBindingComponent> component).valueSet) {
+      valueSetDisplay = (<ElementDefinitionElementDefinitionBindingComponent> component).valueSet;
+    }
+
+    if (component && component.strength && valueSetDisplay) {
       return component.strength + ' ' + valueSetDisplay;
     } else if (valueSetDisplay) {
       return valueSetDisplay;
@@ -201,10 +208,11 @@ export class ElementTreeModel {
       return component.strength;
     }
 
+
     return '';
   }
 
-  private getBindingDisplay(element: ElementDefinition): string {
+  private getBindingDisplay(element: STU3ElementDefinition | R4ElementDefinition): string {
     let display = this.getBindingComponentDisplay(element.binding);
     const fixedPropertyName = Globals.getChoiceSelectionName(element, 'fixed');
     const patternPropertyName = Globals.getChoiceSelectionName(element, 'pattern');
@@ -239,10 +247,42 @@ export class ElementTreeModel {
       display += exampleName;
     }
 
+    const elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> element.type;
+    if(elementTypes){
+      elementTypes.forEach(e => {
+        // append the last 15 characters to display
+        if (e.targetProfile) {
+          if(e.targetProfile instanceof Array){
+            e.targetProfile.forEach(tp => {
+              if(display) display += ", ";
+              display += tp.toString().substring(tp.lastIndexOf("/") + 1);
+            });
+          }
+          else{
+            if(display) display += ", ";
+            display += e.targetProfile.toString().substring(e.targetProfile.lastIndexOf("/") + 1);
+          }
+        }
+        else if (e.profile){
+          if(e.profile instanceof Array){
+            e.profile.forEach(p => {
+              if(display) display += ", ";
+              display += p.toString().substring(p.lastIndexOf("/") + 1);
+            });
+          }
+          else{
+            if(display) display += ", ";
+            display += e.profile.toString().substring(e.profile.lastIndexOf("/") + 1);
+          }
+        }
+      });
+    }
+
     return display;
   }
 
-  get binding(): string {
+  get constraints(): string {
+    //Change this to grab the valueset
     if (this.constrainedElement) {
       return this.getBindingDisplay(this.constrainedElement);
     }

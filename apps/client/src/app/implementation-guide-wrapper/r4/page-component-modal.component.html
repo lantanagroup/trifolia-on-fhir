@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Edit page</h4>
+  <h4 class="modal-title">Edit Page</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -22,7 +22,7 @@
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
                                [required]="true"></app-fhir-select-single-code>
 
-  <div class="form-group">
+  <div class="form-group" *ngIf="page.generation !== 'generated'">
     <label>
       <input type="checkbox" [(ngModel)]="hasPageNavMenu" /> Show on top nav menu
     </label>
@@ -33,7 +33,8 @@
     <label>Content</label>
     <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></app-markdown>
     <div class="help-block" *ngIf="!pageBinary">
-      A contained Binary resource could not be found for this source. This will result in an incomplete FHIR IG Publisher build package.
+      <span *ngIf="page.nameUrl === 'index.md'">This home page can be automatically generated based on the description of the implementation guide. Alternatively, you can import content from a file on your computer or <a href="javascript:void()" (click)="initializePageContent()">click here</a> to override the content of the home page.</span>
+      <span *ngIf="page.nameUrl !== 'index.md'">No content has been specified for this page. <a href="javascript:void(0)" (click)="initializePageContent()">click here</a> to specify content for the page.</span>
       <br/>
       <input type="file" style="display: none" (change)="importFile(fileInput.files[0])" accept=".html,.txt,.md" #fileInput/>
       <button type="button" class="btn btn-default" (click)="fileInput.click()">Import from computer (HTML, Text, MD/Markdown)</button>

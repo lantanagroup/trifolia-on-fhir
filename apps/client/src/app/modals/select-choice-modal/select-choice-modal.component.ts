@@ -3,6 +3,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ElementTreeModel} from '../../models/element-tree-model';
 import {Coding, StructureDefinition, TypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
+import { ElementDefinitionTypeRefComponent } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 /**
  * This component represents a modal window that can instantiated using NgbModal.
@@ -18,7 +19,7 @@ export class SelectChoiceModalComponent implements OnInit {
   @Input() element = new ElementTreeModel();
   @Input() structureDefinition = new StructureDefinition();
   public selectedType: string;
-  public types: TypeRefComponent[];
+  public types: TypeRefComponent[] | ElementDefinitionTypeRefComponent[];
   public definedTypeCodes: Coding[] = [];
 
   constructor(
@@ -29,7 +30,7 @@ export class SelectChoiceModalComponent implements OnInit {
   ngOnInit() {
     this.definedTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/defined-types');
     if (this.element.constrainedElement && this.element.constrainedElement.type) {
-      this.types = this.element.constrainedElement.type;
+      this.types =  this.element.constrainedElement.type;
     } else {
       this.types = this.definedTypeCodes.map((definedTypeCode: Coding) =>
         new TypeRefComponent({code: definedTypeCode.code}));

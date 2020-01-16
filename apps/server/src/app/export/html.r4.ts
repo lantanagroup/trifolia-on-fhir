@@ -1,10 +1,7 @@
 import {HtmlExporter} from './html';
-import {FhirControl, PageInfo, TableOfContentsEntry} from './html.models';
-import {
-  Binary as R4Binary, Bundle as R4Bundle,
-  ImplementationGuidePageComponent, ImplementationGuideResourceComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import * as path from "path";
+import {PageInfo} from './html.models';
+import {Binary as R4Binary, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import * as path from 'path';
 import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ContactDetail} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -46,11 +43,11 @@ export class R4HtmlExporter extends HtmlExporter {
     const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
 
-    const previousPageLink = previousPage && previousPage.finalFileName ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
+    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
+      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
       undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
+    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
+      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
     if (pageInfo.content && pageInfo.fileName) {

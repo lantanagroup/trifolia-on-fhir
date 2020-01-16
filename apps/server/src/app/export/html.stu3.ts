@@ -1,16 +1,8 @@
 import {HtmlExporter} from './html';
-import {FhirControl, FhirControlDependency, PageInfo, TableOfContentsEntry} from './html.models';
-import {
-  Binary as STU3Binary,
-  Bundle as STU3Bundle,
-  DomainResource,
-  Extension,
-  PackageResourceComponent,
-  PageComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PageInfo} from './html.models';
+import {Binary as STU3Binary, DomainResource, PackageResourceComponent, PageComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class STU3HtmlExporter extends HtmlExporter {
@@ -51,11 +43,11 @@ export class STU3HtmlExporter extends HtmlExporter {
     const pageIndex = this.pageInfos.indexOf(pageInfo);
     const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
     const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage && previousPage.finalFileName ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
+    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
+      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
       undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
+    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
+      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
     if (page.kind !== 'toc' && pageInfo.content) {

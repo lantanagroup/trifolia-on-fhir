@@ -49,18 +49,22 @@ export class ImplementationGuideService {
     }
 
     public getImplementationGuide(id: string) {
-        return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>('/api/implementationGuide/' + id);
+        return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`);
     }
 
     public saveImplementationGuide(implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
         if (implementationGuide.id) {
-            return this.http.put('/api/implementationGuide/' + implementationGuide.id, implementationGuide);
+            return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
         } else {
             return this.http.post('/api/implementationGuide', implementationGuide);
         }
     }
 
     public removeImplementationGuide(id: string) {
-        return this.http.delete('/api/implementationGuide/' + id);
+        return this.http.delete(`/api/implementationGuide/${id}`);
+    }
+
+    public copyPermissions(id: string) {
+      return this.http.post<number>(`/api/implementationGuide/${id}/copy-permissions`, null);
     }
 }

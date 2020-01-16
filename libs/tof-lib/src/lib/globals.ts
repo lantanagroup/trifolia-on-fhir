@@ -144,7 +144,8 @@ export class Globals {
     'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.',
     'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
     'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
-    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.'
+    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.',
+    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.'
   };
 
   static readonly cookieKeys = {
