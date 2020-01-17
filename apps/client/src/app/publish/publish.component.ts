@@ -147,6 +147,10 @@ export class PublishComponent implements OnInit {
     });
   }
 
+  public getPackageId(){
+    return this.packageId;
+  }
+
   public ngOnInit() {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;

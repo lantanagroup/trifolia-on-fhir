@@ -122,6 +122,6 @@
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>
-  <button type="button" class="btn btn-primary" (click)="cancel()" [disabled]="!packageId" [attr.data-intro]="Globals.introText['publish.cancel-btn']">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="cancel()" [disabled]="!getPackageId()" [attr.data-intro]="Globals.introText['publish.cancel-btn']">Cancel</button>
   <span class="message">{{message}}</span>
 </footer>
