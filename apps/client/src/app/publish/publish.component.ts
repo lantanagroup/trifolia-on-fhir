@@ -165,11 +165,7 @@ export class PublishComponent implements OnInit {
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {
-        if (data.status === 'queue') {
-          // check the value of message to see that the number is greater than 0
-
-          // enable cancel button if queue is greater than 0
-        } else if (data.status === 'complete') {
+        if (data.status === 'complete') {
           this.message = 'Done exporting';
 
           if (this.options.downloadOutput) {
@@ -185,11 +181,13 @@ export class PublishComponent implements OnInit {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';
         } else {
-          this.socketOutput += data.message ? data.message.trim() : "";
+          let msg = data.message ? data.message.trim() : "";
 
-          if (!data.message.endsWith('\n')) {
-            this.socketOutput += '\r\n';
+          if (msg && !msg.endsWith('\n')) {
+            msg += '\r\n';
           }
+
+          this.socketOutput += msg;
 
           if (this.autoScroll && this.outputEle) {
             setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
