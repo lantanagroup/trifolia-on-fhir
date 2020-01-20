@@ -53,6 +53,17 @@ export class BundleExporter {
               page.nameUrl = Globals.getCleanFileName(page.title) + '.html';
             }
 
+            // Old extension used to determine if toc should be auto-generated. No longer used, but some IGs still have it and need it removed.
+            const autoGenericTocExtension = (page.extension || []).find(e => e.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
+            if (autoGenericTocExtension) {
+              const index = page.extension.indexOf(autoGenericTocExtension);
+              page.extension.splice(index, index >= 0 ? 1 : 0);
+
+              if (page.extension.length === 0) {
+                delete page.extension;
+              }
+            }
+
             (page.page || []).forEach((next) => fixPage(next));
           };
 
