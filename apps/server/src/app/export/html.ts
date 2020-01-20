@@ -302,10 +302,10 @@ export class HtmlExporter {
       // noinspection SpellCheckingInspection
       const shContent = '#!/bin/bash\n' +
         'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-        'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+        'java -jar org.hl7.fhir.igpublisher.jar -ig ig.ini';
       fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
 
-      const batContent = 'java -jar org.hl7.fhir.igpublisher.jar -ig ig.json';
+      const batContent = 'java -jar org.hl7.fhir.igpublisher.jar -ig ig.ini';
       fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
     }
 
