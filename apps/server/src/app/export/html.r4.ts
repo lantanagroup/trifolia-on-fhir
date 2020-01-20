@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ContactDetail} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class R4HtmlExporter extends HtmlExporter {
 
@@ -87,9 +88,7 @@ export class R4HtmlExporter extends HtmlExporter {
           const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
 
           if (binary && binary.data) {
-            pageInfo.fileName = page.title
-              .trim()
-              .replace(/[/\\—,() ]/g, '');
+            pageInfo.fileName = Globals.getCleanFileName(page.title);
 
             if (pageInfo.fileName.indexOf('.') < 0) {
               pageInfo.fileName += this.getPageExtension(page);

@@ -4,6 +4,7 @@ import {Binary as STU3Binary, DomainResource, PackageResourceComponent, PageComp
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 
 export class STU3HtmlExporter extends HtmlExporter {
   protected removeNonExampleMedia() {
@@ -95,11 +96,7 @@ export class STU3HtmlExporter extends HtmlExporter {
           const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
 
           if (binary) {
-            pageInfo.fileName = page.source ?
-              page.source
-                .trim()
-                .replace(/[/\\—,() ]/g, '') :
-              null;
+            pageInfo.fileName = Globals.getCleanFileName(page.source);
             pageInfo.content = Buffer.from(binary.content, 'base64').toString();
           }
         }

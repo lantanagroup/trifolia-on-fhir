@@ -353,4 +353,14 @@ export class Globals {
   static trackByFn(index) {
     return index;
   }
+
+  static getCleanFileName(value: string) {
+    if (!value) {
+      return '';
+    }
+
+    return value
+      .trim()
+      .replace(/[^\w\-]/gm, '');
+  }
 }
