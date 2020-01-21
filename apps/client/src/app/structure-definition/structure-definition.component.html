@@ -5,7 +5,7 @@
 <div class="sd-main" *ngIf="structureDefinition">
   <h2>{{structureDefinition.name || 'No name'}} <span class="badge badge-warning" *ngIf="!canEdit(structureDefinition)">View-only</span></h2>
 
-  <ngb-tabset (tabChange)="beforeTabChange($event)" [destroyOnHide]="false" [class.has-element-definition]="selectedElement" #sdTabs>
+  <ngb-tabset (tabChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs>
     <ngb-tab id="general">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>

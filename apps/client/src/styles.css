@@ -93,10 +93,22 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
   white-space: pre;
 }
 
+.editor-statusbar .lines:before {
+  content: 'Lines：';
+}
+
+.editor-statusbar .counts:before {
+  content: 'Words：';
+}
+
 .disable-markdown .CodeMirror {
   background-color: #e9ecef;
   min-height: 30px;
   height: 30px;
+}
+
+.disable-markdown .CodeMirror-line {
+  display: none;
 }
 
 .disable-markdown .editor-toolbar {

@@ -45,6 +45,7 @@ import {NarrativeComponent} from './narrative/narrative.component';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {SharedUiModule} from '../shared-ui/shared-ui.module';
 import {FhirEditIdentifierCardComponent} from './identifier-card/identifier-card.component';
+import {SimplemdeModule} from 'ngx-simplemde';
 
 const components = [
   FhirAddressModalComponent,
@@ -116,7 +117,8 @@ const components = [
     NgbModule,
     SharedModule,
     SharedUiModule,
-    AngularEditorModule
+    AngularEditorModule,
+    SimplemdeModule.forRoot({ })
   ]
 })
 export class FhirEditModule {

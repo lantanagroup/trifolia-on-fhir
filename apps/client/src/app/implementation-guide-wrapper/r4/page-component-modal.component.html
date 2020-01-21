@@ -31,7 +31,7 @@
 
   <div class="form-group">
     <label>Content</label>
-    <app-markdown [(ngModel)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></app-markdown>
+    <trifolia-fhir-markdown [(value)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
     <div class="help-block" *ngIf="!pageBinary">
       <span *ngIf="page.nameUrl === 'index.md'">This home page can be automatically generated based on the description of the implementation guide. Alternatively, you can import content from a file on your computer or <a href="javascript:void()" (click)="initializePageContent()">click here</a> to override the content of the home page.</span>
       <span *ngIf="page.nameUrl !== 'index.md'">No content has been specified for this page. <a href="javascript:void(0)" (click)="initializePageContent()">click here</a> to specify content for the page.</span>
