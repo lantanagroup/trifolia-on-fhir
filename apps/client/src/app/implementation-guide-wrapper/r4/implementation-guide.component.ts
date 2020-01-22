@@ -499,6 +499,22 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     }
   }
 
+  public addParameter() {
+    if (!this.implementationGuide.definition) {
+      this.implementationGuide.definition = {
+        resource: []
+      };
+    }
+
+    this.implementationGuide.definition.parameter = this.implementationGuide.definition.parameter || [];
+    this.implementationGuide.definition.parameter.push({ code: '', value: '' });
+  }
+
+  public addGlobal() {
+    this.implementationGuide.global = this.implementationGuide.global || [];
+    this.implementationGuide.global.push({type: '', profile: '' });
+  }
+
   public setDependsOnName(dependsOn: ImplementationGuideDependsOnComponent, name: any) {
     if (!dependsOn.extension) {
       dependsOn.extension = [];
