@@ -402,61 +402,6 @@
       </ng-template>
     </ngb-tab>
 
-    <!-- Globals -->
-    <ngb-tab id="globals">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Globals</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <p>
-          <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('global')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'global', [{type: '', profile: '' }])"/>
-          Allow globals
-        </p>
-
-        <table class="table" *ngIf="implementationGuide.hasOwnProperty('global')">
-          <thead>
-          <tr>
-            <th>
-              Type
-              <app-tooltip-icon tooltipPath="ImplementationGuide.global.type"></app-tooltip-icon>
-            </th>
-            <th>
-              Profile
-              <app-tooltip-icon tooltipPath="ImplementationGuide.global.profile"></app-tooltip-icon>
-            </th>
-            <th class="actions-column-1">
-              <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Add global"
-                        (click)="implementationGuide.global.push({type: '', profile: '' })">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
-            <td>
-              <select class="form-control" [(ngModel)]="g.type">
-                <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-              </select>
-            </td>
-            <td>
-              <app-fhir-string [parentObject]="g" propertyName="profile" [required]="true" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-              <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Remove global"
-                        (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </ng-template>
-    </ngb-tab>
-
     <!-- Resources -->
     <ngb-tab id="resources">
       <ng-template ngbTabTitle>
@@ -522,6 +467,116 @@
           </tr>
           </tbody>
         </table>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Other -->
+    <ngb-tab id="other">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Other</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <div class="card">
+          <div class="card-header">
+            Parameters <app-tooltip-icon tooltipPath="ImplementationGuide.definition.parameter"></app-tooltip-icon>
+          </div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>
+                Code <app-tooltip-icon tooltipPath="ImplementationGuide.definition.parameter.code"></app-tooltip-icon>
+              </th>
+              <th>
+                Value <app-tooltip-icon tooltipPath="ImplementationGuide.definition.parameter.value"></app-tooltip-icon>
+              </th>
+              <th class="actions-column-1">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" (click)="addParameter()" title="Add a new parameter">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.parameter">
+            <tr *ngFor="let param of implementationGuide.definition.parameter; let pi = index">
+              <td>
+                <app-fhir-string [parentObject]="param" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="param" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" (click)="implementationGuide.definition.parameter.splice(pi, 1)" title="Remove this parameter">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="!implementationGuide.definition || !implementationGuide.definition.parameter || implementationGuide.definition.parameter.length === 0">
+            <tr>
+              <td colspan="3">
+                No parameters have been defined. Click <a href="javascript:void(0)" (click)="addParameter()">here</a> to add one.
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            Globals <app-tooltip-icon tooltipPath="ImplementationGuide.global"></app-tooltip-icon>
+          </div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>
+                Type
+                <app-tooltip-icon tooltipPath="ImplementationGuide.global.type"></app-tooltip-icon>
+              </th>
+              <th>
+                Profile
+                <app-tooltip-icon tooltipPath="ImplementationGuide.global.profile"></app-tooltip-icon>
+              </th>
+              <th class="actions-column-1">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" title="Add global" (click)="addGlobal()">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody *ngIf="implementationGuide.global">
+            <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
+              <td>
+                <select class="form-control" [(ngModel)]="g.type">
+                  <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+                </select>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="g" propertyName="profile" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" title="Remove global"
+                          (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="!implementationGuide.global || implementationGuide.global.length === 0">
+            <tr>
+              <td colspan="3">
+                No globals have been defined. Click <a href="javascript:void(0)" (click)="addGlobal()">here</a> to add one.
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
       </ng-template>
     </ngb-tab>
 
