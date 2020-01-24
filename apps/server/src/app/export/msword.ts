@@ -222,10 +222,25 @@ export class MSWordExporter {
             );
           };
 
+          if (structureDefinition.status) {
+            structDefTable.addChildElement(new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph("status")],
+                    verticalAlign: VerticalAlign.CENTER,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph(structureDefinition.status)],
+                    verticalAlign: VerticalAlign.CENTER,
+                  }),
+                ]
+              })
+            );
+          };
+
 
           if (structureDefinition.differential) {
             (structureDefinition.differential.element || []).forEach((element, eIndex) => {
-
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -239,33 +254,40 @@ export class MSWordExporter {
                     ]
                   })
                 );
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("Id")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.id}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("Path")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.path}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
 
+                if(element.id) {
+                  structDefTable.addChildElement(new TableRow({
+                      children: [
+                        new TableCell({
+                          children: [new Paragraph("Id")],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                        new TableCell({
+                          children: [new Paragraph(`${element.id}`)],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                      ]
+                    })
+                  );
+                }
+
+                if(element.path) {
+                  structDefTable.addChildElement(new TableRow({
+                      children: [
+                        new TableCell({
+                          children: [new Paragraph("Path")],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                        new TableCell({
+                          children: [new Paragraph(`${element.path}`)],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                      ]
+                    })
+                  );
+                }
+
+              if(element.minValue) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -273,13 +295,15 @@ export class MSWordExporter {
                         verticalAlign: VerticalAlign.CENTER,
                       }),
                       new TableCell({
-                        children: [new Paragraph(`${element.min}`)],
+                        children: [new Paragraph(`${element.minValue}`)],
                         verticalAlign: VerticalAlign.CENTER,
                       }),
                     ]
                   })
                 );
+              }
 
+              if(element.maxValue) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -293,7 +317,9 @@ export class MSWordExporter {
                     ]
                   })
                 );
+              }
 
+              if(element.mustSupport) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -307,7 +333,9 @@ export class MSWordExporter {
                     ]
                   })
                 );
+              }
 
+              if(element.binding) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -321,8 +349,9 @@ export class MSWordExporter {
                     ]
                   })
                 );
+              }
 
-
+              if(element.short) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -336,7 +365,9 @@ export class MSWordExporter {
                     ]
                   })
                 );
+              }
 
+              if(element.label) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -350,7 +381,9 @@ export class MSWordExporter {
                     ]
                   })
                 );
+              }
 
+              if(element.alias) {
                 structDefTable.addChildElement(new TableRow({
                     children: [
                       new TableCell({
@@ -365,34 +398,10 @@ export class MSWordExporter {
                   })
                 );
               }
-            );
+            });
           }
 
           this.body.push(structDefTable);
-
-/*
-          keys.forEach((key) => {
-            //if(key === 'name' || 'url' || 'description'){
-            const table = new Table({
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph(key)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(entry.resource[key])],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              ]
-            });
-            this.body.push(table);
-          //}
-          });
-            */
 
           this.body.push(new Paragraph({
             text: ""
@@ -502,6 +511,7 @@ export class MSWordExporter {
           if (valueSet.compose.exclude) {
             valueSet.compose.exclude
               .forEach((exclude) => {
+                if(exclude) {
                   valueSetTable.addChildElement(new TableRow({
                       children: [
                         new TableCell({
@@ -516,25 +526,27 @@ export class MSWordExporter {
                     })
                   )
                 }
-              )
+              })
           };
 
           if (valueSet.contained) {
             valueSet.contained
               .forEach((contained) => {
-                valueSetTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("contained")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(contained)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
+                if(contained) {
+                  valueSetTable.addChildElement(new TableRow({
+                      children: [
+                        new TableCell({
+                          children: [new Paragraph("contained")],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                        new TableCell({
+                          children: [new Paragraph(contained)],
+                          verticalAlign: VerticalAlign.CENTER,
+                        }),
+                      ]
+                    })
+                  );
+                }
               })
           };
 
@@ -644,19 +656,21 @@ export class MSWordExporter {
             if (codeSystem.contained) {
               codeSystem.contained
                 .forEach((contained) => {
-                  codeSystemTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("contained")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(contained)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  );
+                  if(contained) {
+                    codeSystemTable.addChildElement(new TableRow({
+                        children: [
+                          new TableCell({
+                            children: [new Paragraph("contained")],
+                            verticalAlign: VerticalAlign.CENTER,
+                          }),
+                          new TableCell({
+                            children: [new Paragraph(contained)],
+                            verticalAlign: VerticalAlign.CENTER,
+                          }),
+                        ]
+                      })
+                    );
+                  }
                 })
             };
 
