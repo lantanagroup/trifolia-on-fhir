@@ -23,4 +23,5 @@ export interface IExtension {
   valueBoolean?: boolean;
   valueString?: string;
   valueReference?: IResourceReference;
+  valueMarkdown?: string;
 }

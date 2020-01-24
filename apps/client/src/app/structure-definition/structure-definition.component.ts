@@ -23,6 +23,8 @@ import {ElementDefinitionPanelComponent} from './element-definition-panel/elemen
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -79,6 +81,60 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     return false;
+  }
+
+  get notes() {
+    if (!this.structureDefinition || !this.structureDefinition.extension) return '';
+    const extensions: IExtension[] = this.structureDefinition.extension;
+    const notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
+    return notes ? notes.valueMarkdown || '' : '';
+  }
+
+  set notes(value: string) {
+    if (!this.structureDefinition) return;
+    this.structureDefinition.extension = this.structureDefinition.extension || [];
+    const extensions: IExtension[] = this.structureDefinition.extension;
+    let notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
+
+    if (!notes && value) {
+      notes = {
+        url: Globals.extensionUrls['extension-sd-notes'],
+        valueMarkdown: value
+      };
+      extensions.push(notes);
+    } else if (notes && !value) {
+      const index = extensions.indexOf(notes);
+      extensions.splice(index, index >= 0 ? 1 : 0);
+    } else if (notes && value) {
+      notes.valueMarkdown = value;
+    }
+  }
+
+  get intro() {
+    if (!this.structureDefinition || !this.structureDefinition.extension) return '';
+    const extensions: IExtension[] = this.structureDefinition.extension;
+    const intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+    return intro ? intro.valueMarkdown || '' : '';
+  }
+
+  set intro(value: string) {
+    if (!this.structureDefinition) return;
+    this.structureDefinition.extension = this.structureDefinition.extension || [];
+    const extensions: IExtension[] = this.structureDefinition.extension;
+    let intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+
+    if (!intro && value) {
+      intro = {
+        url: Globals.extensionUrls['extension-sd-intro'],
+        valueMarkdown: value
+      };
+      extensions.push(intro);
+    } else if (intro && !value) {
+      const index = extensions.indexOf(intro);
+      extensions.splice(index, index >= 0 ? 1 : 0);
+    } else if (intro && value) {
+      intro.valueMarkdown = value;
+    }
   }
 
   ngOnDestroy() {

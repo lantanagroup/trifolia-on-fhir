@@ -30,7 +30,9 @@ export class Globals {
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
     'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path',
     'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation',
-    'extension-ig-page-nav-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu'
+    'extension-ig-page-nav-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
+    'extension-sd-notes': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-notes',
+    'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro'
   };
 
   static readonly introText = {
