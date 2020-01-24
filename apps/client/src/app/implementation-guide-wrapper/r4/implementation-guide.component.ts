@@ -8,9 +8,8 @@ import {
   ImplementationGuidePageComponent,
   ResourceReference,
   ImplementationGuideDefinitionComponent,
-  ImplementationGuidePackageComponent,
   ImplementationGuideResourceComponent,
-  ImplementationGuideDependsOnComponent, Extension
+  ImplementationGuideDependsOnComponent, Extension, ImplementationGuideGroupingComponent
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
@@ -30,6 +29,7 @@ import {
   getImplementationGuideMediaReferences, MediaReference
 } from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {GroupModalComponent} from './group-modal.component';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -130,6 +130,42 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
 
   public get isFilterResourceTypeAll() {
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+  }
+
+  public addGrouping() {
+    if (!this.implementationGuide.definition) {
+      this.implementationGuide.definition = {
+        resource: []
+      };
+    }
+
+    this.implementationGuide.definition.grouping = this.implementationGuide.definition.grouping || [];
+
+    const newId = 'new-group' + (this.implementationGuide.definition.grouping.filter(g => g.id && g.id.startsWith('new-group')).length + 1);
+
+    this.implementationGuide.definition.grouping.push({
+      id: newId,
+      name: 'New Group'
+    });
+  }
+
+  public editGroup(group: ImplementationGuideGroupingComponent) {
+    const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.group = group;
+    modalRef.componentInstance.implementationGuide = this.implementationGuide;
+  }
+
+  public removeGroup(group: ImplementationGuideGroupingComponent) {
+    if (!confirm('This will remove the grouping from the implementation guide and any references to it from resources within the implementation guide. Are you sure you want to continue?')) {
+      return;
+    }
+
+    (this.implementationGuide.definition.resource || [])
+      .filter(r => r.groupingId === group.id)
+      .forEach(r => delete r.groupingId);
+
+    const index = this.implementationGuide.definition.grouping.indexOf(group);
+    this.implementationGuide.definition.grouping.splice(index, 1);
   }
 
   public editResource(resource: ImplementationGuideResourceComponent) {
@@ -301,26 +337,6 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     }
   }
 
-  public togglePackages(hasPackages: boolean) {
-    if (!hasPackages && this.implementationGuide.definition && this.implementationGuide.definition.package) {
-      delete this.implementationGuide.definition.package;
-    } else if (hasPackages) {
-      if (!this.implementationGuide.definition) {
-        this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
-      }
-
-      if (!this.implementationGuide.definition.package) {
-        this.implementationGuide.definition.package = [];
-      }
-
-      if (this.implementationGuide.definition.package.length === 0) {
-        const newPackage = new ImplementationGuidePackageComponent();
-        newPackage.name = 'New Package';
-        this.implementationGuide.definition.package.push(newPackage);
-      }
-    }
-  }
-
   public toggleRootPage(value: boolean) {
     if (value && !this.implementationGuide.definition) {
       this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
@@ -484,6 +500,22 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     if (extension) {
       return extension.valueString;
     }
+  }
+
+  public addParameter() {
+    if (!this.implementationGuide.definition) {
+      this.implementationGuide.definition = {
+        resource: []
+      };
+    }
+
+    this.implementationGuide.definition.parameter = this.implementationGuide.definition.parameter || [];
+    this.implementationGuide.definition.parameter.push({ code: '', value: '' });
+  }
+
+  public addGlobal() {
+    this.implementationGuide.global = this.implementationGuide.global || [];
+    this.implementationGuide.global.push({type: '', profile: '' });
   }
 
   public setDependsOnName(dependsOn: ImplementationGuideDependsOnComponent, name: any) {

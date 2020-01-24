@@ -14489,31 +14489,13 @@ export class ImplementationGuideGlobalComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuidePackageComponent extends BackboneElement {
-  public name: string;
-  public description?: string;
-
-  constructor(obj?: any) {
-    super(obj);
-    if (obj) {
-      if (obj.hasOwnProperty('name')) {
-        this.name = obj.name;
-      }
-      if (obj.hasOwnProperty('description')) {
-        this.description = obj.description;
-      }
-    }
-  }
-
-}
-
 export class ImplementationGuideResourceComponent extends BackboneElement {
   public reference: ResourceReference;
   public name?: string;
   public description?: string;
   public exampleBoolean? = false;
   public exampleCanonical?: string;
-  public package?: string;
+  public groupingId?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -14533,8 +14515,8 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
       if (obj.hasOwnProperty('exampleCanonical')) {
         this.exampleCanonical = obj.exampleCanonical;
       }
-      if (obj.hasOwnProperty('package')) {
-        this.package = obj.package;
+      if (obj.hasOwnProperty('groupingId')) {
+        this.groupingId = obj.groupingId;
       }
     }
   }
@@ -14614,8 +14596,25 @@ export class ImplementationGuideTemplateComponent extends BackboneElement {
 
 }
 
+export class ImplementationGuideGroupingComponent extends BackboneElement {
+  public name: string;
+  public description?: string;
+
+  constructor(obj?: any) {
+    super(obj);
+    if (obj) {
+      if (obj.hasOwnProperty('name')) {
+        this.name = obj.name;
+      }
+      if (obj.hasOwnProperty('description')) {
+        this.description = obj.description;
+      }
+    }
+  }
+}
+
 export class ImplementationGuideDefinitionComponent extends BackboneElement {
-  public package?: ImplementationGuidePackageComponent[];
+  public grouping?: ImplementationGuideGroupingComponent[];
   public resource: ImplementationGuideResourceComponent[];
   public page?: ImplementationGuidePageComponent;
   public parameter?: ImplementationGuideParameterComponent[];
@@ -14624,10 +14623,10 @@ export class ImplementationGuideDefinitionComponent extends BackboneElement {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('package')) {
-        this.package = [];
+      if (obj.hasOwnProperty('grouping')) {
+        this.grouping = [];
         for (const o of obj.package || []) {
-          this.package.push(new ImplementationGuidePackageComponent(o));
+          this.grouping.push(new ImplementationGuideGroupingComponent(o));
         }
       }
       if (obj.hasOwnProperty('resource')) {

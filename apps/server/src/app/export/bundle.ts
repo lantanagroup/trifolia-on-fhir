@@ -21,66 +21,75 @@ export class BundleExporter {
     this.fhirServerId = fhirServerId;
     this.fhirVersion = fhirVersion;
     this.fhir = fhir;
-    this.implementationGuideId = implementationGuideId
+    this.implementationGuideId = implementationGuideId;
   }
 
   /**
    * Performs any fixes to the resources that are being exported, such as removing ToF-specific extensions from the resource
    * and converting ImplementationGuide.definition.page.nameReference to nameUrl
-   * @param object The resource to cleanup
+   * @param obj The resource to cleanup
    * @param clone
    */
-  public static cleanupResource(object: any, clone = true) {
-    if (object) {
+  public static cleanupResource(obj: any, clone = true) {
+    if (obj) {
       if (clone) {
-        object = JSON.parse(JSON.stringify(object));
+        obj = JSON.parse(JSON.stringify(obj));
       }
 
       const extensionUrlKeys = Object.keys(Globals.extensionUrls);
       const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
-      const keys = Object.keys(object);
+      const keys = Object.keys(obj);
 
-      if (object.meta && object.meta.security) {
-        delete object.meta.security;
+      if (obj.meta && obj.meta.security) {
+        delete obj.meta.security;
       }
 
       // Convert page.nameReference to page.nameTitle
-      if (object.resourceType === 'ImplementationGuide' && object.definition) {
-        if (object.definition.page) {
+      if (obj.resourceType === 'ImplementationGuide' && obj.definition) {
+        if (obj.definition.page) {
           const fixPage = (page: ImplementationGuidePageComponent) => {
             if (page.nameReference && page.title) {
               delete page.nameReference;
-              page.nameUrl = page.title
-                .replace(/[/\\—,() ]/g, '') +
-                '.html';
+              page.nameUrl = Globals.getCleanFileName(page.title) + '.html';
+            }
+
+            // Old extension used to determine if toc should be auto-generated. No longer used, but some IGs still have it and need it removed.
+            const autoGenericTocExtension = (page.extension || []).find(e => e.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
+            if (autoGenericTocExtension) {
+              const index = page.extension.indexOf(autoGenericTocExtension);
+              page.extension.splice(index, index >= 0 ? 1 : 0);
+
+              if (page.extension.length === 0) {
+                delete page.extension;
+              }
             }
 
             (page.page || []).forEach((next) => fixPage(next));
           };
 
-          fixPage(object.definition.page);
+          fixPage(obj.definition.page);
 
           // Remove any contained binary resources. The IG publisher produces errors when there is a contained binary resource on the IG.
-          const containedBinaries = (object.contained || []).filter((contained: DomainResource) => contained.resourceType === 'Binary');
+          const containedBinaries = (obj.contained || []).filter((contained: DomainResource) => contained.resourceType === 'Binary');
           containedBinaries.forEach((contained) => {
-            const index = object.contained.indexOf(contained);
-            object.contained.splice(index, 1);
+            const index = obj.contained.indexOf(contained);
+            obj.contained.splice(index, 1);
           });
         }
 
         // Remove Media resources from the IG. Media should only be left if it is an example
-        if (object.definition.resource) { // R4
-          for (let i = object.definition.resource.length - 1; i >= 0; i--) {
-            const resource = object.definition.resource[i];
+        if (obj.definition.resource) { // R4
+          for (let i = obj.definition.resource.length - 1; i >= 0; i--) {
+            const resource = obj.definition.resource[i];
             const isExample = resource.exampleBoolean === true || !!resource.exampleCanonical;
             const isMedia = resource.reference && resource.reference.reference && resource.reference.reference.startsWith('Media/');
 
             if (isMedia && !isExample) {
-              object.definition.resource.splice(i, 1);
+              obj.definition.resource.splice(i, 1);
             }
           }
-        } else if (object.package) {      // STU3
-          object.package.forEach((pkg) => {
+        } else if (obj.package) {      // STU3
+          obj.package.forEach((pkg) => {
             if (!pkg.resource) {
               return;
             }
@@ -102,7 +111,7 @@ export class BundleExporter {
       // Remove ToF-specific extensions recursively in the object
       keys.forEach((key) => {
         if (key === 'extension') {
-          const extensions: Extension[] = object[key];
+          const extensions: Extension[] = obj[key];
           const removeExtensions = extensions.filter((extension) => extensionUrls.indexOf(extension.url) >= 0);
 
           // Remove any extensions from the resource that are for Trifolia
@@ -110,13 +119,13 @@ export class BundleExporter {
             const index = extensions.indexOf(removeExtension);
             extensions.splice(index, 1);
           });
-        } else if (typeof object[key] === 'object') {
-          this.cleanupResource(object[key], false);
+        } else if (typeof obj[key] === 'object') {
+          this.cleanupResource(obj[key], false);
         }
       });
     }
 
-    return object;
+    return obj;
   }
 
   public async getBundle(cleanup = false, summary = false): Promise<Bundle> {

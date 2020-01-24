@@ -45,7 +45,7 @@ export class FhirChoiceComponent implements OnInit {
       return false;
     }
 
-    const stringChoices = ['code', 'string', 'uri', 'oid', 'id', 'markdown', 'base64binary', 'dateTime', 'instant', 'time'];
+    const stringChoices = ['code', 'string', 'uri', 'uuid', 'url', 'oid', 'id', 'markdown', 'base64binary', 'dateTime', 'instant', 'time'];
     return stringChoices.indexOf(foundChoice.toLowerCase()) >= 0;
   }
 
@@ -124,7 +124,9 @@ export class FhirChoiceComponent implements OnInit {
       case 'string':
       case 'uri':
       case 'oid':
+      case 'url':
       case 'id':
+      case 'uuid':
       case 'markdown':
       case 'base64binary':
         return '';

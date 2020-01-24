@@ -1,5 +1,5 @@
 <div [class.disable-markdown]="disabled">
-    <textarea #simplemde></textarea>
+  <simplemde [(ngModel)]="value" [options]="{ toolbar: toolbar }" (ngModelChange)="valueChange.emit($event)" #smde></simplemde>
 </div>
 
 <ng-template #imageListModal let-modal>

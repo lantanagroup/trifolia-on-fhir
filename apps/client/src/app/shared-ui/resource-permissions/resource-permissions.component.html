@@ -51,7 +51,7 @@
     <div class="card" *ngIf="resource.resourceType === 'ImplementationGuide'">
       <div class="card-header">Copy IG permissions</div>
       <div class="card-body">
-        <p>Copy permissions from this IG to resources referenced by the IG.</p>
+        <p>Add permissions from this IG to resources referenced by the IG. This <em>does not</em> overwrite or remove permissions that already exist on the resources, it <em>adds</em> permissions from the IG that don't already exist.</p>
       </div>
       <button type="button" class="btn btn-primary" (click)="copyIgPermissions()">
         <i class="fas fa-copy"></i> Copy
@@ -59,9 +59,9 @@
     </div>
 
     <div class="card" [attr.data-intro]="Globals.introText['resource-permissions.copy']">
-      <div class="card-header">Copy permissions to here</div>
+      <div class="card-header">Copy permissions to this resource</div>
       <div class="card-body">
-        <p>Copy permissions from a different resource to this resource.</p>
+        <p>Add permissions from a different resource to this resource. This <em>does not</em> overwrite or remove permissions that already exist on this resource, it <em>adds</em> permissions from the specified resource that don't already exist on this resource.</p>
 
         <div class="form-group">
           <div class="input-group">

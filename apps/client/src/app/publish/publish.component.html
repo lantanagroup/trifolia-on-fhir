@@ -1,4 +1,4 @@
-<div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>v4.1.0-288459e2</strong>).
+<div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>1.0.38-SNAPSHOT built 2020-01-11 @ 07:15</strong>).
   When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.
 </div>
 
@@ -122,5 +122,6 @@
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>
+  <button type="button" class="btn btn-primary" (click)="cancel()" [disabled]="!getPackageId()" [attr.data-intro]="Globals.introText['publish.cancel-btn']">Cancel</button>
   <span class="message">{{message}}</span>
 </footer>

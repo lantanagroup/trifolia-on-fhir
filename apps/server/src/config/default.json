@@ -12,6 +12,10 @@
     "maxRequestSizeMegabytes": 50,
     "latestIgPublisherPath": "assets/ig-publisher/latest/"
   },
+  "publish": {
+    "queueLimit": 2,
+    "timeout": 5000
+  },
   "auth": {
     "clientId": "",
     "scope": "",

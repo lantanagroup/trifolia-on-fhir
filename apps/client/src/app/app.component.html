@@ -125,20 +125,26 @@
   </div>
 </nav>
 
-<div class="container container-large">
+<ng-template #bannerTemplate>
   <div class="alert alert-primary" *ngIf="configService.config.bannerMessage">
     <span [innerHTML]="configService.config.bannerMessage"></span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+</ng-template>
+
+<div class="container container-large">
   <div class="jumbotron" *ngIf="!authService.isAuthenticated()">
+    <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <app-home></app-home>
   </div>
   <div class="jumbotron" *ngIf="authService.isAuthenticated() && !authService.practitioner">
+    <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <trifolia-fhir-new-user-modal></trifolia-fhir-new-user-modal>
   </div>
   <div class="jumbotron" *ngIf="authService.isAuthenticated() && authService.practitioner">
+    <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
       {{configService.statusMessage}}
     </div>

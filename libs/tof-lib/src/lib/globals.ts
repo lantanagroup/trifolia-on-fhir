@@ -39,7 +39,9 @@ export class Globals {
     'export.igPublisherOutput': 'You can select the type of output the published IG will take here.',
     'export.igPublisherJAR': 'You can also choose whether the FHIR IG Publisher JAR will be included in the export package here.',
     'export.bundle': 'This tab exports a FHIR Bundle that contains the resources referenced by the selected implementation guide.',
+    'export.msword': 'This tab exports a MsWord document that contains the resources referenced by the selected implementation guide.',
     'export.bundleOutput': 'You can select the type of output the Bundle will take here.',
+    'export.mswordOutput': 'You can select the type of output the Document will take here.',
     'export.github': 'This tab exports the implementation guide to a GitHub repository.',
     'export.githubMessage': 'Write the commit message that you\'d like to be associated with this IG on GitHub',
     'export.githubLogin': 'Click here to login to GitHub.',
@@ -94,6 +96,7 @@ export class Globals {
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
     'publish.publish-btn': 'When you are satisfied with the options, press this button to start the publication process.',
+    'publish.cancel-btn': 'When you\'re placed in queue and wish to cancel the publication process, press this button.',
     'ig.quick-tab': 'This tab has the most important fields that are needed to create a basic implementation guide. Other fields are represented in additional tabs, categorized according to their use/purpose.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
@@ -142,7 +145,8 @@ export class Globals {
     'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.',
     'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
     'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
-    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.'
+    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.',
+    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.'
   };
 
   static readonly cookieKeys = {
@@ -348,5 +352,15 @@ export class Globals {
 
   static trackByFn(index) {
     return index;
+  }
+
+  static getCleanFileName(value: string) {
+    if (!value) {
+      return '';
+    }
+
+    return value
+      .trim()
+      .replace(/[^\w\-]/gm, '');
   }
 }

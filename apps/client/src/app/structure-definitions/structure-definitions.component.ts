@@ -23,6 +23,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public message: string;
   public page = 1;
   public nameText: string;
+  public IDText: string;
   public urlText: string;
   public titleText: string;
   public criteriaChangedEvent = new Subject();
@@ -88,6 +89,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.criteriaChangedEvent.next();
   }
 
+  public IDTextChanged(value: string) {
+    this.IDText = value;
+    this.page = 1;
+    this.criteriaChangedEvent.next();
+  }
+
   public implementationGuideIdChanged(value: string) {
     this.implementationGuideId = value;
     this.page = 1;
@@ -110,7 +117,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.showMoreSearch = !this.showMoreSearch;
 
     if (!this.showMoreSearch && (this.titleText || this.urlText)) {
-      this.nameText = null;
+      this.titleText = null;
       this.urlText = null;
       this.criteriaChangedEvent.next();
     }
@@ -118,6 +125,8 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
 
   public clearFilters() {
     this.nameText = null;
+    this.IDText = null;
+    this.titleText = null;
     this.urlText = null;
     this.implementationGuideId = null;
     this.page = 1;
@@ -128,7 +137,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.response = null;
     this.configService.setStatusMessage('Loading structure definitions');
 
-    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.urlText, this.implementationGuideId)
+    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.IDText, this.urlText, this.implementationGuideId, this.titleText)
       .subscribe((response: Bundle) => {
         this.response = response;
         this.configService.setStatusMessage('');

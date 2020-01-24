@@ -165,7 +165,7 @@ export interface SecurityPermission {
 export function parsePermissions(meta: Meta): SecurityPermission[] {
   return (meta.security || [])
     .filter((security) => {
-      return security.system === Globals.securityDelim && security.code;
+      return security.system === Globals.securitySystem && security.code;
     })
     .map((security) => {
       const parts = security.code.split(Globals.securityDelim);
@@ -178,8 +178,8 @@ export function parsePermissions(meta: Meta): SecurityPermission[] {
       } else if (parts.length === 3) {
         return {
           type: <any> parts[0],
-          permission: <any> parts[1],
-          id: parts[2]
+          id: parts[1],
+          permission: <any> parts[2]
         };
       }
     });

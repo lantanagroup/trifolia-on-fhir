@@ -27,8 +27,7 @@
                 tooltipPath="ImplementationGuide.name">
               </app-fhir-string>
 
-              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"
-                                 tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
 
               <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
 
@@ -283,8 +282,7 @@
                   Description
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
                 </label>
-                <app-markdown [(ngModel)]="p.description"
-                              [disabled]="!p.hasOwnProperty('description')"></app-markdown>
+                <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')"></trifolia-fhir-markdown>
               </div>
 
               <h4>Resources

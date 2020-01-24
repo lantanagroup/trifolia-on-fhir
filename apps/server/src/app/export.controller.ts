@@ -1,5 +1,5 @@
 import {BaseController} from './base.controller';
-import {Controller, Get, Header, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
+import {Controller, Get, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -17,20 +17,16 @@ import {createHtmlExporter} from './export/html.factory';
 
 import * as path from "path";
 import * as tmp from 'tmp';
-import {FhirServerBase, FhirServerId, FhirServerVersion} from './server.decorators';
-import {Fhir} from 'fhir/fhir';
 import {MSWordExporter} from './export/msword';
+import { ExportService } from './export.service';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiUseTags('Export')
 @ApiOAuth2Auth()
 export class ExportController extends BaseController {
-  static htmlExports = [];
-
   private readonly logger = new TofLogger(ExportController.name);
-
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
     super(configService, httpService);
   }
 
@@ -199,28 +195,65 @@ export class ExportController extends BaseController {
       options.socketId,
       implementationGuideId);
 
-    ExportController.htmlExports.push(exporter);
+    this.exportService.exports.push(exporter);
+
+    const runPublish = () => {
+      const exportIndex = this.exportService.exports.indexOf(exporter);
+
+      if(exportIndex === -1){
+        return;
+      }
+
+      if (exportIndex >= this.configService.publish.queueLimit) {
+        exporter.sendSocketMessage('progress', `You are ${exportIndex + 1} in line.`, false);
+        setTimeout(() => {
+          runPublish();
+        }, this.configService.publish.timeOut);
+        return;
+      }
+
+      // Ignore the promise... The publish process should keep going.
+      exporter.publish(options.format, options.useTerminologyServer, options.useLatest, options.downloadOutput, options.includeIgPublisherJar)
+        .finally(() => {
+          const index = this.exportService.exports.indexOf(exporter);
+          this.exportService.exports.splice(index, 1);
+        });
+    };
+
 
     try {
       await exporter.export(options.format, options.includeIgPublisherJar, options.useLatest);
 
-      // Ignore the promise... The publish process should keep going.
-      exporter.publish(options.format, options.useTerminologyServer, options.useLatest, options.downloadOutput, options.includeIgPublisherJar);
+      runPublish();
 
       return exporter.packageId;
     } catch (ex) {
+      const index = this.exportService.exports.indexOf(exporter);
+      this.exportService.exports.splice(index, 1);
+
       this.logger.error(`Error while publishing implementation guide: ${ex.message}`, ex.stack);
       throw ex;
-    } finally {
-      const index = ExportController.htmlExports.indexOf(exporter);
-      ExportController.htmlExports.splice(index);
+    }
+  }
+
+  @Post(':packageId/cancel')
+  public cancel(@Param('packageId') packageId: string){
+    this.logger.log(`User has requested that package id ${packageId} be removed from the queue`);
+
+    const exporter = this.exportService.exports.find(e => e.packageId === packageId);
+    const index = this.exportService.exports.indexOf(exporter);
+
+    if (index >= 0) {
+      this.exportService.exports.splice(index, 1);
+      exporter.sendSocketMessage('progress', "You have been removed from the queue");
+      this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
     }
   }
 
   private async sendPackageResponse(packageId: string, res: Response) {
     this.logger.log(`Packaging export with id ${packageId}`);
 
-    const rootPath = path.join(tmp.tmpdir, packageId);
+    const rootPath = path.join((<any>tmp).tmpdir, packageId);
 
     const buffer = await zip(rootPath);
 
