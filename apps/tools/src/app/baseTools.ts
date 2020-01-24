@@ -1,6 +1,5 @@
 import {Bundle, CapabilityStatement, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as rp from 'request-promise';
-import {resource} from 'selenium-webdriver/http';
 import {HttpService} from '@nestjs/common';
 
 export class BaseTools {
