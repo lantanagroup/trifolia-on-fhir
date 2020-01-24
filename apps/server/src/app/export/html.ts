@@ -64,7 +64,7 @@ export class HtmlExporter {
     return <R4ImplementationGuide>this.implementationGuide;
   }
 
-  private static getExtensionFromFormat(format: Formats) {
+  protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
       case 'application/fhir+xml':
       case 'application/xml':
@@ -78,10 +78,11 @@ export class HtmlExporter {
   /**
    * Returns the contents of the control file. This is now the ig.ini file in the root
    * of the html export package.
+   * Override in version-specific FHIR implementations
    * @param bundle The bundle that contains all resources in the IG
    * @param format The format that the user selected for the export
    */
-  public getControl(bundle: any, format: Formats) {
+  protected getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +
@@ -203,6 +204,45 @@ export class HtmlExporter {
     // DO NOTHING. Should be overridden by subclasses.
   }
 
+  /**
+   * Writes all pages to the file system for the implementation guide
+   * Override in version-specific FHIR implementations
+   * @param rootPath The root directory of the IG's export in the file system
+   */
+  // noinspection JSUnusedLocalSymbols
+  protected writePages(rootPath: string) {
+    // Override with version-specific class
+  }
+
+  /**
+   * Finds the resource within the ImplementationGuide, which contains information
+   * on how the resource is used within the implementation guide. This is separate logic
+   * because the structure of ImplementationGuide is majorly different between STU3 and R4.
+   * Override in version-specific FHIR implementations
+   * @param resourceType {string}
+   * @param id {string}
+   */
+  protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
+    // Override with version-specific class
+    return;
+  }
+
+  /**
+   * Removes Media resources from the implementation guide that are not an example.
+   * Those Media resources are meant to be exported as images in the file
+   * structure, rather than actual Media resources.
+   * Override in version-specific FHIR implementations
+   */
+  protected removeNonExampleMedia() {
+  }
+
+  /**
+   * Makes sure that parameters required by the IG publisher are populated.
+   * Override in version-specific FHIR implementations
+   */
+  protected checkParameters() {
+  }
+
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -243,6 +283,8 @@ export class HtmlExporter {
     this.implementationGuide = bundle.entry
       .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
       .resource;
+
+    this.checkParameters();
 
     this.removeNonExampleMedia();
 
@@ -312,24 +354,6 @@ export class HtmlExporter {
     this.logger.log(`Done creating HTML export for IG ${this.implementationGuideId}`);
   }
 
-  // noinspection JSUnusedLocalSymbols
-  protected writePages(rootPath: string) {
-    // Override with version-specific class
-  }
-
-  /**
-   * Finds the resource within the ImplementationGuide, which contains information
-   * on how the resource is used within the implementation guide. This is separate logic
-   * because the structure of ImplementationGuide is majorly different between STU3
-   * and R4.
-   * @param resourceType {string}
-   * @param id {string}
-   */
-  protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
-    // Override with version-specific class
-    return;
-  }
-
   public sendSocketMessage(status: 'error' | 'progress' | 'complete', message, shouldLog?: boolean) {
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
@@ -361,14 +385,6 @@ export class HtmlExporter {
       default:
         return '.md';
     }
-  }
-
-  /**
-   * Removes Media resources from the implementation guide that are not an example.
-   * Those Media resources are meant to be exported as images in the file
-   * structure, rather than actual Media resources.
-   */
-  protected removeNonExampleMedia() {
   }
 
   private async getIgPublisher(useLatest: boolean): Promise<string> {

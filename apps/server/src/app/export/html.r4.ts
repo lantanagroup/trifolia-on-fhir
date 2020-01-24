@@ -6,9 +6,15 @@ import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ContactDetail} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {release} from 'os';
+import {Formats} from '../models/export-options';
 
 export class R4HtmlExporter extends HtmlExporter {
-
+  /**
+   * Removes Media resources from the implementation guide that are not an example.
+   * Those Media resources are meant to be exported as images in the file
+   * structure, rather than actual Media resources.
+   */
   protected removeNonExampleMedia() {
     if (!this.r4ImplementationGuide.definition) {
       return;
@@ -27,6 +33,13 @@ export class R4HtmlExporter extends HtmlExporter {
       const index = this.r4ImplementationGuide.definition.resource.indexOf(resource);
       this.r4ImplementationGuide.definition.resource.splice(index, index >= 0 ? 1 : 0);
     });
+  }
+
+  protected getControl(bundle: any, format: Formats) {
+    return '[IG]\n' +
+      `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
+      'template = hl7.fhir.template\n' +
+      'usage-stats-opt-out = false\n';
   }
 
   protected getImplementationGuideResource(resourceType: string, id: string): ImplementationGuideResourceComponent {
@@ -123,12 +136,38 @@ export class R4HtmlExporter extends HtmlExporter {
     this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
   }
 
+  protected checkParameters() {
+    super.checkParameters();
+
+    // The copyrightyear and releaselabel parameters are required parameters for the IG Publisher
+    let copyrightYearParam = this.r4ImplementationGuide.definition.parameter.find(p => p.code && p.code.toLowerCase() === 'copyrightyear');
+    let releaseLabelParam = this.r4ImplementationGuide.definition.parameter.find(p => p.code && p.code.toLowerCase() === 'releaselabel');
+
+    if (!copyrightYearParam) {
+      copyrightYearParam = {
+        code: 'copyrightyear',
+        value: '2020+'
+      };
+      this.r4ImplementationGuide.definition.parameter.push(copyrightYearParam);
+    }
+
+    if (!releaseLabelParam) {
+      releaseLabelParam = {
+        code: 'releaselabel',
+        value: 'CI Build'
+      };
+      this.r4ImplementationGuide.definition.parameter.push(releaseLabelParam);
+    }
+  }
+
   protected updateTemplates(rootPath: string, bundle) {
     if (!this.r4ImplementationGuide.definition) {
       this.r4ImplementationGuide.definition = {
         resource: []
       };
     }
+
+    this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
 
     // always automatically create index.md, it might be overwritten by writePages()
     if (this.r4ImplementationGuide) {
