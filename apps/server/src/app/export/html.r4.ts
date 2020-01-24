@@ -35,12 +35,14 @@ export class R4HtmlExporter extends HtmlExporter {
     });
   }
 
+  /* TODO: Uncomment after lloyd publishes his template changes
   protected getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +
       'usage-stats-opt-out = false\n';
   }
+   */
 
   protected getImplementationGuideResource(resourceType: string, id: string): ImplementationGuideResourceComponent {
     if (this.r4ImplementationGuide.definition) {
