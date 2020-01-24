@@ -82,7 +82,7 @@ export class HtmlExporter {
    * @param bundle The bundle that contains all resources in the IG
    * @param format The format that the user selected for the export
    */
-  protected getControl(bundle: any, format: Formats) {
+  public getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +

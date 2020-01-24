@@ -36,7 +36,7 @@ export class R4HtmlExporter extends HtmlExporter {
   }
 
   /* TODO: Uncomment after lloyd publishes his template changes
-  protected getControl(bundle: any, format: Formats) {
+  public getControl(bundle: any, format: Formats) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +
