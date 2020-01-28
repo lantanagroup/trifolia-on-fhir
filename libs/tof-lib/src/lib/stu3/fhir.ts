@@ -43,6 +43,7 @@ export class Extension extends Element implements IExtension {
   public valueString?: string;
   public valueReference?: ResourceReference;
   public valueUri?: string;
+  public valueMarkdown?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -67,6 +68,9 @@ export class Extension extends Element implements IExtension {
       }
       if (obj.valueReference) {
         this.valueReference = new ResourceReference(obj.valueReference);
+      }
+      if (obj.hasOwnProperty('valueMarkdown')) {
+        this.valueMarkdown = obj.valueMarkdown;
       }
     }
   }

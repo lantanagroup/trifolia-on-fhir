@@ -427,38 +427,26 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     if (!pageDef) {
       return;
     }
-
-    if (pageDef.page.page) {
-      for (let i = pageDef.page.page.length - 1; i >= 0; i--) {
-        const childPage = pageDef.page.page[i];
-        const foundChildPageDef = this.pages.find((nextPageDef) => nextPageDef.page === childPage);
-        this.removePage(foundChildPageDef);
-      }
-    }
-
-    // If a contained Binary resource is associated with the page, remove it
-    if (pageDef.page.nameReference) {
-      if (pageDef.page.nameReference.reference && pageDef.page.nameReference.reference.startsWith('#')) {
-        const foundBinary = (this.implementationGuide.contained || []).find((contained) =>
-          contained.id === pageDef.page.nameReference.reference.substring(1));
-
-        if (foundBinary) {
-          const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
-          this.implementationGuide.contained.splice(binaryIndex, 1);
-        }
-      }
-    }
-
     // Remove the page
     if (pageDef.parent) {
       const pageIndex = pageDef.parent.page.indexOf(pageDef.page);
       pageDef.parent.page.splice(pageIndex, 1);
     } else {
+      const children = this.implementationGuide.definition.page.page;
       delete this.implementationGuide.definition.page;
+
+      if (children && children.length >= 1) {
+        this.implementationGuide.definition.page = children[0];
+        children.splice(0, 1);
+
+        if (children.length > 0) {
+          this.implementationGuide.definition.page.page = this.implementationGuide.definition.page.page || [];
+          this.implementationGuide.definition.page.page.splice(0, 0, ...children);
+        }
+      }
     }
 
-    const pageDefIndex = this.pages.indexOf(pageDef);
-    this.pages.splice(pageDefIndex, 1);
+    this.initPages();
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {

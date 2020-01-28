@@ -536,13 +536,20 @@ export class HtmlExporter {
       return;
     }
 
-    /* Add this back in when ToF's UI captures this information
-    const introPath = path.join(rootPath, `input/pagecontent/${resource.resourceType}-${resource.id}-intro.md`);
-    const notesPath = path.join(rootPath, `input/pagecontent/${resource.resourceType}-${resource.id}-notes.md`);
+    if (resource.resourceType === 'StructureDefinition') {
+      const intro = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+      const notes = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
 
-    fs.writeFileSync(introPath, '');
-    fs.writeFileSync(notesPath, '');
-     */
+      if (intro && intro.valueMarkdown) {
+        const introPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-intro.md`);
+        fs.writeFileSync(introPath, intro.valueMarkdown);
+      }
+
+      if (notes && notes.valueMarkdown) {
+        const notesPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-notes.md`);
+        fs.writeFileSync(notesPath, notes.valueMarkdown);
+      }
+    }
   }
 
   /**

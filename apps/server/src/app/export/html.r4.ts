@@ -66,7 +66,7 @@ export class R4HtmlExporter extends HtmlExporter {
       `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
-    if (pageInfo.content && pageInfo.fileName) {
+    if (pageInfo.fileName) {
       const pagesPathFiles = fs.readdirSync(pagesPath);
       const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
 
@@ -79,7 +79,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
       const newPagePath = path.join(pagesPath, fileName);
 
-      fs.writeFileSync(newPagePath, `${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`);
+      fs.writeFileSync(newPagePath, `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`);
     }
 
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
@@ -102,7 +102,7 @@ export class R4HtmlExporter extends HtmlExporter {
           const contained = (this.r4ImplementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
           const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
 
-          if (binary && binary.data) {
+          if (binary) {
             pageInfo.fileName = Globals.getCleanFileName(page.title);
 
             if (pageInfo.fileName.indexOf('.') < 0) {
@@ -116,6 +116,33 @@ export class R4HtmlExporter extends HtmlExporter {
         }
       } else if (page.nameUrl) {
         pageInfo.fileName = page.nameUrl;
+
+        if (pageInfo.fileName.indexOf('.') > 0) {
+          pageInfo.fileName = pageInfo.fileName.substring(0, pageInfo.fileName.lastIndexOf('.'));
+        }
+
+        pageInfo.fileName += this.getPageExtension(page);
+      }
+
+      // Populate the index.md page with default content based on the IG
+      if (pageInfo.fileName === 'index.md' && !pageInfo.content) {
+        pageInfo.content = '<a name="intro"> </a>\n### Introduction\n\n';
+
+        if (this.r4ImplementationGuide.description) {
+          const descriptionContent = '### Description\n\n' + this.r4ImplementationGuide.description + '\n\n';
+          pageInfo.content += descriptionContent;
+        } else {
+          pageInfo.content += 'This implementation guide does not have a description, yet.';
+        }
+
+        if (this.r4ImplementationGuide.contact) {
+          const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
+            const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
+            return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+          });
+          const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+          pageInfo.content += authorsContent;
+        }
       }
 
       theList.push(pageInfo);
@@ -140,6 +167,14 @@ export class R4HtmlExporter extends HtmlExporter {
 
   protected checkParameters() {
     super.checkParameters();
+
+    if (!this.r4ImplementationGuide.definition) {
+      this.r4ImplementationGuide.definition = {
+        resource: []
+      };
+    }
+
+    this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
 
     // The copyrightyear and releaselabel parameters are required parameters for the IG Publisher
     let copyrightYearParam = this.r4ImplementationGuide.definition.parameter.find(p => p.code && p.code.toLowerCase() === 'copyrightyear');
@@ -170,32 +205,6 @@ export class R4HtmlExporter extends HtmlExporter {
     }
 
     this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
-
-    // always automatically create index.md, it might be overwritten by writePages()
-    if (this.r4ImplementationGuide) {
-      const pagesPath = path.join(rootPath, 'input/pagecontent');
-      fs.ensureDirSync(pagesPath);
-
-      const indexPath = path.join(pagesPath, 'index.md');
-
-      fs.appendFileSync(indexPath, '<a name="intro"> </a>\n### Introduction\n\n');
-
-      if (this.r4ImplementationGuide.description) {
-        const descriptionContent = '### Description\n\n' + this.r4ImplementationGuide.description + '\n\n';
-        fs.appendFileSync(indexPath, descriptionContent);
-      } else {
-        fs.appendFileSync(indexPath, 'This implementation guide does not have a description, yet.');
-      }
-
-      if (this.r4ImplementationGuide.contact) {
-        const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
-          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-        });
-        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-        fs.appendFileSync(indexPath, authorsContent);
-      }
-    }
 
     super.updateTemplates(rootPath, bundle);
   }

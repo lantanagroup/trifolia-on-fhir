@@ -20,6 +20,7 @@ export class Extension implements IExtension {
   public valueBoolean?: boolean;
   public valueString?: string;
   public valueReference?: ResourceReference;
+  public valueMarkdown?: string;
 
   constructor(obj?: any) {
     if (obj) {
@@ -43,6 +44,9 @@ export class Extension implements IExtension {
       }
       if (obj.hasOwnProperty('valueReference')) {
         this.valueReference = new ResourceReference(obj.valueReference);
+      }
+      if (obj.hasOwnProperty('valueMarkdown')) {
+        this.valueMarkdown = obj.valueMarkdown;
       }
 
       // Add other properties as needed

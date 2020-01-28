@@ -51,7 +51,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
-    if (page.kind !== 'toc' && pageInfo.content) {
+    if (page.kind !== 'toc') {
       const pagesPathFiles = fs.readdirSync(pagesPath);
       const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
 
@@ -68,7 +68,7 @@ export class STU3HtmlExporter extends HtmlExporter {
         `title: ${page.title}\n` +
         'layout: default\n' +
         `active: ${page.title}\n` +
-        `---\n\n${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`;
+        `---\n\n${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`;
 
       fs.writeFileSync(newPagePath, content);
     }
