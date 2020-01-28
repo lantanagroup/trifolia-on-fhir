@@ -1,5 +1,5 @@
 import '../date-extensions';
-import {IExtension} from '../fhirInterfaces';
+import {IBundle, IExtension} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -1253,7 +1253,8 @@ export class LinkComponent extends BackboneElement {
 
 }
 
-export class SearchComponent extends BackboneElement {
+export class
+SearchComponent extends BackboneElement {
   public mode?: string;
   public score?: number;
 
@@ -1763,7 +1764,7 @@ export class Signature extends Element {
 
 export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
 
-export class Bundle extends Resource {
+export class Bundle extends Resource implements IBundle {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
   public type: BundleTypes;

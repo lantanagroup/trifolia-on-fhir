@@ -1,13 +1,11 @@
 import {HtmlExporter} from './html';
 import {PageInfo} from './html.models';
-import {Binary as R4Binary, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Binary as R4Binary, DomainResource, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {ContactDetail} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ContactDetail, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {release} from 'os';
-import {Formats} from '../models/export-options';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -165,8 +163,10 @@ export class R4HtmlExporter extends HtmlExporter {
     this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
   }
 
-  protected checkParameters() {
-    super.checkParameters();
+  protected prepareImplementationGuide(): DomainResource {
+    super.prepareImplementationGuide();
+
+    this.r4ImplementationGuide.fhirVersion = [this.getOfficialFhirVersion()];
 
     if (!this.r4ImplementationGuide.definition) {
       this.r4ImplementationGuide.definition = {
@@ -195,6 +195,8 @@ export class R4HtmlExporter extends HtmlExporter {
       };
       this.r4ImplementationGuide.definition.parameter.push(releaseLabelParam);
     }
+
+    return this.r4ImplementationGuide;
   }
 
   protected updateTemplates(rootPath: string, bundle) {

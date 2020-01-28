@@ -4,11 +4,13 @@ import {spawn} from 'child_process';
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
+  StructureDefinition as STU3StructureDefinition,
   Media,
   PackageResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   ImplementationGuide as R4ImplementationGuide,
+  StructureDefinition as R4StructureDefinition,
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -28,11 +30,12 @@ import {
   getExtensionString
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export class HtmlExporter {
   readonly homedir: string;
   public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public bundle: IBundle;
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
@@ -200,49 +203,6 @@ export class HtmlExporter {
     });
   }
 
-  protected populatePageInfos() {
-    // DO NOTHING. Should be overridden by subclasses.
-  }
-
-  /**
-   * Writes all pages to the file system for the implementation guide
-   * Override in version-specific FHIR implementations
-   * @param rootPath The root directory of the IG's export in the file system
-   */
-  // noinspection JSUnusedLocalSymbols
-  protected writePages(rootPath: string) {
-    // Override with version-specific class
-  }
-
-  /**
-   * Finds the resource within the ImplementationGuide, which contains information
-   * on how the resource is used within the implementation guide. This is separate logic
-   * because the structure of ImplementationGuide is majorly different between STU3 and R4.
-   * Override in version-specific FHIR implementations
-   * @param resourceType {string}
-   * @param id {string}
-   */
-  protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
-    // Override with version-specific class
-    return;
-  }
-
-  /**
-   * Removes Media resources from the implementation guide that are not an example.
-   * Those Media resources are meant to be exported as images in the file
-   * structure, rather than actual Media resources.
-   * Override in version-specific FHIR implementations
-   */
-  protected removeNonExampleMedia() {
-  }
-
-  /**
-   * Makes sure that parameters required by the IG publisher are populated.
-   * Override in version-specific FHIR implementations
-   */
-  protected checkParameters() {
-  }
-
   public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
@@ -250,7 +210,7 @@ export class HtmlExporter {
 
     const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
-    let control, bundle;
+    let control;
 
     this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}`);
 
@@ -266,7 +226,7 @@ export class HtmlExporter {
     this.logger.log('Retrieving resources for export');
 
     try {
-      bundle = await bundleExporter.getBundle();
+      this.bundle = await bundleExporter.getBundle();
     } catch (ex) {
       this.logger.error(`Error while retrieving bundle: ${ex.message}`, ex.stack);
       throw ex;
@@ -280,31 +240,24 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-    this.implementationGuide = bundle.entry
+    this.implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
       .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
       .resource;
 
-    this.checkParameters();
-
     this.removeNonExampleMedia();
-
-    if (this.fhirVersion === 'stu3') {
-      this.stu3ImplementationGuide.fhirVersion = '3.0.2';
-    } else if (this.fhirVersion === 'r4') {
-      this.r4ImplementationGuide.fhirVersion = ['4.0.1'];
-    }
-
     this.populatePageInfos();
+
+    const igToWrite: DomainResource = this.prepareImplementationGuide();
 
     // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
     // to the ig that needs to get written.
     this.logger.log('Updating the IG publisher templates for the resources');
-    this.updateTemplates(this.rootPath, bundle);
+    this.updateTemplates(this.rootPath, this.bundle);
 
-    this.writeResourceContent(inputDir, this.implementationGuide, isXml);
+    this.writeResourceContent(inputDir, igToWrite, isXml);
 
     // Go through all of the other resources and write them to the file system
-    bundle.entry
+    this.bundle.entry
       .filter((e) => this.implementationGuide !== e.resource)
       .forEach((entry) => this.writeResourceContent(inputDir, entry.resource, isXml));
 
@@ -314,7 +267,7 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    control = this.getControl(bundle, format);
+    control = this.getControl(this.bundle, format);
 
     this.logger.log('Saving the control file to the temp directory');
 
@@ -325,7 +278,7 @@ export class HtmlExporter {
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
 
     // Write the intro, summary and search MD files for each resource
-    (bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
+    (this.bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
@@ -373,6 +326,81 @@ export class HtmlExporter {
     }
   }
 
+  protected getOfficialFhirVersion(): string {
+    switch (this.fhirVersion) {
+      case 'stu3':
+        return '3.0.2';
+      case 'r4':
+        return '4.0.1';
+      default:
+        throw new Error(`Unknown FHIR version ${this.fhirVersion}`);
+    }
+  }
+
+  protected populatePageInfos() {
+    // DO NOTHING. Should be overridden by subclasses.
+  }
+
+  /**
+   * Writes all pages to the file system for the implementation guide
+   * Override in version-specific FHIR implementations
+   * @param rootPath The root directory of the IG's export in the file system
+   */
+  // noinspection JSUnusedLocalSymbols
+  protected writePages(rootPath: string) {
+    // Override with version-specific class
+  }
+
+  /**
+   * Finds the resource within the ImplementationGuide, which contains information
+   * on how the resource is used within the implementation guide. This is separate logic
+   * because the structure of ImplementationGuide is majorly different between STU3 and R4.
+   * Override in version-specific FHIR implementations
+   * @param resourceType {string}
+   * @param id {string}
+   */
+  protected getImplementationGuideResource(resourceType: string, id: string): PackageResourceComponent | ImplementationGuideResourceComponent {
+    // Override with version-specific class
+    return;
+  }
+
+  /**
+   * Removes Media resources from the implementation guide that are not an example.
+   * Those Media resources are meant to be exported as images in the file
+   * structure, rather than actual Media resources.
+   * Override in version-specific FHIR implementations
+   */
+  protected removeNonExampleMedia() {
+  }
+
+  /**
+   * Makes sure that parameters required by the IG publisher are populated.
+   * Override in version-specific FHIR implementations
+   */
+  protected prepareImplementationGuide(): DomainResource {
+    // Set the fhirVersion on each of the profiles
+    (this.bundle.entry || [])
+      .filter(entry => entry.resource && entry.resource.resourceType === 'StructureDefinition')
+      .forEach(entry => {
+        const structureDefinition = <STU3StructureDefinition | R4StructureDefinition> entry.resource;
+        structureDefinition.fhirVersion = this.getOfficialFhirVersion();
+      });
+
+    (this.bundle.entry || [])
+      .filter(entry => entry.resource && ['StructureDefinition', 'CodeSystem', 'ValueSet', 'CapabilityStatement'].indexOf(entry.resource.resourceType) >= 0)
+      .forEach(entry => {
+        const resource = <any> entry.resource;
+
+        if (!resource.title && resource.name) {
+          resource.title = resource.name;
+        } else if (!resource.title && !resource.name) {
+          resource.name = resource.title = resource.id;
+        }
+      });
+
+    return this.implementationGuide;
+  }
+
   protected getPageExtension(page: ImplementationGuidePageComponent) {
     switch (page.generation) {
       case 'html':
@@ -384,66 +412,6 @@ export class HtmlExporter {
         return '.md';
       default:
         return '.md';
-    }
-  }
-
-  private async getIgPublisher(useLatest: boolean): Promise<string> {
-    const fileName = 'org.hl7.fhir.igpublisher.jar';
-    const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
-    const defaultFilePath = path.join(defaultPath, fileName);
-    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher/latest/');
-    const latestFilePath = path.join(latestPath, fileName);
-    const localContentLengthPath = path.join(latestPath, 'size.txt');
-    let contentLength;
-
-    if (useLatest === true) {
-      fs.ensureDirSync(latestPath);
-
-      this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
-
-      this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
-
-      try {
-        // Get the HEAD information for the fhir ig publisher first, and check if the date is different
-        const headResults = await this.httpService.request({
-          method: 'HEAD',
-          url: this.fhirConfig.latestPublisher
-        }).toPromise();
-        contentLength = headResults.headers['content-length'];
-
-        const localContentLengthContent = fs.existsSync(localContentLengthPath) ? fs.readFileSync(localContentLengthPath).toString() : undefined;
-
-        if (localContentLengthContent === contentLength) {
-          this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
-          return latestFilePath;
-        }
-
-        this.sendSocketMessage('progress', 'Server does not have the latest version of the IG publisher... Downloading.', true);
-      } catch (ex) {
-        this.logger.error(`Error getting version information about the FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('progress', 'Encountered error downloading version info for the latest IG publisher, will use pre-loaded/default IG publisher');
-        return defaultFilePath;
-      }
-
-      try {
-        // noinspection SpellCheckingInspection
-        const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
-
-        this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
-
-        fs.writeFileSync(latestFilePath, results.data);
-        fs.writeFileSync(localContentLengthPath, contentLength);
-
-        return latestFilePath;
-      } catch (ex) {
-        this.logger.error(`Error getting latest version of FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
-        return defaultFilePath;
-      }
-    } else {
-      this.logger.log('Using built-in version of FHIR IG publisher for export');
-      this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
-      return defaultFilePath;
     }
   }
 
@@ -505,6 +473,66 @@ export class HtmlExporter {
       '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
       '</ul>\n';
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
+  }
+
+  private async getIgPublisher(useLatest: boolean): Promise<string> {
+    const fileName = 'org.hl7.fhir.igpublisher.jar';
+    const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
+    const defaultFilePath = path.join(defaultPath, fileName);
+    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher/latest/');
+    const latestFilePath = path.join(latestPath, fileName);
+    const localContentLengthPath = path.join(latestPath, 'size.txt');
+    let contentLength;
+
+    if (useLatest === true) {
+      fs.ensureDirSync(latestPath);
+
+      this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
+
+      this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
+
+      try {
+        // Get the HEAD information for the fhir ig publisher first, and check if the date is different
+        const headResults = await this.httpService.request({
+          method: 'HEAD',
+          url: this.fhirConfig.latestPublisher
+        }).toPromise();
+        contentLength = headResults.headers['content-length'];
+
+        const localContentLengthContent = fs.existsSync(localContentLengthPath) ? fs.readFileSync(localContentLengthPath).toString() : undefined;
+
+        if (localContentLengthContent === contentLength) {
+          this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
+          return latestFilePath;
+        }
+
+        this.sendSocketMessage('progress', 'Server does not have the latest version of the IG publisher... Downloading.', true);
+      } catch (ex) {
+        this.logger.error(`Error getting version information about the FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading version info for the latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
+      }
+
+      try {
+        // noinspection SpellCheckingInspection
+        const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
+
+        this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
+
+        fs.writeFileSync(latestFilePath, results.data);
+        fs.writeFileSync(localContentLengthPath, contentLength);
+
+        return latestFilePath;
+      } catch (ex) {
+        this.logger.error(`Error getting latest version of FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
+        return defaultFilePath;
+      }
+    } else {
+      this.logger.log('Using built-in version of FHIR IG publisher for export');
+      this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
+      return defaultFilePath;
+    }
   }
 
   /**
@@ -611,7 +639,7 @@ export class HtmlExporter {
 
   private getResourceFilePath(inputDir: string, resource: DomainResource, isXml: boolean) {
     // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
-    if (resource === this.implementationGuide) {
+    if (resource.resourceType === 'ImplementationGuide') {
       fs.ensureDirSync(inputDir);
       return path.join(inputDir, resource.id + (isXml ? '.xml' : '.json'));
     }

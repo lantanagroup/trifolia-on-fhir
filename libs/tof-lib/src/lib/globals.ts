@@ -363,6 +363,6 @@ export class Globals {
 
     return value
       .trim()
-      .replace(/[^\w\-]/gm, '');
+      .replace(/[^\w\-\\.]/gm, '');
   }
 }
