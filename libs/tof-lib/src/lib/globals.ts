@@ -33,7 +33,8 @@ export class Globals {
     'extension-ig-page-nav-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
     'extension-sd-notes': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-notes',
     'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro',
-    'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter'
+    'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
+    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
   };
 
   static readonly introText = {

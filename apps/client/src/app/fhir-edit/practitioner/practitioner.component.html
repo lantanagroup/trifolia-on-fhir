@@ -1,93 +1,25 @@
-<div class="card">
-    <div class="card-header">Identifier(s)</div>
-    <table class="table table-striped" *ngIf="practitioner.hasOwnProperty('identifier')">
-        <thead>
-        <tr>
-            <th>Use</th>
-            <th>System</th>
-            <th>Value</th>
-            <th class="actions-column-2">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Add an identifier"
-                            (click)="practitioner.identifier.push({ use: 'official', system: '', value: '' })">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let identifier of practitioner.identifier; let ii = index">
-            <td *ngIf="identifier.system === Globals.authNamespace">{{identifier.use}}</td>
-            <td *ngIf="identifier.system === Globals.authNamespace">{{identifier.system}}</td>
-            <td *ngIf="identifier.system === Globals.authNamespace">{{identifier.value}}</td>
-            <td *ngIf="identifier.system !== Globals.authNamespace">
-                <app-fhir-select-single-code [parentObject]="identifier" propertyName="use"
-                                             valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use"
-                                             [isFormGroup]="false"></app-fhir-select-single-code>
-            </td>
-            <td *ngIf="identifier.system !== Globals.authNamespace">
-                <input type="text" class="form-control" [(ngModel)]="identifier.system"/>
-            </td>
-            <td *ngIf="identifier.system !== Globals.authNamespace">
-                <input type="text" class="form-control" [(ngModel)]="identifier.value"/>
-            </td>
-            <td>
-                <div class="pull-right btn-group">
-                    <button type="button" class="btn btn-default" title="Edit this identifier"
-                            [disabled]="identifier.system === Globals.authNamespace" (click)="editIdentifier(identifier)">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-default" title="Remove this identifier"
-                            [disabled]="identifier.system === Globals.authNamespace"
-                            (click)="practitioner.identifier.splice(ii, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+<p>Identifiers:</p>
+<ul>
+  <li *ngFor="let i of practitioner.identifier">{{i.value}} {{i.system ? '(' + i.system + ')' : ''}}</li>
+</ul>
+
+<div class="form-group">
+  <label>First Name</label>
+  <input type="text" class="form-control" [(ngModel)]="firstName" required [class.is-invalid]="!firstName" />
 </div>
 
-<app-fhir-human-names *ngIf="practitioner" [parentObject]="practitioner" propertyName="name" title="Name(s)" [required]="true"></app-fhir-human-names>
+<div class="form-group">
+  <label>Last Name</label>
+  <input type="text" class="form-control" [(ngModel)]="lastName" required [class.is-invalid]="!lastName" />
+</div>
 
-<div class="card">
-    <div class="card-header">
-        <input type="checkbox" [ngModel]="practitioner.hasOwnProperty('telecom')" (ngModelChange)="Globals.toggleProperty(practitioner, 'telecom', [{ system: 'phone', value: '' }])"/>
-        Telecom(s)
-    </div>
-    <table class="table table-striped" *ngIf="practitioner.hasOwnProperty('telecom')">
-        <thead>
-        <tr>
-            <th>System</th>
-            <th>Value</th>
-            <th class="actions-column-1">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a telecom" (click)="practitioner.telecom.push({ system: 'phone', value: '' })">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let t of practitioner.telecom; let ti = index">
-            <td>
-                <app-fhir-select-single-code [parentObject]="t" propertyName="system" valueSetUrl="http://hl7.org/fhir/ValueSet/contact-point-system" [isFormGroup]="false" [required]="true"></app-fhir-select-single-code>
-            </td>
-            <td>
-                <app-fhir-string [parentObject]="t" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
-            </td>
-            <td>
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this telecom"
-                            (click)="practitioner.telecom.splice(ti, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="form-group">
+  <label>Email</label>
+  <input type="text" class="form-control" [(ngModel)]="email" required email [class.is-invalid]="!email" />
+</div>
+
+<div class="form-group">
+  <label>Phone</label>
+  <input type="text" class="form-control" [(ngModel)]="phone" />
 </div>

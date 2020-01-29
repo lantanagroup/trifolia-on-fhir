@@ -1,6 +1,3 @@
-import {DomainResource as STU3DomainResource, ResourceReference} from './stu3/fhir';
-import {DomainResource as R4DomainResource, Resource as R4Resource} from './r4/fhir';
-
 export interface IResourceReference {
   reference?: string;
   display?: string;
@@ -27,12 +24,27 @@ export interface IExtension {
   valueMarkdown?: string;
 }
 
+export interface IResource {
+  id?: string;
+  meta?: any;
+  implicitRules?: string;
+  language?: string;
+}
+
+export interface IDomainResource extends IResource {
+  resourceType: string;
+  text?: any;
+  contained?: IDomainResource[];
+  extension?: IExtension[];
+  modifierExtension?: IExtension[];
+}
+
 export interface IBundleEntry {
   search?: {
     mode?: string;
     score?: number;
   };
-  resource?: STU3DomainResource | R4DomainResource;
+  resource?: IDomainResource;
   request?: {
     method: string;
     url: string;
@@ -42,7 +54,7 @@ export interface IBundleEntry {
     location?: string;
     etag?: string;
     lastModified?: Date;
-    outcome?: STU3DomainResource | R4Resource;
+    outcome?: IDomainResource | IResource;
   };
 }
 
@@ -54,4 +66,33 @@ export interface IBundle {
     url: string;
   }[];
   entry?: IBundleEntry[];
+}
+
+export interface IHumanName {
+  use?: string;
+  text?: string;
+  family?: string;
+  given?: string[];
+  prefix?: string[];
+  suffix?: string[];
+}
+
+export interface IIdentifier {
+  use?: string;
+  type?: ICodeableConcept;
+  system?: string;
+  value?: string;
+}
+
+export interface IContactPoint {
+  system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
+  value?: string;
+  use?: 'home'|'work'|'temp'|'old'|'mobile';
+}
+
+export interface IPractitioner extends IDomainResource {
+  resourceType: string;
+  identifier?: IIdentifier[];
+  name?: IHumanName[];
+  telecom?: IContactPoint[];
 }

@@ -4,15 +4,15 @@ import {spawn} from 'child_process';
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
-  StructureDefinition as STU3StructureDefinition,
   Media,
-  PackageResourceComponent
+  PackageResourceComponent,
+  StructureDefinition as STU3StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   ImplementationGuide as R4ImplementationGuide,
-  StructureDefinition as R4StructureDefinition,
   ImplementationGuidePageComponent,
-  ImplementationGuideResourceComponent
+  ImplementationGuideResourceComponent,
+  StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
 import {IServerConfig} from '../models/server-config';
@@ -25,10 +25,7 @@ import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {Formats} from '../models/export-options';
 import {PageInfo} from './html.models';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getExtensionString
-} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 

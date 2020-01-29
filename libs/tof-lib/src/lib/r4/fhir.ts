@@ -1,4 +1,4 @@
-import {IBundle, IExtension} from '../fhirInterfaces';
+import {IBundle, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -312,7 +312,7 @@ export class Narrative extends Element {
 
 }
 
-export class DomainResource extends Resource {
+export class DomainResource extends Resource implements IDomainResource {
   public resourceType = 'DomainResource';
   public text?: Narrative;
   public contained?: DomainResource[];
@@ -13755,7 +13755,7 @@ export class HealthcareService extends DomainResource {
 
 }
 
-export class HumanName extends Element {
+export class HumanName extends Element implements IHumanName {
   public use?: string;
   public text?: string;
   public family?: string;
@@ -21707,7 +21707,7 @@ export class PractitionerQualificationComponent extends BackboneElement {
 
 }
 
-export class Practitioner extends DomainResource {
+export class Practitioner extends DomainResource implements IPractitioner {
   public resourceType = 'Practitioner';
   public identifier?: Identifier[];
   public active?: boolean;
