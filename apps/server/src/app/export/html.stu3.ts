@@ -6,6 +6,7 @@ import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {release} from 'os';
 
 export class STU3HtmlExporter extends HtmlExporter {
   protected removeNonExampleMedia() {
@@ -40,8 +41,58 @@ export class STU3HtmlExporter extends HtmlExporter {
     }
   }
 
+  private ensureParameterExtensions() {
+    this.stu3ImplementationGuide.extension = this.stu3ImplementationGuide.extension || [];
+    const parameters = this.stu3ImplementationGuide.extension.filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-parameter'] &&
+        e.extension &&
+        !!e.extension.find(n => n.url === 'code') &&
+        !!e.extension.find(n => n.url === 'value');
+    });
+
+    let releaseLabel = parameters.find(e => {
+      const code = e.extension.find(n => n.url === 'code').valueString;
+      return code === 'releaselabel';
+    });
+
+    if (!releaseLabel) {
+      releaseLabel = {
+        url: Globals.extensionUrls['extension-ig-parameter'],
+        extension: [{
+          url: 'code',
+          valueString: 'releaselabel'
+        }, {
+          url: 'value',
+          valueString: 'CI Build'
+        }]
+      };
+      this.stu3ImplementationGuide.extension.push(releaseLabel);
+    }
+
+    let copyrightYear = parameters.find(e => {
+      const code = e.extension.find(n => n.url === 'code').valueString;
+      return code === 'copyrightyear';
+    });
+
+    if (!copyrightYear) {
+      copyrightYear = {
+        url: Globals.extensionUrls['extension-ig-parameter'],
+        extension: [{
+          url: 'code',
+          valueString: 'copyrightyear'
+        }, {
+          url: 'value',
+          valueString: '2020+'
+        }]
+      };
+      this.stu3ImplementationGuide.extension.push(copyrightYear);
+    }
+  }
+
   protected prepareImplementationGuide(): R4ImplementationGuide {
     super.prepareImplementationGuide();
+
+    this.ensureParameterExtensions();
 
     const getPage = (stu3Page: PageComponent): ImplementationGuidePageComponent => {
       if (!stu3Page) return;
@@ -65,6 +116,13 @@ export class STU3HtmlExporter extends HtmlExporter {
       return ret;
     };
 
+    const parameters = this.stu3ImplementationGuide.extension.filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-parameter'] &&
+        e.extension &&
+        !!e.extension.find(n => n.url === 'code') &&
+        !!e.extension.find(n => n.url === 'value');
+    });
+
     const newIg = new R4ImplementationGuide();
     newIg.id = this.stu3ImplementationGuide.id;
     newIg.url = this.stu3ImplementationGuide.url;
@@ -73,7 +131,15 @@ export class STU3HtmlExporter extends HtmlExporter {
 
     newIg.definition = {
       resource: [],
-      page: getPage(this.stu3ImplementationGuide.page)
+      page: getPage(this.stu3ImplementationGuide.page),
+      parameter: parameters.map(p => {
+        const code = p.extension.find(e => e.url === 'code').valueString;
+        const value = p.extension.find(e => e.url === 'value').valueString;
+        return {
+          code: code,
+          value: value
+        };
+      })
     };
 
     // Convert ImplementationGuide.package.resource to ImplementationGuide.definition.resource

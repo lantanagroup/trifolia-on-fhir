@@ -6,6 +6,7 @@ import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ContactDetail, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {Formats} from '../models/export-options';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -32,15 +33,6 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.resource.splice(index, index >= 0 ? 1 : 0);
     });
   }
-
-  /* TODO: Uncomment after lloyd publishes his template changes
-  public getControl(bundle: any, format: Formats) {
-    return '[IG]\n' +
-      `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
-      'template = hl7.fhir.template\n' +
-      'usage-stats-opt-out = false\n';
-  }
-   */
 
   protected getImplementationGuideResource(resourceType: string, id: string): ImplementationGuideResourceComponent {
     if (this.r4ImplementationGuide.definition) {

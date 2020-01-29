@@ -89,16 +89,7 @@ export class HtmlExporter {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       'template = hl7.fhir.template\n' +
-      'usage-stats-opt-out = false\n' +
-      'copyrightyear = 2019+\n' +
-      'license = CC0-1.0\n' +
-      `version = ${this.implementationGuide.version || '1.0.0'}\n` +
-      'ballotstatus = CI Build\n' +
-      'fhirspec = http://build.fhir.org/\n' +
-      '#excludexml = Yes\n' +
-      '#excludejson = Yes\n' +
-      '#excludettl = Yes\n' +
-      '#excludeMaps = Yes\n';
+      'usage-stats-opt-out = false\n';
   }
 
   // noinspection JSUnusedLocalSymbols
@@ -552,7 +543,10 @@ export class HtmlExporter {
       const fileNameIdentifier = ((<Media>resource).identifier || []).find(id => !!id.value);
 
       if (fileNameIdentifier && (<Media>resource).content && (<Media>resource).content.data) {
-        const outputPath = path.join(this.rootPath, 'input/pagecontent', fileNameIdentifier.value);
+        const imagesPath = path.join(this.rootPath, 'input/images');
+        const outputPath = path.join(imagesPath, fileNameIdentifier.value);
+
+        fs.ensureDirSync(imagesPath);
 
         try {
           fs.writeFileSync(outputPath, new Buffer((<Media>resource).content.data, 'base64'));
