@@ -41,43 +41,25 @@ describe('HtmlExporter', () => {
 
     const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, null, 'test-ig');
 
-    it('should create a basic control file content with a default version', () => {
+    it('should create a basic control file with xml extension', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
       delete htmlExporter.implementationGuide.version;
       const control = htmlExporter.getControl(bundle, 'xml');
       const expected = '[IG]\n' +
         'ig = input/test-ig.xml\n' +
         'template = hl7.fhir.template\n' +
-        'usage-stats-opt-out = false\n' +
-        'copyrightyear = 2019+\n' +
-        'license = CC0-1.0\n' +
-        'version = 1.0.0\n' +
-        'ballotstatus = CI Build\n' +
-        'fhirspec = http://build.fhir.org/\n' +
-        '#excludexml = Yes\n' +
-        '#excludejson = Yes\n' +
-        '#excludettl = Yes\n' +
-        '#excludeMaps = Yes\n';
+        'usage-stats-opt-out = false\n';
       expect(control).toEqual(expected);
     });
 
-    it('should create a control file format with json extension and non-default version', () => {
+    it('should create a control file format with json extension', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
       htmlExporter.implementationGuide.version = '1.1.0';
       const control = htmlExporter.getControl(bundle, 'json');
       const expected = '[IG]\n' +
         'ig = input/test-ig.json\n' +
         'template = hl7.fhir.template\n' +
-        'usage-stats-opt-out = false\n' +
-        'copyrightyear = 2019+\n' +
-        'license = CC0-1.0\n' +
-        'version = 1.1.0\n' +
-        'ballotstatus = CI Build\n' +
-        'fhirspec = http://build.fhir.org/\n' +
-        '#excludexml = Yes\n' +
-        '#excludejson = Yes\n' +
-        '#excludettl = Yes\n' +
-        '#excludeMaps = Yes\n';
+        'usage-stats-opt-out = false\n';
       expect(control).toEqual(expected);
     });
 
