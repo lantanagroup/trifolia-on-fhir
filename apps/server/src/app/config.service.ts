@@ -6,6 +6,7 @@ import * as config from 'config';
 import {IAuthConfig} from './models/auth-config';
 import {IGithubConfig} from './models/github-config';
 import { IPublishConfig } from './models/publish-config';
+import {AnnouncementServiceConfig} from './models/announcement-service-config';
 
 @Injectable()
 export class ConfigService {
@@ -41,6 +42,7 @@ export class ConfigService {
     queueLimit: 2,
     timeOut: 5000
   };
+  public announcementService?: AnnouncementServiceConfig;
   public headerPropagation: string[];
 
   constructor() {
@@ -52,6 +54,7 @@ export class ConfigService {
       this.github = config.get('github');
       this.publish = config.get('publish');
       this.headerPropagation = config.get('headerPropagation');
+      this.announcementService = config.has('announcementService') ? config.get('announcementService') : undefined;
     }
   }
 }

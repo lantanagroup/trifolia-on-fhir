@@ -40,7 +40,8 @@ export class ConfigController extends BaseController {
       github: {
         clientId: this.configService.github.clientId
       },
-      nonEditableResources: this.configService.fhir.nonEditableResources
+      nonEditableResources: this.configService.fhir.nonEditableResources,
+      announcementService: !!this.configService.announcementService && !!this.configService.announcementService.type
     };
 
     return retConfig;

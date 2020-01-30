@@ -21,4 +21,5 @@ export interface ConfigModel {
   nonEditableResources: {
     [resourceType: string]: string[];
   };
+  announcementService: boolean;
 }

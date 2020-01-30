@@ -23,3 +23,7 @@
   <label>Phone</label>
   <input type="text" class="form-control" [(ngModel)]="phone" />
 </div>
+
+<div class="form-group" *ngIf="configService.config?.announcementService">
+  <input type="checkbox" [(ngModel)]="announcements" /> Send me announcements regarding Trifolia!
+</div>

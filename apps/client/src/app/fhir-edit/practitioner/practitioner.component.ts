@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Practitioner} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {IPractitioner} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ConfigService} from '../../shared/config.service';
 
 @Component({
   selector: 'trifolia-fhir-practitioner',
@@ -13,7 +14,7 @@ export class FhirPractitionerComponent implements OnInit {
 
   public Globals = Globals;
 
-  constructor() {
+  constructor(public configService: ConfigService) {
   }
 
   private checkNames() {
@@ -164,6 +165,33 @@ export class FhirPractitionerComponent implements OnInit {
         const index = this.practitioner.telecom.indexOf(found);
         this.practitioner.telecom.splice(index, 1);
       }
+    }
+  }
+
+  get announcements() {
+    if (this.practitioner.extension) {
+      const found = this.practitioner.extension.find(e => e.url === Globals.extensionUrls['extension-practitioner-announcements']);
+
+      if (found) {
+        return found.valueBoolean;
+      }
+    }
+
+    return false;
+  }
+
+  set announcements(value: boolean) {
+    this.practitioner.extension = this.practitioner.extension || [];
+    let found = this.practitioner.extension.find(e => e.url === Globals.extensionUrls['extension-practitioner-announcements']);
+
+    if (!found) {
+      found = {
+        url: Globals.extensionUrls['extension-practitioner-announcements'],
+        valueBoolean: value
+      };
+      this.practitioner.extension.push(found);
+    } else {
+      found.valueBoolean = value;
     }
   }
 
