@@ -30,6 +30,7 @@ import {
 } from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
+import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -41,7 +42,7 @@ class PageDefinition {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class R4ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -55,7 +56,6 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   };
   public filterResourceQuery: string;
   public igNotFound = false;
-  public Globals = Globals;
 
   constructor(
     private modal: NgbModal,
@@ -70,6 +70,14 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+  }
+
+  protected get packageId(): string {
+    return this.implementationGuide.packageId;
+  }
+
+  protected set packageId(value: string) {
+    this.implementationGuide.packageId = value;
   }
 
   public get mediaReferences(): MediaReference[] {
@@ -185,6 +193,9 @@ export class R4ImplementationGuideComponent extends BaseComponent implements OnI
   }
 
   public addResources() {
+    if (!this.implementationGuide.definition) this.implementationGuide.definition = { resource: [] };
+    if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
+
     const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.selectMultiple = true;
 

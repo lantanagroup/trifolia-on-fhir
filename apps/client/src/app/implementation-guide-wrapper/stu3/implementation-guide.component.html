@@ -102,7 +102,19 @@
 
               <div class="form-group">
                 <label>Package ID</label>
-                <input type="text" class="form-control" [(ngModel)]="packageId"/>
+                <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" />
+                <span class="help-block" *ngIf="!packageId">You must specify Package ID.</span>
+                <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
+                  <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="packageId && packageId.startsWith('hl7.')">
+                <label>HL7 Work Group</label>
+                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup">
+                  <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
+                  <option [ngValue]="undefined">Unspecified</option>
+                </select>
               </div>
 
               <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>

@@ -90,6 +90,11 @@ export interface IContactPoint {
   use?: 'home'|'work'|'temp'|'old'|'mobile';
 }
 
+export interface IContactDetail {
+  name?: string;
+  telecom?: IContactPoint[];
+}
+
 export interface IPractitioner extends IDomainResource {
   resourceType: string;
   identifier?: IIdentifier[];

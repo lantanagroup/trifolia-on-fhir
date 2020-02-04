@@ -128,6 +128,7 @@ export class STU3HtmlExporter extends HtmlExporter {
     newIg.url = this.stu3ImplementationGuide.url;
     newIg.fhirVersion = [this.getOfficialFhirVersion()];
     newIg.packageId = `hl7.fhir.${newIg.id}`;
+    newIg.contact = this.stu3ImplementationGuide.contact;
 
     newIg.definition = {
       resource: [],

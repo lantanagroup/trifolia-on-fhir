@@ -1,5 +1,5 @@
 import '../date-extensions';
-import {IBundle, IDomainResource, IElementDefinition, IExtension, IHumanName, IPractitioner, IStructureDefinition} from '../fhirInterfaces';
+import {IBundle, IElementDefinition, IStructureDefinition, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -318,7 +318,7 @@ export class Identifier extends Element {
 
 }
 
-export class ContactPoint extends Element {
+export class ContactPoint extends Element implements IContactPoint {
   public system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
   public value?: string;
   public use?: 'home'|'work'|'temp'|'old'|'mobile';
@@ -348,7 +348,7 @@ export class ContactPoint extends Element {
 
 }
 
-export class ContactDetail extends Element {
+export class ContactDetail extends Element implements IContactDetail {
   public name?: string;
   public telecom?: ContactPoint[];
 
