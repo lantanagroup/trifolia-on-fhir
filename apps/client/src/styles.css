@@ -753,3 +753,26 @@ tr.introjs-showElement > th {
 }
 
 /*** END INTRO.JS STYLES ***/
+
+/** Global styles to make other-resources screens work with max height **/
+div.container > div.jumbotron > ng-component {
+  height: 93%;
+  display: block;
+}
+
+div.container > div.jumbotron > ng-component > div:first-child {
+  height: 100%;
+}
+
+div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset {
+  height: 92%;
+  display: block;
+}
+
+div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) {
+  height: 94%;
+}
+
+div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) > div[id="json/xml-panel"] {
+  height: 100%;
+}

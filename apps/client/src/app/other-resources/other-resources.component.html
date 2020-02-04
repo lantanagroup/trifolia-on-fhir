@@ -75,9 +75,9 @@
           <td>{{getEntryName(entry)}}</td>
           <td class="actions-column-1">
             <div class="pull-right">
-              <button type="button" class="btn btn-primary" title="View this resource" (click)="openResource(entry.resource)">
+              <a class="btn btn-primary" title="View this resource" routerLink="{{configService.baseSessionUrl}}/other-resources/{{entry.resource.resourceType}}/{{entry.resource.id}}">
                 <i class="fa fa-search"></i>
-              </button>
+              </a>
             </div>
           </td>
         </tr>
@@ -98,73 +98,6 @@
     </ng-template>
   </ngb-tab>
 
-  <!-- Introduction -->
-  <ngb-tab *ngIf="configService.showingIntroduction">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['other.open-resource-tab']">&lt;ResourceType&gt; &lt;ID&gt;</span>
-    </ng-template>
-    <ng-template ngbTabContent>
-      ...
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Each opened resource -->
-  <ngb-tab *ngFor="let r of openedResources; let ri = index" id="resource-{{ri}}">
-    <ng-template ngbTabTitle>{{r.resource.resourceType}} {{r.resource.id}} <i class="fas fa-times" (click)="closeResource(ri, $event)"></i></ng-template>
-    <ng-template ngbTabContent>
-      <input type="file" style="display: none;" #jsonFileUpload accept="application/json" (change)="uploadFile('json', ri, $event, jsonFileUpload)"/>
-      <input type="file" style="display: none;" #xmlFileUpload accept="application/xml" (change)="uploadFile('xml', ri, $event, xmlFileUpload)"/>
-      <div class="btn-toolbar">
-        <div class="btn-group mr-2" role="group" aria-label="Generic actions for the resource">
-          <button type="button" class="btn btn-primary" title="Remove this resource" (click)="remove(r)">
-            <i class="fa fa-trash"></i>
-          </button>
-          <button type="button" class="btn btn-primary" title="Change this resource's ID" (click)="changeId(r)">
-            <i class="fa fa-id-badge"></i>
-          </button>
-        </div>
-        <div class="btn-group" role="group" aria-label="Download/upload" *ngIf="['json','xml'].indexOf(r.activeSub) >= 0">
-          <button type="button" class="btn btn-primary" title="Download this resource"
-                  (click)="downloadFile(r.activeSub, ri)"
-                  [attr.data-intro]="Globals.introText['other.resource.download']">
-            <i class="fa fa-download"></i>
-          </button>
-          <button type="button" class="btn btn-primary" title="Upload to update/overwrite this resource"
-                  (click)="r.activeSub === 'json' ? jsonFileUpload.click() : xmlFileUpload.click()"
-                  [attr.data-intro]="Globals.introText['other.resource.upload']">
-            <i class="fa fa-upload"></i>
-          </button>
-        </div>
-        <div class="btn-group" role="group" aria-label="Permissions management" *ngIf="r.activeSub === 'permissions'">
-          <button type="button" class="btn btn-primary" title="Save changes to the resource"
-                  (click)="save(r)"
-                  [attr.data-intro]="Globals.introText['other.resource.save']">
-            <i class="fas fa-save"></i>
-          </button>
-        </div>
-      </div>
-
-      <ngb-tabset (tabChange)="changeSubTab(r, $event)">
-        <ngb-tab id="json">
-          <ng-template ngbTabTitle>JSON</ng-template>
-          <ng-template ngbTabContent>
-            <pre>{{openedResources[ri].resource | json}}</pre>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab id="xml">
-          <ng-template ngbTabTitle>XML</ng-template>
-          <ng-template ngbTabContent>
-            <pre>{{openedResources[ri].resource | fhirXml}}</pre>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
-          <ng-template ngbTabContent>
-            <trifolia-fhir-resource-permissions [resource]="openedResources[ri].resource"></trifolia-fhir-resource-permissions>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
-    </ng-template>
-  </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">
