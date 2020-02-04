@@ -6,15 +6,9 @@
   <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
 
   <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
-    <ngb-tab id="quick">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['ig.quick-tab']">Quick</span>
-      </ng-template>
+    <ngb-tab id="general" title="General">
       <ng-template ngbTabContent>
-        <div class="alert alert-info">These fields are the key fields used to develop and publish an implementation guide package. Use the other tabs to access more details.</div>
-
         <div class="row">
-
           <div class="col-md-6">
             <div class="form-group">
               <label>ID</label>
@@ -52,15 +46,25 @@
             <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-3">
             <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
           </div>
 
-          <div class="col-md-6">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>
+                Package ID
+                <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
+              </label>
+              <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
+              <span class="help-block" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
+              <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
+                <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-3">
             <div class="form-group">
               <label>
                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'fhirVersion', [])"/>
@@ -97,6 +101,32 @@
             </div>
           </div>
 
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>
+                <span>Status </span>
+                <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
+              </label>
+              <select class="form-control" [(ngModel)]="implementationGuide.status">
+                <option [ngValue]="'draft'">Draft</option>
+                <option [ngValue]="'active'">Active</option>
+                <option [ngValue]="'retired'">Retired</option>
+                <option [ngValue]="'unknown'">Unknown</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-3" *ngIf="implementationGuide.packageId && implementationGuide.packageId.startsWith('hl7.')">
+            <div class="form-group">
+              <label>HL7 Work Group</label>
+              <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup">
+                <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
+                <option [ngValue]="undefined">Unspecified</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-12">
             <app-fhir-markdown
               [parentObject]="implementationGuide"
@@ -111,149 +141,7 @@
           <div class="col-md-12">
             <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
           </div>
-
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-                <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.resource" (ngModelChange)="toggleResources($event)"/>
-                Resources
-                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource"></app-tooltip-icon>
-              </div>
-              <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
-                <thead>
-                <tr>
-                  <td colspan="4">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="btn-group-toggle" data-toggle="buttons">
-                          <label class="btn" [class.btn-primary]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
-                            All
-                          </label>
-                          <label class="btn" [class.btn-primary]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
-                            Profiles
-                          </label>
-                          <label class="btn" [class.btn-primary]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')">
-                            Terminology
-                          </label>
-                          <label class="btn" [class.btn-primary]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
-                            Examples
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reference</th>
-                  <th>Name</th>
-                  <th>Example?</th>
-                  <th class="actions-column-1">
-                    <div class="pull-right">
-                      <button type="button" class="btn btn-primary" (click)="addResources()" title="Add existing resources to this implementation guide">
-                        <i class="fas fa-hand-pointer"></i>
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let resource of resources; let ri = index">
-                  <td>
-                    <app-fhir-reference
-                      [parentObject]="resource"
-                      propertyName="reference"
-                      [hideDisplay]="true"
-                      [isFormGroup]="false"
-                      [required]="true"
-                      [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
-                      prependIconTooltip="This is a duplicate">
-                    </app-fhir-reference>
-                  </td>
-                  <td>
-                    <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
-                  </td>
-                  <td>
-                    <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')"></app-fhir-boolean>
-                    <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
-                  </td>
-                  <td>
-                    <div class="btn-group pull-right">
-                      <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary" (click)="removeResource(resource)">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
-      </ng-template>
-    </ngb-tab>
-
-    <ngb-tab id="general">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['ig.general-tab']">General</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <fieldset>
-          <div class="row">
-            <div class="col-md-8">
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
-
-              <app-fhir-string
-                [parentObject]="implementationGuide"
-                [required]="true"
-                (change)="nameChanged()"
-                pattern="^[A-Z][A-Za-z0-9_]+$"
-                patternMessage="Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter."
-                propertyName="name"
-                title="Name"
-                tooltipPath="ImplementationGuide.name">
-              </app-fhir-string>
-
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="title" title="Title" tooltipPath="ImplementationGuide.title"></app-fhir-string>
-
-              <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
-
-              <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>ID
-                  <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
-                </label>
-                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO"/>
-              </div>
-
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version"></app-fhir-string>
-
-              <div class="form-group">
-                <label>
-                  <span>Status </span>
-                  <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
-                </label>
-                <select class="form-control" [(ngModel)]="implementationGuide.status">
-                  <option [ngValue]="'draft'">Draft</option>
-                  <option [ngValue]="'active'">Active</option>
-                  <option [ngValue]="'retired'">Retired</option>
-                  <option [ngValue]="'unknown'">Unknown</option>
-                </select>
-              </div>
-
-              <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
-
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="packageId" title="Package ID" tooltipPath="ImplementationGuide.packageId" [required]="true"></app-fhir-string>
-            </div>
-          </div>
-        </fieldset>
       </ng-template>
     </ngb-tab>
 
@@ -262,8 +150,6 @@
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-fhir-narrative [resource]="implementationGuide"></app-fhir-narrative>
-
         <app-fhir-markdown
           [parentObject]="implementationGuide"
           propertyName="description" title="Description"
@@ -341,6 +227,8 @@
         </div>
 
         <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
+
+        <app-fhir-narrative [resource]="implementationGuide"></app-fhir-narrative>
       </ng-template>
     </ngb-tab>
 
@@ -350,65 +238,6 @@
         <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <input type="checkbox" [ngModel]="implementationGuide.definition && implementationGuide.definition.resource" (ngModelChange)="toggleResources($event)"/> Implementation guide has resources
-
-        <table class="table table-striped" *ngIf="implementationGuide.definition && implementationGuide.definition.resource">
-          <thead>
-          <tr>
-            <th>
-              Reference
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.reference"></app-tooltip-icon>
-            </th>
-            <th>
-              Name
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.name"></app-tooltip-icon>
-            </th>
-            <th>
-              Example?
-              <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.example[x]"></app-tooltip-icon>
-            </th>
-            <th class="actions-column-1">
-              <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Add existing resources to this implementation guide" (click)="addResources()">
-                  <i class="fas fa-hand-pointer"></i>
-                </button>
-              </div>
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let resource of implementationGuide.definition.resource; let ri = index">
-            <td>
-              <app-fhir-reference
-                [parentObject]="resource"
-                propertyName="reference"
-                [hideDisplay]="true"
-                [isFormGroup]="false"
-                [required]="true"
-                [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
-                prependIconTooltip="This is a duplicate">
-              </app-fhir-reference>
-            </td>
-            <td>
-              <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-              <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')"></app-fhir-boolean>
-              <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
-            </td>
-            <td>
-              <div class="btn-group pull-right">
-                <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
-                  <i class="fa fa-edit"></i>
-                </button>
-                <button type="button" class="btn btn-primary" title="Remove this resource from the implementation guide" (click)="implementationGuide.definition.resource.splice(ri, 1)">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
 
         <!-- Resource Groups -->
         <div class="card">
@@ -469,6 +298,88 @@
             </tfoot>
           </table>
         </div>
+
+        <div class="card">
+          <div class="card-header">Resources</div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <td colspan="4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="btn-group-toggle" data-toggle="buttons">
+                      <label class="btn" [class.btn-primary]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
+                        All
+                      </label>
+                      <label class="btn" [class.btn-primary]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
+                        Profiles
+                      </label>
+                      <label class="btn" [class.btn-primary]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')">
+                        Terminology
+                      </label>
+                      <label class="btn" [class.btn-primary]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
+                        Examples
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th>Reference</th>
+              <th>Name</th>
+              <th>Example?</th>
+              <th class="actions-column-1">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" (click)="addResources()" title="Add existing resources to this implementation guide">
+                    <i class="fas fa-hand-pointer"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let resource of resources; let ri = index">
+              <td>
+                <app-fhir-reference
+                  [parentObject]="resource"
+                  propertyName="reference"
+                  [hideDisplay]="true"
+                  [isFormGroup]="false"
+                  [required]="true"
+                  [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                  prependIconTooltip="This is a duplicate">
+                </app-fhir-reference>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')"></app-fhir-boolean>
+                <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
+              </td>
+              <td>
+                <div class="btn-group pull-right">
+                  <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="removeResource(resource)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="!implementationGuide.definition || !implementationGuide.definition.resource || implementationGuide.definition.resource.length === 0">
+            <tr>
+              <th colspan="4">No resources have been added to this implementation guide, yet. Click <a href="javascript:void(0)" (click)="addResources()">here</a> to add one.</th>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
       </ng-template>
     </ngb-tab>
 
@@ -478,6 +389,10 @@
         <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Other</span>
       </ng-template>
       <ng-template ngbTabContent>
+        <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
+
+        <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
+
         <div class="card">
           <div class="card-header">
             Parameters <app-tooltip-icon tooltipPath="ImplementationGuide.definition.parameter"></app-tooltip-icon>

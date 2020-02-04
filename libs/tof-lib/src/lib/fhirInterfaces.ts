@@ -96,3 +96,8 @@ export interface IPractitioner extends IDomainResource {
   name?: IHumanName[];
   telecom?: IContactPoint[];
 }
+
+export interface IContactDetail {
+  name?: string;
+  telecom?: IContactPoint[];
+}
