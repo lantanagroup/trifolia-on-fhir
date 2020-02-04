@@ -146,6 +146,7 @@ export class STU3HtmlExporter extends HtmlExporter {
     this.stu3ImplementationGuide.package.forEach(p => {
       newIg.definition.resource = newIg.definition.resource.concat((p.resource || []).map(r => {
         const ret = new ImplementationGuideResourceComponent();
+        ret.description = r.description;
 
         if (r.sourceReference) {
           ret.reference = {
@@ -162,6 +163,19 @@ export class STU3HtmlExporter extends HtmlExporter {
           ret.exampleBoolean = r.example;
         } else if (r.exampleFor) {
           ret.exampleBoolean = true;
+        }
+
+        if (!ret.description && ret.reference && ret.reference.reference) {
+          const parsedReference = parseReference(ret.reference.reference);
+          const foundResourceEntry = this.bundle.entry.find(e => e.resource && e.resource.resourceType === parsedReference.resourceType && e.resource.id === parsedReference.id);
+
+          if (foundResourceEntry) {
+            const foundResource: any = foundResourceEntry.resource;
+
+            if (foundResource.description) {
+              ret.description = foundResource.description;
+            }
+          }
         }
 
         return ret;

@@ -2,7 +2,7 @@ import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angul
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {ElementTreeModel} from '../../models/element-tree-model';
+import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   Coding,
   ElementDefinition as STU3ElementDefinition, ExampleComponent,
@@ -16,6 +16,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../shared/config.service';
 import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
+import {IElementDefinition} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -44,7 +45,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   }
 
-  get element(): STU3ElementDefinition | R4ElementDefinition {
+  get element(): IElementDefinition {
     if (this.elementTreeModel) {
       return this.elementTreeModel.constrainedElement;
     }

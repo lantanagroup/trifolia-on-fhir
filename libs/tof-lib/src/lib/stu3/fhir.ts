@@ -1,5 +1,5 @@
 import '../date-extensions';
-import {IBundle, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {IBundle, IDomainResource, IElementDefinition, IExtension, IHumanName, IPractitioner, IStructureDefinition} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -787,7 +787,7 @@ export class ElementDefinitionBindingComponent extends Element {
 
 }
 
-export class ElementDefinition extends Element {
+export class ElementDefinition extends Element implements IElementDefinition {
   public path: string;
   public representation?: string[];
   public sliceName?: string;
@@ -974,7 +974,7 @@ export class DifferentialComponent extends BackboneElement {
 
 }
 
-export class StructureDefinition extends DomainResource {
+export class StructureDefinition extends DomainResource implements IStructureDefinition {
   public resourceType = 'StructureDefinition';
   public url: string;
   public identifier?: Identifier[];

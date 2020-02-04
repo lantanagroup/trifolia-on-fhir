@@ -96,3 +96,53 @@ export interface IPractitioner extends IDomainResource {
   name?: IHumanName[];
   telecom?: IContactPoint[];
 }
+
+export interface IElement {
+  id?: string;
+}
+
+export interface IElementDefinitionType {
+  code: string;
+  profile?: string|string[];
+  targetProfile?: string|string[];
+}
+
+export interface IElementDefinitionMapping {
+  identity: string;
+  language?: string;
+  map: string;
+  comment?: string;
+}
+
+export interface IElementDefinition extends IElement {
+  path: string;
+  sliceName?: string;
+  slicing?: any;
+  label?: string;
+  short?: string;
+  definition?: string;
+  alias?: string[];
+  type?: IElementDefinitionType[];
+  min?: number;
+  max?: string;
+  contentReference?: string;
+  binding?: {
+    strength: string;
+  }
+  example?: any;
+  mapping?: IElementDefinitionMapping[];
+}
+
+export interface IStructureDefinition extends IDomainResource {
+  url: string;
+  identifier?: IIdentifier[];
+  name: string;
+  title?: string;
+  status: string;
+  snapshot?: {
+    element: IElementDefinition[]
+  };
+  differential?: {
+    element: IElementDefinition[];
+  };
+}

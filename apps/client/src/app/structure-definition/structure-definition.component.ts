@@ -3,15 +3,18 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ElementTreeModel} from '../models/element-tree-model';
+import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   ConstraintComponent,
   DifferentialComponent,
   ElementDefinition as STU3ElementDefinition,
-  StructureDefinition as STU3StructureDefinition, TypeRefComponent
+  StructureDefinition as STU3StructureDefinition,
+  TypeRefComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  ElementDefinition as R4ElementDefinition, ElementDefinitionConstraintComponent, ElementDefinitionTypeRefComponent,
+  ElementDefinition as R4ElementDefinition,
+  ElementDefinitionConstraintComponent,
+  ElementDefinitionTypeRefComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
@@ -23,8 +26,7 @@ import {ElementDefinitionPanelComponent} from './element-definition-panel/elemen
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IElementDefinition, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -247,11 +249,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           }
         }
 
-        if (elementTreeModel.path === diffElement.path) {
-          return true;
-        }
-
-        return false;
+        return elementTreeModel.path === diffElement.path;
       });
 
       for (let x = 0; x < constrainedElements.length; x++) {
@@ -426,7 +424,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    const elements = <(IElementDefinition)[]> this.structureDefinition.differential.element;
     const thisElementIndex = this.elements.indexOf(elementTreeModel);
     const previousConstrainedSiblings = this.elements.filter((e, i) => e.parent === elementTreeModel.parent && e.constrainedElement && i < thisElementIndex);
 
@@ -448,8 +446,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     const leafElementName = elementTreeModel.baseElement.id.substring(elementTreeModel.baseElement.id.lastIndexOf('.') + 1);
-    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
-    let constrainedElement: STU3ElementDefinition | R4ElementDefinition;
+    const elements = <IElementDefinition[]> this.structureDefinition.differential.element;
+    let constrainedElement: IElementDefinition;
 
     if (this.configService.isFhirSTU3) {
       constrainedElement = new STU3ElementDefinition();
@@ -558,7 +556,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  public removeElementDefinition(element: STU3ElementDefinition | R4ElementDefinition, event?, shouldConfirm = true) {
+  public removeElementDefinition(element: IElementDefinition, event?, shouldConfirm = true) {
     if (shouldConfirm && !confirm('Are you sure you want to remove the constraints for this element?')) {
       return;
     }
@@ -596,7 +594,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  private getChildElementDefinitions(element: STU3ElementDefinition | R4ElementDefinition): (STU3ElementDefinition | R4ElementDefinition)[] {
+  private getChildElementDefinitions(element: IElementDefinition): (STU3ElementDefinition | R4ElementDefinition)[] {
     const elementId = element.id;
     const sliceName = elementId.indexOf(':') >= 0 ? elementId.substring(elementId.indexOf(':') + 1) : '';
     const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;

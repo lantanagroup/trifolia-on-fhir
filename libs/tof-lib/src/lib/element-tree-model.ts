@@ -1,19 +1,20 @@
-import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from './stu3/fhir';
 import {
   ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent,
   ElementDefinitionTypeRefComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+} from './r4/fhir';
+import {Globals} from './globals';
+import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
 
 export class ElementTreeModel {
-  public constrainedElement?: STU3ElementDefinition | R4ElementDefinition;
-  public baseElement: STU3ElementDefinition | R4ElementDefinition;
+  public constrainedElement?: IElementDefinition;
+  public baseElement: IElementDefinition;
   public depth: number;
   public expanded = false;
   public hasChildren = false;
   public position: number;
   public parent?: ElementTreeModel;
-  public profile: StructureDefinition;
+  public profile: IStructureDefinition;
   public profilePath: string;
   public path: string;
 
@@ -88,30 +89,6 @@ export class ElementTreeModel {
     return false;
   }
 
-  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
-    const typeCounts = {};
-
-    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
-      if (typeCounts.hasOwnProperty(type.code)) {
-        typeCounts[type.code]++;
-      } else {
-        typeCounts[type.code] = 1;
-      }
-    });
-
-    const types = Object.keys(typeCounts);
-
-    for (let i = 0; i < types.length; i++) {
-      const type = types[i];
-
-      if (typeCounts[type] > 1) {
-        types[i] = type + '+';
-      }
-    }
-
-    return types.join(', ');
-  }
-
   get type(): string {
     const types = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> (this.constrainedElement ? this.constrainedElement.type : this.baseElement.type);
     if (types) {
@@ -176,7 +153,16 @@ export class ElementTreeModel {
     return this.baseElement.max;
   }
 
-  private getBindingComponentDisplay(component: ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent) {
+  get constraints(): string {
+    //Change this to grab the valueset
+    if (this.constrainedElement) {
+      return this.getBindingDisplay(this.constrainedElement);
+    }
+
+    return this.getBindingDisplay(this.baseElement);
+  }
+
+  private static getBindingComponentDisplay(component: ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent) {
     if (!component) {
       return '';
     }
@@ -212,8 +198,32 @@ export class ElementTreeModel {
     return '';
   }
 
-  private getBindingDisplay(element: STU3ElementDefinition | R4ElementDefinition): string {
-    let display = this.getBindingComponentDisplay(element.binding);
+  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
+    const typeCounts = {};
+
+    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
+      if (typeCounts.hasOwnProperty(type.code)) {
+        typeCounts[type.code]++;
+      } else {
+        typeCounts[type.code] = 1;
+      }
+    });
+
+    const types = Object.keys(typeCounts);
+
+    for (let i = 0; i < types.length; i++) {
+      const type = types[i];
+
+      if (typeCounts[type] > 1) {
+        types[i] = type + '+';
+      }
+    }
+
+    return types.join(', ');
+  }
+
+  private getBindingDisplay(element: IElementDefinition): string {
+    let display = ElementTreeModel.getBindingComponentDisplay(element.binding);
     const fixedPropertyName = Globals.getChoiceSelectionName(element, 'fixed');
     const patternPropertyName = Globals.getChoiceSelectionName(element, 'pattern');
     const defaultValueName = Globals.getChoiceSelectionName(element, 'defaultValue');
@@ -281,12 +291,11 @@ export class ElementTreeModel {
     return display;
   }
 
-  get constraints(): string {
-    //Change this to grab the valueset
+  toString() {
     if (this.constrainedElement) {
-      return this.getBindingDisplay(this.constrainedElement);
+      return this.constrainedElement.id;
+    } else if (this.baseElement) {
+      return this.baseElement.id;
     }
-
-    return this.getBindingDisplay(this.baseElement);
   }
 }

@@ -1,4 +1,4 @@
-import {IBundle, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {IBundle, IDomainResource, IElementDefinition, IExtension, IHumanName, IPractitioner, IStructureDefinition} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -821,7 +821,7 @@ export class ElementDefinitionMappingComponent extends Element {
 
 }
 
-export class ElementDefinition extends BackboneElement {
+export class ElementDefinition extends BackboneElement implements IElementDefinition {
   public path: string;
   public representation?: string[];
   public sliceName?: string;
@@ -1034,7 +1034,7 @@ export class StructureDefinitionContextComponent extends BackboneElement {
 
 }
 
-export class StructureDefinition extends DomainResource {
+export class StructureDefinition extends DomainResource implements IStructureDefinition {
   public resourceType = 'StructureDefinition';
   public url: string;
   public identifier?: Identifier[];
