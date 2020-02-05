@@ -3,11 +3,12 @@ import * as profileTypes from '../assets/r4/profiles-types.json';
 import * as profileResources from '../assets/r4/profiles-resources.json';
 import * as testData1 from '../../../../test/data/shareableplandefinition.profile.json';
 import * as testData2 from '../../../../test/data/resprate.profile.json';
+import * as testData3 from '../../../../test/data/resprate2.profile.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
-import {preserveWhitespacesDefault} from '@angular/compiler';
+import {ElementDefinition} from './r4/fhir';
 
 describe('ConstraintManager', () => {
   const parser = new ParseConformance(false, Versions.R4);
@@ -15,17 +16,76 @@ describe('ConstraintManager', () => {
   parser.parseBundle(profileResources);
   const fhir = new Fhir(parser);
 
-  describe('resprate observation', () => {
+  describe('associate resprate2 observation', () => {
+    it('should associate sub-sub constraint', () => {
+      const testData: IStructureDefinition = JSON.parse(JSON.stringify(testData3));
+
+      // Add a sub-sub constraint element to the resprate2 profile
+      testData.differential.element.splice(2, 0,
+        {
+          "id": "Observation.code.coding.code",
+          "path": "Observation.code.coding.code"
+        });
+
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      const cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+
+      cm.toggleExpand(cm.elements[14]);
+      cm.toggleExpand(cm.elements[17]);
+      expect(cm.elements[22].basePath).toBe('Observation.code.coding.code');
+      expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[2]);
+    });
+  });
+
+  describe('constrain resprate2 observation', () => {
     let cm;
+    let testData: IStructureDefinition;
 
     beforeEach(() => {
+      testData = JSON.parse(JSON.stringify(testData3));
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
-      cm = new ConstraintManager(obsModel, testData2, fhir.parser);
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
 
       expect(cm.elements.length).toBe(33);
-      expect(cm.elements[0].constrainedElement).toBe(testData2.differential.element[0]);
-      expect(cm.elements[14].constrainedElement).toBe(testData2.differential.element[1]);
-      expect(cm.elements[21].constrainedElement).toBe(testData2.differential.element[6]);
+    });
+
+    it('should constrain code.coding', () => {
+      cm.toggleExpand(cm.elements[14]);
+      expect(cm.elements.length).toBe(37);
+
+      expect(testData.differential.element.length).toBe(7);
+      cm.constrain(cm.elements[17]);
+      expect(testData.differential.element.length).toBe(8);
+      expect(testData.differential.element[2].id).toBe('Observation.code.coding');
+      expect(testData.differential.element[2].path).toBe('Observation.code.coding');
+    });
+
+    it('should constraint code.coding.code', () => {
+      cm.toggleExpand(cm.elements[14]);
+      cm.toggleExpand(cm.elements[17]);
+      expect(cm.elements.length).toBe(44);
+
+      expect(testData.differential.element.length).toBe(7);
+      cm.constrain(cm.elements[22]);
+      expect(testData.differential.element.length).toBe(8);
+      expect(testData.differential.element[2].id).toBe('Observation.code.coding.code');
+      expect(testData.differential.element[2].path).toBe('Observation.code.coding.code');
+    });
+  });
+
+  describe('resprate observation', () => {
+    let cm;
+    let testData: IStructureDefinition;
+
+    beforeEach(() => {
+      testData = <IStructureDefinition> JSON.parse(JSON.stringify(testData2));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+
+      expect(cm.elements.length).toBe(33);
+      expect(cm.elements[0].constrainedElement).toBe(testData.differential.element[0]);
+      expect(cm.elements[14].constrainedElement).toBe(testData.differential.element[1]);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[6]);
     });
 
     it('should expand constrained code', () => {
@@ -70,8 +130,8 @@ describe('ConstraintManager', () => {
         expect(e.depth).toBe(3);
       });
 
-      expect(cm.elements[21].constrainedElement).toBe(testData2.differential.element[4]);
-      expect(cm.elements[24].constrainedElement).toBe(testData2.differential.element[5]);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[4]);
+      expect(cm.elements[24].constrainedElement).toBe(testData.differential.element[5]);
     });
 
     it('should expand code.coding.code', () => {
@@ -138,9 +198,11 @@ describe('ConstraintManager', () => {
   });
 
   describe('ctor(), toggleExpand(), associate()', () => {
+    const testData: IStructureDefinition = <IStructureDefinition> JSON.parse(JSON.stringify(testData1));
+
     it('should initialize with the first level expanded', () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
-      const cm = new ConstraintManager(planDefModel, <IStructureDefinition> <any> testData1, fhir.parser);
+      const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
       expect(cm.elements).toBeTruthy();
       expect(cm.elements.length).toBe(40);
       const ids = cm.elements.map(e => e.baseId);
@@ -164,14 +226,16 @@ describe('ConstraintManager', () => {
       // check associations - this is a simple test for the profile since all elements in the differential are second-level constraints. we can compare straight-across after init
       const constrainedElementTreeModels = cm.elements.filter(e => !!e.constrainedElement).map(e => e.constrainedElement);
       expect(constrainedElementTreeModels.length).toBe(13);
-      expect(constrainedElementTreeModels).toStrictEqual(testData1.differential.element);
+      expect(constrainedElementTreeModels).toStrictEqual(testData.differential.element);
     });
   });
 
   describe('findChildren(element, elements)', () => {
+    const testData: IStructureDefinition = <IStructureDefinition> JSON.parse(JSON.stringify(testData1));
+
     it('should find children of a regular element', () => {
-      const goalElement = testData1.snapshot.element[38];
-      const children = ConstraintManager.findElementChildren(goalElement, testData1.snapshot.element);
+      const goalElement = testData.snapshot.element[38];
+      const children = ConstraintManager.findElementChildren(goalElement, testData.snapshot.element);
       expect(children).toBeTruthy();
       expect(children.length).toEqual(10);
       expect(children[0].id).toEqual('PlanDefinition.goal.id');
@@ -268,9 +332,11 @@ describe('ConstraintManager', () => {
   });
 
   describe('findChildren(element)', () => {
+    const testData: IStructureDefinition = <IStructureDefinition> JSON.parse(JSON.stringify(testData1));
+
     it('should find children', () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
-      const cm = new ConstraintManager(planDefModel, <IStructureDefinition> <any> testData1, fhir.parser);
+      const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
       const children = cm.findChildren(planDefModel.snapshot.element[0]);     // ask for children of PlanDefinition
       expect(children).toBeTruthy();
       expect(children.length).toBe(39);
@@ -278,7 +344,7 @@ describe('ConstraintManager', () => {
 
     it('should find children of a child type', () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
-      const cm = new ConstraintManager(planDefModel, <IStructureDefinition> <any> testData1, fhir.parser);
+      const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
       const children = cm.findChildren(planDefModel.snapshot.element[2]);     // ask for children of PlanDefinition.meta
       expect(children).toBeTruthy();
       expect(children.length).toBe(8);

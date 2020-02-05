@@ -16,7 +16,6 @@ export class ElementTreeModel {
   public parent?: ElementTreeModel;
   public profile: IStructureDefinition;
   public profilePath: string;
-  public path: string;
 
   constructor() {
   }
@@ -37,12 +36,6 @@ export class ElementTreeModel {
     }
   }
 
-  get constrainedPath(): string {
-    if (this.constrainedElement) {
-      return this.constrainedElement.path;
-    }
-  }
-
   get baseId(): string {
     if (this.baseElement) {
       return this.baseElement.id;
@@ -58,18 +51,34 @@ export class ElementTreeModel {
   get id(): string {
     if (this.constrainedElement) {
       return this.constrainedElement.id;
-    } else if (this.baseElement) {
-      return this.baseElement.id;
+    } else if (this.parent) {
+      if (this.parent.constrainedElement) {
+        return this.parent.constrainedElement.id + '.' + this.leafPath;
+      } else {
+        return this.parent.baseElement.id + '.' + this.leafPath;
+      }
+    } else {
+      return this.leafPath;
     }
+  }
 
-    return '';
+  get path(): string {
+    if (this.constrainedElement) {
+      return this.constrainedElement.path;
+    } else if (this.parent) {
+      if (this.parent.constrainedElement) {
+        return this.parent.constrainedElement.path + '.' + this.leafPath;
+      } else {
+        return this.parent.baseElement.path + '.' + this.leafPath;
+      }
+    } else {
+      return this.leafPath;
+    }
   }
 
   get leafPath(): string {
-    const element = this.constrainedElement || this.baseElement;
-
-    if (element) {
-      return element.path.substring(element.path.lastIndexOf('.') + 1);
+    if (this.baseElement) {
+      return this.baseElement.path.substring(this.baseElement.path.lastIndexOf('.') + 1);
     }
 
     return '';
@@ -202,7 +211,6 @@ export class ElementTreeModel {
     newElementTreeModel.depth = this.depth;
     newElementTreeModel.expanded = this.expanded;
     newElementTreeModel.profile = this.profile;
-    newElementTreeModel.path = this.path;
     newElementTreeModel.position = this.position;
     newElementTreeModel.profilePath = this.profilePath;
     return newElementTreeModel;

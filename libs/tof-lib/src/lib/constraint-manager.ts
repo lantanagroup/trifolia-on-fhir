@@ -8,8 +8,16 @@ export class ConstraintManager {
   readonly structureDefinition: IStructureDefinition;
   readonly fhirParser: ParseConformance;
   public elements: ElementTreeModel[];
+  private elementDefinitionType: (new(obj?: any) => IElementDefinition);
 
-  public constructor(base: IStructureDefinition, structureDefinition: IStructureDefinition, fhirParser: ParseConformance) {
+  /**
+   *
+   * @param elementDefinitionType The class/type of IElementDefinition that should be used to create
+   * @param base The base structure definition
+   * @param structureDefinition The child structure definition (the SD that is actively being created)
+   * @param fhirParser An instance of the FHIR.js ParseConformance class that contains the core FHIR spec structures needed
+   */
+  public constructor(elementDefinitionType: (new(obj?: any) => IElementDefinition), base: IStructureDefinition, structureDefinition: IStructureDefinition, fhirParser: ParseConformance) {
     if (!base) throw new Error('base is required');
     if (!base.snapshot) throw new Error('base.snapshot is required');
     if (!base.snapshot.element) throw new Error('base.snapshot.element is required');
@@ -18,6 +26,7 @@ export class ConstraintManager {
     this.base = base;
     this.structureDefinition = structureDefinition;
     this.fhirParser = fhirParser;
+    this.elementDefinitionType = elementDefinitionType;
 
     if (!this.structureDefinition.differential) {
       this.structureDefinition.differential = {
@@ -26,6 +35,8 @@ export class ConstraintManager {
     } else if (!this.structureDefinition.differential.element) {
       this.structureDefinition.differential.element = [];
     }
+
+    this.structureDefinition.differential.element = this.structureDefinition.differential.element.map(e => new elementDefinitionType(e));
 
     const rootElement = this.createElementTreeModel(this.base.snapshot.element[0]);
     this.elements = [rootElement];
@@ -133,6 +144,48 @@ export class ConstraintManager {
     }
 
     return ConstraintManager.findElementChildren(parent, structure.snapshot.element);
+  }
+
+  private findPreviousSiblings(elementTreeModel: ElementTreeModel) {
+    const elements = elementTreeModel.parent ? this.elements.filter(e => e.parent === elementTreeModel.parent) : this.elements.filter(e => !e.parent);
+    const thisIndex = elements.indexOf(elementTreeModel);
+    return elements.filter((e, i) => i < thisIndex);
+  }
+
+  /**
+   * Creates a new constraint on the specified element tree model. Inserts the new ElementDefinition (constraint)
+   * in the differential in the appropriate location.
+   * @param elementTreeModel The element tree model that should have a new constraint
+   */
+  constrain(elementTreeModel: ElementTreeModel) {
+    if (elementTreeModel.constrainedElement) return;
+
+    // Create a new instance of the ELementDefinition
+    elementTreeModel.constrainedElement = new this.elementDefinitionType({
+      id: elementTreeModel.id,
+      path: elementTreeModel.path
+    });
+
+    let prevConstrainedElementTreeModel: ElementTreeModel;
+    let nextElementTreeModel = elementTreeModel;
+
+    while (!prevConstrainedElementTreeModel && nextElementTreeModel) {
+      const previousSiblings = this.findPreviousSiblings(nextElementTreeModel);
+      const previousConstraints = previousSiblings.filter(e => e.constrainedElement);
+
+      if (previousConstraints.length === 0 && nextElementTreeModel.parent && nextElementTreeModel.parent.constrainedElement) {
+        prevConstrainedElementTreeModel = nextElementTreeModel.parent;
+        break;
+      } else if (previousConstraints.length === 0) {
+        nextElementTreeModel = nextElementTreeModel.parent;
+      } else {
+        prevConstrainedElementTreeModel = previousConstraints[previousConstraints.length - 1];
+        break;
+      }
+    }
+
+    const previousConstraintIndex = this.structureDefinition.differential.element.indexOf(prevConstrainedElementTreeModel.constrainedElement);
+    this.structureDefinition.differential.element.splice(previousConstraintIndex + 1, 0, elementTreeModel.constrainedElement);
   }
 
   /**
