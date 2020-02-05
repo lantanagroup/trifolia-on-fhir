@@ -3,6 +3,7 @@ import {ParseConformance} from 'fhir/parseConformance';
 import {ElementTreeModel} from './element-tree-model';
 
 export class ConstraintManager {
+  static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
   readonly base: IStructureDefinition;
   readonly structureDefinition: IStructureDefinition;
   readonly fhirParser: ParseConformance;
@@ -63,7 +64,8 @@ export class ConstraintManager {
     etm.baseElement = base;
     etm.parent = parent;
     etm.depth = parent ? parent.depth + 1 : 0;
-    etm.hasChildren = this.findChildren(base).length > 0;
+    const children = this.findChildren(base);
+    etm.hasChildren = children.length > 0;
     return etm;
   }
 
@@ -82,6 +84,7 @@ export class ConstraintManager {
       }
 
       this.associate(newTreeModels);
+      etm.expanded = true;
     } else {
       const childElementTreeModels = this.elements.filter(next => next.parent === etm);
       for (let i = childElementTreeModels.length - 1; i >= 0; i--) {
@@ -92,6 +95,7 @@ export class ConstraintManager {
         // Remove the child from the elements list
         const index = this.elements.indexOf(childElementTreeModels[i]);
         this.elements.splice(index, 1);
+        etm.expanded = false;
       }
     }
   }
@@ -155,9 +159,8 @@ export class ConstraintManager {
         } else if (pathMatch && !idMatch) {
           // This is a new slice
           const index = this.elements.indexOf(elementTreeModel);
-          const clone = <ElementTreeModel> JSON.parse(JSON.stringify(elementTreeModel));
+          const clone = elementTreeModel.clone(diff);
           this.elements.splice(index + 1, 0, clone);
-          clone.constrainedElement = diff;
         }
       }
     }

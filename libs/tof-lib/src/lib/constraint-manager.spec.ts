@@ -15,6 +15,128 @@ describe('ConstraintManager', () => {
   parser.parseBundle(profileResources);
   const fhir = new Fhir(parser);
 
+  describe('resprate observation', () => {
+    let cm;
+
+    beforeEach(() => {
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(obsModel, testData2, fhir.parser);
+
+      expect(cm.elements.length).toBe(33);
+      expect(cm.elements[0].constrainedElement).toBe(testData2.differential.element[0]);
+      expect(cm.elements[14].constrainedElement).toBe(testData2.differential.element[1]);
+      expect(cm.elements[21].constrainedElement).toBe(testData2.differential.element[6]);
+    });
+
+    it('should expand constrained code', () => {
+      cm.toggleExpand(cm.elements[14]);           // expand code
+
+      expect(cm.elements[14].expanded).toBe(true);
+      expect(cm.elements.length).toBe(38);
+
+      const newElements = cm.elements.filter((e, i) => i >= 15 && i <= 19);
+      const actualBasePaths = newElements.map(e => e.basePath);
+      const expectedBasePaths = ['Observation.code.id', 'Observation.code.extension', 'Observation.code.coding', 'Observation.code.coding', 'Observation.code.text'];
+      expect(actualBasePaths).toStrictEqual(expectedBasePaths);
+
+      expect(newElements[2].isSlice).toBe(false);
+      expect(newElements[2].displayId).toBe('coding');
+      expect(newElements[3].isSlice).toBe(true);
+      expect(newElements[3].displayId).toBe('coding:RespRateCode');
+
+      // All new elements should have the right parent, and a depth of 2
+      newElements
+        .forEach(e => {
+          expect(e.parent).toBe(cm.elements[14]);
+          expect(e.depth).toBe(2);
+          expect(e.hasChildren).toBe(true);
+        });
+    });
+
+    it('should expand constrained code.coding', () => {
+      cm.toggleExpand(cm.elements[14]);     // expand code
+      cm.toggleExpand(cm.elements[17]);     // expand code.coding
+
+      expect(cm.elements[17].expanded).toBe(true);
+      expect(cm.elements.length).toBe(47);
+
+      const newElements = cm.elements.filter((e, i) => i >= 18 && i <= 26);
+      const actualBasePaths = newElements.map(e => e.basePath);
+      const expectedBasePaths = ["Observation.code.coding.id", "Observation.code.coding.extension", "Observation.code.coding.system", "Observation.code.coding.system", "Observation.code.coding.version", "Observation.code.coding.code", "Observation.code.coding.code", "Observation.code.coding.display", "Observation.code.coding.userSelected"];
+      expect(actualBasePaths).toStrictEqual(expectedBasePaths);
+
+      newElements.forEach(e => {
+        expect(e.parent).toBe(cm.elements[17]);
+        expect(e.depth).toBe(3);
+      });
+
+      expect(cm.elements[21].constrainedElement).toBe(testData2.differential.element[4]);
+      expect(cm.elements[24].constrainedElement).toBe(testData2.differential.element[5]);
+    });
+
+    it('should expand code.coding.code', () => {
+      cm.toggleExpand(cm.elements[14]);     // expand code
+      cm.toggleExpand(cm.elements[17]);     // expand code.coding
+      cm.toggleExpand(cm.elements[24]);     // expand code.coding.code
+
+      expect(cm.elements[24].expanded).toBe(true);
+      expect(cm.elements.length).toBe(50);
+
+      const newElements = cm.elements.filter((e, i) => i >= 25 && i <= 27);
+      const actualBasePaths = newElements.map(e => e.basePath);
+      const expectedBasePaths = ["Observation.code.coding.code.id", "Observation.code.coding.code.extension", "Observation.code.coding.code.value"];
+
+      expect(actualBasePaths).toStrictEqual(expectedBasePaths);
+
+      newElements.forEach(e => {
+        expect(e.parent).toBe(cm.elements[24]);
+        expect(e.depth).toBe(4);
+        expect(e.hasChildren).toBe(e.baseId !== 'Observation.code.coding.code.value');
+      });
+    });
+
+    it('should collapse code with code.coding.code', () => {
+      expect(cm.elements.length).toBe(33);
+      cm.toggleExpand(cm.elements[14]);     // expand code
+      cm.toggleExpand(cm.elements[17]);     // expand code.coding
+      cm.toggleExpand(cm.elements[24]);     // expand code.coding.code
+
+      cm.toggleExpand(cm.elements[14]);     // collapse code
+      expect(cm.elements.length).toBe(33);
+
+      const actualIds = cm.elements.map(e => e.baseId);
+      expect(actualIds).toStrictEqual(["Observation","Observation.id","Observation.meta","Observation.implicitRules","Observation.language","Observation.text","Observation.contained","Observation.extension","Observation.modifierExtension","Observation.identifier","Observation.basedOn","Observation.partOf","Observation.status","Observation.category","Observation.code","Observation.subject","Observation.focus","Observation.encounter","Observation.effective[x]","Observation.issued","Observation.performer","Observation.value[x]","Observation.dataAbsentReason","Observation.interpretation","Observation.note","Observation.bodySite","Observation.method","Observation.specimen","Observation.device","Observation.referenceRange","Observation.hasMember","Observation.derivedFrom","Observation.component"]);
+    });
+
+    it('should expand constrained valueQuantity', () => {
+      // Expand the Observation.valueQuantity constraint, and we should get child properties for the Quantity data type
+      cm.toggleExpand(cm.elements[21]);
+      expect(cm.elements.length).toBe(40);
+
+      const newElements = cm.elements.filter((e, i) => i >= 22 && i <= 28);
+      const actualBasePaths = newElements.map(e => e.basePath);
+      const expectedBasePaths = ['Observation.value[x].id','Observation.value[x].extension','Observation.value[x].value','Observation.value[x].comparator','Observation.value[x].unit','Observation.value[x].system','Observation.value[x].code'];
+      expect(actualBasePaths).toStrictEqual(expectedBasePaths);
+
+      // All new elements should have the right parent, and a depth of 2
+      newElements
+        .forEach(e => {
+          expect(e.parent).toBe(cm.elements[21]);
+          expect(e.depth).toBe(2);
+          expect(e.hasChildren).toBe(true);
+        });
+
+      expect(newElements[2].constrainedElement).toBeTruthy();
+      expect(newElements[2].constrainedElement.id).toBe('Observation.valueQuantity.value');
+      expect(newElements[4].constrainedElement).toBeTruthy();
+      expect(newElements[4].constrainedElement.id).toBe('Observation.valueQuantity.unit');
+      expect(newElements[5].constrainedElement).toBeTruthy();
+      expect(newElements[5].constrainedElement.id).toBe('Observation.valueQuantity.system');
+      expect(newElements[6].constrainedElement).toBeTruthy();
+      expect(newElements[6].constrainedElement.id).toBe('Observation.valueQuantity.code');
+    });
+  });
+
   describe('ctor(), toggleExpand(), associate()', () => {
     it('should initialize with the first level expanded', () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
@@ -44,49 +166,7 @@ describe('ConstraintManager', () => {
       expect(constrainedElementTreeModels.length).toBe(13);
       expect(constrainedElementTreeModels).toStrictEqual(testData1.differential.element);
     });
-
-    it('should associate resprate profile elements correctly', () => {
-      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
-      const cm = new ConstraintManager(obsModel, testData2, fhir.parser);
-
-      expect(cm.elements.length).toBe(33);
-      expect(cm.elements[0].constrainedElement).toBe(testData2.differential.element[0]);
-      expect(cm.elements[14].constrainedElement).toBe(testData2.differential.element[1]);
-      expect(cm.elements[21].constrainedElement).toBe(testData2.differential.element[6]);
-
-      // Expand the Observation.valueQuantity constraint, and we should get child properties for the Quantity data type
-      cm.toggleExpand(cm.elements[21]);
-      expect(cm.elements.length).toBe(40);
-
-      const newElements = cm.elements.filter((e, i) => i >= 22 && i <= 28);
-      const actualBasePaths = newElements.map(e => e.basePath);
-      const expectedBasePaths = ['Observation.value[x].id','Observation.value[x].extension','Observation.value[x].value','Observation.value[x].comparator','Observation.value[x].unit','Observation.value[x].system','Observation.value[x].code'];
-      expect(actualBasePaths).toStrictEqual(expectedBasePaths);
-
-      // All new elements should have the right parent, and a depth of 2
-      newElements
-        .forEach(e => {
-          expect(e.parent).toBe(cm.elements[21]);
-          expect(e.depth).toBe(2);
-          expect(e.hasChildren).toBe(false);
-        });
-
-      expect(newElements[2].constrainedElement).toBeTruthy();
-      expect(newElements[2].constrainedElement.id).toBe('Observation.valueQuantity.value');
-      expect(newElements[4].constrainedElement).toBeTruthy();
-      expect(newElements[4].constrainedElement.id).toBe('Observation.valueQuantity.unit');
-      expect(newElements[5].constrainedElement).toBeTruthy();
-      expect(newElements[5].constrainedElement.id).toBe('Observation.valueQuantity.system');
-      expect(newElements[6].constrainedElement).toBeTruthy();
-      expect(newElements[6].constrainedElement.id).toBe('Observation.valueQuantity.code');
-    });
   });
-
-  /*
-  describe('toggleExpand()', () => {
-
-  });
-   */
 
   describe('findChildren(element, elements)', () => {
     it('should find children of a regular element', () => {

@@ -28,10 +28,6 @@ export class ElementTreeModel {
       leafId = leafId.substring(leafId.lastIndexOf('.') + 1);
     }
 
-    if (leafId.indexOf(':') > 0) {
-      leafId = leafId.substring(leafId.indexOf(':') + 1);
-    }
-
     return leafId;
   }
 
@@ -194,8 +190,30 @@ export class ElementTreeModel {
       return component.strength;
     }
 
-
     return '';
+  }
+
+  clone(constrainedElement?: IElementDefinition) {
+    const newElementTreeModel = new ElementTreeModel();
+    newElementTreeModel.baseElement = this.baseElement;
+    newElementTreeModel.hasChildren = this.hasChildren;
+    newElementTreeModel.constrainedElement = constrainedElement || this.constrainedElement;
+    newElementTreeModel.parent = this.parent;
+    newElementTreeModel.depth = this.depth;
+    newElementTreeModel.expanded = this.expanded;
+    newElementTreeModel.profile = this.profile;
+    newElementTreeModel.path = this.path;
+    newElementTreeModel.position = this.position;
+    newElementTreeModel.profilePath = this.profilePath;
+    return newElementTreeModel;
+  }
+
+  toString() {
+    if (this.constrainedElement) {
+      return this.constrainedElement.id;
+    } else if (this.baseElement) {
+      return this.baseElement.id;
+    }
   }
 
   private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
@@ -289,13 +307,5 @@ export class ElementTreeModel {
     }
 
     return display;
-  }
-
-  toString() {
-    if (this.constrainedElement) {
-      return this.constrainedElement.id;
-    } else if (this.baseElement) {
-      return this.baseElement.id;
-    }
   }
 }
