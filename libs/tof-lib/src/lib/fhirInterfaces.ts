@@ -126,6 +126,15 @@ export interface IElementDefinitionDiscriminator {
   path: string;
 }
 
+export interface IElementDefinitionConstraint {
+  key: string;
+  requirements?: string;
+  severity: string;
+  human: string;
+  expression?: string;
+  source?: string;
+}
+
 export interface IElementDefinitionSlicing {
   discriminator?: IElementDefinitionDiscriminator[];
   description?: string;
@@ -150,6 +159,10 @@ export interface IElementDefinition extends IElement {
   }
   example?: any;
   mapping?: IElementDefinitionMapping[];
+  constraint?: IElementDefinitionConstraint[];
+  isSummary?: boolean;
+  isModifier?: boolean;
+  mustSupport?: boolean;
 }
 
 export interface IStructureDefinition extends IDomainResource {

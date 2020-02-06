@@ -233,14 +233,14 @@
       </ng-template>
     </ngb-tab>
 
-    <ngb-tab id="elements">
+    <ngb-tab id="elements" [disabled]="!constraintManager && !constraintManager.elements">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
       </ng-template>
       <ng-template ngbTabContent>
         <div class="elements">
-          <div class="element" *ngFor="let e of elements">
-            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
+          <div class="element" *ngFor="let e of constraintManager.elements">
+            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
               <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
             </div>
             <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
@@ -253,13 +253,13 @@
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
-
-              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
-              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut"
-                                                                                                                                                          title="Slice this element"
-                                                                                                                                                          (click)="sliceElement(e)"></i> </span>
-              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fas fa-trash-alt" title="Remove this element"
-                                                                                                        (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
+              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e)"></i> </span>
+              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)">
+                <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e)"></i>
+              </span>
+              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))">
+                <i class="fas fa-trash-alt" title="Remove this element" (click)="constraintManager.removeConstraint(e)"></i>
+              </span>
               <br/>
               <span title="Type">{{e.typeDisplay}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
             </div>
@@ -284,7 +284,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr class="clickable" *ngFor="let e of elements; let ei = index"
+          <tr class="clickable" *ngFor="let e of constraintManager.elements; let ei = index"
               [class.selected]="selectedElement === e"
               [class.constrained]="!!e.constrainedElement"
               (click)="toggleSelectedElement(e, true)"
@@ -292,7 +292,7 @@
               [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
             <td class="element-name" [class.has-children]="e.hasChildren">
               <div>
-                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e, $event)">
+                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
                   <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                 </div>
                 <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
@@ -359,12 +359,12 @@
         <div class="btn-group mr-2">
           <button type="button" class="btn btn-primary btn-sm" title="Slice this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 1 || !cardinalityAllowsMultiple(selectedElement.baseElement.max) || selectedElement.isSliceRoot"
-                  (click)="sliceElement(selectedElement, $event)">
+                  (click)="constraintManager.slice(selectedElement)">
             <i class="fa fa-cut"></i>
           </button>
           <button type="button" class="btn btn-primary btn-sm" title="Remove this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 1 || hasSlices(selectedElement)"
-                  (click)="removeElementDefinition(selectedElement.constrainedElement, $event)">
+                  (click)="constraintManager.removeConstraint(selectedElement)">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
@@ -380,13 +380,13 @@
         *ngIf="selectedElement.constrainedElement"
         [elementTreeModel]="selectedElement"
         [disabled]="false"
-        [elementTreeModels]="elements"
+        [elementTreeModels]="constraintManager.elements"
         [structureDefinition]="structureDefinition" #edPanel>
       </app-element-definition-panel>
 
       <div *ngIf="!selectedElement.constrainedElement">
         <p>This element has not been constrained.</p>
-        <button type="button" class="btn btn-primary" (click)="constrainElement(selectedElement)" id="edConstraintBtn">
+        <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement)" id="edConstraintBtn">
           <i class="fa fa-edit"></i> Constrain this element
         </button>
       </div>

@@ -475,7 +475,7 @@ export class MappingComponent extends BackboneElement {
 
 }
 
-export class DiscriminatorComponent extends Element implements IElementDefinitionSlicing {
+export class DiscriminatorComponent extends Element {
   public type: string;
   public path: string;
 
@@ -490,7 +490,6 @@ export class DiscriminatorComponent extends Element implements IElementDefinitio
       }
     }
   }
-
 }
 
 export class SlicingComponent extends Element implements IElementDefinitionSlicing {
