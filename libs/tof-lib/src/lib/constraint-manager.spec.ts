@@ -104,7 +104,7 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element.length).toBe(7);
     });
 
-    it('should slice category and category.coding', () => {
+    it('should slice category', () => {
       cm.constrain(cm.elements[13]);
       expect(cm.elements.length).toBe(33);
       expect(testData.differential.element.length).toBe(8);
@@ -127,6 +127,13 @@ describe('ConstraintManager', () => {
 
       cm.toggleExpand(cm.elements[18]);     // expand the new slice
       expect(cm.elements.length).toBe(42);
+    });
+
+    it('should slice category and category.coding', () => {
+      cm.constrain(cm.elements[13]);
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      cm.slice(cm.elements[13], 'mySlice');
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
 
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       expect(testData.differential.element.length).toBe(10);
@@ -141,7 +148,15 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element[4].path).toBe('Observation.category.coding');
       expect(cm.elements.length).toBe(43);
       expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[4]);
+    });
 
+    it('should slice category.coding twice', () => {
+      cm.constrain(cm.elements[13]);
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      cm.slice(cm.elements[13], 'mySlice');
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
       cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
       expect(cm.elements.length).toBe(44);
       expect(testData.differential.element.length).toBe(12);
@@ -149,6 +164,60 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element[5].id).toBe('Observation.category:mySlice.coding:mySlice3');
       expect(testData.differential.element[5].path).toBe('Observation.category.coding');
       expect(cm.elements[23].constrainedElement).toBe(testData.differential.element[5]);
+    });
+
+    it('should delete the slices', () => {
+      cm.constrain(cm.elements[13]);
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      cm.slice(cm.elements[13], 'mySlice');
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
+      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
+      cm.removeConstraint(cm.elements[23]);
+
+      expect(cm.elements.length).toBe(43);
+      expect(cm.elements[23].baseId).toBe('Observation.category.text');
+      expect(testData.differential.element.length).toBe(11);
+    });
+
+    it('should delete the category.coding slicing and all slices associated with it', () => {
+      cm.constrain(cm.elements[13]);
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      cm.slice(cm.elements[13], 'mySlice');
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
+      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
+      cm.removeConstraint(cm.elements[21]);
+
+      expect(cm.elements.length).toBe(42);
+      expect(cm.elements[22].baseId).toBe('Observation.category.text');
+      expect(testData.differential.element.length).toBe(9);
+
+      const actualIds = testData.differential.element.map(e => e.id);
+      const expectedIds = ['Observation', 'Observation.category', 'Observation.category:mySlice', 'Observation.code', 'Observation.valueQuantity', 'Observation.valueQuantity.value', 'Observation.valueQuantity.unit', 'Observation.valueQuantity.system', 'Observation.valueQuantity.code'];
+      expect(actualIds).toStrictEqual(expectedIds);
+    });
+
+    it('should delete the category slicing and all slices associated with it', () => {
+      cm.constrain(cm.elements[13]);
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      cm.slice(cm.elements[13], 'mySlice');
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
+      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
+      cm.removeConstraint(cm.elements[13]);
+
+      expect(cm.elements.length).toBe(33);
+      expect(cm.elements[13].baseId).toBe('Observation.category');
+      expect(cm.elements[14].baseId).toBe('Observation.code');
+      expect(testData.differential.element.length).toBe(7);
+
+      const actualIds = testData.differential.element.map(e => e.id);
+      const expectedIds = ['Observation', 'Observation.code', 'Observation.valueQuantity', 'Observation.valueQuantity.value', 'Observation.valueQuantity.unit', 'Observation.valueQuantity.system', 'Observation.valueQuantity.code'];
+      expect(actualIds).toStrictEqual(expectedIds);
     });
   });
 

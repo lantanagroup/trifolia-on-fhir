@@ -157,6 +157,8 @@ export class ConstraintManager {
     if (!elementTreeModel.constrainedElement) return;
     if (elementTreeModel.expanded) this.toggleExpand(elementTreeModel);
 
+    const hasSlicing = elementTreeModel.constrainedElement.slicing;
+    const removeEtm = !!elementTreeModel.constrainedElement.sliceName;
     const index = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
     const toRemove = [elementTreeModel.constrainedElement];
 
@@ -165,16 +167,39 @@ export class ConstraintManager {
       const nextId = next.id ? ConstraintManager.normalizePath(next.id) : '';
       const constrainedId = ConstraintManager.normalizePath(elementTreeModel.constrainedElement.id);
 
-      if (nextId.startsWith(constrainedId + '.')) {
+      if (hasSlicing && nextId.startsWith(constrainedId + ':')) {
+        toRemove.push(next);
+      } else if (!hasSlicing && nextId.startsWith(constrainedId + '.')) {
         toRemove.push(next);
       } else {
         break;
       }
     }
 
+    const diffElements = this.structureDefinition.differential.element;
+
     // Remove each of the constrained elements
-    toRemove.forEach((e => this.structureDefinition.differential.element.splice(this.structureDefinition.differential.element.indexOf(e), 1)));
+    // If the element request to remove is a "slicing" element, it may have slices associated with it.
+    // Those slices are in separate ElementTreeModel instances that also need to be removed
+    for (let i = toRemove.length - 1; i >= 0; i--) {
+      const elementToRemove = toRemove[i];
+      const foundEtm = this.elements.find(next => next.constrainedElement === elementToRemove);
+
+      if (foundEtm && foundEtm !== elementTreeModel) {
+        this.removeConstraint(foundEtm);
+      }
+
+      const elementToRemoveIndex = diffElements.indexOf(elementToRemove);
+      diffElements.splice(elementToRemoveIndex, elementToRemoveIndex >= 0 ? 1 : 0);
+    }
+
     delete elementTreeModel.constrainedElement;
+
+    // Remove the element from the tree model if it is a slice
+    if (removeEtm) {
+      const etmIndex = this.elements.indexOf(elementTreeModel);
+      this.elements.splice(etmIndex, etmIndex >= 0 ? 1 : 0);
+    }
   }
 
   slice(elementTreeModel: ElementTreeModel, sliceName?: string) {
