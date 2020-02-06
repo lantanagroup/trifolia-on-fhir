@@ -1,4 +1,15 @@
-import {IBundle, IElementDefinition, IStructureDefinition, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {
+  IBundle,
+  IElementDefinition,
+  IStructureDefinition,
+  IContactDetail,
+  IContactPoint,
+  IDomainResource,
+  IExtension,
+  IHumanName,
+  IPractitioner,
+  IElementDefinitionDiscriminator, IElementDefinitionSlicing
+} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -459,7 +470,7 @@ export class StructureDefinitionMappingComponent extends BackboneElement {
 
 }
 
-export class ElementDefinitionDiscriminatorComponent extends Element {
+export class ElementDefinitionDiscriminatorComponent extends Element implements IElementDefinitionDiscriminator {
   public type: string;
   public path: string;
 
@@ -477,11 +488,11 @@ export class ElementDefinitionDiscriminatorComponent extends Element {
 
 }
 
-export class ElementDefinitionSlicingComponent extends Element {
+export class ElementDefinitionSlicingComponent extends Element implements IElementDefinitionSlicing {
   public discriminator?: ElementDefinitionDiscriminatorComponent[];
   public description?: string;
   public ordered?: boolean;
-  public rules: string;
+  public rules: 'closed'|'open'|'openAtEnd';
 
   constructor(obj?: any) {
     super(obj);

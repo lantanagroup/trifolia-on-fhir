@@ -1,5 +1,16 @@
 import '../date-extensions';
-import {IBundle, IElementDefinition, IStructureDefinition, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {
+  IBundle,
+  IElementDefinition,
+  IStructureDefinition,
+  IContactDetail,
+  IContactPoint,
+  IDomainResource,
+  IExtension,
+  IHumanName,
+  IPractitioner,
+  IElementDefinitionSlicing
+} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -464,7 +475,7 @@ export class MappingComponent extends BackboneElement {
 
 }
 
-export class DiscriminatorComponent extends Element {
+export class DiscriminatorComponent extends Element implements IElementDefinitionSlicing {
   public type: string;
   public path: string;
 
@@ -482,11 +493,11 @@ export class DiscriminatorComponent extends Element {
 
 }
 
-export class SlicingComponent extends Element {
+export class SlicingComponent extends Element implements IElementDefinitionSlicing {
   public discriminator?: DiscriminatorComponent[];
   public description?: string;
   public ordered?: boolean;
-  public rules: string;
+  public rules: 'closed'|'open'|'openAtEnd';
 
   constructor(obj?: any) {
     super(obj);

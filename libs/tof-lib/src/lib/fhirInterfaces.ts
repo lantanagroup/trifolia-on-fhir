@@ -1,3 +1,5 @@
+import {ElementDefinitionDiscriminatorComponent} from './r4/fhir';
+
 export interface IResourceReference {
   reference?: string;
   display?: string;
@@ -119,10 +121,22 @@ export interface IElementDefinitionMapping {
   comment?: string;
 }
 
+export interface IElementDefinitionDiscriminator {
+  type: string;
+  path: string;
+}
+
+export interface IElementDefinitionSlicing {
+  discriminator?: IElementDefinitionDiscriminator[];
+  description?: string;
+  ordered?: boolean;
+  rules: 'closed'|'open'|'openAtEnd';
+}
+
 export interface IElementDefinition extends IElement {
   path: string;
   sliceName?: string;
-  slicing?: any;
+  slicing?: IElementDefinitionSlicing;
   label?: string;
   short?: string;
   definition?: string;

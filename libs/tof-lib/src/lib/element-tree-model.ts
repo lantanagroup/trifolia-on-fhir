@@ -209,7 +209,6 @@ export class ElementTreeModel {
     newElementTreeModel.constrainedElement = constrainedElement || this.constrainedElement;
     newElementTreeModel.parent = this.parent;
     newElementTreeModel.depth = this.depth;
-    newElementTreeModel.expanded = this.expanded;
     newElementTreeModel.profile = this.profile;
     newElementTreeModel.position = this.position;
     newElementTreeModel.profilePath = this.profilePath;

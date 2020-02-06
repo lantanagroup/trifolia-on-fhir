@@ -37,7 +37,7 @@ describe('ConstraintManager', () => {
     });
   });
 
-  describe('constrain resprate2 observation', () => {
+  describe('[un]constrain resprate2 observation', () => {
     let cm;
     let testData: IStructureDefinition;
 
@@ -70,6 +70,85 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element.length).toBe(8);
       expect(testData.differential.element[2].id).toBe('Observation.code.coding.code');
       expect(testData.differential.element[2].path).toBe('Observation.code.coding.code');
+    });
+
+    it('should remove the constraint for valueQuantity', () => {
+      expect(testData.differential.element.length).toBe(7);
+      expect(cm.elements.length).toBe(33);
+      cm.toggleExpand(cm.elements[21]);
+      expect(cm.elements.length).toBe(40);
+      cm.removeConstraint(cm.elements[21]);
+      expect(cm.elements.length).toBe(33);
+      const actualIds = testData.differential.element.map(e => e.id);
+      const expectedIds = ["Observation", "Observation.code"];
+      expect(actualIds).toStrictEqual(expectedIds);
+    });
+  });
+
+  describe('slice resprate2 observation', () => {
+    let cm;
+    let testData: IStructureDefinition;
+
+    beforeEach(() => {
+      testData = JSON.parse(JSON.stringify(testData3));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+
+      expect(cm.elements.length).toBe(33);
+      expect(testData.differential.element.length).toBe(7);
+    });
+
+    it('should not slice code because it is not repeatable', () => {
+      cm.slice(cm.elements[14]);
+      expect(cm.elements.length).toBe(33);
+      expect(testData.differential.element.length).toBe(7);
+    });
+
+    it('should slice category and category.coding', () => {
+      cm.constrain(cm.elements[13]);
+      expect(cm.elements.length).toBe(33);
+      expect(testData.differential.element.length).toBe(8);
+
+      cm.toggleExpand(cm.elements[13]);   // expand category
+      expect(cm.elements.length).toBe(37);
+
+      // slice category
+      cm.slice(cm.elements[13], 'mySlice');
+      expect(cm.elements.length).toBe(38);
+      expect(cm.elements[18].id).toBe('Observation.category:mySlice');
+      expect(cm.elements[18].constrainedElement).toBeTruthy();
+
+      expect(testData.differential.element.length).toBe(9);
+      expect(testData.differential.element[1].slicing).toBeTruthy();
+      expect(testData.differential.element[1].slicing.rules).toBe('open');
+      expect(testData.differential.element[2].id).toBe('Observation.category:mySlice');
+      expect(testData.differential.element[2].path).toBe('Observation.category');
+      expect(testData.differential.element[2].sliceName).toBe('mySlice');
+
+      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      expect(cm.elements.length).toBe(42);
+
+      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      expect(testData.differential.element.length).toBe(10);
+      expect(testData.differential.element[3].id).toBe('Observation.category:mySlice.coding');
+      expect(testData.differential.element[3].path).toBe('Observation.category.coding');
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[3]);
+
+      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
+      expect(testData.differential.element.length).toBe(11);
+      expect(testData.differential.element[4].sliceName).toBe('mySlice2');
+      expect(testData.differential.element[4].id).toBe('Observation.category:mySlice.coding:mySlice2');
+      expect(testData.differential.element[4].path).toBe('Observation.category.coding');
+      expect(cm.elements.length).toBe(43);
+      expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[4]);
+
+      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
+      expect(cm.elements.length).toBe(44);
+      expect(testData.differential.element.length).toBe(12);
+      expect(testData.differential.element[5].sliceName).toBe('mySlice3');
+      expect(testData.differential.element[5].id).toBe('Observation.category:mySlice.coding:mySlice3');
+      expect(testData.differential.element[5].path).toBe('Observation.category.coding');
+      expect(cm.elements[23].constrainedElement).toBe(testData.differential.element[5]);
     });
   });
 

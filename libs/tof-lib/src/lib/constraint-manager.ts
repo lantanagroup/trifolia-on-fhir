@@ -1,6 +1,7 @@
 import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ElementTreeModel} from './element-tree-model';
+import {element} from 'protractor';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -150,6 +151,76 @@ export class ConstraintManager {
     const elements = elementTreeModel.parent ? this.elements.filter(e => e.parent === elementTreeModel.parent) : this.elements.filter(e => !e.parent);
     const thisIndex = elements.indexOf(elementTreeModel);
     return elements.filter((e, i) => i < thisIndex);
+  }
+
+  removeConstraint(elementTreeModel: ElementTreeModel) {
+    if (!elementTreeModel.constrainedElement) return;
+    if (elementTreeModel.expanded) this.toggleExpand(elementTreeModel);
+
+    const index = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
+    const toRemove = [elementTreeModel.constrainedElement];
+
+    for (let i = index + 1; i < this.structureDefinition.differential.element.length; i++) {
+      const next = this.structureDefinition.differential.element[i];
+      const nextId = next.id ? ConstraintManager.normalizePath(next.id) : '';
+      const constrainedId = ConstraintManager.normalizePath(elementTreeModel.constrainedElement.id);
+
+      if (nextId.startsWith(constrainedId + '.')) {
+        toRemove.push(next);
+      } else {
+        break;
+      }
+    }
+
+    // Remove each of the constrained elements
+    toRemove.forEach((e => this.structureDefinition.differential.element.splice(this.structureDefinition.differential.element.indexOf(e), 1)));
+    delete elementTreeModel.constrainedElement;
+  }
+
+  slice(elementTreeModel: ElementTreeModel, sliceName?: string) {
+    if (!elementTreeModel.constrainedElement) return;
+    if (!elementTreeModel.max || (elementTreeModel.max !== '*' && parseInt(elementTreeModel.max, 10) <= 1)) return;
+
+    if (!elementTreeModel.constrainedElement.slicing) {
+      elementTreeModel.constrainedElement.slicing = {
+        rules: 'open'
+      };
+    }
+
+    // Create a new element for the slice with
+    const constrainedElement = new this.elementDefinitionType();
+    const clone = elementTreeModel.clone(constrainedElement);
+    constrainedElement.sliceName = sliceName || 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+    constrainedElement.id = elementTreeModel.id + ':' + constrainedElement.sliceName;
+    constrainedElement.path = elementTreeModel.path;
+
+    // Determine where to store insert the new ElementDefinition in the differential
+    let lastSiblingIndex = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement) + 1;
+    while (lastSiblingIndex < this.structureDefinition.differential.element.length) {
+      const nextElement = this.structureDefinition.differential.element[lastSiblingIndex];
+
+      if (!nextElement.id.startsWith(elementTreeModel.id + ':')) {
+        break;
+      }
+
+      lastSiblingIndex++;
+    }
+
+    this.structureDefinition.differential.element.splice(lastSiblingIndex, 0, constrainedElement);
+
+    // Determine where to put the ElementTreeModel
+    lastSiblingIndex = this.elements.indexOf(elementTreeModel) + 1;
+    while (lastSiblingIndex < this.elements.length) {
+      const nextElement = this.elements[lastSiblingIndex];
+
+      if (!nextElement.id.startsWith(elementTreeModel.id)) {
+        break;
+      }
+
+      lastSiblingIndex++;
+    }
+
+    this.elements.splice(lastSiblingIndex, 0, clone);
   }
 
   /**
