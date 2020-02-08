@@ -34,6 +34,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
         if (this.resourceType === 'ImplementationGuide' && this.originalId === this.configService.project.implementationGuideId) {
           // noinspection JSIgnoredPromiseFromCall
+          this.configService.project.implementationGuideId = this.newId;
           this.router.navigate([`${this.configService.fhirServer}/${this.newId}/implementation-guide`]);
         }
 
