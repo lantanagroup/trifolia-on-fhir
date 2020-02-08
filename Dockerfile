@@ -31,7 +31,7 @@ RUN npm prune --production
 
 FROM node:10-alpine
 
-RUN apk update && apk --update add ruby-full ruby-dev build-base
+RUN apk update && apk --update add ruby-full ruby-dev build-base openjdk8-jre
 RUN gem install jekyll bundler
 RUN rm -rf /var/cache/apk/*
 
