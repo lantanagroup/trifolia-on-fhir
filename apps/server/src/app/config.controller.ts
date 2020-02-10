@@ -34,12 +34,14 @@ export class ConfigController extends BaseController {
       auth: {
         clientId: this.configService.auth.clientId,
         scope: this.configService.auth.scope,
-        issuer: this.configService.auth.issuer
+        issuer: this.configService.auth.issuer,
+        logoutUrl: this.configService.auth.logoutUrl
       },
       github: {
         clientId: this.configService.github.clientId
       },
-      nonEditableResources: this.configService.fhir.nonEditableResources
+      nonEditableResources: this.configService.fhir.nonEditableResources,
+      announcementService: !!this.configService.announcementService && !!this.configService.announcementService.type
     };
 
     return retConfig;

@@ -3,9 +3,9 @@
 <ngb-tabset>
   <ngb-tab title="My Information">
     <ng-template ngbTabContent>
-      <app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
+      <trifolia-fhir-practitioner [practitioner]="practitioner" #editPractitioner></trifolia-fhir-practitioner>
 
-      <button type="button" class="btn btn-primary" (click)="saveUser()">Save</button>
+      <button type="button" class="btn btn-primary" (click)="saveUser()" [disabled]="!editPractitioner.valid">Save</button>
     </ng-template>
   </ngb-tab>
   <ngb-tab title="Groups">

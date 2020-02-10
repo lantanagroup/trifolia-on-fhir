@@ -3,9 +3,10 @@ import {AddPermission, RemovePermission} from './permissions';
 import * as Yargs from 'yargs';
 import {RemoveExtras} from './removeExtras';
 import {UserListCommand} from './user-list';
+import {PopulateFromAuth0} from './populateFromAuth0';
 
-const usersFormat = 'users <server>';
-const usersDescription = 'Gets a list of users from the specified FHIR server';
+const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
+const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
 
 const modifyPermissionFormat = 'modify-permission <server> <modify> <type> <permission> [id]';
 const modifyPermissionDescription = 'Adds/removes a permission to one or all resources';
@@ -20,6 +21,23 @@ const userListFormat = 'users';
 const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
 const argv = Yargs
+  .command(populateFromAuth0Format, populateFromAuth0Description, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('server', {
+        describe: 'The FHIR server that contains the Practitioner resources to populate',
+        required: true
+      })
+      .positional('domain', {
+        describe: 'The auth0 domain to connect to and get more information about the user.',
+        example: 'trifolia'
+      })
+      .positional('token', {
+        describe: 'The auth0 token to use for authorization.'
+      });
+  }, (args: any) => {
+    const executor = new PopulateFromAuth0(args);
+    executor.execute();
+  })
   .command(modifyPermissionFormat, modifyPermissionDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('server', {

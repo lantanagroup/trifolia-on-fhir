@@ -31,20 +31,17 @@ RUN npm prune --production
 
 FROM node:10-alpine
 
-RUN apk update && apk --update add ruby-full ruby-dev build-base
+RUN apk update && apk --update add ruby-full ruby-dev build-base openjdk8-jre
 RUN gem install jekyll bundler
 RUN rm -rf /var/cache/apk/*
 
-RUN mkdir -p /ToF/client && mkdir /ToF/server && mkdir /ToF/tools
+COPY --from=build-ToF /build/dist/. /ToF/
+COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 
-USER 1000
+VOLUME /ToF/apps/server/logs
+VOLUME /ToF/apps/server/igs
 
-COPY --from=build-ToF --chown=1000:1000 /build/node_modules/. /ToF/node_modules/
-COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/client/. /ToF/client/
-COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/server/. /ToF/server/
-COPY --from=build-ToF --chown=1000:1000 /build/dist/apps/tools/. /ToF/tools/
-
-WORKDIR /ToF/server
+WORKDIR /ToF/apps/server
 
 EXPOSE 49366
 

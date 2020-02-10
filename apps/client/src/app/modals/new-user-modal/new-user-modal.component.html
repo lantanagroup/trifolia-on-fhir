@@ -4,8 +4,8 @@
 
 <p><strong>{{message}}</strong></p>
 
-<app-fhir-practitioner [practitioner]="practitioner"></app-fhir-practitioner>
+<trifolia-fhir-practitioner [practitioner]="practitioner" #editPractitioner></trifolia-fhir-practitioner>
 
 <div class="footer">
-  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="okDisabled">OK</button>
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="okDisabled || !editPractitioner.valid">OK</button>
 </div>

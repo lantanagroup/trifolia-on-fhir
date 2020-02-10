@@ -27,8 +27,7 @@
                 tooltipPath="ImplementationGuide.name">
               </app-fhir-string>
 
-              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true"
-                                 tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
 
               <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
 
@@ -103,7 +102,19 @@
 
               <div class="form-group">
                 <label>Package ID</label>
-                <input type="text" class="form-control" [(ngModel)]="packageId"/>
+                <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" />
+                <span class="help-block" *ngIf="!packageId">You must specify Package ID.</span>
+                <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
+                  <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="packageId && packageId.startsWith('hl7.')">
+                <label>HL7 Work Group</label>
+                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup">
+                  <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
+                  <option [ngValue]="undefined">Unspecified</option>
+                </select>
               </div>
 
               <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version"></app-fhir-string>
@@ -276,8 +287,7 @@
                   Description
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
                 </label>
-                <app-markdown [(ngModel)]="p.description"
-                              [disabled]="!p.hasOwnProperty('description')"></app-markdown>
+                <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')"></trifolia-fhir-markdown>
               </div>
 
               <h4>Resources
@@ -418,7 +428,7 @@
                      [class.is-invalid]="!p.page.title"/>
             </td>
             <td>
-              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="pageKindChanged(p.page)">
+              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
                 <option value="page">Page</option>
                 <option value="example">Example</option>
                 <option value="list">List</option>
@@ -459,7 +469,7 @@
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-resource-permissions [meta]="implementationGuide.meta"></app-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 

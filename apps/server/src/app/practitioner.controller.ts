@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, NotFoundException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
@@ -10,6 +10,7 @@ import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -24,63 +25,161 @@ export class PractitionerController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  @Post('me')
-  public updateMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Body() practitioner: Practitioner): Promise<any> {
-    return this.getMyPractitioner(user, fhirServerBase, true)
-      .then((existingPractitioner) => {
-        const authUser = user.sub;
-        let system = Globals.defaultAuthNamespace;
-        let value = authUser;
+  private async subscribeCampaigner(email: string, firstName: string, lastName: string) {
+    if (!this.configService.announcementService) return;
+    if (this.configService.announcementService.type === 'campaigner' && !this.configService.announcementService.listId && !this.configService.announcementService.apiKey) return;
 
-        if (authUser.startsWith('auth0|')) {
-          system =  Globals.authNamespace;
-          value = authUser.substring(6);
-        }
+    let subscriber;
 
-        if (!practitioner.identifier) {
-          practitioner.identifier = [];
-        }
+    try {
+      const subscriberResponse = await this.httpService.get(`https://edapi.campaigner.com/v1/Subscribers/${email}/Properties?ApiKey=${this.configService.announcementService.apiKey}`).toPromise();
+      subscriber = subscriberResponse.data;
+    } catch (ex) {
+      try {
+        const subscriberResponse = await this.httpService.post(`https://edapi.campaigner.com/v1/Subscribers?ApiKey=${this.configService.announcementService.apiKey}`, {
+          EmailAddress: email,
+          Lists: [ this.configService.announcementService.listId ]
+        }).toPromise();
+        subscriber = subscriberResponse.data;
+      } catch (ex) {
+        this.logger.error(`Could not create subscriber ${email}: ${ex.message}`);
+      }
+    }
 
-        const foundIdentifier = practitioner.identifier.find((identifier) => {
-          return identifier.system === system && identifier.value === value;
-        });
+    try {
+      if (!subscriber.CustomFields) {
+        subscriber.CustomFields = [];
+      }
 
-        if (!foundIdentifier) {
-          practitioner.identifier.push({
-            system: system,
-            value: value
+      if (firstName) {
+        const foundFirstName = subscriber.CustomFields.find(cf => cf.FieldName === 'FirstName');
+
+        if (foundFirstName) {
+          foundFirstName.Value = firstName;
+        } else {
+          subscriber.CustomFields.push({
+            FieldName: 'FirstName',
+            Value: firstName
           });
         }
+      }
 
-        if (existingPractitioner && existingPractitioner.id) {
-          practitioner.id = existingPractitioner.id;
+      if (lastName) {
+        const foundLastName = subscriber.CustomFields.find(cf => cf.FieldName === 'LastName');
+
+        if (foundLastName) {
+          foundLastName.Value = lastName;
         } else {
-          practitioner.id = generateId();
+          subscriber.CustomFields.push({
+            FieldName: 'LastName',
+            Value: lastName
+          });
         }
+      }
 
-        const practitionerRequest: AxiosRequestConfig = {
-          url: buildUrl(fhirServerBase, this.resourceType, practitioner.id),
-          method: 'PUT',
-          data: practitioner
-        };
+      const updateSubscriber = {
+        EmailAddress: email,
+        CustomFields: subscriber.CustomFields,
+        Lists: (subscriber.Lists || []).map(l => l.ListID)
+      };
 
-        return this.httpService.request(practitionerRequest).toPromise();
-      })
-      .then((results) => {
-        const location = results.headers.location || results.headers['content-location'];
+      if (updateSubscriber.Lists.indexOf(this.configService.announcementService.listId) < 0) {
+        updateSubscriber.Lists.push(this.configService.announcementService.listId);
+      }
 
-        if (!location) {
-          throw new Error(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
-        }
+      await this.httpService.put(`https://edapi.campaigner.com/v1/Subscribers/${email}?ApiKey=${this.configService.announcementService.apiKey}`, updateSubscriber).toPromise();
+    } catch (ex) {
+      this.logger.error(`Could not update campaigner subscriber ${email}: ${ex.message}`)
+    }
+  }
 
-        const options = <AxiosRequestConfig> {
-          url: location,
-          method: 'GET'
-        };
+  private async unsubscribeCampaigner(email: string) {
+    try {
+      await this.httpService.post(`https://edapi.campaigner.com/v1/Lists/${this.configService.announcementService.listId}/RemoveEmails?ApiKey=${this.configService.announcementService.apiKey}`, {
+        EmailAddresses: [email]
+      }).toPromise();
+    } catch (ex) {
+      this.logger.error(`Could not unsubscribe ${email} from list: ${ex.message}`);
+    }
+  }
 
-        return this.httpService.request(options).toPromise();
-      })
-      .then((results) => results.data);
+  private async toggleAnnouncements(subscribed: boolean, email: string, firstName: string, lastName: string) {
+    if (!this.configService.announcementService) return;
+
+    if (this.configService.announcementService.type === 'campaigner') {
+      if (subscribed) {
+        await this.subscribeCampaigner(email, firstName, lastName);
+      } else {
+        await this.unsubscribeCampaigner(email);
+      }
+    }
+  }
+
+  @Post('me')
+  public async updateMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Body() practitioner: Practitioner): Promise<any> {
+    const existingPractitioner = await this.getMyPractitioner(user, fhirServerBase, true);
+    const authUser = user.sub;
+    let system = Globals.defaultAuthNamespace;
+    let value = authUser;
+
+    if (authUser.startsWith('auth0|')) {
+      system =  Globals.authNamespace;
+      value = authUser.substring(6);
+    }
+
+    if (!practitioner.identifier) {
+      practitioner.identifier = [];
+    }
+
+    const foundIdentifier = practitioner.identifier.find((identifier) => {
+      return identifier.system === system && identifier.value === value;
+    });
+
+    if (!foundIdentifier) {
+      practitioner.identifier.push({
+        system: system,
+        value: value
+      });
+    }
+
+    if (existingPractitioner && existingPractitioner.id) {
+      practitioner.id = existingPractitioner.id;
+    } else {
+      practitioner.id = generateId();
+    }
+
+    const practitionerRequest: AxiosRequestConfig = {
+      url: buildUrl(fhirServerBase, this.resourceType, practitioner.id),
+      method: 'PUT',
+      data: practitioner
+    };
+
+    const results = await this.httpService.request(practitionerRequest).toPromise();
+    const location = results.headers.location || results.headers['content-location'];
+
+    if (!location) {
+      throw new Error(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
+    }
+
+    const updatedPractitionerResponse = await this.httpService.get<IPractitioner>(location).toPromise();
+    const updatedPractitioner = updatedPractitionerResponse.data;
+
+    const subscribeExt = (updatedPractitioner.extension || []).find(e => e.url === Globals.extensionUrls['extension-practitioner-announcements']);
+    const emailTelecom = (updatedPractitioner.telecom || []).find(t => t.system === 'email');
+    let email = emailTelecom ? emailTelecom.value : undefined;
+    const firstName = updatedPractitioner.name && updatedPractitioner.name.length > 0 && updatedPractitioner.name[0].given && updatedPractitioner.name[0].given.length > 0 ?
+      updatedPractitioner.name[0].given[0] : undefined;
+    const lastName = updatedPractitioner.name && updatedPractitioner.name.length > 0 ? updatedPractitioner.name[0].family : undefined;
+
+    if (email && email.startsWith('mailto:')) {
+      email = email.substring('mailto:'.length);
+    }
+
+    if (subscribeExt && email) {
+      this.toggleAnnouncements(subscribeExt.valueBoolean, email, firstName, lastName);
+    }
+
+    return updatedPractitioner;
   }
 
   @Get('me')

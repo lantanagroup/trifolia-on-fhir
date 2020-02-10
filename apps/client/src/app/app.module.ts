@@ -74,6 +74,7 @@ import {
   OAuthService
 } from 'angular-oauth2-oidc';
 import {UsersComponent} from './manage/users/users.component';
+import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -210,7 +211,8 @@ const authModuleConfig: OAuthModuleConfig = {
     STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent
+    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
+    GroupModalComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -225,7 +227,7 @@ const authModuleConfig: OAuthModuleConfig = {
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent
   ],
   imports: [
     RouterModule.forRoot(

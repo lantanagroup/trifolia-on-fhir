@@ -9,11 +9,17 @@
     "logFileName": "logs/tof.log",
     "logLevel": "all",
     "maxLogSizeKB": 1024,
-    "maxRequestSizeMegabytes": 50
+    "maxRequestSizeMegabytes": 50,
+    "latestIgPublisherPath": "assets/ig-publisher/latest/"
+  },
+  "publish": {
+    "queueLimit": 2,
+    "timeout": 5000
   },
   "auth": {
     "clientId": "",
     "scope": "",
+    "logoutUrl": "",
     "issuer": "",
     "jwksUri": ""
   },
@@ -24,6 +30,11 @@
   "github": {
     "clientId": "",
     "secret": ""
+  },
+  "announcementService": {
+    "type": "",
+    "apiKey": "",
+    "listId": ""
   },
   "fhir": {
     "nonEditableResources": {
@@ -56,13 +67,13 @@
     "servers": [{
       "id": "lantana_hapi_stu3",
       "name": "Lantana HAPI STU3 DEV Server",
-      "uri": "https://hapi3-dev.lantanagroup.com/baseDstu3",
+      "uri": "https://hapi3-dev.lantanagroup.com/fhir",
       "version": "stu3",
       "short": "LCG STU3 DEV"
     }, {
       "id": "lantana_hapi_r4",
       "name": "Lantana HAPI R4 DEV Server",
-      "uri": "https://hapi4-dev.lantanagroup.com/baseR4",
+      "uri": "https://hapi4-dev.lantanagroup.com/fhir",
       "version": "r4",
       "short": "LCG R4 DEV"
     }]

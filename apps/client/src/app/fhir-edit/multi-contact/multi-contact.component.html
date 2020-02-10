@@ -13,7 +13,7 @@
             </th>
             <th class="actions-column-2">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({ name: '' })">
+                    <button type="button" class="btn btn-primary" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({ name: '' })">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -27,10 +27,10 @@
             </td>
             <td>
                 <div class="btn-group pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'contact'}}" (click)="editContact(c)">
+                    <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}" (click)="editContact(c)">
                         <i class="fa fa-edit"></i>
                     </button>
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'contact'}}" (click)="parentObject[propertyName].splice(ci, 1)">
+                    <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}" (click)="parentObject[propertyName].splice(ci, 1)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>

@@ -135,6 +135,22 @@ export class PublishComponent implements OnInit {
       });
   }
 
+  public cancel(){
+    this.tabs.select('status');
+
+    this.exportService.cancel(this.packageId)
+      .subscribe((packageId: string) => {
+        this.packageId = packageId;
+        this.inProgress = false;
+      }, (err) => {
+        this.message = getErrorString(err);
+    });
+  }
+
+  public getPackageId(){
+    return this.packageId;
+  }
+
   public ngOnInit() {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
@@ -149,16 +165,6 @@ export class PublishComponent implements OnInit {
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {
-        this.socketOutput += data.message === "Done. You will be prompted to download the package in a moment." ? data.message : data.message.trim() + "...\n";
-
-        if (!data.message.endsWith('\n')) {
-          this.socketOutput += '\r\n';
-        }
-
-        if (this.autoScroll && this.outputEle) {
-          setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
-        }
-
         if (data.status === 'complete') {
           this.message = 'Done exporting';
 
@@ -174,6 +180,18 @@ export class PublishComponent implements OnInit {
         } else if (data.status === 'error') {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';
+        } else {
+          let msg = data.message ? data.message.trim() : "";
+
+          if (msg && !msg.endsWith('\n')) {
+            msg += '\r\n';
+          }
+
+          this.socketOutput += msg;
+
+          if (this.autoScroll && this.outputEle) {
+            setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
+          }
         }
       }
     }, (err) => {

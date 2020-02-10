@@ -29,9 +29,9 @@ export class ConfigService {
   public static identifyRelease(fhirVersion: string): Versions {
     if (!fhirVersion) {
       return Versions.STU3;
-    } else if (semver.satisfies(fhirVersion, '>= 3.2.0 <= 4.0.0')) {
+    } else if (semver.satisfies(fhirVersion, '>= 3.2.0 < 4.2.0')) {
       return Versions.R4;
-    } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.1')) {
+    } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.2')) {
       return Versions.STU3;
     } else {
       throw new Error('Unexpected FHIR Version ' + fhirVersion);

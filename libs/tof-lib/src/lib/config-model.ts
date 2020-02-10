@@ -13,6 +13,7 @@ export interface ConfigModel {
     clientId: string;
     scope: string;
     issuer: string;
+    logoutUrl?: string;
   };
   github: {
     clientId: string;
@@ -20,4 +21,5 @@ export interface ConfigModel {
   nonEditableResources: {
     [resourceType: string]: string[];
   };
+  announcementService: boolean;
 }

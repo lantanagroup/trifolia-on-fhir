@@ -1,16 +1,15 @@
 <div class="form-group" *ngIf="parentObject">
   <label>
-    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, '')"/>
     {{title || propertyName}}
     <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
   </label>
-  <app-markdown
+  <trifolia-fhir-markdown
     *ngIf="!displayOnly"
-    [(ngModel)]="parentObject[propertyName]"
-    [disabled]="isOptional && !parentObject.hasOwnProperty(propertyName)"
+    [value]="parentObject[propertyName]"
+    (valueChange)="valueChanged($event)"
     [mediaReferences]="mediaReferences">
-  </app-markdown>
-  <div *ngIf="displayOnly && parentObject.hasOwnProperty(propertyName)">
-    <p>{{parentObject[propertyName]}} [<a href="javascript:void(0)" (click)="openModal()">Edit</a>]</p>
+  </trifolia-fhir-markdown>
+  <div *ngIf="displayOnly">
+    <p>{{parentObject[propertyName] || 'No markdown specified'}} [<a href="javascript:void(0)" (click)="openModal()">Edit</a>]</p>
   </div>
 </div>

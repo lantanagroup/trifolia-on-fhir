@@ -1,3 +1,5 @@
+import {IBundle, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+
 export class Base {
   public fhir_comments?: string[];
 
@@ -11,13 +13,14 @@ export class Base {
 
 }
 
-export class Extension {
+export class Extension implements IExtension {
   public id?: string;
   public extension?: Extension[];
   public url: string;
   public valueBoolean?: boolean;
   public valueString?: string;
   public valueReference?: ResourceReference;
+  public valueMarkdown?: string;
 
   constructor(obj?: any) {
     if (obj) {
@@ -41,6 +44,9 @@ export class Extension {
       }
       if (obj.hasOwnProperty('valueReference')) {
         this.valueReference = new ResourceReference(obj.valueReference);
+      }
+      if (obj.hasOwnProperty('valueMarkdown')) {
+        this.valueMarkdown = obj.valueMarkdown;
       }
 
       // Add other properties as needed
@@ -306,7 +312,7 @@ export class Narrative extends Element {
 
 }
 
-export class DomainResource extends Resource {
+export class DomainResource extends Resource implements IDomainResource {
   public resourceType = 'DomainResource';
   public text?: Narrative;
   public contained?: DomainResource[];
@@ -341,7 +347,7 @@ export class DomainResource extends Resource {
   }
 }
 
-export class ContactPoint extends Element {
+export class ContactPoint extends Element implements IContactPoint {
   public system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
   public value?: string;
   public use?: 'home'|'work'|'temp'|'old'|'mobile';
@@ -371,7 +377,7 @@ export class ContactPoint extends Element {
 
 }
 
-export class ContactDetail extends Element {
+export class ContactDetail extends Element implements IContactDetail {
   public name?: string;
   public telecom?: ContactPoint[];
 
@@ -1737,7 +1743,7 @@ export class Signature extends Element {
 
 export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
 
-export class Bundle extends Resource {
+export class Bundle extends Resource implements IBundle {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
   public type: BundleTypes;
@@ -13749,7 +13755,7 @@ export class HealthcareService extends DomainResource {
 
 }
 
-export class HumanName extends Element {
+export class HumanName extends Element implements IHumanName {
   public use?: string;
   public text?: string;
   public family?: string;
@@ -14487,31 +14493,13 @@ export class ImplementationGuideGlobalComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuidePackageComponent extends BackboneElement {
-  public name: string;
-  public description?: string;
-
-  constructor(obj?: any) {
-    super(obj);
-    if (obj) {
-      if (obj.hasOwnProperty('name')) {
-        this.name = obj.name;
-      }
-      if (obj.hasOwnProperty('description')) {
-        this.description = obj.description;
-      }
-    }
-  }
-
-}
-
 export class ImplementationGuideResourceComponent extends BackboneElement {
   public reference: ResourceReference;
   public name?: string;
   public description?: string;
   public exampleBoolean? = false;
   public exampleCanonical?: string;
-  public package?: string;
+  public groupingId?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -14531,8 +14519,8 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
       if (obj.hasOwnProperty('exampleCanonical')) {
         this.exampleCanonical = obj.exampleCanonical;
       }
-      if (obj.hasOwnProperty('package')) {
-        this.package = obj.package;
+      if (obj.hasOwnProperty('groupingId')) {
+        this.groupingId = obj.groupingId;
       }
     }
   }
@@ -14612,8 +14600,25 @@ export class ImplementationGuideTemplateComponent extends BackboneElement {
 
 }
 
+export class ImplementationGuideGroupingComponent extends BackboneElement {
+  public name: string;
+  public description?: string;
+
+  constructor(obj?: any) {
+    super(obj);
+    if (obj) {
+      if (obj.hasOwnProperty('name')) {
+        this.name = obj.name;
+      }
+      if (obj.hasOwnProperty('description')) {
+        this.description = obj.description;
+      }
+    }
+  }
+}
+
 export class ImplementationGuideDefinitionComponent extends BackboneElement {
-  public package?: ImplementationGuidePackageComponent[];
+  public grouping?: ImplementationGuideGroupingComponent[];
   public resource: ImplementationGuideResourceComponent[];
   public page?: ImplementationGuidePageComponent;
   public parameter?: ImplementationGuideParameterComponent[];
@@ -14622,10 +14627,10 @@ export class ImplementationGuideDefinitionComponent extends BackboneElement {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('package')) {
-        this.package = [];
+      if (obj.hasOwnProperty('grouping')) {
+        this.grouping = [];
         for (const o of obj.package || []) {
-          this.package.push(new ImplementationGuidePackageComponent(o));
+          this.grouping.push(new ImplementationGuideGroupingComponent(o));
         }
       }
       if (obj.hasOwnProperty('resource')) {
@@ -21702,7 +21707,7 @@ export class PractitionerQualificationComponent extends BackboneElement {
 
 }
 
-export class Practitioner extends DomainResource {
+export class Practitioner extends DomainResource implements IPractitioner {
   public resourceType = 'Practitioner';
   public identifier?: Identifier[];
   public active?: boolean;

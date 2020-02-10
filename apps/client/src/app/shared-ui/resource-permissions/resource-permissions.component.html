@@ -48,33 +48,50 @@
       {{copyTypeaheadFormatter(r)}}
     </ng-template>
 
-    <div class="form-group" [attr.data-intro]="Globals.introText['resource-permissions.copy']">
-      <label>Copy permissions from...</label>
-      <div class="input-group">
-        <select class="form-control" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
-          <option [ngValue]="undefined">SELECT</option>
-          <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
-        </select>
-        <input type="text" class="form-control"
-               [(ngModel)]="copyResource"
-               [disabled]="!copyResourceType"
-               [ngbTypeahead]="copyTypeaheadSearch"
-               [inputFormatter]="copyTypeaheadFormatter"
-               [resultTemplate]="rt"
-               [attr.data-intro]="Globals.introText['resource-permissions.copy.criteria']" />
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-outline-primary" title="Use a more advanced search window to find the resource you would like to copy permissions from"
-                  (click)="selectCopyResource()" [attr.data-intro]="Globals.introText['resource-permissions.copy.select']">
-            <i class="fas fa-hand-pointer"></i>
-          </button>
-          <button type="button" class="btn btn-primary" title="Copy the selected resource's permissions to this resource"
-                  (click)="copyPermissions()"
-                  [disabled]="!copyResource || !copyResource.resourceType"
-                  [attr.data-intro]="Globals.introText['resource-permissions.copy.copy-btn']">
-            <i class="fas fa-copy"></i>
-          </button>
+    <div class="card" *ngIf="resource.resourceType === 'ImplementationGuide'">
+      <div class="card-header">Copy IG permissions</div>
+      <div class="card-body">
+        <p>Add permissions from this IG to resources referenced by the IG. This <em>does not</em> overwrite or remove permissions that already exist on the resources, it <em>adds</em> permissions from the IG that don't already exist.</p>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="copyIgPermissions()">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+    </div>
+
+    <div class="card" [attr.data-intro]="Globals.introText['resource-permissions.copy']">
+      <div class="card-header">Copy permissions to this resource</div>
+      <div class="card-body">
+        <p>Add permissions from a different resource to this resource. This <em>does not</em> overwrite or remove permissions that already exist on this resource, it <em>adds</em> permissions from the specified resource that don't already exist on this resource.</p>
+
+        <div class="form-group">
+          <div class="input-group">
+            <select class="form-control" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
+              <option [ngValue]="undefined">SELECT</option>
+              <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
+            </select>
+            <input type="text" class="form-control"
+                   [(ngModel)]="copyResource"
+                   [disabled]="!copyResourceType"
+                   [ngbTypeahead]="copyTypeaheadSearch"
+                   [inputFormatter]="copyTypeaheadFormatter"
+                   [resultTemplate]="rt"
+                   [attr.data-intro]="Globals.introText['resource-permissions.copy.criteria']" />
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-outline-primary" title="Use a more advanced search window to find the resource you would like to copy permissions from"
+                      (click)="selectCopyResource()" [attr.data-intro]="Globals.introText['resource-permissions.copy.select']">
+                <i class="fas fa-hand-pointer"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <button type="button" class="btn btn-primary" title="Copy the selected resource's permissions to this resource"
+              (click)="copyPermissions()"
+              [disabled]="!copyResource || !copyResource.resourceType"
+              [attr.data-intro]="Globals.introText['resource-permissions.copy.copy-btn']">
+        <i class="fas fa-copy"></i> Copy
+      </button>
     </div>
   </div>
 

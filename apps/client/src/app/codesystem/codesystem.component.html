@@ -298,7 +298,7 @@
   <!-- Permissions -->
   <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabContent>
-      <app-resource-permissions [meta]="codeSystem.meta"></app-resource-permissions>
+      <trifolia-fhir-resource-permissions [resource]="codeSystem"></trifolia-fhir-resource-permissions>
     </ng-template>
   </ngb-tab>
 

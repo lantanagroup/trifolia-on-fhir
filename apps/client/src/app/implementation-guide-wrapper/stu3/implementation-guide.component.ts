@@ -27,6 +27,7 @@ import {BaseComponent} from '../../base.component';
 import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
 import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 
 class PageDefinition {
   public page: PageComponent;
@@ -48,7 +49,7 @@ class ImplementationGuideResource {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class STU3ImplementationGuideComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
   public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
@@ -56,7 +57,6 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   public pages: PageDefinition[];
   public resourceTypeCodes: Coding[] = [];
   public igNotFound = false;
-  public Globals = Globals;
   public ClientHelper = ClientHelper;
 
   private navSubscription: any;
@@ -91,7 +91,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     return (this.implementationGuide.extension || []).filter((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
   }
 
-  public get packageId(): string {
+  protected get packageId(): string {
     const foundExtension = (this.implementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
 
     if (foundExtension) {
@@ -99,7 +99,7 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
     }
   }
 
-  public set packageId(value: string) {
+  protected set packageId(value: string) {
     this.implementationGuide.extension = this.implementationGuide.extension || [];
     let foundExtension = (this.implementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
 
@@ -140,28 +140,6 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
   public removeDependency(dependency: Extension) {
     const index = this.implementationGuide.extension.indexOf(dependency);
     this.implementationGuide.extension.splice(index);
-  }
-
-  public pageKindChanged(page: PageComponent) {
-    let autoGenExtension = (page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-auto-generate-toc']);
-
-    if (page.kind === 'toc') {
-      if (!page.extension) {
-        page.extension = [];
-      }
-
-      if (autoGenExtension && !autoGenExtension.valueBoolean) {
-        autoGenExtension.valueBoolean = true;
-      } else if (!autoGenExtension) {
-        autoGenExtension = new Extension();
-        autoGenExtension.url = Globals.extensionUrls['extension-ig-page-auto-generate-toc'];
-        autoGenExtension.valueBoolean = true;
-        page.extension.push(autoGenExtension);
-      }
-    } else if (autoGenExtension) {
-      const extIndex = page.extension.indexOf(autoGenExtension);
-      page.extension.splice(extIndex, 1);
-    }
   }
 
   public addResources(destPackage?: PackageComponent) {
@@ -406,16 +384,11 @@ export class STU3ImplementationGuideComponent extends BaseComponent implements O
 
   public toggleRootPage(value: boolean) {
     if (value && !this.implementationGuide.page) {
-      const newPage = new PageComponent();
-      newPage.kind = 'toc';
-      newPage.title = 'Table of Contents';
-      newPage.format = 'markdown';
-      newPage.extension = [{
-        url: Globals.extensionUrls['extension-ig-page-auto-generate-toc'],
-        valueBoolean: true
-      }];
-      newPage.source = 'toc.md';
-      this.implementationGuide.page = newPage;
+      this.implementationGuide.page = new PageComponent();
+      this.implementationGuide.page.kind = 'page';
+      this.implementationGuide.page.title = 'New Page';
+      this.implementationGuide.page.format = 'markdown';
+      this.implementationGuide.page.source = 'newPage.md';
     } else if (!value && this.implementationGuide.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.page);
       this.removePage(foundPageDef);

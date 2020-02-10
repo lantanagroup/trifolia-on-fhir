@@ -1,17 +1,12 @@
 import {HtmlExporter} from './html';
-import {FhirControl, FhirControlDependency, PageInfo, TableOfContentsEntry} from './html.models';
-import {
-  Binary as STU3Binary,
-  Bundle as STU3Bundle,
-  DomainResource,
-  Extension,
-  PackageResourceComponent,
-  PageComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PageInfo} from './html.models';
+import {Binary as STU3Binary, DomainResource, PackageResourceComponent, PageComponent, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {release} from 'os';
 
 export class STU3HtmlExporter extends HtmlExporter {
   protected removeNonExampleMedia() {
@@ -46,144 +41,230 @@ export class STU3HtmlExporter extends HtmlExporter {
     }
   }
 
-  public getControl(bundle: STU3Bundle) {
-    const canonicalBaseRegex = /^(.+?)\/ImplementationGuide\/.+$/gm;
-    const canonicalBaseMatch = canonicalBaseRegex.exec(this.stu3ImplementationGuide.url);
-    const packageIdExtension = (this.stu3ImplementationGuide.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-package-id']);
-    let canonicalBase;
+  private ensureParameterExtensions() {
+    this.stu3ImplementationGuide.extension = this.stu3ImplementationGuide.extension || [];
+    const parameters = this.stu3ImplementationGuide.extension.filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-parameter'] &&
+        e.extension &&
+        !!e.extension.find(n => n.url === 'code') &&
+        !!e.extension.find(n => n.url === 'value');
+    });
 
-    if (!canonicalBaseMatch || canonicalBaseMatch.length < 2) {
-      canonicalBase = this.stu3ImplementationGuide.url.substring(0, this.stu3ImplementationGuide.url.lastIndexOf('/'));
-    } else {
-      canonicalBase = canonicalBaseMatch[1];
+    let releaseLabel = parameters.find(e => {
+      const code = e.extension.find(n => n.url === 'code').valueString;
+      return code === 'releaselabel';
+    });
+
+    if (!releaseLabel) {
+      releaseLabel = {
+        url: Globals.extensionUrls['extension-ig-parameter'],
+        extension: [{
+          url: 'code',
+          valueString: 'releaselabel'
+        }, {
+          url: 'value',
+          valueString: 'CI Build'
+        }]
+      };
+      this.stu3ImplementationGuide.extension.push(releaseLabel);
     }
 
-    // TODO: Extract npm-name from IG extension.
-    // currently, IG resource has to be in XML format for the IG Publisher
-    const control = <FhirControl>{
-      tool: 'jekyll',
-      source: 'implementationguide/' + this.stu3ImplementationGuide.id + '.xml',
-      'npm-name': packageIdExtension && packageIdExtension.valueString ? packageIdExtension.valueString : this.stu3ImplementationGuide.id + '-npm',
-      license: 'CC0-1.0',                                                         // R4: ImplementationGuide.license
-      paths: {
-        qa: 'generated_output/qa',
-        temp: 'generated_output/temp',
-        output: 'output',
-        txCache: 'generated_output/txCache',
-        specification: 'http://hl7.org/fhir/STU3',
-        pages: [
-          'framework',
-          'source/pages'
-        ],
-        resources: ['source/resources']
-      },
-      pages: ['pages'],
-      version: '3.0.2',
-      'extension-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'allowed-domains': ['https://trifolia-on-fhir.lantanagroup.com'],
-      'sct-edition': 'http://snomed.info/sct/731000124108',
-      'extraTemplates': ['mappings'],
-      canonicalBase: canonicalBase,
-      defaults: {
-        'Location': {'template-base': 'ex.html'},
-        'ProcedureRequest': {'template-base': 'ex.html'},
-        'Organization': {'template-base': 'ex.html'},
-        'MedicationStatement': {'template-base': 'ex.html'},
-        'SearchParameter': {'template-base': 'base.html'},
-        'StructureDefinition': {
-          'template-mappings': 'sd-mappings.html',
-          'template-base': 'sd.html',
-          'template-defns': 'sd-definitions.html',
-          'mappings': 'StructureDefinition-{{[id]}}-mappings.html'
-        },
-        'Immunization': {'template-base': 'ex.html'},
-        'Patient': {'template-base': 'ex.html'},
-        'StructureMap': {
-          'content': false,
-          'script': false,
-          'template-base': 'ex.html',
-          'profiles': false
-        },
-        'ConceptMap': {'template-base': 'base.html'},
-        'Practitioner': {'template-base': 'ex.html'},
-        'OperationDefinition': {'template-base': 'base.html'},
-        'CodeSystem': {'template-base': 'base.html'},
-        'Communication': {'template-base': 'ex.html'},
-        'Any': {
-          'template-format': 'format.html',
-          'template-base': 'base.html'
-        },
-        'PractitionerRole': {'template-base': 'ex.html'},
-        'ValueSet': {'template-base': 'base.html'},
-        'CapabilityStatement': {'template-base': 'base.html'},
-        'Observation': {'template-base': 'ex.html'}
-      },
-      resources: {}
-    };
+    let copyrightYear = parameters.find(e => {
+      const code = e.extension.find(n => n.url === 'code').valueString;
+      return code === 'copyrightyear';
+    });
 
-    if (this.stu3ImplementationGuide.version) {
-      control['fixed-business-version'] = this.stu3ImplementationGuide.version;
+    if (!copyrightYear) {
+      copyrightYear = {
+        url: Globals.extensionUrls['extension-ig-parameter'],
+        extension: [{
+          url: 'code',
+          valueString: 'copyrightyear'
+        }, {
+          url: 'value',
+          valueString: '2020+'
+        }]
+      };
+      this.stu3ImplementationGuide.extension.push(copyrightYear);
     }
-
-    // Set the dependencyList based on the extensions in the IG
-    const dependencyExtensions = (this.stu3ImplementationGuide.extension || []).filter((extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
-
-    // R4 ImplementationGuide.dependsOn
-    control.dependencyList = dependencyExtensions
-      .filter((dependencyExtension) => {
-        const locationExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
-        const nameExtension = (dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
-
-        return !!locationExtension && !!locationExtension.valueUri && !!nameExtension && !!nameExtension.valueString;
-      })
-      .map((dependencyExtension) => {
-        const locationExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-location']);
-        const nameExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-name']);
-        const versionExtension = <Extension>(dependencyExtension.extension || []).find((next) => next.url === Globals.extensionUrls['extension-ig-dependency-version']);
-
-        return <FhirControlDependency>{
-          location: locationExtension ? locationExtension.valueUri : '',
-          name: nameExtension ? nameExtension.valueString : '',
-          version: versionExtension ? versionExtension.valueString : ''
-        };
-      });
-
-    // Define the resources in the control and what templates they should use
-    if (bundle && bundle.entry) {
-      for (let i = 0; i < bundle.entry.length; i++) {
-        const entry = bundle.entry[i];
-        const resource = entry.resource;
-        const igResource = this.getImplementationGuideResource(resource.resourceType, resource.id);
-        const isExample = igResource ? igResource.example || igResource.exampleFor : false;
-
-        // Skip adding the ImplementationGuide and Media images for using the narrative to the control file's resources
-        if (resource.resourceType === 'ImplementationGuide' || (resource.resourceType === 'Media' && !isExample)) {
-          continue;
-        }
-
-        control.resources[resource.resourceType + '/' + resource.id] = {
-          base: resource.resourceType + '-' + resource.id + '.html',
-          defns: resource.resourceType + '-' + resource.id + '-definitions.html'
-        };
-      }
-    }
-
-    return control;
   }
 
-  private writePage(pagesPath: string, page: PageComponent, level: number, tocEntries: TableOfContentsEntry[]) {
+  protected prepareImplementationGuide(): R4ImplementationGuide {
+    super.prepareImplementationGuide();
+
+    this.ensureParameterExtensions();
+
+    const getPage = (stu3Page: PageComponent): ImplementationGuidePageComponent => {
+      if (!stu3Page) return;
+
+      const ret = new ImplementationGuidePageComponent();
+      ret.title = stu3Page.title;
+      ret.generation = stu3Page.format;
+
+      if (stu3Page.extension && stu3Page.extension.length > 0) {
+        ret.extension = stu3Page.extension;
+      }
+
+      if (stu3Page.page) {
+        ret.page = stu3Page.page.map(nextPage => getPage(nextPage));
+      }
+
+      if (stu3Page.source) {
+        ret.nameUrl = stu3Page.source;
+      }
+
+      return ret;
+    };
+
+    const parameters = this.stu3ImplementationGuide.extension.filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-parameter'] &&
+        e.extension &&
+        !!e.extension.find(n => n.url === 'code') &&
+        !!e.extension.find(n => n.url === 'value');
+    });
+
+    const newIg = new R4ImplementationGuide();
+    newIg.id = this.stu3ImplementationGuide.id;
+    newIg.url = this.stu3ImplementationGuide.url;
+    newIg.fhirVersion = [this.getOfficialFhirVersion()];
+    newIg.packageId = `hl7.fhir.${newIg.id}`;
+    newIg.contact = this.stu3ImplementationGuide.contact;
+
+    newIg.definition = {
+      resource: [],
+      page: getPage(this.stu3ImplementationGuide.page),
+      parameter: parameters.map(p => {
+        const code = p.extension.find(e => e.url === 'code').valueString;
+        const value = p.extension.find(e => e.url === 'value').valueString;
+        return {
+          code: code,
+          value: value
+        };
+      })
+    };
+
+    // Convert ImplementationGuide.package.resource to ImplementationGuide.definition.resource
+    this.stu3ImplementationGuide.package.forEach(p => {
+      newIg.definition.resource = newIg.definition.resource.concat((p.resource || []).map(r => {
+        const ret = new ImplementationGuideResourceComponent();
+
+        if (r.sourceReference) {
+          ret.reference = {
+            reference: r.sourceReference.reference,
+            display: r.sourceReference.display
+          };
+        } else if (r.sourceUri) {
+          ret.reference = {
+            reference: r.sourceUri
+          };
+        }
+
+        if (r.hasOwnProperty('example')) {
+          ret.exampleBoolean = r.example;
+        } else if (r.exampleFor) {
+          ret.exampleBoolean = true;
+        }
+
+        return ret;
+      }));
+    });
+
+    return newIg;
+  }
+
+  protected populatePageInfos() {
+    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
+    const getPagesList = (theList: PageInfo[], page: PageComponent) => {
+      if (!page) {
+        return theList;
+      }
+
+      if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
+        const contentExtension = (page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
+
+        const pageInfo = new PageInfo();
+        pageInfo.page = page;
+        pageInfo.fileName = Globals.getCleanFileName(page.source);
+
+        // the page in the ImplementationGuide should be what we want the page to output as
+        // while the file might have a different extension
+        const extension = page.source.substring(page.source.lastIndexOf('.'));
+        page.source = page.source.substring(0, page.source.lastIndexOf('.')) + '.html';
+
+        if (!page.format) {
+          switch (extension) {
+            case '.md':
+              page.format = 'markdown';
+              break;
+            case '.html':
+              page.format = 'html';
+              break;
+          }
+        }
+
+        if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
+          const reference = contentExtension.valueReference.reference;
+
+          if (reference.startsWith('#')) {
+            const contained = (this.stu3ImplementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
+            const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
+
+            if (binary) {
+              if (binary.content) {
+                pageInfo.content = Buffer.from(binary.content, 'base64').toString();
+              } else {
+                pageInfo.content = 'No content has been specified for this page.';
+              }
+            }
+          }
+        }
+
+        theList.push(pageInfo);
+      }
+
+      (page.page || []).forEach((next) => getPagesList(theList, next));
+
+      return theList;
+    };
+
+    if (!this.stu3ImplementationGuide.page || !this.stu3ImplementationGuide.page.source || !this.stu3ImplementationGuide.page.source.startsWith('index.')) {
+      const originalFirstPage = this.stu3ImplementationGuide.page;
+      this.stu3ImplementationGuide.page = {
+        title: 'IG Home Page',
+        source: 'index.html',
+        kind: 'page',
+        format: 'markdown',
+        page: originalFirstPage ? [originalFirstPage] : []
+      };
+    }
+
+    this.pageInfos = getPagesList([], this.stu3ImplementationGuide.page);
+  }
+
+  protected writePages(rootPath: string) {
+    const rootPageInfo = this.pageInfos.length > 0 ? this.pageInfos[0] : null;
+
+    if (rootPageInfo) {
+      const pagesPath = path.join(rootPath, 'input/pagecontent');
+      fs.ensureDirSync(pagesPath);
+
+      this.writePage(pagesPath, <PageComponent> rootPageInfo.page, 1);
+    }
+  }
+
+  private writePage(pagesPath: string, page: PageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
-    const pageIndex = this.pageInfos.indexOf(pageInfo);
+    const pageIndex = pageInfo ? this.pageInfos.indexOf(pageInfo) : -1;
     const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
     const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage && previousPage.finalFileName ?
-      `[Previous Page](${previousPage.finalFileName})\n\n` :
+    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
+      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
       undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName ?
-      `\n\n[Next Page](${nextPage.finalFileName})` :
+    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
+      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
       undefined;
 
-    if (page.kind !== 'toc' && pageInfo.content) {
+    if (pageInfo && page.kind !== 'toc') {
       const pagesPathFiles = fs.readdirSync(pagesPath);
       const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
 
@@ -195,72 +276,11 @@ export class STU3HtmlExporter extends HtmlExporter {
       }
 
       const newPagePath = path.join(pagesPath, pageInfo.fileName);
-
-      const content = '---\n' +
-        `title: ${page.title}\n` +
-        'layout: default\n' +
-        `active: ${page.title}\n` +
-        `---\n\n${previousPageLink || ''}${pageInfo.content}${nextPageLink || ''}`;
+      const content = `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`;
 
       fs.writeFileSync(newPagePath, content);
     }
 
-    // Add an entry to the TOC
-    tocEntries.push({level: level, fileName: page.kind === 'page' && pageInfo.fileName, title: page.title});
-    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1, tocEntries));
-  }
-
-  protected writePages(rootPath: string) {
-    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
-    const getPagesList = (theList: PageInfo[], page: PageComponent) => {
-      if (!page) {
-        return theList;
-      }
-
-      const contentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
-      const autoGenerateExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc');
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-      pageInfo.shouldAutoGenerate = autoGenerateExtension && autoGenerateExtension.valueBoolean === true;
-
-      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-          const contained = (this.stu3ImplementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
-          const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
-
-          if (binary) {
-            pageInfo.fileName = page.source ?
-              page.source
-                .trim()
-                .replace(/—/g, '')
-                .replace(/[/\\]/g, '_')
-                .replace(/ /g, '_') :
-              null;
-            pageInfo.content = Buffer.from(binary.content, 'base64').toString();
-          }
-        }
-      }
-
-      theList.push(pageInfo);
-
-      (page.page || []).forEach((next) => getPagesList(theList, next));
-
-      return theList;
-    };
-
-    const tocEntries = [];
-    this.pageInfos = getPagesList([], this.stu3ImplementationGuide.page);
-    const rootPageInfo = this.pageInfos.length > 0 ? this.pageInfos[0] : null;
-
-    if (rootPageInfo) {
-      const pagesPath = path.join(rootPath, 'source/pages');
-      fs.ensureDirSync(pagesPath);
-
-      this.writePage(pagesPath, <PageComponent> rootPageInfo.page, 1, tocEntries);
-      this.generateTableOfContents(rootPath, tocEntries, rootPageInfo.shouldAutoGenerate, rootPageInfo.content);
-    }
+    (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
   }
 }

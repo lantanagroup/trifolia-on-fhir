@@ -25,12 +25,16 @@ export class Globals {
     'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
     'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
     'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
-    'extension-ig-page-auto-generate-toc': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
     'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path',
-    'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation'
+    'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation',
+    'extension-ig-page-nav-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
+    'extension-sd-notes': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-notes',
+    'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro',
+    'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
+    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
   };
 
   static readonly introText = {
@@ -39,7 +43,9 @@ export class Globals {
     'export.igPublisherOutput': 'You can select the type of output the published IG will take here.',
     'export.igPublisherJAR': 'You can also choose whether the FHIR IG Publisher JAR will be included in the export package here.',
     'export.bundle': 'This tab exports a FHIR Bundle that contains the resources referenced by the selected implementation guide.',
+    'export.msword': 'This tab exports a MsWord document that contains the resources referenced by the selected implementation guide.',
     'export.bundleOutput': 'You can select the type of output the Bundle will take here.',
+    'export.mswordOutput': 'You can select the type of output the Document will take here.',
     'export.github': 'This tab exports the implementation guide to a GitHub repository.',
     'export.githubMessage': 'Write the commit message that you\'d like to be associated with this IG on GitHub',
     'export.githubLogin': 'Click here to login to GitHub.',
@@ -94,7 +100,7 @@ export class Globals {
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
     'publish.publish-btn': 'When you are satisfied with the options, press this button to start the publication process.',
-    'ig.quick-tab': 'This tab has the most important fields that are needed to create a basic implementation guide. Other fields are represented in additional tabs, categorized according to their use/purpose.',
+    'publish.cancel-btn': 'When you\'re placed in queue and wish to cancel the publication process, press this button.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
     'ig.globals-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
@@ -142,8 +148,70 @@ export class Globals {
     'sd.no-mappings': 'You must specify mappings for the profile in the "Mappings" tab, first.',
     'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
     'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
-    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.'
+    'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.',
+    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.'
   };
+
+  static readonly hl7WorkGroups = [
+    { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },
+    { name: 'Affiliate Due Diligence', url: 'http://www.hl7.org/Special/committees/affildued' },
+    { name: 'Anesthesia', url: 'http://www.hl7.org/Special/committees/gas' },
+    { name: 'Architectural Review', url: 'http://www.hl7.org/Special/committees/arb' },
+    { name: 'Arden Syntax', url: 'http://www.hl7.org/Special/committees/arden' },
+    { name: 'Biomedical Research and Regulation', url: 'http://www.hl7.org/Special/committees/rcrim' },
+    { name: 'Board Motions', url: 'http://www.hl7.org/Special/committees/boardmotions' },
+    { name: 'CDA Management Group', url: 'http://www.hl7.org/Special/committees/cdamg' },
+    { name: 'Clinical Decision Support', url: 'http://www.hl7.org/Special/committees/dss' },
+    { name: 'Clinical Genomics', url: 'http://www.hl7.org/Special/committees/clingenomics' },
+    { name: 'Clinical Information Modeling Initiative', url: 'http://www.hl7.org/Special/committees/cimi' },
+    { name: 'Clinical Interoperability Council', url: 'http://www.hl7.org/Special/committees/cic' },
+    { name: 'Clinical Quality Information', url: 'http://www.hl7.org/Special/committees/cqi' },
+    { name: 'Clinical Steering Division', url: 'http://www.hl7.org/Special/committees/desd' },
+    { name: 'Community-Based Care and Privacy (CBCP)', url: 'http://www.hl7.org/Special/committees/homehealth' },
+    { name: 'Conformance', url: 'http://www.hl7.org/Special/committees/ictc' },
+    { name: 'Cross-Group Projects', url: 'http://www.hl7.org/Special/committees/cgp' },
+    { name: 'Education', url: 'http://www.hl7.org/Special/committees/education' },
+    { name: 'Electronic Health Records', url: 'http://www.hl7.org/Special/committees/ehr' },
+    { name: 'Electronic Services and Tools', url: 'http://www.hl7.org/Special/committees/esTools' },
+    { name: 'Emergency Care', url: 'http://www.hl7.org/Special/committees/emergencycare' },
+    { name: 'FHIR Infrastructure', url: 'http://www.hl7.org/Special/committees/fiwg' },
+    { name: 'FHIR Management Group', url: 'http://www.hl7.org/Special/committees/fhirmg' },
+    { name: 'Financial Management', url: 'http://www.hl7.org/Special/committees/fm' },
+    { name: 'Governance and Operations', url: 'http://www.hl7.org/Special/committees/gno' },
+    { name: 'Health Care Devices', url: 'http://www.hl7.org/Special/committees/healthcaredevices' },
+    { name: 'HL7 Foundation Task Force / Advisory Council', url: 'http://www.hl7.org/Special/committees/foundtf' },
+    { name: 'Imaging Integration', url: 'http://www.hl7.org/Special/committees/imagemgt' },
+    { name: 'Implementable Technology Specifications', url: 'http://www.hl7.org/Special/committees/xml' },
+    { name: 'Infrastructure and Messaging', url: 'http://www.hl7.org/Special/committees/inm' },
+    { name: 'Infrastructure Steering Division', url: 'http://www.hl7.org/Special/committees/ftsd' },
+    { name: 'International Council', url: 'http://www.hl7.org/Special/committees/international' },
+    { name: 'Leadership Development and Nomination Committee', url: 'http://www.hl7.org/Special/committees/nominate' },
+    { name: 'Learning Health Systems', url: 'http://www.hl7.org/Special/committees/lhs' },
+    { name: 'Mobile Health', url: 'http://www.hl7.org/Special/committees/mobile' },
+    { name: 'Modeling and Methodology', url: 'http://www.hl7.org/Special/committees/mmm' },
+    { name: 'Orders and Observations', url: 'http://www.hl7.org/Special/committees/orders' },
+    { name: 'Organizational Support Steering Division', url: 'http://www.hl7.org/Special/committees/t3sd' },
+    { name: 'Patient Administration', url: 'http://www.hl7.org/Special/committees/pafm' },
+    { name: 'Patient Care', url: 'http://www.hl7.org/Special/committees/patientare' },
+    { name: 'Patient Empowerment', url: 'http://www.hl7.org/Special/committees/patientempowerment' },
+    { name: 'Payer/Provider Information Exchange Work Group', url: 'http://www.hl7.org/Special/committees/claims' },
+    { name: 'Pharmacy', url: 'http://www.hl7.org/Special/committees/medication' },
+    { name: 'Policy Advisory Committee', url: 'http://www.hl7.org/Special/committees/policy' },
+    { name: 'Process Improvement', url: 'http://www.hl7.org/Special/committees/pi' },
+    { name: 'Project Services', url: 'http://www.hl7.org/Special/committees/projectServices' },
+    { name: 'Public Health', url: 'http://www.hl7.org/Special/committees/pher' },
+    { name: 'Publishing', url: 'http://www.hl7.org/Special/committees/publishing' },
+    { name: 'Recognition and Awards', url: 'http://www.hl7.org/Special/committees/awards' },
+    { name: 'Security', url: 'http://www.hl7.org/Special/committees/secure' },
+    { name: 'Services Oriented Architecture', url: 'http://www.hl7.org/Special/committees/soa' },
+    { name: 'Standards Governance Board', url: 'http://www.hl7.org/Special/committees/sgb' },
+    { name: 'Structured Documents', url: 'http://www.hl7.org/Special/committees/structure' },
+    { name: 'Technical Steering Committee', url: 'http://www.hl7.org/Special/committees/tsc' },
+    { name: 'Terminology Authority', url: 'http://www.hl7.org/Special/committees/termauth' },
+    { name: 'US Realm Steering Committee', url: 'http://www.hl7.org/Special/committees/usrealm' },
+    { name: 'V2 Management Group', url: 'http://www.hl7.org/Special/committees/v2management' },
+    { name: 'Vocabulary', url: 'http://www.hl7.org/Special/committees/vocab' }
+  ];
 
   static readonly cookieKeys = {
     recentImplementationGuides: 'recentImplementationGuides',
@@ -348,5 +416,15 @@ export class Globals {
 
   static trackByFn(index) {
     return index;
+  }
+
+  static getCleanFileName(value: string) {
+    if (!value) {
+      return '';
+    }
+
+    return value
+      .trim()
+      .replace(/[^\w\-\\.]/gm, '');
   }
 }

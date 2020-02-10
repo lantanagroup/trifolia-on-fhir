@@ -1,4 +1,5 @@
 import '../date-extensions';
+import {IBundle, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -33,7 +34,7 @@ export class Element extends Base {
 
 }
 
-export class Extension extends Element {
+export class Extension extends Element implements IExtension {
   public url: string;
   public valueCode?: string;
   public valueCodeableConcept?: CodeableConcept;
@@ -42,6 +43,7 @@ export class Extension extends Element {
   public valueString?: string;
   public valueReference?: ResourceReference;
   public valueUri?: string;
+  public valueMarkdown?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -66,6 +68,9 @@ export class Extension extends Element {
       }
       if (obj.valueReference) {
         this.valueReference = new ResourceReference(obj.valueReference);
+      }
+      if (obj.hasOwnProperty('valueMarkdown')) {
+        this.valueMarkdown = obj.valueMarkdown;
       }
     }
   }
@@ -182,7 +187,7 @@ export class Narrative extends Element {
 
 }
 
-export class DomainResource extends Resource {
+export class DomainResource extends Resource implements IDomainResource {
   public resourceType = 'DomainResource';
   public text?: Narrative;
   public contained?: DomainResource[];
@@ -313,7 +318,7 @@ export class Identifier extends Element {
 
 }
 
-export class ContactPoint extends Element {
+export class ContactPoint extends Element implements IContactPoint {
   public system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
   public value?: string;
   public use?: 'home'|'work'|'temp'|'old'|'mobile';
@@ -343,7 +348,7 @@ export class ContactPoint extends Element {
 
 }
 
-export class ContactDetail extends Element {
+export class ContactDetail extends Element implements IContactDetail {
   public name?: string;
   public telecom?: ContactPoint[];
 
@@ -1248,7 +1253,8 @@ export class LinkComponent extends BackboneElement {
 
 }
 
-export class SearchComponent extends BackboneElement {
+export class
+SearchComponent extends BackboneElement {
   public mode?: string;
   public score?: number;
 
@@ -1758,7 +1764,7 @@ export class Signature extends Element {
 
 export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
 
-export class Bundle extends Resource {
+export class Bundle extends Resource implements IBundle {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
   public type: BundleTypes;
@@ -10153,7 +10159,7 @@ export class HealthcareService extends DomainResource {
 
 }
 
-export class HumanName extends Element {
+export class HumanName extends Element implements IHumanName {
   public use?: string;
   public text?: string;
   public family?: string;
@@ -14154,7 +14160,7 @@ export class QualificationComponent extends BackboneElement {
 
 }
 
-export class Practitioner extends DomainResource {
+export class Practitioner extends DomainResource implements IPractitioner {
   public resourceType = 'Practitioner';
   public identifier?: Identifier[];
   public active?: boolean;

@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="generator" content="HelpNDoc Professional Edition 6.5.0.399">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico"/>
+
+  <title>Getting Started</title>
+  <meta name="description" content="" /> 
+  <meta name="keywords" content="">
+
+
+
+  
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Getting Started">
+  <meta name="twitter:description" content="">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="Getting Started" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="" />
+  <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="vendors/html5shiv-3.7.3/html5shiv.min.js"></script>
+      <script src="vendors/respond-1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  <!-- JsTree styles -->
+  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+
+  <!-- Hnd styles -->
+  <link href="css/layout.min.css" rel="stylesheet" />
+  <link href="css/effects.min.css" rel="stylesheet" />
+  <link href="css/theme-light-blue.min.css" rel="stylesheet" />
+  <link href="css/print.min.css" rel="stylesheet" media="print" />
+  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+
+  <!-- Content style -->
+  <link href="css/hnd.content.css" rel="stylesheet" />
+
+  
+
+
+
+</head>
+
+<body class="md-nav-expanded">
+
+
+
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible">Skip to main content</a>
+  </div>
+
+  <header class="headroom">
+    <button class="hnd-toggle btn btn-default">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>        
+    </button>
+    <h1>Trifolia-on-FHIR</h1>
+    
+  </header>
+
+  <nav class="md-nav-expanded">
+    <!-- Nav tabs -->
+    <ul class="tab-tabs nav nav-tabs" role="tablist">
+      <li id="nav-close"> 
+        <button class="hnd-toggle btn btn-default">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+      </li>
+      
+	  
+        <li role="presentation" class="tab active">
+            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-list"></i>
+                Contents
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-asterisk"></i>
+                Index
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-search"></i>
+                Search
+            </a>
+        </li>
+      
+    </ul>  <!-- /Nav tabs -->
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+	  
+      <div role="tabpanel" class="tab-pane active" id="contents">
+        <div id="toc" class="tree-container unselectable"
+            data-url="_toc.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /contents-->
+      
+      <div role="tabpanel" class="tab-pane" id="index">
+        <div id="keywords" class="tree-container unselectable"
+            data-url="_keywords.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /index-->
+      
+      <div role="tabpanel" class="tab-pane" id="search">
+        <div class="search-content">
+          <div class="search-input">
+            <form id="search-form">
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>  <!-- /search-input -->
+          <div class="search-result">
+            <div id="search-info"></div>
+            <div class="tree-container unselectable" id="search-tree"></div>
+          </div>  <!-- /search-result -->
+        </div>  <!-- /search-content -->
+      </div>  <!-- /search-->
+      
+    </div>  <!-- /Tab panes -->
+
+  </nav>
+
+  <div id="main">
+
+    <article>
+        <div id="topic-content" class="container-fluid" 
+		  data-hnd-id="GettingStarted"
+		  data-hnd-context="34"
+		  data-hnd-title="Getting Started"
+		>
+            
+                <div class="navigation">
+                    <ol class="breadcrumb">
+                        <li>Authoring</li>
+                    </ol>
+                    <div class="nav-arrows">
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Navigation.html" title="Navigation" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="GuidelinesandBestPractices.html" title="Guidelines and Best Practices" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                    </div>
+                </div> 
+            
+
+            <a id="main-content"></a>
+
+            <h2>Getting Started</h2>
+
+            <div class="main-content">
+                
+<p></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">IG Design Overview</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Create/Open an ImplementationGuide (Project).</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Create ValueSets and CodeSystems in the UI.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Create profiles (StructureDefinition resources) in UI. Create elements and constrain them to value sets created in step #2.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Import images into the IG to insert into narrative.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Create narrative pages for the IG.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Mark example resources as “example” with optional subject/context.</span></li>
+<li value="7" class="rvps3"><span class="rvts8">Publish the IG.</span></li>
+<li value="8" class="rvps3"><span class="rvts8">Review the published IG.</span></li>
+<li value="9" class="rvps3"><span class="rvts8">Review the QA results and resolve errors.</span></li>
+<li value="10" class="rvps3"><span class="rvts8">Export as HTML package and store in GitHub.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Create Implementation Guide</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Open and log into Trifolia-on-FHIR.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select File &gt; New Project.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Specify an ID that is unique to your IG (e.g., test-ig).</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Specify a URL unique to your IG (e.g., http://test.com/fhir/implementationguide/test-ig). The last leaf/level of the URL should match the ID to prevent errors during publishing.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Specify a name for your IG. This is the computable format of the name, used similarly (but not the same) as the ID.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Specify a title for your IG. This is what is displayed to readers of the IG.</span></li>
+<li value="7" class="rvps3"><span class="rvts8">Specify a Package ID. If developing an HL7 IG, you will receive this information pending PSS approval.</span></li>
+<li value="8" class="rvps3"><span class="rvts8">Define permissions using the “Permissions” tab.</span></li>
+<li value="9" class="rvps3"><span class="rvts8">Save the IG. It is now set as the project you are working on.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Create Terminology</span></span></h2>
+<p class="rvps3"><span class="rvts8">Create a new value set or code system:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Select Browse/Edit &gt; Value Sets and/or Code Systems.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the blue “+” button in the top-right to create a new value set or code system.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Specify the details of the value set and/or code system.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Save the value set or code system. The value set or code system is automatically associated with your IG.</span></li>
+</ol>
+<p class="rvps3"><span class="rvts8">Locate existing value sets or code systems:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Select Browse/Edit &gt; Edit Implementation Guide.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the “Resources” tab.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Select the “hand/pointer” icon in the top-right to add an existing resource.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Un-check “Showing resources for the “Test IG” implementation guide.”</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Filter/Find then select the value set or code system.</span></li>
+</ol>
+<p class="rvps3"><span class="rvts8">Import a ValueSet from VSAC:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Select “Import” on the top navigation bar</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the “VSAC” tab</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Specify your VSAC credentials</span><br/><span class="rvts8">Your credentials are never sent to ToF servers, they are used only by your browser to communicate with VSAC; they do not leave your computer, aside from being sent to VSAC for authentication.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Specify the OID for the value set you would like to import.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Click “Import”.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Assuming the value set is found, it will be imported and automatically associated with your IG.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Create Profiles</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Select Browse/Edit &gt; Profiles/Extensions.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Click the blue “+” icon in the top-right of the screen.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Indicate the URL for the profile. The beginning of the URL should match the IG’s URL (e.g., http://test.com/fhir/structuredefinition/my-profile if the IG is http://test.com/fhir/implementationguide/test-ig).</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Verify the ID matches the end of the URL. This should auto-populate when you enter the URL</span><br/><span class="rvts8">(e.g., “my-profile” for the above URL example)</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Specify a name and title, which the published IG will display.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Indicate the “type” of resource this profile constrains (e.g., “Patient”).</span></li>
+<li value="7" class="rvps3"><span class="rvts8">You may want to build your profile based on another profile. Specify a “Base Profile” that exists in the system.</span></li>
+<li value="8" class="rvps3"><span class="rvts8">Click “Save.”</span></li>
+<li value="9" class="rvps3"><span class="rvts8">Click the “Elements” tab.</span></li>
+<li value="10" class="rvps3"><span class="rvts8">Select an element to constrain.</span></li>
+<li value="11" class="rvps3"><span class="rvts8">Click “Constrain Element” in the right panel.</span></li>
+<li value="12" class="rvps3"><span class="rvts8">Re-define the element in the right panel to specify the difference between the element and the base definition.</span></li>
+<li value="13" class="rvps3"><span class="rvts8">Repeat for all constraints.</span></li>
+<li value="14" class="rvps3"><span class="rvts8">Define a description for the profile, which the published IG will display to the reader.</span></li>
+<li value="15" class="rvps3"><span class="rvts8">Save the profile.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Import Images</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Click the “Import” menu from the top navigation menu.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Drag-and-drop image files from your computer to the import window.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Click “Import.”</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Create Narrative Pages</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Click Browse/Edit &gt; Edit Implementation Guide.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the “Narrative/Pages” tab.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Provide a high-level description of the implementation guide, if desired. If no narrative pages are specified (see Step 4), then the IG’s home page will use this description.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Scroll to the bottom and click the “Add Narrative Page” button. This will create an index page that represents the home page for your IG. When you edit this page, ToF can automatically generate the content for the home page (index) based on the description of the IG. You can also specify custom content displayed on the home page.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Click the “+” on the index/home page to create child pages.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">The “Downloads” template is available to add to your IG and customize, which will provide default content for a “Downloads” page.</span></li>
+<li value="7" class="rvps3"><span class="rvts8">Select “Show on top navigation bar” and specify a navigation menu name for the pages you want to appear on the top menu of the published IG.</span></li>
+<li value="8" class="rvps3"><span class="rvts8">When editing a page, you can click the icon that represents multiple images to insert imports.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Identify Examples</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Click Browse/Edit &gt; Edit Implementation Guide.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the “Resources” tab.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">Click “Edit” next to an example resource.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Select “Example = Yes” or select a profile to set an example.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Click “Done.”</span></li>
+<li value="6" class="rvps3"><span class="rvts8">“Save” the IG after updating resources.</span></li>
+</ol>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts18">Publish</span></span></h2>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps3"><span class="rvts8">Click the “Publish” menu from the top navigation menu.</span></li>
+<li value="2" class="rvps3"><span class="rvts8">Select the options for your publication.</span></li>
+<li value="3" class="rvps3"><span class="rvts8">HL7 requires the latest IG publisher for ballots. The IG publisher updates occasionally include bugs, which leads to errors. You can select “No” pending resolution.</span></li>
+<li value="4" class="rvps3"><span class="rvts8">Selecting “No” for “Use terminology server” can quicken the publish execution, assuming you’re not worried about terminology.</span></li>
+<li value="5" class="rvps3"><span class="rvts8">Indicating “Yes” for “Download?” will offer the entire published package as a download to your computer when complete.</span></li>
+<li value="6" class="rvps3"><span class="rvts8">Click “Publish.” This process can be time-consuming, depending on the size of your IG. Please be patient. Once published, you can view the IG with the link on the status screen. Alternatively, you can select Browse/Edit &gt; View Implementation Guide.</span></li>
+</ol>
+<p></p>
+
+            </div>
+            
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2020 by Lantana Consulting Group. All Rights Reserved.</div></div>
+        </div>  <!-- /#topic-content -->
+    </article>
+
+    <footer></footer>
+
+  </div>  <!-- /#main -->
+
+  <div class="mask" data-toggle="sm-nav-expanded"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="hndModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.1/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  
+  <!-- Headroom -->
+  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
+  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+
+  <!-- JsTree -->
+  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+
+  <!-- HelpNDoc scripts -->
+  <script src="_translations.js"></script>
+  <script src="js/hndsd.min.js"></script>
+  <script src="js/hndse.min.js"></script>
+  <script src="js/app.min.js"></script>
+
+  <!-- Scripts -->
+  <script>
+    $(function() {
+      // Create the app
+      var app = new Hnd.App();
+      // Update translations
+      hnd_ut(app);
+	  // Instanciate imageMapResizer
+	  imageMapResize();
+	  // Custom JS
+	  
+      // Boot the app
+      app.Boot();
+    });
+  </script>
+
+
+
+</body>
+
+</html>
+

@@ -19,6 +19,7 @@ import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -45,12 +46,12 @@ class ResourceSecurity {
 }
 
 @Component({
-  selector: 'app-resource-permissions',
+  selector: 'trifolia-fhir-resource-permissions',
   templateUrl: './resource-permissions.component.html',
   styleUrls: ['./resource-permissions.component.css']
 })
 export class ResourcePermissionsComponent implements OnInit {
-  @Input() meta: Meta;
+  @Input() resource: DomainResource;
 
   public groupsBundle: Bundle;
   public usersBundle: Bundle;
@@ -74,8 +75,15 @@ export class ResourcePermissionsComponent implements OnInit {
     private fhirService: FhirService,
     private groupService: GroupService,
     private practitionerService: PractitionerService,
+    private implementationGuideService: ImplementationGuideService,
     private modal: NgbModal) {
 
+  }
+
+  get meta(): Meta {
+    if (this.resource) {
+      return this.resource.meta;
+    }
   }
 
   copyTypeaheadSearch = (text$: Observable<string>) => {
@@ -116,7 +124,7 @@ export class ResourcePermissionsComponent implements OnInit {
     } else {
       return 'id: ' + resource.id;
     }
-  }
+  };
 
   public get security(): ResourceSecurity[] {
     const resourceSecurity = getMetaSecurity(this.meta);
@@ -290,6 +298,16 @@ export class ResourcePermissionsComponent implements OnInit {
     } else {
       alert('The selected resource does not have any permissions defined');
     }
+  }
+
+  public copyIgPermissions() {
+    this.implementationGuideService.copyPermissions(this.resource.id).toPromise()
+      .then((count: number) => {
+        alert(`The implementation guide's permissions have been copied to ${count} child resources.`);
+      })
+      .catch((err) => {
+        alert('An error occurred while copying permissions from the IG to child resources.');
+      });
   }
 
   ngOnInit() {

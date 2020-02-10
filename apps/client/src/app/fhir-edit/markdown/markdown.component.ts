@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MarkdownModalComponent} from '../../modals/markdown-modal/markdown-modal.component';
@@ -34,6 +34,17 @@ export class FhirMarkdownComponent implements OnInit {
     const modalRef = this.modalService.open(MarkdownModalComponent, {size: 'lg'});
     modalRef.componentInstance.parentObject = this.parentObject;
     modalRef.componentInstance.propertyName = this.propertyName;
+  }
+
+  valueChanged(value) {
+    this.parentObject[this.propertyName] = value;
+
+    if (this.parentObject[this.propertyName] === '') {
+      if (this.parentObject.hasOwnProperty(this.propertyName)) {
+        // hasOwnProperty tells us if it is a data value. when true, it's a value that should be removed. when false, it's likely a getter/setter that shouldn't be deleted
+        delete this.parentObject[this.propertyName];
+      }
+    }
   }
 
   ngOnInit() {

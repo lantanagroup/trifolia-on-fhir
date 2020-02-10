@@ -17,6 +17,7 @@ import {FormsModule} from '@angular/forms';
 import {ProfileBaseDefinitionComponent} from './profile-base-definition/profile-base-definition.component';
 import {ResourcePermissionsComponent} from './resource-permissions/resource-permissions.component';
 import {ImplementationGuideTypeaheadComponent} from './implementation-guide-typeahead/implementation-guide-typeahead.component';
+import {SimplemdeModule} from 'ngx-simplemde';
 
 const components = [
   MarkdownComponent,
@@ -42,7 +43,8 @@ const components = [
     NgbModule,
     FormsModule,
     SharedModule,
-    DiffMatchPatchModule
+    DiffMatchPatchModule,
+    SimplemdeModule.forRoot({ })
   ]
 })
 export class SharedUiModule {
