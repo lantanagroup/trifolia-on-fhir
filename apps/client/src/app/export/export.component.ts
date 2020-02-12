@@ -53,7 +53,8 @@ export class ExportComponent implements OnInit {
   private async getImplementationGuideResources() {
     this.message = 'Retrieving resources for the implementation guide';
 
-    const bundleResponse = await this.exportService.exportBundle({implementationGuideId: this.options.implementationGuideId, exportFormat: ExportFormats.Bundle}).toPromise();
+    const bundleResponse = await this.exportService.exportBundle(<ExportOptions>{implementationGuideId: this.options.implementationGuideId, exportFormat: ExportFormats.Bundle,
+      downloadOutput: false}).toPromise();
     const bundleJson = await getStringFromBlob(bundleResponse.body);
 
     try {
