@@ -141,7 +141,8 @@
   </div>
   <div class="jumbotron" *ngIf="authService.isAuthenticated() && !authService.practitioner">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
-    <trifolia-fhir-new-user-modal></trifolia-fhir-new-user-modal>
+    <trifolia-fhir-new-user-modal *ngIf="configService.fhirConformance"></trifolia-fhir-new-user-modal>
+    <p *ngIf="!configService.fhirConformance">Can't communicate with the FHIR server!</p>
   </div>
   <div class="jumbotron" *ngIf="authService.isAuthenticated() && authService.practitioner">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
