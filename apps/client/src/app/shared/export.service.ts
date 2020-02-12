@@ -10,7 +10,7 @@ export class ExportOptions {
   public responseFormat?: 'application/json' | 'application/xml' | 'application/msword';
   public useTerminologyServer? = true;
   public useLatest? = true;
-  public downloadOutput? = false;       // Only applies to HTML exports
+  public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
 }
 
@@ -88,6 +88,7 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
+    url += 'downloadOutput=' + options.downloadOutput.toString() + '&';
     url += 'socketId=' + encodeURIComponent(this.socketService.socketId);
 
     return this.http.get(url, {responseType: 'text'});

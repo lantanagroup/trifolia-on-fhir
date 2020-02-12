@@ -14767,7 +14767,7 @@ export class ImplementationGuide extends DomainResource {
   public copyright?: string;
   public packageId?: string;
   public license?: string;
-  public fhirVersion: string[] = ['4.0.0'];
+  public fhirVersion: string[] = ['4.0.1'];
   public dependsOn?: ImplementationGuideDependsOnComponent[];
   public global?: ImplementationGuideGlobalComponent[];
   public definition?: ImplementationGuideDefinitionComponent;

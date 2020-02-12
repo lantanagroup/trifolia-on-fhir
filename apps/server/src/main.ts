@@ -64,7 +64,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
       throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
   }
 
-  if (!req.fhirServerBase.endsWith('/')) {
+  if (req.fhirServerBase && !req.fhirServerBase.endsWith('/')) {
     req.fhirServerBase += '/';
   }
 
