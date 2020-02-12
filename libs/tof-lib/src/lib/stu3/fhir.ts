@@ -4331,7 +4331,7 @@ export class CapabilityStatement extends DomainResource {
   public instantiates?: string[];
   public software?: SoftwareComponent;
   public implementation?: ImplementationComponent;
-  public fhirVersion = '3.0.1';
+  public fhirVersion = '3.0.2';
   public acceptUnknown: 'no'|'extensions'|'elements'|'both' = 'both';
   public format: string[] = ['application/json'];
   public patchFormat?: string[];
