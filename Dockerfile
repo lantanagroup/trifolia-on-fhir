@@ -31,9 +31,8 @@ RUN npm prune --production
 
 FROM node:10-alpine
 
-RUN apk update && apk --update add ruby-full ruby-dev build-base openjdk8-jre
-RUN gem install jekyll bundler
-RUN rm -rf /var/cache/apk/*
+RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre
+RUN gem install jekyll bundler --no-document
 
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
