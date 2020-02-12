@@ -37,11 +37,11 @@ export class ExportOptions {
       }
 
       if (query.hasOwnProperty('downloadOutput')) {
-        this.downloadOutput = query.downloadOutput.toLowerCase === 'true';
+        this.downloadOutput = query.downloadOutput.toLowerCase() === 'true';
       }
 
       if (query.hasOwnProperty('_format')) {
-        this.format = query._format;
+        this.format = query['_format'];
       }
 
       if (query.hasOwnProperty('exportFormat')) {

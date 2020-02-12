@@ -164,9 +164,12 @@ export class PublishComponent implements OnInit {
     }
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
+
       if (data.packageId === this.packageId) {
         if (data.status === 'complete') {
           this.message = 'Done exporting';
+
+          this.socketOutput += data.message;
 
           if (this.options.downloadOutput) {
             const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
