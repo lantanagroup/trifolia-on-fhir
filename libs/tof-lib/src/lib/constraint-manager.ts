@@ -9,7 +9,7 @@ export class ConstraintManager {
   readonly structureDefinition: IStructureDefinition;
   readonly fhirParser: ParseConformance;
   public elements: ElementTreeModel[];
-  private elementDefinitionType: (new(obj?: any) => IElementDefinition);
+  private readonly elementDefinitionType: (new(obj?: any) => IElementDefinition);
 
   /**
    *
@@ -131,7 +131,7 @@ export class ConstraintManager {
       }
     }
 
-    if (type) {
+    if (type && type !== 'BackboneElement') {
       const nextStructure = this.fhirParser.structureDefinitions.find(sd => sd.id.toLowerCase() === type.toLowerCase());
 
       if (nextStructure) {
@@ -291,25 +291,26 @@ export class ConstraintManager {
   private associate(elementTreeModels: ElementTreeModel[]) {
     for (const elementTreeModel of elementTreeModels) {
       const base = elementTreeModel.baseElement;
+      const sliceCounts: { [ path: string ]: number } = {};
 
       for (const diff of this.structureDefinition.differential.element) {
         if (!base.path || !base.id || !diff.path || !diff.id) continue;
 
-        const basePath = ConstraintManager.normalizePath(base.path);
-        const baseId = ConstraintManager.normalizePath(base.id);
-        const diffPath = ConstraintManager.normalizePath(diff.path);
+        const baseId = ConstraintManager.normalizePath(elementTreeModel.id);
         const diffId = ConstraintManager.normalizePath(diff.id);
-        const pathMatch = basePath === diffPath;
         const idMatch = baseId === diffId;
+        const baseIdDepth = baseId.split('.').length;
+        const diffIdDepth = diffId.split('.').length;
 
-        if (pathMatch && idMatch) {
+        if (idMatch) {
           // This is a constraint on something in the base
           elementTreeModel.constrainedElement = diff;
-        } else if (pathMatch && !idMatch) {
+        } else if (diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth) {
           // This is a new slice
           const index = this.elements.indexOf(elementTreeModel);
           const clone = elementTreeModel.clone(diff);
-          this.elements.splice(index + 1, 0, clone);
+          sliceCounts[elementTreeModel.basePath] = (sliceCounts[elementTreeModel.basePath] || 0) + 1;
+          this.elements.splice(index + sliceCounts[elementTreeModel.basePath], 0, clone);
         }
       }
     }

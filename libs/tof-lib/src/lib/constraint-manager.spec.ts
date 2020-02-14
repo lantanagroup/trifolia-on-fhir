@@ -4,6 +4,7 @@ import * as profileResources from '../assets/r4/profiles-resources.json';
 import * as testData1 from '../../../../test/data/shareableplandefinition.profile.json';
 import * as testData2 from '../../../../test/data/resprate.profile.json';
 import * as testData3 from '../../../../test/data/resprate2.profile.json';
+import * as testData4 from '../../../../test/data/ccd.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
@@ -15,6 +16,49 @@ describe('ConstraintManager', () => {
   parser.parseBundle(profileTypes);
   parser.parseBundle(profileResources);
   const fhir = new Fhir(parser);
+
+  describe('ccd profile tests', () => {
+    let cm;
+    let testData: IStructureDefinition;
+
+    beforeEach(() => {
+      testData = JSON.parse(JSON.stringify(testData4));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Composition');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+
+      expect(cm.elements.length).toBe(43);
+    });
+
+    it('should have section slices in the correct order', () => {
+      const actualSliceIds = cm.elements
+        .filter((e, i) => i >= 24 && i <= 42 && e.depth === 1)
+        .map(e => e.id);
+      const expectedSliceIds = ['Composition.section:allergies_and_intolerances_section', 'Composition.section:medications_section', 'Composition.section:problem_section', 'Composition.section:results_section', 'Composition.section:social_history_section', 'Composition.section:vital_signs_section', 'Composition.section:plan_of_treatment_section', 'Composition.section:procedures_section', 'Composition.section:family_history_section', 'Composition.section:advance_directives_section', 'Composition.section:encounters_section', 'Composition.section:functional_status_section', 'Composition.section:immunizations_section', 'Composition.section:nutrition_section', 'Composition.section:mental_status_section', 'Composition.section:medical_equipment_section', 'Composition.section:payers_section', 'Composition.section:goals_section', 'Composition.section:health_concerns_section'];
+
+      expect(cm.elements.length).toBe(43);
+      expect(actualSliceIds).toStrictEqual(expectedSliceIds);
+    });
+
+    it('should expand section slices and have the correct children', () => {
+      cm.toggleExpand(cm.elements[24]);
+      expect(cm.elements.length).toBe(57);
+
+      let actualIds = cm.elements
+        .filter((e, i) => i >= 25 && i <= 38 && e.depth === 2)
+        .map(e => e.id);
+      let expectedIds = ['Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.entry:allergy_entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section'];
+      expect(actualIds).toStrictEqual(expectedIds);
+
+      // expand medications section
+      cm.toggleExpand(cm.elements[39]);
+      expect(cm.elements.length).toBe(71);
+      actualIds = cm.elements
+        .filter((e, i) => i >= 40 && i <= 53 && e.depth === 2)
+        .map(e => e.id);
+      expectedIds = ['Composition.section:medications_section.id', 'Composition.section:medications_section.extension', 'Composition.section:medications_section.modifierExtension', 'Composition.section:medications_section.title', 'Composition.section:medications_section.code', 'Composition.section:medications_section.author', 'Composition.section:medications_section.focus', 'Composition.section:medications_section.text', 'Composition.section:medications_section.mode', 'Composition.section:medications_section.orderedBy', 'Composition.section:medications_section.entry', 'Composition.section:medications_section.entry:medication_entry', 'Composition.section:medications_section.emptyReason', 'Composition.section:medications_section.section'];
+      expect(actualIds).toStrictEqual(expectedIds);
+    });
+  });
 
   describe('associate resprate2 observation', () => {
     it('should associate sub-sub constraint', () => {
@@ -266,11 +310,11 @@ describe('ConstraintManager', () => {
       cm.toggleExpand(cm.elements[17]);     // expand code.coding
 
       expect(cm.elements[17].expanded).toBe(true);
-      expect(cm.elements.length).toBe(47);
+      expect(cm.elements.length).toBe(45);
 
-      const newElements = cm.elements.filter((e, i) => i >= 18 && i <= 26);
+      const newElements = cm.elements.filter((e, i) => i >= 18 && i <= 24);
       const actualBasePaths = newElements.map(e => e.basePath);
-      const expectedBasePaths = ["Observation.code.coding.id", "Observation.code.coding.extension", "Observation.code.coding.system", "Observation.code.coding.system", "Observation.code.coding.version", "Observation.code.coding.code", "Observation.code.coding.code", "Observation.code.coding.display", "Observation.code.coding.userSelected"];
+      const expectedBasePaths = ["Observation.code.coding.id", "Observation.code.coding.extension", "Observation.code.coding.system", "Observation.code.coding.version", "Observation.code.coding.code", "Observation.code.coding.display", "Observation.code.coding.userSelected"];
       expect(actualBasePaths).toStrictEqual(expectedBasePaths);
 
       newElements.forEach(e => {
@@ -278,26 +322,29 @@ describe('ConstraintManager', () => {
         expect(e.depth).toBe(3);
       });
 
-      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[4]);
-      expect(cm.elements[24].constrainedElement).toBe(testData.differential.element[5]);
+      cm.toggleExpand(cm.elements[25]);
+      expect(cm.elements.length).toBe(52);
+
+      expect(cm.elements[28].constrainedElement).toBe(testData.differential.element[4]);
+      expect(cm.elements[30].constrainedElement).toBe(testData.differential.element[5]);
     });
 
     it('should expand code.coding.code', () => {
       cm.toggleExpand(cm.elements[14]);     // expand code
       cm.toggleExpand(cm.elements[17]);     // expand code.coding
-      cm.toggleExpand(cm.elements[24]);     // expand code.coding.code
+      cm.toggleExpand(cm.elements[22]);     // expand code.coding.code
 
-      expect(cm.elements[24].expanded).toBe(true);
-      expect(cm.elements.length).toBe(50);
+      expect(cm.elements[22].expanded).toBe(true);
+      expect(cm.elements.length).toBe(48);
 
-      const newElements = cm.elements.filter((e, i) => i >= 25 && i <= 27);
+      const newElements = cm.elements.filter((e, i) => i >= 23 && i <= 25);
       const actualBasePaths = newElements.map(e => e.basePath);
       const expectedBasePaths = ["Observation.code.coding.code.id", "Observation.code.coding.code.extension", "Observation.code.coding.code.value"];
 
       expect(actualBasePaths).toStrictEqual(expectedBasePaths);
 
       newElements.forEach(e => {
-        expect(e.parent).toBe(cm.elements[24]);
+        expect(e.parent).toBe(cm.elements[22]);
         expect(e.depth).toBe(4);
         expect(e.hasChildren).toBe(e.baseId !== 'Observation.code.coding.code.value');
       });
