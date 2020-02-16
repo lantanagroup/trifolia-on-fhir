@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FhirService} from './fhir.service';
-import {AuditEventService} from './audit-event.service';
 import {AuthService} from './auth.service';
 import {CapabilityStatementService} from './capability-statement.service';
 import {CodeSystemService} from './code-system.service';
@@ -30,7 +29,6 @@ import {ManageService} from './manage.service';
     NgbModule
   ],
   providers: [
-    AuditEventService,
     AuthService,
     CapabilityStatementService,
     CodeSystemService,

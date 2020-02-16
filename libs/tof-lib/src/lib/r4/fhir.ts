@@ -1,4 +1,14 @@
-import {IBundle, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {
+  IAgentComponent,
+  IAuditEvent,
+  IBundle,
+  IContactDetail,
+  IContactPoint, IDetailComponent,
+  IDomainResource, IEntityComponent,
+  IExtension,
+  IHumanName, INetworkComponent,
+  IPractitioner
+} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -3609,9 +3619,9 @@ export class AppointmentResponse extends DomainResource {
 
 }
 
-export class AuditEventNetworkComponent extends BackboneElement {
+export class AuditEventNetworkComponent extends BackboneElement implements INetworkComponent {
   public address?: string;
-  public type?: string;
+  public type?: Coding;
 
   constructor(obj?: any) {
     super(obj);
@@ -3620,14 +3630,14 @@ export class AuditEventNetworkComponent extends BackboneElement {
         this.address = obj.address;
       }
       if (obj.hasOwnProperty('type')) {
-        this.type = obj.type;
+        this.type = new Coding(obj.type);
       }
     }
   }
 
 }
 
-export class AuditEventAgentComponent extends BackboneElement {
+export class AuditEventAgentComponent extends BackboneElement implements IAgentComponent {
   public type?: CodeableConcept;
   public role?: CodeableConcept[];
   public who?: ResourceReference;
@@ -3712,7 +3722,7 @@ export class AuditEventSourceComponent extends BackboneElement {
 
 }
 
-export class AuditEventDetailComponent extends BackboneElement {
+export class AuditEventDetailComponent extends BackboneElement implements IDetailComponent {
   public type: string;
   public value: Element;
 
@@ -3730,7 +3740,7 @@ export class AuditEventDetailComponent extends BackboneElement {
 
 }
 
-export class AuditEventEntityComponent extends BackboneElement {
+export class AuditEventEntityComponent extends BackboneElement implements IEntityComponent {
   public what?: ResourceReference;
   public type?: Coding;
   public role?: Coding;
@@ -3782,14 +3792,14 @@ export class AuditEventEntityComponent extends BackboneElement {
 
 }
 
-export class AuditEvent extends DomainResource {
+export class AuditEvent extends DomainResource implements IAuditEvent {
   public resourceType = 'AuditEvent';
   public type: Coding;
   public subtype?: Coding[];
   public action?: string;
   public period?: Period;
-  public recorded: Date;
-  public outcome?: string;
+  public recorded: string;
+  public outcome?: Coding;
   public outcomeDesc?: string;
   public purposeOfEvent?: CodeableConcept[];
   public agent: AuditEventAgentComponent[];
@@ -3815,7 +3825,7 @@ export class AuditEvent extends DomainResource {
         this.period = new Period(obj.period);
       }
       if (obj.hasOwnProperty('recorded')) {
-        this.recorded = new Date(obj.recorded);
+        this.recorded = obj.recorded;
       }
       if (obj.hasOwnProperty('outcome')) {
         this.outcome = obj.outcome;

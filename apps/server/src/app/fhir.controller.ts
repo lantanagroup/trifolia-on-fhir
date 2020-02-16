@@ -25,7 +25,7 @@ import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, parseFhirUrl} from './helper';
+import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
 import {
   Bundle,
   DomainResource,
@@ -63,7 +63,7 @@ export class FhirController extends BaseController {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
 
-
+    let resource;
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'GET'
@@ -72,8 +72,12 @@ export class FhirController extends BaseController {
     this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
 
     // Get the current state of the resource
-    const getResponse = await this.httpService.request(currentOptions).toPromise();
-    const resource = getResponse.data;
+    try {
+      const getResponse = await this.httpService.request(currentOptions).toPromise();
+      resource = getResponse.data;
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
+    }
 
     if (!resource || !resource.id) {
       throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
@@ -96,8 +100,13 @@ export class FhirController extends BaseController {
       method: 'DELETE'
     };
 
-    // Create the new resource with the new id
-    await this.httpService.request(createOptions).toPromise();
+    try {
+      // Create the new resource with the new id
+      await this.httpService.request(createOptions).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when creating the new resource to change the resource\'s id: ${ex.message}`);
+      throw ex;
+    }
 
     const searchForReference = (searchResourceType: string, searchParameter: string) => {
 
@@ -301,8 +310,23 @@ export class FhirController extends BaseController {
       this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
       await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
 
+
+
       // TODO: Handle DELETE events (remove the resource from the IG).
     }
+
+    let action = '';
+    if(entry.request.method === 'POST'){
+      action = 'C';
+    }else if(entry.request.method === 'GET'){
+      action = 'R';
+    }else if(entry.request.method === 'PUT'){
+      action = 'U';
+    }else if(entry.request.method.indexOf('DEL') > 0){
+      action = 'D';
+    }
+
+    createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, batchProcessingResponse.data);
 
     return batchProcessingResponse;
   }
@@ -570,6 +594,19 @@ export class FhirController extends BaseController {
       if (contextImplementationGuide && results.data.resourceType && results.data.id && ['POST', 'PUT'].indexOf(method) >= 0) {
         await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide,true);
       }
+
+      let action = '';
+      if(method === 'POST'){
+        action = 'C';
+      } else if(method === 'GET'){
+        action = 'R';
+      } else if(method === 'PUT'){
+        action = 'U';
+      } else if(method.indexOf('DEL') > 0){
+        action = 'D';
+      }
+
+      createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, results.data);
 
       return {
         status: results.status,

@@ -8,9 +8,10 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {Bundle, DomainResource, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions} from './helper';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent} from './helper';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import { logger } from 'codelyzer/util/logger';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
@@ -217,6 +218,8 @@ export class BaseFhirController extends BaseController {
         await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, resource, userSecurityInfo, contextImplementationGuide, true);
       }
 
+      createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, "C", userSecurityInfo, resource);
+
       return resource;
     } else {
       throw new InternalServerErrorException(`FHIR server did not respond with a location to the newly created ${this.resourceType}`);
@@ -282,6 +285,9 @@ export class BaseFhirController extends BaseController {
       }
 
       const updatedResults = await this.httpService.get(resourceUrl).toPromise();
+
+      createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, "U", userSecurityInfo, resource);
+
       return updatedResults.data;
     } catch (ex) {
       let message = `Failed to update resource ${this.resourceType}/${id}: ${ex.message}`;
@@ -314,6 +320,9 @@ export class BaseFhirController extends BaseController {
 
     try {
       const deleteResults = await this.httpService.request(options).toPromise();
+
+      createAuditEvent(this.logger, this.httpService, fhirServerVersion, baseUrl, "D", userSecurityInfo, deleteResults.data);
+
       return deleteResults.data;
     } catch (ex) {
       let message = `Failed to delete resource ${this.resourceType}/${id}: ${ex.message}`;
