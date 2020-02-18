@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FhirService } from '../../shared/fhir.service';
 import { ActivatedRoute } from '@angular/router';
-import { DomainResource, OperationOutcome } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { DomainResource } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import {saveAs} from 'file-saver';
@@ -10,28 +10,20 @@ import { ConfigService } from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import { ValidatorResponse } from 'fhir/validator';
 
-class OpenedResource {
-  resource: DomainResource;
-  activeSub: 'json/xml'|'permissions' = 'json/xml';
-
-  constructor(resource) {
-    this.resource = resource;
-  }
-}
-
 @Component({
   templateUrl: './other-resources-result.component.html',
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent implements OnInit {
+  activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
-  data: OpenedResource;
+  data: DomainResource;
   Globals = Globals;
   content: string;
   contentChanged = new EventEmitter();
   serializationError = false;
   validation: ValidatorResponse;
-  selected: string = 'JSON';
+  selected = 'JSON';
   options: string[] = [ 'JSON', 'XML' ];
 
   constructor(private fhirService: FhirService,
@@ -43,19 +35,19 @@ export class OtherResourcesResultComponent implements OnInit {
       .debounceTime(500)
       .subscribe(() => {
         if (this.data) {
-          this.serializationError = false
+          this.serializationError = false;
           this.message = null;
           try {
             // deserialize the content back to data
-            if (this.data.activeSub === 'json/xml' && this.selected === 'JSON') {
-              this.data.resource = JSON.parse(this.content);
+            if (this.activeSub === 'json/xml' && this.selected === 'JSON') {
+              this.data = JSON.parse(this.content);
               this.message = 'The content has been updated';
-            } else if (this.data.activeSub === 'json/xml' && this.selected === 'XML') {
-              this.data.resource = this.fhirService.deserialize(this.content);
+            } else if (this.activeSub === 'json/xml' && this.selected === 'XML') {
+              this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
 
-            this.validation = this.fhirService.validate(this.data.resource);
+            this.validation = this.fhirService.validate(this.data);
 
             if(!this.validation.valid){
               this.message = 'There are validation errors. This resource will still save but please view the validation tab.';
@@ -83,9 +75,9 @@ export class OtherResourcesResultComponent implements OnInit {
     this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
       .subscribe((results: DomainResource) => {
 
-        this.data = new OpenedResource(results);
-        this.content = JSON.stringify(this.data.resource, null, '\t');
-        this.validation = this.fhirService.validate(this.data.resource);
+        this.data = new DomainResource(results);
+        this.content = JSON.stringify(this.data, null, '\t');
+        this.validation = this.fhirService.validate(this.data);
 
         setTimeout(() => {
           this.message = 'Resource opened.';
@@ -97,41 +89,43 @@ export class OtherResourcesResultComponent implements OnInit {
 
   changeType() {
     console.log('Changing content type');
-    switch (this.selected) {
-      case 'JSON':
-        this.content = JSON.stringify(this.data.resource, null, '\t');
-        break;
-      case 'XML':
-        this.content = this.fhirService.serialize(this.data.resource);
-        break;
-    }
+    setTimeout(() => {
+      switch (this.selected) {
+        case 'JSON':
+          this.content = JSON.stringify(this.data, null, '\t');
+          break;
+        case 'XML':
+          this.content = this.fhirService.serialize(this.data);
+          break;
+      }
+    }, 500);
   }
 
   changeSubTab(event: NgbTabChangeEvent) {
-    this.data.activeSub = <any> event.nextId;
+    this.activeSub = <any> event.nextId;
   }
 
   public downloadFile() {
-    const openedResource = this.data;
-    let type: string = this.selected;
+
+    const type: string = this.selected;
     switch (type) {
       case 'XML':
-        const xml = this.fhirService.serialize(openedResource.resource);
+        const xml = this.fhirService.serialize(this.data);
         const xmlBlob = new Blob([xml], {type: 'application/xml'});
-        saveAs(xmlBlob, openedResource.resource.id + '.xml');
+        saveAs(xmlBlob, this.data.id + '.xml');
         break;
       case 'JSON':
-        const json = JSON.stringify(openedResource.resource, null, '\t');
+        const json = JSON.stringify(this.data, null, '\t');
         const jsonBlob = new Blob([json], {type: 'application/json'});
-        saveAs(jsonBlob, openedResource.resource.id + '.json');
+        saveAs(jsonBlob, this.data.id + '.json');
         break;
     }
   }
 
   public uploadFile(event: any) {
-    let type: string = this.selected;
+    const type: string = this.selected;
     const reader = new FileReader();
-    const openedResource = this.data;
+
 
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -140,29 +134,31 @@ export class OtherResourcesResultComponent implements OnInit {
         let resource: DomainResource;
 
         switch (type) {
-          case 'json':
+          case 'JSON':
             resource = JSON.parse(content);
             break;
-          case 'xml':
+          case 'XML':
             resource = this.fhirService.deserialize(content);
             break;
           default:
             throw new Error('Unexpected type specified: ' + type);
         }
 
-        this.message = 'Updating the resource';
+        this.contentHasChanged(content);
 
-        this.fhirService.update(resource.resourceType, openedResource.resource.id, resource)
+        /**this.message = 'Updating the resource';
+
+        this.fhirService.update(resource.resourceType, this.data.id, resource)
           .subscribe((result: DomainResource) => {
-            if (result.resourceType === openedResource.resource.resourceType) {
-              Object.assign(openedResource, result);
+            if (result.resourceType === this.data.resourceType) {
+              Object.assign(this.data, result);
               this.message = 'Updated resource';
             } else if (result.resourceType === 'OperationOutcome') {
               this.message = this.fhirService.getOperationOutcomeMessage(<OperationOutcome>result);
 
-              this.fhirService.read(openedResource.resource.resourceType, openedResource.resource.id)
+              this.fhirService.read(this.data.resourceType, this.data.id)
                 .subscribe((updatedResource: DomainResource) => {
-                  Object.assign(openedResource.resource, updatedResource);
+                  Object.assign(this.data, updatedResource);
                 }, (err) => {
                   console.log('Error re-opening resource after update: ' + err);
                   this.message = 'Error re-opening resource after update';
@@ -171,42 +167,42 @@ export class OtherResourcesResultComponent implements OnInit {
           }, (err) => {
             console.log(err);
             this.message = 'Error updating resource';
-          });
+          });**/
       };
       reader.readAsText(file);
     }
   }
 
-  public save(or: OpenedResource) {
-    this.fhirService.update(or.resource.resourceType, or.resource.id, or.resource).toPromise()
+  public save(dr: DomainResource) {
+    this.fhirService.update(dr.resourceType, dr.id, dr).toPromise()
       .then((updated) => {
-        Object.assign(or.resource, updated);
-        this.message = `Successfully updated resource ${or.resource.resourceType}/${or.resource.id}!`;
+        Object.assign(dr, updated);
+        this.message = `Successfully updated resource ${dr.resourceType}/${dr.id}!`;
       })
       .catch((err) => {
         this.message = getErrorString(err);
       });
   }
 
-  public remove(or: OpenedResource) {
-    if (!confirm(`Are you sure you want to delete ${or.resource.resourceType}/${or.resource.id}?`)) {
+  public remove(dr: DomainResource) {
+    if (!confirm(`Are you sure you want to delete ${dr.resourceType}/${dr.id}?`)) {
       return false;
-  }
+    }
 
-    this.fhirService.delete(or.resource.resourceType, or.resource.id)
+    this.fhirService.delete(dr.resourceType, dr.id)
       .subscribe(() => {
       }, (err) => {
         this.message = 'Error while removing the resource: ' + getErrorString(err);
       });
   }
 
-  public changeId(or: OpenedResource) {
+  public changeId(dr: DomainResource) {
     const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
-    modalRef.componentInstance.resourceType = or.resource.resourceType;
-    modalRef.componentInstance.originalId = or.resource.id;
+    modalRef.componentInstance.resourceType = dr.resourceType;
+    modalRef.componentInstance.originalId = dr.id;
     modalRef.result.then((newId) => {
       // Update the resource
-      this.data.resource.id = newId;
+      this.data.id = newId;
     });
   }
 }

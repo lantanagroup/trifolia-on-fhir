@@ -1,9 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FhirService} from '../shared/fhir.service';
-import {Bundle, Coding, DomainResource, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {saveAs} from 'file-saver';
-import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {Bundle, Coding} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+
+import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
@@ -101,5 +100,9 @@ export class OtherResourcesComponent implements OnInit {
 
   ngOnInit() {
     this.resourceTypes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+    const resourceIndex = this.resourceTypes.findIndex(resource => {
+      return resource.code === "Resource";
+    });
+    this.resourceTypes.splice(resourceIndex, 1);
   }
 }
