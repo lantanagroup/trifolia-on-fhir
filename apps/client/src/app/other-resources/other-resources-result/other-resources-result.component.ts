@@ -145,29 +145,6 @@ export class OtherResourcesResultComponent implements OnInit {
         }
 
         this.contentHasChanged(content);
-
-        /**this.message = 'Updating the resource';
-
-        this.fhirService.update(resource.resourceType, this.data.id, resource)
-          .subscribe((result: DomainResource) => {
-            if (result.resourceType === this.data.resourceType) {
-              Object.assign(this.data, result);
-              this.message = 'Updated resource';
-            } else if (result.resourceType === 'OperationOutcome') {
-              this.message = this.fhirService.getOperationOutcomeMessage(<OperationOutcome>result);
-
-              this.fhirService.read(this.data.resourceType, this.data.id)
-                .subscribe((updatedResource: DomainResource) => {
-                  Object.assign(this.data, updatedResource);
-                }, (err) => {
-                  console.log('Error re-opening resource after update: ' + err);
-                  this.message = 'Error re-opening resource after update';
-                });
-            }
-          }, (err) => {
-            console.log(err);
-            this.message = 'Error updating resource';
-          });**/
       };
       reader.readAsText(file);
     }
