@@ -1,18 +1,21 @@
 <div class="modal-header">
-    <h4 class="modal-title">Change resource ID</h4>
+  <h4 class="modal-title">Change resource ID</h4>
 </div>
 <div class="modal-body">
-    <p><strong>Resource: </strong> {{resourceType}}/{{originalId}}</p>
-    <p>You are changing the ID of this resource. The history for this resource will be preserved under the original id. Other resources referencing this by the original ID will need to be updated.</p>
+  <p><strong>Resource: </strong> {{resourceType}}/{{originalId}}</p>
+  <p>You are changing the ID of this resource. The history for this resource will be preserved under the original id.
+    Other resources referencing this by the original ID will need to be updated.</p>
 
-    <p class="alert alert-info" *ngIf="message">{{message}}</p>
+  <p class="alert alert-info" *ngIf="message">{{message}}</p>
 
-    <div class="form-group">
-        <label>New ID</label>
-        <input type="text" class="form-control" [(ngModel)]="newId" />
-    </div>
+  <div class="form-group">
+    <label>New ID</label>
+    <input type="text" class="form-control" [(ngModel)]="newId" [class.is-invalid]="!idIsValid"/>
+    <span class="help-block" *ngIf="!idIsValid">ID is required, and must not contain any spaces or special characters.</span>
+  </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="ok()" [disabled]="!newId || newId === originalId">OK</button>
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!newId || newId === originalId || !idIsValid">OK
+  </button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
 </div>

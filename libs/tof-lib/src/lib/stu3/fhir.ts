@@ -1,5 +1,15 @@
 import '../date-extensions';
-import {IBundle, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {
+  IAgentComponent,
+  IAuditEvent,
+  IBundle, ICodeableConcept, ICoding,
+  IContactDetail,
+  IContactPoint, IDetailComponent,
+  IDomainResource, IEntityComponent,
+  IExtension,
+  IHumanName, INetworkComponent,
+  IPractitioner, IResourceReference
+} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -77,7 +87,7 @@ export class Extension extends Element implements IExtension {
 
 }
 
-export class Coding extends Element {
+export class Coding extends Element implements ICoding {
   public system?: string;
   public version?: string;
   public code?: string;
@@ -223,7 +233,7 @@ export class DomainResource extends Resource implements IDomainResource {
 
 }
 
-export class CodeableConcept extends Element {
+export class CodeableConcept extends Element implements ICodeableConcept {
   public coding?: Coding[];
   public text?: string;
 
@@ -262,7 +272,7 @@ export class Period extends Element {
 
 }
 
-export class ResourceReference extends Element {
+export class ResourceReference extends Element implements IResourceReference {
   public reference?: string;
   public identifier?: Identifier;
   public display?: string;
@@ -3517,9 +3527,9 @@ export class AppointmentResponse extends DomainResource {
 
 }
 
-export class NetworkComponent extends BackboneElement {
+export class NetworkComponent extends BackboneElement implements INetworkComponent {
   public address?: string;
-  public type?: string;
+  public type?: Coding;
 
   constructor(obj?: any) {
     super(obj);
@@ -3528,14 +3538,14 @@ export class NetworkComponent extends BackboneElement {
         this.address = obj.address;
       }
       if (obj.type) {
-        this.type = obj.type;
+        this.type = new Coding(obj.type);
       }
     }
   }
 
 }
 
-export class AgentComponent extends BackboneElement {
+export class AgentComponent extends BackboneElement implements IAgentComponent {
   public role?: CodeableConcept[];
   public reference?: ResourceReference;
   public userId?: Identifier;
@@ -3620,7 +3630,7 @@ export class SourceComponent extends BackboneElement {
 
 }
 
-export class DetailComponent extends BackboneElement {
+export class DetailComponent extends BackboneElement implements IDetailComponent {
   public type: string;
   public value: string;
 
@@ -3638,7 +3648,7 @@ export class DetailComponent extends BackboneElement {
 
 }
 
-export class EntityComponent extends BackboneElement {
+export class EntityComponent extends BackboneElement implements IEntityComponent {
   public identifier?: Identifier;
   public reference?: ResourceReference;
   public type?: Coding;
@@ -3694,13 +3704,13 @@ export class EntityComponent extends BackboneElement {
 
 }
 
-export class AuditEvent extends DomainResource {
+export class AuditEvent extends DomainResource implements IAuditEvent {
   public resourceType = 'AuditEvent';
   public type: Coding;
   public subtype?: Coding[];
   public action?: string;
-  public recorded: Date;
-  public outcome?: string;
+  public recorded: string;
+  public outcome?: Coding;
   public outcomeDesc?: string;
   public purposeOfEvent?: CodeableConcept[];
   public agent: AgentComponent[];
@@ -3723,10 +3733,10 @@ export class AuditEvent extends DomainResource {
         this.action = obj.action;
       }
       if (obj.recorded) {
-        this.recorded = new Date(obj.recorded);
+        this.recorded = obj.recorded;
       }
       if (obj.outcome) {
-        this.outcome = obj.outcome;
+        this.outcome = new Coding(obj.outcome);
       }
       if (obj.outcomeDesc) {
         this.outcomeDesc = obj.outcomeDesc;
