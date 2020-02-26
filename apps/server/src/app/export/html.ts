@@ -145,7 +145,7 @@ export class HtmlExporter {
 
         if (code !== 0) {
           this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
-          this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
           reject('Return code from IG Publisher is not 0');
         } else {
           this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
