@@ -158,8 +158,8 @@ export class FhirController extends BaseController {
       }
     };
 
-    allResults.forEach(resource => {
-      const foundReference = findReference(resource);
+    allResults.forEach(result => {
+      const foundReference = findReference(result);
       if(foundReference){
         foundReference.reference =  `${resourceType}/${newId}`;
         foundReference.display = newId;
@@ -171,13 +171,13 @@ export class FhirController extends BaseController {
     if (allResources.length > 0) {
       const transaction = new Bundle();
       transaction.type = 'transaction';
-      transaction.entry = allResources.map((resource) => {
+      transaction.entry = allResources.map((r) => {
         return {
-          resource: resource,
-          fullUrl: buildUrl(fhirServerBase, resource.resourceType, resource.id),
+          resource: r,
+          fullUrl: buildUrl(fhirServerBase, r.resourceType, r.id),
           request: {
             method: 'PUT',
-            url: `${resource.resourceType}/${resource.id}`
+            url: `${r.resourceType}/${r.id}`
           }
         };
       });
