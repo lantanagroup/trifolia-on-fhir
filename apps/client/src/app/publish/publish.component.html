@@ -79,6 +79,27 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Template</label>
+            <select class="form-control" [(ngModel)]="options.template" (change)="templateHasChanged()">
+              <option value="hl7.fhir.template">HL7 FHIR Template</option>
+              <option value="hl7.cda.template">HL7 CDA Template</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Version</label>
+            <div>
+              <select class="form-control" [(ngModel)]="options.templateVersion">
+                <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab *ngIf="validation" id="validation">

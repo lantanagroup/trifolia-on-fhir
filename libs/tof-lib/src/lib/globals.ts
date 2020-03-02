@@ -227,7 +227,11 @@ export class Globals {
     exportLastDownloadOutput: 'exportLastDownloadOutput',
     exportLastUseLatestIgPublisher: 'exportLastUseLatestIgPublisher',
     atlassianAccountConfirmed: 'atlassian_account_confirmed',
-    lastResponseFormat: 'lastResponseFormat'
+    lastResponseFormat: 'lastResponseFormat',
+    lastTemplate: 'lastTemplate',
+    lastTemplateVersion: 'lastTemplateVersion',
+    lastExportTemplate: 'lastExportTemplate',
+    lastExportTemplateVersion: 'lastExportTemplateVersion'
   };
 
   static readonly FHIRUrls = {

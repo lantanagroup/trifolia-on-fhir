@@ -1,7 +1,7 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
@@ -14,6 +14,8 @@ import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import { HttpClient } from '@angular/common/http';
+import { error } from 'util';
 
 @Component({
   templateUrl: './publish.component.html',
@@ -29,6 +31,8 @@ export class PublishComponent implements OnInit {
   public autoScroll = true;
   public Globals = Globals;
   public inProgress = false;
+  public templateChanged = new EventEmitter();
+  public templateVersions : string[] = [];
 
   private packageId;
 
@@ -45,19 +49,47 @@ export class PublishComponent implements OnInit {
     private implementationGuideService: ImplementationGuideService,
     private cookieService: CookieService,
     public configService: ConfigService,
-    private exportService: ExportService) {
+    private exportService: ExportService,
+    private http: HttpClient) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
       this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
       this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
-
+    this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
+    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
     // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
     this.socketService.onConnected.subscribe(() => {
       if (this.packageId) {
         this.socketService.notifyExporting(this.packageId);
       }
     });
+
+    this.templateChanged
+      .subscribe(async () => {
+        let url = '';
+        this.templateVersions = [];
+        if(this.options.template === 'hl7.fhir.template'){
+          url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
+        }
+        else if(this.options.template === 'hl7.cda.template'){
+          url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
+        }
+
+        try{
+          const versionJSON = await this.http.get(url).toPromise();
+          if(versionJSON.hasOwnProperty('list') && versionJSON['list']){
+            for(let x = 0; x < versionJSON['list'].length; x++){
+              if(versionJSON['list'][x]['version']) this.templateVersions.push(versionJSON['list'][x]['version']);
+            }
+          }
+        }catch(ex){
+          this.templateVersions = ['current'];
+          this.message = "Error getting version list: " + getErrorString(ex);
+        }
+      }, (err) => {
+        this.message = "Error populating version numbers: " + getErrorString(err);
+      });
   }
 
   public implementationGuideChanged(implementationGuide: ImplementationGuide) {
@@ -121,6 +153,11 @@ export class PublishComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
+  public templateHasChanged() {
+    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.templateChanged.emit();
+  }
+
   public publish() {
     this.inProgress = true;
     this.socketOutput = '';
@@ -162,6 +199,8 @@ export class PublishComponent implements OnInit {
           this.implementationGuideChanged(implementationGuide);
         }, (err) => this.message = getErrorString(err));
     }
+
+    this.templateChanged.emit();
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
 
