@@ -66,7 +66,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label>Template</label>
-            <select class="form-control" [(ngModel)]="options.template" (change)="templateHasChanged()">
+            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
             </select>
@@ -76,7 +76,7 @@
           <div class="form-group">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion">
+              <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
                 <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
               </select>
             </div>

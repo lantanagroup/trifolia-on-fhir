@@ -1,7 +1,7 @@
-import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
@@ -14,8 +14,7 @@ import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { HttpClient } from '@angular/common/http';
-import { error } from 'util';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   templateUrl: './publish.component.html',
@@ -56,7 +55,6 @@ export class PublishComponent implements OnInit {
       this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
-    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
     // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
     this.socketService.onConnected.subscribe(() => {
       if (this.packageId) {
@@ -126,9 +124,24 @@ export class PublishComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
-  public templateHasChanged(){
+  public async templateChanged() {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
-    this.templateVersions = this.configService.getTemplateVersions(this.options);
+    this.templateVersions = await this.configService.getTemplateVersions(this.options);
+
+    const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
+    if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
+      this.options.templateVersion = templateVersionCookie;
+    } else if (this.templateVersions && this.templateVersions.length > 0) {
+      this.options.templateVersion = this.templateVersions[0];
+    } else {
+      this.options.templateVersion = 'current';
+    }
+
+    this.templateVersionChanged();
+  }
+
+  public templateVersionChanged() {
+    this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
   }
 
   public publish() {
@@ -173,10 +186,9 @@ export class PublishComponent implements OnInit {
         }, (err) => this.message = getErrorString(err));
     }
 
-    this.templateHasChanged();
+    this.templateChanged();
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
-
       if (data.packageId === this.packageId) {
         if (data.status === 'complete') {
           this.message = 'Done exporting';
@@ -189,9 +201,10 @@ export class PublishComponent implements OnInit {
             this.exportService.getPackage(this.packageId)
               .subscribe((results: any) => {
                 saveAs(results.body, igName + '.zip');
-                this.inProgress = false;
               });
           }
+
+          this.inProgress = false;
         } else if (data.status === 'error') {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';

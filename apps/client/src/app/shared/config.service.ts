@@ -7,8 +7,7 @@ import {CapabilityStatement as R4CapabilityStatement, Coding} from '../../../../
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { ExportOptions } from './export.service';
+import {ExportOptions} from './export.service';
 
 @Injectable()
 export class ConfigService {
@@ -40,28 +39,30 @@ export class ConfigService {
     }
   }
 
-  public getTemplateVersions(options: ExportOptions): string[] {
+  public async getTemplateVersions(options: ExportOptions): Promise<string[]> {
     let url = '';
     let templateVersions = [];
-    if(options.template === 'hl7.fhir.template'){
+
+    if (options.template === 'hl7.fhir.template') {
       url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
-    }
-    else if(options.template === 'hl7.cda.template'){
+    } else if(options.template === 'hl7.cda.template') {
       url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
     }
 
-    try{
-      this.http.get(url).toPromise().then(result => {
-        if(result.hasOwnProperty('list') && result['list']){
-          for(let x = 0; x < result['list'].length; x++){
-            if(result['list'][x]['version']) templateVersions.push(result['list'][x]['version']);
+    try {
+      const result = await this.http.get(url).toPromise();
+
+      if (result.hasOwnProperty('list') && result['list']) {
+        for (let x = 0; x < result['list'].length; x++) {
+          if (result['list'][x]['version']) {
+            templateVersions.push(result['list'][x]['version']);
           }
         }
-      });
-    }catch(ex){
+      }
+    } catch(ex) {
       templateVersions = ['current'];
-      throw new Error("Error getting version list: " + getErrorString(ex));
     }
+
     return templateVersions;
   }
 
