@@ -230,8 +230,6 @@ export class Globals {
     lastResponseFormat: 'lastResponseFormat',
     lastTemplate: 'lastTemplate',
     lastTemplateVersion: 'lastTemplateVersion',
-    lastExportTemplate: 'lastExportTemplate',
-    lastExportTemplateVersion: 'lastExportTemplateVersion'
   };
 
   static readonly FHIRUrls = {

@@ -31,7 +31,6 @@ export class PublishComponent implements OnInit {
   public autoScroll = true;
   public Globals = Globals;
   public inProgress = false;
-  public templateChanged = new EventEmitter();
   public templateVersions : string[] = [];
 
   private packageId;
@@ -64,32 +63,6 @@ export class PublishComponent implements OnInit {
         this.socketService.notifyExporting(this.packageId);
       }
     });
-
-    this.templateChanged
-      .subscribe(async () => {
-        let url = '';
-        this.templateVersions = [];
-        if(this.options.template === 'hl7.fhir.template'){
-          url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
-        }
-        else if(this.options.template === 'hl7.cda.template'){
-          url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
-        }
-
-        try{
-          const versionJSON = await this.http.get(url).toPromise();
-          if(versionJSON.hasOwnProperty('list') && versionJSON['list']){
-            for(let x = 0; x < versionJSON['list'].length; x++){
-              if(versionJSON['list'][x]['version']) this.templateVersions.push(versionJSON['list'][x]['version']);
-            }
-          }
-        }catch(ex){
-          this.templateVersions = ['current'];
-          this.message = "Error getting version list: " + getErrorString(ex);
-        }
-      }, (err) => {
-        this.message = "Error populating version numbers: " + getErrorString(err);
-      });
   }
 
   public implementationGuideChanged(implementationGuide: ImplementationGuide) {
@@ -153,9 +126,9 @@ export class PublishComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
-  public templateHasChanged() {
+  public templateHasChanged(){
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
-    this.templateChanged.emit();
+    this.templateVersions = this.configService.getTemplateVersions(this.options);
   }
 
   public publish() {
@@ -200,7 +173,7 @@ export class PublishComponent implements OnInit {
         }, (err) => this.message = getErrorString(err));
     }
 
-    this.templateChanged.emit();
+    this.templateHasChanged();
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
 

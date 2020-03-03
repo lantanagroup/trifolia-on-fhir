@@ -52,34 +52,8 @@ export class ExportComponent implements OnInit {
     this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.downloadOutput = true;
-    this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastExportTemplate) || this.options.template;
-    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastExportTemplateVersion) || this.options.templateVersion;
-
-    this.templateChanged
-      .subscribe(async () => {
-        let url = '';
-        this.templateVersions = [];
-        if(this.options.template === 'hl7.fhir.template'){
-          url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
-        }
-        else if(this.options.template === 'hl7.cda.template'){
-          url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
-        }
-
-        try{
-          const versionJSON = await this.http.get(url).toPromise();
-          if(versionJSON.hasOwnProperty('list') && versionJSON['list']){
-            for(let x = 0; x < versionJSON['list'].length; x++){
-              if(versionJSON['list'][x]['version']) this.templateVersions.push(versionJSON['list'][x]['version']);
-            }
-          }
-        }catch(ex){
-          this.templateVersions = ['current'];
-          this.message = "Error getting version list: " + getErrorString(ex);
-        }
-      }, (err) => {
-        this.message = "Error populating version numbers: " + getErrorString(err);
-      });
+    this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
+    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
 
   }
 
@@ -96,6 +70,11 @@ export class ExportComponent implements OnInit {
     } catch (ex) {
       this.message = 'Could not parse the bundle: ' + ex.message;
     }
+  }
+
+  public templateHasChanged(){
+    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.templateVersions = this.configService.getTemplateVersions(this.options);
   }
 
   public onTabChange(event: NgbTabChangeEvent) {
@@ -170,11 +149,6 @@ export class ExportComponent implements OnInit {
     if (this.cookieService.get(cookieKey)) {
       this.cookieService.remove(cookieKey);
     }
-  }
-
-  public templateHasChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastExportTemplate, this.options.template);
-    this.templateChanged.emit();
   }
 
   public responseFormatChanged() {
@@ -288,7 +262,7 @@ export class ExportComponent implements OnInit {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
     }
 
-    this.templateChanged.emit();
+    this.templateHasChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
