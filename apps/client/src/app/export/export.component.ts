@@ -31,7 +31,6 @@ export class ExportComponent implements OnInit {
   public activeTabId = 'html';
   public Globals = Globals;
   public templateVersions: string[] = [];
-  public templateChanged = new EventEmitter();
 
   @ViewChild('githubPanel', { static: true }) githubPanel: ExportGithubPanelComponent;
 
