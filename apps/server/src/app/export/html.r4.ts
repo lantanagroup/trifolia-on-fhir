@@ -116,13 +116,13 @@ export class R4HtmlExporter extends HtmlExporter {
 
       // Populate the index.md page with default content based on the IG
       if (pageInfo.fileName === 'index.md' && !pageInfo.content) {
-        pageInfo.content = '<a name="intro"> </a>\n### Introduction\n\n';
+        pageInfo.content = '### Overview\n\n';
 
         if (this.r4ImplementationGuide.description) {
-          const descriptionContent = '### Description\n\n' + this.r4ImplementationGuide.description + '\n\n';
-          pageInfo.content += descriptionContent;
+          const descriptionContent = this.r4ImplementationGuide.description + '\n\n';
+          pageInfo.content += descriptionContent + '\n\n';
         } else {
-          pageInfo.content += 'This implementation guide does not have a description, yet.';
+          pageInfo.content += 'This implementation guide does not have a description, yet.\n\n';
         }
 
         if (this.r4ImplementationGuide.contact) {
