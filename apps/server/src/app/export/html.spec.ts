@@ -44,10 +44,10 @@ describe('HtmlExporter', () => {
     it('should create a basic control file with xml extension', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
       delete htmlExporter.implementationGuide.version;
-      const control = htmlExporter.getControl(bundle, 'xml');
+      const control = htmlExporter.getControl(bundle, 'xml', 'hl7.fhir.template', '0.1.0');
       const expected = '[IG]\n' +
         'ig = input/test-ig.xml\n' +
-        'template = hl7.fhir.template\n' +
+        'template = hl7.fhir.template#0.1.0\n' +
         'usage-stats-opt-out = false\n';
       expect(control).toEqual(expected);
     });
@@ -55,10 +55,10 @@ describe('HtmlExporter', () => {
     it('should create a control file format with json extension', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;
       htmlExporter.implementationGuide.version = '1.1.0';
-      const control = htmlExporter.getControl(bundle, 'json');
+      const control = htmlExporter.getControl(bundle, 'json', 'hl7.cda.template', 'current');
       const expected = '[IG]\n' +
         'ig = input/test-ig.json\n' +
-        'template = hl7.fhir.template\n' +
+        'template = hl7.cda.template#current\n' +
         'usage-stats-opt-out = false\n';
       expect(control).toEqual(expected);
     });
@@ -68,7 +68,7 @@ describe('HtmlExporter', () => {
       bundleCopy.entry[0].resource.extension[0].extension.splice(2, 1);   // name is an extension at index 1 within the dependency extension
 
       htmlExporter.implementationGuide = <ImplementationGuide> bundleCopy.entry[0].resource;
-      const newControl = htmlExporter.getControl(bundleCopy, 'xml');
+      const newControl = htmlExporter.getControl(bundleCopy, 'xml', 'hl7.fhir.template', 'current');
 
       expect(newControl).toBeTruthy();
     });
