@@ -12,6 +12,8 @@ export class ExportOptions {
   public useLatest? = true;
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
+  public template = 'hl7.fhir.template';
+  public templateVersion = "";
 }
 
 @Injectable()
@@ -89,7 +91,9 @@ export class ExportService {
     }
 
     url += 'downloadOutput=' + options.downloadOutput.toString() + '&';
-    url += 'socketId=' + encodeURIComponent(this.socketService.socketId);
+    url += 'socketId=' + encodeURIComponent(this.socketService.socketId) + '&';
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
 
     return this.http.get(url, {responseType: 'text'});
   }

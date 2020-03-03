@@ -11,6 +11,8 @@ export class ExportOptions {
   public format: Formats;
   public exportFormat = ExportFormats.Bundle;
   public includeIgPublisherJar = false;
+  public template = 'hl7.fhir.template';
+  public templateVersion = 'current';
 
   public get isXml() {
     return this.format === 'application/xml' ||
@@ -50,6 +52,14 @@ export class ExportOptions {
 
       if (query.hasOwnProperty('includeIgPublisherJar')) {
         this.includeIgPublisherJar = query.includeIgPublisherJar.toLowerCase() === 'true';
+      }
+
+      if(query.hasOwnProperty('template')){
+        this.template = query.template;
+      }
+
+      if(query.hasOwnProperty('templateVersion')){
+        this.templateVersion = query.templateVersion;
       }
     }
   }
