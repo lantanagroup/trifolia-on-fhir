@@ -13,7 +13,7 @@ export class ExportOptions {
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
   public template = 'hl7.fhir.template';
-  public templateVersion = "";
+  public templateVersion = "current";
 }
 
 @Injectable()
@@ -36,6 +36,9 @@ export class ExportService {
       url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
     }
 
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
+
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
 
@@ -45,6 +48,10 @@ export class ExportService {
     if (options.responseFormat) {
       url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
     }
+
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
+
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
 
@@ -63,6 +70,9 @@ export class ExportService {
     if (options.includeIgPublisherJar === true) {
       url += 'includeIgPublisherJar=true&';
     }
+
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
 
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
@@ -99,7 +109,7 @@ export class ExportService {
   }
 
   public cancel(packageId: string){
-    let url = `/api/export/${packageId}/cancel`;
+    const url = `/api/export/${packageId}/cancel`;
     return this.http.post(url, null);
   }
 
