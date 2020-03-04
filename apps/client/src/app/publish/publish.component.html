@@ -1,3 +1,5 @@
+<h1>Publish</h1>
+
 <div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher (<strong>1.0.38-SNAPSHOT built 2020-01-11 @ 07:15</strong>).
   When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.
 </div>
@@ -83,7 +85,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label>Template</label>
-            <select class="form-control" [(ngModel)]="options.template" (change)="templateHasChanged()">
+            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
             </select>
@@ -93,7 +95,7 @@
           <div class="form-group">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion">
+              <select class="form-control" [(ngModel)]="options.templateVersion" (change)="templateVersionChanged()">
                 <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
               </select>
             </div>

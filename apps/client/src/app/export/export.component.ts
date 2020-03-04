@@ -52,8 +52,6 @@ export class ExportComponent implements OnInit {
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.downloadOutput = true;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
-    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
-
   }
 
   private async getImplementationGuideResources() {
@@ -71,9 +69,24 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public templateHasChanged(){
+  public async templateChanged() {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
-    this.templateVersions = this.configService.getTemplateVersions(this.options);
+    this.templateVersions = await this.configService.getTemplateVersions(this.options);
+
+    const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
+    if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
+      this.options.templateVersion = templateVersionCookie;
+    } else if (this.templateVersions && this.templateVersions.length > 0) {
+      this.options.templateVersion = this.templateVersions[0];
+    } else {
+      this.options.templateVersion = 'current';
+    }
+
+    this.templateVersionChanged();
+  }
+
+  public templateVersionChanged() {
+    this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
   }
 
   public onTabChange(event: NgbTabChangeEvent) {
@@ -261,7 +274,7 @@ export class ExportComponent implements OnInit {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
     }
 
-    this.templateHasChanged();
+    this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
