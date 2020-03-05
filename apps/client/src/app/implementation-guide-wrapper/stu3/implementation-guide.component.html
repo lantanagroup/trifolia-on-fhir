@@ -4,6 +4,9 @@
 
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span></h2>
+  <button type="button" class="btn btn-primary" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+    <i class="fa fa-trash"></i>
+  </button>
 
   <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
     <ngb-tab id="general">
