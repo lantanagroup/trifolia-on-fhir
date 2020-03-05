@@ -32,6 +32,7 @@ RUN npm prune --production
 FROM node:10-alpine
 
 RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre
+RUN gem install sassc --disable-march-tune-native
 RUN gem install jekyll bundler --no-document
 
 COPY --from=build-ToF /build/dist/. /ToF/
