@@ -440,18 +440,29 @@ export class FhirService {
       return;
     }
 
-    const results = this.fhir.validate(resource, {
-      // inject custom validation into the FHIR module
-      onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
-    });
+    try {
+      const results = this.fhir.validate(resource, {
+        // inject custom validation into the FHIR module
+        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
+      });
 
-    // Remove any messages that are only information
-    results.messages = (results.messages || []).filter((message) => message.severity !== Severities.Information);
+      // Remove any messages that are only information
+      results.messages = (results.messages || []).filter((message) => message.severity !== Severities.Information);
 
-    // Update the "valid" property to account for custom validations
-    results.valid = !(results.messages || []).find((message) => message.severity === Severities.Error);
+      // Update the "valid" property to account for custom validations
+      results.valid = !(results.messages || []).find((message) => message.severity === Severities.Error);
 
-    return results;
+      return results;
+    } catch (ex) {
+      return {
+        valid: false,
+        messages: [{
+          severity: Severities.Error,
+          message: `Internal error during validation: ${ex.message}`,
+          resourceId: resource.id
+        }]
+      };
+    }
   }
 
   public serialize(resource: Resource) {

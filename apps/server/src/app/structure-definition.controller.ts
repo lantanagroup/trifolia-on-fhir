@@ -7,8 +7,11 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
+import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
+import {Fhir} from 'fhir/fhir';
+import {BaseDefinitionResponseModel} from '../../../../libs/tof-lib/src/lib/base-definition-response-model';
 
 @Controller('api/structureDefinition')
 @UseGuards(AuthGuard('bearer'))
@@ -50,15 +53,94 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param type {string}
    */
   @Get('base')
-  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string) {
-    /* COMMENTING OUT THIS LOGIC. The Profile Editor does not handle profiles derived from other profiles correctly, for now.
+  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string): Promise<BaseDefinitionResponseModel> {
+    const ret = new BaseDefinitionResponseModel();
+    const fhirServer = this.configService.fhir.servers.find(s => s.id === request.fhirServerId);
+
+    if (!url.startsWith('http://hl7.org/fhir/StructureDefinition/')) {
+      try {
+        let profileWithSnapshot: StructureDefinition;
+
+        if (fhirServer.supportsSnapshot) {
+          const snapshotUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, '$snapshot', { url: url });
+          const results = await this.httpService.get(snapshotUrl).toPromise();
+          profileWithSnapshot = results.data;
+        } else {
+          profileWithSnapshot = await this.generateInternalSnapshot(request.fhirServerBase, request.fhir, url);
+        }
+
+        if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {
+          ret.base = profileWithSnapshot;
+          return ret;
+        }
+      } catch (ex) {
+        ret.message = ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome' ? getErrorString(null, ex.response.data) : ex.message;
+        ret.success = false;
+      }
+    }
+
+    // Extra logic in case one of the base profiles aren't present or snapshot generation fails...
+    // Should at least respond with a snapshot based on the core resource type from the spec
+    if (!type) {
+      ret.success = false;
+      ret.message = `Can't find one or more base profiles for ${url} and no type is specified to fall back on`;
+      return ret;
+    }
+
+    const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + type;
+    const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+
+    if (!baseTypeProfile) {
+      ret.success = false;
+      ret.message = `Can't find base profile in spec for ${baseUrl}`;
+    } else {
+      ret.base = baseTypeProfile;
+    }
+
+    return ret;
+  }
+
+  @Get()
+  public search(@User() user, @FhirServerBase() fhirServerBase?: string, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+    return super.baseSearch(user, fhirServerBase, query, headers);
+  }
+
+  @Get(':id')
+  public get(@FhirServerBase() fhirServerBase, @Query() query, @User() user, @Param('id') id: string) {
+    return super.baseGet(fhirServerBase, id, query, user);
+  }
+
+  @Post()
+  public async create(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
+    body = await this.generateProfileSnapshot(fhirServerId, body);
+    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId, applyContextPermissions);
+  }
+
+  @Put(':id')
+  public async update(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+    body = await this.generateProfileSnapshot(fhirServerId, body);
+    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId, applyContextPermissions);
+  }
+
+  @Delete(':id')
+  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
+  }
+
+  /**
+   * Collects all profiles related to the url specified and Uses the FHIR.js generateSnapshot() functionality to create a snapshot.
+   * @param fhirServerBase
+   * @param fhir
+   * @param url
+   */
+  private async generateInternalSnapshot(fhirServerBase: string, fhir: Fhir, url: string) {
     // Recursive function to get all base profiles for a given url
     const getNextBase = async (baseUrl: string, list: StructureDefinition[] = []) => {
-      const foundBaseProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+      const foundBaseProfile = fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
       if (foundBaseProfile) {
         list.push(foundBaseProfile);
       } else {
-        const requestUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, {url: baseUrl});
+        const requestUrl = buildUrl(fhirServerBase, 'StructureDefinition', null, null, {url: baseUrl});
         const results = await this.httpService.get<Bundle>(requestUrl).toPromise();
 
         if (!results.data || results.data.total !== 1) {
@@ -79,68 +161,53 @@ export class StructureDefinitionController extends BaseFhirController {
     try {
       baseProfiles = await getNextBase(url);
     } catch (ex) {
-      // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot based on the core spec
-      if (!type) {
-        throw new Error(`Can't find one or more base profiles for ${url} and no type is specified to fall back on`);
-      }
-
-      const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + type;
-      const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
-
-      if (!baseTypeProfile) {
-        throw new Error(`Can't find base profile for ${baseUrl}`);
-      }
-
-      return baseTypeProfile;
+      this.logger.warn(`Error while attempting to internally generate a snapshot for the profile ${url}: ${ex.message}`);
+      return null;
     }
 
     const found = baseProfiles.find((baseProfile) => baseProfile.url === url);
 
     if (!found.snapshot) {
       const baseProfilesBundle = SnapshotGenerator.createBundle(...(<PCStructureDefinition[]>baseProfiles));
-      request.fhir.generateSnapshot(baseProfilesBundle);
+      fhir.generateSnapshot(baseProfilesBundle);
     }
 
     return found;
-     */
+  }
 
-    // Extra logic in case one of the base profiles aren't present... Should at least respond with a snapshot based on the core spec
-    if (!type) {
-      throw new Error(`Can't find one or more base profiles for ${url} and no type is specified to fall back on`);
+  /**
+   * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
+   * @param fhirServerId
+   * @param body
+   */
+  private async generateProfileSnapshot(fhirServerId: string, body: any) {
+    const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
+    const fhirServerBase = fhirServer.uri;
+
+    if (!fhirServer.supportsSnapshot) {
+      // TODO: add internal snapshot generation logic
+      delete body.snapshot;
+      return body;
     }
 
-    const baseUrl = 'http://hl7.org/fhir/StructureDefinition/' + type;
-    const baseTypeProfile = request.fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
+    try {
+      const snapshotUrl = buildUrl(fhirServerBase, 'StructureDefinition', null, '$snapshot');
+      const results = await this.httpService.post(snapshotUrl, body).toPromise();
 
-    if (!baseTypeProfile) {
-      throw new Error(`Can't find base profile for ${baseUrl}`);
+      if (results.data && results.data.resourceType === 'StructureDefinition' && results.data.snapshot) {
+        return results.data;
+      }
+    } catch (ex) {
+      let msg = ex.message;
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        msg = getErrorString(null, ex.response.data);
+      }
+
+      this.logger.warn(`Could not generate snapshot during update to StructureDefinition ${body.id || 'new'}: ${msg}`);
     }
 
-    return baseTypeProfile;
-  }
-
-  @Get()
-  public search(@User() user, @FhirServerBase() fhirServerBase?: string, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
-    return super.baseSearch(user, fhirServerBase, query, headers);
-  }
-
-  @Get(':id')
-  public get(@FhirServerBase() fhirServerBase, @Query() query, @User() user, @Param('id') id: string) {
-    return super.baseGet(fhirServerBase, id, query, user);
-  }
-
-  @Post()
-  public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
-    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId, applyContextPermissions);
-  }
-
-  @Put(':id')
-  public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
-    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId, applyContextPermissions);
-  }
-
-  @Delete(':id')
-  public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
+    // If snapshot failed to generate, make sure the current profile is not saved with an out-dated snapshot.
+    delete body.snapshot;
+    return body;
   }
 }

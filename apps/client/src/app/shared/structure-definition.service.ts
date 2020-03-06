@@ -5,6 +5,7 @@ import {Bundle, StructureDefinition as STU3StructureDefinition} from '../../../.
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 
 @Injectable()
 export class StructureDefinitionService {
@@ -65,14 +66,14 @@ export class StructureDefinitionService {
     return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
   }
 
-  public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<STU3StructureDefinition | R4StructureDefinition> {
+  public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<BaseDefinitionResponseModel> {
     let url = `/api/structureDefinition/base?url=${encodeURIComponent(baseDefinition)}&`;
 
     if (type) {
       url += `type=${encodeURIComponent(type)}&`;
     }
 
-    return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
+    return this.http.get<BaseDefinitionResponseModel>(url);
   }
 
   public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition> {

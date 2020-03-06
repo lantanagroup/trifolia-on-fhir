@@ -8,10 +8,13 @@ import {
   ConstraintComponent,
   DifferentialComponent,
   ElementDefinition as STU3ElementDefinition,
-  StructureDefinition as STU3StructureDefinition, TypeRefComponent
+  StructureDefinition as STU3StructureDefinition,
+  TypeRefComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  ElementDefinition as R4ElementDefinition, ElementDefinitionConstraintComponent, ElementDefinitionTypeRefComponent,
+  ElementDefinition as R4ElementDefinition,
+  ElementDefinitionConstraintComponent,
+  ElementDefinitionTypeRefComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {RecentItemService} from '../shared/recent-item.service';
@@ -23,8 +26,9 @@ import {ElementDefinitionPanelComponent} from './element-definition-panel/elemen
 import {AuthService} from '../shared/auth.service';
 import {BaseComponent} from '../base.component';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {Severities, ValidatorResponse} from 'fhir/validator';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -40,7 +44,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public baseStructureDefinition;
   public elements: ElementTreeModel[] = [];
   public selectedElement: ElementTreeModel;
-  public validation: any;
+  public validation: ValidatorResponse;
   public message: string;
   public sdNotFound = false;
   public Globals = Globals;
@@ -50,6 +54,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
 
   private navSubscription: any;
+  private baseDefResponse: BaseDefinitionResponseModel;
 
   constructor(
     public route: ActivatedRoute,
@@ -402,16 +407,15 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.message = 'Loading base structure definition...';
-    let baseStructureDefinition;
 
     try {
-      baseStructureDefinition = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
+      this.baseDefResponse = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
     } catch (err) {
       this.message = getErrorString(err);
       return;
     }
 
-    this.baseStructureDefinition = baseStructureDefinition;
+    this.baseStructureDefinition = this.baseDefResponse.base;
     this.populateBaseElements();
     this.recentItemService.ensureRecentItem(
       Globals.cookieKeys.recentStructureDefinitions,
@@ -642,12 +646,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.strucDefService.save(this.structureDefinition)
-      .subscribe((results: STU3StructureDefinition | R4StructureDefinition) => {
+      .subscribe((updatedStructureDefinition: STU3StructureDefinition | R4StructureDefinition) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
+          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${updatedStructureDefinition.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, results.id, results.name);
+          this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
+          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -674,6 +679,22 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.validation = this.fhirService.validate(this.structureDefinition, {
         baseStructureDefinition: this.baseStructureDefinition
       });
+
+      if (this.baseDefResponse && !this.baseDefResponse.success) {
+        if (this.baseDefResponse.message) {
+          this.validation.messages.push({
+            severity: Severities.Error,
+            location: 'StructureDefinition.baseDefinition',
+            message: `Error getting snapshot of base definition: ${this.baseDefResponse.message}`
+          });
+        } else {
+          this.validation.messages.push({
+            severity: Severities.Error,
+            location: 'StructureDefinition.baseDefinition',
+            message: `Unknown error getting snapshot of base definition.`
+          });
+        }
+      }
     }
   }
 
