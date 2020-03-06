@@ -62,6 +62,27 @@
           <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR. If Publish fails to run, try re-running with 'No' selected for this option.</div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Template</label>
+            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
+              <option value="hl7.fhir.template">HL7 FHIR Template</option>
+              <option value="hl7.cda.template">HL7 CDA Template</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Version</label>
+            <div>
+              <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
+                <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab title="Bundle" id="bundle">

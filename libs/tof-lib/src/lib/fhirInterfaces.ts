@@ -5,6 +5,43 @@ export interface IResourceReference {
   display?: string;
 }
 
+export interface INetworkComponent {
+  address?: string;
+  type?: ICoding;
+}
+
+export interface IAgentComponent{
+  role?: ICodeableConcept[];
+  altId?: string;
+  name?: string;
+  requestor: boolean;
+  location?: IResourceReference;
+  policy?: string[];
+  media?: ICoding;
+  network?: INetworkComponent;
+  purposeOfUse?: ICodeableConcept[];
+}
+
+export interface ISourceComponent {
+  site?: string;
+  type?: ICoding[];
+}
+
+export interface IDetailComponent {
+  type: string;
+}
+
+export interface IEntityComponent {
+  type?: ICoding;
+  role?: ICoding;
+  lifecycle?: ICoding;
+  securityLabel?: ICoding[];
+  name?: string;
+  description?: string;
+  query?: string; //stored as base64
+  detail?: IDetailComponent[];
+}
+
 export interface ICoding {
   system?: string;
   version?: string;
@@ -177,4 +214,17 @@ export interface IStructureDefinition extends IDomainResource {
   differential?: {
     element: IElementDefinition[];
   };
+}
+
+export interface IAuditEvent {
+  type: ICoding;
+  subtype?: ICoding[];
+  action?: string;
+  recorded: string;
+  outcome?: ICoding;
+  outcomeDesc?: string;
+  purposeOfEvent?: ICodeableConcept[];
+  agent: IAgentComponent[];
+  source: ISourceComponent;
+  entity?: IEntityComponent[];
 }

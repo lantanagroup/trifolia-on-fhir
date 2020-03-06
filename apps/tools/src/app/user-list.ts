@@ -79,7 +79,11 @@ export class UserListCommand extends BaseTools {
         const foundEmail = (firstPractitioner.telecom || []).find((telecom) => telecom.system === 'email');
         const foundPhone = (firstPractitioner.telecom || []).find((telecom) => telecom.system === 'phone');
         const name = getHumanNamesDisplay(firstPractitioner.name);
-        let firstName, lastName;
+        let firstName, lastName, email;
+
+        if (foundEmail && foundEmail.value) {
+          email = foundEmail.value.replace('mailto:', '');
+        }
 
         if (name.split(' ').length === 2) {
           firstName = name.split(' ')[1];
@@ -89,7 +93,7 @@ export class UserListCommand extends BaseTools {
         return {
           identifier: identifier,
           name: name,
-          email: foundEmail ? foundEmail.value : null,
+          email: email,
           phone: foundPhone ? foundPhone.value : null,
           firstName: firstName,
           lastName: lastName
@@ -100,9 +104,15 @@ export class UserListCommand extends BaseTools {
       });
 
     if (this.options.auth0export) {
-      let content = fs.readFileSync(this.options.auth0export).toString();
+      let content = fs.readFileSync(this.options.auth0export).toString().trim();
       content = '[' + content.replace(/\n/g, ',\n') + ']';
-      this.auth0users = <Auth0User[]> JSON.parse(content);
+
+      try {
+        this.auth0users = <Auth0User[]>JSON.parse(content);
+      } catch (ex) {
+        console.error('Cannot read auth0 export content: ' + ex.message);
+        process.exit(1);
+      }
 
       results.forEach(r => {
         const auth0User = this.auth0users.find(a => a.user_id.indexOf('|' + r.identifier) >= 0);
@@ -120,8 +130,9 @@ export class UserListCommand extends BaseTools {
     if (!this.options.tabs) {
       console.table(results);
     } else {
+      console.log(['Number', 'Identifier', 'Name', 'First Name', 'Last Name', 'Email', 'Phone'].join('\t'));
       results.forEach((r, i) => {
-        const cells = [i, r.identifier, r.name, r.firstName, r.lastName, r.email, r.phone];
+        const cells = [i + 1, r.identifier, r.name, r.firstName, r.lastName, r.email, r.phone];
         console.log(cells.join('\t'));
       });
     }

@@ -1,0 +1,8 @@
+textarea {
+  height: 100%;
+}
+
+select {
+  max-width: 150px;
+  margin-left: 7px;
+}

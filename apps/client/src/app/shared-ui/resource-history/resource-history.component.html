@@ -1,6 +1,6 @@
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
-<div class="row">
+<div class="row" *ngIf="historyBundle && historyBundle.entry">
   <div [class.col-md-12]="!compareResource" [class.col-md-4]="!!compareResource">
     <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
       <thead>
@@ -12,8 +12,8 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource.meta.lastUpdated}}</a></td>
+        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
+        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.lastUpdated}}</a></td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
       </tbody>

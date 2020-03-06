@@ -10,7 +10,9 @@ import {
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {AuditEvent as STU3AuditEvent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
+  AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -19,6 +21,9 @@ import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import * as dateExtension from '../../../../libs/tof-lib/src/lib/date-extensions'
+import { IAuditEvent, IDomainResource } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { TofLogger } from './tof-logger';
 
 export const zip = (p): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -55,6 +60,75 @@ export const rmdir = (p): Promise<void> => {
     });
   });
 };
+
+export async function createAuditEvent(logger: TofLogger, httpService: HttpService, fhirServerVersion: string,
+                                       fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
+  try {
+    let auditEvent: IAuditEvent;
+    
+    if (fhirServerVersion === 'stu3') {
+      const stu3AuditEvent = new STU3AuditEvent();
+      stu3AuditEvent.type = {
+        code: "110100",
+        display: "Application Activity"
+      };
+      stu3AuditEvent.action = action;
+      stu3AuditEvent.recorded = new Date(Date.now()).formatFhir();
+      stu3AuditEvent.agent = [{
+        userId: {
+          value: usi.practitioner.identifier[0].value
+        },
+        requestor: true,
+        reference: {
+          reference: `Practitioner/${usi.practitioner.id}`
+        }
+      }];
+      stu3AuditEvent.entity = [{
+        type: {
+          code: resource.resourceType
+        },
+        securityLabel: resource.meta && resource.meta.security ? resource.meta.security : null,
+        reference: {
+          reference: `${resource.resourceType}/${resource.id}`
+        }
+      }];
+      auditEvent = stu3AuditEvent;
+    } else if (fhirServerVersion === 'r4') {
+      const r4AuditEvent = new R4AuditEvent();
+      r4AuditEvent.type = {
+        code: "110100",
+        display: "Application Activity"
+      };
+      r4AuditEvent.action = action;
+      r4AuditEvent.recorded = new Date(Date.now()).formatFhir();
+      r4AuditEvent.agent = [{
+        altId: usi.practitioner.identifier[0].value,
+        requestor: true,
+        who: {
+          reference: `Practitioner/${usi.practitioner.id}`
+        }
+      }];
+      r4AuditEvent.entity = [{
+        type: {
+          code: resource.resourceType
+        },
+        securityLabel: resource.meta && resource.meta.security ? resource.meta.security : null,
+        what: {
+          reference: `${resource.resourceType}/${resource.id}`
+        }
+      }];
+      auditEvent = r4AuditEvent;
+    } else {
+      throw new Error(`Cannot create AuditEvent for unexpected FHIR server version ${fhirServerVersion}`);
+    }
+
+    let url: string = buildUrl(fhirServerBase, "AuditEvent");
+
+    await httpService.post(url, auditEvent).toPromise();
+  } catch (ex) {
+    logger.error(`Failed to create audit event record due to: ${ex.message}`);
+  }
+}
 
 export interface ParsedFhirUrl {
   resourceType?: string;

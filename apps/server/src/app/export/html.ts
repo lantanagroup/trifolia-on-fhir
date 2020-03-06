@@ -81,11 +81,13 @@ export class HtmlExporter {
    * Override in version-specific FHIR implementations
    * @param bundle The bundle that contains all resources in the IG
    * @param format The format that the user selected for the export
+   * @param template The type of template used (FHIR or CDA)
+   * @param templateVersion The version of the template used
    */
-  public getControl(bundle: any, format: Formats) {
+  public getControl(bundle: any, format: Formats, template: string, templateVersion: string) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
-      'template = hl7.fhir.template\n' +
+      `template = ${template}#${templateVersion}\n` +
       'usage-stats-opt-out = false\n';
   }
 
@@ -145,7 +147,7 @@ export class HtmlExporter {
 
         if (code !== 0) {
           this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
-          this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
           reject('Return code from IG Publisher is not 0');
         } else {
           this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
@@ -191,7 +193,7 @@ export class HtmlExporter {
     });
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -255,7 +257,7 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    control = this.getControl(this.bundle, format);
+    control = this.getControl(this.bundle, format, template, templateVersion);
 
     this.logger.log('Saving the control file to the temp directory');
 

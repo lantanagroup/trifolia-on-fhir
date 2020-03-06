@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { saveAs } from 'file-saver';
 import { ExportOptions, ExportService } from '../shared/export.service';
@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { AuthService } from '../shared/auth.service';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { getErrorString, getStringFromBlob } from '../../../../../libs/tof-lib/src/lib/helper';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   templateUrl: './export.component.html',
@@ -29,6 +30,7 @@ export class ExportComponent implements OnInit {
   public searching = false;
   public activeTabId = 'html';
   public Globals = Globals;
+  public templateVersions: string[] = [];
 
   @ViewChild('githubPanel', { static: true }) githubPanel: ExportGithubPanelComponent;
 
@@ -43,11 +45,13 @@ export class ExportComponent implements OnInit {
     private cookieService: CookieService,
     private githubService: GithubService,
     private fhirService: FhirService,
-    public configService: ConfigService) {
+    public configService: ConfigService,
+    public http: HttpClient) {
 
     this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.downloadOutput = true;
+    this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
   }
 
   private async getImplementationGuideResources() {
@@ -63,6 +67,26 @@ export class ExportComponent implements OnInit {
     } catch (ex) {
       this.message = 'Could not parse the bundle: ' + ex.message;
     }
+  }
+
+  public async templateChanged() {
+    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.templateVersions = await this.configService.getTemplateVersions(this.options);
+
+    const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
+    if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
+      this.options.templateVersion = templateVersionCookie;
+    } else if (this.templateVersions && this.templateVersions.length > 0) {
+      this.options.templateVersion = this.templateVersions[0];
+    } else {
+      this.options.templateVersion = 'current';
+    }
+
+    this.templateVersionChanged();
+  }
+
+  public templateVersionChanged() {
+    this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
   }
 
   public onTabChange(event: NgbTabChangeEvent) {
@@ -249,6 +273,8 @@ export class ExportComponent implements OnInit {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
     }
+
+    this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)

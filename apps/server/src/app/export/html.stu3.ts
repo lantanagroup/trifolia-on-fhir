@@ -129,6 +129,14 @@ export class STU3HtmlExporter extends HtmlExporter {
     newIg.fhirVersion = [this.getOfficialFhirVersion()];
     newIg.packageId = `hl7.fhir.${newIg.id}`;
     newIg.contact = this.stu3ImplementationGuide.contact;
+    newIg.version = this.stu3ImplementationGuide.version;
+    newIg.description = this.stu3ImplementationGuide.description;
+    newIg.name = this.stu3ImplementationGuide.name;
+
+    const foundPackageExtension = (this.stu3ImplementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-package-id']);
+    if (foundPackageExtension && foundPackageExtension.valueString) {
+      newIg.packageId = foundPackageExtension.valueString;
+    }
 
     newIg.definition = {
       resource: [],
