@@ -3,6 +3,10 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Bundle, ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { ConfigService } from './config.service';
+import { Router } from '@angular/router';
+
 
 export class PublishedGuideModel {
     public name: string;
@@ -14,7 +18,9 @@ export class PublishedGuideModel {
 @Injectable()
 export class ImplementationGuideService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient,
+                public configService: ConfigService,
+                public router: Router) { }
 
     /*
     private _serverError(err: any) {
@@ -58,6 +64,25 @@ export class ImplementationGuideService {
         } else {
             return this.http.post('/api/implementationGuide', implementationGuide);
         }
+    }
+
+    public deleteImplementationGuide(ig: STU3ImplementationGuide | R4ImplementationGuide){
+      if (!confirm(`Are you sure you want to delete ${ig.name}?`)) {
+        return false;
+      }
+
+      const name = ig.name;
+      const id = ig.id;
+
+      this.removeImplementationGuide(ig.id)
+        .subscribe(() => {
+          this.configService.project = null;
+          // noinspection JSIgnoredPromiseFromCall
+          this.router.navigate([`${this.configService.fhirServer}/home`]);
+          alert(`IG ${name} with id ${id} has been deleted`);
+        }, (err) => {
+          console.log('Error while deleting the IG: ' + getErrorString(err));
+        });
     }
 
     public removeImplementationGuide(id: string) {
