@@ -1,63 +1,63 @@
 div.elements {
-    display: none;
+  display: none;
 }
 
 div.element-definition > .card-header > .pull-right {
-    display: none;
+  display: none;
 }
 
 div.elements > .element {
-    width: 100%;
-    display: flex;
-    border-bottom: 1px solid lightgray;
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid lightgray;
 }
 
 div.elements > .element span.property,
 div.elements > .element span.action {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 @media (max-width: 1024px) {
-    div.element-definition {
-        top: 0px;
-        height: 100%;
-        left: 6px;
-        width: auto !important;
-        right: 14px;
-    }
+  div.element-definition {
+    top: 0px;
+    height: 100%;
+    left: 6px;
+    width: auto !important;
+    right: 14px;
+  }
 
-    table.elements {
-        display:  none;
-    }
+  table.elements {
+    display: none;
+  }
 
-    div.elements {
-        display: inherit;
-    }
+  div.elements {
+    display: inherit;
+  }
 
-    div.element-definition > .card-header > .pull-right {
-        display: inherit;
-    }
+  div.element-definition > .card-header > .pull-right {
+    display: inherit;
+  }
 }
 
 div.element-definition {
-    position: absolute;
-    width: 33%;
-    right: 23px;
-    top: 0px;
-    height: 100%;
+  position: absolute;
+  width: 33%;
+  right: 23px;
+  top: 0px;
+  height: 100%;
 }
 
 tr.selected > td {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 tr.selected > td:first-child {
-    border-left: 1px solid black;
+  border-left: 1px solid black;
 }
 
 tr.selected > td:last-child {
-    border-right: 1px solid black;
+  border-right: 1px solid black;
 }
 
 tr.selected > td {
@@ -65,67 +65,72 @@ tr.selected > td {
 }
 
 tr.constrained {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .sd-main:not(.small) {
-    width: 100%;
+  width: 100%;
 }
 
 .sd-main.small {
-    width: 75%;
-    display: inline-table;
-    padding-right: 10px;
+  width: 75%;
+  display: inline-table;
+  padding-right: 10px;
 }
 
 .selected-element {
-    width: 25%;
-    position: fixed;
-    right: 29px;
-    top: 88px;
+  width: 25%;
+  position: fixed;
+  right: 29px;
+  top: 88px;
 }
 
 .selected-element {
-    overflow-y: auto;
-    max-height: 85%;
+  overflow-y: auto;
+  max-height: 85%;
 }
 
 div.element-definition > div.card-body {
-    height: 100%;
-    overflow-y: auto;
+  height: 100%;
+  overflow-y: auto;
 }
 
 div.element-definition .card-body {
-    padding: 0px;
-    margin-top: -1px;
+  padding: 0px;
+  margin-top: -1px;
 }
 
 .card.context {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 div.expand-collapse {
-    display: inline-block;
-    width: 15px;
+  display: inline-block;
+  width: 15px;
+  margin-right: 5px;
 }
 
 table.elements .element-name > div {
-    display: flex;
+  display: flex;
 }
 
 table.elements > thead > tr,
 table.elements > tbody > tr {
-    height: 25px;
+  height: 25px;
 }
 
 table.elements > tbody > tr:last-child {
-    height: 100%;
+  height: 100%;
 }
 
 th.element-binding, td.element-binding {
-    word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 div.element-definition.card .card-body {
   padding: 10px;
+}
+
+.table.elements td, .table th {
+  padding: 5px;
 }

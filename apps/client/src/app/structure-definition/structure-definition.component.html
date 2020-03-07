@@ -233,17 +233,17 @@
       </ng-template>
     </ngb-tab>
 
-    <ngb-tab id="elements" [disabled]="!constraintManager && !constraintManager.elements">
+    <ngb-tab id="elements" *ngIf="constraintManager && constraintManager.elements">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
       </ng-template>
       <ng-template ngbTabContent>
         <div class="elements">
           <div class="element" *ngFor="let e of constraintManager.elements">
+            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
             <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
               <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
             </div>
-            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
             <div>
               <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
               <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
@@ -292,10 +292,10 @@
               [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
             <td class="element-name" [class.has-children]="e.hasChildren">
               <div>
+                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
                 <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
                   <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                 </div>
-                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
                 {{e.displayId}}
                 <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
               </div>
