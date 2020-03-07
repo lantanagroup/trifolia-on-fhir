@@ -150,12 +150,48 @@ export class ElementTreeModel {
     return this.baseElement.min;
   }
 
+  get minString(): string {
+    if (this.constrainedElement && this.constrainedElement.hasOwnProperty('min')) {
+      return this.constrainedElement.min.toString();
+    }
+
+    return this.baseElement.min.toString();
+  }
+
+  set minString(value: string) {
+    try {
+      if (this.constrainedElement) {
+        const min = parseInt(value, 10);
+
+        if (min >= 0) {
+          this.constrainedElement.min = min;
+        }
+      }
+    } catch (ex) {}
+  }
+
   get max(): string {
     if (this.constrainedElement && this.constrainedElement.hasOwnProperty('max')) {
       return this.constrainedElement.max;
     }
 
     return this.baseElement.max;
+  }
+
+  set max(value: string) {
+    if (this.constrainedElement) {
+      if (value === '*') {
+        this.constrainedElement.max = value;
+      } else {
+        try {
+          const maxNum = parseInt(value, 10);
+
+          if (maxNum >= 0) {
+            this.constrainedElement.max = maxNum.toString();
+          }
+        } catch (ex) {}
+      }
+    }
   }
 
   get constraints(): string {

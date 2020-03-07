@@ -146,3 +146,7 @@ table.elements td {
 table.elements tr td:last-child {
   border-right: none;
 }
+
+table.elements td.element-cardinality {
+  width: 135px;
+}

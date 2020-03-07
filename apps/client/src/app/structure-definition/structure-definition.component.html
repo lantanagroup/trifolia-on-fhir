@@ -307,7 +307,15 @@
               <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
             </td>
-            <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
+            <td class="element-cardinality">
+              <div class="input-group">
+                <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" />
+                <div class="input-group-append">
+                  <span class="input-group-text">...</span>
+                </div>
+                <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" />
+              </div>
+            </td>
             <td class="element-type">{{e.typeDisplay}}</td>
             <td class="element-binding">{{e.constraints}}</td>
           </tr>
