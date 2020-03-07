@@ -142,7 +142,9 @@ export class R4HtmlExporter extends HtmlExporter {
       return theList;
     };
 
-    if (!this.r4ImplementationGuide.definition.page || this.r4ImplementationGuide.definition.page.nameUrl !== 'index.html') {
+    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+
+    if (this.pageInfos.length === 0 || !this.pageInfos[0].fileName || !this.pageInfos[0].fileName.startsWith('index.')) {
       const originalFirstPage = this.r4ImplementationGuide.definition.page;
       this.r4ImplementationGuide.definition.page = {
         title: 'IG Home Page',
@@ -150,9 +152,34 @@ export class R4HtmlExporter extends HtmlExporter {
         generation: 'markdown',
         page: originalFirstPage ? [originalFirstPage] : []
       };
+
+      const rootPageInfo = new PageInfo();
+      rootPageInfo.fileName = 'index.md';
+      rootPageInfo.page = this.r4ImplementationGuide.definition.page;
+      this.pageInfos.splice(0, 0, rootPageInfo);
     }
 
-    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+    if (!this.pageInfos[0].content) {
+      let indexContent = '### Overview\n\n';
+
+      if (this.r4ImplementationGuide.description) {
+        const descriptionContent = this.r4ImplementationGuide.description + '\n\n';
+        indexContent += descriptionContent + '\n\n';
+      } else {
+        indexContent += 'This implementation guide does not have a description, yet.\n\n';
+      }
+
+      if (this.r4ImplementationGuide.contact) {
+        const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
+          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
+          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+        });
+        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+        indexContent += authorsContent;
+      }
+
+      this.pageInfos[0].content = indexContent;
+    }
   }
 
   protected prepareImplementationGuide(): DomainResource {
