@@ -1,4 +1,29 @@
-import {ElementDefinitionDiscriminatorComponent} from './r4/fhir';
+export function setChoice(source: any, dest: any, choiceName: string, ... choices: string[]) {
+  const primitives = ['base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid'];
+
+  if (!choices || choices.length === 0) {
+    throw new Error('No choices specified for setChoice()');
+  }
+
+  for (const choice of choices) {
+    const propertyName = choiceName + choice.substring(0, 1).toUpperCase() + choice.substring(1);
+    const sourceValue = source[propertyName];
+
+    if (sourceValue) {
+      if (primitives.indexOf(choice)) {
+        dest[propertyName] = sourceValue;
+      } else {
+        let className = choice;
+
+        if (className === 'Reference') {
+          className = 'ResourceReference';
+        }
+
+        dest[propertyName] = new (<any>window)[className](sourceValue);
+      }
+    }
+  }
+}
 
 export interface IResourceReference {
   reference?: string;
