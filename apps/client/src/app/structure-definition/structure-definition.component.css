@@ -131,6 +131,18 @@ div.element-definition.card .card-body {
   padding: 10px;
 }
 
-.table.elements td, .table th {
+table.elements td, .table th {
   padding: 5px;
+}
+
+table.elements td.element-properties {
+  min-width: 50px;
+}
+
+table.elements td {
+  border-right: 1px dotted gray;
+}
+
+table.elements tr td:last-child {
+  border-right: none;
 }

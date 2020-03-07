@@ -300,7 +300,7 @@
                 <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
               </div>
             </td>
-            <td class="element-properties">
+            <td class="element-properties" [ngbPopover]="elementPropertiesPopover" container="body" triggers="manual" (click)="e.constrainedElement ? epp.open() : null" #epp="ngbPopover">
               <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
@@ -401,3 +401,9 @@
   </div>
   <span class="message">{{message}}</span>
 </footer>
+
+<ng-template #elementPropertiesPopover>
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isSummary" /> Is Summary <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isModifier" /> Is Modifier <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.mustSupport" /> Must Support
+</ng-template>
