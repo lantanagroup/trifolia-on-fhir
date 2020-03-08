@@ -1,105 +1,83 @@
 <div class="modal-header">
-    <h4 class="modal-title">{{element ? element.path : 'Unknown'}}'s Type</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
+  <h4 class="modal-title">{{element ? element.path : 'Unknown'}}'s Type</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 
-<!-- FHIR R4 -->
-<div class="modal-body" *ngIf="type && configService.isFhirR4">
-    <div class="form-group">
-        <label>
-            Code <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
-        </label>
-        <select class="form-control" [(ngModel)]="type.code">
-            <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-        </select>
-    </div>
+<div class="modal-body">
+  <div class="form-group">
+    <label>
+      Code
+      <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
+    </label>
+    <select class="form-control" [(ngModel)]="type.code">
+      <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
+    </select>
+  </div>
 
-    <div class="form-group">
-        <label>
-            Profile <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
-        </label>
-        <p *ngFor="let p of type.profile">
-            <input type="text" class="form-control" />
-        </p>
+  <div class="form-group">
+    <label>
+      Profile
+      <app-tooltip-icon tooltipKey="ed.type.profile"></app-tooltip-icon>
+    </label>
+    <div class="input-group">
+      <input type="text" class="form-control" [(ngModel)]="type.profile"/>
+      <input type="text" class="form-control" [(ngModel)]="profileElement" placeholder="Profile Element"/>
+      <div class="input-group-append">
+        <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectProfile('profile')">
+          <i class="fas fa-hand-pointer"></i>
+        </button>
+      </div>
     </div>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Target Profile
+      <app-tooltip-icon tooltipKey="ed.type.targetProfile"></app-tooltip-icon>
+    </label>
+    <div class="input-group">
+      <input type="text" class="form-control" [(ngModel)]="type.targetProfile"/>
+      <div class="input-group-append">
+        <button type="button" class="btn btn-primary" title="Select a target profile" (click)="selectProfile('targetProfile')">
+          <i class="fas fa-hand-pointer"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Aggregation
+      <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
+    </label>
+    <div class="input-group">
+      <select class="form-control" [(ngModel)]="type.aggregation">
+        <option [ngValue]="undefined">NONE</option>
+        <option>contained</option>
+        <option>referenced</option>
+        <option>bundled</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Versioning
+      <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
+    </label>
+    <div class="input-group">
+      <select class="form-control" [(ngModel)]="type.versioning">
+        <option [ngValue]="undefined">NONE</option>
+        <option>either</option>
+        <option>independent</option>
+        <option>specific</option>
+      </select>
+    </div>
+  </div>
 </div>
 
-<!-- FHIR STU3 -->
-<div class="modal-body" *ngIf="type && configService.isFhirSTU3">
-    <div class="form-group">
-        <label>
-            Code
-            <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
-        </label>
-        <select class="form-control" [(ngModel)]="type.code">
-            <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('profile')" (ngModelChange)="Globals.toggleProperty(type, 'profile', '')"/>
-            Profile
-            <app-tooltip-icon tooltipKey="ed.type.profile"></app-tooltip-icon>
-        </label>
-        <div class="input-group">
-            <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('profile')" [(ngModel)]="type.profile"/>
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-default" title="Select a profile" (click)="selectProfile('profile')">
-                    <i class="fas fa-hand-pointer"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('targetProfile')" (ngModelChange)="Globals.toggleProperty(type, 'targetProfile', '')"/>
-            Target Profile
-            <app-tooltip-icon tooltipKey="ed.type.targetProfile"></app-tooltip-icon>
-        </label>
-        <div class="input-group">
-            <input type="text" class="form-control" [disabled]="!type.hasOwnProperty('targetProfile')" [(ngModel)]="type.targetProfile"/>
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-default" title="Select a target profile" (click)="selectProfile('targetProfile')">
-                    <i class="fas fa-hand-pointer"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('aggregation')" (ngModelChange)="Globals.toggleProperty(type, 'aggregation', 'contained')"/>
-            Aggregation
-            <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
-        </label>
-        <div class="input-group">
-            <select class="form-control" [disabled]="!type.hasOwnProperty('aggregation')" [(ngModel)]="type.aggregation">
-                <option>contained</option>
-                <option>referenced</option>
-                <option>bundled</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>
-            <input type="checkbox" [ngModel]="type.hasOwnProperty('versioning')" (ngModelChange)="Globals.toggleProperty(type, 'versioning', 'either')"/>
-            Versioning
-            <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
-        </label>
-        <div class="input-group">
-            <select class="form-control" [disabled]="!type.hasOwnProperty('versioning')" [(ngModel)]="type.versioning">
-                <option>either</option>
-                <option>independent</option>
-                <option>specific</option>
-            </select>
-        </div>
-    </div>
-</div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

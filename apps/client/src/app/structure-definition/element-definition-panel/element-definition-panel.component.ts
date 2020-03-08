@@ -3,15 +3,8 @@ import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
-import {
-  Coding,
-  ElementDefinition as STU3ElementDefinition, ExampleComponent,
-  StructureDefinition,
-  TypeRefComponent
-} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  ElementDefinition as R4ElementDefinition, ElementDefinitionExampleComponent, ElementDefinitionTypeRefComponent
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Coding, ExampleComponent, StructureDefinition, TypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinitionExampleComponent, ElementDefinitionTypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../shared/config.service';
@@ -120,9 +113,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
     let modalRef;
 
     if (this.configService.isFhirSTU3) {
-      modalRef = this.modalService.open(STU3TypeModalComponent);
+      modalRef = this.modalService.open(STU3TypeModalComponent, { size: 'lg', backdrop: 'static' });
     } else if (this.configService.isFhirR4) {
-      modalRef = this.modalService.open(R4TypeModalComponent);
+      modalRef = this.modalService.open(R4TypeModalComponent, { size: 'lg', backdrop: 'static' });
     } else {
       throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     }
@@ -194,10 +187,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-
-
   addType() {
-    let elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.element.type;
+    const elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.element.type;
     elementTypes.push({code: this.getDefaultType()});
   }
 
@@ -252,7 +243,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     let elementTypes = this.elementTreeModel.constrainedElement ?
       <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.constrainedElement.type : [];
 
-    let elementExamples = <(ExampleComponent | ElementDefinitionExampleComponent)[]> this.element.example;
+    const elementExamples = <(ExampleComponent | ElementDefinitionExampleComponent)[]> this.element.example;
 
     if (!elementTypes || elementTypes.length === 0) {
       elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.baseElement.type;

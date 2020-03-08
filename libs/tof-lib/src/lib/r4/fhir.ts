@@ -8,7 +8,7 @@ import {
   IDomainResource,
   IElementDefinition,
   IElementDefinitionDiscriminator,
-  IElementDefinitionSlicing,
+  IElementDefinitionSlicing, IElementDefinitionType,
   IEntityComponent,
   IExtension,
   IHumanName,
@@ -545,9 +545,10 @@ export class ElementDefinitionBaseComponent extends Element {
 
 }
 
-export class ElementDefinitionTypeRefComponent extends Element {
+export class ElementDefinitionTypeRefComponent extends Element implements IElementDefinitionType {
   public code: string;
   public profile?: string[];
+  public _profile?: Element|Element[];
   public targetProfile?: string[];
   public aggregation?: string[];
   public versioning?: string;
@@ -569,6 +570,16 @@ export class ElementDefinitionTypeRefComponent extends Element {
       }
       if (obj.hasOwnProperty('versioning')) {
         this.versioning = obj.versioning;
+      }
+      if (obj.hasOwnProperty('_profile')) {
+        if (obj._profile instanceof Array) {
+          this._profile = [];
+          for (const profileInfo of obj._profile) {
+            this._profile.push(profileInfo ? new Element(profileInfo) : profileInfo);
+          }
+        } else {
+          this._profile = new Element(obj._profile);
+        }
       }
     }
   }

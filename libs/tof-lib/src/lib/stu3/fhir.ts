@@ -17,7 +17,7 @@ import {
   IHumanName,
   INetworkComponent,
   IPractitioner,
-  IResourceReference, setChoice
+  IResourceReference, setChoice, IElementDefinitionType, IElement
 } from '../fhirInterfaces';
 
 export class Base {
@@ -551,9 +551,10 @@ export class BaseComponent extends Element {
 
 }
 
-export class TypeRefComponent extends Element {
+export class TypeRefComponent extends Element implements IElementDefinitionType {
   public code: string;
   public profile?: string;
+  public _profile?: Element | Element[];
   public targetProfile?: string;
   public aggregation?: string[];
   public versioning?: string;
@@ -575,6 +576,16 @@ export class TypeRefComponent extends Element {
       }
       if (obj.versioning) {
         this.versioning = obj.versioning;
+      }
+      if (obj.hasOwnProperty('_profile')) {
+        if (obj._profile instanceof Array) {
+          this._profile = [];
+          for (const profileInfo of obj._profile) {
+            this._profile.push(profileInfo ? new Element(profileInfo) : profileInfo);
+          }
+        } else {
+          this._profile = new Element(obj._profile);
+        }
       }
     }
   }

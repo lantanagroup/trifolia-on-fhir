@@ -168,11 +168,13 @@ export interface IPractitioner extends IDomainResource {
 
 export interface IElement {
   id?: string;
+  extension?: IExtension[];
 }
 
-export interface IElementDefinitionType {
+export interface IElementDefinitionType extends IElement {
   code: string;
   profile?: string|string[];
+  _profile?: IElement | IElement[];
   targetProfile?: string|string[];
 }
 
