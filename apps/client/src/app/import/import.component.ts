@@ -321,21 +321,30 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    let response;
-    const url = buildUrl('/api/fhir', resource.resourceType, resource.id, null, { applyContextPermissions: this.applyContextPermissions });
+    let url = `/api/fhir/${resource.resourceType}`;
 
     if (resource.id) {
-      response = this.httpClient.put(url, resource);
-    } else {
-      response = this.httpClient.post(url, resource);
+      url += `/${resource.id}`;
     }
 
-    response
-      .subscribe((results: Bundle | OperationOutcome) => {
+    url += `?applyContextPermissions=${this.applyContextPermissions}`;
+
+    (resource.id ? this.httpClient.put(url, resource) : this.httpClient.post(url, resource))
+      .subscribe((results: OperationOutcome) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
-        } else if (results.resourceType === 'Bundle') {
-          this.resultsBundle = <Bundle>results;
+        } else {
+          const successOutcome = new OperationOutcome();
+          successOutcome.text = {
+            status: 'generated',
+            div: `<div><p>Successfully imported resource</p></div>`
+          };
+          successOutcome.issue = [{
+            severity: 'information',
+            code: 'success',
+            diagnostics: 'Successfully imported the resource.'
+          }];
+          this.outcome = successOutcome;
         }
 
         this.message = 'Done.';
@@ -356,7 +365,7 @@ export class ImportComponent implements OnInit {
           };
         }
 
-        this.message = 'Done. Errors occurred.';
+        this.message = 'Done. Errors occurred: ' + getErrorString(err);
         setTimeout(() => {
           tabSet.select('results');
         });
