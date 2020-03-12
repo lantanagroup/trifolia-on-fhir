@@ -1,20 +1,26 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
-import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  StructureDefinition as R4StructureDefinition,
+  StructureDefinitionContextComponent
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AuthService} from '../shared/auth.service';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent implements OnInit {
-  public structureDefinition: StructureDefinition;
+  public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
+  public Globals: Globals;
 
   constructor(
     public configService: ConfigService,
@@ -24,7 +30,9 @@ export class NewProfileComponent implements OnInit {
     private authService: AuthService,
     private strucDefService: StructureDefinitionService) {
 
-    this.structureDefinition = new StructureDefinition({ meta: this.authService.getDefaultMeta() });
+    this.structureDefinition = this.configService.isFhirR4 ?
+      new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
+      new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
   }
 
   public saveDisabled() {
@@ -33,6 +41,10 @@ export class NewProfileComponent implements OnInit {
       !this.structureDefinition.name ||
       !this.structureDefinition.type ||
       !this.structureDefinition.kind ||
+      (this.configService.isFhirR4 && this.structureDefinition.type === "Extension" && !this.structureDefinition.context) ||
+      (this.configService.isFhirR4 && this.structureDefinition.type === "Extension" && this.structureDefinition.context &&
+        ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
+        || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
       !this.structureDefinition.hasOwnProperty('abstract');
   }
 
