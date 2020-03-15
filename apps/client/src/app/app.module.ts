@@ -76,6 +76,7 @@ import {
 import {UsersComponent} from './manage/users/users.component';
 import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
 import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
+import { PackageListComponent } from './implementation-guide-wrapper/package-list/package-list.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -229,7 +230,7 @@ const authModuleConfig: OAuthModuleConfig = {
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent, OtherResourcesResultComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent, OtherResourcesResultComponent, PackageListComponent
   ],
   imports: [
     RouterModule.forRoot(

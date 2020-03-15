@@ -11,7 +11,7 @@ import {
   IElementDefinitionSlicing, IElementDefinitionType,
   IEntityComponent,
   IExtension,
-  IHumanName,
+  IHumanName, IImplementationGuide,
   INetworkComponent,
   IPractitioner,
   IStructureDefinition, setChoice
@@ -14820,7 +14820,7 @@ export class ImplementationGuideManifestComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuide extends DomainResource {
+export class ImplementationGuide extends DomainResource implements IImplementationGuide {
   public resourceType = 'ImplementationGuide';
   public url: string;
   public version?: string;
