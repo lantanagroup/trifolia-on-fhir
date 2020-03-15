@@ -6,7 +6,7 @@ import {
   IContactPoint, IDetailComponent,
   IDomainResource, IEntityComponent,
   IExtension,
-  IHumanName, INetworkComponent,
+  IHumanName, INetworkComponent, IImplementationGuide,
   IPractitioner
 } from '../fhirInterfaces';
 
@@ -14749,7 +14749,7 @@ export class ImplementationGuideManifestComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuide extends DomainResource {
+export class ImplementationGuide extends DomainResource implements IImplementationGuide {
   public resourceType = 'ImplementationGuide';
   public url: string;
   public version?: string;

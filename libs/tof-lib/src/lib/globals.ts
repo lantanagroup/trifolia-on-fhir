@@ -34,7 +34,8 @@ export class Globals {
     'extension-sd-notes': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-notes',
     'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro',
     'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
-    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
+    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
+    'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
   };
 
   static readonly introText = {
@@ -103,7 +104,7 @@ export class Globals {
     'publish.cancel-btn': 'When you\'re placed in queue and wish to cancel the publication process, press this button.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
-    'ig.globals-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
+    'ig.other-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
     'ig.packages-tab': 'This tab lets you to define packages that are used to categorize/group resources included in the implementation guide. These packages are not commonly used and are for more advanced implementation guide authors.',
     'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.',
     'other.open-resource-tab': 'Each resource that you open will show in a separate tab like this.',

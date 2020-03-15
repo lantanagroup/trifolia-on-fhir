@@ -1,0 +1,77 @@
+<div class="card">
+  <div class="card-header">
+    <span>package-list.json</span>
+    <input type="file" style="display: none;" #importFile (change)="import(importFile.files[0])" accept="application/json" />
+    <div class="pull-right btn-group">
+      <button type="button" class="btn btn-primary" title="Import the package-list.json from your computer" (click)="importFile.click()">
+        <i class="fas fa-file-upload"></i>
+      </button>
+      <button type="button" class="btn btn-primary" title="Remove the package-list.json" *ngIf="packageList" (click)="remove()">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+  <div class="card-body" *ngIf="!packageList">
+    <p>No package-list.json has been specified for this IG.</p>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" (click)="initPackageList()">Add package-list.json</button>
+      <button type="button" class="btn btn-primary" (click)="importFile.click()">Import from computer</button>
+    </div>
+  </div>
+  <div class="card-body" *ngIf="packageList">
+    <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="packageListChanged.emit()"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="packageListChanged.emit()"></app-fhir-string>
+
+    <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="packageListChanged.emit()"></app-fhir-string>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th class="small-col">Version</th>
+        <th>Description</th>
+        <th>Path</th>
+        <th class="small-col">FHIR Version</th>
+        <th class="small-col">Status</th>
+        <th class="small-col">Current?</th>
+        <th class="actions-column-1">
+          <button type="button" class="btn btn-primary" title="Add a version to the list." (click)="addVersion()">
+            <i class="fa fa-plus"></i>
+          </button>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let v of packageList.list; let vi = index">
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="packageListChanged.emit()" />
+        </td>
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="packageListChanged.emit()" />
+        </td>
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="packageListChanged.emit()" />
+        </td>
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="packageListChanged.emit()" />
+        </td>
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="packageListChanged.emit()" />
+        </td>
+        <td>
+          <select class="form-control" [(ngModel)]="v.current" (change)="packageListChanged.emit()">
+            <option [ngValue]="undefined">Unspecified</option>
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </td>
+        <td>
+          <button type="button" class="btn btn-primary" title="Remove this version from the list." (click)="removeVersion(vi)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

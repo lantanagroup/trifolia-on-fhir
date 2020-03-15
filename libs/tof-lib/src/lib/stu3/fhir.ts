@@ -8,7 +8,7 @@ import {
   IDomainResource, IEntityComponent,
   IExtension,
   IHumanName, INetworkComponent,
-  IPractitioner, IResourceReference
+  IPractitioner, IResourceReference, IImplementationGuide
 } from '../fhirInterfaces';
 
 export class Base {
@@ -8142,13 +8142,17 @@ export class Distance extends Quantity {
 }
 
 export class ContentComponent extends BackboneElement {
-  public p: Element;
+  public attachment: Attachment;
+  public format?: Coding;
 
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.p) {
-        this.p = new Element(obj.p);
+      if (obj.attachment) {
+        this.attachment = new Attachment(obj.attachment);
+      }
+      if (obj.format) {
+        this.format = obj.format;
       }
     }
   }
@@ -8282,8 +8286,8 @@ export class DocumentReference extends DomainResource {
   public type: CodeableConcept;
   public class?: CodeableConcept;
   public subject?: ResourceReference;
-  public created?: Date;
-  public indexed: Date;
+  public created?: string;
+  public indexed: string;
   public author?: ResourceReference[];
   public authenticator?: ResourceReference;
   public custodian?: ResourceReference;
@@ -8321,10 +8325,10 @@ export class DocumentReference extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.indexed) {
-        this.indexed = new Date(obj.indexed);
+        this.indexed = obj.indexed;
       }
       if (obj.author) {
         this.author = [];
@@ -8384,7 +8388,7 @@ export class EligibilityRequest extends DomainResource {
   public priority?: CodeableConcept;
   public patient?: ResourceReference;
   public serviced?: Element;
-  public created?: Date;
+  public created?: string;
   public enterer?: ResourceReference;
   public provider?: ResourceReference;
   public organization?: ResourceReference;
@@ -8417,7 +8421,7 @@ export class EligibilityRequest extends DomainResource {
         this.serviced = new Element(obj.serviced);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.enterer) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -8469,7 +8473,7 @@ export class EligibilityResponse extends DomainResource {
   public resourceType = 'EligibilityResponse';
   public identifier?: Identifier[];
   public status?: string;
-  public created?: Date;
+  public created?: string;
   public requestProvider?: ResourceReference;
   public requestOrganization?: ResourceReference;
   public request?: ResourceReference;
@@ -8494,7 +8498,7 @@ export class EligibilityResponse extends DomainResource {
         this.status = obj.status;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.requestProvider) {
         this.requestProvider = new ResourceReference(obj.requestProvider);
@@ -8846,7 +8850,7 @@ export class EnrollmentRequest extends DomainResource {
   public resourceType = 'EnrollmentRequest';
   public identifier?: Identifier[];
   public status?: string;
-  public created?: Date;
+  public created?: string;
   public insurer?: ResourceReference;
   public provider?: ResourceReference;
   public organization?: ResourceReference;
@@ -8866,7 +8870,7 @@ export class EnrollmentRequest extends DomainResource {
         this.status = obj.status;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.insurer) {
         this.insurer = new ResourceReference(obj.insurer);
@@ -8895,7 +8899,7 @@ export class EnrollmentResponse extends DomainResource {
   public request?: ResourceReference;
   public outcome?: CodeableConcept;
   public disposition?: string;
-  public created?: Date;
+  public created?: string;
   public organization?: ResourceReference;
   public requestProvider?: ResourceReference;
   public requestOrganization?: ResourceReference;
@@ -8922,7 +8926,7 @@ export class EnrollmentResponse extends DomainResource {
         this.disposition = obj.disposition;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.organization) {
         this.organization = new ResourceReference(obj.organization);
@@ -9066,7 +9070,7 @@ export class ExpansionProfile extends DomainResource {
   public name?: string;
   public status: string;
   public experimental?: boolean;
-  public date?: Date;
+  public date?: string;
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -9106,7 +9110,7 @@ export class ExpansionProfile extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.publisher) {
         this.publisher = obj.publisher;
@@ -9286,7 +9290,7 @@ export class ExplanationOfBenefit extends DomainResource {
   public subType?: CodeableConcept[];
   public patient?: ResourceReference;
   public billablePeriod?: Period;
-  public created?: Date;
+  public created?: string;
   public enterer?: ResourceReference;
   public insurer?: ResourceReference;
   public provider?: ResourceReference;
@@ -9348,7 +9352,7 @@ export class ExplanationOfBenefit extends DomainResource {
         this.billablePeriod = new Period(obj.billablePeriod);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.enterer) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -9515,7 +9519,7 @@ export class FamilyMemberHistory extends DomainResource {
   public notDone?: boolean;
   public notDoneReason?: CodeableConcept;
   public patient: ResourceReference;
-  public date?: Date;
+  public date?: string;
   public name?: string;
   public relationship: CodeableConcept;
   public gender?: string;
@@ -9556,7 +9560,7 @@ export class FamilyMemberHistory extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.name) {
         this.name = obj.name;
@@ -9640,7 +9644,7 @@ export class Goal extends DomainResource {
   public subject?: ResourceReference;
   public start?: Element;
   public target?: TargetComponent;
-  public statusDate?: Date;
+  public statusDate?: string;
   public statusReason?: string;
   public expressedBy?: ResourceReference;
   public addresses?: ResourceReference[];
@@ -9682,7 +9686,7 @@ export class Goal extends DomainResource {
         this.target = new TargetComponent(obj.target);
       }
       if (obj.statusDate) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.statusReason) {
         this.statusReason = obj.statusReason;
@@ -9726,7 +9730,7 @@ export class GraphDefinition extends DomainResource {
   public name: string;
   public status: string;
   public experimental?: boolean;
-  public date?: Date;
+  public date?: string;
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -9756,7 +9760,7 @@ export class GraphDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.publisher) {
         this.publisher = obj.publisher;
@@ -9914,7 +9918,7 @@ export class GuidanceResponse extends DomainResource {
   public status: string;
   public subject?: ResourceReference;
   public context?: ResourceReference;
-  public occurrenceDateTime?: Date;
+  public occurrenceDateTime?: string;
   public performer?: ResourceReference;
   public reason?: Element;
   public note?: Annotation[];
@@ -9945,7 +9949,7 @@ export class GuidanceResponse extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.occurrenceDateTime) {
-        this.occurrenceDateTime = new Date(obj.occurrenceDateTime);
+        this.occurrenceDateTime = obj.occurrenceDateTime;
       }
       if (obj.performer) {
         this.performer = new ResourceReference(obj.performer);
@@ -9985,8 +9989,8 @@ export class GuidanceResponse extends DomainResource {
 export class AvailableTimeComponent extends BackboneElement {
   public daysOfWeek?: string[];
   public allDay?: boolean;
-  public availableStartTime?: Date;
-  public availableEndTime?: Date;
+  public availableStartTime?: string;
+  public availableEndTime?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -9998,10 +10002,10 @@ export class AvailableTimeComponent extends BackboneElement {
         this.allDay = obj.allDay;
       }
       if (obj.availableStartTime) {
-        this.availableStartTime = new Date(obj.availableStartTime);
+        this.availableStartTime = obj.availableStartTime;
       }
       if (obj.availableEndTime) {
-        this.availableEndTime = new Date(obj.availableEndTime);
+        this.availableEndTime = obj.availableEndTime;
       }
     }
   }
@@ -10298,7 +10302,7 @@ export class ImagingManifest extends DomainResource {
   public resourceType = 'ImagingManifest';
   public identifier?: Identifier;
   public patient: ResourceReference;
-  public authoringTime?: Date;
+  public authoringTime?: string;
   public author?: ResourceReference;
   public description?: string;
   public study: StudyComponent[];
@@ -10313,7 +10317,7 @@ export class ImagingManifest extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.authoringTime) {
-        this.authoringTime = new Date(obj.authoringTime);
+        this.authoringTime = obj.authoringTime;
       }
       if (obj.author) {
         this.author = new ResourceReference(obj.author);
@@ -10870,7 +10874,7 @@ export class PageComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuide extends DomainResource {
+export class ImplementationGuide extends DomainResource implements IImplementationGuide {
   public resourceType = 'ImplementationGuide';
   public url: string;
   public version?: string;
