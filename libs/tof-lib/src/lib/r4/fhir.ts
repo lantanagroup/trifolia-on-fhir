@@ -1070,7 +1070,7 @@ export class StructureDefinition extends DomainResource {
   public contextInvariant?: string[];
   public type: string;
   public baseDefinition?: string;
-  public derivation?: string;
+  public derivation? = 'constraint';
   public snapshot?: StructureDefinitionSnapshotComponent;
   public differential?: StructureDefinitionDifferentialComponent;
 
