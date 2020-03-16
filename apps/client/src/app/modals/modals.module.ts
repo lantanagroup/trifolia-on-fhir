@@ -13,6 +13,7 @@ import {SettingsModalComponent} from './settings-modal/settings-modal.component'
 import {SharedModule} from '../shared/shared.module';
 import {FormsModule} from '@angular/forms';
 import {SharedUiModule} from '../shared-ui/shared-ui.module';
+import {MediaSelectionModalComponent} from './media-selection-modal/media-selection-modal.component';
 
 const modalComponents = [
   AdminMessageModalComponent,
@@ -22,7 +23,8 @@ const modalComponents = [
   NewUserModalComponent,
   PublishedIgSelectModalComponent,
   SelectChoiceModalComponent,
-  SettingsModalComponent
+  SettingsModalComponent,
+  MediaSelectionModalComponent
 ];
 
 @NgModule({
