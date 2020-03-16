@@ -160,6 +160,16 @@ export class BundleExporter {
     bundle.total = (bundle.entry || []).length;
     bundle.type = type;
 
+    if (bundle.type === 'transaction') {
+      bundle.entry.forEach(entry => {
+        entry.request = {
+          method: 'PUT',
+          url: `${entry.resource.resourceType}/${entry.resource.id}`
+        };
+        delete entry.search;
+      });
+    }
+
     if (cleanup) {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }

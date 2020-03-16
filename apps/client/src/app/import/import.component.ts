@@ -240,20 +240,26 @@ export class ImportComponent implements OnInit {
   private getFileBundle(): Bundle {
     const bundle = new Bundle();
     bundle.type = 'batch';
-    bundle.entry = this.files
+    bundle.entry = [];
+
+    this.files
       .filter((importFile: ImportFileModel) => {
         return importFile.contentType === ContentTypes.Json ||
           importFile.contentType === ContentTypes.Xml ||
           importFile.contentType === ContentTypes.Image;
       })
-      .map((importFile: ImportFileModel) => {
-        const entry = new EntryComponent();
-        entry.request = new RequestComponent();
-        entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
-        entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
-        entry.resource = importFile.resource;
-
-        return entry;
+      .forEach((importFile: ImportFileModel) => {
+        if (importFile.resource.resourceType === 'Bundle' && (<Bundle> importFile.resource).type === 'transaction') {
+          const transactionBundle = <Bundle> importFile.resource;
+          bundle.entry.push(...transactionBundle.entry);
+        } else {
+          const entry = new EntryComponent();
+          entry.request = new RequestComponent();
+          entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
+          entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
+          entry.resource = importFile.resource;
+          bundle.entry.push(entry);
+        }
       });
 
     this.files

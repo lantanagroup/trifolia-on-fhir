@@ -158,6 +158,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
+  {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
   {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'}
