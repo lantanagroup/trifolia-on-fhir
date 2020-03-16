@@ -1,6 +1,6 @@
 import {BaseController} from './base.controller';
 import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
-import {BundleExporter, BundleTypes} from './export/bundle';
+import {BundleExporter} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -112,7 +112,7 @@ export class ExportController extends BaseController {
     @Res() response: Response,
     @Param('implementationGuideId') implementationGuideId: string,
     @Query('removeExtensions') removeExtensions: string,
-    @Query('bundleType') bundleType: BundleTypes) {
+    @Query('bundleType') bundleType: 'searchset'|'transaction') {
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
