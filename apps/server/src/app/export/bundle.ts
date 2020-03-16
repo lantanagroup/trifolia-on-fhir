@@ -5,6 +5,9 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {HttpService, Logger} from '@nestjs/common';
 import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
+export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
+export type BundleTypes = 'searchset'|'transaction';
+
 export class BundleExporter {
   readonly httpService: HttpService;
   readonly fhirServerBase: string;
@@ -109,9 +112,11 @@ export class BundleExporter {
       }
 
       // Remove ToF-specific extensions recursively in the object
-      keys.forEach((key) => {
+      for (const key of keys) {
+        const value = obj[key];
+
         if (key === 'extension') {
-          const extensions: Extension[] = obj[key];
+          const extensions: Extension[] = value;
           const removeExtensions = extensions.filter((extension) => extensionUrls.indexOf(extension.url) >= 0);
 
           // Remove any extensions from the resource that are for Trifolia
@@ -119,16 +124,20 @@ export class BundleExporter {
             const index = extensions.indexOf(removeExtension);
             extensions.splice(index, 1);
           });
-        } else if (typeof obj[key] === 'object') {
-          this.cleanupResource(obj[key], false);
+        } else if (value instanceof Array) {
+          for (const next of value) {
+            this.cleanupResource(next, false);
+          }
+        } else if (typeof value === 'object') {
+          this.cleanupResource(value, false);
         }
-      });
+      }
     }
 
     return obj;
   }
 
-  public async getBundle(cleanup = false, summary = false): Promise<Bundle> {
+  public async getBundle(cleanup = false, summary = false, type: BundleTypes = 'searchset'): Promise<Bundle> {
     const params = {
       _id: this.implementationGuideId,
       _include: [
@@ -149,17 +158,18 @@ export class BundleExporter {
     const bundle = results.data;
 
     bundle.total = (bundle.entry || []).length;
+    bundle.type = type;
 
     if (cleanup) {
-      (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource));
+      (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }
 
     return bundle;
   }
 
-  public export(format: 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml' = 'json', removeExtensions = false) {
+  public export(format: FormatTypes  = 'json', removeExtensions = false, type: BundleTypes = 'searchset') {
     return new Promise((resolve, reject) => {
-      this.getBundle(removeExtensions)
+      this.getBundle(removeExtensions, false, type)
         .then((results) => {
           let response: Bundle | string = results;
 

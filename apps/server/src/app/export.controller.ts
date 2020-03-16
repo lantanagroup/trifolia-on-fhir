@@ -1,6 +1,6 @@
 import {BaseController} from './base.controller';
-import {Controller, Get, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
-import {BundleExporter} from './export/bundle';
+import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
+import {BundleExporter, BundleTypes} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -110,7 +110,9 @@ export class ExportController extends BaseController {
   public async exportImplementationGuide(
     @Req() request: ITofRequest,
     @Res() response: Response,
-    @Param('implementationGuideId') implementationGuideId: string) {
+    @Param('implementationGuideId') implementationGuideId: string,
+    @Query('removeExtensions') removeExtensions: string,
+    @Query('bundleType') bundleType: BundleTypes) {
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
@@ -123,7 +125,7 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      const results = await exporter.export(options.format);
+      const results = await exporter.export(options.format, removeExtensions === 'true', bundleType);
       const fileExt = options.isXml ? '.xml' : '.json';
 
       response.contentType('application/octet-stream');
