@@ -58,7 +58,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   constructor(
     private modal: NgbModal,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,

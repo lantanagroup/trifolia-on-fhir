@@ -65,7 +65,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
