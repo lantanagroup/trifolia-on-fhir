@@ -3,10 +3,8 @@
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="ig-main" *ngIf="implementationGuide">
-  <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <button type="button" class="btn btn-primary" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
-      <i class="fa fa-trash"></i>
-    </button>
+  <h2>
+    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
   </h2>
   <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
     <ngb-tab id="general" title="General">
@@ -627,4 +625,9 @@
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
+  <div class="pull-right">
+    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+      <i class="fa fa-trash"></i> Delete
+    </button>
+  </div>
 </footer>
