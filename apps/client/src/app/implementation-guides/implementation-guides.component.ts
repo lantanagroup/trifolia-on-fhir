@@ -73,7 +73,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   }
 
   public changeId(implementationGuide: ImplementationGuide) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = implementationGuide.id;
     modalRef.result.then((newId) => {

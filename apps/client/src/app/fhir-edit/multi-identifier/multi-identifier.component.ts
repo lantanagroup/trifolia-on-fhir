@@ -26,7 +26,7 @@ export class FhirMultiIdentifierComponent implements OnInit {
   }
 
   public editIdentifier(identifier: Identifier) {
-    const ref = this.modalService.open(FhirIdentifierModalComponent, {size: 'lg'});
+    const ref = this.modalService.open(FhirIdentifierModalComponent, {size: 'lg', backdrop: 'static'});
     ref.componentInstance.identifier = identifier;
   }
 

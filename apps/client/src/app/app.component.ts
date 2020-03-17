@@ -106,7 +106,7 @@ export class AppComponent implements OnInit {
   }
 
   public openFile() {
-    const modalRef = this.modalService.open(FileOpenModalComponent);
+    const modalRef = this.modalService.open(FileOpenModalComponent, {backdrop: 'static'});
 
     modalRef.result.then((results: FileModel) => {
       this.fileService.loadFile(results);
@@ -114,7 +114,7 @@ export class AppComponent implements OnInit {
   }
 
   public editSettings() {
-    this.modalService.open(SettingsModalComponent, {size: 'lg'});
+    this.modalService.open(SettingsModalComponent, {size: 'lg', backdrop: 'static'});
   }
 
   public supportButtonClicked() {

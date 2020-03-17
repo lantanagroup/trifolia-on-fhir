@@ -64,7 +64,7 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   public changeId(operationDefinition: OperationDefinition) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = operationDefinition.resourceType;
     modalRef.componentInstance.originalId = operationDefinition.id;
     modalRef.result.then((newId) => {

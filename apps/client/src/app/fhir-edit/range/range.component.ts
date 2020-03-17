@@ -105,7 +105,7 @@ export class FhirRangeComponent implements OnInit {
   }
 
   editRange() {
-    const modalRef = this.modalService.open(FhirRangeModalComponent);
+    const modalRef = this.modalService.open(FhirRangeModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.range = this.parentObject[this.propertyName];
   }
 

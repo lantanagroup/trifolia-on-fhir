@@ -73,7 +73,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
       return;
     }
 
-    const modalRef = this.modalService.open(FileOpenModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FileOpenModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.captureVersion = false;
 
     modalRef.result.then((file: FileModel) => {

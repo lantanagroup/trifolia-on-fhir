@@ -81,7 +81,7 @@ export class FhirHumanNameComponent implements OnInit {
   }
 
   editHumanName() {
-    const modalRef = this.modalService.open(FhirHumanNameModalComponent);
+    const modalRef = this.modalService.open(FhirHumanNameModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.humanName = this.parentObject[this.propertyName];
   }
 

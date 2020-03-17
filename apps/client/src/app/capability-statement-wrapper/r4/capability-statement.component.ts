@@ -107,7 +107,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
   }
 
   public editResource(resource: CapabilityStatementResourceComponent) {
-    const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
   }
 
@@ -117,7 +117,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
   }
 
   public selectResourceProfile(resource: CapabilityStatementResourceComponent) {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((selection: ResourceSelection) => {

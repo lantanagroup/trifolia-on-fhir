@@ -105,7 +105,7 @@ export class FhirRatioComponent implements OnInit {
   }
 
   editRatio() {
-    const modalRef = this.modalService.open(FhirRatioModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirRatioModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.ratio = this.parentObject[this.propertyName];
   }
 

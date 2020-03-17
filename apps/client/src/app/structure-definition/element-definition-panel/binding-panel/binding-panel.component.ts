@@ -80,7 +80,7 @@ export class BindingPanelComponent implements OnInit {
   }
 
   public selectValueSet() {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {

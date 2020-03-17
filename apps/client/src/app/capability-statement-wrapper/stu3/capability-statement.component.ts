@@ -99,7 +99,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
   }
 
   public editResource(resource: ResourceComponent) {
-    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
   }
 
@@ -119,12 +119,12 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
   }
 
   public editEvent(event: EventComponent) {
-    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.event = event;
   }
 
   public selectImplementationGuide(implementationGuideIndex) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.hideResourceType = true;
 

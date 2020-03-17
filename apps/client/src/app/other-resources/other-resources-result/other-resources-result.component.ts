@@ -174,7 +174,7 @@ export class OtherResourcesResultComponent implements OnInit {
   }
 
   public changeId(dr: DomainResource) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = dr.resourceType;
     modalRef.componentInstance.originalId = dr.id;
     modalRef.result.then((newId) => {

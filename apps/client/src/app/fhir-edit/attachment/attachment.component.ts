@@ -26,7 +26,7 @@ export class FhirAttachmentComponent implements OnInit {
   }
 
   editAttachment() {
-    const modalRef = this.modalService.open(FhirAttachmentModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirAttachmentModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.attachment = this.parentObject[this.propertyName];
   }
 
