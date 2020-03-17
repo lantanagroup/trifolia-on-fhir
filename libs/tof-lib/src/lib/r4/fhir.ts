@@ -6,7 +6,7 @@ import {
   IContactPoint, IDetailComponent,
   IDomainResource, IEntityComponent,
   IExtension,
-  IHumanName, INetworkComponent,
+  IHumanName, INetworkComponent, IImplementationGuide,
   IPractitioner
 } from '../fhirInterfaces';
 
@@ -1070,7 +1070,7 @@ export class StructureDefinition extends DomainResource {
   public contextInvariant?: string[];
   public type: string;
   public baseDefinition?: string;
-  public derivation?: string;
+  public derivation? = 'constraint';
   public snapshot?: StructureDefinitionSnapshotComponent;
   public differential?: StructureDefinitionDifferentialComponent;
 
@@ -14749,7 +14749,7 @@ export class ImplementationGuideManifestComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuide extends DomainResource {
+export class ImplementationGuide extends DomainResource implements IImplementationGuide {
   public resourceType = 'ImplementationGuide';
   public url: string;
   public version?: string;

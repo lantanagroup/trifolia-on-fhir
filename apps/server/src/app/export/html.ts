@@ -28,6 +28,7 @@ import {PageInfo} from './html.models';
 import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -263,6 +264,15 @@ export class HtmlExporter {
 
     // Write the ig.json file to the export temporary folder
     fs.writeFileSync(this.controlPath, control);
+
+    const packageList = PackageListModel.getPackageList(this.implementationGuide);
+
+    if (packageList) {
+      this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
+
+      const packageListPath = path.join(this.rootPath, 'package-list.json');
+      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
+    }
 
     // Make sure ROOT/input/pagecontent exists for writeFilesForResources()
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));

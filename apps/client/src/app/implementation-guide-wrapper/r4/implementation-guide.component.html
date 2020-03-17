@@ -3,10 +3,8 @@
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="ig-main" *ngIf="implementationGuide">
-  <h2>{{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <button type="button" class="btn btn-primary" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
-      <i class="fa fa-trash"></i>
-    </button>
+  <h2>
+    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
   </h2>
   <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
     <ngb-tab id="general" title="General">
@@ -389,9 +387,11 @@
     <!-- Other -->
     <ngb-tab id="other">
       <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['ig.globals-tab']">Other</span>
+        <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
       </ng-template>
       <ng-template ngbTabContent>
+        <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultPackageId]="packageId" [defaultTitle]="this.implementationGuide.title" [defaultName]="this.implementationGuide.name"></trifolia-fhir-package-list>
+
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
 
         <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
@@ -625,4 +625,9 @@
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
+  <div class="pull-right">
+    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+      <i class="fa fa-trash"></i> Delete
+    </button>
+  </div>
 </footer>

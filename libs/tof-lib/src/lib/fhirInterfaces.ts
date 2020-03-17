@@ -151,3 +151,13 @@ export interface IAuditEvent {
   source: ISourceComponent;
   entity?: IEntityComponent[];
 }
+
+export interface IImplementationGuide extends IDomainResource {
+  url: string;
+  version?: string;
+  name: string;
+  status: string;
+  fhirVersion?: string|string[];
+  description?: string;
+  experimental?: boolean;
+}

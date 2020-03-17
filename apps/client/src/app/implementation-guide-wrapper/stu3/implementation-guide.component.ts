@@ -5,7 +5,9 @@ import {
   Coding,
   Extension,
   ImplementationGuide,
-  OperationOutcome, PackageComponent, PackageResourceComponent,
+  OperationOutcome,
+  PackageComponent,
+  PackageResourceComponent,
   PageComponent
 } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -18,13 +20,9 @@ import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {ValidatorResponse} from 'fhir/validator';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ClientHelper} from '../../clientHelper';
-import {BaseComponent} from '../../base.component';
-import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
@@ -67,7 +65,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -116,6 +114,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       const index = this.implementationGuide.extension.indexOf(foundExtension);
       this.implementationGuide.extension.splice(index, 1);
     }
+  }
+
+  public addGlobal() {
+    this.implementationGuide.global = this.implementationGuide.global || [];
+    this.implementationGuide.global.push({type: '', profile: { reference: '' }});
   }
 
   public changeId() {

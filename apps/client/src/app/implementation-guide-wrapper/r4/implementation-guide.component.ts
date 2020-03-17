@@ -3,13 +3,15 @@ import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
   Coding,
+  Extension,
   ImplementationGuide,
-  OperationOutcome,
-  ImplementationGuidePageComponent,
-  ResourceReference,
   ImplementationGuideDefinitionComponent,
+  ImplementationGuideDependsOnComponent,
+  ImplementationGuideGroupingComponent,
+  ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
-  ImplementationGuideDependsOnComponent, Extension, ImplementationGuideGroupingComponent
+  OperationOutcome,
+  ResourceReference
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
@@ -21,13 +23,9 @@ import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {BaseComponent} from '../../base.component';
-import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {R4ResourceModalComponent} from './resource-modal.component';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getImplementationGuideMediaReferences, MediaReference
-} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
@@ -60,7 +58,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   constructor(
     private modal: NgbModal,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,

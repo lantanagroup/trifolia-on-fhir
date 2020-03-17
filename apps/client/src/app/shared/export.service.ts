@@ -14,6 +14,8 @@ export class ExportOptions {
   public includeIgPublisherJar? = false;
   public template = 'hl7.fhir.template';
   public templateVersion = "current";
+  public removeExtensions = false;
+  public bundleType: 'searchset'|'transaction' = 'searchset';
 }
 
 @Injectable()
@@ -34,6 +36,14 @@ export class ExportService {
 
     if (options.responseFormat) {
       url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
+    }
+
+    if (options.removeExtensions === true || options.removeExtensions === false) {
+      url += `removeExtensions=${options.removeExtensions}&`;
+    }
+
+    if (options.bundleType) {
+      url += `bundleType=${options.bundleType}&`;
     }
 
     url += 'template=' + encodeURIComponent(options.template) + '&';

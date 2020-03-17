@@ -256,7 +256,7 @@ export class MarkdownComponent implements OnInit {
       this.imagesError = null;
       this.loadingImages = true;
 
-      this.fhirService.search('Media', null, null, null, null, {_id: ids}, false, false, page, 10).toPromise()
+      this.fhirService.search('Media', null, true, null, null, {_id: ids}, false, false, page, 10).toPromise()
         .then((results: Bundle) => {
           this.totalImages = results.total;
           const nextImages = (results.entry || []).map((entry) => {

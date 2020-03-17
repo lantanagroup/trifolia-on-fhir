@@ -92,13 +92,32 @@
       </div>
 
       <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
                [attr.data-intro]="Globals.introText['export.bundleOutput']">
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
               <option value="application/json">JSON</option>
               <option value="application/xml">XML</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Remove ToF Extensions?</label>
+            <select class="form-control" [(ngModel)]="options.removeExtensions">
+              <option [ngValue]="false">No</option>
+              <option [ngValue]="true">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Bundle Type</label>
+            <select class="form-control" [(ngModel)]="options.bundleType">
+              <option value="searchset">Search Set</option>
+              <option value="transaction">Transaction</option>
             </select>
           </div>
         </div>
