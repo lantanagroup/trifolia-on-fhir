@@ -7,6 +7,8 @@ import {ModalService} from '../../shared/modal.service';
 /**
  * This class include generic markdown functionality for all markdown fields in Trifolia-on-FHIR. The fhir-edit-markdown component
  * provides more fhir-specific functionality for markdown.
+ * See this [stackoverflow](https://stackoverflow.com/questions/60729394/ngbmodal-opens-very-slowly-for-some-modal-windows) article for information on
+ * why a hidden button was created in the html template that is triggered programmatically by the custom toolbar item.
  */
 @Component({
   selector: 'trifolia-fhir-markdown',
