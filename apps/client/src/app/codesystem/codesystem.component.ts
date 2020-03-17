@@ -132,7 +132,7 @@ export class CodesystemComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   public editConcept(concept: ConceptDefinitionComponent) {
-    const modalRef = this.modalService.open(FhirCodesystemConceptModalComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(FhirCodesystemConceptModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.concept = concept;
   }
 

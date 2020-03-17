@@ -32,7 +32,7 @@ export class FhirMarkdownComponent implements OnInit {
   }
 
   openModal() {
-    const modalRef = this.modalService.open(MarkdownModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(MarkdownModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.parentObject = this.parentObject;
     modalRef.componentInstance.propertyName = this.propertyName;
   }

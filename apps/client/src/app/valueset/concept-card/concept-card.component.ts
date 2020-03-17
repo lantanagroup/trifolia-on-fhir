@@ -51,7 +51,7 @@ export class ConceptCardComponent implements OnInit {
   }
 
   public editConcept(concept: ConceptReferenceComponent) {
-    const modalRef = this.modalService.open(FhirValueSetIncludeConceptModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirValueSetIncludeConceptModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.concept = concept;
   }
 

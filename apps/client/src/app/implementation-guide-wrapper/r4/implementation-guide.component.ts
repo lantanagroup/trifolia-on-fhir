@@ -175,7 +175,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editResource(resource: ImplementationGuideResourceComponent) {
-    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
   }
@@ -185,7 +185,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
   }
@@ -194,7 +194,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!this.implementationGuide.definition) this.implementationGuide.definition = { resource: [] };
     if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
 
-    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
@@ -270,7 +270,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
-    const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       dependsOn.packageId = guide['npm-name'];
       dependsOn.uri = guide.url;
@@ -362,7 +362,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg', backdrop: 'static'});
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;

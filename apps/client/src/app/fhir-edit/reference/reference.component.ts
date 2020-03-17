@@ -88,7 +88,7 @@ export class FhirReferenceComponent implements OnInit {
   }
 
   selectReference() {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = this.resourceType;
     modalRef.componentInstance.hideResourceType = this.hideResourceType;
 

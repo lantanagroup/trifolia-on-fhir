@@ -21,7 +21,7 @@ export class FhirCodeableConceptModalComponent implements OnInit {
   }
 
   editCoding(coding: Coding) {
-    const modalRef = this.modalService.open(FhirCodingModalComponent);
+    const modalRef = this.modalService.open(FhirCodingModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.coding = coding;
   }
 

@@ -164,7 +164,7 @@ export class FhirChoiceComponent implements OnInit {
   }
 
   editAddress() {
-    const modalRef = this.modalService.open(FhirAddressModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirAddressModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.address = this.parentObject[this.getChoicePropertyName()];
   }
 
@@ -195,7 +195,7 @@ export class FhirChoiceComponent implements OnInit {
   }
 
   editCodeableConcept() {
-    const modalRef = this.modalService.open(FhirCodeableConceptModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirCodeableConceptModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.codeableConcept = this.parentObject[this.getChoicePropertyName()];
   }
 
@@ -223,12 +223,12 @@ export class FhirChoiceComponent implements OnInit {
   }
 
   editCoding() {
-    const modalRef = this.modalService.open(FhirCodingModalComponent);
+    const modalRef = this.modalService.open(FhirCodingModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.coding = this.parentObject[this.getChoicePropertyName()];
   }
 
   editContactPoint() {
-    const modalRef = this.modalService.open(FhirContactPointModalComponent);
+    const modalRef = this.modalService.open(FhirContactPointModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.contactPoint = this.parentObject[this.getChoicePropertyName()];
   }
 

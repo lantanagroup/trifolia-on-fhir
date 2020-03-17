@@ -37,7 +37,7 @@ export class FhirCapabilityStatementResourceModalComponent {
   }
 
   selectSupportedProfile(index: number) {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 

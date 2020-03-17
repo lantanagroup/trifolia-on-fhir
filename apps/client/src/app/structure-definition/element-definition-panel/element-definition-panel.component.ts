@@ -102,7 +102,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   editMappings() {
-    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl'});
+    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
     modalRef.componentInstance.structureDefinition = this.structureDefinition;
   }
@@ -119,9 +119,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
     let modalRef;
 
     if (this.configService.isFhirSTU3) {
-      modalRef = this.modalService.open(STU3TypeModalComponent);
+      modalRef = this.modalService.open(STU3TypeModalComponent, {backdrop: 'static'});
     } else if (this.configService.isFhirR4) {
-      modalRef = this.modalService.open(R4TypeModalComponent);
+      modalRef = this.modalService.open(R4TypeModalComponent, {backdrop: 'static'});
     } else {
       throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     }

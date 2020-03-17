@@ -266,7 +266,7 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   public selectCopyResource() {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
 
     modalRef.result.then((results) => {
       this.copyResourceType = results.resourceType;

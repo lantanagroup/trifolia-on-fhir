@@ -18,7 +18,7 @@ export class IncludePanelComponent implements OnInit {
   }
 
   public selectIncludeValueSet(include: ConceptSetComponent, index) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
 
