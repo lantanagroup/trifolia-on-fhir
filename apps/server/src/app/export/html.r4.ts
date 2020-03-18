@@ -1,6 +1,12 @@
 import {HtmlExporter} from './html';
 import {PageInfo} from './html.models';
-import {Binary as R4Binary, DomainResource, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  Binary as R4Binary,
+  DomainResource,
+  ImplementationGuide,
+  ImplementationGuidePageComponent,
+  ImplementationGuideResourceComponent
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -75,74 +81,73 @@ export class R4HtmlExporter extends HtmlExporter {
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
   }
 
-  protected populatePageInfos() {
-    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
-    const getPagesList = (theList: PageInfo[], page: ImplementationGuidePageComponent) => {
-      if (!page) {
-        return theList;
-      }
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-
-      if (page.nameReference && page.nameReference.reference) {
-        const reference = page.nameReference.reference;
-
-        if (reference.startsWith('#')) {
-          const contained = (this.r4ImplementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
-          const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
-
-          if (binary) {
-            pageInfo.fileName = Globals.getCleanFileName(page.title);
-
-            if (pageInfo.fileName.indexOf('.') < 0) {
-              pageInfo.fileName += this.getPageExtension(page);
-            }
-          }
-
-          if (binary && binary.data) {
-            pageInfo.content = Buffer.from(binary.data, 'base64').toString();
-          }
-        }
-      } else if (page.nameUrl) {
-        pageInfo.fileName = page.nameUrl;
-
-        if (pageInfo.fileName.indexOf('.') > 0) {
-          pageInfo.fileName = pageInfo.fileName.substring(0, pageInfo.fileName.lastIndexOf('.'));
-        }
-
-        pageInfo.fileName += this.getPageExtension(page);
-      }
-
-      // Populate the index.md page with default content based on the IG
-      if (pageInfo.fileName === 'index.md' && !pageInfo.content) {
-        pageInfo.content = '### Overview\n\n';
-
-        if (this.r4ImplementationGuide.description) {
-          const descriptionContent = this.r4ImplementationGuide.description + '\n\n';
-          pageInfo.content += descriptionContent + '\n\n';
-        } else {
-          pageInfo.content += 'This implementation guide does not have a description, yet.\n\n';
-        }
-
-        if (this.r4ImplementationGuide.contact) {
-          const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
-            const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-            return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-          });
-          const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-          pageInfo.content += authorsContent;
-        }
-      }
-
-      theList.push(pageInfo);
-
-      (page.page || []).forEach((next) => getPagesList(theList, next));
-
+  public static getPagesList(theList: PageInfo[], page: ImplementationGuidePageComponent, implementationGuide: ImplementationGuide) {
+    if (!page) {
       return theList;
-    };
+    }
 
-    this.pageInfos = getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null);
+    const pageInfo = new PageInfo();
+    pageInfo.page = page;
+
+    if (page.nameReference && page.nameReference.reference) {
+      const reference = page.nameReference.reference;
+
+      if (reference.startsWith('#')) {
+        const contained = (implementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
+        const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
+
+        if (binary) {
+          pageInfo.fileName = Globals.getCleanFileName(page.title);
+
+          if (pageInfo.fileName.indexOf('.') < 0) {
+            pageInfo.fileName += HtmlExporter.getPageExtension(page);
+          }
+        }
+
+        if (binary && binary.data) {
+          pageInfo.content = Buffer.from(binary.data, 'base64').toString();
+        }
+      }
+    } else if (page.nameUrl) {
+      pageInfo.fileName = page.nameUrl;
+
+      if (pageInfo.fileName.indexOf('.') > 0) {
+        pageInfo.fileName = pageInfo.fileName.substring(0, pageInfo.fileName.lastIndexOf('.'));
+      }
+
+      pageInfo.fileName += HtmlExporter.getPageExtension(page);
+    }
+
+    // Populate the index.md page with default content based on the IG
+    if (pageInfo.fileName === 'index.md' && !pageInfo.content) {
+      pageInfo.content = '### Overview\n\n';
+
+      if (implementationGuide.description) {
+        const descriptionContent = implementationGuide.description + '\n\n';
+        pageInfo.content += descriptionContent + '\n\n';
+      } else {
+        pageInfo.content += 'This implementation guide does not have a description, yet.\n\n';
+      }
+
+      if (implementationGuide.contact) {
+        const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
+          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+        });
+        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+        pageInfo.content += authorsContent;
+      }
+    }
+
+    theList.push(pageInfo);
+
+    (page.page || []).forEach((next) => this.getPagesList(theList, next, implementationGuide));
+
+    return theList;
+  }
+
+  protected populatePageInfos() {
+    this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
 
     if (this.pageInfos.length === 0 || !this.pageInfos[0].fileName || !this.pageInfos[0].fileName.startsWith('index.')) {
       const originalFirstPage = this.r4ImplementationGuide.definition.page;

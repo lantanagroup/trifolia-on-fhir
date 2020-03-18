@@ -233,7 +233,6 @@ export class ExportComponent implements OnInit {
 
     const extension = this.options.responseFormat === 'application/xml' ? '.xml' : this.options.responseFormat === 'application/msword' ? '.docx' : '.json';
 
-
     try {
       switch (this.options.exportFormat) {
         case ExportFormats.HTML:

@@ -1,6 +1,13 @@
 import {HtmlExporter} from './html';
 import {PageInfo} from './html.models';
-import {Binary as STU3Binary, DomainResource, PackageResourceComponent, PageComponent, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Binary as STU3Binary,
+  DomainResource,
+  ImplementationGuide,
+  PackageResourceComponent,
+  PageComponent,
+  StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -180,61 +187,60 @@ export class STU3HtmlExporter extends HtmlExporter {
     return newIg;
   }
 
-  protected populatePageInfos() {
-    // Flatten the hierarchy of pages into a single array that we can use to determine previous and next pages
-    const getPagesList = (theList: PageInfo[], page: PageComponent) => {
-      if (!page) {
-        return theList;
+  public static getPagesList(theList: PageInfo[], page: PageComponent, implementationGuide: ImplementationGuide) {
+    if (!page) {
+      return theList;
+    }
+
+    if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
+      const contentExtension = (page.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-ig-page-content']);
+
+      const pageInfo = new PageInfo();
+      pageInfo.page = page;
+      pageInfo.fileName = Globals.getCleanFileName(page.source);
+
+      // the page in the ImplementationGuide should be what we want the page to output as
+      // while the file might have a different extension
+      const extension = page.source.substring(page.source.lastIndexOf('.'));
+      page.source = page.source.substring(0, page.source.lastIndexOf('.')) + '.html';
+
+      if (!page.format) {
+        switch (extension) {
+          case '.md':
+            page.format = 'markdown';
+            break;
+          case '.html':
+            page.format = 'html';
+            break;
+        }
       }
 
-      if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
-        const contentExtension = (page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
+      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
+        const reference = contentExtension.valueReference.reference;
 
-        const pageInfo = new PageInfo();
-        pageInfo.page = page;
-        pageInfo.fileName = Globals.getCleanFileName(page.source);
+        if (reference.startsWith('#')) {
+          const contained = (implementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
+          const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
 
-        // the page in the ImplementationGuide should be what we want the page to output as
-        // while the file might have a different extension
-        const extension = page.source.substring(page.source.lastIndexOf('.'));
-        page.source = page.source.substring(0, page.source.lastIndexOf('.')) + '.html';
-
-        if (!page.format) {
-          switch (extension) {
-            case '.md':
-              page.format = 'markdown';
-              break;
-            case '.html':
-              page.format = 'html';
-              break;
-          }
-        }
-
-        if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-          const reference = contentExtension.valueReference.reference;
-
-          if (reference.startsWith('#')) {
-            const contained = (this.stu3ImplementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
-            const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
-
-            if (binary) {
-              if (binary.content) {
-                pageInfo.content = Buffer.from(binary.content, 'base64').toString();
-              } else {
-                pageInfo.content = 'No content has been specified for this page.';
-              }
+          if (binary) {
+            if (binary.content) {
+              pageInfo.content = Buffer.from(binary.content, 'base64').toString();
+            } else {
+              pageInfo.content = 'No content has been specified for this page.';
             }
           }
         }
-
-        theList.push(pageInfo);
       }
 
-      (page.page || []).forEach((next) => getPagesList(theList, next));
+      theList.push(pageInfo);
+    }
 
-      return theList;
-    };
+    (page.page || []).forEach((next) => STU3HtmlExporter.getPagesList(theList, next, implementationGuide));
 
+    return theList;
+  }
+
+  protected populatePageInfos() {
     if (!this.stu3ImplementationGuide.page || !this.stu3ImplementationGuide.page.source || !this.stu3ImplementationGuide.page.source.startsWith('index.')) {
       const originalFirstPage = this.stu3ImplementationGuide.page;
       this.stu3ImplementationGuide.page = {
@@ -246,7 +252,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       };
     }
 
-    this.pageInfos = getPagesList([], this.stu3ImplementationGuide.page);
+    this.pageInfos = STU3HtmlExporter.getPagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
   }
 
   protected writePages(rootPath: string) {
