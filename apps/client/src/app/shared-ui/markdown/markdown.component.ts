@@ -21,7 +21,6 @@ export class MarkdownComponent implements OnInit {
   @Input() disabled = false;
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
   @Input() mediaReferences?: MediaReference[];
-  @Input() implementationGuideId?: string;
 
   @ViewChild('smde', { static: true })
   private simplemde: SimplemdeComponent;
@@ -220,7 +219,7 @@ export class MarkdownComponent implements OnInit {
   }
 
   async insertImage() {
-    const image = await this.modalService.getMediaSelection(this.implementationGuideId, this.mediaReferences);
+    const image = await this.modalService.getMediaSelection(this.mediaReferences);
 
     const doc = this.simplemde.Instance.codemirror.getDoc();
     const cursor = doc.getCursor();

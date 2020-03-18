@@ -9,9 +9,8 @@ export class ModalService {
   constructor(private modalService: NgbModal) {
   }
 
-  async getMediaSelection(implementationGuideId?: string, mediaReferences?: MediaReference[]): Promise<ImageItem> {
+  async getMediaSelection(mediaReferences?: MediaReference[]): Promise<ImageItem> {
     const modalRef = this.modalService.open(MediaSelectionModalComponent, { container: 'body', backdrop: 'static' });
-    modalRef.componentInstance.implementationGuideId = implementationGuideId;
     modalRef.componentInstance.mediaReferences = mediaReferences;
     return await modalRef.result;
   }

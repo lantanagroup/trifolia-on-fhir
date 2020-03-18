@@ -22,7 +22,6 @@ export class FhirMarkdownComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() displayOnly = false;
   @Input() mediaReferences?: MediaReference[];
-  @Input() implementationGuideId?: string;
 
   public Globals = Globals;
 

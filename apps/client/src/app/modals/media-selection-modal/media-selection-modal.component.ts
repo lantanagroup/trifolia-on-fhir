@@ -6,6 +6,7 @@ import {Media as STU3Media} from '../../../../../../libs/tof-lib/src/lib/stu3/fh
 import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfigService} from '../../shared/config.service';
 
 export class ImageItem {
   name: string;
@@ -18,7 +19,6 @@ export class ImageItem {
   styleUrls: ['./media-selection-modal.component.css']
 })
 export class MediaSelectionModalComponent implements OnInit {
-  @Input() implementationGuideId?: string;
   @Input() mediaReferences?: MediaReference[];
 
   message: string;
@@ -27,6 +27,7 @@ export class MediaSelectionModalComponent implements OnInit {
   totalImages = 0;
 
   constructor(
+    private configService: ConfigService,
     private fhirService: FhirService,
     public activeModal: NgbActiveModal) {
 
@@ -43,10 +44,10 @@ export class MediaSelectionModalComponent implements OnInit {
     this.message = null;
     this.loading = true;
 
-    if (this.implementationGuideId) {
-      query['_has:ImplementationGuide:resource:_id'] = this.implementationGuideId;
-    } else if (this.mediaReferences && this.mediaReferences.length > 0) {
+    if (this.mediaReferences && this.mediaReferences.length > 0) {
       query['_ids'] = this.mediaReferences.map((mr) => mr.id);
+    } else if (this.configService.project && this.configService.project.implementationGuideId) {
+      query['_has:ImplementationGuide:resource:_id'] = this.configService.project.implementationGuideId;
     }
 
     try {
