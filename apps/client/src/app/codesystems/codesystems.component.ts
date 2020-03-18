@@ -81,7 +81,7 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   }
 
   public changeId(codeSystem: CodeSystem) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = codeSystem.resourceType;
     modalRef.componentInstance.originalId = codeSystem.id;
     modalRef.result.then((newId) => {

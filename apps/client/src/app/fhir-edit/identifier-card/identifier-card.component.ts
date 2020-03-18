@@ -36,7 +36,7 @@ export class FhirEditIdentifierCardComponent implements OnInit {
   openModal(content, identifier: STU3Identifier | R4Identifier) {
     this.modalIdentifier = identifier;
 
-    const modalRef = this.modalService.open(content);
+    const modalRef = this.modalService.open(content, {backdrop: 'static'});
 
     modalRef.result
       .then(() => {

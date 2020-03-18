@@ -57,7 +57,7 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
   }
 
   public editParameter(parameter: ParameterComponent) {
-    const modalInstance = this.modal.open(ParameterModalComponent, {size: 'lg'});
+    const modalInstance = this.modal.open(ParameterModalComponent, {size: 'lg', backdrop: 'static'});
     modalInstance.componentInstance.operationDefinition = this.operationDefinition;
     modalInstance.componentInstance.parameter = parameter;
   }

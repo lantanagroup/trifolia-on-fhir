@@ -71,7 +71,7 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
   }
 
   public changeId(valueSet: Questionnaire) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = valueSet.resourceType;
     modalRef.componentInstance.originalId = valueSet.id;
     modalRef.result.then((newId) => {

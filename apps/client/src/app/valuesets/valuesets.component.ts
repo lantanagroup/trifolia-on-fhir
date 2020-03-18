@@ -97,7 +97,7 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
   }
 
   public changeId(valueSet: ValueSet) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = valueSet.resourceType;
     modalRef.componentInstance.originalId = valueSet.id;
     modalRef.result.then((newId) => {

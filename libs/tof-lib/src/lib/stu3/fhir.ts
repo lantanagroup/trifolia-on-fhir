@@ -3,21 +3,25 @@ import {
   IAgentComponent,
   IAuditEvent,
   IBundle,
-  IElementDefinition,
-  IElementDefinitionSlicing,
-  IStructureDefinition,
   ICodeableConcept,
+  ICodeSystem,
   ICoding,
   IContactDetail,
   IContactPoint,
   IDetailComponent,
   IDomainResource,
+  IElementDefinition,
+  IElementDefinitionSlicing,
+  IElementDefinitionType,
   IEntityComponent,
   IExtension,
   IHumanName,
+  IImplementationGuide,
   INetworkComponent,
   IPractitioner,
-  IResourceReference, setChoice, IElementDefinitionType, IElement, IImplementationGuide
+  IResourceReference,
+  IStructureDefinition,
+  setChoice
 } from '../fhirInterfaces';
 
 export class Base {
@@ -2043,7 +2047,7 @@ export class ConceptDefinitionComponent extends BackboneElement {
 
 }
 
-export class CodeSystem extends DomainResource {
+export class CodeSystem extends DomainResource implements ICodeSystem {
   public resourceType = 'CodeSystem';
   public url?: string;
   public identifier?: Identifier;

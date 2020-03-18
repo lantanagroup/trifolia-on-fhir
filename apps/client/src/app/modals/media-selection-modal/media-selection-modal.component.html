@@ -1,0 +1,47 @@
+<div class="modal-header">
+  <h4 class="modal-title">Select an image</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="alert alert-danger" *ngIf="message">{{message}}</div>
+  <div class="alert alert-info" *ngIf="loading">Loading images...</div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Title</th>
+      <th class="actions-column-1">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let image of images">
+      <td>{{image.name}}</td>
+      <td>{{image.title}}</td>
+      <td>
+        <button type="button" class="btn btn-primary" title="Select this image" (click)="activeModal.close(image)">
+          <i class="fas fa-hand-pointer"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot *ngIf="totalImages !== images.length">
+    <tr>
+      <td colspan="3">
+        <button type="button" class="btn btn-primary" (click)="loadMoreImages()" [disabled]="loading">Load more...</button>
+      </td>
+    </tr>
+    </tfoot>
+    <tfoot *ngIf="!loading && (!images || images.length === 0)">
+    <tr>
+      <td colspan="4">
+        <em>No images are available to select.</em>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

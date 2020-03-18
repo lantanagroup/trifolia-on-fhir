@@ -65,7 +65,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -126,13 +126,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
   }
 
   public selectPublishedIg(dependency: Extension) {
-    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
@@ -146,7 +146,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public addResources(destPackage?: PackageComponent) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
@@ -358,7 +358,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    this.modalService.open(content, {size: 'lg'});
+    this.modalService.open(content, {size: 'lg', backdrop: 'static'});
   }
 
   public tabChange(event) {
@@ -401,7 +401,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg', backdrop: 'static'});
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -549,7 +549,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg'});
+    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.resource = igResource.resource;
   }

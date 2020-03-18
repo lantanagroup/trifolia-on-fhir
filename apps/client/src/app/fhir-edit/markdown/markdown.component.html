@@ -3,12 +3,7 @@
     {{title || propertyName}}
     <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
   </label>
-  <trifolia-fhir-markdown
-    *ngIf="!displayOnly"
-    [value]="parentObject[propertyName]"
-    (valueChange)="valueChanged($event)"
-    [mediaReferences]="mediaReferences">
-  </trifolia-fhir-markdown>
+  <trifolia-fhir-markdown *ngIf="!displayOnly" [value]="parentObject[propertyName]" (valueChange)="valueChanged($event)" [mediaReferences]="mediaReferences"></trifolia-fhir-markdown>
   <div *ngIf="displayOnly">
     <p>{{parentObject[propertyName] || 'No markdown specified'}} [<a href="javascript:void(0)" (click)="openModal()">Edit</a>]</p>
   </div>

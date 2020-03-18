@@ -27,7 +27,7 @@ export class FhirMultiContactComponent implements OnInit {
   }
 
   public editContact(contact: ContactDetail) {
-    const ref = this.modalService.open(FhirContactModalComponent, {size: 'lg'});
+    const ref = this.modalService.open(FhirContactModalComponent, {size: 'lg', backdrop: 'static'});
     ref.componentInstance.contact = contact;
   }
 

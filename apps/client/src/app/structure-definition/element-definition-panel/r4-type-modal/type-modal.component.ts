@@ -27,7 +27,7 @@ export class R4TypeModalComponent implements OnInit {
   }
 
   public selectProfile(array: string[], index: number) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 

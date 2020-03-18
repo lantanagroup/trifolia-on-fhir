@@ -29,6 +29,7 @@ import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
+import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -317,7 +318,7 @@ export class FhirService {
       options.headers['ignoreContext'] = 'true';
     }
 
-    return this.http.get(url, options);
+    return this.http.get<IBundle>(url, options);
   }
 
   /**

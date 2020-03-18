@@ -96,7 +96,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   editMappings() {
-    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl'});
+    const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
     modalRef.componentInstance.structureDefinition = this.structureDefinition;
   }

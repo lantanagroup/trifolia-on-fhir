@@ -43,7 +43,7 @@ export class ProfileBaseDefinitionComponent implements OnInit, OnChanges {
   }
 
   openSelectBaseDefinitionModal() {
-    this.modalService.open(this.selectBaseDefinitionModal, { size: 'lg' }).result.then(() => {
+    this.modalService.open(this.selectBaseDefinitionModal, { size: 'lg', backdrop: 'static' }).result.then(() => {
 
     });
   }

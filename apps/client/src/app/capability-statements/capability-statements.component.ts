@@ -65,7 +65,7 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
   }
 
   public changeId(capabilityStatement: CapabilityStatement) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = capabilityStatement.resourceType;
     modalRef.componentInstance.originalId = capabilityStatement.id;
     modalRef.result.then((newId) => {

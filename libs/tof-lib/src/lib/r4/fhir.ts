@@ -2,19 +2,23 @@ import {
   IAgentComponent,
   IAuditEvent,
   IBundle,
+  ICodeSystem,
   IContactDetail,
   IContactPoint,
   IDetailComponent,
   IDomainResource,
   IElementDefinition,
   IElementDefinitionDiscriminator,
-  IElementDefinitionSlicing, IElementDefinitionType,
+  IElementDefinitionSlicing,
+  IElementDefinitionType,
   IEntityComponent,
   IExtension,
-  IHumanName, IImplementationGuide,
+  IHumanName,
+  IImplementationGuide,
   INetworkComponent,
   IPractitioner,
-  IStructureDefinition, setChoice
+  IStructureDefinition,
+  setChoice
 } from '../fhirInterfaces';
 
 export class Base {
@@ -1141,7 +1145,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public contextInvariant?: string[];
   public type: string;
   public baseDefinition?: string;
-  public derivation?: string;
+  public derivation? = 'constraint';
   public snapshot?: StructureDefinitionSnapshotComponent;
   public differential?: StructureDefinitionDifferentialComponent;
 
@@ -2013,7 +2017,7 @@ export class CodeSystemConceptDefinitionComponent extends BackboneElement {
 
 }
 
-export class CodeSystem extends DomainResource {
+export class CodeSystem extends DomainResource implements ICodeSystem {
   public resourceType = 'CodeSystem';
   public url?: string;
   public identifier?: Identifier[];

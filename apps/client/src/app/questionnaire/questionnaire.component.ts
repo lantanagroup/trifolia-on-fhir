@@ -195,7 +195,7 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   public editItem(itemModel: ItemModel) {
-    const modalRef = this.modalService.open(QuestionnaireItemModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(QuestionnaireItemModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.item = itemModel.item;
     modalRef.componentInstance.questionnaire = this.questionnaire;
   }
