@@ -9,12 +9,14 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { ConfigService } from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import { ValidatorResponse } from 'fhir/validator';
+import { BaseComponent } from '../../base.component';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
   styleUrls: ['./other-resources-result.component.css']
 })
-export class OtherResourcesResultComponent implements OnInit {
+export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: DomainResource;
@@ -29,7 +31,10 @@ export class OtherResourcesResultComponent implements OnInit {
   constructor(private fhirService: FhirService,
               private route: ActivatedRoute,
               private modalService: NgbModal,
-              public configService: ConfigService) {
+              public configService: ConfigService,
+              protected authService: AuthService,) {
+
+    super(configService, authService);
 
     this.contentChanged
       .debounceTime(500)

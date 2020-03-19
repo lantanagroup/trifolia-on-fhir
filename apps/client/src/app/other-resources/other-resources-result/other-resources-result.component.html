@@ -37,7 +37,10 @@
         <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
       </ng-template>
     </ngb-tab>
-    <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+      <ng-template ngbTabTitle>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(data)" title="No permissions specified!"></i>
+      </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-resource-permissions [resource]="data"></trifolia-fhir-resource-permissions>
       </ng-template>
@@ -55,7 +58,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button class="btn btn-primary" (click)="save(data)" [disabled]="serializationError">Save</button>
+    <button class="btn btn-primary" (click)="save(data)" [disabled]="serializationError || !canEdit(data)">Save</button>
   </div>
   <span class="message">{{message}}</span>
 </footer>
