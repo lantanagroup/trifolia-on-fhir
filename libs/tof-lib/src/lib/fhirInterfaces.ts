@@ -161,3 +161,29 @@ export interface IImplementationGuide extends IDomainResource {
   description?: string;
   experimental?: boolean;
 }
+
+export interface ICodeSystemConceptProperty {
+  code: string;
+  valueCode?: string;
+  valueCoding?: ICoding;
+  valueString?: string;
+  valueInteger?: number;
+  valueBoolean?: boolean;
+  valueDateTime?: string;
+}
+
+export interface ICodeSystemConcept {
+  code: string;
+  display?: string;
+  definition?: string;
+  property?: ICodeSystemConceptProperty[];
+}
+
+export interface ICodeSystem extends IDomainResource {
+  url?: string;
+  identifier?: IIdentifier | IIdentifier[];
+  version?: string;
+  name?: string;
+  title?: string;
+  concept?: ICodeSystemConcept[];
+}

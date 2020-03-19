@@ -8,7 +8,7 @@ import {
   IDomainResource, IEntityComponent,
   IExtension,
   IHumanName, INetworkComponent,
-  IPractitioner, IResourceReference, IImplementationGuide
+  IPractitioner, IResourceReference, IImplementationGuide, ICodeSystem
 } from '../fhirInterfaces';
 
 export class Base {
@@ -2002,7 +2002,7 @@ export class ConceptDefinitionComponent extends BackboneElement {
 
 }
 
-export class CodeSystem extends DomainResource {
+export class CodeSystem extends DomainResource implements ICodeSystem {
   public resourceType = 'CodeSystem';
   public url?: string;
   public identifier?: Identifier;

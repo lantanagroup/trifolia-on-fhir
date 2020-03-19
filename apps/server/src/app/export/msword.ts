@@ -1,28 +1,12 @@
-import {
-  Document,
-  HeadingLevel,
-  Packer,
-  Paragraph,
-  Table,
-  TableCell,
-  TableOfContents,
-  TableRow,
-  VerticalAlign
-} from 'docx';
-import { Bundle, DomainResource, ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { TofLogger } from '../tof-logger';
-//import { StructureDefinition } from 'fhir/parseConformance';
-import { Extension } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import {StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-
-import {ValueSet as STU3ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ValueSet as R4ValueSet} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-
-import {CodeSystem as STU3CodeSystem} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CodeSystem as R4CodeSystem} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-
+import {Document, HeadingLevel, IParagraphOptions, Packer, Paragraph, Table, TableCell, TableOfContents, TableRow, TextRun, VerticalAlign} from 'docx';
+import {Bundle, StructureDefinition as R4StructureDefinition, Extension as R4Extension, ValueSet as R4ValueSet, ImplementationGuide as R4ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {TofLogger} from '../tof-logger';
+import {StructureDefinition as STU3StructureDefinition, Extension as STU3Extension, ValueSet as STU3ValueSet, ImplementationGuide as STU3ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import * as fs from 'fs';
+import {R4HtmlExporter} from './html.r4';
+import {PageInfo} from './html.models';
+import {STU3HtmlExporter} from './html.stu3';
 
 /**
  * This class is responsible for creating an MSWord DOCX document from a bundle of
@@ -39,649 +23,189 @@ export class MSWordExporter {
 
   }
 
-  addResource(resource: DomainResource) {
-    this.body.push(new Paragraph({
-      heading: HeadingLevel.HEADING_2,
-      text: `${resource.resourceType}/${resource.id}`
-    }));
+  private static createPara(text: string, heading?: HeadingLevel, bold?: boolean) {
+    const options: IParagraphOptions = {
+      children: [this.createRun(text, bold)],
+      heading: heading
+    };
 
-    if ((<any> resource).description) {
-      this.body.push((<any> resource).description);
-    } else {
-      this.body.push(new Paragraph('This profile does not have a description'));
-    }
+    return new Paragraph(options);
   }
 
-  async export(bundle: Bundle) {
-    this.doc = new Document();
+  private static createRun(text: string, bold?: boolean) {
+    const options: any = {
+      text: text
+    };
+
+    if (bold === true) {
+      options.bold = true;
+    }
+
+    return new TextRun(options);
+  }
+
+  private static createFieldPara(fieldName: string, fieldValue: string) {
+    return new Paragraph({
+      children: [
+        this.createRun(fieldName + ': ', true),
+        this.createRun(fieldValue)
+      ]
+    });
+  }
+
+  private static createRow(header: boolean, ...cellValues: string[]) {
+    return new TableRow({
+      children: cellValues.map(cv => {
+        return new TableCell({
+          children: [MSWordExporter.createPara(cv, null, header)],
+          verticalAlign: VerticalAlign.CENTER,
+          margins: {
+            left: 75,
+            right: 75
+          }
+        });
+      })
+    });
+  }
+
+  private static createMarkdown(title: string, content: string) {
+    return [
+      this.createPara(title, null, true),
+      this.createPara(content, null, false)
+    ];
+  }
+
+  async export(bundle: Bundle, version: 'stu3'|'r4') {
+    this.doc = new Document({
+      externalStyles: fs.readFileSync('./assets/msword-styles.xml').toString()
+    });
     this.body = [];
 
+    this.body.push(new TableOfContents('Table of Contents', {
+      hyperlink: true,
+      headingStyleRange: '1-5'
+    }));
+
     const implementationGuideEntry = (bundle.entry || []).find(entry => entry.resource && entry.resource.resourceType === 'ImplementationGuide');
-    const implementationGuide = implementationGuideEntry ? <ImplementationGuide> implementationGuideEntry.resource : undefined;
+    const implementationGuide = implementationGuideEntry ? <STU3ImplementationGuide | R4ImplementationGuide> implementationGuideEntry.resource : undefined;
+    const profiles = bundle.entry.filter(entry => entry.resource && (entry.resource.resourceType === 'StructureDefinition'));
 
     if (implementationGuide) {
+      this.body.push(MSWordExporter.createPara('IG Overview', HeadingLevel.HEADING_2));
+      this.body.push(MSWordExporter.createFieldPara('Title/Name', (<any> implementationGuide).title || implementationGuide.name));
+      this.body.push(MSWordExporter.createFieldPara('URL', implementationGuide.url));
+      this.body.push(...MSWordExporter.createMarkdown('Description', implementationGuide.description || 'No description'));
 
+      let pageInfos: PageInfo[];
 
-      const implTable = new Table({
-        rows: [
-          new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph("Name")],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-              new TableCell({
-                children: [new Paragraph(implementationGuide.title || implementationGuide.name)],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-            ]
-          })
-        ]
-      });
+      if (version === 'stu3') {
+        const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
+        pageInfos = STU3HtmlExporter.getPagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+      } else if (version === 'r4') {
+        const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
+        if (r4ImplementationGuide.definition) {
+          pageInfos = R4HtmlExporter.getPagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+        }
+      }
 
-      if (implementationGuide.description) {
-        implTable.addChildElement(new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph("Description")],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-              new TableCell({
-                children: [new Paragraph(implementationGuide.description)],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-            ]
-          })
-        );
-      };
-      if (implementationGuide.publisher) {
-        implTable.addChildElement(new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph("Publisher")],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-              new TableCell({
-                children: [new Paragraph(implementationGuide.publisher)],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-            ]
-          })
-        );
-      };
-      if (implementationGuide.copyright) {
-        implTable.addChildElement(new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph("Copyright")],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-              new TableCell({
-                children: [new Paragraph(implementationGuide.copyright)],
-                verticalAlign: VerticalAlign.CENTER,
-              }),
-            ]
-          })
-        );
-      };
-      this.body.push(implTable);
+      if (pageInfos && pageInfos.length > 0) {
+        this.body.push(MSWordExporter.createPara('Pages', HeadingLevel.HEADING_2));
 
-      this.body.push(new Paragraph({
-        text: ""
-      }));
+        pageInfos.forEach((pageInfo, pageInfoIndex) => {
+          this.body.push(MSWordExporter.createPara(`Page ${pageInfoIndex+1}`, HeadingLevel.HEADING_3));
+          this.body.push(MSWordExporter.createFieldPara('Title', pageInfo.title));
+          this.body.push(MSWordExporter.createFieldPara('File Name', pageInfo.fileName));
+          this.body.push(...MSWordExporter.createMarkdown('Content', pageInfo.content || 'None/Auto-Generated'));
+        });
+      }
+    }
 
-      bundle.entry
-        .filter(entry => entry.resource && (entry.resource.resourceType === 'StructureDefinition'))
-        .forEach((entry) => {
-          const extensionUrlKeys = Object.keys(Globals.extensionUrls);
-          const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
-          const keys = Object.keys(entry.resource);
+    if (profiles.length > 0) {
+      this.body.push(MSWordExporter.createPara('Profiles', HeadingLevel.HEADING_2));
+    }
 
-          const structureDefinition: STU3StructureDefinition | R4StructureDefinition = <STU3StructureDefinition | R4StructureDefinition> entry.resource;
+    profiles.forEach((entry, sdIndex) => {
+      const structureDefinition: STU3StructureDefinition | R4StructureDefinition = <STU3StructureDefinition | R4StructureDefinition>entry.resource;
+      const sdExtensions = <(STU3Extension | R4Extension)[]> structureDefinition.extension;
 
+      this.body.push(MSWordExporter.createPara(`Profile ${sdIndex+1}: ${structureDefinition.url || structureDefinition.name}`, HeadingLevel.HEADING_3));
+      this.body.push(MSWordExporter.createFieldPara('URL', structureDefinition.url));
+      this.body.push(MSWordExporter.createFieldPara('Title/Name', structureDefinition.title || structureDefinition.name));
+      this.body.push(MSWordExporter.createFieldPara('Status', structureDefinition.status));
+      this.body.push(...MSWordExporter.createMarkdown('Description', structureDefinition.description || 'No description'));
 
-          const structDefTable = new Table({
+      const introExt = (sdExtensions || []).find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+      const notesExt = (sdExtensions || []).find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
+
+      if (introExt && introExt.valueMarkdown) {
+        this.body.push(...MSWordExporter.createMarkdown('Intro', introExt.valueMarkdown || 'No intro'));
+      }
+
+      if (notesExt && notesExt.valueMarkdown) {
+        this.body.push(...MSWordExporter.createMarkdown('Notes', notesExt.valueMarkdown || 'No notes'));
+      }
+
+      if (structureDefinition.differential && structureDefinition.differential.element && structureDefinition.differential.element.length > 0) {
+        structureDefinition.differential.element.forEach((element, elementIndex) => {
+          this.body.push(MSWordExporter.createPara(`Element ${elementIndex+1}: ${element.id || element.path}`, HeadingLevel.HEADING_4));
+
+          if (element.hasOwnProperty('min')) {
+            this.body.push(MSWordExporter.createFieldPara('Min', element.min.toString()));
+          }
+
+          if (element.max) {
+            this.body.push(MSWordExporter.createFieldPara('Max', element.max || 'Inherited'));
+          }
+
+          if (element.definition) {
+            this.body.push(MSWordExporter.createFieldPara('Definition', element.definition || 'Inherited'));
+          }
+
+          if (element.short) {
+            this.body.push(MSWordExporter.createFieldPara('Short', element.short || 'Inherited'));
+          }
+
+          if (element.alias) {
+            this.body.push(MSWordExporter.createFieldPara('Alias', element.alias || 'Inherited'));
+          }
+        });
+      }
+    });
+
+    const valueSets = bundle.entry.filter(entry => entry.resource && (entry.resource.resourceType === 'ValueSet'));
+
+    if (valueSets.length > 0) {
+      this.body.push(MSWordExporter.createPara('Value Sets', HeadingLevel.HEADING_2));
+    }
+
+    valueSets.forEach((entry, valueSetIndex) => {
+      const valueSet: STU3ValueSet | R4ValueSet = <STU3ValueSet | R4ValueSet> entry.resource;
+
+      this.body.push(MSWordExporter.createPara(`Value Set ${valueSetIndex+1}`, HeadingLevel.HEADING_3));
+      this.body.push(MSWordExporter.createFieldPara('Title/Name', valueSet.title || valueSet.name));
+      this.body.push(MSWordExporter.createFieldPara('URL', valueSet.url));
+      this.body.push(...MSWordExporter.createMarkdown('Description', valueSet.description || 'No description'));
+
+      if (valueSet.compose && valueSet.compose.include && valueSet.compose.include.length > 0) {
+        valueSet.compose.include.forEach((include, includeIndex) => {
+          this.body.push(MSWordExporter.createPara(`Include ${includeIndex+1}`, HeadingLevel.HEADING_4));
+          this.body.push(MSWordExporter.createFieldPara('System', include.system || 'None'));
+
+          const includeTable = new Table({
             rows: [
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("Name")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.name)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
+              MSWordExporter.createRow(true, 'Code', 'Display'),
+              ...(include.concept || []).map(concept => {
+                return MSWordExporter.createRow(false, concept.code, concept.display)
               })
             ]
           });
 
-          if (structureDefinition.title) {
-            structDefTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("Title")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.title)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
+          this.body.push(includeTable);
+        });
+      }
 
-          if (structureDefinition.description) {
-            structDefTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("description")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.description)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
-
-
-          if (structureDefinition.url) {
-            structDefTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("url")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.url)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
-
-          if (structureDefinition.purpose) {
-            structDefTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("purpose")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.purpose)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
-
-          if (structureDefinition.status) {
-            structDefTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("status")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(structureDefinition.status)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
-
-
-          if (structureDefinition.differential) {
-            (structureDefinition.differential.element || []).forEach((element, eIndex) => {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("Element")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${eIndex + 1}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-
-                if(element.id) {
-                  structDefTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("Id")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(`${element.id}`)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  );
-                }
-
-                if(element.path) {
-                  structDefTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("Path")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(`${element.path}`)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  );
-                }
-
-              if(element.minValue) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("min")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.minValue}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.maxValue) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("max")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.max}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.mustSupport) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("must support")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.mustSupport}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.binding) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("bindings")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.binding}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.short) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("short")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.short}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.label) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("description")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.label}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-
-              if(element.alias) {
-                structDefTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("alias")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(`${element.alias}`)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-            });
-          }
-
-          this.body.push(structDefTable);
-
-          this.body.push(new Paragraph({
-            text: ""
-          }));
-          }
-        );
-
-      bundle.entry
-        .filter(entry => entry.resource && (entry.resource.resourceType === 'ValueSet'))
-        .forEach((entry) => {
-            const extensionUrlKeys = Object.keys(Globals.extensionUrls);
-            const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
-            const keys = Object.keys(entry.resource);
-
-            const valueSet: STU3ValueSet | R4ValueSet = <STU3ValueSet | R4ValueSet> entry.resource;
-
-
-            const valueSetTable = new Table({
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("Name")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(valueSet.name || valueSet.title)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              ]
-            });
-
-          if (valueSet.url) {
-            valueSetTable.addChildElement(new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph("url")],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [new Paragraph(valueSet.url)],
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ]
-              })
-            );
-          };
-
-          if (valueSet.identifier) {
-            valueSet.identifier
-              .forEach((identifier) => {
-                valueSetTable.addChildElement(new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [new Paragraph("identifier")],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                      new TableCell({
-                        children: [new Paragraph(identifier)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      }),
-                    ]
-                  })
-                );
-              }
-            )
-          };
-
-          if (valueSet.description) {
-            valueSetTable.addChildElement(new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("description")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(valueSet.description)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              );
-            };
-
-          if (valueSet.compose.include) {
-            valueSet.compose.include
-              .forEach((include) => {
-                  valueSetTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("compose")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(include)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  )
-                }
-              )
-          };
-
-          if (valueSet.compose.exclude) {
-            valueSet.compose.exclude
-              .forEach((exclude) => {
-                if(exclude) {
-                  valueSetTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("compose")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(exclude)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  )
-                }
-              })
-          };
-
-          if (valueSet.contained) {
-            valueSet.contained
-              .forEach((contained) => {
-                if(contained) {
-                  valueSetTable.addChildElement(new TableRow({
-                      children: [
-                        new TableCell({
-                          children: [new Paragraph("contained")],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                        new TableCell({
-                          children: [new Paragraph(contained)],
-                          verticalAlign: VerticalAlign.CENTER,
-                        }),
-                      ]
-                    })
-                  );
-                }
-              })
-          };
-
-          this.body.push(valueSetTable);
-
-            this.body.push(new Paragraph({
-              text: ""
-            }));
-          }
-        );
-
-      bundle.entry
-        .filter(entry => entry.resource && (entry.resource.resourceType === 'CodeSystem'))
-        .forEach((entry) => {
-            const extensionUrlKeys = Object.keys(Globals.extensionUrls);
-            const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
-            const keys = Object.keys(entry.resource);
-
-            const codeSystem: STU3CodeSystem | R4CodeSystem = <STU3CodeSystem | R4CodeSystem> entry.resource;
-
-
-            const codeSystemTable = new Table({
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("Name")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(codeSystem.name || codeSystem.title)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              ]
-            });
-
-            if (codeSystem.url) {
-              codeSystemTable.addChildElement(new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("url")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(codeSystem.url)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              );
-            };
-
-            if (codeSystem.identifier) {
-              codeSystemTable.addChildElement(new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("identifier")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(codeSystem.identifier.valueOf())],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-              })
-              );
-            };
-
-            if (codeSystem.description) {
-              codeSystemTable.addChildElement(new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("description")],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(codeSystem.description)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    }),
-                  ]
-                })
-              );
-            };
-
-            if (codeSystem.concept) {
-              codeSystem.concept
-                .forEach((concept) => {
-                  codeSystemTable.addChildElement(new TableRow({
-                        children: [
-                          new TableCell({
-                            children: [new Paragraph("concept")],
-                            verticalAlign: VerticalAlign.CENTER,
-                          }),
-                          new TableCell({
-                            children: [new Paragraph(concept)],
-                            verticalAlign: VerticalAlign.CENTER,
-                          }),
-                        ]
-                      })
-                    )
-                  }
-                )
-            };
-
-            if (codeSystem.contained) {
-              codeSystem.contained
-                .forEach((contained) => {
-                  if(contained) {
-                    codeSystemTable.addChildElement(new TableRow({
-                        children: [
-                          new TableCell({
-                            children: [new Paragraph("contained")],
-                            verticalAlign: VerticalAlign.CENTER,
-                          }),
-                          new TableCell({
-                            children: [new Paragraph(contained)],
-                            verticalAlign: VerticalAlign.CENTER,
-                          }),
-                        ]
-                      })
-                    );
-                  }
-                })
-            };
-
-            this.body.push(codeSystemTable);
-
-            this.body.push(new Paragraph({
-              text: ""
-            }));
-          }
-        );
-    }
+      this.body.push(MSWordExporter.createPara(''));
+    });
 
     this.doc.addSection({
       properties: {},

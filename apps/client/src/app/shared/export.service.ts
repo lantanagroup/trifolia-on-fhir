@@ -53,18 +53,9 @@ export class ExportService {
   }
 
   public exportMsWord(options: ExportOptions) {
-    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/msword?`;
-
-    if (options.responseFormat) {
-      url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
-    }
-
-    url += 'template=' + encodeURIComponent(options.template) + '&';
-    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
-
+    const url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/msword?`;
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
-
 
   public exportHtml(options: ExportOptions) {
     let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/html?`;

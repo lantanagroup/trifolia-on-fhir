@@ -48,7 +48,7 @@
     "@nestjs/passport": "^6.1.0",
     "@nestjs/platform-express": "^6.2.4",
     "@nestjs/swagger": "^3.0.2",
-    "@ng-bootstrap/ng-bootstrap": "^5.1.0",
+    "@ng-bootstrap/ng-bootstrap": "^6.0.0",
     "@nrwl/angular": "8.6.0",
     "@nrwl/nest": "8.6.0",
     "@nrwl/node": "^8.6.0",

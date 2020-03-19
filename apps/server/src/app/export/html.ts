@@ -401,7 +401,7 @@ export class HtmlExporter {
     return this.implementationGuide;
   }
 
-  protected getPageExtension(page: ImplementationGuidePageComponent) {
+  protected static getPageExtension(page: ImplementationGuidePageComponent) {
     switch (page.generation) {
       case 'html':
       case 'generated':
