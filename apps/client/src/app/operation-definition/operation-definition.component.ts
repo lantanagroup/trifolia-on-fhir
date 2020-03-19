@@ -11,12 +11,13 @@ import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {BaseComponent} from '../base.component';
 
 @Component({
   templateUrl: './operation-definition.component.html',
   styleUrls: ['./operation-definition.component.css']
 })
-export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck {
+export class OperationDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   public operationDefinition: OperationDefinition;
   public message: string;
   public validation: any;
@@ -28,13 +29,15 @@ export class OperationDefinitionComponent implements OnInit, OnDestroy, DoCheck 
   constructor(
     public route: ActivatedRoute,
     public configService: ConfigService,
-    private authService: AuthService,
+    protected authService: AuthService,
     private modal: NgbModal,
     private router: Router,
     private opDefService: OperationDefinitionService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
+
+    super(configService, authService);
 
     this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
   }

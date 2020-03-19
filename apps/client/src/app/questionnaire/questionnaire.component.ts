@@ -11,6 +11,8 @@ import {ConfigService} from '../shared/config.service';
 import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {BaseComponent} from '../base.component';
+import { config } from 'rxjs';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -43,7 +45,7 @@ export class ItemModel {
   templateUrl: './questionnaire.component.html',
   styleUrls: ['./questionnaire.component.css']
 })
-export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
+export class QuestionnaireComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public questionnaire: Questionnaire;
   public message: string;
   public validation: any;
@@ -54,13 +56,15 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, DoCheck {
   constructor(
     public route: ActivatedRoute,
     public configService: ConfigService,
-    private authService: AuthService,
+    protected authService: AuthService,
     private questionnaireService: QuestionnaireService,
     private router: Router,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
+
+    super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
   }
