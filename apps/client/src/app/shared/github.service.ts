@@ -4,500 +4,472 @@ import {forkJoin, Observable} from 'rxjs';
 import {ConfigService} from './config.service';
 
 export interface FileModel {
-    path: string;
-    content: string;
-    sha?: string;
+  path: string;
+  content: string;
+  sha?: string;
+  info?: string;
+  action: 'nothing'|'add'|'update'|'delete';
+  isNew?: boolean;
 }
 
 interface CommitCreatedResponseModel {
-    sha: string;
-    node_id: string;
+  sha: string;
+  node_id: string;
+  url: string;
+  author: {
+    date: string;
+    name: string;
+    email: string;
+  };
+  committer: {
+    date: string;
+    name: string;
+    email: string;
+  };
+  message: string;
+  tree: {
     url: string;
-    author: {
-        date: string;
-        name: string;
-        email: string;
-    };
-    committer: {
-        date: string;
-        name: string;
-        email: string;
-    };
-    message: string;
-    tree: {
-        url: string;
-        sha: string;
-    };
-    parents: [{
-        url: string;
-        sha: string;
-    }];
-    verification: {
-        verified: boolean;
-        reason: string;
-        signature: string;
-        payload: string;
-    };
+    sha: string;
+  };
+  parents: [{
+    url: string;
+    sha: string;
+  }];
+  verification: {
+    verified: boolean;
+    reason: string;
+    signature: string;
+    payload: string;
+  };
 }
 
 interface BlobCreatedResponseModel {
-    url: string;
-    sha: string;
+  url: string;
+  sha: string;
 }
 
 interface ReferenceUpdatedModel {
-    ref: string;
-    node_id: string;
+  ref: string;
+  node_id: string;
+  url: string;
+  object: {
+    type: string;
+    sha: string;
     url: string;
-    object: {
-        type: string;
-        sha: string;
-        url: string;
-    };
+  };
 }
 
 interface RepositoryReferenceModel {
-    ref: string;
-    node_id: string;
+  ref: string;
+  node_id: string;
+  url: string;
+  object: {
+    type: string;
+    sha: string;
     url: string;
-    object: {
-        type: string;
-        sha: string;
-        url: string;
-    };
+  };
 }
 
 interface RepositoryTreeModel {
+  sha: string;
+  url: string;
+  tree: [{
+    path: string;
+    mode: string;
+    type: string;
+    size: number;
     sha: string;
     url: string;
-    tree: [{
-        path: string;
-        mode: string;
-        type: string;
-        size: number;
-        sha: string;
-        url: string;
-    }];
+  }];
 }
 
 export interface RepositoryOwnerModel {
-    login: string;
-    id: string;
-    node_id: string;
-    avatar_url: string;
-    url: string;
-    html_url: string;
-    type: string;
-    site_admin: boolean;
+  login: string;
+  id: string;
+  node_id: string;
+  avatar_url: string;
+  url: string;
+  html_url: string;
+  type: string;
+  site_admin: boolean;
 }
 
 export interface RepositoryModel {
-    id: string;
-    node_id: string;
-    name: string;
-    full_name: string;
-    private: boolean;
-    owner: RepositoryOwnerModel;
-    html_url: string;
-    description: string;
-    fork: false;
-    url: string;
-    size: number;
-    watchers_count: number;
-    language: string;
-    has_issues: boolean;
-    has_projects: boolean;
-    has_downloads: boolean;
-    has_wiki: boolean;
-    has_pages: boolean;
-    license: string;
-    open_issues: number;
-    watchers: number;
-    default_branch: string;
+  id: string;
+  node_id: string;
+  name: string;
+  full_name: string;
+  private: boolean;
+  owner: RepositoryOwnerModel;
+  html_url: string;
+  description: string;
+  fork: false;
+  url: string;
+  size: number;
+  watchers_count: number;
+  language: string;
+  has_issues: boolean;
+  has_projects: boolean;
+  has_downloads: boolean;
+  has_wiki: boolean;
+  has_pages: boolean;
+  license: string;
+  open_issues: number;
+  watchers: number;
+  default_branch: string;
 }
 
 export interface ContentModel {
-    type: string;
-    encoding: string;
-    size: number;
-    name: string;
-    path: string;
-    content: string;
-    sha: string;
-    url: string;
-    git_url: string;
-    html_url: string;
-    download_url: string;
+  type: string;
+  encoding: string;
+  size: number;
+  name: string;
+  path: string;
+  content: string;
+  sha: string;
+  url: string;
+  git_url: string;
+  html_url: string;
+  download_url: string;
 }
 
 export interface BranchModel {
-    name: string;
-    commit?: {
-        sha: string;
-        url: string;
-    };
-    protected?: boolean;
-    protection_url?: string;
+  name: string;
+  commit?: {
+    sha: string;
+    url: string;
+  };
+  protected?: boolean;
+  protection_url?: string;
 }
 
 export interface UserModel {
-    login: string;
-    id: string;
-    node_id: string;
-    avatar_url: string;
-    html_url: string;
+  login: string;
+  id: string;
+  node_id: string;
+  avatar_url: string;
+  html_url: string;
+  url: string;
+  repos_url: string;
+  type: string;
+  site_admin: boolean;
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+}
+
+export interface CommitsModel {
+  sha: string;
+  node_id: string;
+  commit: {
+    author: any;
+    committer: any;
+    message?: string;
+    tree: {
+      url: string;
+      sha: string;
+    };
+    verification: {
+      verified: boolean;
+      reason: string;
+      signature: any;
+      payload: any;
+    };
+  };
+  parents: {
     url: string;
-    repos_url: string;
-    type: string;
-    site_admin: boolean;
-    name: string;
-    company: string;
-    blog: string;
-    location: string;
-    email: string;
+    sha: string;
+  }[];
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class GithubService {
-    public token: string;
-    public authChanged: EventEmitter<any> = new EventEmitter();
+  public token: string;
+  public authChanged: EventEmitter<any> = new EventEmitter();
 
-    private readonly tokenKey = 'github-token';
+  private readonly tokenKey = 'github-token';
 
-    constructor(
-        private configService: ConfigService,
-        private http: HttpClient) {
+  constructor(
+    private configService: ConfigService,
+    private http: HttpClient) {
 
-        this.token = localStorage.getItem(this.tokenKey);
+    this.token = localStorage.getItem(this.tokenKey);
 
-        // Watch for changes to the local storage. GitHub auth is handled in a separate window, and sets the key
-        // in the local storage when logged in. Retrieve the key from local storage when the storage changes.
-        window.addEventListener('storage', () => {
-            const newToken = localStorage.getItem(this.tokenKey);
+    // Watch for changes to the local storage. GitHub auth is handled in a separate window, and sets the key
+    // in the local storage when logged in. Retrieve the key from local storage when the storage changes.
+    window.addEventListener('storage', () => {
+      const newToken = localStorage.getItem(this.tokenKey);
 
-            if (this.token !== newToken) {
-                this.token = newToken;
-                this.authChanged.emit();
-            }
-        });
+      if (this.token !== newToken) {
+        this.token = newToken;
+        this.authChanged.emit();
+      }
+    });
+  }
+
+  private handleError(err, observer?) {
+    if (err.status === 401) {
+      this.logout();
     }
 
-    private handleError(err, observer?) {
-        if (err.status === 401) {
-            this.logout();
-        }
+    if (observer) {
+      observer.error(err);
+      observer.complete();
+    }
+  }
 
-        if (observer) {
-            observer.error(err);
-            observer.complete();
-        }
+  private getOptions() {
+    return {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': 'Bearer ' + this.token
+      }
+    };
+  }
+
+  public logout() {
+    this.token = null;
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  public async login() {
+    if (this.token) return;
+
+    const redirectUri = location.origin + '/github/callback';
+    const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
+    const activeWin = window.open(url, 'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
+
+    if (!activeWin) {
+      throw new Error('Could not open window to login to GitHub. Please ensure pop-ups are not blocked.');
     }
 
-    private getOptions() {
+    return new Promise((resolve, error) => {
+      activeWin.onunload = () => {
+        setTimeout(() => {
+          if (this.token) {
+            return resolve();
+          } else {
+            return error('Not logged into GitHub.');
+          }
+        }, 500);
+      };
+    });
+  }
+
+  public async getUser(): Promise<UserModel> {
+    await this.login();
+    return await this.http.get<UserModel>('https://api.github.com/user', this.getOptions()).toPromise();
+  }
+
+  public async getRepositories(): Promise<RepositoryModel[]> {
+    const repositories = [];
+
+    try {
+      await this.login();
+
+      const getNextRepositories = async (page = 1) => {
+        const next = await this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100&page=' + page, this.getOptions()).toPromise();
+
+        if (next) {
+          repositories.push(...next);
+
+          if (next.length === 100) {
+            await getNextRepositories(page + 1);
+          }
+        }
+      };
+
+      await getNextRepositories();
+    } catch (ex) {
+      console.error('Error retrieving list of repositories from GitHub: ' + ex.message);
+    }
+
+    return repositories;
+  }
+
+  public async getBranches(ownerLogin: string, repositoryName: string): Promise<BranchModel[]> {
+    await this.login();
+
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/branches`;
+    return await this.http.get<BranchModel[]>(url, this.getOptions()).toPromise();
+  }
+
+  public async getAllContents(ownerLogin: string, repositoryName: string, branchName: string, id: string) {
+    if (id.startsWith('file|')) {
+      return this.getContents(ownerLogin, repositoryName, branchName, id.substring(5));
+    } else if (id.startsWith('dir|')) {
+      const dirContents = await this.getContents(ownerLogin, repositoryName, branchName, id.substring(4));
+      const promises = dirContents.map((dirContent) => this.getAllContents(ownerLogin, repositoryName, branchName, dirContent.type + '|' + dirContent.path));
+      const dirFilesResponses = await Promise.all(promises);
+      let files = [];
+
+      dirFilesResponses.forEach((dirFiles: ContentModel[]) => {
+        files = files.concat(dirFiles);
+      });
+
+      return files;
+    } else {
+      throw new Error('Unexpected github import selected: ' + id);
+    }
+  }
+
+  public async getFiles(ownerLogin: string, repositoryName: string, branchName: string) {
+    await this.login();
+
+    const commitsUrl = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`;
+    const commitsResults = await this.http.get<CommitsModel>(commitsUrl, this.getOptions()).toPromise();
+
+    const treesUrl = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${commitsResults.commit.tree.sha}?recursive=true`;
+    const treesResponse = await this.http.get<RepositoryTreeModel>(treesUrl, this.getOptions()).toPromise();
+
+    return treesResponse.tree
+      .filter(t => t.mode !== '040000')
+      .map(t => {
+        return <FileModel> {
+          path: t.path,
+          action: 'nothing',
+          isNew: false
+        };
+      });
+  }
+
+  public async getContents(ownerLogin: string, repositoryName: string, branchName?: string, path?: string): Promise<ContentModel[]> {
+    await this.login();
+
+    let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents`;
+
+    if (path) {
+      url += `/${path}`;
+    }
+
+    if (branchName) {
+      url += '?ref=' + encodeURIComponent(branchName);
+    }
+
+    return await this.http.get<ContentModel[]>(url, this.getOptions()).toPromise();
+  }
+
+  public async fetchHead(ownerLogin: string, repositoryName: string, branch = 'master') {
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+    return this.http.get<RepositoryReferenceModel>(url, this.getOptions()).toPromise();
+  }
+
+  public async fetchTree(ownerLogin: string, repositoryName: string, branch = 'master'): Promise<RepositoryTreeModel> {
+    const reference = await this.fetchHead(ownerLogin, repositoryName, branch)
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${reference.object.sha}`;
+    return await this.http.get<RepositoryTreeModel>(url, this.getOptions()).toPromise();
+  }
+
+  public async createTree(ownerLogin: string, repositoryName: string, baseTreeSha: string, files: FileModel[]) {
+    const body = {
+      base_tree: baseTreeSha,
+      tree: files.map((file) => {
         return {
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Authorization': 'Bearer ' + this.token
-            }
+          path: file.path,
+          mode: '100644',
+          type: 'blob',
+          sha: file.sha
         };
-    }
+      })
+    };
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees`;
+    return this.http.post<RepositoryTreeModel>(url, body, this.getOptions()).toPromise();
+  }
 
-    public logout() {
-        this.token = null;
-        localStorage.removeItem(this.tokenKey);
-    }
+  public async createCommit(ownerLogin: string, repositoryName: string, message: string, treeSha: string, parentSha: string) {
+    const body = {
+      message: message,
+      tree: treeSha,
+      parents: [parentSha]
+    };
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/commits`;
+    return this.http.post<CommitCreatedResponseModel>(url, body, this.getOptions()).toPromise();
+  }
 
-    public login(): Observable<any> {
-        if (this.token) {
-            return new Observable((observer) => {
-                observer.next();
-                observer.complete();
-            });
-        }
+  public async updateHead(ownerLogin: string, repositoryName: string, sha: string, branch = 'master') {
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+    const body = {
+      sha: sha,
+      force: true
+    };
+    return this.http.patch<ReferenceUpdatedModel>(url, body, this.getOptions()).toPromise();
+  }
 
-        const redirectUri = location.origin + '/github/callback';
-        const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
-        const activeWin = window.open(url,'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
-
-        return new Observable<any>((observer) => {
-            if (!activeWin) {
-                observer.error('Could not open window to login to GitHub. Please ensure pop-ups are not blocked.');
-                observer.complete();
-                return;
-            }
-            activeWin.onunload = () => {
-                setTimeout(() => {
-                    if (this.token) {
-                        observer.next();
-                    } else {
-                        observer.error('Not logged into GitHub.');
-                    }
-                    observer.complete();
-                }, 1000);
-            };
-        });
-    }
-
-    public getUser(): Observable<UserModel> {
-        return new Observable<UserModel>((observer) => {
-            this.login()
-                .subscribe(() => {
-                    this.http.get<UserModel>('https://api.github.com/user', this.getOptions())
-                        .subscribe((user) => {
-                            observer.next(user);
-                            observer.complete();
-                        }, (err) => this.handleError(err, observer));
-                }, (err) => this.handleError(err, observer));
-        });
-    }
-
-    public getRepositories(): Observable<RepositoryModel[]> {
-        return new Observable<RepositoryModel[]>((observer) => {
-            this.login()
-                .subscribe(() => {
-                    let repositories = [];
-
-                    const getNextRepositories = (page = 1) => {
-                        this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100&page=' + page, this.getOptions())
-                            .subscribe((next) => {
-                                repositories = repositories.concat(next);
-                                if (next.length === 100) {
-                                    getNextRepositories(page + 1);
-                                } else {
-                                    observer.next(repositories);
-                                    observer.complete();
-                                }
-                            }, (err) => this.handleError(err, observer));
-                    };
-
-                    getNextRepositories();
-                }, (err) => this.handleError(err, observer));
-        });
-    }
-
-    public getBranches(ownerLogin: string, repositoryName: string): Observable<BranchModel[]> {
-        return new Observable<BranchModel[]>((observer) => {
-            this.login()
-                .subscribe(() => {
-                    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/branches`;
-
-                    this.http.get<BranchModel[]>(url, this.getOptions())
-                        .subscribe((branches) => {
-                            observer.next(branches);
-                            observer.complete();
-                        }, (err) => this.handleError(err, observer));
-                }, (err) => this.handleError(err, observer));
-        });
-    }
-
-    public getAllContents(ownerLogin: string, repositoryName: string, branchName: string, id: string) {
-        if (id.startsWith('file|')) {
-            return this.getContents(ownerLogin, repositoryName, branchName, id.substring(5));
-        } else if (id.startsWith('dir|')) {
-            return new Observable<ContentModel[]>((observer) => {
-                this.getContents(ownerLogin, repositoryName, branchName, id.substring(4))
-                    .subscribe((dirContents) => {
-                        const observables = dirContents.map((dirContent) => this.getAllContents(ownerLogin, repositoryName, branchName, dirContent.type + '|' + dirContent.path));
-
-                        forkJoin(observables)
-                            .subscribe((dirFilesResponses) => {
-                                let files = [];
-
-                                dirFilesResponses.forEach((dirFiles: ContentModel[]) => {
-                                    files = files.concat(dirFiles);
-                                });
-
-                                observer.next(files);
-                                observer.complete();
-                            }, (err) => this.handleError(err, observer));
-                    }, (err) => this.handleError(err, observer));
-            });
-        } else {
-            throw new Error('Unexpected github import selected: ' + id);
-        }
-    }
-
-    public getContents(ownerLogin: string, repositoryName: string, branchName?: string, path?: string): Observable<ContentModel[]> {
-        return new Observable<ContentModel[]>((observer) => {
-            this.login()
-                .subscribe(() => {
-                    let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents`;
-
-                    if (path) {
-                        url += `/${path}`;
-                    }
-
-                    if (branchName) {
-                        url += '?ref=' + encodeURIComponent(branchName);
-                    }
-
-                    this.http.get<ContentModel[]>(url, this.getOptions())
-                        .subscribe((contents) => {
-                            observer.next(contents);
-                            observer.complete();
-                        }, (err) => this.handleError(err, observer));
-                }, (err) => this.handleError(err, observer));
-        });
-    }
-
-    public fetchHead(ownerLogin: string, repositoryName: string, branch = 'master') {
-        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
-        return this.http.get<RepositoryReferenceModel>(url, this.getOptions());
-    }
-
-    public fetchTree(ownerLogin: string, repositoryName: string, branch = 'master'): Observable<RepositoryTreeModel> {
-        return new Observable((observer) => {
-            this.fetchHead(ownerLogin, repositoryName, branch)
-                .subscribe((reference) => {
-                    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${reference.object.sha}`;
-                    this.http.get<RepositoryTreeModel>(url, this.getOptions())
-                        .subscribe((tree) => {
-                            observer.next(tree);
-                            observer.complete();
-                        }, (err) => {
-                            observer.error(err);
-                            observer.complete();
-                        })
-                }, (err) => {
-                    observer.error(err);
-                    observer.complete();
-                })
-        });
-    }
-
-    public createTree(ownerLogin: string, repositoryName: string, baseTreeSha: string, files: FileModel[]) {
+  public async updateContents(ownerLogin: string, repositoryName: string, message: string, files: FileModel[], branchName = 'master') {
+    // Create a blob for each of the files
+    const filesRequiringBlob = files.filter(f => f.action !== 'nothing' && f.action !== 'delete' && f.content);
+    const blobPromises = filesRequiringBlob
+      .map((file) => {
+        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/blobs`;
         const body = {
-            base_tree: baseTreeSha,
-            tree: files.map((file) => {
-                return {
-                    path: file.path,
-                    mode: '100644',
-                    type: 'blob',
-                    sha: file.sha
-                };
-            })
+          content: file.content,
+          encoding: 'utf-8'
         };
-        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees`;
-        return this.http.post<RepositoryTreeModel>(url, body, this.getOptions());
+        return this.http.post<BlobCreatedResponseModel>(url, body, this.getOptions()).toPromise();
+      });
+    const deletedFiles = files.filter(f => f.action === 'delete');
+
+    const blobs = await Promise.all(blobPromises);
+    const baseTree = await this.fetchTree(ownerLogin, repositoryName, branchName);
+
+    // Add files being updated/deleted via a blob to the tree
+    const filesWithSha = filesRequiringBlob.map((file, index) => {
+      return <FileModel>{
+        path: file.path,
+        sha: blobs[index].sha
+      };
+    });
+
+    // Add files being deleted to the tree
+    filesWithSha.push(... deletedFiles.map(f => {
+      return <FileModel> {
+        path: f.path,
+        sha: null
+      };
+    }));
+
+    const newTree = await this.createTree(ownerLogin, repositoryName, baseTree.sha, filesWithSha);
+    const newCommit = await this.createCommit(ownerLogin, repositoryName, message, newTree.sha, baseTree.sha);
+    await this.updateHead(ownerLogin, repositoryName, newCommit.sha, branchName);
+  }
+
+  public async updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+    const encoded = btoa(content);
+    const options = this.getOptions();
+    const update = async (lastSha?: string) => {
+      const data = {
+        content: encoded
+      };
+
+      if (lastSha) {
+        data['sha'] = lastSha;
+      }
+
+      if (branchName) {
+        data['branch'] = branchName;
+      }
+
+      if (message) {
+        data['message'] = message;
+      }
+
+      await this.http.put<any>(url, data, this.getOptions()).toPromise();
+    };
+
+    await this.login();
+
+    const res = await this.http.get<any>(url, options).toPromise();
+    const cleanedResponseContent = res.content.replace(/\r/g, '').replace(/\n/g, '');
+
+    if (cleanedResponseContent === encoded) {      // If the content hasn't changed, don't update in GitHub
+      return;
     }
 
-    public createCommit(ownerLogin: string, repositoryName: string, message: string, treeSha: string, parentSha: string) {
-        const body = {
-            message: message,
-            tree: treeSha,
-            parents: [parentSha]
-        };
-        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/commits`;
-        return this.http.post<CommitCreatedResponseModel>(url, body, this.getOptions());
-    }
-
-    public updateHead(ownerLogin: string, repositoryName: string, sha: string, branch = 'master') {
-        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
-        const body = {
-            sha: sha,
-            force: true
-        };
-        return this.http.patch<ReferenceUpdatedModel>(url, body, this.getOptions());
-    }
-
-    public updateContents(ownerLogin: string, repositoryName: string, message: string, files: FileModel[], branchName = 'master') {
-        return new Observable<any>((observer) => {
-            // Create a blob for each of the files
-            const blobPromises = files.map((file) => {
-                const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/blobs`;
-                const body = {
-                    content: file.content,
-                    encoding: 'utf-8'
-                };
-                return this.http.post<BlobCreatedResponseModel>(url, body, this.getOptions()).toPromise();
-            });
-
-            let blobs;
-            let baseTree;
-
-            Promise.all(blobPromises)
-                .then((results) => {
-                    blobs = results;
-                    return this.fetchTree(ownerLogin, repositoryName, branchName).toPromise();
-                })
-                .then((results) => {
-                    baseTree = results;
-                    const filesWithSha = files.map((file, index) => {
-                        return <FileModel> {
-                            path: file.path,
-                            sha: blobs[index].sha
-                        };
-                    });
-
-                    return this.createTree(ownerLogin, repositoryName, results.sha, filesWithSha).toPromise();
-                })
-                .then((newTree) => {
-                    return this.createCommit(ownerLogin, repositoryName, message, newTree.sha, baseTree.sha).toPromise();
-                })
-                .then((newCommit) => {
-                    return this.updateHead(ownerLogin, repositoryName, newCommit.sha, branchName).toPromise();
-                })
-                .then(() => {
-                    observer.next();
-                    observer.complete();
-                })
-                .catch((err) => {
-                    observer.error(err);
-                    observer.complete();
-                });
-        });
-    }
-
-    public updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
-        return new Observable<ContentModel[]>((observer) => {
-            const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
-            const encoded = btoa(content);
-            const options = this.getOptions();
-            const update = (lastSha?: string) => {
-                const data = {
-                    content: encoded
-                };
-
-                if (lastSha) {
-                    data['sha'] = lastSha;
-                }
-
-                if (branchName) {
-                    data['branch'] = branchName;
-                }
-
-                if (message) {
-                    data['message'] = message;
-                }
-
-                this.http.put<any>(url, data, this.getOptions())
-                    .subscribe(() => {
-                        observer.next();
-                        observer.complete();
-                    }, (err) => this.handleError(err, observer));
-            };
-
-            this.login()
-                .subscribe(() => {
-                    this.http.get<any>(url, options)
-                        .subscribe((res) => {
-                            const cleanedResponseContent = res.content.replace(/\r/g, '').replace(/\n/g, '');
-                            if (cleanedResponseContent === encoded) {      // If the content hasn't changed, don't update in GitHub
-                                observer.next();
-                                observer.complete();
-                            } else {
-                                update(res.sha);
-                            }
-                        }, (err) => {
-                            if (err.status === 404) {
-                                update();
-                            } else {
-                                this.handleError(err, observer);
-                            }
-                        });
-                }, (err) => this.handleError(err, observer));
-        });
-    }
+    await update(res.sha);
+  }
 }
