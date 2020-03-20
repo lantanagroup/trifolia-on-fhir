@@ -1,291 +1,186 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {Bundle, DomainResource, EntryComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../shared/github.service';
-import {NodeMenuItemAction, NodeSelectedEvent, TreeModel, TreeModelSettings} from 'ng2-tree';
-import {ImportService} from '../shared/import.service';
-import {FhirService} from '../shared/fhir.service';
-import {Content} from '@angular/compiler/src/render3/r3_ast';
+import {Component, OnInit} from '@angular/core';
+import {BranchModel, FileModel, GithubService, RepositoryModel} from '../shared/github.service';
+import {ConfigService} from '../shared/config.service';
+import {ExportService} from '../shared/export.service';
+import JSZip from 'jszip';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
-  selector: 'app-export-github-panel',
+  selector: 'trifolia-fhir-export-github-panel',
   templateUrl: './export-github-panel.component.html',
   styleUrls: ['./export-github-panel.component.css']
 })
-export class ExportGithubPanelComponent implements OnChanges {
-  @Input() resourcesBundle: Bundle;
-  @ViewChild('treeComponent', { static: true }) treeComponent;
+export class ExportGithubPanelComponent implements OnInit {
   public message: string;
-  public checkedIds: string[] = [];
-  public isChanging: boolean;
-  public newPath: string;
-  public newType: 'json' | 'xml' = 'json';
+  public commitMessage: string;
+  public loadingRepositories = true;
   public repositories: RepositoryModel[];
   public branches: BranchModel[];
-  public tree: TreeModel;
-  public resourceTypeDir = true;
-  public newFolderName: string;
   public repository: RepositoryModel;
   public branch: string;
+  public igFiles: FileModel[];
+  public igFilesPromise: Promise<void>;
+  public allFiles: FileModel[];
+  public Globals = Globals;
+  public filter = {
+    added: true,
+    updated: true,
+    deleted: true,
+    nothing: true
+  };
 
   constructor(
     public githubService: GithubService,
-    private importService: ImportService,
-    private fhirService: FhirService) {
+    private configService: ConfigService,
+    private fhirService: FhirService,
+    private exportService: ExportService) {
   }
 
-  public get isAllChecked(): boolean {
-    return this.checkedIds.length === this.resourcesBundle.entry.length;
+  deleteOthers() {
+    this.allFiles
+      .filter(f => !f.isNew && !f.content)
+      .forEach(f => f.action = 'delete');
   }
 
-  public set isAllChecked(checked: boolean) {
-    if (checked) {
-      this.checkedIds = (this.resourcesBundle.entry || []).map((entry) => entry.resource.id);
-    } else {
-      this.checkedIds = [];
-    }
-  }
-
-  public isChecked(entry: EntryComponent) {
-    return this.checkedIds.indexOf(entry.resource.id) >= 0;
-  }
-
-  public setChecked(entry: EntryComponent, checked: boolean) {
-    const index = this.checkedIds.indexOf(entry.resource.id);
-
-    if (!checked && index >= 0) {
-      this.checkedIds.splice(index, 1);
-    } else if (checked && index < 0) {
-      this.checkedIds.push(entry.resource.id);
-    }
-  }
-
-  public addNewFolder() {
-    const nodeController = this.treeComponent.getControllerByNodeId(this.newPath);
-    const selectedNodeModel = nodeController.toTreeModel();
-    const newNodeModel: TreeModel = {
-      id: (selectedNodeModel.id === '/' ? '' : selectedNodeModel.id) + '/' + this.newFolderName,
-      value: this.newFolderName,
-      children: []
-    };
-
-    nodeController.addChild(newNodeModel);
-
-    setTimeout(() => {
-      const newNodeController = this.treeComponent.getControllerByNodeId(newNodeModel.id);
-      newNodeController.select();
-      this.newFolderName = null;
-    }, 500);
-  }
-
-  public changeSelected() {
-    this.isChanging = true;
-
-    this.message = null;
-    this.newPath = '';
-    this.newType = 'json';
-    this.tree = null;
-
-    const settings: TreeModelSettings = {
-      cssClasses: {
-        expanded: 'fa fa-caret-down',
-        collapsed: 'fa fa-caret-right',
-        empty: 'fa fa-caret-right disabled',
-        leaf: 'fa'
-      },
-      menuItems: [{name: 'New folder', action: NodeMenuItemAction.Custom}],
-      static: true
-    };
-    const templates = {
-      node: '<i class="fa fa-folder-o"></i>',
-      leaf: '<i class="fa fa-file-o"></i>'
-    };
-
-    this.githubService.getContents(this.repository.owner.login, this.repository.name, this.branch)
-      .subscribe((contents) => {
-        this.tree = {
-          value: this.branch,
-          id: '/',
-          children: contents
-            .filter((content: ContentModel) => content.type === 'dir')
-            .sort((a: ContentModel, b: ContentModel) => (a.type + a.name).localeCompare(b.type + b.name))
-            .map((content: ContentModel) => {
-              return this.mapContentToTreeModel(content);
-            }),
-          settings: settings,
-          templates: templates
-        };
-      }, (err) => {
-        if (err && err.error && err.error.message === 'This repository is empty.') {
-          this.tree = {
-            value: this.branch || 'master',
-            id: '/',
-            children: [],
-            settings: settings,
-            templates: templates
-          };
-        } else {
-          this.message = getErrorString(err);
-        }
-      });
-  }
-
-  public getPathFromResource(resource: DomainResource): string {
-    return this.fhirService.getResourceGithubDetails(resource).path;
-  }
-
-  private mapContentToTreeModel(content: ContentModel): TreeModel {
-    const newTreeModel: TreeModel = {
-      value: content.name,
-      id: '/' + content.path
-    };
-
-    newTreeModel.loadChildren = (callback) => {
-      this.githubService.getContents(this.repository.owner.login, this.repository.name, this.branch, content.path)
-        .subscribe((childItems) => {
-          const childTreeModels = <TreeModel[]> childItems
-            .filter((next: ContentModel) => next.type === 'dir')
-            .sort((a: ContentModel, b: ContentModel) => (a.type + a.name).localeCompare(b.type + b.name))
-            .map((childItem: ContentModel) => {
-              return this.mapContentToTreeModel(childItem);
-            });
-          callback(childTreeModels);
-        }, (err) => {
-          this.message = getErrorString(err);
-        });
-    };
-
-    return newTreeModel;
-  }
-
-  private updateImplementationGuideDetails() {
-    const implementationGuideEntry = (this.resourcesBundle.entry || []).find((entry) => entry.resource.resourceType === 'ImplementationGuide');
-
-    if (implementationGuideEntry) {
-      let shouldSave = false;
-
-      const implementationGuideDetails = this.fhirService.getResourceGithubDetails(implementationGuideEntry.resource);
-      if (this.repository.name !== implementationGuideDetails.repository) {
-        implementationGuideDetails.repository = this.repository.name;
-        shouldSave = true;
+  get filteredAllFiles() {
+    return this.allFiles.filter(f => {
+      if (f.action === 'nothing' && this.filter.nothing) {
+        return true;
+      } else if (f.action === 'add' && this.filter.added) {
+        return true;
+      } else if (f.action === 'update' && this.filter.updated) {
+        return true;
+      } else if (f.action === 'delete' && this.filter.deleted) {
+        return true;
       }
-      if (this.repository.owner.login !== implementationGuideDetails.owner) {
-        implementationGuideDetails.owner = this.repository.owner.login;
-        shouldSave = true;
-      }
-      if (this.branch !== implementationGuideDetails.branch) {
-        implementationGuideDetails.branch = this.branch;
-        shouldSave = true;
-      }
-
-      this.fhirService.setResourceGithubDetails(implementationGuideEntry.resource, implementationGuideDetails);
-
-      if (shouldSave) {
-        this.saveResources([implementationGuideEntry.resource])
-          .subscribe(() => {
-            this.message = 'Updated implementation guide\'s repository and branch';
-          }, (err) => {
-            this.message = getErrorString(err);
-          });
-      }
-    }
+      return false;
+    });
   }
 
-  repositoryChanged() {
+  async repositoryChanged() {
     this.branches = [];
     this.branch = null;
 
-    this.githubService.getBranches(this.repository.owner.login, this.repository.name)
-      .subscribe((branches: BranchModel[]) => {
-        this.branches = branches;
+    if (!this.repository) return;
 
-        if (this.branches.length === 0 && this.repository.default_branch) {
-          this.branches.push({name: this.repository.default_branch});
-        }
+    this.branches = await this.githubService.getBranches(this.repository.owner.login, this.repository.name);
 
-        if (this.repository.default_branch) {
-          this.branch = this.repository.default_branch;
-        }
-
-        this.branchChanged();
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
-  }
-
-  branchChanged() {
-    this.tree = null;
-    this.updateImplementationGuideDetails();
-  }
-
-  public nodeSelected(event: NodeSelectedEvent) {
-    this.newPath = <string>event.node.id;
-  }
-
-  private saveResources(resources: DomainResource[]) {
-    const updateBundle = new Bundle();
-    updateBundle.type = 'transaction';
-    updateBundle.entry = resources.map((resource) => {
-      return <EntryComponent>{
-        request: {
-          method: 'PUT',
-          url: resource.resourceType + '/' + resource.id
-        },
-        resource: resource
-      };
-    });
-
-    return this.fhirService.batch(JSON.stringify(updateBundle), 'application/json');
-  }
-
-  public okChanging() {
-    const resources = this.checkedIds.map((checkedId) => {
-      return (this.resourcesBundle.entry || []).find((entry) => entry.resource.id === checkedId).resource;
-    });
-
-    resources.forEach((resource: DomainResource) => {
-      let path = this.newPath;
-
-      if (this.resourceTypeDir) {
-        path += (!path.endsWith('/') ? '/' : '') + resource.resourceType.toLowerCase() + '/';
-      }
-
-      path += (!path.endsWith('/') ? '/' : '') + resource.id + '.' + this.newType;
-
-      this.fhirService.setResourceGithubDetails(resource, {
-        owner: this.repository.owner.login,
-        repository: this.repository.name,
-        branch: this.branch,
-        path: path
-      });
-    });
-
-    this.saveResources(resources)
-      .subscribe(() => {
-        this.message = 'Updated resources with GitHub repository and path.';
-        this.isChanging = false;
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    const implementationGuideEntry = (this.resourcesBundle.entry || []).find((entry) => entry.resource && entry.resource.resourceType === 'ImplementationGuide');
-    const implementationGuide = implementationGuideEntry ? implementationGuideEntry.resource : null;
-
-    if (implementationGuide) {
-      const implementationGuideDetails = this.fhirService.getResourceGithubDetails(implementationGuide);
-
-      this.githubService.getRepositories()
-        .subscribe((repositories) => {
-          this.repositories = repositories;
-          this.repository = repositories.find((repo) => repo.full_name === implementationGuideDetails.owner + '/' + implementationGuideDetails.repository);
-          this.repositoryChanged();
-        }, (err) => {
-          this.message = getErrorString(err);
-        });
+    if (this.branches.length === 0 && this.repository.default_branch) {
+      this.branches.push({name: this.repository.default_branch});
     }
 
-    this.checkedIds = (this.resourcesBundle.entry || []).map((entry) => entry.resource.id);
+    if (this.repository.default_branch) {
+      this.branch = this.repository.default_branch;
+    }
+
+    this.branchChanged();
+  }
+
+  public async branchChanged() {
+    if (!this.branch) return;
+
+    await this.igFilesPromise;
+
+    this.allFiles = await this.githubService.getFiles(this.repository.owner.login, this.repository.name, this.branch);
+
+    this.igFiles.forEach(f => {
+      const found = this.allFiles.find(n => n.path === f.path);
+
+      if (found) {
+        found.content = f.content;
+        found.action = 'update';
+        found.info = f.info;
+        f.isNew = false;
+      } else {
+        f.action = 'add';
+        f.isNew = true;
+        this.allFiles.push(f);
+      }
+    });
+
+    this.allFiles.sort((a, b) => (a.path > b.path) ? 1 : (a.path === b.path) ? 0 : -1);
+  }
+
+  private async loadFiles() {
+    if (this.configService.project && this.configService.project.implementationGuideId) {
+      let htmlPackage;
+      try {
+        htmlPackage = await this.exportService.exportHtml(<any>{
+          implementationGuideId: this.configService.project.implementationGuideId,
+          includeIgPublisherJar: false,
+          responseFormat: 'application/json'
+        }).toPromise();
+      } catch (ex) {
+        this.message = getErrorString(ex);
+        return;
+      }
+
+      const zip: JSZip = await JSZip.loadAsync(htmlPackage.body);
+      const filePaths = Object.keys(zip.files);
+      this.igFiles = [];
+
+      for (let i = 0; i < filePaths.length; i++) {
+        const b64Content = await zip.files[filePaths[i]].async('base64');
+        const content = b64Content ? atob(b64Content) : undefined;
+
+        const file: FileModel = {
+          path: filePaths[i],
+          content: b64Content,
+          action: 'update'
+        };
+
+        if (file.content) {
+          let resource;
+
+          if (file.path.endsWith('.json')) {
+            try {
+              const parsed = JSON.parse(content);
+
+              if (parsed.hasOwnProperty('resourceType')) {
+                resource = <IDomainResource> parsed;
+              }
+            } catch (ex) { }
+          } else if (file.path.endsWith('.xml')) {
+            try {
+              resource = this.fhirService.deserialize(content);
+            } catch (ex) { }
+          }
+
+          if (resource) {
+            file.info = `${resource.resourceType}/${resource.id}`;
+          }
+
+          this.igFiles.push(file);
+        }
+      }
+    }
+  }
+
+  async ngOnInit() {
+    try {
+      this.loadingRepositories = true;
+      this.repositories = await this.githubService.getRepositories();
+    } catch (ex) {
+      this.message = getErrorString(ex);
+    } finally {
+      this.loadingRepositories = false;
+    }
+
+    this.igFilesPromise = this.loadFiles();
+  }
+
+  get canExport(): boolean {
+    return !!this.repository && !!this.branch && !!this.igFiles && this.igFiles.length > 0 && !!this.commitMessage;
+  }
+
+  async export() {
+    try {
+      await this.githubService.updateContents(this.repository.owner.login, this.repository.name, this.commitMessage, this.allFiles, this.branch);
+    } catch (ex) {
+      this.message = getErrorString(ex);
+    }
   }
 }

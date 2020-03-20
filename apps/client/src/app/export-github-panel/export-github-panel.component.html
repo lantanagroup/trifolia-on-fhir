@@ -1,85 +1,82 @@
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
+<div class="alert alert-info" *ngIf="!message">The "GitHub" export format places all the resources within the IG in the specified GitHub repository/branch.</div>
+<div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to GitHub. If the file already exists in GitHub, it will be completely overwritten by this export. At least one resource must have GitHub location information specified to export.</div>
 
 <button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubService.login()">Login to GitHub</button>
 
-<div class="row" *ngIf="githubService.token && resourcesBundle && !isChanging">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label>Repository</label>
-            <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()">
-                <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
-            </select>
-        </div>
+<div class="row" *ngIf="githubService.token">
+  <div class="col-md-12">
+    <div class="form-group">
+      <label>Commit Message</label>
+      <textarea class="form-control" [class.is-invalid]="!commitMessage" [(ngModel)]="commitMessage" placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
     </div>
-    <div class="col-md-4">
-        <div class="form-group" *ngIf="repository">
-            <label>Branch</label>
-            <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
-                <option *ngFor="let b of branches">{{b.name}}</option>
-            </select>
-        </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Repository</label>
+      <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
+        <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
+      </select>
+      <p class="help-block" *ngIf="loadingRepositories">Loading list of GitHub repositories...</p>
     </div>
-    <div class="col-md-12">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th><input type="checkbox" [(ngModel)]="isAllChecked" /></th>
-                <th>Resource</th>
-                <th>Path</th>
-                <th class="actions-column-1">
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-sm" [disabled]="checkedIds.length === 0 || !repository || !branch" (click)="changeSelected()">Change Selected</button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let entry of resourcesBundle.entry">
-                <td><input type="checkbox" [ngModel]="isChecked(entry)" (ngModelChange)="setChecked(entry, $event)" /></td>
-                <td>{{entry.resource.resourceType}}: {{entry.resource.id}}</td>
-                <td>{{getPathFromResource(entry.resource)}}</td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
+  </div>
+
+  <div class="col-md-4">
+    <div class="form-group" *ngIf="repository">
+      <label>Branch</label>
+      <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
+        <option *ngFor="let b of branches">{{b.name}}</option>
+      </select>
     </div>
-</div>
-<div class="card" *ngIf="githubService.token && isChanging">
-    <div class="card-header">Change destination to {{checkedIds.length}} selected resources</div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group">
-                    <label>Select format</label>
-                    <select class="form-control" [(ngModel)]="newType">
-                        <option value="xml">XML</option>
-                        <option value="json">JSON</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Directory per resource type?</label>
-                    <select class="form-control" [(ngModel)]="resourceTypeDir">
-                        <option [ngValue]="true">Yes</option>
-                        <option [ngValue]="false">No</option>
-                    </select>
-                </div>
+  </div>
+
+  <div class="col-md-12" *ngIf="allFiles">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>
+          File (Total: {{filteredAllFiles.length}}/{{allFiles.length}})
+          <div class="btn-group btn-group-toggle" title="Choose what files to show in the list/table.">
+            <label class="btn-primary" ngbButtonLabel>
+              <input type="checkbox" ngbButton [(ngModel)]="filter.nothing"> Do Nothing
+            </label>
+            <label class="btn-primary" ngbButtonLabel>
+              <input type="checkbox" ngbButton [(ngModel)]="filter.added"> Added
+            </label>
+            <label class="btn-primary" ngbButtonLabel>
+              <input type="checkbox" ngbButton [(ngModel)]="filter.updated"> Updated
+            </label>
+            <label class="btn-primary" ngbButtonLabel>
+              <input type="checkbox" ngbButton [(ngModel)]="filter.deleted"> Deleted
+            </label>
+          </div>
+        </th>
+        <th>Info</th>
+        <th>
+          <div class="dropdown pull-right">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+            <div class="dropdown-menu" aria-labelledby="actionsMenuButton">
+              <a class="dropdown-item" href="javascript:void(0)" (click)="deleteOthers()">Delete everything not in the IG</a>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" *ngIf="tree">
-                <label>Select destination {{newPath}}</label>
-                <div class="input-group" *ngIf="newPath">
-                    <input type="text" class="form-control" [(ngModel)]="newFolderName" />
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" title="Add a new folder below the selected folder" (click)="addNewFolder()" [disabled]="!newFolderName || newFolderName.indexOf('/') >= 0">Add folder below selection</button>
-                    </div>
-                </div>
-                <tree [tree]="tree" (nodeSelected)="nodeSelected($event)" #treeComponent></tree>
-            </div>
-        </div>
-    </div>
-    <div class="card-footer">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" [disabled]="!newPath" (click)="okChanging()">OK</button>
-            <button type="button" class="btn btn-default" (click)="isChanging = false">Cancel</button>
-        </div>
-    </div>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let file of filteredAllFiles">
+        <td>{{file.path}}</td>
+        <td>{{file.info}}</td>
+        <td>
+          <select class="form-control" [(ngModel)]="file.action">
+            <option value="nothing">Do Nothing</option>
+            <option value="add" *ngIf="file.isNew">Add</option>
+            <option value="update" *ngIf="file.content">Update</option>
+            <option value="delete" *ngIf="!file.content">Delete</option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -68,6 +68,7 @@
     "intro.js": "^2.9.3",
     "jquery": "^3.4.0",
     "jsonwebtoken": "^8.5.1",
+    "jszip": "^3.2.2",
     "jwks-rsa": "^1.6.0",
     "mustache": "^3.0.1",
     "nanoid": "^2.0.1",
