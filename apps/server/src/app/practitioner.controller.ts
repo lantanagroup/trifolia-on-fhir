@@ -183,7 +183,7 @@ export class PractitionerController extends BaseFhirController {
   }
 
   @Get('me')
-  public getMe(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<Practitioner> {
+  public getMe(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<IPractitioner> {
     return super.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
   }
 

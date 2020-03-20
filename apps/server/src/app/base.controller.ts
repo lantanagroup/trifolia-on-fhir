@@ -10,6 +10,7 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export interface GenericResponse {
   status?: number;
@@ -20,12 +21,14 @@ export interface GenericResponse {
 
 export interface IUserSecurityInfo {
   user?: ITofUser;
-  practitioner?: Practitioner;
+  practitioner?: IPractitioner;
   groups?: Group[];
 }
 
 export class BaseController {
   private static logger = new TofLogger(BaseController.name);
+  private static practitionerCache: { [sub: string]: { retrieved: Date, practitioner: IPractitioner } } = {};
+  private static readonly CacheMaxAge = 5*60*1000;    // 5 minutes
 
   constructor(protected configService: ConfigService, protected httpService: HttpService) {
   }
@@ -64,9 +67,17 @@ export class BaseController {
     }
   }
 
-  public async getMyPractitioner(user: ITofUser, fhirServerBase: string, resolveIfNotFound = false): Promise<Practitioner> {
+  public async getMyPractitioner(user: ITofUser, fhirServerBase: string, resolveIfNotFound = false): Promise<IPractitioner> {
     let system = Globals.defaultAuthNamespace;
     let identifier = user.sub;
+
+    // Check if we already have a practitioner in the cache within the last CacheMaxAge
+    if (BaseController.practitionerCache[identifier]) {
+      const age = new Date().getTime() - BaseController.practitionerCache[identifier].retrieved.getTime();
+      if (age < BaseController.CacheMaxAge) {
+        return BaseController.practitionerCache[identifier].practitioner;
+      }
+    }
 
     if (identifier.startsWith('auth0|')) {
       system = Globals.authNamespace;
@@ -108,6 +119,12 @@ export class BaseController {
       new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`);
       throw new InternalServerErrorException();
     }
+
+    // Add the practitioner to the cache so that they don't have to be
+    BaseController.practitionerCache[identifier] = {
+      retrieved: new Date(),
+      practitioner: bundle.entry[0].resource
+    };
 
     return <Practitioner>bundle.entry[0].resource;
   }

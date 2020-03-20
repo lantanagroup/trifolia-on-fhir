@@ -1,21 +1,21 @@
-import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from './stu3/fhir';
 import {
   ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent,
   ElementDefinitionTypeRefComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+} from './r4/fhir';
+import {Globals} from './globals';
+import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
 
 export class ElementTreeModel {
-  public constrainedElement?: STU3ElementDefinition | R4ElementDefinition;
-  public baseElement: STU3ElementDefinition | R4ElementDefinition;
+  public constrainedElement?: IElementDefinition;
+  public baseElement: IElementDefinition;
   public depth: number;
   public expanded = false;
   public hasChildren = false;
   public position: number;
   public parent?: ElementTreeModel;
-  public profile: StructureDefinition;
+  public profile: IStructureDefinition;
   public profilePath: string;
-  public path: string;
 
   constructor() {
   }
@@ -27,22 +27,12 @@ export class ElementTreeModel {
       leafId = leafId.substring(leafId.lastIndexOf('.') + 1);
     }
 
-    if (leafId.indexOf(':') > 0) {
-      leafId = leafId.substring(leafId.indexOf(':') + 1);
-    }
-
     return leafId;
   }
 
   get basePath(): string {
     if (this.baseElement) {
       return this.baseElement.path;
-    }
-  }
-
-  get constrainedPath(): string {
-    if (this.constrainedElement) {
-      return this.constrainedElement.path;
     }
   }
 
@@ -61,18 +51,34 @@ export class ElementTreeModel {
   get id(): string {
     if (this.constrainedElement) {
       return this.constrainedElement.id;
-    } else if (this.baseElement) {
-      return this.baseElement.id;
+    } else if (this.parent) {
+      if (this.parent.constrainedElement) {
+        return this.parent.constrainedElement.id + '.' + this.leafPath;
+      } else {
+        return this.parent.baseElement.id + '.' + this.leafPath;
+      }
+    } else {
+      return this.leafPath;
     }
+  }
 
-    return '';
+  get path(): string {
+    if (this.constrainedElement) {
+      return this.constrainedElement.path;
+    } else if (this.parent) {
+      if (this.parent.constrainedElement) {
+        return this.parent.constrainedElement.path + '.' + this.leafPath;
+      } else {
+        return this.parent.baseElement.path + '.' + this.leafPath;
+      }
+    } else {
+      return this.leafPath;
+    }
   }
 
   get leafPath(): string {
-    const element = this.constrainedElement || this.baseElement;
-
-    if (element) {
-      return element.path.substring(element.path.lastIndexOf('.') + 1);
+    if (this.baseElement) {
+      return this.baseElement.path.substring(this.baseElement.path.lastIndexOf('.') + 1);
     }
 
     return '';
@@ -86,30 +92,6 @@ export class ElementTreeModel {
     }
 
     return false;
-  }
-
-  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
-    const typeCounts = {};
-
-    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
-      if (typeCounts.hasOwnProperty(type.code)) {
-        typeCounts[type.code]++;
-      } else {
-        typeCounts[type.code] = 1;
-      }
-    });
-
-    const types = Object.keys(typeCounts);
-
-    for (let i = 0; i < types.length; i++) {
-      const type = types[i];
-
-      if (typeCounts[type] > 1) {
-        types[i] = type + '+';
-      }
-    }
-
-    return types.join(', ');
   }
 
   get type(): string {
@@ -168,6 +150,26 @@ export class ElementTreeModel {
     return this.baseElement.min;
   }
 
+  get minString(): string {
+    if (this.constrainedElement && this.constrainedElement.hasOwnProperty('min')) {
+      return this.constrainedElement.min.toString();
+    }
+
+    return this.baseElement.min.toString();
+  }
+
+  set minString(value: string) {
+    try {
+      if (this.constrainedElement) {
+        const min = parseInt(value, 10);
+
+        if (min >= 0) {
+          this.constrainedElement.min = min;
+        }
+      }
+    } catch (ex) {}
+  }
+
   get max(): string {
     if (this.constrainedElement && this.constrainedElement.hasOwnProperty('max')) {
       return this.constrainedElement.max;
@@ -176,7 +178,32 @@ export class ElementTreeModel {
     return this.baseElement.max;
   }
 
-  private getBindingComponentDisplay(component: ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent) {
+  set max(value: string) {
+    if (this.constrainedElement) {
+      if (value === '*') {
+        this.constrainedElement.max = value;
+      } else {
+        try {
+          const maxNum = parseInt(value, 10);
+
+          if (maxNum >= 0) {
+            this.constrainedElement.max = maxNum.toString();
+          }
+        } catch (ex) {}
+      }
+    }
+  }
+
+  get constraints(): string {
+    //Change this to grab the valueset
+    if (this.constrainedElement) {
+      return this.getBindingDisplay(this.constrainedElement);
+    }
+
+    return this.getBindingDisplay(this.baseElement);
+  }
+
+  private static getBindingComponentDisplay(component: ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent) {
     if (!component) {
       return '';
     }
@@ -208,12 +235,56 @@ export class ElementTreeModel {
       return component.strength;
     }
 
-
     return '';
   }
 
-  private getBindingDisplay(element: STU3ElementDefinition | R4ElementDefinition): string {
-    let display = this.getBindingComponentDisplay(element.binding);
+  clone(constrainedElement?: IElementDefinition) {
+    const newElementTreeModel = new ElementTreeModel();
+    newElementTreeModel.baseElement = this.baseElement;
+    newElementTreeModel.hasChildren = this.hasChildren;
+    newElementTreeModel.constrainedElement = constrainedElement || this.constrainedElement;
+    newElementTreeModel.parent = this.parent;
+    newElementTreeModel.depth = this.depth;
+    newElementTreeModel.profile = this.profile;
+    newElementTreeModel.position = this.position;
+    newElementTreeModel.profilePath = this.profilePath;
+    return newElementTreeModel;
+  }
+
+  toString() {
+    if (this.constrainedElement) {
+      return this.constrainedElement.id;
+    } else if (this.baseElement) {
+      return this.baseElement.id;
+    }
+  }
+
+  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
+    const typeCounts = {};
+
+    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
+      if (typeCounts.hasOwnProperty(type.code)) {
+        typeCounts[type.code]++;
+      } else {
+        typeCounts[type.code] = 1;
+      }
+    });
+
+    const types = Object.keys(typeCounts);
+
+    for (let i = 0; i < types.length; i++) {
+      const type = types[i];
+
+      if (typeCounts[type] > 1) {
+        types[i] = type + '+';
+      }
+    }
+
+    return types.join(', ');
+  }
+
+  private getBindingDisplay(element: IElementDefinition): string {
+    let display = ElementTreeModel.getBindingComponentDisplay(element.binding);
     const fixedPropertyName = Globals.getChoiceSelectionName(element, 'fixed');
     const patternPropertyName = Globals.getChoiceSelectionName(element, 'pattern');
     const defaultValueName = Globals.getChoiceSelectionName(element, 'defaultValue');
@@ -279,14 +350,5 @@ export class ElementTreeModel {
     }
 
     return display;
-  }
-
-  get constraints(): string {
-    //Change this to grab the valueset
-    if (this.constrainedElement) {
-      return this.getBindingDisplay(this.constrainedElement);
-    }
-
-    return this.getBindingDisplay(this.baseElement);
   }
 }

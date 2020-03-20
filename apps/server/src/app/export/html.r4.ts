@@ -199,6 +199,23 @@ export class R4HtmlExporter extends HtmlExporter {
     }
 
     this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
+    this.r4ImplementationGuide.definition.resource = this.r4ImplementationGuide.definition.resource || [];
+
+    // Make sure the resources in the IG have a description
+    this.r4ImplementationGuide.definition.resource.forEach(r => {
+      if (!r.description && r.reference && r.reference.reference) {
+        const parsedReference = parseReference(r.reference.reference);
+        const foundResourceEntry = this.bundle.entry.find(e => e.resource && e.resource.resourceType === parsedReference.resourceType && e.resource.id === parsedReference.id);
+
+        if (foundResourceEntry) {
+          const foundResource: any = foundResourceEntry.resource;
+
+          if (foundResource.description) {
+            r.description = foundResource.description;
+          }
+        }
+      }
+    });
 
     // The copyrightyear and releaselabel parameters are required parameters for the IG Publisher
     let copyrightYearParam = this.r4ImplementationGuide.definition.parameter.find(p => p.code && p.code.toLowerCase() === 'copyrightyear');

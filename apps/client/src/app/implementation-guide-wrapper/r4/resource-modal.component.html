@@ -9,7 +9,16 @@
 
   <app-fhir-string [parentObject]="resource" propertyName="name" title="Name" tooltipPath="ImplementationGuide.definition.resource.name"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="resource" propertyName="description" title="Description" tooltipPath="ImplementationGuide.definition.resource.description"></app-fhir-string>
+  <div class="form-group">
+    <label>
+      Description
+      <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
+    </label>
+    <textarea class="form-control" [(ngModel)]="resource.description"></textarea>
+  </div>
+  <p>
+    <button type="button" class="btn btn-primary" *ngIf="resource.reference && resource.reference.reference" (click)="copyDescription()">Copy description from target resource</button>
+  </p>
 
   <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
 
