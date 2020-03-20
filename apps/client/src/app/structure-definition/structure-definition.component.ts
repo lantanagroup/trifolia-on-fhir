@@ -682,12 +682,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
       if (this.baseDefResponse && !this.baseDefResponse.success) {
         if (this.baseDefResponse.message) {
+          this.validation.valid = false;
           this.validation.messages.push({
             severity: Severities.Error,
             location: 'StructureDefinition.baseDefinition',
             message: `Error getting snapshot of base definition: ${this.baseDefResponse.message}`
           });
         } else {
+          this.validation.valid = false;
           this.validation.messages.push({
             severity: Severities.Error,
             location: 'StructureDefinition.baseDefinition',
