@@ -20,6 +20,16 @@ export class ElementTreeModel {
   constructor() {
   }
 
+  get display(): string {
+    let ret = this.displayId;
+
+    if (!this.constrainedElement && this.baseElement && this.baseElement.sliceName && !ret.endsWith(':' + this.baseElement.sliceName)) {
+      ret += `:${this.baseElement.sliceName}`;
+    }
+
+    return ret;
+  }
+
   get displayId(): string {
     let leafId = this.id;
 
