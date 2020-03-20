@@ -12,12 +12,13 @@ import {AuthService} from '../shared/auth.service';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { BaseComponent } from '../base.component';
 
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
-export class NewProfileComponent implements OnInit {
+export class NewProfileComponent extends BaseComponent implements OnInit {
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
   public Globals: Globals;
@@ -27,8 +28,10 @@ export class NewProfileComponent implements OnInit {
     private fhirService: FhirService,
     private route: Router,
     private modalService: NgbModal,
-    private authService: AuthService,
+    protected authService: AuthService,
     private strucDefService: StructureDefinitionService) {
+
+    super(configService, authService);
 
     this.structureDefinition = this.configService.isFhirR4 ?
       new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
@@ -45,7 +48,8 @@ export class NewProfileComponent implements OnInit {
       (this.configService.isFhirR4 && this.structureDefinition.type === "Extension" && this.structureDefinition.context &&
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
-      !this.structureDefinition.hasOwnProperty('abstract');
+      !this.structureDefinition.hasOwnProperty('abstract') ||
+      !this.canEdit(this.structureDefinition);
   }
 
   public save() {
