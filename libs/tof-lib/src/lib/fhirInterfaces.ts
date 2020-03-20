@@ -1,3 +1,30 @@
+export function setChoice(source: any, dest: any, choiceName: string, ... choices: string[]) {
+  const primitives = ['base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid'];
+
+  if (!choices || choices.length === 0) {
+    throw new Error('No choices specified for setChoice()');
+  }
+
+  for (const choice of choices) {
+    const propertyName = choiceName + choice.substring(0, 1).toUpperCase() + choice.substring(1);
+    const sourceValue = source[propertyName];
+
+    if (sourceValue) {
+      if (primitives.indexOf(choice)) {
+        dest[propertyName] = sourceValue;
+      } else {
+        let className = choice;
+
+        if (className === 'Reference') {
+          className = 'ResourceReference';
+        }
+
+        dest[propertyName] = new (<any>window)[className](sourceValue);
+      }
+    }
+  }
+}
+
 export interface IResourceReference {
   reference?: string;
   display?: string;
@@ -127,6 +154,11 @@ export interface IContactPoint {
   use?: 'home'|'work'|'temp'|'old'|'mobile';
 }
 
+export interface IContactDetail {
+  name?: string;
+  telecom?: IContactPoint[];
+}
+
 export interface IPractitioner extends IDomainResource {
   resourceType: string;
   identifier?: IIdentifier[];
@@ -134,9 +166,81 @@ export interface IPractitioner extends IDomainResource {
   telecom?: IContactPoint[];
 }
 
-export interface IContactDetail {
-  name?: string;
-  telecom?: IContactPoint[];
+export interface IElement {
+  id?: string;
+  extension?: IExtension[];
+}
+
+export interface IElementDefinitionType extends IElement {
+  code: string;
+  profile?: string|string[];
+  _profile?: IElement | IElement[];
+  targetProfile?: string|string[];
+}
+
+export interface IElementDefinitionMapping {
+  identity: string;
+  language?: string;
+  map: string;
+  comment?: string;
+}
+
+export interface IElementDefinitionDiscriminator {
+  type: string;
+  path: string;
+}
+
+export interface IElementDefinitionConstraint {
+  key: string;
+  requirements?: string;
+  severity: string;
+  human: string;
+  expression?: string;
+  source?: string;
+}
+
+export interface IElementDefinitionSlicing {
+  discriminator?: IElementDefinitionDiscriminator[];
+  description?: string;
+  ordered?: boolean;
+  rules: 'closed'|'open'|'openAtEnd';
+}
+
+export interface IElementDefinition extends IElement {
+  path: string;
+  sliceName?: string;
+  slicing?: IElementDefinitionSlicing;
+  label?: string;
+  short?: string;
+  definition?: string;
+  alias?: string[];
+  type?: IElementDefinitionType[];
+  min?: number;
+  max?: string;
+  contentReference?: string;
+  binding?: {
+    strength: string;
+  }
+  example?: any;
+  mapping?: IElementDefinitionMapping[];
+  constraint?: IElementDefinitionConstraint[];
+  isSummary?: boolean;
+  isModifier?: boolean;
+  mustSupport?: boolean;
+}
+
+export interface IStructureDefinition extends IDomainResource {
+  url: string;
+  identifier?: IIdentifier[];
+  name: string;
+  title?: string;
+  status: string;
+  snapshot?: {
+    element: IElementDefinition[]
+  };
+  differential?: {
+    element: IElementDefinition[];
+  };
 }
 
 export interface IAuditEvent {

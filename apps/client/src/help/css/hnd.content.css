@@ -96,108 +96,112 @@ span.rvts17
 }
 span.rvts18
 {
- font-size: 14pt;
- font-style: italic;
- font-weight: bold;
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #000000;
 }
-span.rvts19
+a.rvts19, span.rvts19
 {
- font-size: 14pt;
- font-weight: bold;
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #0000ff;
+ text-decoration: underline;
 }
 span.rvts20
 {
+ font-size: 14pt;
  font-style: italic;
+ font-weight: bold;
 }
 span.rvts21
 {
- font-size: 16pt;
+ font-size: 14pt;
  font-weight: bold;
 }
 span.rvts22
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-style: italic;
 }
 span.rvts23
 {
+ font-size: 16pt;
+ font-weight: bold;
 }
 span.rvts24
 {
  font-family: 'Courier New', 'Courier', monospace;
 }
-a.rvts25, span.rvts25
+span.rvts25
+{
+}
+span.rvts26
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+a.rvts27, span.rvts27
 {
  font-family: 'Courier New', 'Courier', monospace;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts26
-{
- font-family: 'Times New Roman', 'Times', serif;
-}
-span.rvts27
-{
- color: #0c5460;
- background-color: #d1ecf1;
-}
 span.rvts28
 {
- font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
 }
 span.rvts29
 {
+ color: #0c5460;
+ background-color: #d1ecf1;
 }
 span.rvts30
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
 }
 span.rvts31
 {
- font-weight: bold;
 }
 span.rvts32
 {
- font-size: 11pt;
- font-weight: bold;
+ font-family: 'Courier New', 'Courier', monospace;
 }
 span.rvts33
 {
  font-weight: bold;
- color: #c00000;
 }
 span.rvts34
 {
- font-size: 14pt;
- font-style: italic;
+ font-size: 11pt;
  font-weight: bold;
 }
 span.rvts35
 {
  font-weight: bold;
+ color: #c00000;
 }
-a.rvts36, span.rvts36
+span.rvts36
 {
- color: #0000ff;
- text-decoration: underline;
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
 }
 span.rvts37
 {
- font-style: italic;
+ font-weight: bold;
 }
 a.rvts38, span.rvts38
 {
  color: #0000ff;
- text-decoration: none;
+ text-decoration: underline;
 }
 span.rvts39
 {
  font-style: italic;
- font-weight: bold;
 }
-span.rvts40
+a.rvts40, span.rvts40
 {
- font-style: italic;
+ color: #0000ff;
+ text-decoration: none;
 }
 span.rvts41
 {
@@ -206,31 +210,40 @@ span.rvts41
 }
 span.rvts42
 {
+ font-style: italic;
+}
+span.rvts43
+{
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts44
+{
  font-size: 11pt;
  font-family: 'Calibri';
  color: #000000;
 }
-span.rvts43
-{
- font-weight: bold;
- color: #000000;
-}
-span.rvts44
-{
- font-weight: bold;
- color: #000000;
-}
 span.rvts45
 {
+ font-weight: bold;
  color: #000000;
 }
 span.rvts46
+{
+ font-weight: bold;
+ color: #000000;
+}
+span.rvts47
+{
+ color: #000000;
+}
+span.rvts48
 {
  font-size: 13pt;
  font-style: italic;
  font-weight: bold;
 }
-a.rvts47, span.rvts47
+a.rvts49, span.rvts49
 {
  font-size: 11pt;
  font-family: 'Calibri';
@@ -382,8 +395,11 @@ p,ul,ol /* Paragraph Style */
 .list1 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;}
 .list2 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;}
 .list3 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
-.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
-.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
-.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
-.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
-.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
+.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;}
+.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: circle;}
+.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: square;}
+.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
+.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
+.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
+.list10 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
+.list11 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}

@@ -2,12 +2,23 @@ import {
   IAgentComponent,
   IAuditEvent,
   IBundle,
+  ICodeSystem,
   IContactDetail,
-  IContactPoint, IDetailComponent,
-  IDomainResource, IEntityComponent,
+  IContactPoint,
+  IDetailComponent,
+  IDomainResource,
+  IElementDefinition,
+  IElementDefinitionDiscriminator,
+  IElementDefinitionSlicing,
+  IElementDefinitionType,
+  IEntityComponent,
   IExtension,
-  IHumanName, INetworkComponent, IImplementationGuide,
-  IPractitioner, ICodeSystem
+  IHumanName,
+  IImplementationGuide,
+  INetworkComponent,
+  IPractitioner,
+  IStructureDefinition,
+  setChoice
 } from '../fhirInterfaces';
 
 export class Base {
@@ -469,7 +480,7 @@ export class StructureDefinitionMappingComponent extends BackboneElement {
 
 }
 
-export class ElementDefinitionDiscriminatorComponent extends Element {
+export class ElementDefinitionDiscriminatorComponent extends Element implements IElementDefinitionDiscriminator {
   public type: string;
   public path: string;
 
@@ -487,11 +498,11 @@ export class ElementDefinitionDiscriminatorComponent extends Element {
 
 }
 
-export class ElementDefinitionSlicingComponent extends Element {
+export class ElementDefinitionSlicingComponent extends Element implements IElementDefinitionSlicing {
   public discriminator?: ElementDefinitionDiscriminatorComponent[];
   public description?: string;
   public ordered?: boolean;
-  public rules: string;
+  public rules: 'closed'|'open'|'openAtEnd';
 
   constructor(obj?: any) {
     super(obj);
@@ -538,9 +549,10 @@ export class ElementDefinitionBaseComponent extends Element {
 
 }
 
-export class ElementDefinitionTypeRefComponent extends Element {
+export class ElementDefinitionTypeRefComponent extends Element implements IElementDefinitionType {
   public code: string;
   public profile?: string[];
+  public _profile?: Element|Element[];
   public targetProfile?: string[];
   public aggregation?: string[];
   public versioning?: string;
@@ -563,6 +575,16 @@ export class ElementDefinitionTypeRefComponent extends Element {
       if (obj.hasOwnProperty('versioning')) {
         this.versioning = obj.versioning;
       }
+      if (obj.hasOwnProperty('_profile')) {
+        if (obj._profile instanceof Array) {
+          this._profile = [];
+          for (const profileInfo of obj._profile) {
+            this._profile.push(profileInfo ? new Element(profileInfo) : profileInfo);
+          }
+        } else {
+          this._profile = new Element(obj._profile);
+        }
+      }
     }
   }
 
@@ -570,47 +592,56 @@ export class ElementDefinitionTypeRefComponent extends Element {
 
 export class ElementDefinitionExampleComponent extends Element {
   public label: string;
-  public valueInstant?: number;
-  public valueDecimal?: number;
-  public valueCode?: string;
-  public valueMarkdown?: string;
-  public valueString?: string;
-  public valueId?: string;
-  public valueUnsignedInt?: number;
-  public valuePositiveInt?: number;
-  public valueInteger?: number;
-  public valueUri?: string;
-  public valueOid?: string;
-  public valueUuid?: string;
-  public valueCanonical?: string;
-  public valueUrl?: string;
-  public valueBoolean?: boolean;
+
+  // Value Choices
   public valueBase64Binary?: string;
+  public valueBoolean?: boolean;
+  public valueCanonical?: string;
+  public valueCode?: string;
   public valueDate?: string;
   public valueDateTime?: string;
+  public valueDecimal?: number;
+  public valueId?: string;
+  public valueInstant?: number;
+  public valueInteger?: number;
+  public valueMarkdown?: string;
+  public valueOid?: string;
+  public valuePositiveInt?: number;
+  public valueString?: string;
   public valueTime?: string;
-  public valueRatio?: Ratio;
+  public valueUnsignedInt?: number;
+  public valueUri?: string;
+  public valueUrl?: string;
+  public valueUuid?: string;
+  public valueAddress?: Address;
+  public valueAge?: Age;
   public valueAnnotation?: Annotation;
+  public valueAttachment?: Attachment;
   public valueCodeableConcept?: CodeableConcept;
   public valueCoding?: Coding;
-  public valueTiming?: Timing;
-  public valueAge?: Age;
-  public valueMoney?: Money;
+  public valueContactPoint?: ContactPoint;
+  public valueCount?: Count;
   public valueDistance?: Distance;
   public valueDuration?: Duration;
-  public valueCount?: Count;
-  public valueQuantity?: Quantity;
-  public valueSampledData?: SampledData;
-  public valueMoneyQuantity?: MoneyQuantity;
-  public valueSimpleQuantity?: SimpleQuantity;
-  public valueSignature?: Signature;
-  public valueAddress?: Address;
-  public valueContactPoint?: ContactPoint;
   public valueHumanName?: HumanName;
   public valueIdentifier?: Identifier;
-  public valueAttachment?: Attachment;
-  public valueRange?: Range;
+  public valueMoney?: Money;
   public valuePeriod?: Period;
+  public valueQuantity?: Quantity;
+  public valueRange?: Range;
+  public valueRatio?: Ratio;
+  public valueReference?: ResourceReference;
+  public valueSampledData?: SampledData;
+  public valueSignature?: Signature;
+  public valueTiming?: Timing;
+  public valueContactDetail?: ContactDetail;
+  public valueContributor?: Contributor;
+  public valueDataRequirement?: DataRequirement;
+  public valueExpression?: Expression;
+  public valueParameterDefinition?: ParameterDefinition;
+  public valueRelatedArtifact?: RelatedArtifact;
+  public valueTriggerDefinition?: TriggerDefinition;
+  public valueUsageContext?: UsageContext;
 
   constructor(obj?: any) {
     super(obj);
@@ -618,129 +649,8 @@ export class ElementDefinitionExampleComponent extends Element {
       if (obj.hasOwnProperty('label')) {
         this.label = obj.label;
       }
-      if (obj.valueInstant) {
-        this.valueInstant = obj.valueInstant;
-      }
-      if (obj.valueDecimal) {
-        this.valueDecimal = obj.valueDecimal;
-      }
-      if (obj.valueCode) {
-        this.valueCode = obj.valueCode;
-      }
-      if (obj.valueMarkdown) {
-        this.valueMarkdown = obj.valueMarkdown;
-      }
-      if (obj.valueString) {
-        this.valueString = obj.valueString;
-      }
-      if (obj.valueId) {
-        this.valueId = obj.valueId;
-      }
-      if (obj.valueUnsignedInt) {
-        this.valueUnsignedInt = obj.valueUnsignedInt;
-      }
-      if (obj.valuePositiveInt) {
-        this.valuePositiveInt = obj.valuePositiveInt;
-      }
-      if (obj.valueInteger) {
-        this.valueInteger = obj.valueInteger;
-      }
-      if (obj.valueUri) {
-        this.valueUri = obj.valueUri;
-      }
-      if (obj.valueOid) {
-        this.valueOid = obj.valueOid;
-      }
-      if (obj.valueUuid) {
-        this.valueUuid = obj.valueUuid;
-      }
-      if (obj.valueCanonical) {
-        this.valueCanonical = obj.valueCanonical;
-      }
-      if (obj.valueUrl) {
-        this.valueUrl = obj.valueUrl;
-      }
-      if (obj.valueBoolean) {
-        this.valueBoolean = obj.valueBoolean;
-      }
-      if (obj.valueBase64Binary) {
-        this.valueBase64Binary = obj.valueBase64Binary;
-      }
-      if (obj.valueDate) {
-        this.valueDate = obj.valueDate;
-      }
-      if (obj.valueDateTime) {
-        this.valueDateTime = obj.valueDateTime;
-      }
-      if (obj.valueTime) {
-        this.valueTime = obj.valueTime;
-      }
-      if (obj.valueRatio) {
-        this.valueRatio = new Ratio(obj.valueRatio);
-      }
-      if (obj.valueAnnotation) {
-        this.valueAnnotation = new Annotation(obj.valueAnnotation);
-      }
-      if (obj.valueCodeableConcept) {
-        this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept);
-      }
-      if (obj.valueCoding) {
-        this.valueCoding = new Coding(obj.valueCoding);
-      }
-      if (obj.valueTiming) {
-        this.valueTiming = new Timing(obj.valueTiming);
-      }
-      if (obj.valueAge) {
-        this.valueAge = new Age(obj.valueAge);
-      }
-      if (obj.valueMoney) {
-        this.valueMoney = new Money(obj.valueMoney);
-      }
-      if (obj.valueDistance) {
-        this.valueDistance = new Distance(obj.valueDistance);
-      }
-      if (obj.valueDuration) {
-        this.valueDuration = new Duration(obj.valueDuration);
-      }
-      if (obj.valueCount) {
-        this.valueCount = new Count(obj.valueCount);
-      }
-      if (obj.valueQuantity) {
-        this.valueQuantity = new Quantity(obj.valueQuantity);
-      }
-      if (obj.valueSampledData) {
-        this.valueSampledData = new SampledData(obj.valueSampledData);
-      }
-      if (obj.valueMoneyQuantity) {
-        this.valueMoneyQuantity = new MoneyQuantity(obj.valueMoneyQuantity);
-      }
-      if (obj.valueSimpleQuantity) {
-        this.valueSimpleQuantity = new SimpleQuantity(obj.valueSimpleQuantity);
-      }
-      if (obj.valueSignature) {
-        this.valueSignature = new Signature(obj.valueSignature);
-      }
-      if (obj.valueAddress) {
-        this.valueAddress = new Address(obj.valueAddress);
-      }
-      if (obj.valueContactPoint) {
-        this.valueContactPoint = new ContactPoint(obj.valueContactPoint);
-      }
-      if (obj.valueHumanName) {
-        this.valueHumanName = new HumanName(obj.valueHumanName);
-      }
-      if (obj.valueIdentifier) {
-        this.valueIdentifier = new Identifier(obj.valueIdentifier);
-      }
-      if (obj.valueAttachment) {
-        this.valueAttachment = new Attachment(obj.valueAttachment);
-      }
-      if (obj.valueRange) {
-        this.valueRange = new Range(obj.valueRange);
-      }
-      if (obj.valuePeriod) {
-        this.valuePeriod = new Period(obj.valuePeriod);
-      }
+
+      setChoice(obj, this, 'value', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition');
     }
   }
 }
@@ -831,7 +741,7 @@ export class ElementDefinitionMappingComponent extends Element {
 
 }
 
-export class ElementDefinition extends BackboneElement {
+export class ElementDefinition extends BackboneElement implements IElementDefinition {
   public path: string;
   public representation?: string[];
   public sliceName?: string;
@@ -849,11 +759,8 @@ export class ElementDefinition extends BackboneElement {
   public base?: ElementDefinitionBaseComponent;
   public contentReference?: string;
   public type?: ElementDefinitionTypeRefComponent[];
-  public defaultValue?: Element;
   public meaningWhenMissing?: string;
   public orderMeaning?: string;
-  public fixed?: Element;
-  public pattern?: Element;
   public example?: ElementDefinitionExampleComponent[];
   public minValue?: Element;
   public maxValue?: Element;
@@ -866,6 +773,178 @@ export class ElementDefinition extends BackboneElement {
   public isSummary?: boolean;
   public binding?: ElementDefinitionElementDefinitionBindingComponent;
   public mapping?: ElementDefinitionMappingComponent[];
+
+  // Fixed Choices
+  public fixedBase64Binary?: string;
+  public fixedBoolean?: boolean;
+  public fixedCanonical?: string;
+  public fixedCode?: string;
+  public fixedDate?: string;
+  public fixedDateTime?: string;
+  public fixedDecimal?: number;
+  public fixedId?: string;
+  public fixedInstant?: number;
+  public fixedInteger?: number;
+  public fixedMarkdown?: string;
+  public fixedOid?: string;
+  public fixedPositiveInt?: number;
+  public fixedString?: string;
+  public fixedTime?: string;
+  public fixedUnsignedInt?: number;
+  public fixedUri?: string;
+  public fixedUrl?: string;
+  public fixedUuid?: string;
+  public fixedAddress?: Address;
+  public fixedAge?: Age;
+  public fixedAnnotation?: Annotation;
+  public fixedAttachment?: Attachment;
+  public fixedCodeableConcept?: CodeableConcept;
+  public fixedCoding?: Coding;
+  public fixedContactPoint?: ContactPoint;
+  public fixedCount?: Count;
+  public fixedDistance?: Distance;
+  public fixedDuration?: Duration;
+  public fixedHumanName?: HumanName;
+  public fixedIdentifier?: Identifier;
+  public fixedMoney?: Money;
+  public fixedPeriod?: Period;
+  public fixedQuantity?: Quantity;
+  public fixedRange?: Range;
+  public fixedRatio?: Ratio;
+  public fixedReference?: ResourceReference;
+  public fixedSampledData?: SampledData;
+  public fixedSignature?: Signature;
+  public fixedTiming?: Timing;
+  public fixedContactDetail?: ContactDetail;
+  public fixedContributor?: Contributor;
+  public fixedDataRequirement?: DataRequirement;
+  public fixedExpression?: Expression;
+  public fixedParameterDefinition?: ParameterDefinition;
+  public fixedRelatedArtifact?: RelatedArtifact;
+  public fixedTriggerDefinition?: TriggerDefinition;
+  public fixedUsageContext?: UsageContext;
+
+  // Pattern Choices
+  public patternBase64Binary?: string;
+  public patternBoolean?: boolean;
+  public patternCanonical?: string;
+  public patternCode?: string;
+  public patternDate?: string;
+  public patternDateTime?: string;
+  public patternDecimal?: number;
+  public patternId?: string;
+  public patternInstant?: number;
+  public patternInteger?: number;
+  public patternMarkdown?: string;
+  public patternOid?: string;
+  public patternPositiveInt?: number;
+  public patternString?: string;
+  public patternTime?: string;
+  public patternUnsignedInt?: number;
+  public patternUri?: string;
+  public patternUrl?: string;
+  public patternUuid?: string;
+  public patternAddress?: Address;
+  public patternAge?: Age;
+  public patternAnnotation?: Annotation;
+  public patternAttachment?: Attachment;
+  public patternCodeableConcept?: CodeableConcept;
+  public patternCoding?: Coding;
+  public patternContactPoint?: ContactPoint;
+  public patternCount?: Count;
+  public patternDistance?: Distance;
+  public patternDuration?: Duration;
+  public patternHumanName?: HumanName;
+  public patternIdentifier?: Identifier;
+  public patternMoney?: Money;
+  public patternPeriod?: Period;
+  public patternQuantity?: Quantity;
+  public patternRange?: Range;
+  public patternRatio?: Ratio;
+  public patternReference?: ResourceReference;
+  public patternSampledData?: SampledData;
+  public patternSignature?: Signature;
+  public patternTiming?: Timing;
+  public patternContactDetail?: ContactDetail;
+  public patternContributor?: Contributor;
+  public patternDataRequirement?: DataRequirement;
+  public patternExpression?: Expression;
+  public patternParameterDefinition?: ParameterDefinition;
+  public patternRelatedArtifact?: RelatedArtifact;
+  public patternTriggerDefinition?: TriggerDefinition;
+  public patternUsageContext?: UsageContext;
+
+  // Default Value Choice
+  public defaultValueBase64Binary?: string;
+  public defaultValueBoolean?: boolean;
+  public defaultValueCanonical?: string;
+  public defaultValueCode?: string;
+  public defaultValueDate?: string;
+  public defaultValueDateTime?: string;
+  public defaultValueDecimal?: number;
+  public defaultValueId?: string;
+  public defaultValueInstant?: number;
+  public defaultValueInteger?: number;
+  public defaultValueMarkdown?: string;
+  public defaultValueOid?: string;
+  public defaultValuePositiveInt?: number;
+  public defaultValueString?: string;
+  public defaultValueTime?: string;
+  public defaultValueUnsignedInt?: number;
+  public defaultValueUri?: string;
+  public defaultValueUrl?: string;
+  public defaultValueUuid?: string;
+  public defaultValueAddress?: Address;
+  public defaultValueAge?: Age;
+  public defaultValueAnnotation?: Annotation;
+  public defaultValueAttachment?: Attachment;
+  public defaultValueCodeableConcept?: CodeableConcept;
+  public defaultValueCoding?: Coding;
+  public defaultValueContactPoint?: ContactPoint;
+  public defaultValueCount?: Count;
+  public defaultValueDistance?: Distance;
+  public defaultValueDuration?: Duration;
+  public defaultValueHumanName?: HumanName;
+  public defaultValueIdentifier?: Identifier;
+  public defaultValueMoney?: Money;
+  public defaultValuePeriod?: Period;
+  public defaultValueQuantity?: Quantity;
+  public defaultValueRange?: Range;
+  public defaultValueRatio?: Ratio;
+  public defaultValueReference?: ResourceReference;
+  public defaultValueSampledData?: SampledData;
+  public defaultValueSignature?: Signature;
+  public defaultValueTiming?: Timing;
+  public defaultValueContactDetail?: ContactDetail;
+  public defaultValueContributor?: Contributor;
+  public defaultValueDataRequirement?: DataRequirement;
+  public defaultValueExpression?: Expression;
+  public defaultValueParameterDefinition?: ParameterDefinition;
+  public defaultValueRelatedArtifact?: RelatedArtifact;
+  public defaultValueTriggerDefinition?: TriggerDefinition;
+  public defaultValueUsageContext?: UsageContext;
+
+  // Min Value Choices
+  public minValueDate?: string;
+  public minValueDateTime?: string;
+  public minValueInstant?: number;
+  public minValueTime?: string;
+  public minValueDecimal?: number;
+  public minValueInteger?: number;
+  public minValuePositiveInt?: number;
+  public minValueUnsignedInt?: number;
+  public minValueQuantity?: Quantity;
+
+  // Max Value Choices
+  public maxValueDate?: string;
+  public maxValueDateTime?: string;
+  public maxValueInstant?: number;
+  public maxValueTime?: string;
+  public maxValueDecimal?: number;
+  public maxValueInteger?: number;
+  public maxValuePositiveInt?: number;
+  public maxValueUnsignedInt?: number;
+  public maxValueQuantity?: Quantity;
 
   constructor(obj?: any) {
     super(obj);
@@ -927,20 +1006,11 @@ export class ElementDefinition extends BackboneElement {
           this.type.push(new ElementDefinitionTypeRefComponent(o));
         }
       }
-      if (obj.hasOwnProperty('defaultValue')) {
-        this.defaultValue = new Element(obj.defaultValue);
-      }
       if (obj.hasOwnProperty('meaningWhenMissing')) {
         this.meaningWhenMissing = obj.meaningWhenMissing;
       }
       if (obj.hasOwnProperty('orderMeaning')) {
         this.orderMeaning = obj.orderMeaning;
-      }
-      if (obj.hasOwnProperty('fixed')) {
-        this.fixed = new Element(obj.fixed);
-      }
-      if (obj.hasOwnProperty('pattern')) {
-        this.pattern = new Element(obj.pattern);
       }
       if (obj.hasOwnProperty('example')) {
         this.example = [];
@@ -987,9 +1057,14 @@ export class ElementDefinition extends BackboneElement {
           this.mapping.push(new ElementDefinitionMappingComponent(o));
         }
       }
+
+      setChoice(obj, this, 'fixed', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition');
+      setChoice(obj, this, 'pattern', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition');
+      setChoice(obj, this, 'defaultValue', 'base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid', 'Address', 'Age', 'Annotation', 'Attachment', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'HumanName', 'Identifier', 'Money', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'Timing', 'ContactDetail', 'Contributor', 'DataRequirement', 'Expression', 'ParameterDefinition', 'RelatedArtifact', 'TriggerDefinition');
+      setChoice(obj, this, 'minValue', 'date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity');
+      setChoice(obj, this, 'maxValue', 'date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity');
     }
   }
-
 }
 
 export class StructureDefinitionSnapshotComponent extends BackboneElement {
@@ -1044,7 +1119,7 @@ export class StructureDefinitionContextComponent extends BackboneElement {
 
 }
 
-export class StructureDefinition extends DomainResource {
+export class StructureDefinition extends DomainResource implements IStructureDefinition {
   public resourceType = 'StructureDefinition';
   public url: string;
   public identifier?: Identifier[];

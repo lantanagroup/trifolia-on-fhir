@@ -156,7 +156,7 @@ export class StructureDefinitionController extends BaseFhirController {
       return list;
     };
 
-    let baseProfiles;
+    let baseProfiles, baseUrl, baseTypeProfile;
 
     try {
       baseProfiles = await getNextBase(url);
@@ -174,7 +174,6 @@ export class StructureDefinitionController extends BaseFhirController {
 
     return found;
   }
-
   /**
    * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
    * @param fhirServerId
@@ -183,7 +182,6 @@ export class StructureDefinitionController extends BaseFhirController {
   private async generateProfileSnapshot(fhirServerId: string, body: any) {
     const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
     const fhirServerBase = fhirServer.uri;
-
     if (!fhirServer.supportsSnapshot) {
       // TODO: add internal snapshot generation logic
       delete body.snapshot;

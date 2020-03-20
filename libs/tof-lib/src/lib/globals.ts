@@ -35,6 +35,7 @@ export class Globals {
     'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro',
     'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
     'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
+    'elementdefinition-profile-element': 'http://hl7.org/fhir/StructureDefinition/elementdefinition-profile-element',
     'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
   };
 
