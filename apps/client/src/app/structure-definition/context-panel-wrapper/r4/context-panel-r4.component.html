@@ -12,13 +12,6 @@
             <th>
                 Expression <app-tooltip-icon tooltipKey="StructureDefinition.context.expression"></app-tooltip-icon>
             </th>
-            <th class="actions-column-1">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push({ type: '', expression: '' })">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
         </tr>
         </thead>
         <tbody>
@@ -29,8 +22,8 @@
                   <option value="element">Element</option>
                   <option value="extension">Extension</option>
                 </select>
-                <span *ngIf="structureDefinition.type==='Extension' && structureDefinition.context[cii].type===''">
-                  If the StructureDefinition type is Extension, there must be a context type selected</span>
+                <span *ngIf="structureDefinition.context[cii].type===''">
+                  There must be a context type selected</span>
             </td>
             <td>
               <input type="text" class="form-control" [(ngModel)]="ci.expression"/>
