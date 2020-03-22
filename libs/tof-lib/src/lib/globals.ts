@@ -153,8 +153,11 @@ export class Globals {
     'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
     'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
     'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.',
-    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.'
+    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.',
+    'ig.parameter': 'Defines how IG is built by tools, such as the HL7 IG Publisher. Some parameters are required by the IG Publisher, and if they are not specified here, will be automatically set by ToF during the publication process. More information about parameters and how they affect the publication template can be found <a href="https://confluence.hl7.org/display/FHIR/Implementation+Guide+Parameters" target="_blank">here</a>.'
   };
+
+  static readonly igParameters = ['logging', 'generate', 'path-resource', 'autoload-resources', 'codesystem-property', 'path-pages', 'path-qa', 'path-tx-cache', 'path-liquid', 'path-temp', 'path-output', 'path-history', 'path-expansion-params', 'path-suppressed-warnings', 'html-exempt', 'extension-domain', 'active-tables', 'ig-expansion-parameters', 'special-url', 'template-openapi', 'template-html', 'template-md', 'apply-contact', 'apply-context', 'apply-copyright', 'apply-jurisdiction', 'apply-license', 'apply-publisher', 'apply-version', 'validation', 'show-inherited-invariants', 'usage-stats-opt-out'];
 
   static readonly hl7WorkGroups = [
     { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },

@@ -398,7 +398,7 @@
 
         <div class="card">
           <div class="card-header">
-            Parameters <app-tooltip-icon tooltipPath="ImplementationGuide.definition.parameter"></app-tooltip-icon>
+            Parameters <app-tooltip-icon tooltipKey="ig.parameter"></app-tooltip-icon>
           </div>
           <table class="table table-striped">
             <thead>
@@ -421,7 +421,15 @@
             <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.parameter">
             <tr *ngFor="let param of implementationGuide.definition.parameter; let pi = index">
               <td>
-                <app-fhir-string [parentObject]="param" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                <div class="input-group">
+                  <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
+                    </div>
+                  </div>
+                </div>
               </td>
               <td>
                 <app-fhir-string [parentObject]="param" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>

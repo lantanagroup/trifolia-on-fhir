@@ -1,10 +1,21 @@
-<i *ngIf="tooltip && !showAsAlert" class="fas tooltip-icon" [class.fa-question-circle]="!showAsExclamation" [class.fa-exclamation-circle]="showAsExclamation" [ngbTooltip]="tooltip" [placement]="tooltipPlacement" container="body"></i>
+<ng-template #tipContent>
+  <div [innerHTML]="tooltip"></div>
+</ng-template>
+<i class="fas tooltip-icon"
+   container="body"
+   triggers="click:blur"
+   *ngIf="tooltip && !showAsAlert"
+   [class.fa-question-circle]="!showAsExclamation"
+   [class.fa-exclamation-circle]="showAsExclamation"
+   [ngbTooltip]="tipContent"
+   [placement]="tooltipPlacement"></i>
+
 <div *ngIf="tooltip && showAsAlert" class="alert alert-info tooltip-alert">
-    <button aria-label="Show/Hide" class="close" type="button" (click)="toggle()">
+  <button aria-label="Show/Hide" class="close" type="button" (click)="toggle()">
         <span aria-hidden="true">
             <i class="fa" [class.fa-compress]="!hidden" [class.fa-expand]="hidden"></i>
         </span>
-    </button>
-    <strong *ngIf="hidden">{{alertTitle || tooltipPath || tooltipKey}}</strong>
-    <span *ngIf="!hidden">{{tooltip}}</span>
+  </button>
+  <strong *ngIf="hidden">{{alertTitle || tooltipPath || tooltipKey}}</strong>
+  <span *ngIf="!hidden">{{tooltip}}</span>
 </div>
