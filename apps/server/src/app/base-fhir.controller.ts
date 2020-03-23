@@ -5,13 +5,11 @@ import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {Bundle, DomainResource, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent} from './helper';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import { logger } from 'codelyzer/util/logger';
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
