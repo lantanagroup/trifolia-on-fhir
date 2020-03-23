@@ -13,6 +13,8 @@ export class Globals {
   static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
+  static readonly packagedIgPublisherVersion = '1.0.38-SNAPSHOT built 2020-01-11 @ 07:15';
+
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',

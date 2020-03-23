@@ -55,6 +55,7 @@
           <app-fhir-boolean
             [parentObject]="options"
             propertyName="useLatest"
+            noLabel="No ({{Globals.packagedIgPublisherVersion}})"
             [required]="true"
             [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
             title="Use latest FHIR IG Publisher?">
