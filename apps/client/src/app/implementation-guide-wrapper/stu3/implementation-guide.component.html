@@ -151,6 +151,63 @@
 
         <div class="card">
           <div class="card-header">
+            Parameters <app-tooltip-icon tooltipKey="ig.parameter"></app-tooltip-icon>
+          </div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>
+                Code
+              </th>
+              <th>
+                Value
+              </th>
+              <th class="actions-column-1">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" (click)="addParameter()" title="Add a new parameter">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody *ngIf="parameters.length > 0">
+            <tr *ngFor="let param of parameters; let pi = index">
+              <td>
+                <div class="input-group">
+                  <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="param" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" (click)="removeParameter(param)" title="Remove this parameter">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="parameters.length === 0">
+            <tr>
+              <td colspan="3">
+                No parameters have been defined. Click <a href="javascript:void(0)" (click)="addParameter()">here</a> to add one.
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             Globals
             <app-tooltip-icon tooltipPath="ImplementationGuide.global"></app-tooltip-icon>
           </div>

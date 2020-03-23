@@ -27,6 +27,54 @@ import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 
+class Parameter {
+  public extension: Extension;
+
+  constructor(extension: Extension) {
+    this.extension = extension;
+  }
+
+  get code(): string {
+    const ext = (this.extension.extension || []).find(e => e.url === 'code');
+    return ext ? ext.valueString : '';
+  }
+
+  set code(value: string) {
+    this.extension.extension = this.extension.extension || [];
+    let ext = this.extension.extension.find(e => e.url === 'code');
+
+    if (!ext && value) {
+      ext = new Extension({ url: 'code', valueString: value });
+      this.extension.extension.push(ext);
+    } else if (ext && !value) {
+      const index = this.extension.extension.indexOf(ext);
+      this.extension.extension.splice(index, index >= 0 ? 1 : 0);
+    } else if (ext && value) {
+      ext.valueString = value;
+    }
+  }
+
+  get value(): string {
+    const ext = (this.extension.extension || []).find(e => e.url === 'value');
+    return ext ? ext.valueString : '';
+  }
+
+  set value(value: string) {
+    this.extension.extension = this.extension.extension || [];
+    let ext = this.extension.extension.find(e => e.url === 'value');
+
+    if (!ext && value) {
+      ext = new Extension({ url: 'value', valueString: value });
+      this.extension.extension.push(ext);
+    } else if (ext && !value) {
+      const index = this.extension.extension.indexOf(ext);
+      this.extension.extension.splice(index, index >= 0 ? 1 : 0);
+    } else if (ext && value) {
+      ext.valueString = value;
+    }
+  }
+}
+
 class PageDefinition {
   public page: PageComponent;
   public parent?: PageComponent;
@@ -56,6 +104,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public resourceTypeCodes: Coding[] = [];
   public igNotFound = false;
   public ClientHelper = ClientHelper;
+  public parameters: Parameter[] = [];
 
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -114,6 +163,22 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       const index = this.implementationGuide.extension.indexOf(foundExtension);
       this.implementationGuide.extension.splice(index, 1);
     }
+  }
+
+  public addParameter() {
+    this.implementationGuide.extension = this.implementationGuide.extension || [];
+    this.implementationGuide.extension.push({ url: Globals.extensionUrls['extension-ig-parameter'] });
+    this.parameters = (this.implementationGuide.extension || [])
+      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
+      .map(e => new Parameter(e));
+  }
+
+  public removeParameter(param: Parameter) {
+    const index = this.implementationGuide.extension.indexOf(param.extension);
+    this.implementationGuide.extension.splice(index, index >= 0 ? 1 : 0);
+    this.parameters = (this.implementationGuide.extension || [])
+      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
+      .map(e => new Parameter(e));
   }
 
   public addGlobal() {
@@ -319,6 +384,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = <ImplementationGuide>this.fileService.file.resource;
+        this.parameters = (this.implementationGuide.extension || [])
+          .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
+          .map(e => new Parameter(e));
         this.nameChanged();
         this.initPages();
       } else {
@@ -637,7 +705,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if (this.navSubscription) this.navSubscription.unsubscribe();
     this.configService.setTitle(null);
   }
 
