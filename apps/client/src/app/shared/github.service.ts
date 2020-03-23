@@ -2,6 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin, Observable} from 'rxjs';
 import {ConfigService} from './config.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export interface FileModel {
   path: string;
@@ -117,6 +118,11 @@ export interface RepositoryModel {
   open_issues: number;
   watchers: number;
   default_branch: string;
+  permissions?: {
+    admin: boolean;
+    push: boolean;
+    pull: boolean;
+  };
 }
 
 export interface ContentModel {
@@ -211,17 +217,6 @@ export class GithubService {
     });
   }
 
-  private handleError(err, observer?) {
-    if (err.status === 401) {
-      this.logout();
-    }
-
-    if (observer) {
-      observer.error(err);
-      observer.complete();
-    }
-  }
-
   private getOptions() {
     return {
       headers: {
@@ -231,9 +226,16 @@ export class GithubService {
     };
   }
 
-  public logout() {
-    this.token = null;
-    localStorage.removeItem(this.tokenKey);
+  public async logout() {
+    try {
+      const url = `https://api.github.com/authorizations/${this.token}`;
+      await this.http.delete(url, this.getOptions()).toPromise();
+    } catch (ex) {
+      console.error('Failed to notify GitHub of logout (still going to forget GitHub token):' + getErrorString(ex));
+    } finally {
+      this.token = null;
+      localStorage.removeItem(this.tokenKey);
+    }
   }
 
   public async login() {
@@ -265,8 +267,8 @@ export class GithubService {
     return await this.http.get<UserModel>('https://api.github.com/user', this.getOptions()).toPromise();
   }
 
-  public async getRepositories(): Promise<RepositoryModel[]> {
-    const repositories = [];
+  public async getRepositories(requirePush = false): Promise<RepositoryModel[]> {
+    const repositories: RepositoryModel[] = [];
 
     try {
       await this.login();
@@ -288,7 +290,11 @@ export class GithubService {
       console.error('Error retrieving list of repositories from GitHub: ' + ex.message);
     }
 
-    return repositories;
+    return repositories
+      .filter(r => {
+        if (!requirePush) return true;
+        return !!r.permissions && r.permissions.push;
+      });
   }
 
   public async getBranches(ownerLogin: string, repositoryName: string): Promise<BranchModel[]> {

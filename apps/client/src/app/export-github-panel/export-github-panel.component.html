@@ -14,7 +14,9 @@
 
   <div class="col-md-4">
     <div class="form-group">
-      <label>Repository</label>
+      <label>
+        Repository <app-tooltip-icon tooltipKey="github.repository.onlypush"></app-tooltip-icon>
+      </label>
       <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
         <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
       </select>

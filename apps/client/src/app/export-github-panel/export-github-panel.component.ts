@@ -162,7 +162,7 @@ export class ExportGithubPanelComponent implements OnInit {
   async ngOnInit() {
     try {
       this.loadingRepositories = true;
-      this.repositories = await this.githubService.getRepositories();
+      this.repositories = await this.githubService.getRepositories(true);
     } catch (ex) {
       this.message = getErrorString(ex);
     } finally {
