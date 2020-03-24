@@ -303,9 +303,6 @@ export class FhirController extends BaseController {
     if (contextImplementationGuide) {
       this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
       await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
-
-
-
       // TODO: Handle DELETE events (remove the resource from the IG).
     }
 
@@ -363,10 +360,21 @@ export class FhirController extends BaseController {
 
     const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
 
+    const queue = (bundle.entry || []).map(e => e);
+    const results = [];
+
+    for (let i = 0; i < queue.length; i++) {
+      const entry = queue[i];
+      const nextResult = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+      results.push(nextResult);
+    }
+
+    /* This causes HAPI to freeze up
     const promises = (bundle.entry || []).map((entry) => {
       return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
     });
     const results = await Promise.all(promises);
+     */
 
     // Now that processing the batch entries is done, persist the context IG back to the server
     if (contextImplementationGuide) {
