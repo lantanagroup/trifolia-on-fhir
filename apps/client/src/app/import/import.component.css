@@ -1,3 +1,7 @@
 tr.invalid td {
     text-decoration: line-through;
 }
+
+.card.results {
+  margin-top: 10px;
+}
