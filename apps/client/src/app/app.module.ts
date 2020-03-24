@@ -75,6 +75,8 @@ import {
 } from 'angular-oauth2-oidc';
 import {UsersComponent} from './manage/users/users.component';
 import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
+import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
+import { PackageListComponent } from './implementation-guide-wrapper/package-list/package-list.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -154,7 +156,9 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent},
   {path: ':fhirServer/:implementationGuideId/export', component: ExportComponent},
   {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
-  {path: ':fhirServer/other-resources', component: OtherResourcesComponent},
+  {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
+  {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
+  {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
   {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'}
@@ -227,7 +231,7 @@ const authModuleConfig: OAuthModuleConfig = {
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent, OtherResourcesResultComponent, PackageListComponent
   ],
   imports: [
     RouterModule.forRoot(

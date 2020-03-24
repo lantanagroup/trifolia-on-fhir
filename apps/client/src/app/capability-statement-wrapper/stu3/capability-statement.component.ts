@@ -14,12 +14,13 @@ import {FileService} from '../../shared/file.service';
 import {ClientHelper} from '../../clientHelper';
 import {AuthService} from '../../shared/auth.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {BaseComponent} from '../../base.component';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
+export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
 
   public message: string;
@@ -36,12 +37,14 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
     public fhirService: FhirService,
     public fileService: FileService,
     public route: ActivatedRoute,
-    private authService: AuthService,
+    protected authService: AuthService,
     private modalService: NgbModal,
     private csService: CapabilityStatementService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private router: Router,
     private recentItemService: RecentItemService) {
+
+    super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
@@ -99,7 +102,7 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
   }
 
   public editResource(resource: ResourceComponent) {
-    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
   }
 
@@ -119,12 +122,12 @@ export class STU3CapabilityStatementComponent implements OnInit, OnDestroy, DoCh
   }
 
   public editEvent(event: EventComponent) {
-    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.event = event;
   }
 
   public selectImplementationGuide(implementationGuideIndex) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.hideResourceType = true;
 

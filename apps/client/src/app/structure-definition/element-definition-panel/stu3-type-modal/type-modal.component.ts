@@ -5,6 +5,7 @@ import {FhirService} from '../../../shared/fhir.service';
 import {Coding, TypeRefComponent} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
 import {ConfigService} from '../../../shared/config.service';
+import {IElement} from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   templateUrl: './type-modal.component.html',
@@ -20,18 +21,54 @@ export class STU3TypeModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
-    private modalService: NgbModal,
-    private fhirService: FhirService) {
+    protected modalService: NgbModal,
+    protected fhirService: FhirService) {
+
   }
 
   selectProfile(dest: string) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 
     modalRef.result.then((results) => {
       this.type[dest] = results.resource.url;
     });
+  }
+
+  get profileElement(): string {
+    if (!this.type._profile) return '';
+
+    const profileInfo = <IElement> this.type._profile;
+    const found = (profileInfo.extension || []).find(e => e.url === Globals.extensionUrls['elementdefinition-profile-element']);
+
+    if (!found) return '';
+
+    return found.valueString;
+  }
+
+  set profileElement(value: string) {
+    if (!this.type._profile) this.type._profile = {};
+    const profileInfo = <IElement> this.type._profile;
+    profileInfo.extension = profileInfo.extension || [];
+    let found = profileInfo.extension.find(e => e.url === Globals.extensionUrls['elementdefinition-profile-element']);
+
+    if (!found) {
+      found = {
+        url: Globals.extensionUrls['elementdefinition-profile-element']
+      };
+      profileInfo.extension.push(found);
+    }
+
+    if (value) {
+      found.valueString = value;
+    } else {
+      const foundIndex = profileInfo.extension.indexOf(found);
+      profileInfo.extension.splice(foundIndex, foundIndex >= 0 ? 1 : 0);
+
+      if (profileInfo.extension.length === 0) delete profileInfo.extension;
+      if (Object.keys(profileInfo).length === 0) delete this.type._profile;
+    }
   }
 
   ngOnInit() {

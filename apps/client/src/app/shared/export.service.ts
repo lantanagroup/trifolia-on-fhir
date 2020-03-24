@@ -10,8 +10,12 @@ export class ExportOptions {
   public responseFormat?: 'application/json' | 'application/xml' | 'application/msword';
   public useTerminologyServer? = true;
   public useLatest? = true;
-  public downloadOutput? = false;       // Only applies to HTML exports
+  public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
+  public template = 'hl7.fhir.template';
+  public templateVersion = "current";
+  public removeExtensions = false;
+  public bundleType: 'searchset'|'transaction' = 'searchset';
 }
 
 @Injectable()
@@ -34,18 +38,24 @@ export class ExportService {
       url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
     }
 
+    if (options.removeExtensions === true || options.removeExtensions === false) {
+      url += `removeExtensions=${options.removeExtensions}&`;
+    }
+
+    if (options.bundleType) {
+      url += `bundleType=${options.bundleType}&`;
+    }
+
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
+
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
 
   public exportMsWord(options: ExportOptions) {
-    let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/msword?`;
-
-    if (options.responseFormat) {
-      url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
-    }
+    const url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/msword?`;
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
-
 
   public exportHtml(options: ExportOptions) {
     let url = `/api/export/${encodeURIComponent(options.implementationGuideId)}/html?`;
@@ -61,6 +71,9 @@ export class ExportService {
     if (options.includeIgPublisherJar === true) {
       url += 'includeIgPublisherJar=true&';
     }
+
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
 
     return this.http.post(url, null, {observe: 'response', responseType: 'blob'});
   }
@@ -88,13 +101,16 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
-    url += 'socketId=' + encodeURIComponent(this.socketService.socketId);
+    url += 'downloadOutput=' + options.downloadOutput.toString() + '&';
+    url += 'socketId=' + encodeURIComponent(this.socketService.socketId) + '&';
+    url += 'template=' + encodeURIComponent(options.template) + '&';
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
 
     return this.http.get(url, {responseType: 'text'});
   }
 
   public cancel(packageId: string){
-    let url = `/api/export/${packageId}/cancel`;
+    const url = `/api/export/${packageId}/cancel`;
     return this.http.post(url, null);
   }
 

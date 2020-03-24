@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FhirService} from './fhir.service';
-import {AuditEventService} from './audit-event.service';
 import {AuthService} from './auth.service';
 import {CapabilityStatementService} from './capability-statement.service';
 import {CodeSystemService} from './code-system.service';
@@ -22,6 +21,7 @@ import {FileService} from './file.service';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {GroupService} from './group.service';
 import {ManageService} from './manage.service';
+import {ModalService} from './modal.service';
 
 @NgModule({
   declarations: [],
@@ -30,7 +30,6 @@ import {ManageService} from './manage.service';
     NgbModule
   ],
   providers: [
-    AuditEventService,
     AuthService,
     CapabilityStatementService,
     CodeSystemService,
@@ -50,7 +49,8 @@ import {ManageService} from './manage.service';
     UserService,
     ValueSetService,
     GroupService,
-    ManageService
+    ManageService,
+    ModalService
   ],
   exports: []
 })

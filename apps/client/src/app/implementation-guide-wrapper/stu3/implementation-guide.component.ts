@@ -5,7 +5,9 @@ import {
   Coding,
   Extension,
   ImplementationGuide,
-  OperationOutcome, PackageComponent, PackageResourceComponent,
+  OperationOutcome,
+  PackageComponent,
+  PackageResourceComponent,
   PageComponent
 } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -18,16 +20,60 @@ import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {ValidatorResponse} from 'fhir/validator';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {ClientHelper} from '../../clientHelper';
-import {BaseComponent} from '../../base.component';
-import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
+
+class Parameter {
+  public extension: Extension;
+
+  constructor(extension: Extension) {
+    this.extension = extension;
+  }
+
+  get code(): string {
+    const ext = (this.extension.extension || []).find(e => e.url === 'code');
+    return ext ? ext.valueString : '';
+  }
+
+  set code(value: string) {
+    this.extension.extension = this.extension.extension || [];
+    let ext = this.extension.extension.find(e => e.url === 'code');
+
+    if (!ext && value) {
+      ext = new Extension({ url: 'code', valueString: value });
+      this.extension.extension.push(ext);
+    } else if (ext && !value) {
+      const index = this.extension.extension.indexOf(ext);
+      this.extension.extension.splice(index, index >= 0 ? 1 : 0);
+    } else if (ext && value) {
+      ext.valueString = value;
+    }
+  }
+
+  get value(): string {
+    const ext = (this.extension.extension || []).find(e => e.url === 'value');
+    return ext ? ext.valueString : '';
+  }
+
+  set value(value: string) {
+    this.extension.extension = this.extension.extension || [];
+    let ext = this.extension.extension.find(e => e.url === 'value');
+
+    if (!ext && value) {
+      ext = new Extension({ url: 'value', valueString: value });
+      this.extension.extension.push(ext);
+    } else if (ext && !value) {
+      const index = this.extension.extension.indexOf(ext);
+      this.extension.extension.splice(index, index >= 0 ? 1 : 0);
+    } else if (ext && value) {
+      ext.valueString = value;
+    }
+  }
+}
 
 class PageDefinition {
   public page: PageComponent;
@@ -58,6 +104,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public resourceTypeCodes: Coding[] = [];
   public igNotFound = false;
   public ClientHelper = ClientHelper;
+  public parameters: Parameter[] = [];
 
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -67,7 +114,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private implementationGuideService: ImplementationGuideService,
+    public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
@@ -118,18 +165,35 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
   }
 
+  public addParameter() {
+    this.implementationGuide.extension = this.implementationGuide.extension || [];
+    this.implementationGuide.extension.push({ url: Globals.extensionUrls['extension-ig-parameter'] });
+    this.initParameters();
+  }
+
+  public removeParameter(param: Parameter) {
+    const index = this.implementationGuide.extension.indexOf(param.extension);
+    this.implementationGuide.extension.splice(index, index >= 0 ? 1 : 0);
+    this.initParameters();
+  }
+
+  public addGlobal() {
+    this.implementationGuide.global = this.implementationGuide.global || [];
+    this.implementationGuide.global.push({type: '', profile: { reference: '' }});
+  }
+
   public changeId() {
     if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
       return;
     }
 
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
   }
 
   public selectPublishedIg(dependency: Extension) {
-    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
@@ -143,7 +207,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public addResources(destPackage?: PackageComponent) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
@@ -310,6 +374,12 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.getImplementationGuide();
   }
 
+  private initParameters() {
+    this.parameters = (this.implementationGuide.extension || [])
+      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
+      .map(e => new Parameter(e));
+  }
+
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
@@ -318,6 +388,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         this.implementationGuide = <ImplementationGuide>this.fileService.file.resource;
         this.nameChanged();
         this.initPages();
+        this.initParameters();
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -338,6 +409,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.implementationGuide = <ImplementationGuide>results;
           this.nameChanged();
           this.initPages();
+          this.initParameters();
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
@@ -355,7 +427,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    this.modalService.open(content, {size: 'lg'});
+    this.modalService.open(content, {size: 'lg', backdrop: 'static'});
   }
 
   public tabChange(event) {
@@ -398,7 +470,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg', backdrop: 'static'});
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -546,7 +618,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg'});
+    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.resource = igResource.resource;
   }
@@ -634,7 +706,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if (this.navSubscription) this.navSubscription.unsubscribe();
     this.configService.setTitle(null);
   }
 

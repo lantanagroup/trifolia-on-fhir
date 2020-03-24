@@ -7,6 +7,7 @@ import {CapabilityStatement as R4CapabilityStatement, Coding} from '../../../../
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
+import {ExportOptions} from './export.service';
 
 @Injectable()
 export class ConfigService {
@@ -36,6 +37,33 @@ export class ConfigService {
     } else {
       throw new Error('Unexpected FHIR Version ' + fhirVersion);
     }
+  }
+
+  public async getTemplateVersions(options: ExportOptions): Promise<string[]> {
+    let url = '';
+    let templateVersions = [];
+
+    if (options.template === 'hl7.fhir.template') {
+      url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
+    } else if(options.template === 'hl7.cda.template') {
+      url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
+    }
+
+    try {
+      const result = await this.http.get(url).toPromise();
+
+      if (result.hasOwnProperty('list') && result['list']) {
+        for (let x = 0; x < result['list'].length; x++) {
+          if (result['list'][x]['version']) {
+            templateVersions.push(result['list'][x]['version']);
+          }
+        }
+      }
+    } catch(ex) {
+      templateVersions = ['current'];
+    }
+
+    return templateVersions;
   }
 
   public get baseSessionUrl(): string {

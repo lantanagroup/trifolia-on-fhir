@@ -75,7 +75,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   public changeId(structureDefinitionListItem: StructureDefinition) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent);
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.originalId = structureDefinitionListItem.id;
     modalRef.result.then((newId) => {

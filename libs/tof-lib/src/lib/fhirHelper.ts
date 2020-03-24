@@ -43,6 +43,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
   }
 
   if (operation) {
+    if (!operation.startsWith('$')) operation = '$' + operation;
     path = joinUrl(path, operation);
   }
 

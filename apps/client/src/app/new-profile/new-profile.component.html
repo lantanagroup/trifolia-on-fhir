@@ -46,11 +46,21 @@
                                        [profileType]="structureDefinition.type"></app-profile-base-definition>
         </div>
       </div>
+      <div class="row" *ngIf="configService.isFhirR4">
+        <div class="col-md-6">
+          <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
+          <span class="help-block" *ngIf="!structureDefinition.context">There must be at least be a context type selected</span>
+        </div>
+      </div>
+
     </ng-template>
   </ngb-tab>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+    <ng-template ngbTabTitle>
+      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No permissions specified!"></i>
+    </ng-template>
     <ng-template ngbTabContent>
       <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
     </ng-template>

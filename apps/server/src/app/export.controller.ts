@@ -1,5 +1,5 @@
 import {BaseController} from './base.controller';
-import {Controller, Get, HttpService, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
+import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -19,6 +19,7 @@ import * as path from "path";
 import * as tmp from 'tmp';
 import {MSWordExporter} from './export/msword';
 import { ExportService } from './export.service';
+import {FhirServerVersion} from './server.decorators';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -52,7 +53,7 @@ export class ExportController extends BaseController {
               }
             })
         });
-      }
+      };
 
       bundleExporter.getBundle(true)
         .then((results: Bundle) => {
@@ -110,7 +111,9 @@ export class ExportController extends BaseController {
   public async exportImplementationGuide(
     @Req() request: ITofRequest,
     @Res() response: Response,
-    @Param('implementationGuideId') implementationGuideId: string) {
+    @Param('implementationGuideId') implementationGuideId: string,
+    @Query('removeExtensions') removeExtensions: string,
+    @Query('bundleType') bundleType: 'searchset'|'transaction') {
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
@@ -123,7 +126,7 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      const results = await exporter.export(options.format);
+      const results = await exporter.export(options.format, removeExtensions === 'true', bundleType);
       const fileExt = options.isXml ? '.xml' : '.json';
 
       response.contentType('application/octet-stream');
@@ -136,12 +139,12 @@ export class ExportController extends BaseController {
   }
 
   @Post(':implementationGuideId/msword')
-  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string) {
+  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
     const bundleExporter = new BundleExporter(this.httpService, this.logger, req.fhirServerBase, req.fhirServerId, req.fhirServerVersion, req.fhir, implementationGuideId);
-    const bundle = await bundleExporter.getBundle(true);
+    const bundle = await bundleExporter.getBundle(false);
 
     const msWordExporter = new MSWordExporter();
-    const results = await msWordExporter.export(bundle);
+    const results = await msWordExporter.export(bundle, fhirServerVersion);
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment; filename=ig.docx');
@@ -169,7 +172,7 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.includeIgPublisherJar ? options.useLatest : false);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.includeIgPublisherJar ? options.useLatest : false, options.template, options.templateVersion);
 
       // Zip up the dir, send it to client, and then delete the directory
       await this.sendPackageResponse(exporter.packageId, response);
@@ -222,7 +225,7 @@ export class ExportController extends BaseController {
 
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.useLatest);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.useLatest, options.template, options.templateVersion);
 
       runPublish();
 

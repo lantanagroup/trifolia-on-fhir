@@ -5,8 +5,8 @@
     </label>
     <select class="form-control" [(ngModel)]="value">
         <option *ngIf="!required" [ngValue]="undefined">Unspecified</option>
-        <option [ngValue]="false">No</option>
-        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">{{noLabel}}</option>
+        <option [ngValue]="true">{{yesLabel}}</option>
     </select>
 </div>
 <div *ngIf="!isFormGroup" [class.input-group]="title">
@@ -16,7 +16,7 @@
     </div>
     <select class="form-control" [(ngModel)]="value">
         <option *ngIf="!required" [ngValue]="undefined">Unspecified</option>
-        <option [ngValue]="false">No</option>
-        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">{{noLabel}}</option>
+        <option [ngValue]="true">{{yesLabel}}</option>
     </select>
 </div>

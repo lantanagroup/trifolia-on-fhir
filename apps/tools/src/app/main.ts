@@ -125,8 +125,8 @@ const argv = Yargs
       .option('auth0export', {
         description: 'A file exported from the Auth0 import/export plugin that should provide additional data to this tool.'
       })
-      .option('csv', {
-        description: 'Dump the results as a CSV',
+      .option('tabs', {
+        description: 'Dump the results as a TXT with tab delims',
         boolean: true
       });
   }, async (args: any) => {

@@ -13,12 +13,13 @@ import {FileModel} from '../models/file-model';
 import {ClientHelper} from '../clientHelper';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {BaseComponent} from '../base.component';
 
 @Component({
   templateUrl: './valueset.component.html',
   styleUrls: ['./valueset.component.css']
 })
-export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
+export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   public valueSet: ValueSet;
   public message: string;
   public validation: any;
@@ -31,13 +32,15 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
   constructor(
     public route: ActivatedRoute,
     public configService: ConfigService,
-    private authService: AuthService,
+    protected authService: AuthService,
     private valueSetService: ValueSetService,
     private router: Router,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
+
+    super(configService, authService);
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
   }
@@ -73,7 +76,7 @@ export class ValuesetComponent implements OnInit, OnDestroy, DoCheck {
       return;
     }
 
-    const modalRef = this.modalService.open(FileOpenModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FileOpenModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.captureVersion = false;
 
     modalRef.result.then((file: FileModel) => {

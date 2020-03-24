@@ -1,9 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {ElementTreeModel} from '../../models/element-tree-model';
+import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {Coding, StructureDefinition, TypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import { ElementDefinitionTypeRefComponent } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {IElementDefinitionType} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 /**
  * This component represents a modal window that can instantiated using NgbModal.
@@ -19,7 +20,7 @@ export class SelectChoiceModalComponent implements OnInit {
   @Input() element = new ElementTreeModel();
   @Input() structureDefinition = new StructureDefinition();
   public selectedType: string;
-  public types: TypeRefComponent[] | ElementDefinitionTypeRefComponent[];
+  public types: IElementDefinitionType[];
   public definedTypeCodes: Coding[] = [];
 
   constructor(

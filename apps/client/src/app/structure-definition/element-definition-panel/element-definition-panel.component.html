@@ -86,21 +86,30 @@
         </div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group">
               <label>
-                <input type="checkbox" [(ngModel)]="element.mustSupport"/>
-                Must support
-                <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
+                <input type="checkbox" [(ngModel)]="element.isSummary"/>
+                Is Summary
+                <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
               </label>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group" *ngIf="structureDefinition.type == 'Extension'">
+          <div class="col-md-4">
+            <div class="form-group">
               <label>
                 <input type="checkbox" [(ngModel)]="element.isModifier"/>
-                Is modifier
+                Is Modifier
                 <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
+              </label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="element.mustSupport"/>
+                Must Support
+                <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
               </label>
             </div>
           </div>

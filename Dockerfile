@@ -3,7 +3,7 @@ FROM node:10-alpine AS build-ToF
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
 # (Java is used to executed the FHIR IG Publisher)
-RUN apk add --no-cache --virtual .gyp make python gcc g++ openjdk8-jre build-base
+RUN apk add --no-cache --virtual .gyp make python gcc g++ openjdk8-jre build-base fontconfig
 
 RUN mkdir /build
 
@@ -31,9 +31,10 @@ RUN npm prune --production
 
 FROM node:10-alpine
 
-RUN apk update && apk --update add ruby-full ruby-dev build-base openjdk8-jre
-RUN gem install jekyll bundler
-RUN rm -rf /var/cache/apk/*
+RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre
+RUN gem install sassc -- --disable-march-tune-native
+RUN gem install jekyll bundler --no-document
+RUN jekyll -v
 
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/

@@ -14,6 +14,8 @@ import {
   FhirReferenceModalComponent,
   ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
+import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {FhirService} from '../../shared/fhir.service';
 
 @Component({
   templateUrl: './resource-modal.component.html',
@@ -22,6 +24,10 @@ import {
 export class R4ResourceModalComponent implements OnInit {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
+
+  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private fhirService: FhirService) {
+
+  }
 
   get enableGroups() {
     return this.resource.groupingId ||
@@ -40,10 +46,6 @@ export class R4ResourceModalComponent implements OnInit {
     setExtensionString(this.resource, Globals.extensionUrls['extension-ig-resource-file-path'], value);
   }
 
-  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal) {
-
-  }
-
   exampleBooleanChanged() {
     if (this.resource.hasOwnProperty('exampleCanonical')) {
       delete this.resource.exampleCanonical;
@@ -51,7 +53,7 @@ export class R4ResourceModalComponent implements OnInit {
   }
 
   selectExampleCanonical() {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 
@@ -62,6 +64,23 @@ export class R4ResourceModalComponent implements OnInit {
 
       this.resource.exampleCanonical = result.resource.url;
     })
+  }
+
+  async copyDescription() {
+    try {
+      const parsedReference = parseReference(this.resource.reference.reference);
+      const results: any = await this.fhirService.read(parsedReference.resourceType, parsedReference.id).toPromise();
+
+      if (results) {
+        if (results.description) {
+          this.resource.description = results.description;
+        } else {
+          alert('The target resource does not have a "Description"');
+        }
+      }
+    } catch (ex) {
+      alert(`Failed to load resource to copy the description: ${ex.message}`);
+    }
   }
 
   referenceChanged() {

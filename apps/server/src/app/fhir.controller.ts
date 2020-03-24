@@ -25,16 +25,10 @@ import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, parseFhirUrl} from './helper';
-import {
-  Bundle,
-  DomainResource,
-  EntryComponent,
-  ImplementationGuide as STU3ImplementationGuide
-} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
+import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
-import {mergeTokens} from 'codelyzer/angular/styles/cssAst';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 export interface ProxyResponse {
@@ -63,7 +57,7 @@ export class FhirController extends BaseController {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
 
-
+    let resource;
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'GET'
@@ -72,8 +66,12 @@ export class FhirController extends BaseController {
     this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
 
     // Get the current state of the resource
-    const getResponse = await this.httpService.request(currentOptions).toPromise();
-    const resource = getResponse.data;
+    try {
+      const getResponse = await this.httpService.request(currentOptions).toPromise();
+      resource = getResponse.data;
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
+    }
 
     if (!resource || !resource.id) {
       throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
@@ -96,8 +94,13 @@ export class FhirController extends BaseController {
       method: 'DELETE'
     };
 
-    // Create the new resource with the new id
-    await this.httpService.request(createOptions).toPromise();
+    try {
+      // Create the new resource with the new id
+      await this.httpService.request(createOptions).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when creating the new resource to change the resource\'s id: ${ex.message}`);
+      throw ex;
+    }
 
     const searchForReference = (searchResourceType: string, searchParameter: string) => {
 
@@ -149,8 +152,8 @@ export class FhirController extends BaseController {
       }
     };
 
-    allResults.forEach(resource => {
-      const foundReference = findReference(resource);
+    allResults.forEach(result => {
+      const foundReference = findReference(result);
       if(foundReference){
         foundReference.reference =  `${resourceType}/${newId}`;
         foundReference.display = newId;
@@ -162,13 +165,13 @@ export class FhirController extends BaseController {
     if (allResources.length > 0) {
       const transaction = new Bundle();
       transaction.type = 'transaction';
-      transaction.entry = allResources.map((resource) => {
+      transaction.entry = allResources.map((r) => {
         return {
-          resource: resource,
-          fullUrl: buildUrl(fhirServerBase, resource.resourceType, resource.id),
+          resource: r,
+          fullUrl: buildUrl(fhirServerBase, r.resourceType, r.id),
           request: {
             method: 'PUT',
-            url: `${resource.resourceType}/${resource.id}`
+            url: `${r.resourceType}/${r.id}`
           }
         };
       });
@@ -300,9 +303,21 @@ export class FhirController extends BaseController {
     if (contextImplementationGuide) {
       this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
       await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
-
       // TODO: Handle DELETE events (remove the resource from the IG).
     }
+
+    let action = '';
+    if(entry.request.method === 'POST'){
+      action = 'C';
+    }else if(entry.request.method === 'GET'){
+      action = 'R';
+    }else if(entry.request.method === 'PUT'){
+      action = 'U';
+    }else if(entry.request.method.indexOf('DEL') > 0){
+      action = 'D';
+    }
+
+    createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, batchProcessingResponse.data);
 
     return batchProcessingResponse;
   }
@@ -345,10 +360,21 @@ export class FhirController extends BaseController {
 
     const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
 
+    const queue = (bundle.entry || []).map(e => e);
+    const results = [];
+
+    for (let i = 0; i < queue.length; i++) {
+      const entry = queue[i];
+      const nextResult = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+      results.push(nextResult);
+    }
+
+    /* This causes HAPI to freeze up
     const promises = (bundle.entry || []).map((entry) => {
       return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
     });
     const results = await Promise.all(promises);
+     */
 
     // Now that processing the batch entries is done, persist the context IG back to the server
     if (contextImplementationGuide) {
@@ -570,6 +596,19 @@ export class FhirController extends BaseController {
       if (contextImplementationGuide && results.data.resourceType && results.data.id && ['POST', 'PUT'].indexOf(method) >= 0) {
         await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide,true);
       }
+
+      let action = '';
+      if(method === 'POST'){
+        action = 'C';
+      } else if(method === 'GET'){
+        action = 'R';
+      } else if(method === 'PUT'){
+        action = 'U';
+      } else if(method.indexOf('DEL') > 0){
+        action = 'D';
+      }
+
+      createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, results.data);
 
       return {
         status: results.status,

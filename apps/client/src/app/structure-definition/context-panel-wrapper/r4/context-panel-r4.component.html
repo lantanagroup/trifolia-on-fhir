@@ -12,22 +12,23 @@
             <th>
                 Expression <app-tooltip-icon tooltipKey="StructureDefinition.context.expression"></app-tooltip-icon>
             </th>
-            <th class="actions-column-1">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push({ type: '', expression: '' })">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn">
+        <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn" >
             <td>
-                <app-fhir-string [parentObject]="ci" propertyName="type" [isFormGroup]="false"></app-fhir-string>
+                <select class="form-control" [(ngModel)]="structureDefinition.context[cii].type">
+                  <option value="fhirpath">FHIR Path</option>
+                  <option value="element">Element</option>
+                  <option value="extension">Extension</option>
+                </select>
+                <span *ngIf="structureDefinition.context[cii].type===''">
+                  There must be a context type selected</span>
             </td>
             <td>
-                <app-fhir-string [parentObject]="ci" propertyName="expression" [isFormGroup]="false"></app-fhir-string>
+              <input type="text" class="form-control" [(ngModel)]="ci.expression"/>
+              <span *ngIf="structureDefinition.type==='Extension' && structureDefinition.context[cii].expression===''">
+                If the StructureDefinition type is Extension, there must be a context expression inputted</span>
             </td>
             <td>
                 <div class="pull-right">

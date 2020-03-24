@@ -114,7 +114,7 @@ export class ImportGithubPanelComponent implements OnInit {
     if (content.type === 'dir') {
       newTreeModel.loadChildren = (callback) => {
         this.githubService.getContents(this.ownerLogin, this.repositoryName, this.branchName, content.path)
-          .subscribe((childItems) => {
+          .then((childItems) => {
             const childTreeModels = <TreeModel[]> childItems
               .filter((childItem: ContentModel) => childItem.type === 'dir' || childItem.name.endsWith('.xml') || childItem.name.endsWith('.json'))
               .sort((a: ContentModel, b: ContentModel) => {
@@ -126,7 +126,8 @@ export class ImportGithubPanelComponent implements OnInit {
                 return this.mapContentToTreeModel(childItem);
               });
             callback(childTreeModels);
-          }, (err) => {
+          })
+          .catch((err) => {
             this.message = getErrorString(err);
           });
       };
@@ -135,88 +136,67 @@ export class ImportGithubPanelComponent implements OnInit {
     return newTreeModel;
   }
 
-  branchChanged() {
+  async branchChanged() {
     this.selectedPaths = [];
     this.tree = null;
 
-    this.githubService.getContents(this.ownerLogin, this.repositoryName, this.branchName)
-      .subscribe((contents) => {
-        this.tree = {
-          value: this.branchName,
-          id: this.branchName,
-          children: contents
-            .filter((content: ContentModel) => content.type === 'dir' || content.name.endsWith('.xml') || content.name.endsWith('.json'))
-            .sort((a: ContentModel, b: ContentModel) => {
-              const aVal = a.type + a.name;
-              const bVal = b.type + b.name;
-              return (aVal || '').localeCompare(bVal || '');
-            })
-            .map((content: ContentModel) => {
-              return this.mapContentToTreeModel(content);
-            }),
-          settings: {
-            cssClasses: {
-              expanded: 'fa fa-caret-down',
-              collapsed: 'fa fa-caret-right',
-              empty: 'fa fa-caret-right disabled',
-              leaf: 'fa'
-            },
-            static: true
-          },
-          templates: {
-            node: '<i class="fa fa-folder-o"></i>',
-            leaf: '<i class="fa fa-file-o"></i>'
-          }
-        };
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
+    const contents = await this.githubService.getContents(this.ownerLogin, this.repositoryName, this.branchName);
+
+    this.tree = {
+      value: this.branchName,
+      id: this.branchName,
+      children: contents
+        .filter((content: ContentModel) => content.type === 'dir' || content.name.endsWith('.xml') || content.name.endsWith('.json'))
+        .sort((a: ContentModel, b: ContentModel) => {
+          const aVal = a.type + a.name;
+          const bVal = b.type + b.name;
+          return (aVal || '').localeCompare(bVal || '');
+        })
+        .map((content: ContentModel) => {
+          return this.mapContentToTreeModel(content);
+        }),
+      settings: {
+        cssClasses: {
+          expanded: 'fa fa-caret-down',
+          collapsed: 'fa fa-caret-right',
+          empty: 'fa fa-caret-right disabled',
+          leaf: 'fa'
+        },
+        static: true
+      },
+      templates: {
+        node: '<i class="fa fa-folder-o"></i>',
+        leaf: '<i class="fa fa-file-o"></i>'
+      }
+    };
   }
 
-  repositoryChanged() {
+  async repositoryChanged() {
     this.branches = [];
     this.branchName = null;
     this.selectedPaths = [];
     this.tree = null;
 
-    this.githubService.getBranches(this.ownerLogin, this.repositoryName)
-      .subscribe((branches) => {
-        this.branches = branches;
+    this.branches = await this.githubService.getBranches(this.ownerLogin, this.repositoryName);
 
-        const foundRepository = this.repositories.find((repository) => repository.id === this.repositoryId);
+    const foundRepository = this.repositories.find((repository) => repository.id === this.repositoryId);
 
-        if (foundRepository && foundRepository.default_branch) {
-          this.branchName = foundRepository.default_branch;
-          this.branchChanged();
-        }
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
+    if (foundRepository && foundRepository.default_branch) {
+      this.branchName = foundRepository.default_branch;
+      this.branchChanged();
+    }
   }
 
-  githubLogin() {
+  async githubLogin() {
     this.loadingRepositories = true;
-    this.githubService.login()
-      .subscribe(() => {
-        this.githubService.getRepositories()
-          .subscribe((repositories) => {
-            this.repositories = repositories;
-            this.loadingRepositories = false;
-          }, (err) => {
-            this.message = getErrorString(err);
-          });
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
+    await this.githubService.login();
+    this.repositories = await this.githubService.getRepositories();
+    this.loadingRepositories = false;
   }
 
-  ngOnInit() {
-    this.githubService.getRepositories()
-      .subscribe((repositories) => {
-        this.repositories = repositories;
-        this.loadingRepositories = false;
-      }, (err) => {
-        this.message = getErrorString(err);
-      });
+  async ngOnInit() {
+    this.loadingRepositories = true;
+    this.repositories = await this.githubService.getRepositories();
+    this.loadingRepositories = false;
   }
 }

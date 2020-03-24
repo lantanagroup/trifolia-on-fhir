@@ -240,20 +240,26 @@ export class ImportComponent implements OnInit {
   private getFileBundle(): Bundle {
     const bundle = new Bundle();
     bundle.type = 'batch';
-    bundle.entry = this.files
+    bundle.entry = [];
+
+    this.files
       .filter((importFile: ImportFileModel) => {
         return importFile.contentType === ContentTypes.Json ||
           importFile.contentType === ContentTypes.Xml ||
           importFile.contentType === ContentTypes.Image;
       })
-      .map((importFile: ImportFileModel) => {
-        const entry = new EntryComponent();
-        entry.request = new RequestComponent();
-        entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
-        entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
-        entry.resource = importFile.resource;
-
-        return entry;
+      .forEach((importFile: ImportFileModel) => {
+        if (importFile.resource.resourceType === 'Bundle' && (<Bundle> importFile.resource).type === 'transaction') {
+          const transactionBundle = <Bundle> importFile.resource;
+          bundle.entry.push(...transactionBundle.entry);
+        } else {
+          const entry = new EntryComponent();
+          entry.request = new RequestComponent();
+          entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
+          entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
+          entry.resource = importFile.resource;
+          bundle.entry.push(entry);
+        }
       });
 
     this.files
@@ -321,21 +327,30 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    let response;
-    const url = buildUrl('/api/fhir', resource.resourceType, resource.id, null, { applyContextPermissions: this.applyContextPermissions });
+    let url = `/api/fhir/${resource.resourceType}`;
 
     if (resource.id) {
-      response = this.httpClient.put(url, resource);
-    } else {
-      response = this.httpClient.post(url, resource);
+      url += `/${resource.id}`;
     }
 
-    response
-      .subscribe((results: Bundle | OperationOutcome) => {
+    url += `?applyContextPermissions=${this.applyContextPermissions}`;
+
+    (resource.id ? this.httpClient.put(url, resource) : this.httpClient.post(url, resource))
+      .subscribe((results: OperationOutcome) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
-        } else if (results.resourceType === 'Bundle') {
-          this.resultsBundle = <Bundle>results;
+        } else {
+          const successOutcome = new OperationOutcome();
+          successOutcome.text = {
+            status: 'generated',
+            div: `<div><p>Successfully imported resource</p></div>`
+          };
+          successOutcome.issue = [{
+            severity: 'information',
+            code: 'success',
+            diagnostics: 'Successfully imported the resource.'
+          }];
+          this.outcome = successOutcome;
         }
 
         this.message = 'Done.';
@@ -356,7 +371,7 @@ export class ImportComponent implements OnInit {
           };
         }
 
-        this.message = 'Done. Errors occurred.';
+        this.message = 'Done. Errors occurred: ' + getErrorString(err);
         setTimeout(() => {
           tabSet.select('results');
         });

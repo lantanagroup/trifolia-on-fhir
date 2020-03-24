@@ -55,11 +55,33 @@
           <app-fhir-boolean
             [parentObject]="options"
             propertyName="useLatest"
+            noLabel="No ({{Globals.packagedIgPublisherVersion}})"
             [required]="true"
             [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
             title="Use latest FHIR IG Publisher?">
           </app-fhir-boolean>
           <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR. If Publish fails to run, try re-running with 'No' selected for this option.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Template</label>
+            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
+              <option value="hl7.fhir.template">HL7 FHIR Template</option>
+              <option value="hl7.cda.template">HL7 CDA Template</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Version</label>
+            <div>
+              <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
+                <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </ng-template>
@@ -71,13 +93,32 @@
       </div>
 
       <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
                [attr.data-intro]="Globals.introText['export.bundleOutput']">
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
               <option value="application/json">JSON</option>
               <option value="application/xml">XML</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Remove ToF Extensions?</label>
+            <select class="form-control" [(ngModel)]="options.removeExtensions">
+              <option [ngValue]="false">No</option>
+              <option [ngValue]="true">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Bundle Type</label>
+            <select class="form-control" [(ngModel)]="options.bundleType">
+              <option value="searchset">Search Set</option>
+              <option value="transaction">Transaction</option>
             </select>
           </div>
         </div>
@@ -89,39 +130,12 @@
       <div class="alert alert-info">The "MsWord" document export contains all resources referenced by the selected
         implementation guide, including the implementation guide resource.
       </div>
-
-      <div class="row" [attr.data-intro]="Globals.introText['export.msword']">
-        <div class="col-md-6">
-          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
-               [attr.data-intro]="Globals.introText['export.mswordOutput']">
-            <label>Output Format</label>
-            <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
-              <option value="application/msword">MSWORD</option>
-            </select>
-          </div>
-        </div>
-      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab title="GitHub" id="github">
     <ng-template ngbTabContent>
       <div [attr.data-intro]="Globals.introText['export.github']">
-        <div class="alert alert-info">The "GitHub" export format places all the resources within the IG in the specified
-          GitHub repository/branch.
-        </div>
-
-        <div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to
-          GitHub. If the file already exists in GitHub, it will be completely overwritten by this export. At least one
-          resource must have GitHub location information specified to export.
-        </div>
-
-        <div class="form-group">
-          <label>Commit Message</label>
-          <textarea class="form-control" [class.is-invalid]="!githubCommitMessage" [(ngModel)]="githubCommitMessage"
-                    placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
-        </div>
-
-        <app-export-github-panel [resourcesBundle]="githubResourcesBundle" #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"></app-export-github-panel>
+        <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"></trifolia-fhir-export-github-panel>
       </div>
     </ng-template>
   </ngb-tab>

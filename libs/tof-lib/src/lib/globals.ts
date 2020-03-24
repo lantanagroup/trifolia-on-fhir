@@ -13,6 +13,8 @@ export class Globals {
   static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
+  static readonly packagedIgPublisherVersion = '1.0.38-SNAPSHOT built 2020-01-11 @ 07:15';
+
   static readonly extensionUrls = {
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
@@ -34,7 +36,9 @@ export class Globals {
     'extension-sd-notes': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-notes',
     'extension-sd-intro': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-sd-intro',
     'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
-    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
+    'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
+    'elementdefinition-profile-element': 'http://hl7.org/fhir/StructureDefinition/elementdefinition-profile-element',
+    'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements'
   };
 
   static readonly introText = {
@@ -103,7 +107,7 @@ export class Globals {
     'publish.cancel-btn': 'When you\'re placed in queue and wish to cancel the publication process, press this button.',
     'ig.general-tab': 'This tab includes the most generic and high-level fields for an implementation guide, such as the name, title, version, etc.',
     'ig.narrative-tab': 'This tab includes fields to specify custom narrative for the implementation guide that may not be expressed in directly in the profiles within the implementation guide.',
-    'ig.globals-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
+    'ig.other-tab': 'This tab lets you to specify profiles that should be globally applied to the implementation guide based on a resource type. For example, you may specify a profile for Person that should be minimally required for <em>all</em> Person profiles in the implementation guide.',
     'ig.packages-tab': 'This tab lets you to define packages that are used to categorize/group resources included in the implementation guide. These packages are not commonly used and are for more advanced implementation guide authors.',
     'ig.resources-tab': 'This tab lets you indicate which profiles are included in the implementation guide. Resources referenced here <strong>SHOULD NOT</strong> be referenced by other implementation guides in the same way.',
     'other.open-resource-tab': 'Each resource that you open will show in a separate tab like this.',
@@ -127,6 +131,8 @@ export class Globals {
   static readonly tooltips = {
     'ElementDefinition.representation': 'This describes how the element or attribute is represented in XML. For example, a CDA model defined as a FHIR StructureDefinition might use typeAttr as a representation to indicate that xsi:type should be used to determine the type of the element.',
     'ElementDefinition.maxLength': 'Max length of string. Can only be set when the element type is Primitive (but not Boolean). Unlike cardinality, the max length can be loosened or expanded regardless of the base definition.',
+    'StructureDefinition.context.type': 'The type of context provided within the StructureDefinition. Can be either a FHIR path, an Element, or an Extension.',
+    'StructureDefinition.context.expression': 'Text describing the context of the StructureDefinition.',
     'implementationguide.description': 'An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher.\nThe ImplementationGuide resource is a single resource that defines the logical content of the IG, along with the important entry pages into the publication, so that the logical package that the IG represents, so that the contents are computable.\nIn particular, validators are able to use the ImplementationGuide resource to validate content against the implementation guide as a whole. The significant conformance expectation introduced by the ImplementationGuide resource is the idea of Default Profiles. Implementations may conform to multiple implementation guides at once, but this requires that the implementation guides are compatible.',
     'structuredefinition.description': 'A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.\nThe StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation.',
     'operationdefinition.description': 'A formal computable definition of an operation (on the RESTful interface) or a named query (using the search interaction).\nOperationDefinitions are published to define operations that servers can implement in a common fashion. The FHIR specification itself describes some (see below), and other organizations (including IHE, national programs, jurisdictions and vendors) are able to publish additional OperationDefinitions.',
@@ -149,8 +155,12 @@ export class Globals {
     'ig.resource.filePath': 'This file path indicates where the resource will be exported within the HTML package. The file path is relative to the "resources" directory. The resource reference should match case-sensitivity with the file path, or the FHIR IG Publisher may encounter errors. The extension of this file must be either .xml or .json and may change at the time of the export depending on the export options selected.',
     'ig.resource.exampleCanonical': 'The URL of a profile (StructureDefinition) that this is an example of can be specified here when the "Example?" field is "Unspecified".',
     'ig.resource.exampleBoolean': 'Asserts whether this resource is an example of a profile in the implementation guide. If you wish to indicate which profile this resource is an example of, set this field to "Unspecified" and select/specify the URL of the profile in the "Example of Profile" field.',
-    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.'
+    'ig.groups': 'Groups are used during publication to group together resources in the "Artifacts Summary" page.',
+    'ig.parameter': 'Defines how IG is built by tools, such as the HL7 IG Publisher. Some parameters are required by the IG Publisher, and if they are not specified here, will be automatically set by ToF during the publication process. More information about parameters and how they affect the publication template can be found <a href="https://confluence.hl7.org/display/FHIR/Implementation+Guide+Parameters" target="_blank">here</a>.',
+    'github.repository.onlypush': 'Only repositories that you have the permissions to commit/push to are shown. If the repository you are looking for does not show in this list, you may need to contact the admin of the repository and ask for permissions to contribute/push/write.'
   };
+
+  static readonly igParameters = ['logging', 'generate', 'path-resource', 'autoload-resources', 'codesystem-property', 'path-pages', 'path-qa', 'path-tx-cache', 'path-liquid', 'path-temp', 'path-output', 'path-history', 'path-expansion-params', 'path-suppressed-warnings', 'html-exempt', 'extension-domain', 'active-tables', 'ig-expansion-parameters', 'special-url', 'template-openapi', 'template-html', 'template-md', 'apply-contact', 'apply-context', 'apply-copyright', 'apply-jurisdiction', 'apply-license', 'apply-publisher', 'apply-version', 'validation', 'show-inherited-invariants', 'usage-stats-opt-out'];
 
   static readonly hl7WorkGroups = [
     { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },
@@ -227,7 +237,9 @@ export class Globals {
     exportLastDownloadOutput: 'exportLastDownloadOutput',
     exportLastUseLatestIgPublisher: 'exportLastUseLatestIgPublisher',
     atlassianAccountConfirmed: 'atlassian_account_confirmed',
-    lastResponseFormat: 'lastResponseFormat'
+    lastResponseFormat: 'lastResponseFormat',
+    lastTemplate: 'lastTemplate',
+    lastTemplateVersion: 'lastTemplateVersion',
   };
 
   static readonly FHIRUrls = {

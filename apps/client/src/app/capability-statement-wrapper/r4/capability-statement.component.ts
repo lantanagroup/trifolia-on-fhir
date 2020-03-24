@@ -22,12 +22,13 @@ import {
   FhirReferenceModalComponent,
   ResourceSelection
 } from '../../fhir-edit/reference-modal/reference-modal.component';
+import {BaseComponent} from '../../base.component';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoCheck {
+export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
 
   public message: string;
@@ -42,14 +43,16 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
 
   constructor(
     public route: ActivatedRoute,
-    private authService: AuthService,
-    private configService: ConfigService,
+    protected authService: AuthService,
+    public configService: ConfigService,
     private modal: NgbModal,
     private csService: CapabilityStatementService,
     private router: Router,
     private fileService: FileService,
     private recentItemService: RecentItemService,
     private fhirService: FhirService) {
+
+    super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
@@ -107,7 +110,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
   }
 
   public editResource(resource: CapabilityStatementResourceComponent) {
-    const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg'});
+    const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
   }
 
@@ -117,7 +120,7 @@ export class R4CapabilityStatementComponent implements OnInit, OnDestroy, DoChec
   }
 
   public selectResourceProfile(resource: CapabilityStatementResourceComponent) {
-    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((selection: ResourceSelection) => {

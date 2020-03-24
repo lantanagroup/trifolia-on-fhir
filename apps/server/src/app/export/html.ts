@@ -28,6 +28,8 @@ import {PageInfo} from './html.models';
 import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import {FhirInstances} from '../helper';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -81,11 +83,13 @@ export class HtmlExporter {
    * Override in version-specific FHIR implementations
    * @param bundle The bundle that contains all resources in the IG
    * @param format The format that the user selected for the export
+   * @param template The type of template used (FHIR or CDA)
+   * @param templateVersion The version of the template used
    */
-  public getControl(bundle: any, format: Formats) {
+  public getControl(bundle: any, format: Formats, template: string, templateVersion: string) {
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
-      'template = hl7.fhir.template\n' +
+      `template = ${template}#${templateVersion}\n` +
       'usage-stats-opt-out = false\n';
   }
 
@@ -136,6 +140,7 @@ export class HtmlExporter {
         const message = 'Error executing FHIR IG Publisher: ' + err;
         this.logger.error(message);
         this.sendSocketMessage('error', message);
+        reject("Error publishing IG");
       });
 
       igPublisherProcess.on('exit', (code) => {
@@ -145,7 +150,7 @@ export class HtmlExporter {
 
         if (code !== 0) {
           this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
-          this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
           reject('Return code from IG Publisher is not 0');
         } else {
           this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
@@ -191,7 +196,7 @@ export class HtmlExporter {
     });
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -255,12 +260,21 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    control = this.getControl(this.bundle, format);
+    control = this.getControl(this.bundle, format, template, templateVersion);
 
     this.logger.log('Saving the control file to the temp directory');
 
     // Write the ig.json file to the export temporary folder
     fs.writeFileSync(this.controlPath, control);
+
+    const packageList = PackageListModel.getPackageList(this.implementationGuide);
+
+    if (packageList) {
+      this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
+
+      const packageListPath = path.join(this.rootPath, 'package-list.json');
+      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
+    }
 
     // Make sure ROOT/input/pagecontent exists for writeFilesForResources()
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
@@ -389,7 +403,7 @@ export class HtmlExporter {
     return this.implementationGuide;
   }
 
-  protected getPageExtension(page: ImplementationGuidePageComponent) {
+  protected static getPageExtension(page: ImplementationGuidePageComponent) {
     switch (page.generation) {
       case 'html':
       case 'generated':
@@ -677,7 +691,13 @@ export class HtmlExporter {
     }
 
     if (resourcePath.endsWith('.xml')) {
-      resourceContent = this.fhir.objToXml(cleanResource);
+      if (resource.resourceType === 'ImplementationGuide') {
+        // Override the instance of FHIR on the server to use the R4 FHIR instance since
+        // the ImplementationGuide must be in R4 format for the export
+        resourceContent = FhirInstances.fhirR4.objToXml(cleanResource);
+      } else {
+        resourceContent = this.fhir.objToXml(cleanResource);
+      }
       resourceContent = vkbeautify.xml(resourceContent);
     } else if (resourcePath.endsWith('.json')) {
       resourceContent = JSON.stringify(cleanResource, null, '\t');

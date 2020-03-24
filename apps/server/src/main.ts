@@ -16,14 +16,12 @@ import * as fs from 'fs-extra';
 import * as modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
-import {getFhirR4Instance, getFhirStu3Instance} from './app/helper';
 import hpropagate from 'hpropagate';
+import {FhirInstances} from './app/helper';
 
 const config = new ConfigService();
 
 const logger = new TofLogger('main');
-const fhirStu3 = getFhirStu3Instance();
-const fhirR4 = getFhirR4Instance();
 const connections: ISocketConnection[] = [];
 let io;
 
@@ -55,16 +53,16 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
 
   switch (req.fhirServerVersion) {
     case 'stu3':
-      req.fhir = fhirStu3;
+      req.fhir = FhirInstances.fhirStu3;
       break;
     case 'r4':
-      req.fhir = fhirR4;
+      req.fhir = FhirInstances.fhirR4;
       break;
     default:
       throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
   }
 
-  if (!req.fhirServerBase.endsWith('/')) {
+  if (req.fhirServerBase && !req.fhirServerBase.endsWith('/')) {
     req.fhirServerBase += '/';
   }
 

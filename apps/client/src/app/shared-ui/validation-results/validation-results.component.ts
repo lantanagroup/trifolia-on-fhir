@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {ValidatorResponse} from 'fhir/validator';
 
 @Component({
   selector: 'app-validation-results',
@@ -6,7 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./validation-results.component.css']
 })
 export class ValidationResultsComponent implements OnInit {
-  @Input() results: any;
+  @Input() results: ValidatorResponse;
 
   constructor() { }
 

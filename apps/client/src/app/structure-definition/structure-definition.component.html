@@ -233,17 +233,17 @@
       </ng-template>
     </ngb-tab>
 
-    <ngb-tab id="elements">
+    <ngb-tab id="elements" *ngIf="constraintManager && constraintManager.elements">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
       </ng-template>
       <ng-template ngbTabContent>
         <div class="elements">
-          <div class="element" *ngFor="let e of elements">
-            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e)">
+          <div class="element" *ngFor="let e of constraintManager.elements">
+            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
+            <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
               <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
             </div>
-            <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
             <div>
               <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
               <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
@@ -253,13 +253,13 @@
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
-
-              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constrainElement(e, $event)"></i> </span>
-              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || !cardinalityAllowsMultiple(e.baseElement.max) || e.isSliceRoot)"><i class="fa fa-cut"
-                                                                                                                                                          title="Slice this element"
-                                                                                                                                                          (click)="sliceElement(e)"></i> </span>
-              <span class="action" *ngIf="!(!e.constrainedElement || e.depth === 1 || hasSlices(e))"><i class="fas fa-trash-alt" title="Remove this element"
-                                                                                                        (click)="removeElementDefinition(e.constrainedElement)"></i> </span>
+              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e)"></i> </span>
+              <span class="action" *ngIf="e.constrainedElement && e.depth > 0 && cardinalityAllowsMultiple(e.baseElement.max) && e.constrainedElement.slicing">
+                <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e)"></i>
+              </span>
+              <span class="action" *ngIf="e.constrainedElement && e.depth > 0">
+                <i class="fas fa-trash-alt" title="Remove this element" (click)="constraintManager.removeConstraint(e)"></i>
+              </span>
               <br/>
               <span title="Type">{{e.typeDisplay}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
             </div>
@@ -284,7 +284,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr class="clickable" *ngFor="let e of elements; let ei = index"
+          <tr class="clickable" *ngFor="let e of constraintManager.elements; let ei = index"
               [class.selected]="selectedElement === e"
               [class.constrained]="!!e.constrainedElement"
               (click)="toggleSelectedElement(e, true)"
@@ -292,22 +292,30 @@
               [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
             <td class="element-name" [class.has-children]="e.hasChildren">
               <div>
-                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="toggleElementExpand(e, $event)">
+                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
+                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
                   <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                 </div>
-                <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
-                {{e.displayId}}
+                {{e.display}}
                 <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
               </div>
             </td>
-            <td class="element-properties">
+            <td class="element-properties" [ngbPopover]="elementPropertiesPopover" container="body" triggers="manual" (click)="e.constrainedElement ? epp.open() : null" #epp="ngbPopover">
               <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
               <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
             </td>
-            <td class="element-cardinality">{{e.min}}..{{e.max}}</td>
+            <td class="element-cardinality">
+              <div class="input-group">
+                <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" />
+                <div class="input-group-append">
+                  <span class="input-group-text">...</span>
+                </div>
+                <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" />
+              </div>
+            </td>
             <td class="element-type">{{e.typeDisplay}}</td>
             <td class="element-binding">{{e.constraints}}</td>
           </tr>
@@ -320,7 +328,10 @@
     </ngb-tab>
 
     <!-- Permissions -->
-    <ngb-tab id="permissions" title="Permissions" *ngIf="configService.config.enableSecurity">
+    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+      <ng-template ngbTabTitle>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No permissions specified!"></i>
+      </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
       </ng-template>
@@ -358,19 +369,19 @@
       <div class="btn-toolbar" style="float: right">
         <div class="btn-group mr-2">
           <button type="button" class="btn btn-primary btn-sm" title="Slice this element"
-                  [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 1 || !cardinalityAllowsMultiple(selectedElement.baseElement.max) || selectedElement.isSliceRoot"
-                  (click)="sliceElement(selectedElement, $event)">
+                  [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0 || !cardinalityAllowsMultiple(selectedElement.baseElement.max)"
+                  (click)="constraintManager.slice(selectedElement)">
             <i class="fa fa-cut"></i>
           </button>
           <button type="button" class="btn btn-primary btn-sm" title="Remove this element"
-                  [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 1 || hasSlices(selectedElement)"
-                  (click)="removeElementDefinition(selectedElement.constrainedElement, $event)">
+                  [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0"
+                  (click)="constraintManager.removeConstraint(selectedElement)">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
         <div class="btn-group">
           <button type="button" class="btn btn-primary btn-sm" (click)="toggleSelectedElement()" title="Close the definition for this element">
-            <i class="fa fa-close"></i>
+            <i class="fas fa-times"></i>
           </button>
         </div>
       </div>
@@ -380,13 +391,13 @@
         *ngIf="selectedElement.constrainedElement"
         [elementTreeModel]="selectedElement"
         [disabled]="false"
-        [elementTreeModels]="elements"
+        [elementTreeModels]="constraintManager.elements"
         [structureDefinition]="structureDefinition" #edPanel>
       </app-element-definition-panel>
 
       <div *ngIf="!selectedElement.constrainedElement">
         <p>This element has not been constrained.</p>
-        <button type="button" class="btn btn-primary" (click)="constrainElement(selectedElement)" id="edConstraintBtn">
+        <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement)" id="edConstraintBtn">
           <i class="fa fa-edit"></i> Constrain this element
         </button>
       </div>
@@ -401,3 +412,9 @@
   </div>
   <span class="message">{{message}}</span>
 </footer>
+
+<ng-template #elementPropertiesPopover>
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isSummary" /> Is Summary <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isModifier" /> Is Modifier <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.mustSupport" /> Must Support
+</ng-template>

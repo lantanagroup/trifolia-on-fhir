@@ -1,5 +1,28 @@
 import '../date-extensions';
-import {IBundle, IContactDetail, IContactPoint, IDomainResource, IExtension, IHumanName, IPractitioner} from '../fhirInterfaces';
+import {
+  IAgentComponent,
+  IAuditEvent,
+  IBundle,
+  ICodeableConcept,
+  ICodeSystem,
+  ICoding,
+  IContactDetail,
+  IContactPoint,
+  IDetailComponent,
+  IDomainResource,
+  IElementDefinition,
+  IElementDefinitionSlicing,
+  IElementDefinitionType,
+  IEntityComponent,
+  IExtension,
+  IHumanName,
+  IImplementationGuide,
+  INetworkComponent,
+  IPractitioner,
+  IResourceReference,
+  IStructureDefinition,
+  setChoice
+} from '../fhirInterfaces';
 
 export class Base {
   public fhir_comments?: string[];
@@ -77,7 +100,7 @@ export class Extension extends Element implements IExtension {
 
 }
 
-export class Coding extends Element {
+export class Coding extends Element implements ICoding {
   public system?: string;
   public version?: string;
   public code?: string;
@@ -188,7 +211,7 @@ export class Narrative extends Element {
 }
 
 export class DomainResource extends Resource implements IDomainResource {
-  public resourceType = 'DomainResource';
+  public resourceType = '';
   public text?: Narrative;
   public contained?: DomainResource[];
   public extension?: Extension[];
@@ -197,6 +220,7 @@ export class DomainResource extends Resource implements IDomainResource {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
+      this.resourceType = obj.resourceType;
       if (obj.text) {
         this.text = new Narrative(obj.text);
       }
@@ -223,7 +247,7 @@ export class DomainResource extends Resource implements IDomainResource {
 
 }
 
-export class CodeableConcept extends Element {
+export class CodeableConcept extends Element implements ICodeableConcept {
   public coding?: Coding[];
   public text?: string;
 
@@ -262,7 +286,7 @@ export class Period extends Element {
 
 }
 
-export class ResourceReference extends Element {
+export class ResourceReference extends Element implements IResourceReference {
   public reference?: string;
   public identifier?: Identifier;
   public display?: string;
@@ -479,14 +503,13 @@ export class DiscriminatorComponent extends Element {
       }
     }
   }
-
 }
 
-export class SlicingComponent extends Element {
+export class SlicingComponent extends Element implements IElementDefinitionSlicing {
   public discriminator?: DiscriminatorComponent[];
   public description?: string;
   public ordered?: boolean;
-  public rules: string;
+  public rules: 'closed'|'open'|'openAtEnd';
 
   constructor(obj?: any) {
     super(obj);
@@ -533,9 +556,10 @@ export class BaseComponent extends Element {
 
 }
 
-export class TypeRefComponent extends Element {
+export class TypeRefComponent extends Element implements IElementDefinitionType {
   public code: string;
   public profile?: string;
+  public _profile?: Element | Element[];
   public targetProfile?: string;
   public aggregation?: string[];
   public versioning?: string;
@@ -558,48 +582,57 @@ export class TypeRefComponent extends Element {
       if (obj.versioning) {
         this.versioning = obj.versioning;
       }
+      if (obj.hasOwnProperty('_profile')) {
+        if (obj._profile instanceof Array) {
+          this._profile = [];
+          for (const profileInfo of obj._profile) {
+            this._profile.push(profileInfo ? new Element(profileInfo) : profileInfo);
+          }
+        } else {
+          this._profile = new Element(obj._profile);
+        }
+      }
     }
   }
 }
 
 export class ExampleComponent extends Element {
   public label: string;
-  public valueInstant?: number;
-  public valueDecimal?: number;
-  public valueInteger?: number;
-  public valueUnsignedInt?: number;
-  public valuePositiveInt?: number;
-  public valueCode?: string;
-  public valueId?: string;
-  public valueMarkdown?: string;
-  public valueOid?: string;
-  public valueUri?: string;
-  public valueString?: string;
+
+  // Value Choices
+  public valueBoolean?: string;
+  public valueInteger?: boolean;
+  public valueDecimal?: string;
   public valueBase64Binary?: string;
+  public valueInstant?: string;
+  public valueString?: string;
+  public valueUri?: number;
   public valueDate?: string;
-  public valueDateTime?: string;
-  public valueBoolean?: boolean;
-  public valueRatio?: Ratio;
-  public valueTiming?: Timing;
-  public valueCoding?: Coding;
-  public valueSignature?: Signature;
+  public valueDateTime?: number;
+  public valueTime?: number;
+  public valueCode?: string;
+  public valueOid?: string;
+  public valueId?: number;
+  public valueUnsignedInt?: string;
+  public valuePositiveInt?: string;
+  public valueMarkdown?: number;
+  public valueAnnotation?: string;
+  public valueAttachment?: string;
+  public valueIdentifier?: string;
   public valueCodeableConcept?: CodeableConcept;
-  public valueAge?: Age;
-  public valueDistance?: Distance;
+  public valueCoding?: Coding;
   public valueQuantity?: Quantity;
-  public valueSimpleQuantity?: SimpleQuantity;
-  public valueDuration?: Duration;
-  public valueCount?: Count;
-  public valueMoney?: Money;
-  public valueSampledData?: SampledData;
-  public valueContactPoint?: ContactPoint;
-  public valueAddress?: Address;
-  public valueAnnotation?: Annotation;
-  public valueHumanName?: HumanName;
-  public valueIdentifier?: Identifier;
-  public valueAttachment?: Attachment;
   public valueRange?: Range;
   public valuePeriod?: Period;
+  public valueRatio?: Ratio;
+  public valueSampledData?: SampledData;
+  public valueSignature?: Signature;
+  public valueHumanName?: HumanName;
+  public valueAddress?: Address;
+  public valueContactPoint?: ContactPoint;
+  public valueTiming?: Timing;
+  public valueReference?: ResourceReference;
+  public valueMeta?: Meta;
 
   constructor(obj?: any) {
     super(obj);
@@ -607,114 +640,8 @@ export class ExampleComponent extends Element {
       if (obj.label) {
         this.label = obj.label;
       }
-      if (obj.valueInstant) {
-        this.valueInstant = obj.valueInstant;
-      }
-      if (obj.valueDecimal) {
-        this.valueDecimal = obj.valueDecimal;
-      }
-      if (obj.valueInteger) {
-        this.valueInteger = obj.valueInteger;
-      }
-      if (obj.valueUnsignedInt) {
-        this.valueUnsignedInt = obj.valueUnsignedInt;
-      }
-      if (obj.valuePositiveInt) {
-        this.valuePositiveInt = obj.valuePositiveInt;
-      }
-      if (obj.valueCode) {
-        this.valueCode = obj.valueCode;
-      }
-      if (obj.valueId) {
-        this.valueId = obj.valueId;
-      }
-      if (obj.valueMarkdown) {
-        this.valueMarkdown = obj.valueMarkdown;
-      }
-      if (obj.valueOid) {
-        this.valueOid = obj.valueOid;
-      }
-      if (obj.valueUri) {
-        this.valueUri = obj.valueUri;
-      }
-      if (obj.valueString) {
-        this.valueString = obj.valueString;
-      }
-      if (obj.valueBase64Binary) {
-        this.valueBase64Binary = obj.valueBase64Binary;
-      }
-      if (obj.valueDate) {
-        this.valueDate = obj.valueDate;
-      }
-      if (obj.valueDateTime) {
-        this.valueDateTime = obj.valueDateTime;
-      }
-      if (obj.valueBoolean) {
-        this.valueBoolean = obj.valueBoolean;
-      }
-      if (obj.valueRatio) {
-        this.valueRatio = new Ratio(obj.valueRatio);
-      }
-      if (obj.valueTiming) {
-        this.valueTiming = new Timing(obj.valueTiming);
-      }
-      if (obj.valueCoding) {
-        this.valueCoding = new Coding(obj.valueCoding);
-      }
-      if (obj.valueSignature) {
-        this.valueSignature = new Signature(obj.valueSignature);
-      }
-      if (obj.valueCodeableConcept) {
-        this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept);
-      }
-      if (obj.valueAge) {
-        this.valueAge = new Age(obj.valueAge);
-      }
-      if (obj.valueDistance) {
-        this.valueDistance = new Distance(obj.valueDistance);
-      }
-      if (obj.valueQuantity) {
-        this.valueQuantity = new Quantity(obj.valueQuantity);
-      }
-      if (obj.valueSimpleQuantity) {
-        this.valueSimpleQuantity = new SimpleQuantity(obj.valueSimpleQuantity);
-      }
-      if (obj.valueDuration) {
-        this.valueDuration = new Duration(obj.valueDuration);
-      }
-      if (obj.valueCount) {
-        this.valueCount = new Count(obj.valueCount);
-      }
-      if (obj.valueMoney) {
-        this.valueMoney = new Money(obj.valueMoney);
-      }
-      if (obj.valueSampledData) {
-        this.valueSampledData = new SampledData(obj.valueSampledData);
-      }
-      if (obj.valueContactPoint) {
-        this.valueContactPoint = new ContactPoint(obj.valueContactPoint);
-      }
-      if (obj.valueAddress) {
-        this.valueAddress = new Address(obj.valueAddress);
-      }
-      if (obj.valueAnnotation) {
-        this.valueAnnotation = new Annotation(obj.valueAnnotation);
-      }
-      if (obj.valueHumanName) {
-        this.valueHumanName = new HumanName(obj.valueHumanName);
-      }
-      if (obj.valueIdentifier) {
-        this.valueIdentifier = new Identifier(obj.valueIdentifier);
-      }
-      if (obj.valueAttachment) {
-        this.valueAttachment = new Attachment(obj.valueAttachment);
-      }
-      if (obj.valueRange) {
-        this.valueRange = new Range(obj.valueRange);
-      }
-      if (obj.valuePeriod) {
-        this.valuePeriod = new Period(obj.valuePeriod);
-      }
+
+      setChoice(obj, this, 'value', 'boolean', 'integer', 'decimal', 'base64Binary', 'instant', 'string', 'uri', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'unsignedInt', 'positiveInt', 'markdown', 'Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta');
     }
   }
 }
@@ -787,7 +714,7 @@ export class ElementDefinitionBindingComponent extends Element {
 
 }
 
-export class ElementDefinition extends Element {
+export class ElementDefinition extends Element implements IElementDefinition {
   public path: string;
   public representation?: string[];
   public sliceName?: string;
@@ -807,11 +734,7 @@ export class ElementDefinition extends Element {
   public defaultValue?: Element;
   public meaningWhenMissing?: string;
   public orderMeaning?: string;
-  public fixed?: Element;
-  public pattern?: Element;
   public example?: ExampleComponent[];
-  public minValue?: Element;
-  public maxValue?: Element;
   public maxLength?: number;
   public condition?: string[];
   public constraint?: ConstraintComponent[];
@@ -820,6 +743,146 @@ export class ElementDefinition extends Element {
   public isSummary?: boolean;
   public binding?: ElementDefinitionBindingComponent;
   public mapping?: ElementDefinitionMappingComponent[];
+
+  // Fixed Choices
+  public fixedBoolean?: string;
+  public fixedInteger?: boolean;
+  public fixedDecimal?: string;
+  public fixedBase64Binary?: string;
+  public fixedInstant?: string;
+  public fixedString?: string;
+  public fixedUri?: number;
+  public fixedDate?: string;
+  public fixedDateTime?: number;
+  public fixedTime?: number;
+  public fixedCode?: string;
+  public fixedOid?: string;
+  public fixedId?: number;
+  public fixedUnsignedInt?: string;
+  public fixedPositiveInt?: string;
+  public fixedMarkdown?: number;
+  public fixedAnnotation?: string;
+  public fixedAttachment?: string;
+  public fixedIdentifier?: string;
+  public fixedCodeableConcept?: CodeableConcept;
+  public fixedCoding?: Coding;
+  public fixedQuantity?: Quantity;
+  public fixedRange?: Range;
+  public fixedPeriod?: Period;
+  public fixedRatio?: Ratio;
+  public fixedSampledData?: SampledData;
+  public fixedSignature?: Signature;
+  public fixedHumanName?: HumanName;
+  public fixedAddress?: Address;
+  public fixedContactPoint?: ContactPoint;
+  public fixedTiming?: Timing;
+  public fixedReference?: ResourceReference;
+  public fixedMeta?: Meta;
+
+  // Pattern Choices
+  public patternBoolean?: string;
+  public patternInteger?: boolean;
+  public patternDecimal?: string;
+  public patternBase64Binary?: string;
+  public patternInstant?: string;
+  public patternString?: string;
+  public patternUri?: number;
+  public patternDate?: string;
+  public patternDateTime?: number;
+  public patternTime?: number;
+  public patternCode?: string;
+  public patternOid?: string;
+  public patternId?: number;
+  public patternUnsignedInt?: string;
+  public patternPositiveInt?: string;
+  public patternMarkdown?: number;
+  public patternAnnotation?: string;
+  public patternAttachment?: string;
+  public patternIdentifier?: string;
+  public patternCodeableConcept?: CodeableConcept;
+  public patternCoding?: Coding;
+  public patternQuantity?: Quantity;
+  public patternRange?: Range;
+  public patternPeriod?: Period;
+  public patternRatio?: Ratio;
+  public patternSampledData?: SampledData;
+  public patternSignature?: Signature;
+  public patternHumanName?: HumanName;
+  public patternAddress?: Address;
+  public patternContactPoint?: ContactPoint;
+  public patternTiming?: Timing;
+  public patternReference?: ResourceReference;
+  public patternMeta?: Meta;
+
+  // Min Value Choices
+  public minValueBoolean?: string;
+  public minValueInteger?: boolean;
+  public minValueDecimal?: string;
+  public minValueBase64Binary?: string;
+  public minValueInstant?: string;
+  public minValueString?: string;
+  public minValueUri?: number;
+  public minValueDate?: string;
+  public minValueDateTime?: number;
+  public minValueTime?: number;
+  public minValueCode?: string;
+  public minValueOid?: string;
+  public minValueId?: number;
+  public minValueUnsignedInt?: string;
+  public minValuePositiveInt?: string;
+  public minValueMarkdown?: number;
+  public minValueAnnotation?: string;
+  public minValueAttachment?: string;
+  public minValueIdentifier?: string;
+  public minValueCodeableConcept?: CodeableConcept;
+  public minValueCoding?: Coding;
+  public minValueQuantity?: Quantity;
+  public minValueRange?: Range;
+  public minValuePeriod?: Period;
+  public minValueRatio?: Ratio;
+  public minValueSampledData?: SampledData;
+  public minValueSignature?: Signature;
+  public minValueHumanName?: HumanName;
+  public minValueAddress?: Address;
+  public minValueContactPoint?: ContactPoint;
+  public minValueTiming?: Timing;
+  public minValueReference?: ResourceReference;
+  public minValueMeta?: Meta;
+
+  // Max Value Choices
+  public maxValueBoolean?: string;
+  public maxValueInteger?: boolean;
+  public maxValueDecimal?: string;
+  public maxValueBase64Binary?: string;
+  public maxValueInstant?: string;
+  public maxValueString?: string;
+  public maxValueUri?: number;
+  public maxValueDate?: string;
+  public maxValueDateTime?: number;
+  public maxValueTime?: number;
+  public maxValueCode?: string;
+  public maxValueOid?: string;
+  public maxValueId?: number;
+  public maxValueUnsignedInt?: string;
+  public maxValuePositiveInt?: string;
+  public maxValueMarkdown?: number;
+  public maxValueAnnotation?: string;
+  public maxValueAttachment?: string;
+  public maxValueIdentifier?: string;
+  public maxValueCodeableConcept?: CodeableConcept;
+  public maxValueCoding?: Coding;
+  public maxValueQuantity?: Quantity;
+  public maxValueRange?: Range;
+  public maxValuePeriod?: Period;
+  public maxValueRatio?: Ratio;
+  public maxValueSampledData?: SampledData;
+  public maxValueSignature?: Signature;
+  public maxValueHumanName?: HumanName;
+  public maxValueAddress?: Address;
+  public maxValueContactPoint?: ContactPoint;
+  public maxValueTiming?: Timing;
+  public maxValueReference?: ResourceReference;
+  public maxValueMeta?: Meta;
 
   constructor(obj?: any) {
     super(obj);
@@ -887,23 +950,11 @@ export class ElementDefinition extends Element {
       if (obj.orderMeaning) {
         this.orderMeaning = obj.orderMeaning;
       }
-      if (obj.fixed) {
-        this.fixed = new Element(obj.fixed);
-      }
-      if (obj.pattern) {
-        this.pattern = new Element(obj.pattern);
-      }
       if (obj.example) {
         this.example = [];
         for (const o of obj.example || []) {
           this.example.push(new ExampleComponent(o));
         }
-      }
-      if (obj.minValue) {
-        this.minValue = new Element(obj.minValue);
-      }
-      if (obj.maxValue) {
-        this.maxValue = new Element(obj.maxValue);
       }
       if (obj.maxLength) {
         this.maxLength = obj.maxLength;
@@ -935,6 +986,11 @@ export class ElementDefinition extends Element {
           this.mapping.push(new ElementDefinitionMappingComponent(o));
         }
       }
+
+      setChoice(obj, this, 'fixed', 'boolean', 'integer', 'decimal', 'base64Binary', 'instant', 'string', 'uri', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'unsignedInt', 'positiveInt', 'markdown', 'Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta');
+      setChoice(obj, this, 'pattern', 'boolean', 'integer', 'decimal', 'base64Binary', 'instant', 'string', 'uri', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'unsignedInt', 'positiveInt', 'markdown', 'Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta');
+      setChoice(obj, this, 'minValue', 'date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity');
+      setChoice(obj, this, 'maxValue', 'date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity');
     }
   }
 
@@ -974,7 +1030,7 @@ export class DifferentialComponent extends BackboneElement {
 
 }
 
-export class StructureDefinition extends DomainResource {
+export class StructureDefinition extends DomainResource implements IStructureDefinition {
   public resourceType = 'StructureDefinition';
   public url: string;
   public identifier?: Identifier[];
@@ -1992,7 +2048,7 @@ export class ConceptDefinitionComponent extends BackboneElement {
 
 }
 
-export class CodeSystem extends DomainResource {
+export class CodeSystem extends DomainResource implements ICodeSystem {
   public resourceType = 'CodeSystem';
   public url?: string;
   public identifier?: Identifier;
@@ -3517,9 +3573,9 @@ export class AppointmentResponse extends DomainResource {
 
 }
 
-export class NetworkComponent extends BackboneElement {
+export class NetworkComponent extends BackboneElement implements INetworkComponent {
   public address?: string;
-  public type?: string;
+  public type?: Coding;
 
   constructor(obj?: any) {
     super(obj);
@@ -3528,14 +3584,14 @@ export class NetworkComponent extends BackboneElement {
         this.address = obj.address;
       }
       if (obj.type) {
-        this.type = obj.type;
+        this.type = new Coding(obj.type);
       }
     }
   }
 
 }
 
-export class AgentComponent extends BackboneElement {
+export class AgentComponent extends BackboneElement implements IAgentComponent {
   public role?: CodeableConcept[];
   public reference?: ResourceReference;
   public userId?: Identifier;
@@ -3620,7 +3676,7 @@ export class SourceComponent extends BackboneElement {
 
 }
 
-export class DetailComponent extends BackboneElement {
+export class DetailComponent extends BackboneElement implements IDetailComponent {
   public type: string;
   public value: string;
 
@@ -3638,7 +3694,7 @@ export class DetailComponent extends BackboneElement {
 
 }
 
-export class EntityComponent extends BackboneElement {
+export class EntityComponent extends BackboneElement implements IEntityComponent {
   public identifier?: Identifier;
   public reference?: ResourceReference;
   public type?: Coding;
@@ -3694,13 +3750,13 @@ export class EntityComponent extends BackboneElement {
 
 }
 
-export class AuditEvent extends DomainResource {
+export class AuditEvent extends DomainResource implements IAuditEvent {
   public resourceType = 'AuditEvent';
   public type: Coding;
   public subtype?: Coding[];
   public action?: string;
-  public recorded: Date;
-  public outcome?: string;
+  public recorded: string;
+  public outcome?: Coding;
   public outcomeDesc?: string;
   public purposeOfEvent?: CodeableConcept[];
   public agent: AgentComponent[];
@@ -3723,10 +3779,10 @@ export class AuditEvent extends DomainResource {
         this.action = obj.action;
       }
       if (obj.recorded) {
-        this.recorded = new Date(obj.recorded);
+        this.recorded = obj.recorded;
       }
       if (obj.outcome) {
-        this.outcome = obj.outcome;
+        this.outcome = new Coding(obj.outcome);
       }
       if (obj.outcomeDesc) {
         this.outcomeDesc = obj.outcomeDesc;
@@ -4331,7 +4387,7 @@ export class CapabilityStatement extends DomainResource {
   public instantiates?: string[];
   public software?: SoftwareComponent;
   public implementation?: ImplementationComponent;
-  public fhirVersion = '3.0.1';
+  public fhirVersion = '3.0.2';
   public acceptUnknown: 'no'|'extensions'|'elements'|'both' = 'both';
   public format: string[] = ['application/json'];
   public patchFormat?: string[];
@@ -8132,13 +8188,17 @@ export class Distance extends Quantity {
 }
 
 export class ContentComponent extends BackboneElement {
-  public p: Element;
+  public attachment: Attachment;
+  public format?: Coding;
 
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.p) {
-        this.p = new Element(obj.p);
+      if (obj.attachment) {
+        this.attachment = new Attachment(obj.attachment);
+      }
+      if (obj.format) {
+        this.format = obj.format;
       }
     }
   }
@@ -8272,8 +8332,8 @@ export class DocumentReference extends DomainResource {
   public type: CodeableConcept;
   public class?: CodeableConcept;
   public subject?: ResourceReference;
-  public created?: Date;
-  public indexed: Date;
+  public created?: string;
+  public indexed: string;
   public author?: ResourceReference[];
   public authenticator?: ResourceReference;
   public custodian?: ResourceReference;
@@ -8311,10 +8371,10 @@ export class DocumentReference extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.indexed) {
-        this.indexed = new Date(obj.indexed);
+        this.indexed = obj.indexed;
       }
       if (obj.author) {
         this.author = [];
@@ -8374,7 +8434,7 @@ export class EligibilityRequest extends DomainResource {
   public priority?: CodeableConcept;
   public patient?: ResourceReference;
   public serviced?: Element;
-  public created?: Date;
+  public created?: string;
   public enterer?: ResourceReference;
   public provider?: ResourceReference;
   public organization?: ResourceReference;
@@ -8407,7 +8467,7 @@ export class EligibilityRequest extends DomainResource {
         this.serviced = new Element(obj.serviced);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.enterer) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -8459,7 +8519,7 @@ export class EligibilityResponse extends DomainResource {
   public resourceType = 'EligibilityResponse';
   public identifier?: Identifier[];
   public status?: string;
-  public created?: Date;
+  public created?: string;
   public requestProvider?: ResourceReference;
   public requestOrganization?: ResourceReference;
   public request?: ResourceReference;
@@ -8484,7 +8544,7 @@ export class EligibilityResponse extends DomainResource {
         this.status = obj.status;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.requestProvider) {
         this.requestProvider = new ResourceReference(obj.requestProvider);
@@ -8836,7 +8896,7 @@ export class EnrollmentRequest extends DomainResource {
   public resourceType = 'EnrollmentRequest';
   public identifier?: Identifier[];
   public status?: string;
-  public created?: Date;
+  public created?: string;
   public insurer?: ResourceReference;
   public provider?: ResourceReference;
   public organization?: ResourceReference;
@@ -8856,7 +8916,7 @@ export class EnrollmentRequest extends DomainResource {
         this.status = obj.status;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.insurer) {
         this.insurer = new ResourceReference(obj.insurer);
@@ -8885,7 +8945,7 @@ export class EnrollmentResponse extends DomainResource {
   public request?: ResourceReference;
   public outcome?: CodeableConcept;
   public disposition?: string;
-  public created?: Date;
+  public created?: string;
   public organization?: ResourceReference;
   public requestProvider?: ResourceReference;
   public requestOrganization?: ResourceReference;
@@ -8912,7 +8972,7 @@ export class EnrollmentResponse extends DomainResource {
         this.disposition = obj.disposition;
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.organization) {
         this.organization = new ResourceReference(obj.organization);
@@ -9056,7 +9116,7 @@ export class ExpansionProfile extends DomainResource {
   public name?: string;
   public status: string;
   public experimental?: boolean;
-  public date?: Date;
+  public date?: string;
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -9096,7 +9156,7 @@ export class ExpansionProfile extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.publisher) {
         this.publisher = obj.publisher;
@@ -9276,7 +9336,7 @@ export class ExplanationOfBenefit extends DomainResource {
   public subType?: CodeableConcept[];
   public patient?: ResourceReference;
   public billablePeriod?: Period;
-  public created?: Date;
+  public created?: string;
   public enterer?: ResourceReference;
   public insurer?: ResourceReference;
   public provider?: ResourceReference;
@@ -9338,7 +9398,7 @@ export class ExplanationOfBenefit extends DomainResource {
         this.billablePeriod = new Period(obj.billablePeriod);
       }
       if (obj.created) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.enterer) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -9505,7 +9565,7 @@ export class FamilyMemberHistory extends DomainResource {
   public notDone?: boolean;
   public notDoneReason?: CodeableConcept;
   public patient: ResourceReference;
-  public date?: Date;
+  public date?: string;
   public name?: string;
   public relationship: CodeableConcept;
   public gender?: string;
@@ -9546,7 +9606,7 @@ export class FamilyMemberHistory extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.name) {
         this.name = obj.name;
@@ -9630,7 +9690,7 @@ export class Goal extends DomainResource {
   public subject?: ResourceReference;
   public start?: Element;
   public target?: TargetComponent;
-  public statusDate?: Date;
+  public statusDate?: string;
   public statusReason?: string;
   public expressedBy?: ResourceReference;
   public addresses?: ResourceReference[];
@@ -9672,7 +9732,7 @@ export class Goal extends DomainResource {
         this.target = new TargetComponent(obj.target);
       }
       if (obj.statusDate) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.statusReason) {
         this.statusReason = obj.statusReason;
@@ -9716,7 +9776,7 @@ export class GraphDefinition extends DomainResource {
   public name: string;
   public status: string;
   public experimental?: boolean;
-  public date?: Date;
+  public date?: string;
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -9746,7 +9806,7 @@ export class GraphDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.date) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.publisher) {
         this.publisher = obj.publisher;
@@ -9904,7 +9964,7 @@ export class GuidanceResponse extends DomainResource {
   public status: string;
   public subject?: ResourceReference;
   public context?: ResourceReference;
-  public occurrenceDateTime?: Date;
+  public occurrenceDateTime?: string;
   public performer?: ResourceReference;
   public reason?: Element;
   public note?: Annotation[];
@@ -9935,7 +9995,7 @@ export class GuidanceResponse extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.occurrenceDateTime) {
-        this.occurrenceDateTime = new Date(obj.occurrenceDateTime);
+        this.occurrenceDateTime = obj.occurrenceDateTime;
       }
       if (obj.performer) {
         this.performer = new ResourceReference(obj.performer);
@@ -9975,8 +10035,8 @@ export class GuidanceResponse extends DomainResource {
 export class AvailableTimeComponent extends BackboneElement {
   public daysOfWeek?: string[];
   public allDay?: boolean;
-  public availableStartTime?: Date;
-  public availableEndTime?: Date;
+  public availableStartTime?: string;
+  public availableEndTime?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -9988,10 +10048,10 @@ export class AvailableTimeComponent extends BackboneElement {
         this.allDay = obj.allDay;
       }
       if (obj.availableStartTime) {
-        this.availableStartTime = new Date(obj.availableStartTime);
+        this.availableStartTime = obj.availableStartTime;
       }
       if (obj.availableEndTime) {
-        this.availableEndTime = new Date(obj.availableEndTime);
+        this.availableEndTime = obj.availableEndTime;
       }
     }
   }
@@ -10288,7 +10348,7 @@ export class ImagingManifest extends DomainResource {
   public resourceType = 'ImagingManifest';
   public identifier?: Identifier;
   public patient: ResourceReference;
-  public authoringTime?: Date;
+  public authoringTime?: string;
   public author?: ResourceReference;
   public description?: string;
   public study: StudyComponent[];
@@ -10303,7 +10363,7 @@ export class ImagingManifest extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.authoringTime) {
-        this.authoringTime = new Date(obj.authoringTime);
+        this.authoringTime = obj.authoringTime;
       }
       if (obj.author) {
         this.author = new ResourceReference(obj.author);
@@ -10860,7 +10920,7 @@ export class PageComponent extends BackboneElement {
 
 }
 
-export class ImplementationGuide extends DomainResource {
+export class ImplementationGuide extends DomainResource implements IImplementationGuide {
   public resourceType = 'ImplementationGuide';
   public url: string;
   public version?: string;

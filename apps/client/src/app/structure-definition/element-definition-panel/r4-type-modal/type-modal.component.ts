@@ -4,6 +4,8 @@ import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../../shared/fhir.service';
 import {Coding, ElementDefinitionTypeRefComponent} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
+import {ConfigService} from '../../../shared/config.service';
+import {IElement} from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   templateUrl: './type-modal.component.html',
@@ -18,12 +20,14 @@ export class R4TypeModalComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private modalService: NgbModal,
-    private fhirService: FhirService) {
+    public configService: ConfigService,
+    protected modalService: NgbModal,
+    protected fhirService: FhirService) {
+
   }
 
   public selectProfile(array: string[], index: number) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 
@@ -54,6 +58,73 @@ export class R4TypeModalComponent implements OnInit {
     }
 
     this.type.aggregation.push('');
+  }
+
+  getProfileElement(profileIndex: number) {
+    if (!this.type._profile || !this.type._profile[profileIndex]) return '';
+
+    const profileInfo = <IElement> this.type._profile[profileIndex];
+    const found = (profileInfo.extension || []).find(e => e.url === Globals.extensionUrls['elementdefinition-profile-element']);
+
+    if (found) {
+      return found.valueString;
+    }
+
+    return '';
+  }
+
+  setProfileElement(profileIndex: number, value: string) {
+    if (!this.type._profile) this.type._profile = [];
+
+    const profileInfos = <IElement[]> this.type._profile;
+
+    if (profileInfos.length-1 < profileIndex) {
+      for (let i = profileInfos.length; i < profileIndex; i++) {
+        profileInfos[i] = null;
+      }
+    }
+
+    let profileInfo = profileInfos[profileIndex];
+
+    if (!profileInfo) {
+      profileInfo = {
+        extension: []
+      };
+      profileInfos[profileIndex] = profileInfo;
+    }
+
+    profileInfo.extension = profileInfo.extension || [];
+
+    let found = (profileInfo.extension || []).find(e => e.url === Globals.extensionUrls['elementdefinition-profile-element']);
+
+    if (!found) {
+      found = {
+        url: Globals.extensionUrls['elementdefinition-profile-element']
+      };
+      profileInfo.extension.push(found);
+    }
+
+    if (value) {
+      found.valueString = value;
+    } else {
+      const foundIndex = profileInfo.extension.indexOf(found);
+
+      if (foundIndex >= 0) {
+        profileInfo.extension.splice(foundIndex, 1);
+      }
+
+      if (profileInfo.extension.length === 0) {
+        delete profileInfo.extension;
+      }
+
+      if (Object.keys(profileInfo).length === 0) {
+        if (profileInfos.length - 1 > profileIndex) {
+          profileInfos[profileIndex] = null;
+        } else {
+          profileInfos.splice(profileIndex, 1);
+        }
+      }
+    }
   }
 
   ngOnInit() {
