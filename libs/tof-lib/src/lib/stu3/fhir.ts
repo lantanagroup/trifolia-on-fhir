@@ -211,7 +211,7 @@ export class Narrative extends Element {
 }
 
 export class DomainResource extends Resource implements IDomainResource {
-  public resourceType = 'DomainResource';
+  public resourceType = '';
   public text?: Narrative;
   public contained?: DomainResource[];
   public extension?: Extension[];
@@ -220,6 +220,7 @@ export class DomainResource extends Resource implements IDomainResource {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
+      this.resourceType = obj.resourceType;
       if (obj.text) {
         this.text = new Narrative(obj.text);
       }
