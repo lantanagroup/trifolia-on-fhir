@@ -29,6 +29,7 @@ import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import {FhirInstances} from '../helper';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -689,7 +690,13 @@ export class HtmlExporter {
     }
 
     if (resourcePath.endsWith('.xml')) {
-      resourceContent = this.fhir.objToXml(cleanResource);
+      if (resource.resourceType === 'ImplementationGuide') {
+        // Override the instance of FHIR on the server to use the R4 FHIR instance since
+        // the ImplementationGuide must be in R4 format for the export
+        resourceContent = FhirInstances.fhirR4.objToXml(cleanResource);
+      } else {
+        resourceContent = this.fhir.objToXml(cleanResource);
+      }
       resourceContent = vkbeautify.xml(resourceContent);
     } else if (resourcePath.endsWith('.json')) {
       resourceContent = JSON.stringify(cleanResource, null, '\t');

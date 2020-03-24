@@ -5,25 +5,39 @@ import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import {BadRequestException, HttpService, UnauthorizedException} from '@nestjs/common';
 import {
+  AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {AuditEvent as STU3AuditEvent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  AuditEvent as R4AuditEvent,
-  DomainResource as R4DomainResource,
-  ImplementationGuide as R4ImplementationGuide
-} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {AuditEvent as R4AuditEvent, DomainResource as R4DomainResource, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import * as dateExtension from '../../../../libs/tof-lib/src/lib/date-extensions'
-import { IAuditEvent, IDomainResource } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { TofLogger } from './tof-logger';
+import {IAuditEvent, IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {TofLogger} from './tof-logger';
+
+export class FhirInstances {
+  private static fhirStu3Instance: Fhir;
+  private static fhirR4Instance: Fhir;
+
+  static get fhirStu3() {
+    if (!this.fhirStu3Instance) {
+      this.fhirStu3Instance = getFhirStu3Instance();
+    }
+    return this.fhirStu3Instance;
+  }
+
+  static get fhirR4() {
+    if (!this.fhirR4Instance) {
+      this.fhirR4Instance = getFhirR4Instance();
+    }
+    return this.fhirR4Instance;
+  }
+}
 
 export const zip = (p): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -65,7 +79,7 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
                                        fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
   try {
     let auditEvent: IAuditEvent;
-    
+
     if (fhirServerVersion === 'stu3') {
       const stu3AuditEvent = new STU3AuditEvent();
       stu3AuditEvent.type = {

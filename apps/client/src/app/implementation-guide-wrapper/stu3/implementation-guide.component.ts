@@ -168,17 +168,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public addParameter() {
     this.implementationGuide.extension = this.implementationGuide.extension || [];
     this.implementationGuide.extension.push({ url: Globals.extensionUrls['extension-ig-parameter'] });
-    this.parameters = (this.implementationGuide.extension || [])
-      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
-      .map(e => new Parameter(e));
+    this.initParameters();
   }
 
   public removeParameter(param: Parameter) {
     const index = this.implementationGuide.extension.indexOf(param.extension);
     this.implementationGuide.extension.splice(index, index >= 0 ? 1 : 0);
-    this.parameters = (this.implementationGuide.extension || [])
-      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
-      .map(e => new Parameter(e));
+    this.initParameters();
   }
 
   public addGlobal() {
@@ -378,17 +374,21 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.getImplementationGuide();
   }
 
+  private initParameters() {
+    this.parameters = (this.implementationGuide.extension || [])
+      .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
+      .map(e => new Parameter(e));
+  }
+
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = <ImplementationGuide>this.fileService.file.resource;
-        this.parameters = (this.implementationGuide.extension || [])
-          .filter(e => e.url === Globals.extensionUrls['extension-ig-parameter'])
-          .map(e => new Parameter(e));
         this.nameChanged();
         this.initPages();
+        this.initParameters();
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -409,6 +409,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.implementationGuide = <ImplementationGuide>results;
           this.nameChanged();
           this.initPages();
+          this.initParameters();
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
