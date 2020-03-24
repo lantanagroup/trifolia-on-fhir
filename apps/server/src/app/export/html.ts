@@ -140,6 +140,7 @@ export class HtmlExporter {
         const message = 'Error executing FHIR IG Publisher: ' + err;
         this.logger.error(message);
         this.sendSocketMessage('error', message);
+        reject("Error publishing IG");
       });
 
       igPublisherProcess.on('exit', (code) => {
