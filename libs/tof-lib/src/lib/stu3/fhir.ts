@@ -132,7 +132,7 @@ export class Coding extends Element implements ICoding {
 
 export class Meta extends Element {
   public versionId?: string;
-  public lastUpdated?: Date;
+  public lastUpdated?: string;
   public profile?: string[];
   public security?: Coding[];
   public tag?: Coding[];
@@ -144,7 +144,7 @@ export class Meta extends Element {
         this.versionId = obj.versionId;
       }
       if (obj.lastUpdated) {
-        this.lastUpdated = new Date(obj.lastUpdated);
+        this.lastUpdated = obj.lastUpdated;
       }
       if (obj.profile) {
         this.profile = obj.profile;
