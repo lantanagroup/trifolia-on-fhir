@@ -129,7 +129,7 @@ export class Coding extends Element {
 
 export class Meta extends Element {
   public versionId?: string;
-  public lastUpdated?: Date;
+  public lastUpdated?: string;
   public source?: string;
   public profile?: string[];
   public security?: Coding[];
@@ -142,7 +142,7 @@ export class Meta extends Element {
         this.versionId = obj.versionId;
       }
       if (obj.hasOwnProperty('lastUpdated')) {
-        this.lastUpdated = new Date(obj.lastUpdated);
+        this.lastUpdated = obj.lastUpdated;
       }
       if (obj.hasOwnProperty('source')) {
         this.source = obj.source;

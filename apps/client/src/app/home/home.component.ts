@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
       }, (err) => {
         console.log(err);
       });
-    this.http.get('/help/Whatsnew.html', {responseType: ResponseContentType.Text})
+    this.http.get('/help/WhatsNew.html', {responseType: ResponseContentType.Text})
       .subscribe((results) => {
         const content = results.text();
         const parser = new DOMParser();

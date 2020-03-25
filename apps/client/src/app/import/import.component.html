@@ -41,22 +41,14 @@
         </tbody>
       </table>
 
-      <div *ngIf="!configService.showingIntroduction && files && files.length > 0 && importBundle">
-        <p class="alert alert-info">The contents of each resource is reduced to display the bundle/transaction easier...</p>
-        <ngb-tabset #n="ngbTabset" [destroyOnHide]="false">
-          <ngb-tab id="importBundleJson">
-            <ng-template ngbTabTitle>JSON <i class="fas fa-download" (click)="downloadBundle('json')"></i></ng-template>
-            <ng-template ngbTabContent>
-              <pre>{{getDisplayImportBundle() | json}}</pre>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab id="importBundleXml">
-            <ng-template ngbTabTitle>XML <i class="fas fa-download" (click)="downloadBundle('xml')"></i></ng-template>
-            <ng-template ngbTabContent>
-              <pre>{{getDisplayImportBundle() | fhirXml}}</pre>
-            </ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+      <div class="dropdown" *ngIf="files && files.length > 0 && importBundle">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Download Transaction Bundle
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="javascript:void(0)" (click)="downloadBundle('json')">JSON</a>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="downloadBundle('xml')">XML</a>
+        </div>
       </div>
 
       <!-- INTRO -->
@@ -82,37 +74,6 @@
         </tr>
         </tbody>
       </table>
-
-      <div *ngIf="configService.showingIntroduction" [attr.data-intro]="Globals.introText['import.file.formats']">
-        <ngb-tabset>
-          <ngb-tab>
-            <ng-template ngbTabTitle>JSON <i class="fas fa-download" [attr.data-intro]="Globals.introText['import.file.formats.json']"></i></ng-template>
-            <ng-template ngbTabContent>
-              <pre>
-&#123;
-  "resourceType": "Bundle",
-  "entry": [
-    &#123;
-      "request": &#123;
-        "method": "PUT",
-        "url": "StructureDefinition/test-profile"
-      },
-      "resource": &#123;
-         "resourceType": "StructureDefinition",
-         "id": "test-profile"
-      }
-    }
-  ],
-  "type": "transaction"
-}
-              </pre>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab>
-            <ng-template ngbTabTitle>XML <i class="fas fa-download"></i></ng-template>
-          </ngb-tab>
-        </ngb-tabset>
-      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab id="text">
@@ -168,8 +129,7 @@
               </div>
 
               <p>
-                <input type="checkbox" [(ngModel)]="rememberVsacCredentials"/> Remember VSAC credentials in the future <i class="fa fa-question-circle"
-                                                                                                                          ngbTooltip="If checked, these credentials will be stored in your browser's cookies. These credentials are never stored on the server, and are only used to authenticate requests to the VSAC on your behalf."></i>
+                <input type="checkbox" [(ngModel)]="rememberVsacCredentials"/> Remember VSAC credentials in the future <app-tooltip-icon tooltipKey="vsac.remember"></app-tooltip-icon>
               </p>
             </div>
           </div>
@@ -185,34 +145,35 @@
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>
   </ngb-tab>
-  <ngb-tab id="results" [disabled]="!outcome && !resultsBundle">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['import.results']">Results</span>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <div *ngIf="outcome">
-        <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
-        <div class="card" *ngFor="let issue of outcome.issue">
-          <div class="card-header">{{issue.severity}}{{issue.location && issue.location.length === 1 ? ' - ' + issue.location[0] : ''}}</div>
-          <div class="card-body">{{issue.diagnostics}}</div>
-        </div>
-      </div>
-      <div *ngIf="resultsBundle">
-        <div class="card" *ngFor="let entry of resultsBundle.entry; let i = index">
-          <div class="card-header">Bundle entry {{i + 1}} - {{entry.response ? entry.response.status : 'Unknown status'}}</div>
-          <div class="card-body" *ngIf="getBundleEntryOutcome(entry)">
-            <p></p>
-            <ul>
-              <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
-                #{{ii + 1}} - {{issue.diagnostics}}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
 </ngb-tabset>
+
+<div class="card results" *ngIf="outcome || resultsBundle">
+  <div class="card-header">Results</div>
+  <div class="card-body" *ngIf="outcome">
+    <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
+    <ul>
+      <li *ngFor="let issue of outcome.issue">
+        <span>{{issue.severity}}{{issue.location && issue.location.length === 1 ? ' - ' + issue.location[0] : ''}}: </span>
+        <span>{{issue.diagnostics}}</span>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body" *ngIf="resultsBundle">
+    <div *ngFor="let entry of resultsBundle.entry; let i = index">
+      <p><strong>Bundle entry {{i + 1}}</strong></p>
+      <div *ngIf="getBundleEntryOutcome(entry) && getBundleEntryOutcome(entry).issue">
+        <ul *ngIf="getBundleEntryOutcome(entry).issue.length > 1">
+          <li *ngFor="let issue of getBundleEntryOutcome(entry).issue; let ii = index">
+            #{{ii + 1}} - {{issue.diagnostics}}
+          </li>
+        </ul>
+        <p *ngIf="getBundleEntryOutcome(entry).issue.length === 1">
+          {{getBundleEntryOutcome(entry).issue[0].diagnostics}}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="import(t)" [disabled]="importDisabled()" [attr.data-intro]="Globals.introText['import.import-btn']">Import</button>

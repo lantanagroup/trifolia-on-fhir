@@ -1,16 +1,16 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
-import { FhirService } from '../../shared/fhir.service';
-import { ActivatedRoute } from '@angular/router';
-import { DomainResource } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import {Component, EventEmitter, OnInit} from '@angular/core';
+import {FhirService} from '../../shared/fhir.service';
+import {ActivatedRoute} from '@angular/router';
+import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {NgbModal, NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {saveAs} from 'file-saver';
-import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { ConfigService } from '../../shared/config.service';
+import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {ConfigService} from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import { ValidatorResponse } from 'fhir/validator';
-import { BaseComponent } from '../../base.component';
-import { AuthService } from '../../shared/auth.service';
+import {ValidatorResponse} from 'fhir/validator';
+import {BaseComponent} from '../../base.component';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
@@ -26,13 +26,13 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   serializationError = false;
   validation: ValidatorResponse;
   selected = 'JSON';
-  options: string[] = [ 'JSON', 'XML' ];
+  options: string[] = ['JSON', 'XML'];
 
   constructor(private fhirService: FhirService,
               private route: ActivatedRoute,
               private modalService: NgbModal,
               public configService: ConfigService,
-              protected authService: AuthService,) {
+              protected authService: AuthService) {
 
     super(configService, authService);
 
@@ -54,13 +54,14 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
             this.validation = this.fhirService.validate(this.data);
 
-            if(!this.validation.valid){
+            if (!this.validation.valid) {
               this.message = 'There are validation errors. This resource will still save but please view the validation tab.';
             }
 
-            setTimeout(() => { this.message = ''; }, 3000);
-          }
-           catch (ex) {
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          } catch (ex) {
             this.message = 'The content you have specified is invalid: ' + ex.message;
             //Deactivate save button when true
             this.serializationError = true;
@@ -80,7 +81,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
       .subscribe((results: DomainResource) => {
 
-        this.data = new DomainResource(results);
+        this.data = results;
         this.content = JSON.stringify(this.data, null, '\t');
         this.validation = this.fhirService.validate(this.data);
 
@@ -107,7 +108,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   }
 
   changeSubTab(event: NgbTabChangeEvent) {
-    this.activeSub = <any> event.nextId;
+    this.activeSub = <any>event.nextId;
   }
 
   public downloadFile() {
@@ -116,12 +117,12 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     switch (type) {
       case 'XML':
         const xml = this.fhirService.serialize(this.data);
-        const xmlBlob = new Blob([xml], {type: 'application/xml'});
+        const xmlBlob = new Blob([xml], { type: 'application/xml' });
         saveAs(xmlBlob, this.data.id + '.xml');
         break;
       case 'JSON':
         const json = JSON.stringify(this.data, null, '\t');
-        const jsonBlob = new Blob([json], {type: 'application/json'});
+        const jsonBlob = new Blob([json], { type: 'application/json' });
         saveAs(jsonBlob, this.data.id + '.json');
         break;
     }
@@ -179,7 +180,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   }
 
   public changeId(dr: DomainResource) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });
     modalRef.componentInstance.resourceType = dr.resourceType;
     modalRef.componentInstance.originalId = dr.id;
     modalRef.result.then((newId) => {
