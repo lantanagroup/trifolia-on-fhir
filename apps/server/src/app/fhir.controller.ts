@@ -360,6 +360,7 @@ export class FhirController extends BaseController {
 
     const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
 
+    /* This causes HAPI to freeze up
     const queue = (bundle.entry || []).map(e => e);
     const results = [];
 
@@ -368,13 +369,12 @@ export class FhirController extends BaseController {
       const nextResult = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
       results.push(nextResult);
     }
+     */
 
-    /* This causes HAPI to freeze up
     const promises = (bundle.entry || []).map((entry) => {
       return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
     });
     const results = await Promise.all(promises);
-     */
 
     // Now that processing the batch entries is done, persist the context IG back to the server
     if (contextImplementationGuide) {
