@@ -11,7 +11,6 @@ import {AnnouncementServiceConfig} from './models/announcement-service-config';
 @Injectable()
 export class ConfigService {
   public server: IServerConfig = {
-    adminCode: 'default',
     supportUrl: 'http://test.com/support',
     enableSecurity: false,
     maxRequestSizeMegabytes: 50,

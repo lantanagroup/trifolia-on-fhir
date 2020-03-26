@@ -3,7 +3,6 @@
     "hostname": "localhost",
     "port": 49366,
     "enableSecurity": false,
-    "adminCode": "t3st",
     "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",
     "googleAnalyticsCode": "UA-43626731-3",
     "logFileName": "logs/tof.log",
@@ -46,25 +45,6 @@
     },
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
     "latestPublisher": "https://github.com/FHIR/latest-ig-publisher/raw/master/org.hl7.fhir.publisher.jar",
-    "publishedVersions": [{
-      "version": "0.4.0 - 1.0.2",
-      "url": "http://hl7.org/fhir/DSTU2/"
-    }, {
-      "version": "1.1.0 - 3.0.1",
-      "url": "http://hl7.org/fhir/STU3/"
-    }, {
-      "version": "3.0.1 - 3.1.9",
-      "url": "http://hl7.org/fhir/DSTU2/"
-    }, {
-      "version": "3.2.0 - 3.2.9",
-      "url": "http://hl7.org/fhir/2018Jan/"
-    }, {
-      "version": "3.3.0 - 3.3.9",
-      "url": "http://hl7.org/fhir/2018May/"
-    }, {
-      "version": ">3.3.9",
-      "url": "http://build.fhir.org/"
-    }],
     "servers": [{
       "id": "lantana_hapi_stu3",
       "name": "Lantana HAPI STU3 DEV Server",
