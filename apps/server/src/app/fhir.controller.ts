@@ -30,6 +30,7 @@ import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3Imple
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {default as PQueue} from 'p-queue';
 
 export interface ProxyResponse {
   status: number;
@@ -221,10 +222,9 @@ export class FhirController extends BaseController {
         const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
 
         try {
-          this.logger.log('Retrieving resource to check security');
+          this.logger.log(`Retrieving existing resource and checking security for ${entry.resource.resourceType}/${entry.resource.id}`);
           originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
 
-          this.logger.log('Checking security for resource');
           assertUserCanEdit(this.configService, userSecurityInfo, originalResource);
         } catch (ex) {
           if (ex.response) {
@@ -289,6 +289,7 @@ export class FhirController extends BaseController {
     let batchProcessingResponse;
 
     try {
+      this.logger.log(`Sending ${entry.request.method} request for ${entry.resource.resourceType}${entry.resource.id ? '/' + entry.resource.id : ''} to FHIR server.`);
       batchProcessingResponse = await this.httpService.request(options).toPromise();
     } catch (ex) {
       this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
@@ -360,21 +361,17 @@ export class FhirController extends BaseController {
 
     const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
 
-    /* This causes HAPI to freeze up
-    const queue = (bundle.entry || []).map(e => e);
+    // Uses promise-queue to throttle the number of requests that can be sent to the FHIR server at the same time
+    const queue = new PQueue({ concurrency: this.configService.server.maxAsyncQueueRequests });
     const results = [];
 
-    for (let i = 0; i < queue.length; i++) {
-      const entry = queue[i];
-      const nextResult = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
-      results.push(nextResult);
-    }
-     */
-
-    const promises = (bundle.entry || []).map((entry) => {
-      return this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+    (bundle.entry || []).forEach((entry) => {
+      queue.add(async () => {
+        const next = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+        results.push(next);
+      });
     });
-    const results = await Promise.all(promises);
+    await queue.onIdle();
 
     // Now that processing the batch entries is done, persist the context IG back to the server
     if (contextImplementationGuide) {

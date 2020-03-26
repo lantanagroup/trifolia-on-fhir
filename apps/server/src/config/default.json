@@ -10,7 +10,8 @@
     "logLevel": "all",
     "maxLogSizeKB": 1024,
     "maxRequestSizeMegabytes": 50,
-    "latestIgPublisherPath": "assets/ig-publisher/latest/"
+    "latestIgPublisherPath": "assets/ig-publisher/latest/",
+    "maxAsyncQueueRequests": 10
   },
   "publish": {
     "queueLimit": 2,
