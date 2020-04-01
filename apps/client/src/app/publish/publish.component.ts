@@ -54,7 +54,9 @@ export class PublishComponent implements OnInit {
       this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
       this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
+    this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
+    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
     // Handle intermittent disconnects mid-export by notifying the server that we are currently exporting the given packageId
     this.socketService.onConnected.subscribe(() => {
       if (this.packageId) {
@@ -124,24 +126,47 @@ export class PublishComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
+  public async templateTypeChanged() {
+    if (this.options.templateType === 'official') {
+      this.options.template = 'hl7.fhir.template';
+      this.options.templateVersion = 'current';
+    } else if (this.options.templateType === 'custom-uri') {
+      this.options.template = '';
+    }
+
+    this.cookieService.put(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    await this.templateChanged();
+  }
+
   public async templateChanged() {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
-    this.templateVersions = await this.configService.getTemplateVersions(this.options);
 
-    const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
-    if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
-      this.options.templateVersion = templateVersionCookie;
-    } else if (this.templateVersions && this.templateVersions.length > 0) {
-      this.options.templateVersion = this.templateVersions[0];
+    if (this.options.templateType === 'official') {
+      this.templateVersions = await this.configService.getTemplateVersions(this.options);
+
+      const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
+      if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
+        this.options.templateVersion = templateVersionCookie;
+      } else if (this.templateVersions && this.templateVersions.length > 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      } else {
+        this.options.templateVersion = 'current';
+      }
     } else {
-      this.options.templateVersion = 'current';
+      this.options.templateVersion = null;
     }
 
     this.templateVersionChanged();
   }
 
   public templateVersionChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+    if (!this.options.templateVersion) {
+      if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
+        this.cookieService.remove(Globals.cookieKeys.lastTemplateVersion);
+      }
+    } else {
+      this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+    }
   }
 
   public publish() {

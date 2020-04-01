@@ -40,6 +40,7 @@ export class Extension implements IExtension {
   public url: string;
   public valueBoolean?: boolean;
   public valueString?: string;
+  public valueUri?: string;
   public valueReference?: ResourceReference;
   public valueMarkdown?: string;
 
@@ -62,6 +63,9 @@ export class Extension implements IExtension {
       }
       if (obj.hasOwnProperty('valueString')) {
         this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueUri')) {
+        this.valueUri = obj.valueUri;
       }
       if (obj.hasOwnProperty('valueReference')) {
         this.valueReference = new ResourceReference(obj.valueReference);

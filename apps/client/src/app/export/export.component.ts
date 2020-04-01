@@ -3,7 +3,6 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
-import {SocketService} from '../shared/socket.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {CookieService} from 'angular2-cookie/core';
 import {ConfigService} from '../shared/config.service';
@@ -11,7 +10,6 @@ import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {AuthService} from '../shared/auth.service';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {HttpClient} from '@angular/common/http';
@@ -34,9 +32,7 @@ export class ExportComponent implements OnInit {
   public selectedImplementationGuide: ImplementationGuide;
 
   constructor(
-    private authService: AuthService,
     private implementationGuideService: ImplementationGuideService,
-    private socketService: SocketService,
     private exportService: ExportService,
     private cookieService: CookieService,
     public configService: ConfigService,
@@ -45,27 +41,52 @@ export class ExportComponent implements OnInit {
     this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.downloadOutput = true;
+    this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
+    this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
+  }
+
+  public async templateTypeChanged() {
+    if (this.options.templateType === 'official') {
+      this.options.template = 'hl7.fhir.template';
+      this.options.templateVersion = 'current';
+    } else if (this.options.templateType === 'custom-uri') {
+      this.options.template = '';
+    }
+
+    this.cookieService.put(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    await this.templateChanged();
   }
 
   public async templateChanged() {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
-    this.templateVersions = await this.configService.getTemplateVersions(this.options);
 
-    const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
-    if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
-      this.options.templateVersion = templateVersionCookie;
-    } else if (this.templateVersions && this.templateVersions.length > 0) {
-      this.options.templateVersion = this.templateVersions[0];
+    if (this.options.templateType === 'official') {
+      this.templateVersions = await this.configService.getTemplateVersions(this.options);
+
+      const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
+      if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
+        this.options.templateVersion = templateVersionCookie;
+      } else if (this.templateVersions && this.templateVersions.length > 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      } else {
+        this.options.templateVersion = 'current';
+      }
     } else {
-      this.options.templateVersion = 'current';
+      this.options.templateVersion = null;
     }
 
     this.templateVersionChanged();
   }
 
   public templateVersionChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+    if (!this.options.templateVersion) {
+      if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
+        this.cookieService.remove(Globals.cookieKeys.lastTemplateVersion);
+      }
+    } else {
+      this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+    }
   }
 
   public onTabChange(event: NgbTabChangeEvent) {
@@ -140,6 +161,14 @@ export class ExportComponent implements OnInit {
   public get exportDisabled(): boolean {
     if (!this.options.implementationGuideId || !this.options.exportFormat) {
       return true;
+    }
+
+    if (this.options.exportFormat === ExportFormats.HTML) {
+      if (this.options.templateType === 'custom-uri' && !this.options.template) {
+        return true;
+      } else if (this.options.templateType === 'official' && (!this.options.template || !this.options.templateVersion)) {
+        return true;
+      }
     }
 
     if (this.options.exportFormat === ExportFormats.GitHub && this.githubPanel) {

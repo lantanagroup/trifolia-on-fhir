@@ -25,11 +25,12 @@ import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {Formats} from '../models/export-options';
 import {PageInfo} from './html.models';
-import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {getDefaultImplementationGuideResourcePath, getExtensionString, joinUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
-import {FhirInstances} from '../helper';
+import {FhirInstances, unzip} from '../helper';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -87,9 +88,10 @@ export class HtmlExporter {
    * @param templateVersion The version of the template used
    */
   public getControl(bundle: any, format: Formats, template: string, templateVersion: string) {
+    const templateVersionInfo = templateVersion ? `#${templateVersion}` : '';
     return '[IG]\n' +
       `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
-      `template = ${template}#${templateVersion}\n` +
+      `template = ${template}${templateVersionInfo}\n` +
       'usage-stats-opt-out = false\n';
   }
 
@@ -196,7 +198,7 @@ export class HtmlExporter {
     });
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -260,7 +262,46 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    control = this.getControl(this.bundle, format, template, templateVersion);
+    let controlTemplate = 'hl7.fhir.template';
+    let controlTemplateVersion = 'current';
+
+    if (templateType === 'custom-uri') {
+      try {
+        const templatePathSplit = template.split('/');
+        const fileNameWithoutExt = path.basename(template.substring(template.lastIndexOf('/') + 1), '.zip');
+        const customTemplatePath = path.join(this.rootPath, 'custom-template');
+
+        const retrieveTemplateResults = await this.httpService.get(template, { responseType: 'arraybuffer' }).toPromise();
+        this.sendSocketMessage('progress', 'Retrieved custom template from GitHub, extracting to "custom-template" directory.');
+
+        fs.ensureDirSync(customTemplatePath);
+        await unzip(retrieveTemplateResults.data, customTemplatePath);
+
+        if (templatePathSplit.length > 3) {
+          const subDirName = templatePathSplit[templatePathSplit.length - 3] + '-' + fileNameWithoutExt;
+          const subDirPath = path.join(customTemplatePath, subDirName);
+
+          if (fs.existsSync(subDirPath)) {
+            this.logger.log(`Detected GitHub path structure for branch, moving files from ${subDirPath} to ${customTemplatePath}`);
+
+            fs.readdirSync(subDirPath).forEach((fileToMove) => {
+              const fileToMovePath = path.join(subDirPath, fileToMove);
+              const moveDestination = path.join(customTemplatePath, fileToMove);
+              fs.renameSync(fileToMovePath, moveDestination);
+            });
+
+            fs.unlinkSync(subDirPath);
+          }
+        }
+
+        controlTemplate = 'custom-template';
+        controlTemplateVersion = null;
+      } catch (ex) {
+        this.sendSocketMessage('error', `Error retrieving custom template from GitHub: ${getErrorString(ex)}`, true);
+      }
+    }
+
+    control = this.getControl(this.bundle, format, controlTemplate, controlTemplateVersion);
 
     this.logger.log('Saving the control file to the temp directory');
 
