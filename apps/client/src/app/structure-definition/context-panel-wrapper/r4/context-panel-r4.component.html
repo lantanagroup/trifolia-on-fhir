@@ -22,13 +22,13 @@
                   <option value="element">Element</option>
                   <option value="extension">Extension</option>
                 </select>
-                <span *ngIf="structureDefinition.context[cii].type===''">
+                <span *ngIf="structureDefinition.type==='Extension' && structureDefinition.context[cii].type===''">
                   There must be a context type selected</span>
             </td>
             <td>
               <input type="text" class="form-control" [(ngModel)]="ci.expression"/>
               <span *ngIf="structureDefinition.type==='Extension' && structureDefinition.context[cii].expression===''">
-                If the StructureDefinition type is Extension, there must be a context expression inputted</span>
+                There must be a context expression inputted</span>
             </td>
             <td>
                 <div class="pull-right">
