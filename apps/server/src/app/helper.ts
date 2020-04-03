@@ -52,15 +52,18 @@ export const zip = (p): Promise<any> => {
   });
 };
 
-export const unzip = async (buffer: Buffer, destinationPath: string) => {
+export const unzip = async (buffer: Buffer, destinationPath: string, bypassSubDir?: string) => {
   const zip = await JSZip.loadAsync(buffer);
   const fileNames = Object.keys(zip.files);
   const promises = fileNames.map(async fileName => {
     const file = zip.file(fileName);
+    const bypassedFileName = bypassSubDir && fileName.startsWith(bypassSubDir + '/') ?
+      fileName.substring(bypassSubDir.length + 1) :
+      fileName;
 
     if (file) {
       const content = await file.async('nodebuffer');
-      const destinationFileName = path.join(destinationPath, fileName);
+      const destinationFileName = path.join(destinationPath, bypassedFileName);
       fs.ensureDirSync(path.dirname(destinationFileName));
       fs.writeFileSync(destinationFileName, content);
     }

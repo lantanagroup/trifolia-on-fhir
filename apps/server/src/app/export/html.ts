@@ -275,23 +275,12 @@ export class HtmlExporter {
         this.sendSocketMessage('progress', 'Retrieved custom template from GitHub, extracting to "custom-template" directory.');
 
         fs.ensureDirSync(customTemplatePath);
-        await unzip(retrieveTemplateResults.data, customTemplatePath);
 
         if (templatePathSplit.length > 3) {
           const subDirName = templatePathSplit[templatePathSplit.length - 3] + '-' + fileNameWithoutExt;
-          const subDirPath = path.join(customTemplatePath, subDirName);
-
-          if (fs.existsSync(subDirPath)) {
-            this.logger.log(`Detected GitHub path structure for branch, moving files from ${subDirPath} to ${customTemplatePath}`);
-
-            fs.readdirSync(subDirPath).forEach((fileToMove) => {
-              const fileToMovePath = path.join(subDirPath, fileToMove);
-              const moveDestination = path.join(customTemplatePath, fileToMove);
-              fs.renameSync(fileToMovePath, moveDestination);
-            });
-
-            fs.unlinkSync(subDirPath);
-          }
+          await unzip(retrieveTemplateResults.data, customTemplatePath, subDirName);
+        } else {
+          await unzip(retrieveTemplateResults.data, customTemplatePath);
         }
 
         controlTemplate = 'custom-template';
