@@ -140,6 +140,21 @@ export class STU3HtmlExporter extends HtmlExporter {
     newIg.description = this.stu3ImplementationGuide.description;
     newIg.name = this.stu3ImplementationGuide.name;
 
+    // Dependencies
+    newIg.dependsOn = (this.stu3ImplementationGuide.extension || [])
+      .filter(e => e.url === Globals.extensionUrls['extension-ig-dependency'])
+      .map(dependencyExt => {
+        const versionExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-version']);
+        const nameExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-name']);
+        const locationExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-location']);
+
+        return {
+          uri: locationExt ? locationExt.valueUri : undefined,
+          packageId: nameExt ? nameExt.valueString : undefined,
+          version: versionExt ? versionExt.valueString : undefined
+        };
+      });
+
     const foundPackageExtension = (this.stu3ImplementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-package-id']);
     if (foundPackageExtension && foundPackageExtension.valueString) {
       newIg.packageId = foundPackageExtension.valueString;
