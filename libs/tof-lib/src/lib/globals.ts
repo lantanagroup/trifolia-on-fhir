@@ -16,6 +16,7 @@ export class Globals {
   static readonly packagedIgPublisherVersion = '1.0.38-SNAPSHOT built 2020-01-11 @ 07:15';
 
   static readonly extensionUrls = {
+    'resource-meta-source': 'http://hapifhir.io/fhir/StructureDefinition/resource-meta-source',
     'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
     'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
     'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
