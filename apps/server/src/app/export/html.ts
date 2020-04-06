@@ -231,7 +231,7 @@ export class HtmlExporter {
     fs.ensureDirSync(inputDir);
 
     // Create the empty ignoreWarnings.txt file
-    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), '');
+    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), '== Suppressed Messages ==\n\n');
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
