@@ -1143,7 +1143,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public keyword?: Coding[];
   public fhirVersion?: string;
   public mapping?: StructureDefinitionMappingComponent[];
-  public kind: string;
+  public kind: 'primitive-type'|'complex-type'|'resource'|'logical' = 'resource';
   public abstract: boolean;
   public context?: StructureDefinitionContextComponent[];
   public contextInvariant?: string[];

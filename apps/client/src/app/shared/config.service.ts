@@ -21,7 +21,7 @@ export class ConfigService {
   };
   public statusMessage: string;
   public showingIntroduction = false;
-  private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement } = {};
+  private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement | boolean } = {};
 
   constructor(private injector: Injector) {
     this.fhirServer = localStorage.getItem('fhirServer');
@@ -76,7 +76,7 @@ export class ConfigService {
     }
   }
 
-  public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement {
+  public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement | boolean {
     return this.fhirCapabilityStatements[this.fhirServer];
   }
 
@@ -151,6 +151,9 @@ export class ConfigService {
       .then((res: STU3CapabilityStatement | R4CapabilityStatement) => {
         this.fhirCapabilityStatements[this.fhirServer] = res;
         this.fhirServerChanged.emit(this.fhirServer);
+      })
+      .catch((err) => {
+        this.fhirCapabilityStatements[this.fhirServer] = false;
       });
   }
 
@@ -163,8 +166,9 @@ export class ConfigService {
   }
 
   public get fhirConformanceVersion(): string {
-    if (this.fhirConformance) {
-      return this.fhirConformance.fhirVersion;
+    if (this.fhirConformance && typeof this.fhirConformance === 'object') {
+      const fhirConformance = <STU3CapabilityStatement | R4CapabilityStatement> this.fhirConformance;
+      return fhirConformance.fhirVersion;
     }
   }
 
