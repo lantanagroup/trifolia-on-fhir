@@ -25,6 +25,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public nameText: string;
   public IDText: string;
   public urlText: string;
+  public typeText: string;
   public titleText: string;
   public criteriaChangedEvent = new Subject();
   public implementationGuideId: string = null;
@@ -107,6 +108,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.criteriaChangedEvent.next();
   }
 
+  public typeTextChanged(value: string) {
+    this.typeText = value;
+    this.page = 1;
+    this.criteriaChangedEvent.next();
+  }
+
   public titleTextChanged(value: string) {
     this.titleText = value;
     this.page = 1;
@@ -128,6 +135,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.IDText = null;
     this.titleText = null;
     this.urlText = null;
+    this.typeText = null;
     this.implementationGuideId = null;
     this.page = 1;
     this.criteriaChangedEvent.next();
@@ -137,7 +145,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.response = null;
     this.configService.setStatusMessage('Loading structure definitions');
 
-    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.IDText, this.urlText, this.implementationGuideId, this.titleText)
+    this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.IDText, this.urlText, this.implementationGuideId, this.titleText, this.typeText)
       .subscribe((response: Bundle) => {
         this.response = response;
         this.configService.setStatusMessage('');
