@@ -242,6 +242,17 @@ export class HtmlExporter {
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
+    const packageList = PackageListModel.getPackageList(this.implementationGuide);
+
+    if (packageList) {
+      this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
+
+      const packageListPath = path.join(this.rootPath, 'package-list.json');
+      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
+
+      PackageListModel.removePackageList(this.implementationGuide);
+    }
+
     const igToWrite: DomainResource = this.prepareImplementationGuide();
 
     // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
@@ -296,15 +307,6 @@ export class HtmlExporter {
 
     // Write the ig.json file to the export temporary folder
     fs.writeFileSync(this.controlPath, control);
-
-    const packageList = PackageListModel.getPackageList(this.implementationGuide);
-
-    if (packageList) {
-      this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
-
-      const packageListPath = path.join(this.rootPath, 'package-list.json');
-      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
-    }
 
     // Make sure ROOT/input/pagecontent exists for writeFilesForResources()
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
