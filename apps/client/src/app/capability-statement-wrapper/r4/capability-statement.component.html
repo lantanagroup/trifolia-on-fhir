@@ -22,23 +22,20 @@
             <div class="card-header">
               Formats
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format"
-                        (click)="capabilityStatement.format.push('')">
+                <button type="button" class="btn btn-default btn-sm" title="Add a format" (click)="addFormat()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
             </div>
-            <table class="table table-striped">
+            <table class="table table-striped" *ngIf="capabilityStatement.format && capabilityStatement.format.length > 0">
               <tbody>
               <tr *ngFor="let f of capabilityStatement.format; let i = index; trackBy: Globals.trackByFn">
                 <td>
-                  <input type="text" class="form-control"
-                         [(ngModel)]="capabilityStatement.format[i]"/>
+                  <input type="text" class="form-control" [(ngModel)]="capabilityStatement.format[i]"/>
                 </td>
-                <td>
+                <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format"
-                            (click)="capabilityStatement.format.splice(i, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this format" (click)="capabilityStatement.format.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </div>
@@ -46,32 +43,30 @@
               </tr>
               </tbody>
             </table>
+            <div class="card-body" *ngIf="!capabilityStatement.format || capabilityStatement.format.length === 0">
+              <i>This capability statement does not have any formats, yet. Click <a href="javascript:void(0)" (click)="addFormat()">here</a> to add one.</i>
+            </div>
           </div>
 
           <div class="card">
             <div class="card-header">
               Patch Formats
-              <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('patchFormat')"
-                     (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'patchFormat', [''])"/>
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format"
-                        [disabled]="!capabilityStatement.hasOwnProperty('patchFormat')"
-                        (click)="capabilityStatement.patchFormat.push('')">
+                <button type="button" class="btn btn-default btn-sm" title="Add a format" (click)="addPatchFormat()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
             </div>
-            <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('patchFormat')">
+            <table class="table table-striped" *ngIf="capabilityStatement.patchFormat && capabilityStatement.patchFormat.length > 0">
               <tbody>
               <tr *ngFor="let f of capabilityStatement.patchFormat; let i = index; trackBy: Globals.trackByFn">
                 <td>
                   <input type="text" class="form-control"
                          [(ngModel)]="capabilityStatement.patchFormat[i]"/>
                 </td>
-                <td>
+                <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format"
-                            (click)="capabilityStatement.patchFormat.splice(i, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this format" (click)="capabilityStatement.patchFormat.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </div>
@@ -79,6 +74,9 @@
               </tr>
               </tbody>
             </table>
+            <div class="card-body" *ngIf="!capabilityStatement.patchFormat || capabilityStatement.patchFormat.length === 0">
+              <i>This capability statement does not have any patch formats, yet. Click <a href="javascript:void(0)" (click)="addPatchFormat()">here</a> to add one.</i>
+            </div>
           </div>
 
           <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="description" title="Description"

@@ -57,6 +57,16 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
 
+  addFormat() {
+    this.capabilityStatement.format = this.capabilityStatement.format || [];
+    this.capabilityStatement.format.push('');
+  }
+
+  addPatchFormat() {
+    this.capabilityStatement.patchFormat = this.capabilityStatement.patchFormat || [];
+    this.capabilityStatement.patchFormat.push('');
+  }
+
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');
     return !id || id === 'new';
