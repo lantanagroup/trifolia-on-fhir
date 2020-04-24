@@ -1,41 +1,53 @@
 <div class="card" *ngIf="parentObject">
-    <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ name: '' }])" />
-        {{title || 'Contacts'}}
-        <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-    </div>
-    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
-        <thead>
-        <tr>
-            <th>
-                Name
-                <app-tooltip-icon tooltipPath="ContactDetail.name"></app-tooltip-icon>
-            </th>
-            <th class="actions-column-2">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-primary" title="Add a {{title || 'contact'}}" (click)="parentObject[propertyName].push({ name: '' })">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
-            <td>
-                <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false" [required]="true"></app-fhir-string>
-            </td>
-            <td>
-                <div class="btn-group pull-right">
-                    <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}" (click)="editContact(c)">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}" (click)="parentObject[propertyName].splice(ci, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  <div class="card-header">
+    <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)"
+           (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ name: '' }])"/>
+    {{title || 'Contacts'}}
+    <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </div>
+  <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
+    <thead>
+    <tr>
+      <th>
+        Name
+        <app-tooltip-icon tooltipPath="ContactDetail.name"></app-tooltip-icon>
+      </th>
+      <th class="actions-column-2">
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary" title="Add a {{title || 'contact'}}"
+                  (click)="parentObject[propertyName].push({ name: '' })">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
+      <td>
+        <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false"
+                         [required]="true"></app-fhir-string>
+      </td>
+      <td>
+        <div class="btn-group pull-right">
+          <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}"
+                  (click)="editContact(c)">
+            <i class="fa fa-edit"></i>
+          </button>
+          <!-- Add buttons for sorting up and down -->
+          <button type="button" class="btn btn-primary" title="Push contact up" title="Rearrange with above contact" (click)="pushContactUp(c, ci)" [disabled]="firstContact(ci)">
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button type="button" class="btn btn-primary" title="Push contact down" title="Rearrange with below contact" (click)="pushContactDown(c, ci)" [disabled]="lastContact(ci)">
+            <i class="fas fa-arrow-down"></i>
+          </button>
+          <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}"
+                  (click)="parentObject[propertyName].splice(ci, 1)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>

@@ -3,6 +3,7 @@ import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
 import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
+import JSZip from 'jszip';
 import {BadRequestException, HttpService, UnauthorizedException} from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
@@ -49,6 +50,25 @@ export const zip = (p): Promise<any> => {
       }
     });
   });
+};
+
+export const unzip = async (buffer: Buffer, destinationPath: string, bypassSubDir?: string) => {
+  const zip = await JSZip.loadAsync(buffer);
+  const fileNames = Object.keys(zip.files);
+  const promises = fileNames.map(async fileName => {
+    const file = zip.file(fileName);
+    const bypassedFileName = bypassSubDir && fileName.startsWith(bypassSubDir + '/') ?
+      fileName.substring(bypassSubDir.length + 1) :
+      fileName;
+
+    if (file) {
+      const content = await file.async('nodebuffer');
+      const destinationFileName = path.join(destinationPath, bypassedFileName);
+      fs.ensureDirSync(path.dirname(destinationFileName));
+      fs.writeFileSync(destinationFileName, content);
+    }
+  });
+  await Promise.all(promises);
 };
 
 export const emptydir = (p): Promise<void> => {

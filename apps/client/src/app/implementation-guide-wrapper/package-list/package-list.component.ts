@@ -3,6 +3,7 @@ import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirI
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
 import {DocumentReference} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from '../../shared/config.service';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
   selector: 'trifolia-fhir-package-list',
@@ -39,12 +40,8 @@ export class PackageListComponent implements OnInit {
   }
 
   remove() {
-    const found = PackageListModel.findDocumentReference(this.implementationGuide);
-    if (found) {
-      const index = this.implementationGuide.contained.indexOf(found);
-      this.implementationGuide.contained.splice(index, 1);
-      this.packageList = null;
-    }
+    PackageListModel.removePackageList(this.implementationGuide);
+    this.packageList = null;
   }
 
   import(file: File) {

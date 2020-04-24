@@ -11,10 +11,10 @@ import {AnnouncementServiceConfig} from './models/announcement-service-config';
 @Injectable()
 export class ConfigService {
   public server: IServerConfig = {
-    adminCode: 'default',
     supportUrl: 'http://test.com/support',
     enableSecurity: false,
-    maxRequestSizeMegabytes: 50
+    maxRequestSizeMegabytes: 50,
+    maxAsyncQueueRequests: 4
   };
   public fhir: IFhirConfig = {
     nonEditableResources: {},

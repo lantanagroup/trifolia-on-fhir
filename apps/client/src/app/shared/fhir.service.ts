@@ -459,7 +459,7 @@ export class FhirService {
         valid: false,
         messages: [{
           severity: Severities.Error,
-          message: `Internal error during validation: ${ex.message}`,
+          message: `Internal error during validation: ${ex.message}\r\n${ex.stack}`,
           resourceId: resource.id
         }]
       };

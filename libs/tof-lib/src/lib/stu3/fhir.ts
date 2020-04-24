@@ -132,7 +132,7 @@ export class Coding extends Element implements ICoding {
 
 export class Meta extends Element {
   public versionId?: string;
-  public lastUpdated?: Date;
+  public lastUpdated?: string;
   public profile?: string[];
   public security?: Coding[];
   public tag?: Coding[];
@@ -144,7 +144,7 @@ export class Meta extends Element {
         this.versionId = obj.versionId;
       }
       if (obj.lastUpdated) {
-        this.lastUpdated = new Date(obj.lastUpdated);
+        this.lastUpdated = obj.lastUpdated;
       }
       if (obj.profile) {
         this.profile = obj.profile;
@@ -1050,7 +1050,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public keyword?: Coding[];
   public fhirVersion?: string;
   public mapping?: MappingComponent[];
-  public kind = 'resource';
+  public kind: 'primitive-type'|'complex-type'|'resource'|'logical' = 'resource';
   public abstract = false;
   public contextType?: string;
   public context?: string[];

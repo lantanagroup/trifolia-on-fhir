@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
         if (event instanceof RoutesRecognized && event.state.root.firstChild) {
           const fhirServer = event.state.root.firstChild.params.fhirServer;
           const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
-  
+
           if (fhirServer) {
             await this.configService.changeFhirServer(fhirServer);
             this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
@@ -57,6 +57,18 @@ export class AppComponent implements OnInit {
         }
       });
 
+  }
+
+  get showHome() {
+    return !this.authService.isAuthenticated();
+  }
+
+  get showNewUser() {
+    return this.authService.isAuthenticated() && !this.authService.practitioner && this.configService.fhirConformance;
+  }
+
+  get showRouterOutlet() {
+    return this.authService.isAuthenticated() && this.authService.practitioner && this.configService.fhirConformance;
   }
 
   public startIntro() {

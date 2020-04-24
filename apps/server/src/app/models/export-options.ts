@@ -11,6 +11,7 @@ export class ExportOptions {
   public format: Formats;
   public exportFormat = ExportFormats.Bundle;
   public includeIgPublisherJar = false;
+  public templateType: 'official'|'custom-uri' = 'official';
   public template = 'hl7.fhir.template';
   public templateVersion = 'current';
 
@@ -54,11 +55,15 @@ export class ExportOptions {
         this.includeIgPublisherJar = query.includeIgPublisherJar.toLowerCase() === 'true';
       }
 
-      if(query.hasOwnProperty('template')){
+      if (query.hasOwnProperty('templateType')) {
+        this.templateType = query.templateType;
+      }
+
+      if (query.hasOwnProperty('template')) {
         this.template = query.template;
       }
 
-      if(query.hasOwnProperty('templateVersion')){
+      if (query.hasOwnProperty('templateVersion')) {
         this.templateVersion = query.templateVersion;
       }
     }

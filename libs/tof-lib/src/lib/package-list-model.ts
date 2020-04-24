@@ -24,7 +24,31 @@ export class PackageListModel {
   introduction?: string;
   list?: PackageListItemModel[] = [];
 
-  public static findDocumentReference(implementationGuide: IImplementationGuide) {
+  public static removePackageList(implementationGuide: IImplementationGuide) {
+    const found = PackageListModel.findContainedDocumentReference(implementationGuide);
+
+    if (found) {
+      const index = implementationGuide.contained.indexOf(found);
+      implementationGuide.contained.splice(index, 1);
+
+      if (implementationGuide.contained.length === 0) {
+        delete implementationGuide.contained;
+      }
+    }
+
+    const ext = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-package-list'] && e.valueReference && e.valueReference.reference === '#package-list');
+
+    if (ext) {
+      const index = implementationGuide.extension.indexOf(ext);
+      implementationGuide.extension.splice(index, 1);
+
+      if (implementationGuide.extension.length === 0) {
+        delete implementationGuide.extension;
+      }
+    }
+  }
+
+  public static findContainedDocumentReference(implementationGuide: IImplementationGuide) {
     const found = <R4DocumentReference> implementationGuide.contained
       .find((c) => {
         if (c.resourceType === 'DocumentReference') {
@@ -43,7 +67,7 @@ export class PackageListModel {
       return;
     }
 
-    const found = this.findDocumentReference(implementationGuide);
+    const found = this.findContainedDocumentReference(implementationGuide);
 
     if (found && found.content.length > 0 && found.content[0].attachment && found.content[0].attachment.data) {
       const decoded = typeof atob !== 'undefined' ? atob(found.content[0].attachment.data) : Buffer.from(found.content[0].attachment.data, 'base64').toString();
@@ -61,7 +85,7 @@ export class PackageListModel {
     if (!implementationGuide) return;
 
     implementationGuide.contained = implementationGuide.contained || [];
-    let found: STU3DocumentReference | R4DocumentReference = this.findDocumentReference(implementationGuide);
+    let found: STU3DocumentReference | R4DocumentReference = this.findContainedDocumentReference(implementationGuide);
 
     if (!found) {
       if (fhirVersion === Versions.STU3) {

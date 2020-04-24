@@ -40,6 +40,7 @@ export class Extension implements IExtension {
   public url: string;
   public valueBoolean?: boolean;
   public valueString?: string;
+  public valueUri?: string;
   public valueReference?: ResourceReference;
   public valueMarkdown?: string;
 
@@ -62,6 +63,9 @@ export class Extension implements IExtension {
       }
       if (obj.hasOwnProperty('valueString')) {
         this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueUri')) {
+        this.valueUri = obj.valueUri;
       }
       if (obj.hasOwnProperty('valueReference')) {
         this.valueReference = new ResourceReference(obj.valueReference);
@@ -129,7 +133,7 @@ export class Coding extends Element {
 
 export class Meta extends Element {
   public versionId?: string;
-  public lastUpdated?: Date;
+  public lastUpdated?: string;
   public source?: string;
   public profile?: string[];
   public security?: Coding[];
@@ -142,7 +146,7 @@ export class Meta extends Element {
         this.versionId = obj.versionId;
       }
       if (obj.hasOwnProperty('lastUpdated')) {
-        this.lastUpdated = new Date(obj.lastUpdated);
+        this.lastUpdated = obj.lastUpdated;
       }
       if (obj.hasOwnProperty('source')) {
         this.source = obj.source;
@@ -1139,7 +1143,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public keyword?: Coding[];
   public fhirVersion?: string;
   public mapping?: StructureDefinitionMappingComponent[];
-  public kind: string;
+  public kind: 'primitive-type'|'complex-type'|'resource'|'logical' = 'resource';
   public abstract: boolean;
   public context?: StructureDefinitionContextComponent[];
   public contextInvariant?: string[];

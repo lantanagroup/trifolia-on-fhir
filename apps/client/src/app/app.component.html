@@ -135,16 +135,19 @@
 </ng-template>
 
 <div class="container container-large">
-  <div class="jumbotron" *ngIf="!authService.isAuthenticated()">
+  <div class="jumbotron" *ngIf="showHome">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <app-home></app-home>
   </div>
-  <div class="jumbotron" *ngIf="authService.isAuthenticated() && !authService.practitioner">
+  <div class="jumbotron" *ngIf="showNewUser">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <trifolia-fhir-new-user-modal *ngIf="configService.fhirConformance"></trifolia-fhir-new-user-modal>
-    <p *ngIf="!configService.fhirConformance">Can't communicate with the FHIR server!</p>
   </div>
-  <div class="jumbotron" *ngIf="authService.isAuthenticated() && authService.practitioner">
+  <div class="jumbotron" *ngIf="configService.fhirConformance === false">
+    <h3>Error!</h3>
+    <p>Trifolia-on-FHIR cannot communicate with the selected FHIR server!</p>
+  </div>
+  <div class="jumbotron" *ngIf="showRouterOutlet">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
       {{configService.statusMessage}}

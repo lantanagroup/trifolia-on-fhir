@@ -1,7 +1,6 @@
 export interface IServerConfig {
   hostname?: string;
   port?: number;
-  adminCode: string;
   supportUrl: string;
   googleAnalyticsCode?: string;
   javaLocation?: string;
@@ -13,13 +12,14 @@ export interface IServerConfig {
   maxRequestSizeMegabytes: number;
   latestIgPublisherPath?: string;
   bannerMessage?: string;
+  maxAsyncQueueRequests: number;
 }
 
-export function createTestServerConfig(adminCode: string, enableSecurity = false): IServerConfig {
+export function createTestServerConfig(enableSecurity = false): IServerConfig {
   return {
-    adminCode: adminCode,
     supportUrl: 'http://test.com/support',
     enableSecurity: enableSecurity,
-    maxRequestSizeMegabytes: 50
+    maxRequestSizeMegabytes: 50,
+    maxAsyncQueueRequests: 10
   };
 }

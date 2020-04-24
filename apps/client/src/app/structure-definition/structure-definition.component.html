@@ -75,7 +75,7 @@
               <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" valueSetUrl="http://hl7.org/fhir/ValueSet/extension-context"
-                                           tooltipPath="StructureDefinition.contextType"></app-fhir-select-single-code>
+                                           tooltipPath="StructureDefinition.contextType" *ngIf="structureDefinition.type === 'Extension'"></app-fhir-select-single-code>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
                                            tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>

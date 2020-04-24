@@ -46,10 +46,9 @@
                                        [profileType]="structureDefinition.type"></app-profile-base-definition>
         </div>
       </div>
-      <div class="row" *ngIf="configService.isFhirR4">
+      <div class="row" *ngIf="configService.isFhirR4 && structureDefinition.type === 'Extension'">
         <div class="col-md-6">
           <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
-          <span class="help-block" *ngIf="!structureDefinition.context">There must be at least be a context type selected</span>
         </div>
       </div>
 

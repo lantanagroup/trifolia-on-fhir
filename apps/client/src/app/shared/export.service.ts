@@ -12,6 +12,7 @@ export class ExportOptions {
   public useLatest? = true;
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
+  public templateType: 'official'|'custom-uri' = 'official';
   public template = 'hl7.fhir.template';
   public templateVersion = "current";
   public removeExtensions = false;
@@ -72,6 +73,7 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
+    url += 'templateType=' + encodeURIComponent(options.templateType) + '&';
     url += 'template=' + encodeURIComponent(options.template) + '&';
     url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
 

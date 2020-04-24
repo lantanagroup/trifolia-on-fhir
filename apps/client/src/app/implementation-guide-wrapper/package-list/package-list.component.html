@@ -56,7 +56,13 @@
           <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="packageListChanged.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="packageListChanged.emit()" />
+          <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="packageListChanged.emit()">
+            <option value="ci-build">CI Build</option>
+            <option value="draft">Draft</option>
+            <option value="ballot">Ballot</option>
+            <option value="trial-use">Trial Use</option>
+            <option value="normative">Normative</option>
+          </select>
         </td>
         <td>
           <select class="form-control" [(ngModel)]="v.current" (change)="packageListChanged.emit()">

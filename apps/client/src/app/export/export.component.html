@@ -64,7 +64,23 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Template Type</label>
+            <select class="form-control" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
+              <option value="official">Official</option>
+              <option value="custom-uri">Custom</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
+          <div class="form-group">
+            <label>Template (Archive/ZIP URL)</label>
+            <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
+            <div class="help-block">Note: The URI must be a ZIP file.</div>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="options.templateType === 'official'">
           <div class="form-group">
             <label>Template</label>
             <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
@@ -73,12 +89,12 @@
             </select>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4" *ngIf="options.templateType === 'official'">
           <div class="form-group">
             <label>Version</label>
             <div>
               <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
-                <option *ngFor="let templateVersion of templateVersions">{{templateVersion}}</option>
+                <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
               </select>
             </div>
           </div>

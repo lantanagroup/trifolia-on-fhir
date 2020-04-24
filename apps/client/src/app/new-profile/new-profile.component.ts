@@ -44,8 +44,6 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
       !this.structureDefinition.name ||
       !this.structureDefinition.type ||
       !this.structureDefinition.kind ||
-      (this.configService.isFhirR4 && !this.structureDefinition.context) ||
-      (this.configService.isFhirR4 && this.structureDefinition.context && (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === '') ||
       (this.configService.isFhirR4 && this.structureDefinition.type === "Extension" && this.structureDefinition.context &&
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
