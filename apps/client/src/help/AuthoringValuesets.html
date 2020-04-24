@@ -188,7 +188,7 @@
 <p class="rvps3"><span class="rvts8">A ValueSet resource instances specifies a set of codes drawn from one or more code systems, intended for use in a particular context. Value sets link between CodeSystem definitions and their use in [coded elements](terminologies.html). When using value sets, proper differentiation between a code system and a value set is important. This is one very common area where significant clinical safety risks occur in practice.</span></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts8">Value sets used by an implementation guide </span><span class="rvts23">should</span><span class="rvts8">&nbsp;have a "compose" defined which asserts either the enumerated codes that should be included in the value sets, or asserts other value sets that should be included (making the value set a "wrapper" of sorts).</span></li>
+<li class="rvps3"><span class="rvts8">Value sets used by an implementation guide </span><span class="rvts25">should</span><span class="rvts8">&nbsp;have a "compose" defined which asserts either the enumerated codes that should be included in the value sets, or asserts other value sets that should be included (making the value set a "wrapper" of sorts).</span></li>
 <li class="rvps3"><span class="rvts8">Enumerated codes are shown/edited in the "Compose" tab's "Concepts" section. This section is paged, showing five (5) codes at a time. You may search for a concept by either the code or display values by entering text in the "Code (search)" and "Display (search)" fields shown at the top of the table.</span></li>
 <li class="rvps3"><span class="rvts8">Additional fields (such as the "Designations") may be modified for each concept by clicking the "Edit" button.</span></li>
 </ul>
@@ -203,7 +203,7 @@
 </ul>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
 <p class="rvps3"><span class="rvts8">The "Value Sets" section allows you to indicate what value sets should be included in this value set. Each entry in the "Value Sets" section represents the canonical URL of the value set (ValueSet.url).</span></p>
-<p class="rvps3"><span class="rvts8">When publishing an implementation guide which has a value set that references other value sets, those </span><span class="rvts23">other </span><span class="rvts8">value sets must be available to the FHIR IG Publisher via one of the following methods:</span></p>
+<p class="rvps3"><span class="rvts8">When publishing an implementation guide which has a value set that references other value sets, those </span><span class="rvts25">other </span><span class="rvts8">value sets must be available to the FHIR IG Publisher via one of the following methods:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
 <li class="rvps3"><span class="rvts8">Included in the implementation guide itself (via a resource referenced in the ImplementationGuide resource)</span></li>
 <li class="rvps3"><span class="rvts8">The ValueSet is publicly available by the URL of the value set (e.x. putting the URL of the value set in a browser should return the ValueSet in either XML or JSON format)</span></li>
