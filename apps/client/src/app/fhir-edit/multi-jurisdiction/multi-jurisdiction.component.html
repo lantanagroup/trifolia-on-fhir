@@ -1,68 +1,53 @@
 <div class="card" *ngIf="parentObject">
-    <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{}])"/>
-        Jurisdiction
-        <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
-    </div>
-    <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
-        <thead>
-        <tr>
-            <th>Text</th>
-            <th>Codes</th>
-            <th class="actions-column-1">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="parentObject[propertyName].push({})">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let j of parentObject[propertyName]; let ji = index">
-            <td>
-                <div class="input-group">
-                    <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="j.hasOwnProperty('text')" (ngModelChange)="Globals.toggleProperty(j, 'text', '')" />
-                    </div>
-                    <input type="text" class="form-control" [(ngModel)]="j.text" [disabled]="!j.hasOwnProperty('text')" />
-                </div>
-            </td>
-            <td>
-                <div class="input-group" *ngFor="let c of j.coding; let ci = index">
-                    <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('code')" (ngModelChange)="Globals.toggleProperty(c, 'code', '')" />
-                    </div>
-                    <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" [disabled]="!c.hasOwnProperty('code')" />
-                    <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('display')" (ngModelChange)="Globals.toggleProperty(c, 'display', '')" />
-                    </div>
-                    <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" [disabled]="!c.hasOwnProperty('display')" />
-                    <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="c.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(c, 'system', '')" />
-                    </div>
-                    <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled]="!c.hasOwnProperty('system')" />
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" title="Remove this code" (click)="j.coding.splice(ci, 1)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <div *ngIf="j.hasOwnProperty('coding')">
-                    <a href="javascript:void(0)" (click)="j.coding.push({ code: '', display: '', system: '' })">Add a code</a>
-                    <br />
-                    <a href="javascript:void(0)" (click)="Globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Remove all codes</a>
-                </div>
-                <a href="javascript:void(0)" *ngIf="!j.hasOwnProperty('coding')" (click)="Globals.toggleProperty(j, 'coding', [{ code: '', display: '', system: '' }])">Add a code</a>
-            </td>
-            <td>
-                <div class="pull-right">
-                    <button type="button" class="btn btn-default" title="Remove this jurisdiction" (click)="parentObject[propertyName].splice(ji, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  <div class="card-header">
+    Jurisdiction
+    <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Text</th>
+      <th>Codes</th>
+      <th class="actions-column-1">
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="addJurisdiction()">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </th>
+    </tr>
+    </thead>
+    <tbody *ngIf="jurisdictions && jurisdictions.length > 0">
+    <tr *ngFor="let j of jurisdictions; let ji = index">
+      <td>
+        <input type="text" class="form-control" [ngModel]="getText(j)" (ngModelChange)="setText(j, $event)" />
+      </td>
+      <td>
+        <div class="input-group" *ngFor="let c of (j.coding || []); let ci = index">
+          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" />
+          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" />
+          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" />
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1)">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <a href="javascript:void(0)" (click)="addCoding(j)">Add a code</a>
+      </td>
+      <td>
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary" title="Remove this jurisdiction" (click)="jurisdictions.splice(ji, 1)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="!jurisdictions || jurisdictions.length === 0">
+    <tr>
+      <td colspan="2">No jurisdictions have been specified. Click <a href="javascript:void(0)" (click)="addJurisdiction()">here</a> to add one.</td>
+    </tr>
+    </tbody>
+  </table>
 </div>

@@ -391,6 +391,8 @@
       </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultPackageId]="packageId" [defaultTitle]="this.implementationGuide.title" [defaultName]="this.implementationGuide.name"></trifolia-fhir-package-list>
+        
+        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
 
