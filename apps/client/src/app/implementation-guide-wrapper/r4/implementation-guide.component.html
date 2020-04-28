@@ -57,7 +57,7 @@
                 Package ID
                 <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
               </label>
-              <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
+              <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" (change)="packageIdChanged()" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
               <span class="help-block" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
               <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
                 <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
@@ -391,7 +391,7 @@
       </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultPackageId]="packageId" [defaultTitle]="this.implementationGuide.title" [defaultName]="this.implementationGuide.name"></trifolia-fhir-package-list>
-        
+
         <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>

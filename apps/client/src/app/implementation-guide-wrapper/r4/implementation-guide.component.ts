@@ -76,6 +76,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   protected set packageId(value: string) {
     this.implementationGuide.packageId = value;
+    this.packageIdChanged();
   }
 
   public get mediaReferences(): MediaReference[] {
@@ -136,6 +137,29 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public get isFilterResourceTypeAll() {
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+  }
+
+  public packageIdChanged() {
+    if (this.packageId) {
+      const packageIdParts = this.packageId.toLowerCase().split('.');
+
+      if (packageIdParts.length >= 3 && packageIdParts[0] === 'hl7' && packageIdParts[2] === 'us') {
+        this.implementationGuide.jurisdiction = this.implementationGuide.jurisdiction || [];
+
+        let found = this.implementationGuide.jurisdiction.find(j => j.coding && j.coding.length > 0 && j.coding[0].system === 'urn:iso:std:iso:3166:-2');
+
+        if (!found) {
+          found = {
+            coding: [{
+              system: 'urn:iso:std:iso:3166:-2'
+            }]
+          };
+          this.implementationGuide.jurisdiction.push(found);
+        }
+
+        found.coding[0].code = 'US';
+      }
+    }
   }
 
   public addGrouping() {

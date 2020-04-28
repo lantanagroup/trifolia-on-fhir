@@ -149,6 +149,8 @@
       <ng-template ngbTabContent>
         <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultName]="implementationGuide.name" [defaultPackageId]="packageId"></trifolia-fhir-package-list>
 
+        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+
         <div class="card">
           <div class="card-header">
             Parameters <app-tooltip-icon tooltipKey="ig.parameter"></app-tooltip-icon>
