@@ -25,7 +25,7 @@ import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
-const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp'];
+const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
 enum ContentTypes {
   Json = 0,
@@ -150,7 +150,7 @@ export class ImportComponent implements OnInit {
         importFileModel.contentType = ContentTypes.Xml;
       } else if (extension === '.xlsx') {
         importFileModel.contentType = ContentTypes.Xlsx;
-      } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp') {
+      } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
         importFileModel.contentType = ContentTypes.Image;
       }
 
