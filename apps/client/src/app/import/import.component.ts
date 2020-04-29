@@ -61,6 +61,7 @@ export class ImportComponent implements OnInit {
   public importBundle: Bundle;
   public resultsBundle: Bundle;
   public message: string;
+  public errorMessage: string;
   public activeTab = 'file';
   public vsacCriteria = new VSACImportCriteria();
   public rememberVsacCredentials: boolean;
@@ -596,7 +597,13 @@ export class ImportComponent implements OnInit {
 
   public importDisabled(): boolean {
     if (this.activeTab === 'file') {
-      return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0;
+      let isDisabled = !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0;
+      if (isDisabled && this.files.length > 0) {
+        this.errorMessage = "The XLSX that you're attempting to import is not valid. Please refer to the help documentation for guidance on the proper format of the XLSX.";
+      } else {
+        this.errorMessage = '';
+      }
+      return isDisabled;
     } else if (this.activeTab === 'text') {
       return !this.textContent;
     } else if (this.activeTab === 'vsac') {
