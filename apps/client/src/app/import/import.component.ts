@@ -164,7 +164,7 @@ export class ImportComponent implements OnInit {
         } else if (importFileModel.contentType === ContentTypes.Xlsx) {
           const convertResults = this.importService.convertExcelToValueSetBundle(result);
           if (!convertResults.success) {
-            this.errorMessage = "The XLSX that you're attempting to import is not valid. Please refer to the help documentation for guidance on the proper format of the XLSX.";
+            this.errorMessage = "The XLSX that you're attempting to import is not valid. " + convertResults.message + " Please refer to the help documentation for guidance on the proper format of the XLSX.";
             throw new Error(convertResults.message);
           } else {
             this.errorMessage = '';
