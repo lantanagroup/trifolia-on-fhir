@@ -48,6 +48,9 @@ export class ImportService {
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];
     const sheetRows = XLSX.utils.sheet_to_json(worksheet, {header: 'A'});
+    if (sheetRows.length === 0) {
+      return {success: false, message: 'The excel sheet must have at least one row in it.'};
+    }
 
     const valueSetBundle = new Bundle();
     valueSetBundle.type = 'transaction';
