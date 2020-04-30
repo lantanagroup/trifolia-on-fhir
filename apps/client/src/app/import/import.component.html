@@ -13,6 +13,8 @@
       <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
       </div>
 
+      <div class="alert alert-danger" *ngIf="errorMessage !== ''">{{errorMessage}}</div>
+
       <file-drop (onFileDrop)="dropped($event)">
         <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
         <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile/>

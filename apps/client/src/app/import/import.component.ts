@@ -61,6 +61,7 @@ export class ImportComponent implements OnInit {
   public importBundle: Bundle;
   public resultsBundle: Bundle;
   public message: string;
+  public errorMessage: string = '';
   public activeTab = 'file';
   public vsacCriteria = new VSACImportCriteria();
   public rememberVsacCredentials: boolean;
@@ -141,6 +142,7 @@ export class ImportComponent implements OnInit {
     reader.onload = (e: any) => {
       const result = e.target.result;
       const importFileModel = new ImportFileModel();
+      this.errorMessage = '';
       importFileModel.name = file.name;
       importFileModel.content = result;
 
@@ -161,9 +163,11 @@ export class ImportComponent implements OnInit {
           importFileModel.resource = JSON.parse(result);
         } else if (importFileModel.contentType === ContentTypes.Xlsx) {
           const convertResults = this.importService.convertExcelToValueSetBundle(result);
-
           if (!convertResults.success) {
+            this.errorMessage = "The XLSX that you're attempting to import is not valid. Please refer to the help documentation for guidance on the proper format of the XLSX.";
             throw new Error(convertResults.message);
+          } else {
+            this.errorMessage = '';
           }
 
           importFileModel.vsBundle = convertResults.bundle;
@@ -187,7 +191,10 @@ export class ImportComponent implements OnInit {
         this.files.splice(index, 1);
       }
 
-      this.files.push(importFileModel);
+      // only add to the list of files to import if it doesn't have a formatting error.
+      if (this.errorMessage === '') {
+        this.files.push(importFileModel);
+      }
       this.importBundle = this.getFileBundle();
 
       this.cdr.detectChanges();
@@ -212,6 +219,8 @@ export class ImportComponent implements OnInit {
   }
 
   public removeImportFile(index: number) {
+    //reset the error message
+    this.errorMessage = '';
     this.files.splice(index, 1);
     this.importBundle = this.getFileBundle();
   }
@@ -265,7 +274,9 @@ export class ImportComponent implements OnInit {
     this.files
       .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Xlsx)
       .forEach((importFile: ImportFileModel) => {
-        bundle.entry = bundle.entry.concat(importFile.vsBundle.entry);
+        if (importFile.vsBundle) {
+          bundle.entry = bundle.entry.concat(importFile.vsBundle.entry);
+        }
       });
 
     return bundle;
