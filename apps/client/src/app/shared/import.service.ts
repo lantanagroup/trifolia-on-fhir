@@ -68,19 +68,19 @@ export class ImportService {
       let foundValueSetEntry = (valueSetBundle.entry || []).find((entry) => (<ValueSet>entry.resource).url === valueSetUrl);
 
       if (!valueSetUrl) {
-        return {success: false, message: `Row ${rowNum} does not specify a value set URL`};
+        return {success: false, message: `Row ${rowNum} does not specify a value set URL.`};
       }
 
       if (!codeSystem) {
-        return {success: false, message: `Row ${rowNum} does not specify a code system URL`};
+        return {success: false, message: `Row ${rowNum} does not specify a code system URL.`};
       }
 
       if (!code) {
-        return {success: false, message: `Row ${rowNum} does not specify a concept code`};
+        return {success: false, message: `Row ${rowNum} does not specify a concept code.`};
       }
 
       if (!display) {
-        return {success: false, message: `Row ${rowNum} does not specify a concept display`};
+        return {success: false, message: `Row ${rowNum} does not specify a concept display.`};
       }
 
       if (!foundValueSetEntry) {
@@ -105,7 +105,7 @@ export class ImportService {
         }
 
         if (!valueSetName) {
-          return {success: false, message: `Row ${rowNum} does not specify a value set name`};
+          return {success: false, message: `Row ${rowNum} does not specify a value set name.`};
         }
       }
 
