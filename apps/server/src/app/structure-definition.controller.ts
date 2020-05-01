@@ -5,7 +5,7 @@ import {Bundle, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
+import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
