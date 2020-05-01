@@ -2,6 +2,10 @@
   "server": {
     "hostname": "localhost",
     "port": 49366,
+    "https": {
+      "keyPath": null,
+      "certPath": null
+    },
     "enableSecurity": false,
     "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",
     "googleAnalyticsCode": "UA-43626731-3",
