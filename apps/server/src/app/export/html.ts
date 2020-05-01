@@ -151,7 +151,7 @@ export class HtmlExporter {
         this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
 
         if (code !== 0) {
-          this.sendSocketMessage('progress', 'Won\'t copy output to deployment path.', true);
+          this.sendSocketMessage('progress', 'The HL7 IG Publisher failed. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. Questions related to the execution of the HL7 IG Publisher should be directed to https://chat.fhir.org/#narrow/stream/179252-IG-creation.', true);
           if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
           reject('Return code from IG Publisher is not 0');
         } else {
