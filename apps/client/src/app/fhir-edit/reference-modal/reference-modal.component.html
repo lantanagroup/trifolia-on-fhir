@@ -7,8 +7,8 @@
 <div class="modal-body">
   <div class="row">
     <!-- Type -->
-    <div class="col-md-12">
-      <div class="input-group" *ngIf="!resourceType || !hideResourceType">
+    <div class="col-md-6" *ngIf="!resourceType || !hideResourceType">
+      <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">Type</div>
         </div>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Where (only applies to StructureDefinition resources) -->
-    <div class="col-md-12" *ngIf="resourceType === 'StructureDefinition'">
+    <div class="col-md-6" *ngIf="resourceType === 'StructureDefinition'">
       <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">Where</div>
@@ -30,23 +30,36 @@
         </select>
       </div>
     </div>
-  </div>
 
-  <div class="row">
     <div class="col-md-6" *ngIf="showContentSearch">
       <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Search"/>
     </div>
 
     <div class="col-md-6" *ngIf="showNameSearch">
-      <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter name"/>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Name</div>
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+      </div>
     </div>
 
     <div class="col-md-6" *ngIf="showTitleSearch">
-      <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by title"/>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Title</div>
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+      </div>
     </div>
 
     <div class="col-md-6" *ngIf="!!resourceType">
-      <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Filter by ID"/>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">ID</div>
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+      </div>
     </div>
   </div>
 
@@ -55,10 +68,10 @@
   <table class="table" *ngIf="results">
     <thead>
     <tr>
-      <th *ngIf="selectMultiple"></th>
+      <th *ngIf="selectMultiple" class="actions-column-1"></th>
       <th>Id</th>
       <th>Title/Name</th>
-      <th *ngIf="!selectMultiple">&nbsp;</th>
+      <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
     </tr>
     </thead>
     <tbody>
@@ -93,8 +106,11 @@
   </table>
 </div>
 <div class="modal-footer">
-  <div class="pull-left" *ngIf="configService.project && selectedSearchLocation === 'server'">
-    <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the "{{configService.project.name}}" implementation guide.
+  <div class="pull-left footer-criteria">
+    <p *ngIf="configService.project && selectedSearchLocation === 'server'">
+      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge badge-info">{{configService.project.name}}</span> implementation guide.
+    </p>
+    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge badge-info">{{structureDefinitionType}}</span>.</p>
   </div>
   <div class="pull-left" *ngIf="selected.length > 0">
     Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>

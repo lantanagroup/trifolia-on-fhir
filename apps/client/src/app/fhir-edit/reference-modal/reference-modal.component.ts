@@ -28,6 +28,7 @@ export class FhirReferenceModalComponent implements OnInit {
   @Input() public selectMultiple = false;
   @Input() public allowCoreProfiles = true;
   @Input() public selectedSearchLocation: 'base' | 'server' = 'server';
+  @Input() public structureDefinitionType?: string;
   public idSearch?: string;
   public contentSearch?: string;
   public criteriaChangedEvent: Subject<string> = new Subject<string>();
@@ -139,10 +140,15 @@ export class FhirReferenceModalComponent implements OnInit {
       url += 'title:contains=' + encodeURIComponent(this.titleSearch) + '&';
     }
 
+    if (this.resourceType === 'StructureDefinition' && this.structureDefinitionType) {
+      url += 'type=' + encodeURIComponent(this.structureDefinitionType) + '&';
+    }
+
     if (this.idSearch) {
       url += '_id=' + encodeURIComponent(this.idSearch) + '&';
     }
-    if(this.selectedSearchLocation === 'server') {
+
+    if (this.selectedSearchLocation === 'server') {
       const options = {
         headers: {}
       };
@@ -167,42 +173,36 @@ export class FhirReferenceModalComponent implements OnInit {
     }
     // Search base resources loaded in memory
     else if (this.selectedSearchLocation === 'base') {
-      if(!this.results){
+      if (!this.results) {
         this.results = new Bundle();
         this.baseResourceLength = 10;
       }
+
       let additionalEntries: EntryComponent[] = this.fhirService.fhir.parser.structureDefinitions
         .map((sd: StructureDefinition) => {
           return {
             resource: sd
           };
-      });
-      if(this.nameSearch) {
+        });
+
+      if (this.nameSearch) {
         additionalEntries = additionalEntries
-          .filter(object => (<StructureDefinition> object.resource).name.toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0)
-          .map(object => {
-            return {
-              resource: object.resource
-            };
-          });
+          .filter(object => (<StructureDefinition> object.resource).name.toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0);
       }
-      if(this.titleSearch){
+
+      if (this.titleSearch) {
         additionalEntries = additionalEntries
-          .filter(object => (<StructureDefinition> object.resource).title.toLowerCase().indexOf(this.titleSearch.toLowerCase()) >= 0)
-          .map(object => {
-            return {
-              resource: object.resource
-            };
-          });
+          .filter(object => (<StructureDefinition> object.resource).title.toLowerCase().indexOf(this.titleSearch.toLowerCase()) >= 0);
       }
-      if(this.idSearch){
+
+      if (this.idSearch) {
         additionalEntries = additionalEntries
-          .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.idSearch.toLowerCase()) >= 0))
-          .map(object => {
-            return {
-              resource: object.resource
-            };
-          });
+          .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.idSearch.toLowerCase()) >= 0));
+      }
+
+      if (this.structureDefinitionType) {
+        additionalEntries = additionalEntries
+          .filter(e => e.resource.resourceType !== 'StructureDefinition' || (<StructureDefinition> e.resource).type.toLowerCase() === this.structureDefinitionType.toLowerCase());
       }
 
       this.results.entry = additionalEntries;

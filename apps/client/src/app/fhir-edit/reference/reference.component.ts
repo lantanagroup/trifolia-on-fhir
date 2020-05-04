@@ -23,6 +23,7 @@ export class FhirReferenceComponent implements OnInit {
   @Input() public hideDisplay = false;
   @Input() public prependIconClass: string;
   @Input() public prependIconTooltip: string;
+  @Input() public structureDefinitionType?: string;
 
   @Output() public change = new EventEmitter<any>();
   private changeDebouncer = new Subject();
@@ -91,6 +92,7 @@ export class FhirReferenceComponent implements OnInit {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = this.resourceType;
     modalRef.componentInstance.hideResourceType = this.hideResourceType;
+    modalRef.componentInstance.structureDefinitionType = this.structureDefinitionType;
 
     modalRef.result.then((results: ResourceSelection) => {
       if (!this.isCanonical) {
