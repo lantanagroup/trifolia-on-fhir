@@ -1,18 +1,26 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
-    <label>
-        {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-    </label>
-    <input type="date" class="form-control"
-           [ngModel]="value | date: 'yyyy-MM-dd'"
-           (ngModelChange)="value = $event"
-           [class.is-invalid]="required && !value" />
+  <label>
+    {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </label>
+  <div class="input-group">
+    <input class="form-control" placeholder="yyyy-mm-dd"
+           name="dp" [(ngModel)]="value"
+           [class.is-invalid]="required && !value"
+           ngbDatepicker #d="ngbDatepicker">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+    </div>
+  </div>
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
-    <div class="input-group-addon" *ngIf="!required || title">
-        {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-    </div>
-    <input type="date" class="form-control"
-           [ngModel]="value | date: 'yyyy-MM-dd'"
-           (ngModelChange)="value = $event"
-           [class.is-invalid]="required && !value" />
+  <div class="input-group-addon" *ngIf="!required || title">
+    {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </div>
+  <input class="form-control" placeholder="yyyy-mm-dd"
+         name="dp" [(ngModel)]="value"
+         [class.is-invalid]="required && !value"
+         ngbDatepicker #d="ngbDatepicker">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+  </div>
 </div>
