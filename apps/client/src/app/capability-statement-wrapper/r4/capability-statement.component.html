@@ -94,6 +94,9 @@
 
           <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date"
                          [required]="false"></app-fhir-date>
+          <div class="alert alert-warning status-message" *ngIf="capabilityStatement.date && wrongDateFormat">
+            <span>Date must be written as yyyy-MM-dd</span>
+          </div>
 
           <div class="form-group">
             <label>Status</label>
@@ -678,7 +681,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(capabilityStatement)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(capabilityStatement) || wrongDateFormat">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
