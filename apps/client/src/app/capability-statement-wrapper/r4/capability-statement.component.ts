@@ -196,6 +196,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   }
 
   public get wrongDateFormat(){
+    if(!this.capabilityStatement.date) return false;
     const dateParts = this.capabilityStatement.date.toString().split('-');
 
     return dateParts.length > 1 && (dateParts.length !== 3 || dateParts[0].length < 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2);
