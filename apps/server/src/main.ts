@@ -40,7 +40,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     throw new InvalidModuleConfigException('FHIR servers have not been configured on the server');
   }
 
-  if (req.fhirServerId) {
+  if (req.fhirServerId && req.originalUrl !== '/api/config') {
     const foundFhirServer = config.fhir.servers.find((server) => server.id === req.fhirServerId);
 
     if (!foundFhirServer) {
