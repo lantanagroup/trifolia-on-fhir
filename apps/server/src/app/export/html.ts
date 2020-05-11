@@ -321,7 +321,7 @@ export class HtmlExporter {
 
     this.writePages(this.rootPath);
 
-    this.igPublisherLocation = await this.getIgPublisher(useLatest, version);
+    this.igPublisherLocation = await this.getIgPublisher(version);
 
     if (includeIgPublisherJar && this.igPublisherLocation) {
       this.logger.log('Copying IG Publisher JAR to working directory.');
@@ -543,7 +543,7 @@ export class HtmlExporter {
    * @param useLatest
    * @param version
    */
-  private async getIgPublisher(useLatest: boolean, version: string): Promise<string> {
+  private async getIgPublisher(version: string): Promise<string> {
     const fileName = 'org.hl7.fhir.igpublisher.jar';
     const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);

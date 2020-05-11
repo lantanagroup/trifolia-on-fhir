@@ -188,10 +188,14 @@ export class ExportController extends BaseController {
    * The publisherVersion() returns an array of publisher versions from the sonatype.org endpoint defined below.
    */
   @Get(':publisher-version')
-  public publisherVersion(): Promise<any> {
+  public getPublisherVersions(): Promise<any> {
     const url = 'https://oss.sonatype.org/service/local/repositories/snapshots/index_content/?groupIdHint=org.hl7.fhir.publisher&artifactIdHint=org.hl7.fhir.publisher&';
 
-    return this.httpService.get(url, this.getOptions()).toPromise()
+    return this.httpService.get(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).toPromise()
       .then((results) => {
         const versions = [];
         if (results.data) {
@@ -199,7 +203,7 @@ export class ExportController extends BaseController {
           arr = results.data['data']['children'][0]['children'][0]['children'][0]['children'][0]['children'][0]['children'].sort().reverse();
           arr.forEach(function(object) {
             versions.push(object['nodeName']);
-          })
+          });
         }
         const sortedVersions = versions.sort().reverse();
         const currentVersion = sortedVersions[0];
@@ -207,15 +211,7 @@ export class ExportController extends BaseController {
         return sortedVersions;
       }).catch(function(reason) {
         return reason;
-      })
-  }
-
-  private getOptions() {
-    return {
-      headers: {
-        'Accept': 'application/json',
-      }
-    };
+      });
   }
 
   @Get(':implementationGuideId/publish')
