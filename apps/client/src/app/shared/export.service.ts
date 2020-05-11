@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {ExportFormats} from '../models/export-formats.enum';
-import {HttpClient} from '@angular/common/http';
-import {SocketService} from './socket.service';
-import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server-validation-result';
+import { Injectable } from '@angular/core';
+import { ExportFormats } from '../models/export-formats.enum';
+import { HttpClient } from '@angular/common/http';
+import { SocketService } from './socket.service';
+import { ServerValidationResult } from '../../../../../libs/tof-lib/src/lib/server-validation-result';
 
 export class ExportOptions {
   public implementationGuideId: string;
@@ -10,6 +10,7 @@ export class ExportOptions {
   public responseFormat?: 'application/json' | 'application/xml' | 'application/msword';
   public useTerminologyServer? = true;
   public useLatest? = true;
+  public version: string;
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
   public templateType: 'official'|'custom-uri' = 'official';
@@ -65,10 +66,6 @@ export class ExportService {
       url += '_format=' + encodeURIComponent(options.responseFormat) + '&';
     }
 
-    if (options.useLatest === true) {
-      url += 'useLatest=true&';
-    }
-
     if (options.includeIgPublisherJar === true) {
       url += 'includeIgPublisherJar=true&';
     }
@@ -95,8 +92,8 @@ export class ExportService {
       url += 'useTerminologyServer=' + options.useTerminologyServer.toString() + '&';
     }
 
-    if (options.useLatest === true) {
-      url += 'useLatest=true&';
+    if (options.version) {
+      url += 'version=' + options.version + '&';
     }
 
     if (options.includeIgPublisherJar === true) {
@@ -107,7 +104,6 @@ export class ExportService {
     url += 'socketId=' + encodeURIComponent(this.socketService.socketId) + '&';
     url += 'template=' + encodeURIComponent(options.template) + '&';
     url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
-
     return this.http.get(url, {responseType: 'text'});
   }
 

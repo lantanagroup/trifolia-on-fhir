@@ -1,4 +1,4 @@
-import {ExportFormats} from './export-formats';
+import { ExportFormats } from './export-formats';
 
 export type Formats = 'xml'|'json'|'application/xml'|'application/fhir+xml'|'application/json'|'application/fhir+json';
 
@@ -7,6 +7,7 @@ export class ExportOptions {
   public executeIgPublisher = true;
   public useTerminologyServer = false;
   public useLatest = false;
+  public version: string;
   public downloadOutput = true;
   public format: Formats;
   public exportFormat = ExportFormats.Bundle;
@@ -65,6 +66,10 @@ export class ExportOptions {
 
       if (query.hasOwnProperty('templateVersion')) {
         this.templateVersion = query.templateVersion;
+      }
+
+      if (query.hasOwnProperty('version')) {
+        this.version = query.version;
       }
     }
   }

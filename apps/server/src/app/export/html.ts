@@ -1,6 +1,6 @@
-import {Fhir as FhirModule} from 'fhir/fhir';
-import {Server} from 'socket.io';
-import {spawn} from 'child_process';
+import { Fhir as FhirModule } from 'fhir/fhir';
+import { Server } from 'socket.io';
+import { spawn } from 'child_process';
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
@@ -14,23 +14,26 @@ import {
   ImplementationGuideResourceComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {BundleExporter} from './bundle';
-import {IServerConfig} from '../models/server-config';
-import {IFhirConfig} from '../models/fhir-config';
-import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import { BundleExporter } from './bundle';
+import { IServerConfig } from '../models/server-config';
+import { IFhirConfig } from '../models/fhir-config';
+import { HttpService, Logger, MethodNotAllowedException } from '@nestjs/common';
+import { InvalidModuleConfigException } from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {Formats} from '../models/export-options';
-import {PageInfo} from './html.models';
-import {getDefaultImplementationGuideResourcePath, getExtensionString, joinUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
-import {FhirInstances, unzip} from '../helper';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import { Formats } from '../models/export-options';
+import { PageInfo } from './html.models';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getExtensionString
+} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { IBundle, IExtension } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { PackageListModel } from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import { FhirInstances, unzip } from '../helper';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -198,7 +201,7 @@ export class HtmlExporter {
     });
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, version: string, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -318,7 +321,7 @@ export class HtmlExporter {
 
     this.writePages(this.rootPath);
 
-    this.igPublisherLocation = await this.getIgPublisher(useLatest);
+    this.igPublisherLocation = await this.getIgPublisher(useLatest, version);
 
     if (includeIgPublisherJar && this.igPublisherLocation) {
       this.logger.log('Copying IG Publisher JAR to working directory.');
@@ -509,63 +512,64 @@ export class HtmlExporter {
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 
-  private async getIgPublisher(useLatest: boolean): Promise<string> {
+  /**
+   * this method is called from the getIgPublisher method. This calls the get to download the specified version of the
+   * jar file for the IG Publisher
+   * @param path this is the path to the file system where the jar file will be saved
+   * @param url this is the url that is used to download the jar file
+   */
+  // tslint:disable-next-line:no-shadowed-variable
+  private async downloadJarFile(path: string, url: string) {
+    const writer = fs.createWriteStream(path);
+
+    const response = await this.httpService.axiosRef({
+      url: url,
+      method: 'GET',
+      responseType: 'stream',
+    });
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+  }
+
+  /**
+   * This method checks to see if the version of IG Publisher the user wants to use is already downloaded or not. If
+   * we already have it downloaded just use it. If it doesn't exist in the file system then download it first then use
+   * it. If an error is thrown it will also delete the empty jar file in the directory.
+   * @param useLatest
+   * @param version
+   */
+  private async getIgPublisher(useLatest: boolean, version: string): Promise<string> {
     const fileName = 'org.hl7.fhir.igpublisher.jar';
     const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);
     const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher/latest/');
-    const latestFilePath = path.join(latestPath, fileName);
-    const localContentLengthPath = path.join(latestPath, 'size.txt');
-    let contentLength;
+    const filePath = latestPath + '/' + version + '.jar';
 
-    if (useLatest === true) {
-      fs.ensureDirSync(latestPath);
-
-      this.logger.log('Request to get latest version of FHIR IG publisher. Retrieving from: ' + this.fhirConfig.latestPublisher);
-
-      this.sendSocketMessage('progress', 'Client requests to get the latest FHIR IG publisher. Checking latest version downloaded.');
-
-      try {
-        // Get the HEAD information for the fhir ig publisher first, and check if the date is different
-        const headResults = await this.httpService.request({
-          method: 'HEAD',
-          url: this.fhirConfig.latestPublisher
-        }).toPromise();
-        contentLength = headResults.headers['content-length'];
-
-        const localContentLengthContent = fs.existsSync(localContentLengthPath) ? fs.readFileSync(localContentLengthPath).toString() : undefined;
-
-        if (localContentLengthContent === contentLength) {
-          this.sendSocketMessage('progress', 'Already have the latest version of the IG publisher... Won\'t download again.', true);
-          return latestFilePath;
-        }
-
-        this.sendSocketMessage('progress', 'Server does not have the latest version of the IG publisher... Downloading.', true);
-      } catch (ex) {
-        this.logger.error(`Error getting version information about the FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('progress', 'Encountered error downloading version info for the latest IG publisher, will use pre-loaded/default IG publisher');
-        return defaultFilePath;
-      }
-
-      try {
-        // noinspection SpellCheckingInspection
-        const results = await this.httpService.get(this.fhirConfig.latestPublisher, { responseType: 'arraybuffer' }).toPromise();
-
-        this.logger.log(`Successfully downloaded latest version of FHIR IG Publisher. Ensuring latest directory exists: ${latestFilePath}`);
-
-        fs.writeFileSync(latestFilePath, results.data);
-        fs.writeFileSync(localContentLengthPath, contentLength);
-
-        return latestFilePath;
-      } catch (ex) {
-        this.logger.error(`Error getting latest version of FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('progress', 'Encountered error downloading latest IG publisher, will use pre-loaded/default IG publisher');
-        return defaultFilePath;
-      }
+    // check to see if the jar file is already downloaded, if so use it otherwise download it
+    if (fs.existsSync(filePath)) {
+      this.sendSocketMessage('progress', 'Already have the version ' + version + ' of the IG publisher... Won\'t download again.', true);
+      this.logger.log('The jar file ' + version + ' for the selected version already exists. Not downloading it again.');
+      return filePath;
     } else {
-      this.logger.log('Using built-in version of FHIR IG publisher for export');
-      this.sendSocketMessage('progress', 'Using existing/default version of FHIR IG publisher');
-      return defaultFilePath;
+      try {
+        this.sendSocketMessage('progress', 'Server does not have version ' + version + ' of the IG publisher... Downloading.', true);
+        const url = 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=' + version + '&e=jar';
+        this.logger.log('Downloading version: ' + version + '.jar file with this url: ' + url);
+        await this.downloadJarFile(filePath, url);
+        return filePath;
+      } catch (ex) {
+        // this check for errors and logs errors. If error is caught it also deletes the empty jar file from the directory. This returns the default file path
+        this.logger.error(`Error getting version ${version} of FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('progress', 'Encountered error downloading IG publisher version ' + version + ', will use pre-loaded/default IG publisher');
+        this.logger.error('deleting the empty jar file from ' + filePath);
+        fs.unlinkSync(filePath);
+        return defaultFilePath;
+      }
     }
   }
 
