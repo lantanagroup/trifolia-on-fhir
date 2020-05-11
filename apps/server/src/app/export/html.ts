@@ -99,7 +99,7 @@ export class HtmlExporter {
   }
 
   // noinspection JSUnusedLocalSymbols
-  public async publish(format: Formats, useTerminologyServer: boolean, useLatest: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean) {
+  public async publish(format: Formats, useTerminologyServer: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean) {
     if (!this.packageId) {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
@@ -108,7 +108,7 @@ export class HtmlExporter {
       const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
 
-      const igPublisherVersion = useLatest ? 'latest' : 'default';
+      const igPublisherVersion = 'latest';
       const process = this.serverConfig.javaLocation || 'java';
       const jarParams = ['-jar', this.igPublisherLocation, '-ig', this.controlPath];
 
@@ -201,7 +201,7 @@ export class HtmlExporter {
     });
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, useLatest: boolean, version: string, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean, version: string, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
     if (!this.fhirConfig.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
