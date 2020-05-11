@@ -48,7 +48,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
       !this.structureDefinition.hasOwnProperty('abstract') ||
-      !this.canEdit(this.structureDefinition);
+      !this.canEdit(this.structureDefinition, true);
   }
 
   public save() {
