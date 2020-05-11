@@ -196,16 +196,15 @@ export class ExportController extends BaseController {
         const versions = [];
         if (results.data) {
           let arr = [];
-          arr = results.data['data']['children'][0]['children'][0]['children'][0]['children'][0]['children'][0]['children'];
-          arr.forEach(function(object, index) {
-            if (index === arr.length-1) {
-              versions.push(object['nodeName'] + ' (Current)');
-            } else {
-              versions.push(object['nodeName']);
-            }
+          arr = results.data['data']['children'][0]['children'][0]['children'][0]['children'][0]['children'][0]['children'].sort().reverse();
+          arr.forEach(function(object) {
+            versions.push(object['nodeName']);
           })
         }
-        return versions;
+        const sortedVersions = versions.sort().reverse();
+        const currentVersion = sortedVersions[0];
+        sortedVersions[0] = currentVersion + ' (Current)';
+        return sortedVersions;
       }).catch(function(reason) {
         return reason;
       })
