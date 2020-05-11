@@ -1,22 +1,23 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../shared/config.service';
-import {CookieService} from 'angular2-cookie/core';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {FhirService} from '../shared/fhir.service';
-import {HtmlExportStatus, SocketService} from '../shared/socket.service';
-import {saveAs} from 'file-saver';
-import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server-validation-result';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {ActivatedRoute} from '@angular/router';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {HttpClient} from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ConfigService } from '../shared/config.service';
+import { CookieService } from 'angular2-cookie/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { FhirService } from '../shared/fhir.service';
+import { HtmlExportStatus, SocketService } from '../shared/socket.service';
+import { saveAs } from 'file-saver';
+import { ServerValidationResult } from '../../../../../libs/tof-lib/src/lib/server-validation-result';
+import { NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
+  selector: 'ngbd-typeahead-basic',
   templateUrl: './publish.component.html',
   styleUrls: ['./publish.component.css']
 })
@@ -31,7 +32,9 @@ export class PublishComponent implements OnInit {
   public Globals = Globals;
   public inProgress = false;
   public templateVersions : string[] = [];
-
+  public publisherVersions : any;
+  public recentPublisherVersions : any;
+  public versionModel: any;
   private packageId;
 
   @ViewChild('tabs', { static: true })
@@ -51,8 +54,8 @@ export class PublishComponent implements OnInit {
     private http: HttpClient) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
-      this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
-      this.route.snapshot.paramMap.get('id');
+    this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
+    this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
@@ -64,6 +67,38 @@ export class PublishComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * this metehod is called when the user types into the typeahead input box for IG Publisher version
+   * @param $e
+   */
+  typeaheadSelectedVersion($e) {
+    $e.preventDefault();
+    const item = $e.item;
+    this.versionModel = item;
+    const version = item.replace(' (Current)', '');
+    this.options.version = version;
+  }
+
+  /**
+   * this method is called when the user selects an item in the IG Publisher top 10 versions drop down
+   * @param $event
+   */
+  dropdownSelectedVersion($event){
+    $event.preventDefault();
+    const item = $event.target.options[$event.target.options.selectedIndex].text;
+    this.versionModel = item;
+    const version = item.replace(' (Current)', '');
+    this.options.version = version;
+  }
+
+  search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? []
+        : this.publisherVersions.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    )
 
   public implementationGuideChanged(implementationGuide: ImplementationGuide) {
     this.selectedImplementationGuide = implementationGuide;
@@ -87,6 +122,16 @@ export class PublishComponent implements OnInit {
           (err) => this.message = getErrorString(err)
         );
     }
+
+    this.http.get('/api/export/publisher-version')
+      .subscribe(data => {
+          this.publisherVersions = data;
+          this.recentPublisherVersions = this.publisherVersions.splice(0,10);
+          this.recentPublisherVersions.splice(0, 0, '10 Most Recent');
+        },
+        error => {
+          console.error(error);
+        });
   }
 
   public searchImplementationGuide = (text$: Observable<string>) => {

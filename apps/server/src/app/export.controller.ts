@@ -1,25 +1,26 @@
-import {BaseController} from './base.controller';
-import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
-import {BundleExporter} from './export/bundle';
-import {ITofRequest} from './models/tof-request';
-import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
-import {emptydir, rmdir, zip} from './helper';
-import {ExportOptions} from './models/export-options';
-import {AuthGuard} from '@nestjs/passport';
-import {Response} from 'express';
-import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {ConfigService} from './config.service';
-import {AxiosRequestConfig} from 'axios';
-import {createHtmlExporter} from './export/html.factory';
+import { BaseController } from './base.controller';
+import { Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { BundleExporter } from './export/bundle';
+import { ITofRequest } from './models/tof-request';
+import { Bundle, DomainResource, OperationOutcome } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { ServerValidationResult } from '../../../../libs/tof-lib/src/lib/server-validation-result';
+import { emptydir, rmdir, zip } from './helper';
+import { ExportOptions } from './models/export-options';
+import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import { TofLogger } from './tof-logger';
+import { ApiOAuth2Auth, ApiUseTags } from '@nestjs/swagger';
+import { ConfigService } from './config.service';
+import { AxiosRequestConfig } from 'axios';
+import { createHtmlExporter } from './export/html.factory';
 
-import * as path from "path";
+
+import * as path from 'path';
 import * as tmp from 'tmp';
-import {MSWordExporter} from './export/msword';
+import { MSWordExporter } from './export/msword';
 import { ExportService } from './export.service';
-import {FhirServerVersion} from './server.decorators';
+import { FhirServerVersion } from './server.decorators';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -27,6 +28,7 @@ import {FhirServerVersion} from './server.decorators';
 @ApiOAuth2Auth()
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
+
   constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
     super(configService, httpService);
   }
@@ -51,7 +53,7 @@ export class ExportController extends BaseController {
               if (err.response) {
                 resolve(err.response.data);
               }
-            })
+            });
         });
       };
 
@@ -77,7 +79,7 @@ export class ExportController extends BaseController {
 
           resultSets.forEach((resultSet: any, index) => {
             if (resultSet && resultSet.resourceType === 'OperationOutcome') {
-              const oo = <OperationOutcome> resultSet;
+              const oo = <OperationOutcome>resultSet;
 
               if (oo.issue) {
                 const next = oo.issue.map((issue) => {
@@ -113,7 +115,7 @@ export class ExportController extends BaseController {
     @Res() response: Response,
     @Param('implementationGuideId') implementationGuideId: string,
     @Query('removeExtensions') removeExtensions: string,
-    @Query('bundleType') bundleType: 'searchset'|'transaction') {
+    @Query('bundleType') bundleType: 'searchset' | 'transaction') {
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
@@ -139,7 +141,7 @@ export class ExportController extends BaseController {
   }
 
   @Post(':implementationGuideId/msword')
-  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4') {
     const bundleExporter = new BundleExporter(this.httpService, this.logger, req.fhirServerBase, req.fhirServerId, req.fhirServerVersion, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
 
@@ -182,6 +184,36 @@ export class ExportController extends BaseController {
     }
   }
 
+  /**
+   * The publisherVersion() returns an array of publisher versions from the sonatype.org endpoint defined below.
+   */
+  @Get(':publisher-version')
+  public getPublisherVersions(): Promise<any> {
+    const url = 'https://oss.sonatype.org/service/local/repositories/snapshots/index_content/?groupIdHint=org.hl7.fhir.publisher&artifactIdHint=org.hl7.fhir.publisher&';
+
+    return this.httpService.get(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).toPromise()
+      .then((results) => {
+        const versions = [];
+        if (results.data) {
+          let arr = [];
+          arr = results.data['data']['children'][0]['children'][0]['children'][0]['children'][0]['children'][0]['children'].sort().reverse();
+          arr.forEach(function(object) {
+            versions.push(object['nodeName']);
+          });
+        }
+        const sortedVersions = versions.sort().reverse();
+        const currentVersion = sortedVersions[0];
+        sortedVersions[0] = currentVersion + ' (Current)';
+        return sortedVersions;
+      }).catch(function(reason) {
+        return reason;
+      });
+  }
+
   @Get(':implementationGuideId/publish')
   public async publishImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
@@ -203,7 +235,7 @@ export class ExportController extends BaseController {
     const runPublish = () => {
       const exportIndex = this.exportService.exports.indexOf(exporter);
 
-      if(exportIndex === -1){
+      if (exportIndex === -1) {
         return;
       }
 
@@ -216,7 +248,7 @@ export class ExportController extends BaseController {
       }
 
       // Ignore the promise... The publish process should keep going.
-      exporter.publish(options.format, options.useTerminologyServer, options.useLatest, options.downloadOutput, options.includeIgPublisherJar)
+      exporter.publish(options.format, options.useTerminologyServer, options.useLatest, options.version, options.downloadOutput, options.includeIgPublisherJar)
         .finally(() => {
           const index = this.exportService.exports.indexOf(exporter);
           this.exportService.exports.splice(index, 1);
@@ -225,7 +257,7 @@ export class ExportController extends BaseController {
 
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.useLatest, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.useLatest, options.version, options.template, options.templateVersion);
 
       runPublish();
 
@@ -240,7 +272,7 @@ export class ExportController extends BaseController {
   }
 
   @Post(':packageId/cancel')
-  public cancel(@Param('packageId') packageId: string){
+  public cancel(@Param('packageId') packageId: string) {
     this.logger.log(`User has requested that package id ${packageId} be removed from the queue`);
 
     const exporter = this.exportService.exports.find(e => e.packageId === packageId);
@@ -248,7 +280,7 @@ export class ExportController extends BaseController {
 
     if (index >= 0) {
       this.exportService.exports.splice(index, 1);
-      exporter.sendSocketMessage('progress', "You have been removed from the queue");
+      exporter.sendSocketMessage('progress', 'You have been removed from the queue');
       this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
     }
   }
