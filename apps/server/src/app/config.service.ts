@@ -19,7 +19,6 @@ export class ConfigService {
   public fhir: IFhirConfig = {
     nonEditableResources: {},
     publishedGuides: '',
-    latestPublisher: '',
     servers: [{
       id: 'test',
       name: 'test',

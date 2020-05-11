@@ -13,7 +13,7 @@
     "logLevel": "all",
     "maxLogSizeKB": 1024,
     "maxRequestSizeMegabytes": 50,
-    "latestIgPublisherPath": "assets/ig-publisher/latest/",
+    "latestIgPublisherPath": "assets/ig-publisher",
     "maxAsyncQueueRequests": 10
   },
   "publish": {
@@ -48,7 +48,6 @@
       ]
     },
     "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
-    "latestPublisher": "https://github.com/FHIR/latest-ig-publisher/raw/master/org.hl7.fhir.publisher.jar",
     "servers": [{
       "id": "lantana_hapi_stu3",
       "name": "Lantana HAPI STU3 DEV Server",

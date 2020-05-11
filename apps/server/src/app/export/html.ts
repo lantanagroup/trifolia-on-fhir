@@ -547,8 +547,8 @@ export class HtmlExporter {
     const fileName = 'org.hl7.fhir.igpublisher.jar';
     const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
     const defaultFilePath = path.join(defaultPath, fileName);
-    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher/latest/');
-    const filePath = latestPath + '/' + version + '.jar';
+    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher');
+    const filePath = path.join(latestPath, version + '.jar');
 
     // check to see if the jar file is already downloaded, if so use it otherwise download it
     if (fs.existsSync(filePath)) {
@@ -560,6 +560,7 @@ export class HtmlExporter {
         this.sendSocketMessage('progress', 'Server does not have version ' + version + ' of the IG publisher... Downloading.', true);
         const url = 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=' + version + '&e=jar';
         this.logger.log('Downloading version: ' + version + '.jar file with this url: ' + url);
+        fs.ensureDirSync(path.dirname(filePath));
         await this.downloadJarFile(filePath, url);
         return filePath;
       } catch (ex) {

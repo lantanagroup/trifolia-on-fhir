@@ -10,7 +10,6 @@ export interface IFhirConfigServer {
 export interface IFhirConfig {
   nonEditableResources: { [resourceType: string]: string[] };
   publishedGuides: string;
-  latestPublisher: string;
   servers: IFhirConfigServer[];
   terminologyServer?: string;
 }
