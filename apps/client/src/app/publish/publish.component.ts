@@ -33,7 +33,7 @@ export class PublishComponent implements OnInit {
   public inProgress = false;
   public templateVersions : string[] = [];
   public publisherVersions : any;
-  public recentPublisherVersions : any;
+  public recentPublisherVersions : string[] = ['Loading'];
   public versionModel: any;
   private packageId;
 
@@ -127,7 +127,8 @@ export class PublishComponent implements OnInit {
       .subscribe(data => {
           this.publisherVersions = data;
           this.recentPublisherVersions = this.publisherVersions.splice(0,10);
-          this.recentPublisherVersions.splice(0, 0, '10 Most Recent');
+          const version = this.recentPublisherVersions[0].replace(' (Current)', '');
+          this.options.version = version;
         },
         error => {
           console.error(error);
