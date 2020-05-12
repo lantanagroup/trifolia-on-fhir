@@ -18,6 +18,7 @@ import {ProfileBaseDefinitionComponent} from './profile-base-definition/profile-
 import {ResourcePermissionsComponent} from './resource-permissions/resource-permissions.component';
 import {ImplementationGuideTypeaheadComponent} from './implementation-guide-typeahead/implementation-guide-typeahead.component';
 import {SimplemdeModule} from 'ngx-simplemde';
+import { IgPublisherSelectionComponent } from './ig-publisher-selection/ig-publisher-selection.component';
 
 const components = [
   MarkdownComponent,
@@ -32,7 +33,8 @@ const components = [
   XmlPipe,
   ProfileBaseDefinitionComponent,
   ResourcePermissionsComponent,
-  ImplementationGuideTypeaheadComponent
+  ImplementationGuideTypeaheadComponent,
+  IgPublisherSelectionComponent
 ];
 
 @NgModule({
