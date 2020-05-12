@@ -50,15 +50,12 @@ export class IgPublisherSelectionComponent implements OnInit {
 
   /**
    * this method is called when the user selects an item in the IG Publisher top 10 versions drop down
-   * @param $event
+   * @param version
    */
-  dropdownSelectedVersion($event){
-    $event.preventDefault();
-    const item = $event.target.options[$event.target.options.selectedIndex].text;
-    this.versionDropdown = item;
-    this.versionTypeahead = item;
-    const version = item.replace(' (Current)', '');
-    this.options.version = version;
+  selectRecentVersion(version){
+    this.versionDropdown = version;
+    this.versionTypeahead = version;
+    this.options.version = version.replace(' (Current)', '');
   }
 
   search = (text$: Observable<string>) =>
