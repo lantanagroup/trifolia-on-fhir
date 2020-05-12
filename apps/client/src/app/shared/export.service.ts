@@ -70,6 +70,10 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
+    if (options.version) {
+      url += 'version=' + options.version + '&';
+    }
+
     url += 'templateType=' + encodeURIComponent(options.templateType) + '&';
     url += 'template=' + encodeURIComponent(options.template) + '&';
     url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
