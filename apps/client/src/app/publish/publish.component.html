@@ -30,10 +30,10 @@
         <div class="col-md-6">
           <label for="version-typeahead">FHIR IG Publisher Version.</label>
           <div class="input-group">
-            <input id="version-typeahead" type="text" class="form-control" (selectItem)="typeaheadSelectedVersion($event)" [(ngModel)]="versionModel" placeholder="Start Typing the Version... type (Current) for latest version" [ngbTypeahead]="search"/>
+            <input id="version-typeahead" type="text" class="form-control" (selectItem)="typeaheadSelectedVersion($event)" [(ngModel)]="versionTypeahead" [ngbTypeahead]="search"/>
             <div class="input-group-append">
-              <select id='versions' name='versions' class="form-control" (change)="dropdownSelectedVersion($event)" [(ngModel)]="versionModel">
-                <option *ngFor="let version of recentPublisherVersions" [ngValue]="versionModel">
+              <select id='versions' name='versions' class="form-control" (change)="dropdownSelectedVersion($event)" [(ngModel)]="versionDropdown">
+                <option *ngFor="let version of recentPublisherVersions">
                   {{version}}
                 </option>
               </select>

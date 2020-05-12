@@ -33,8 +33,9 @@ export class PublishComponent implements OnInit {
   public inProgress = false;
   public templateVersions : string[] = [];
   public publisherVersions : any;
-  public recentPublisherVersions : string[] = ['Loading'];
-  public versionModel: any;
+  public recentPublisherVersions : string[] = ['Loading...'];
+  public versionDropdown: any;
+  public versionTypeahead: string;
   private packageId;
 
   @ViewChild('tabs', { static: true })
@@ -75,7 +76,8 @@ export class PublishComponent implements OnInit {
   typeaheadSelectedVersion($e) {
     $e.preventDefault();
     const item = $e.item;
-    this.versionModel = item;
+    this.versionTypeahead = item;
+    this.versionDropdown = item;
     const version = item.replace(' (Current)', '');
     this.options.version = version;
   }
@@ -87,7 +89,9 @@ export class PublishComponent implements OnInit {
   dropdownSelectedVersion($event){
     $event.preventDefault();
     const item = $event.target.options[$event.target.options.selectedIndex].text;
-    this.versionModel = item;
+    console.log(item);
+    this.versionDropdown = item;
+    this.versionTypeahead = item;
     const version = item.replace(' (Current)', '');
     this.options.version = version;
   }
@@ -127,6 +131,7 @@ export class PublishComponent implements OnInit {
       .subscribe(data => {
           this.publisherVersions = data;
           this.recentPublisherVersions = this.publisherVersions.splice(0,10);
+          this.versionTypeahead = this.recentPublisherVersions[0];
           const version = this.recentPublisherVersions[0].replace(' (Current)', '');
           this.options.version = version;
         },
