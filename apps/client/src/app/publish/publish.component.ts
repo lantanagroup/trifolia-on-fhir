@@ -32,10 +32,6 @@ export class PublishComponent implements OnInit {
   public Globals = Globals;
   public inProgress = false;
   public templateVersions : string[] = [];
-  public publisherVersions : any;
-  public recentPublisherVersions : string[] = ['Loading...'];
-  public versionDropdown: any;
-  public versionTypeahead: string;
   private packageId;
 
   @ViewChild('tabs', { static: true })
