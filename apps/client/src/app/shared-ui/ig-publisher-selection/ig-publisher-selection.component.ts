@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExportOptions } from '../../shared/export.service';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
   selector: 'trifolia-fhir-ig-publisher-selection',
@@ -13,7 +13,7 @@ export class IgPublisherSelectionComponent implements OnInit {
   @Input() public options: ExportOptions;
 
   public publisherVersions : any;
-  public recentPublisherVersions : string[] = ['Loading...'];
+  public recentPublisherVersions : any;
   public versionDropdown: any;
   public versionTypeahead: string;
 
@@ -25,9 +25,9 @@ export class IgPublisherSelectionComponent implements OnInit {
     this.http.get('/api/export/publisher-version')
       .subscribe(data => {
           this.publisherVersions = data;
-          this.recentPublisherVersions = this.publisherVersions.splice(0,10);
-          this.versionTypeahead = this.recentPublisherVersions[0];
-          const version = this.recentPublisherVersions[0].replace(' (Current)', '');
+          this.recentPublisherVersions = data;
+          this.versionTypeahead = this.publisherVersions[0];
+          const version = this.publisherVersions[0].replace(' (Current)', '');
           this.options.version = version;
         },
         error => {
@@ -61,7 +61,6 @@ export class IgPublisherSelectionComponent implements OnInit {
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
-      distinctUntilChanged(),
       map(term => term.length < 2 ? []
         : this.publisherVersions.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
