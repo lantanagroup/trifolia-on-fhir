@@ -21,6 +21,7 @@ import * as tmp from 'tmp';
 import { MSWordExporter } from './export/msword';
 import { ExportService } from './export.service';
 import { FhirServerVersion } from './server.decorators';
+import {HtmlExporter} from './export/html';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -217,7 +218,7 @@ export class ExportController extends BaseController {
   @Get(':implementationGuideId/publish')
   public async publishImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
-    const exporter = createHtmlExporter(
+    const exporter: HtmlExporter = createHtmlExporter(
       this.configService.server,
       this.configService.fhir,
       this.httpService,
@@ -232,7 +233,7 @@ export class ExportController extends BaseController {
 
     this.exportService.exports.push(exporter);
 
-    const runPublish = () => {
+    const runPublish = async () => {
       const exportIndex = this.exportService.exports.indexOf(exporter);
 
       if (exportIndex === -1) {
@@ -247,12 +248,14 @@ export class ExportController extends BaseController {
         return;
       }
 
-      // Ignore the promise... The publish process should keep going.
-      exporter.publish(options.format, options.useTerminologyServer, options.useLatest, options.version, options.downloadOutput, options.includeIgPublisherJar)
-        .finally(() => {
-          const index = this.exportService.exports.indexOf(exporter);
-          this.exportService.exports.splice(index, 1);
-        });
+      try {
+        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar)
+      } catch (ex) {
+        this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
+      } finally {
+        const index = this.exportService.exports.indexOf(exporter);
+        this.exportService.exports.splice(index, 1);
+      }
     };
 
 
