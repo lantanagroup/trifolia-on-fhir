@@ -1,22 +1,23 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../shared/config.service';
-import {CookieService} from 'angular2-cookie/core';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {FhirService} from '../shared/fhir.service';
-import {HtmlExportStatus, SocketService} from '../shared/socket.service';
-import {saveAs} from 'file-saver';
-import {ServerValidationResult} from '../../../../../libs/tof-lib/src/lib/server-validation-result';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {ActivatedRoute} from '@angular/router';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {HttpClient} from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ConfigService } from '../shared/config.service';
+import { CookieService } from 'angular2-cookie/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { FhirService } from '../shared/fhir.service';
+import { HtmlExportStatus, SocketService } from '../shared/socket.service';
+import { saveAs } from 'file-saver';
+import { ServerValidationResult } from '../../../../../libs/tof-lib/src/lib/server-validation-result';
+import { NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
+  selector: 'ngbd-typeahead-basic',
   templateUrl: './publish.component.html',
   styleUrls: ['./publish.component.css']
 })
@@ -31,7 +32,6 @@ export class PublishComponent implements OnInit {
   public Globals = Globals;
   public inProgress = false;
   public templateVersions : string[] = [];
-
   private packageId;
 
   @ViewChild('tabs', { static: true })
@@ -51,8 +51,8 @@ export class PublishComponent implements OnInit {
     private http: HttpClient) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
-      this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
-      this.route.snapshot.paramMap.get('id');
+    this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
+    this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;

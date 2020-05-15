@@ -5,13 +5,14 @@ import {Bundle, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
-import {StructureDefinition as PCStructureDefinition} from 'fhir/parseConformance';
+import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {Fhir} from 'fhir/fhir';
 import {BaseDefinitionResponseModel} from '../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {IBundle, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/structureDefinition')
 @UseGuards(AuthGuard('bearer'))
@@ -45,6 +46,20 @@ export class StructureDefinitionController extends BaseFhirController {
     return ret;
   }
 
+  private async getBaseStructureDefinitionResource(fhirServerBase: string, url: string) {
+    try {
+      const getUrl = buildUrl(fhirServerBase, 'StructureDefinition', null, null, { url: url });
+      const getResults = await this.httpService.get(getUrl).toPromise();
+      const bundle = <IBundle> getResults.data;
+
+      if (bundle && bundle.entry && bundle.entry.length === 1) {
+        return <IStructureDefinition> bundle.entry[0].resource;
+      }
+    } catch (ex) {
+      this.logger.error(`Error while retrieving base structure definition ${url}: ${ex.message}`);
+    }
+  }
+
   /**
    * Gets the base structure definition specified by the url.
    * Ensures that the structure definition returned has a snapshot.
@@ -59,14 +74,17 @@ export class StructureDefinitionController extends BaseFhirController {
 
     if (!url.startsWith('http://hl7.org/fhir/StructureDefinition/')) {
       try {
-        let profileWithSnapshot: StructureDefinition;
+        let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(request.fhirServerBase, url);
 
-        if (fhirServer.supportsSnapshot) {
-          const snapshotUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, '$snapshot', { url: url });
-          const results = await this.httpService.get(snapshotUrl).toPromise();
-          profileWithSnapshot = results.data;
-        } else {
-          profileWithSnapshot = await this.generateInternalSnapshot(request.fhirServerBase, request.fhir, url);
+        // The snapshot is not already generated for the profile, so we need to generate it now.
+        if (!profileWithSnapshot.snapshot) {
+          if (fhirServer.supportsSnapshot) {
+            const snapshotUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, '$snapshot', { url: url });
+            const results = await this.httpService.get(snapshotUrl).toPromise();
+            profileWithSnapshot = results.data;
+          } else {
+            profileWithSnapshot = await this.generateInternalSnapshot(request.fhirServerBase, request.fhir, url);
+          }
         }
 
         if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {

@@ -197,6 +197,27 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.configService.setTitle(`StructureDefinition - ${this.structureDefinition.title || this.structureDefinition.name || 'no-name'}`);
   }
 
+  public async loadBaseDefinition() {
+    this.message = 'Loading base structure definition...';
+
+    try {
+      this.baseDefResponse = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
+    } catch (err) {
+      this.message = getErrorString(err);
+      return;
+    }
+
+    this.baseStructureDefinition = this.baseDefResponse.base;
+
+    if (this.configService.isFhirSTU3) {
+      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR4) {
+      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    }
+
+    this.message = 'Done loading base structure definition.';
+  }
+
   private async getStructureDefinition() {
     const sdId = this.route.snapshot.paramMap.get('id');
 
@@ -227,22 +248,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     }
 
-    this.message = 'Loading base structure definition...';
-
-    try {
-      this.baseDefResponse = await this.strucDefService.getBaseStructureDefinition(this.structureDefinition.baseDefinition, this.structureDefinition.type).toPromise();
-    } catch (err) {
-      this.message = getErrorString(err);
-      return;
-    }
-
-    this.baseStructureDefinition = this.baseDefResponse.base;
-
-    if (this.configService.isFhirSTU3) {
-      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR4) {
-      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    }
+    await this.loadBaseDefinition();
 
     this.recentItemService.ensureRecentItem(
       Globals.cookieKeys.recentStructureDefinitions,

@@ -113,6 +113,18 @@ export class ConfigService {
       .then((config: ConfigModel) => {
         this.config = config;
 
+        if(localStorage){
+          const currentFhirServer = localStorage.getItem('fhirServer');
+          const found = this.config.fhirServers.find(fhirServer => {
+            return fhirServer.id === currentFhirServer;
+          });
+
+          if(!found){
+            this.fhirServer = null;
+            localStorage.removeItem('fhirServer');
+          }
+        }
+        
         if (!this.fhirServer && this.config.fhirServers.length > 0) {
           this.fhirServer = this.config.fhirServers[0].id;
         }

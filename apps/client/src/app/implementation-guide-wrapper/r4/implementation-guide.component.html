@@ -57,7 +57,7 @@
                 Package ID
                 <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
               </label>
-              <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
+              <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" (change)="packageIdChanged()" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
               <span class="help-block" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
               <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
                 <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
@@ -392,6 +392,8 @@
       <ng-template ngbTabContent>
         <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultPackageId]="packageId" [defaultTitle]="this.implementationGuide.title" [defaultName]="this.implementationGuide.name"></trifolia-fhir-package-list>
 
+        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
 
         <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
@@ -512,7 +514,7 @@
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No permissions specified!"></i></span>
+          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide, true)" title="No write permissions specified!"></i></span>
       </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
@@ -630,7 +632,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(implementationGuide)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(implementationGuide, true)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

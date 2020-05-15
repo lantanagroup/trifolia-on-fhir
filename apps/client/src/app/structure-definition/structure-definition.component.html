@@ -62,12 +62,7 @@
                 </select>
               </div>
 
-              <div class="form-group">
-                <label>Base Definition
-                  <app-tooltip-icon tooltipKey="sd.baseDefinition"></app-tooltip-icon>
-                </label>
-                <input type="text" class="form-control" readonly="readonly" [ngModel]="structureDefinition.baseDefinition" />
-              </div>
+              <app-fhir-reference [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" [isCanonical]="true" resourceType="StructureDefinition" [structureDefinitionType]="structureDefinition.type" [hideResourceType]="true" (change)="loadBaseDefinition()"></app-fhir-reference>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind"
                                            [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
@@ -330,7 +325,7 @@
     <!-- Permissions -->
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No permissions specified!"></i>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition, true)" title="No permissions specified!"></i>
       </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
@@ -407,7 +402,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(structureDefinition)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(structureDefinition, true)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()">Revert</button>
   </div>
   <span class="message">{{message}}</span>

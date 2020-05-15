@@ -57,6 +57,16 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
   }
 
+  addFormat() {
+    this.capabilityStatement.format = this.capabilityStatement.format || [];
+    this.capabilityStatement.format.push('');
+  }
+
+  addPatchFormat() {
+    this.capabilityStatement.patchFormat = this.capabilityStatement.patchFormat || [];
+    this.capabilityStatement.patchFormat.push('');
+  }
+
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');
     return !id || id === 'new';
@@ -183,6 +193,13 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
         });
     }
+  }
+
+  public get wrongDateFormat(){
+    if(!this.capabilityStatement.date) return false;
+    const dateParts = this.capabilityStatement.date.toString().split('-');
+
+    return dateParts.length > 1 && (dateParts.length !== 3 || dateParts[0].length < 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2);
   }
 
   nameChanged() {

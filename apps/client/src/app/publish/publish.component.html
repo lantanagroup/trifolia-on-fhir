@@ -1,6 +1,6 @@
 <h1>Publish</h1>
 
-<div class="alert alert-info">The "IG Publisher Package" export format produces a package from the selected implementation guide and executes it against the FHIR IG Publisher. When done, it ZIPs everything up in the package'd directory as the export, regardless of whether the FHIR IG Publisher encounters an error during the execution.</div>
+<div class="alert alert-warning">This page executes the <a href="https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation" target="_blank">HL7 IG Publisher</a>. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. Questions related to the execution of the HL7 IG Publisher should be directed to <a href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.</div>
 
 <div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
@@ -13,8 +13,7 @@
            [inputFormatter]="searchFormatter"
            autocomplete="off"/>
     <div class="input-group-btn">
-      <button type="button" class="btn btn-default" title="Clear the selection"
-              (click)="clearImplementationGuide()">
+      <button type="button" class="btn btn-default" title="Clear the selection" (click)="clearImplementationGuide()">
         <i class="fa fa-times"></i>
       </button>
     </div>
@@ -29,17 +28,8 @@
     <ng-template ngbTabContent>
       <div class="row">
         <div class="col-md-6">
-          <app-fhir-boolean
-            [parentObject]="options"
-            propertyName="useLatest"
-            noLabel="No ({{Globals.packagedIgPublisherVersion}})"
-            [required]="true"
-            [cookieKey]="Globals.cookieKeys.exportLastUseLatestIgPublisher"
-            title="Use latest FHIR IG Publisher?">
-          </app-fhir-boolean>
-          <div class="help-block">The latest version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR. If Publish fails to run, try re-running with 'No' selected for this option.</div>
+          <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
         </div>
-
         <div class="col-md-6">
           <app-fhir-boolean
             [parentObject]="options"

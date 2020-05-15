@@ -1,6 +1,10 @@
 export interface IServerConfig {
   hostname?: string;
   port?: number;
+  https?: {
+    keyPath: string;
+    certPath: string;
+  };
   supportUrl: string;
   googleAnalyticsCode?: string;
   javaLocation?: string;

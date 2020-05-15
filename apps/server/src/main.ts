@@ -40,7 +40,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     throw new InvalidModuleConfigException('FHIR servers have not been configured on the server');
   }
 
-  if (req.fhirServerId) {
+  if (req.fhirServerId && req.originalUrl !== '/api/config') {
     const foundFhirServer = config.fhir.servers.find((server) => server.id === req.fhirServerId);
 
     if (!foundFhirServer) {
@@ -169,14 +169,25 @@ const fixSwagger = (document) => {
 };
 
 async function bootstrap() {
+  let httpsOptions;
+
+  if (config.server.https && config.server.https.keyPath && config.server.https.certPath) {
+    httpsOptions = {
+      key: fs.readFileSync(config.server.https.keyPath),
+      cert: fs.readFileSync(config.server.https.certPath)
+    };
+  }
+
   if (config.headerPropagation) {
     hpropagate({
       setAndPropagateCorrelationId: false,
       headersToPropagate: config.headerPropagation
     });
   }
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const globalPrefix = 'api';
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    httpsOptions
+  });
 
   app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useLogger(new TofLogger());
@@ -228,7 +239,7 @@ async function bootstrap() {
   });
 
   await app.listen(port, hostname, () => {
-    logger.log(`Listening at http://localhost:${port}/${globalPrefix}`);
+    logger.log(`Listening at http://localhost:${port}/api`);
   });
 }
 

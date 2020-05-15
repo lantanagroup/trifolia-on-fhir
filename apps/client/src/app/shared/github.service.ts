@@ -196,6 +196,7 @@ export interface CommitsModel {
 export class GithubService {
   public token: string;
   public authChanged: EventEmitter<any> = new EventEmitter();
+  private loginWin: Window;
 
   private readonly tokenKey = 'github-token';
 
@@ -241,24 +242,32 @@ export class GithubService {
   public async login() {
     if (this.token) return;
 
+    if (this.loginWin && !this.loginWin.closed) {
+      this.loginWin.close();
+    }
+
     const redirectUri = location.origin + '/github/callback';
     const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
-    const activeWin = window.open(url, 'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
+    this.loginWin = window.open(url, 'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
 
-    if (!activeWin) {
+    if (!this.loginWin) {
       throw new Error('Could not open window to login to GitHub. Please ensure pop-ups are not blocked.');
     }
 
     return new Promise((resolve, error) => {
-      activeWin.onunload = () => {
-        setTimeout(() => {
+      const checkWin = () => {
+        if (this.loginWin.closed) {
           if (this.token) {
-            return resolve();
+            resolve();
           } else {
-            return error('Not logged into GitHub.');
+            error('Not logged into GitHub.');
           }
-        }, 500);
+        } else {
+          setTimeout(checkWin, 500);
+        }
       };
+
+      checkWin();
     });
   }
 
@@ -287,7 +296,7 @@ export class GithubService {
 
       await getNextRepositories();
     } catch (ex) {
-      console.error('Error retrieving list of repositories from GitHub: ' + ex.message);
+      console.error('Error retrieving list of repositories from GitHub: ' + ex.stack);
     }
 
     return repositories

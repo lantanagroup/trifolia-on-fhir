@@ -298,7 +298,7 @@
   <!-- Permissions -->
   <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(codeSystem)" title="No permissions specified!"></i>
+      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(codeSystem, true)" title="No permissions specified!"></i>
     </ng-template>
     <ng-template ngbTabContent>
       <trifolia-fhir-resource-permissions [resource]="codeSystem"></trifolia-fhir-resource-permissions>
@@ -329,7 +329,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(codeSystem)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(codeSystem, true)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

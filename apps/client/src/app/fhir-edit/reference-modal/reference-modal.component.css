@@ -2,3 +2,16 @@ table {
   margin-bottom: 0;
   margin-top: 5px;
 }
+
+.footer-criteria {
+  width: 100%;
+}
+
+.footer-criteria p {
+  padding: 0px;
+  margin-bottom: 10px;
+}
+
+.input-group {
+  margin-bottom: 3px;
+}

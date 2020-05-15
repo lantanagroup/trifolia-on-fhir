@@ -1,7 +1,7 @@
 import {
   IAgentComponent,
   IAuditEvent,
-  IBundle,
+  IBundle, ICodeableConcept,
   ICodeSystem,
   IContactDetail,
   IContactPoint,
@@ -197,7 +197,7 @@ export class Resource extends Base {
 
 }
 
-export class CodeableConcept extends Element {
+export class CodeableConcept extends Element implements ICodeableConcept {
   public coding?: Coding[];
   public text?: string;
 

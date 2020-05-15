@@ -185,129 +185,42 @@
             <div class="main-content">
                 
 <p></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts23">General</span></span></h2>
-<p class="rvps3"><span class="rvts39">My implementation guide has pages, but the table of contents is empty?</span></p>
-<p class="rvps3"><span class="rvts8">Make sure that the "Table of Contents" page's "Auto Generate Table of Contents?" field is set to "Yes".</span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts23">Home Screen stuck on 'Loading' </span></span></h2>
-<p class="rvps3"><span class="rvts8">Based on your web browser storage settings, Trifolia on FHIR may 'hang" or "stall' at the Loading page with the orange circle. Clearing historical browsing information typically resolves this issue. Please follow the below steps based on the web browser you are using to access Trifolia on FHIR; if the issue is not resolved by the below steps, please submit a ticket and specify which browser you are using. </span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">If using Chrome:</span></p>
-<p class="rvps3"><span class="rvts8">- Select Options (three vertical dots to right of URL address bar within Chrome) and select 'History'</span></p>
-<p class="rvps3"><span class="rvts8">- Open History page and select 'Clear Browsing data' from left pane</span></p>
-<p class="rvps3"><span class="rvts8">- Refresh the page</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">If using Internet Explorer:</span></p>
-<p class="rvps3"><span class="rvts8">- Select the gear icon (to the right of the URL address bar within IE) and select 'Internet Options'</span></p>
-<p class="rvps3"><span class="rvts8">- On the General Tab, click 'Delete...' button under Browsing History</span></p>
-<p class="rvps3"><span class="rvts8">- Apply &gt; OK</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">If using Safari:</span></p>
-<p class="rvps3"><span class="rvts8">- Select Develop (drop down top top) then 'Show JavaScript Console' (or Option-Command-C)</span></p>
-<p class="rvps3"><span class="rvts8">- Select Storage Tab</span></p>
-<p class="rvps3"><span class="rvts8">- Highlight Local Storage - trifolia-fhir.lantanagroup.com and Application Cache</span></p>
-<p class="rvps3"><span class="rvts8">- Select each of the key values and press Delete key to remove each of them</span></p>
-<p class="rvps3"><span class="rvts8">- After having removed each key/value pair, refresh the page</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<p class="rvps3"><span class="rvts8">If using Microsoft Edge</span></p>
-<p class="rvps3"><span class="rvts8">- Select three horizontal dots (to the right of the URL address bar within Edge)</span></p>
-<p class="rvps3"><span class="rvts8">- History &gt; Clear Browsing Data (Ctrl + Shift + Delete)</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts23">Exporting/Publishing with the FHIR IG Publisher</span></span></h2>
-<p class="rvps3"><span class="rvts36">The IG Publisher reports "Property name not found"</span></p>
-<p class="rvps3"><span class="rvts8">This may be due to dependencies being listed in the ImplementationGuide resource incorrectly.</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts23">Publishing with the FHIR IG Publisher - Sample errors and steps to resolve</span></span></h2>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-<div class="rvps3"><table width="100%" border="1" cellpadding="1" cellspacing="2" style="border-color: #000000; border-style: solid; border-spacing: 2px;">
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps4"><span class="rvts44">Publisher Error</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps4"><span class="rvts44">Steps To Resolve</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts47">Core Package hl7.fhir.r4.core#4.0.1</span><br/><span class="rvts47">Terminology Cache is at XXXXXX-119SfCPC7TIac/input-cache/txcache. 0 files in cache (00:13.0263)</span><br/><span class="rvts47">WARNING: Running without terminology server - terminology content will likely not publish correctly (00:13.0265)</span><br/><span class="rvts47">Load Package hl7.fhir.pubpack#0.0.4</span><br/><span class="rvts47">Load Package hl7.fhir.xver-extensions#0.0.3</span><br/><span class="rvts47">Dependency 'hl7.fhir.us.cor' has no id, so can't be referred to in markdown in the IG (00:13.0431)</span><br/><span class="rvts47">Publishing Content Failed: The package 'hl7.fhir.us.cor' has not entry on the current build server (00:13.0432</span><span class="rvts46">)</span><span class="rvts45">Dependency 'http://hl7.org/fhir/us/core' has no id, so can't be referred to in markdown in the IG (00:13.0871)</span></p>
-<p class="rvps3"><span class="rvts45">Publishing Content Failed: The package 'http://hl7.org/fhir/us/core' has no entry on the current build server </span><span class="rvts8">(00:13.0872)</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">1. &nbsp;Go to https://fhir.github.io/auto-ig-builder/builds.html</span></p>
-<p class="rvps3"><span class="rvts8">2. &nbsp;Search for the HL7 / US-Core-R4 in the list of Implementation Guides</span></p>
-<p class="rvps3"><span class="rvts8">3. &nbsp;Click on the "gh" option, and double-click on the &nbsp;US-Core-R4/package-list.json file</span></p>
-<p class="rvps3"><span class="rvts8">4. &nbsp;Open the Implementation Guide in the IG Editor</span></p>
-<p class="rvps3"><span class="rvts8">5. &nbsp;From the General Tab, scroll down to the Dependencies section</span></p>
-<p class="rvps3"><span class="rvts8">6. &nbsp;Enter the "canonical" value from the package-list.json in the URI Field</span></p>
-<p class="rvps3"><span class="rvts8">7. &nbsp;Enter the "package-id" value from the package-list.json file in the Package ID field in ToF</span></p>
-<p class="rvps3"><span class="rvts8">8. &nbsp;Enter the "title" value from the package-list.json in the Name Field</span></p>
-<p class="rvps3"><span class="rvts8">9. &nbsp;Enter the "version" value from the package-list.json in the Version Field</span></p>
-<p class="rvps3"><span class="rvts8">10. &nbsp;Save the implementation guide and Publish</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Publishing Content Failed: </span><span class="rvts45">Error generating snapshot</span><span class="rvts8">&nbsp;for CCDAonFHIRCarePlan(CCDA-on-FHIR-Care-Plan): </span><span class="rvts45">Cannot find or generate snapshot for base definition </span><span class="rvts8">(http://hl7.org/fhir/us/ccda-r4/StructureDefinition/CCDA-on-FHIR-US-Realm-Header from http://hl7.org/fhir/us/ccda-r4/StructureDefinition/CCDA-on-FHIR-Care-Plan) (00:16.0887)</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">1. &nbsp; Open the Implementation Guide in Trifolia on FHIR</span></p>
-<p class="rvps3"><span class="rvts8">2. &nbsp; In Browse-Profiles, check that a profile exists for the Resource in the Error</span></p>
-<p class="rvps3"><span class="rvts8">3. &nbsp; Confirm the base definition for the Resource is a valid HL7 resource</span></p>
-<p class="rvps3"><span class="rvts8">4. &nbsp; Correct the base definition URI if necessary</span></p>
-<p class="rvps3"><span class="rvts8">5. &nbsp; Save the Profile and Publish</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">[xslt] Processing XXXXXX-1WQAeNUFyeelt/template/onGenerate-ig-updated.xml to /tmp/tmp-1WQAeNUFyeelt/temp/pages/_includes/artifacts.xml</span></p>
-<p class="rvps3"><span class="rvts8">[xslt] Loading stylesheet XXXXXX-1WQAeNUFyeelt/template/scripts/createArtifactSummary.xslt</span></p>
-<p class="rvps3"><span class="rvts8">onGenerate.jira.setup:</span></p>
-<p class="rvps3"><span class="rvts8">[xslt] Processing XXXXXX-1WQAeNUFyeelt/template/onGenerate-ig-updated.xml to /tmp/tmp-1WQAeNUFyeelt/template/properties.txt</span></p>
-<p class="rvps3"><span class="rvts8">[xslt] Loading stylesheet XXXXXX-1WQAeNUFyeelt/template/scripts/onGenerate.genProperties.xslt</span></p>
-<p class="rvps3"><span class="rvts45">When using the HL7 template, the IG id must start with "hl7." - found IHE.PCS</span></p>
-<p class="rvps3"><span class="rvts8">[xslt] XXXXXX-1WQAeNUFyeelt/template/scripts/onGenerate.genProperties.xslt:24: Fatal Error! Processing terminated by xsl:message at line 24 in onGenerate.genProperties.xslt</span></p>
-<p class="rvps3"><span class="rvts8">[xslt] Failed to process XXXXXX-1WQAeNUFyeelt/template/onGenerate-ig-updated.xml</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">1. &nbsp; Open the Implementation Guide in Trifolia on FHIR IG Editor</span></p>
-<p class="rvps3"><span class="rvts8">2. &nbsp; In the General tab, Confirm “Package ID” that starts with “hl7.</span></p>
-<p class="rvps3"><span class="rvts8">3. &nbsp; If not, update the Package ID e.g hl7.fhir.us.mytestig, and Save the IG </span></p>
-<p class="rvps3"><span class="rvts8">4. &nbsp; Publish the IG and confirm ."</span><span class="rvts25">the IG id must start with hl7"</span><span class="rvts8">&nbsp;error is resolved</span></p>
-<p class="rvps3"><span class="rvts8"><br/></span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">Connect to Terminology Server at http://tx.fhir.org &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(00:12.0948)</span></p>
-<p class="rvps3"><span class="rvts8">Publishing Content Failed: Unable to connect to terminology server. Use parameter '-tx n/a' tun run without using terminology services to validate LOINC, SNOMED, ICD-X etc. Error = Error sending Http Request: Connect to tx.fhir.org:80 timed out (00:23.0042) (00:23.0045)</span></p>
-<p class="rvps3"><span class="rvts8">Use -? to get command line help (00:23.0046) (00:23.0047)</span></p>
-<p class="rvps3"><span class="rvts8">Stack Dump (for debugging): &nbsp;(00:23.0048)</span></p>
-<p class="rvps3"><span class="rvts8">org.hl7.fhir.exceptions.FHIRException: </span><span class="rvts45">Unable to connect to terminology server. Use parameter '-tx n/a' tun run without using terminology services to validate LOINC, SNOMED, ICD-X etc. Error = Error sending Http Request: Connect to tx.fhir.org:80 timed out </span><span class="rvts8">...</span></p>
-<p class="rvps3"><span class="rvts8">IG Publisher finished with code 1</span></p>
-<p class="rvps3"><span class="rvts8">Won't copy output to deployment path.</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts48">1. &nbsp;When Publishing, and the "Use Terminology Server" is "Yes", it tells the ig publisher to use&nbsp;</span><a class="rvts50" href="http://tx.fhir.org/">tx.fhir.org</a></p>
-<p class="rvps3"><span class="rvts48">2. &nbsp;If the IG you are publishing </span><span class="rvts51">needs to check VSAC,&nbsp;and this message appears, </span><span class="rvts49">Connect to tx.fhir.org:80 timed out </span><span class="rvts48">indicates that Trifolia on FHIR cannot connect to the terminology server at tx.fhir.org</span></p>
-<p class="rvps3"><span class="rvts51">3. &nbsp;T</span><span class="rvts48">he probable cause for this issue is that the terminology server could be down temporarily. </span></p>
-<p class="rvps3"><span class="rvts48">4. &nbsp;Suggest trying again to publish the IG in an hour or two.</span></p>
-<p class="rvps3"><span class="rvts48">5. &nbsp;If If the IG you are publishing does not </span><span class="rvts51">need to check VSAC, then set the "Use Terminology Server" option to "No" during publishing. &nbsp;</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">java.lang.Exception: Error generating snapshot for XXX/tmp-1anxpCfYdgSBM/input/resources/structuredefinition/extension-ig-page-content(extension-ig-page-content): Unable to generate snapshot for https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content in /tmp/tmp-1anxpCfYdgSBM/input/resources/ structuredefinition/extension-ig-page-content ....</span><span class="rvts45">.Caused by: org.hl7.fhir.exceptions.DefinitionException: StructureDefinition https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content</span><span class="rvts8">&nbsp;at Extension.value[x]: illegal constrained type Resource from base64Binary, boolean, canonical, code, date, dateTime, decimal, id, instant, integer, markdown, oid, positiveInt, string, time, unsignedInt, uri, url, uuid, Address, Age, Annotation, Attachment, CodeableConcept, Coding, ContactPoint, Count, Distance, Duration, HumanName, Identifier, Money, Period, Quantity, Range, Ratio, Reference, SampledData, Signature, Timing, ContactDetail, Contributor, DataRequirement, Expression, ParameterDefinition, RelatedArtifact, TriggerDefinition, UsageContext, Dosage, Meta in http://hl7.org/fhir/StructureDefinition/ Extension</span></p>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps3"><span class="rvts8">1. &nbsp;Open the Implementation Guide in Trifolia on FHIR</span></p>
-<p class="rvps3"><span class="rvts8">2. &nbsp;Open the profile referenced in the error using the Profile Editor</span></p>
-<p class="rvps3"><span class="rvts8">3. &nbsp;In the Elements tab, confirmed the Type for each constrained element is correct, and if not make the necessary corrections.</span></p>
-<p class="rvps3"><span class="rvts8">4. &nbsp;For each constrained element, confirm the Type Referenced Profile URL is correct, if not make the necessary corrections.</span></p>
-<p class="rvps3"><span class="rvts8">5. &nbsp;Save the Profile updates, if any, and Publish the IG. </span></p>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><br/>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><br/>
-</td>
-</tr>
-<tr valign="top">
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><br/>
-</td>
-<td style="border-color: #000000; border-style: solid; padding: 1px;"><br/>
-</td>
-</tr>
-</table>
-</div>
+<p class="rvps3"><span class="rvts61">My implementation guide has pages, but the table of contents is empty?</span></p>
+<p class="rvps23"><span class="rvts39">On the </span><span class="rvts40">Table of Contents</span><span class="rvts39">&nbsp;page, in the </span><span class="rvts40">Auto Generate Table of Contents?</span><span class="rvts39">&nbsp;field, select </span><span class="rvts40">Yes</span><span class="rvts39">.</span></p>
+<p class="rvps23"><span class="rvts62"><br/></span></p>
+<p class="rvps23"><span class="rvts61">Why is the Home Screen stuck on Loading?</span></p>
+<p class="rvps23"><span class="rvts44">Based on your web browser storage settings, Trifolia-on-FHIR (ToF) may “hang" or "stall" at the Loading page with the orange circle. Clearing browser history typically resolves this issue. </span></p>
+<p class="rvps23"><span class="rvts44">Follow these steps based on the web browser you use to access ToF; if clearing your browser history does not resolve the issue, submit a ticket and specify the browser you use. </span></p>
+<p class="rvps23"><span class="rvts44"><br/></span></p>
+<p class="rvps23"><span class="rvts21">Chrome:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select </span><span class="rvts42">Options</span><span class="rvts37">, the three vertical dots to right of the URL address bar within Chrome, and select </span><span class="rvts42">History</span><span class="rvts37">.</span></li>
+<li value="2" style="margin-left: 0px" class="rvps11"><span class="rvts37">From the menu, select </span><span class="rvts42">History</span><span class="rvts37">.</span></li>
+<li value="3" style="margin-left: 0px" class="rvps11"><span class="rvts37">On the </span><span class="rvts42">History</span><span class="rvts37">&nbsp;page, from the left pane, select </span><span class="rvts42">Clear browsing data</span><span class="rvts37">.</span></li>
+<li value="4" style="margin-left: 0px" class="rvps11"><span class="rvts37">Refresh the page.</span></li>
+</ol>
+<p class="rvps23"><span class="rvts44"><br/></span></p>
+<p class="rvps23"><span class="rvts21">Internet Explorer:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select the gear icon (to the right of the URL address bar within IE) and select</span><span class="rvts42">&nbsp;Internet Options</span><span class="rvts37">.</span></li>
+<li value="2" style="margin-left: 0px" class="rvps11"><span class="rvts37">On the </span><span class="rvts42">General</span><span class="rvts37">&nbsp;tab, under </span><span class="rvts42">Browsing History</span><span class="rvts37">, click </span><span class="rvts42">Delete</span><span class="rvts37">.</span></li>
+<li value="3" style="margin-left: 0px" class="rvps11"><span class="rvts37">Click </span><span class="rvts42">Apply</span><span class="rvts37">.</span></li>
+</ol>
+<p class="rvps23"><span class="rvts44"><br/></span></p>
+<p class="rvps23"><span class="rvts21">Safari:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select </span><span class="rvts42">Develop</span><span class="rvts37">&nbsp;and then select </span><span class="rvts42">Show JavaScript Console</span><span class="rvts37">&nbsp;(or Option-Command-C).</span></li>
+<li value="2" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select the </span><span class="rvts42">Storage</span><span class="rvts37">&nbsp;tab.</span></li>
+<li value="3" style="margin-left: 0px" class="rvps11"><span class="rvts37">Highlight Local Storage - trifolia-fhir.lantanagroup.com and Application Cache.</span></li>
+<li value="4" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select each of the key values, and click </span><span class="rvts42">Delete</span><span class="rvts37">&nbsp;to remove each of them.</span></li>
+<li value="5" style="margin-left: 0px" class="rvps11"><span class="rvts37">After deleting each key/value pair, refresh the page.</span></li>
+</ol>
+<p class="rvps23"><span class="rvts44"><br/></span></p>
+<p class="rvps23"><span class="rvts21">Microsoft Edge:</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select the three horizontal dots (to the right of the URL address bar within Edge).</span></li>
+<li value="2" style="margin-left: 0px" class="rvps11"><span class="rvts37">Select </span><span class="rvts42">History</span><span class="rvts37">&nbsp;and select </span><span class="rvts42">Clear Browsing Data</span><span class="rvts37">&nbsp;(Ctrl + Shift + Delete).</span></li>
+</ol>
 <p></p>
 
             </div>

@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
+import {ICodeableConcept} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-fhir-multi-jurisdiction',
@@ -18,6 +19,37 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   constructor(
     private fhirService: FhirService) {
+  }
+
+  get jurisdictions(): ICodeableConcept[] {
+    if (this.parentObject[this.propertyName]) {
+      return <ICodeableConcept[]> this.parentObject[this.propertyName];
+    }
+  }
+
+  addJurisdiction() {
+    if (!this.jurisdictions) {
+      this.parentObject[this.propertyName] = [];
+    }
+
+    this.jurisdictions.push({ });
+  }
+
+  getText(jurisdiction: ICodeableConcept) {
+    return jurisdiction.text;
+  }
+
+  setText(jurisdiction: ICodeableConcept, value: string) {
+    if (value) {
+      jurisdiction.text = value;
+    } else {
+      delete jurisdiction.text;
+    }
+  }
+
+  addCoding(jurisdiction: ICodeableConcept) {
+    jurisdiction.coding = jurisdiction.coding || [];
+    jurisdiction.coding.push({});
   }
 
   ngOnInit() {
