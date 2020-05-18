@@ -352,7 +352,7 @@
     <!-- Version History -->
     <ngb-tab id="history" title="History">
       <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="structureDefinition"></app-resource-history>
+        <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()"></app-resource-history>
       </ng-template>
     </ngb-tab>
   </ngb-tabset>
