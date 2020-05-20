@@ -37,16 +37,28 @@ export class ImplementationGuideController extends BaseFhirController {
 
         if (results.data && results.data.guides) {
           results.data.guides.forEach((guide) => {
-            if (guide.editions) {
+            guides.push({
+              name: guide.name,
+              category: guide.category,
+              description: guide.description,
+              editions: guide.editions,
+              'npm-name': guide['npm-name']
+            });
+            /*if (guide.editions) {
+              const editions = [];
               guide.editions.forEach((edition) => {
-                guides.push({
-                  name: guide.name,
+                editions.push({
                   url: edition.url,
-                  version: edition['ig-version'],
-                  'npm-name': guide['npm-name']
-                });
+                  version: edition['ig-version']
+                })
               });
-            }
+              guides.push({
+                name: guide.name,
+                editions: editions,
+                'npm-name': guide['npm-name']
+              });
+            }*/
+
           });
         }
 

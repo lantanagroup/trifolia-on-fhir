@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h4 class="modal-title">Select version of published implementation guide</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <table class="table table-striped" *ngIf="editions">
+    <thead>
+    <tr>
+      <th>URL</th>
+      <th>Version</th>
+      <th class="actions-column-1"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let e of editions">
+      <td>{{e['url']}}</td>
+      <td>{{e['ig-version']}}</td>
+      <td>
+        <button type="button" class="btn btn-primary" title="Select this implementation guide" (click)="selectEdition(e)">
+          <i class="fas fa-hand-pointer"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

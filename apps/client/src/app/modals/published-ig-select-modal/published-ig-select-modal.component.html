@@ -5,26 +5,31 @@
     </button>
 </div>
 <div class="modal-body">
-    <table class="table table-striped" *ngIf="guides">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>URL</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let g of guides">
-            <td>{{g.name}}</td>
-            <td>{{g.url}}</td>
-            <td>
-                <button type="button" class="btn btn-default" title="Select this implementation guide" (click)="activeModal.close(g)">
-                    <i class="fas fa-hand-pointer"></i>
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  <div>
+    <input type="text" class="form-control" placeholder="Search published IGs" [(ngModel)]="filterPublishedIGQuery"/>
+  </div>
+  <table class="table table-striped" *ngIf="guides">
+      <thead>
+      <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>NPM Name</th>
+          <th class="actions-column-1"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let g of guideList" title="{{g.description}}">
+        <td>{{g.name}}</td>
+        <td>{{g.category}}</td>
+        <td>{{g['npm-name']}}</td>
+        <td>
+            <button type="button" class="btn btn-primary" title="Select this implementation guide" (click)="selectPublishedEdition(g)">
+                <i class="fas fa-hand-pointer"></i>
+            </button>
+        </td>
+      </tr>
+      </tbody>
+  </table>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>

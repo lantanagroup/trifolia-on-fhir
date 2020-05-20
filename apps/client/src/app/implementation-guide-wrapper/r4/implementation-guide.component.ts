@@ -139,6 +139,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
   }
 
+  public addDependencies(){
+    if(!this.implementationGuide.dependsOn){
+      this.implementationGuide.dependsOn = [{
+        uri: '',
+        version: ''
+      }];
+    }
+    else{
+      this.implementationGuide.dependsOn.push({
+        uri: '',
+        version: ''
+      });
+    }
+  }
+
   public packageIdChanged() {
     if (this.packageId) {
       const packageIdParts = this.packageId.toLowerCase().split('.');
@@ -296,9 +311,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
-      dependsOn.packageId = guide['npm-name'];
-      dependsOn.uri = guide.url;
-      dependsOn.version = guide.version;
+      if(guide){
+        dependsOn.packageId = guide['npm-name'];
+        dependsOn.uri = guide.url;
+        dependsOn.version = guide.version;
+      }
     });
   }
 

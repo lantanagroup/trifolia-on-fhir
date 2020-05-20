@@ -556,76 +556,80 @@
 <ng-template #dependsOn>
   <div class="card">
     <div class="card-header">
-      <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('dependsOn')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'dependsOn', [{ version: 'current' }])"/>
       Dependencies
       <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
     </div>
-    <table class="table table-striped" *ngIf="implementationGuide.hasOwnProperty('dependsOn')">
+    <table class="table table-striped">
       <thead>
       <tr>
         <th>
           URI
           <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.uri"></app-tooltip-icon>
         </th>
-        <th>
+        <!--th>
           Location
           <app-tooltip-icon tooltipKey="ig.dependsOn.location"></app-tooltip-icon>
-        </th>
+        </th-->
         <th>
           Package ID
           <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
         </th>
-        <th>
+        <!--th>
           Name
           <app-tooltip-icon tooltipKey="ig.dependsOn.name"></app-tooltip-icon>
-        </th>
+        </th-->
         <th>
           Version
           <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.version"></app-tooltip-icon>
         </th>
         <th class="actions-column-1">
           <div class="pull-right">
-            <button type="button" class="btn btn-primary" title="Add a dependency" (click)="implementationGuide.dependsOn.push({ uri: '', version: 'current' })">
+            <button type="button" class="btn btn-primary" title="Add a dependency" (click)="addDependencies()">
               <i class="fa fa-plus"></i>
             </button>
           </div>
         </th>
       </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="implementationGuide.dependsOn">
       <tr *ngFor="let dependsOn of implementationGuide.dependsOn; let di = index">
         <td>
           <div class="input-group">
             <input type="text" class="form-control" [class.is-invalid]="!dependsOn.uri" [(ngModel)]="dependsOn.uri"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-primary" (click)="selectPublishedIg(dependsOn)">
-                <i class="fas fa-hand-pointer"></i>
-              </button>
-            </div>
           </div>
         </td>
-        <td>
+        <!--td>
           <input type="text" class="form-control" [class.is-invalid]="!getDependsOnLocation(dependsOn)" [ngModel]="getDependsOnLocation(dependsOn)"
                  (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
-        </td>
+        </td-->
         <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" [isFormGroup]="false"></app-fhir-string>
         </td>
-        <td>
+        <!--td>
           <input type="text" class="form-control" [class.is-invalid]="!getDependsOnName(dependsOn)" [ngModel]="getDependsOnName(dependsOn)" (ngModelChange)="setDependsOnName(dependsOn, $event)"/>
-        </td>
+        </td-->
         <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="version" [isFormGroup]="false"></app-fhir-string>
         </td>
         <td>
           <div class="pull-right">
-            <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" (click)="selectPublishedIg(dependsOn)">
+                <i class="fas fa-hand-pointer"></i>
+              </button>
+              <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
           </div>
         </td>
       </tr>
       </tbody>
+      <tfoot *ngIf="!implementationGuide.dependsOn">
+        <tr>
+          <th colspan="4">No dependencies have been added to this implementation guide, yet. Click <a href="javascript:void(0)" (click)="addDependencies()">here</a> to add one.</th>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </ng-template>

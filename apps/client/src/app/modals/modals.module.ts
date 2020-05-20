@@ -8,6 +8,7 @@ import {FileOpenModalComponent} from './file-open-modal/file-open-modal.componen
 import {MarkdownModalComponent} from './markdown-modal/markdown-modal.component';
 import {NewUserModalComponent} from './new-user-modal/new-user-modal.component';
 import {PublishedIgSelectModalComponent} from './published-ig-select-modal/published-ig-select-modal.component';
+import {PublishedIgEditionSelectModalComponent} from './published-ig-select-modal/published-ig-edition-select-modal/published-ig-edition-select-modal.component';
 import {SelectChoiceModalComponent} from './select-choice-modal/select-choice-modal.component';
 import {SettingsModalComponent} from './settings-modal/settings-modal.component';
 import {SharedModule} from '../shared/shared.module';
@@ -22,6 +23,7 @@ const modalComponents = [
   MarkdownModalComponent,
   NewUserModalComponent,
   PublishedIgSelectModalComponent,
+  PublishedIgEditionSelectModalComponent,
   SelectChoiceModalComponent,
   SettingsModalComponent,
   MediaSelectionModalComponent
