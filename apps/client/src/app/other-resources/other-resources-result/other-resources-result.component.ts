@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {NgbModal, NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
@@ -30,6 +30,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   constructor(private fhirService: FhirService,
               private route: ActivatedRoute,
+              private router: Router,
               private modalService: NgbModal,
               public configService: ConfigService,
               protected authService: AuthService) {
@@ -174,6 +175,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     this.fhirService.delete(dr.resourceType, dr.id)
       .subscribe(() => {
+        this.router.navigate([`${this.configService.baseSessionUrl}/other-resources/`]);
+        alert(`Successfully removed resource ${dr.resourceType}/${dr.id}.`);
       }, (err) => {
         this.message = 'Error while removing the resource: ' + getErrorString(err);
       });
