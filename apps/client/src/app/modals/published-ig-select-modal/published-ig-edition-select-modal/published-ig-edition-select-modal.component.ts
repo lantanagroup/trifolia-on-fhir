@@ -9,6 +9,7 @@ import { PublishedGuideEditionsModel} from '../../../shared/implementation-guide
 })
 export class PublishedIgEditionSelectModalComponent implements OnInit {
   @Input() public editions: Object[];
+  @Input() public canonical: string;
 
   constructor(public activeModal: NgbActiveModal) {
     console.log('ctor');
@@ -16,7 +17,7 @@ export class PublishedIgEditionSelectModalComponent implements OnInit {
 
   public selectEdition(e: Object) {
     const editionModel: PublishedGuideEditionsModel = {
-      url: e['url'],
+      url: this.canonical + '/ImplementationGuide/' + e['package'],
       version: e['ig-version']
     };
     this.activeModal.close(editionModel);

@@ -15,7 +15,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let e of editions">
-      <td>{{e['url']}}</td>
+      <td>{{canonical + '/ImplementationGuide/' + e['package']}}</td>
       <td>{{e['ig-version']}}</td>
       <td>
         <button type="button" class="btn btn-primary" title="Select this implementation guide" (click)="selectEdition(e)">

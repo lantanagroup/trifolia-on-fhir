@@ -23,6 +23,7 @@ export class PublishedGuideModel {
 
 export class PublishedGuideContainerModel {
   public name: string;
+  public canonical: string;
   public category: string;
   public description: string;
   public editions;

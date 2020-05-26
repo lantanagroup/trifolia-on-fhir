@@ -26,6 +26,7 @@ export class PublishedIgSelectModalComponent implements OnInit {
   selectPublishedEdition(guide: PublishedGuideContainerModel){
     const modalRef = this.modal.open(PublishedIgEditionSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.editions = guide.editions;
+    modalRef.componentInstance.canonical = guide.canonical;
     modalRef.result.then((edition: PublishedGuideEditionsModel) => {
       if(edition){
         const publishedGuide: PublishedGuideModel =
