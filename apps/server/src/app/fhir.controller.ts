@@ -617,9 +617,9 @@ export class FhirController extends BaseController {
 
       if (results) {
         return {
-          status: results.status,
-          contentType: results.headers['content-type'] || null,
-          data: results.data
+          status: results && results.statusCode ? results.statusCode : 500,
+          contentType: results && results.headers ? results.headers['content-type'] || null : null,
+          data: results && results.error ? results.error : 'Unknown error occurred'
         };
       } else {
         this.logger.error(`Error (status ${ex.status} processing http-error results in proxy: ${ex.message}`, ex);
