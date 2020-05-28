@@ -123,7 +123,7 @@
   <!-- Permissions -->
   <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(questionnaire, true)" title="No permissions specified!"></i>
+      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!authService.checkForWritePermissions(questionnaire)" title="No permissions specified!"></i>
     </ng-template>
     <ng-template ngbTabContent>
       <trifolia-fhir-resource-permissions [resource]="questionnaire"></trifolia-fhir-resource-permissions>

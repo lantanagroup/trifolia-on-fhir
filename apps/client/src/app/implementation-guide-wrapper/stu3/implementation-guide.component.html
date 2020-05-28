@@ -536,7 +536,7 @@
     <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-        <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide, true)" title="No write permissions specified!"></i></span>
+        <i class="fas fa-exclamation" style="color: red" *ngIf="!authService.checkForWritePermissions(implementationGuide)" title="No write permissions specified!"></i></span>
       </ng-template>
       <ng-template ngbTabContent>
         <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>

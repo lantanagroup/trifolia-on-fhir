@@ -1,7 +1,7 @@
 import {EventEmitter, Injectable, Injector, ComponentFactoryResolver} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PractitionerService} from './practitioner.service';
-import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { DomainResource, Group, Meta, Practitioner } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -241,5 +241,11 @@ export class AuthService {
     }
 
     return meta;
+  }
+
+  public checkForWritePermissions(resource: DomainResource) {
+    return resource.meta.security.filter(user => {
+      return user.code.indexOf("write") > -1;
+    }).length > 0;
   }
 }
