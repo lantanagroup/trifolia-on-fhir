@@ -321,7 +321,7 @@ export class HtmlExporter {
 
     this.writePages(this.rootPath);
 
-    this.igPublisherLocation = await this.getIgPublisher(version);
+    this.igPublisherLocation = includeIgPublisherJar ? await this.getIgPublisher(version) : null;
 
     if (includeIgPublisherJar && this.igPublisherLocation) {
       this.logger.log('Copying IG Publisher JAR to working directory.');

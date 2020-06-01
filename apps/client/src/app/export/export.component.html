@@ -29,11 +29,7 @@
       </div>
 
       <div class="row" [attr.data-intro]="Globals.introText['export.igPublisher']">
-        <div class="col-md-4">
-          <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
-        </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
             <label>Output Format</label>
             <select class="form-control" [(ngModel)]="options.responseFormat">
@@ -43,7 +39,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
             <label>Include FHIR IG Publisher JAR?</label>
             <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
