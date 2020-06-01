@@ -10,14 +10,14 @@ export class BaseComponent {
 
   }
 
-  private canReadOrWrite(resource: DomainResource, permission: 'read'|'write', doFullCheck) {
+  private canReadOrWrite(resource: DomainResource, permission: 'read'|'write') {
     // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;
     }
 
     // User is an admin, should have access to everything
-    if (this.authService.userProfile.isAdmin && !doFullCheck) {
+    if (this.authService.userProfile.isAdmin) {
       return true;
     }
 
@@ -35,11 +35,11 @@ export class BaseComponent {
     return foundEveryone || foundUser || foundGroups;
   }
 
-  public canView(resource: DomainResource, doFullCheck = false) {
-    return this.canReadOrWrite(resource, 'read', doFullCheck);
+  public canView(resource: DomainResource) {
+    return this.canReadOrWrite(resource, 'read');
   }
 
-  public canEdit(resource: DomainResource, doFullCheck = false) {
-    return this.canReadOrWrite(resource, 'write', doFullCheck);
+  public canEdit(resource: DomainResource) {
+    return this.canReadOrWrite(resource, 'write');
   }
 }

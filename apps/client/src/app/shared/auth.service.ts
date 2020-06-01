@@ -242,10 +242,4 @@ export class AuthService {
 
     return meta;
   }
-
-  public checkForWritePermissions(resource: DomainResource) {
-    return resource.meta.security.filter(user => {
-      return user.code.indexOf("write") > -1;
-    }).length > 0;
-  }
 }
