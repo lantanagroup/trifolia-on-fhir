@@ -117,7 +117,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       }
 
       if (stu3Page.source) {
-        ret.nameUrl = stu3Page.source;
+        ret.nameUrl = Globals.getCleanFileName(stu3Page.source);
       }
 
       return ret;
@@ -274,7 +274,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       const originalFirstPage = this.stu3ImplementationGuide.page;
       this.stu3ImplementationGuide.page = {
         title: 'IG Home Page',
-        source: 'index.html',
+        source: 'index.md',
         kind: 'page',
         format: 'markdown',
         page: originalFirstPage ? [originalFirstPage] : []

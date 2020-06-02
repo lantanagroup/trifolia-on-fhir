@@ -527,38 +527,38 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (!pageDef) {
       return;
     }
-
-    if (pageDef.page.page) {
-      for (let i = pageDef.page.page.length - 1; i >= 0; i--) {
-        const childPage = pageDef.page.page[i];
-        const foundChildPageDef = this.pages.find((nextPageDef) => nextPageDef.page === childPage);
-        this.removePage(foundChildPageDef);
-      }
-    }
-
-    // If a contained Binary resource is associated with the page, remove it
-    if (pageDef.page.source) {
-      if (pageDef.page.source.startsWith('#')) {
-        const foundBinary = (this.implementationGuide.contained || []).find((contained) =>
-          contained.id === pageDef.page.source.substring(1));
-
-        if (foundBinary) {
-          const binaryIndex = this.implementationGuide.contained.indexOf(foundBinary);
-          this.implementationGuide.contained.splice(binaryIndex, 1);
-        }
-      }
-    }
-
     // Remove the page
     if (pageDef.parent) {
       const pageIndex = pageDef.parent.page.indexOf(pageDef.page);
       pageDef.parent.page.splice(pageIndex, 1);
     } else {
+      const children = this.implementationGuide.page.page;
       delete this.implementationGuide.page;
+
+      if (children && children.length >= 1) {
+        this.implementationGuide.page = children[0];
+        children.splice(0, 1);
+
+        if (children.length > 0) {
+          this.implementationGuide.page.page = this.implementationGuide.page.page || [];
+          this.implementationGuide.page.page.splice(0, 0, ...children);
+        }
+      }
     }
 
-    const pageDefIndex = this.pages.indexOf(pageDef);
-    this.pages.splice(pageDefIndex, 1);
+    const pageContentExt = (pageDef.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
+
+    if (pageContentExt && pageContentExt.valueReference && pageContentExt.valueReference.reference && pageContentExt.valueReference.reference.startsWith('#')) {
+      const pageContentId = pageContentExt.valueReference.reference.substring(1);
+      const foundContainedContent = (this.implementationGuide.contained || []).find(c => c.id === pageContentId && c.resourceType === 'Binary');
+
+      if (foundContainedContent) {
+        const containedIndex = this.implementationGuide.contained.indexOf(foundContainedContent);
+        this.implementationGuide.contained.splice(containedIndex, 1);
+      }
+    }
+
+    this.initPages();
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {

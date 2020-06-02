@@ -496,6 +496,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
+    if (pageDef.page && pageDef.page.nameReference && pageDef.page.nameReference.reference && pageDef.page.nameReference.reference.startsWith('#')) {
+      const pageContentId = pageDef.page.nameReference.reference.substring(1);
+      const foundContainedContent = (this.implementationGuide.contained || []).find(c => c.id === pageContentId && c.resourceType === 'Binary');
+
+      if (foundContainedContent) {
+        const containedIndex = this.implementationGuide.contained.indexOf(foundContainedContent);
+        this.implementationGuide.contained.splice(containedIndex, 1);
+      }
+    }
+
     this.initPages();
   }
 
