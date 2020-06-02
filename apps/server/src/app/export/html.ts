@@ -99,14 +99,18 @@ export class HtmlExporter {
   }
 
   // noinspection JSUnusedLocalSymbols
-  public async publish(format: Formats, useTerminologyServer: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean) {
+  public async publish(format: Formats, useTerminologyServer: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, version: string) {
     if (!this.packageId) {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
+
+      if (!this.igPublisherLocation) {
+        this.igPublisherLocation = await this.getIgPublisher(version);
+      }
 
       const igPublisherVersion = 'latest';
       const process = this.serverConfig.javaLocation || 'java';

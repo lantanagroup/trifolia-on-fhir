@@ -249,7 +249,7 @@ export class ExportController extends BaseController {
       }
 
       try {
-        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar)
+        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version)
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
       } finally {
