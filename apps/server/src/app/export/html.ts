@@ -280,8 +280,8 @@ export class HtmlExporter {
       throw new Error('The implementation guide was not found in the bundle returned by the server');
     }
 
-    let controlTemplate = 'hl7.fhir.template';
-    let controlTemplateVersion = 'current';
+    let controlTemplate = template || 'hl7.fhir.template';
+    let controlTemplateVersion = templateVersion || 'current';
 
     if (templateType === 'custom-uri') {
       try {

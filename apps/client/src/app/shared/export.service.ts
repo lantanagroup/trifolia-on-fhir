@@ -106,6 +106,7 @@ export class ExportService {
 
     url += 'downloadOutput=' + options.downloadOutput.toString() + '&';
     url += 'socketId=' + encodeURIComponent(this.socketService.socketId) + '&';
+    url += 'templateType=' + encodeURIComponent(options.templateType) + '&';
     url += 'template=' + encodeURIComponent(options.template) + '&';
     url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
     return this.http.get(url, {responseType: 'text'});

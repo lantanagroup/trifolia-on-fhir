@@ -260,7 +260,7 @@ export class ExportController extends BaseController {
 
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion);
 
       runPublish();
 
