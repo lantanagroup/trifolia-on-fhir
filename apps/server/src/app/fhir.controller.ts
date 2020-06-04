@@ -367,7 +367,7 @@ export class FhirController extends BaseController {
 
     (bundle.entry || []).forEach((entry) => {
       queue.add(async () => {
-        const next = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+        const next = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions, applyContextPermissions);
         results.push(next);
       });
     });
@@ -474,7 +474,7 @@ export class FhirController extends BaseController {
     if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
       try {
-        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions);
+        const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions, applyContextPermissions);
         return {
           status: 200,
           data: responseBundle
