@@ -110,34 +110,6 @@
       </div>
     </ng-template>
   </ngb-tab>
-  <ngb-tab *ngIf="validation" id="validation">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['publish.validation']">Validation ({{validation.length}})</span>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>Severity</th>
-          <th>Resource</th>
-          <th>Details</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let issue of validation">
-          <td>{{issue.severity}}</td>
-          <td>{{issue.resourceReference}}</td>
-          <td>{{issue.details}}</td>
-        </tr>
-        </tbody>
-        <tfoot *ngIf="validation.length === 0">
-        <tr>
-          <td colspan="3">No validation issues found!</td>
-        </tr>
-        </tfoot>
-      </table>
-    </ng-template>
-  </ngb-tab>
   <ngb-tab id="status">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>

@@ -1,20 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { ExportOptions, ExportService } from '../shared/export.service';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { ConfigService } from '../shared/config.service';
-import { CookieService } from 'angular2-cookie/core';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { FhirService } from '../shared/fhir.service';
-import { HtmlExportStatus, SocketService } from '../shared/socket.service';
-import { saveAs } from 'file-saver';
-import { ServerValidationResult } from '../../../../../libs/tof-lib/src/lib/server-validation-result';
-import { NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { HttpClient } from '@angular/common/http';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {ExportOptions, ExportService} from '../shared/export.service';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ConfigService} from '../shared/config.service';
+import {CookieService} from 'angular2-cookie/core';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {FhirService} from '../shared/fhir.service';
+import {HtmlExportStatus, SocketService} from '../shared/socket.service';
+import {saveAs} from 'file-saver';
+import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {ActivatedRoute} from '@angular/router';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -26,7 +25,6 @@ export class PublishComponent implements OnInit {
   public options = new ExportOptions();
   public searching = false;
   public message: string;
-  public validation: ServerValidationResult[];
   public socketOutput = '';
   public autoScroll = true;
   public Globals = Globals;
@@ -68,7 +66,6 @@ export class PublishComponent implements OnInit {
   public implementationGuideChanged(implementationGuide: ImplementationGuide) {
     this.selectedImplementationGuide = implementationGuide;
     this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
-    this.validation = null;
 
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
@@ -76,16 +73,6 @@ export class PublishComponent implements OnInit {
       this.cookieService.put(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.remove(cookieKey);
-    }
-
-    if (implementationGuide && implementationGuide.id) {
-      this.exportService.validate(implementationGuide.id)
-        .subscribe(
-          (results) => {
-            this.validation = results;
-          },
-          (err) => this.message = getErrorString(err)
-        );
     }
   }
 
