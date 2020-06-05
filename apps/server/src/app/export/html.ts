@@ -124,7 +124,9 @@ export class HtmlExporter {
 
       this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
-      const igPublisherProcess = spawn(process, jarParams);
+      const igPublisherProcess = spawn(process, jarParams, {
+        cwd: this.rootPath
+      });
 
       igPublisherProcess.stdout.on('data', (data) => {
         const message = data.toString()
