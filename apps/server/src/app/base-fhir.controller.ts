@@ -10,12 +10,19 @@ import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent} from './helper';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import * as fs from 'fs-extra';
+
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
   protected readonly logger = new TofLogger(BaseFhirController.name);
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService,
+              protected configService: ConfigService) {
     super(configService, httpService);
   }
 
@@ -75,7 +82,7 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<Bundle> {
+  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<SearchImplementationGuideResponseContainer> {
     const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
 
     const options = <AxiosRequestConfig> {
@@ -88,7 +95,25 @@ export class BaseFhirController extends BaseController {
 
     try {
       const results = await this.httpService.request(options).toPromise();
-      return results.data;
+      const searchIGResponses: SearchImplementationGuideResponse[] = [];
+      results.data.entry.forEach(bundle => {
+        if(this.configService.server && this.configService.server.publishStatusPath){
+          searchIGResponses.push({
+            data: bundle,
+            published: this.getPublishStatus(bundle.resource.id),
+          });
+        }
+        else{
+          searchIGResponses.push({
+            data: bundle
+          });
+        }
+      });
+      const searchIGContainer: SearchImplementationGuideResponseContainer = {
+        responses: searchIGResponses,
+        total: results.data.total
+      };
+      return searchIGContainer;
     } catch (ex) {
       let message = `Failed to search for resource type ${this.resourceType}: ${ex.message}`;
 
@@ -101,6 +126,14 @@ export class BaseFhirController extends BaseController {
       this.logger.error(message, ex.stack);
       throw ex;
     }
+  }
+
+  public getPublishStatus(implementationGuideId: string): boolean{
+    let publishStatuses: { [implementationGuideId: string]: boolean } = {};
+    if (fs.existsSync(this.configService.server.publishStatusPath)) {
+      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
+    }
+    return publishStatuses.hasOwnProperty(implementationGuideId) ? publishStatuses[implementationGuideId] : null;
   }
 
   protected async baseGet(baseUrl, id: string, query?: any, user?: ITofUser): Promise<any> {

@@ -13,6 +13,10 @@ import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/t
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirController} from './fhir.controller';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -21,7 +25,8 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService,
+              protected configService: ConfigService) {
     super(httpService, configService);
   }
 
@@ -53,7 +58,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get()
-  public search(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query() query?: any, @RequestHeaders() headers?) {
+  public search(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
     return super.baseSearch(user, fhirServerBase, query, headers);
   }
 

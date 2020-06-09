@@ -17,6 +17,7 @@ export interface IServerConfig {
   latestIgPublisherPath?: string;
   bannerMessage?: string;
   maxAsyncQueueRequests: number;
+  publishStatusPath?: string;
 }
 
 export function createTestServerConfig(enableSecurity = false): IServerConfig {

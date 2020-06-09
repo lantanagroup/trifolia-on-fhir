@@ -55,17 +55,24 @@
     </th>
     <th>Name</th>
     <th *ngIf="configService.isFhirR4">Title</th>
+    <th>Published?</th>
     <th class="actions-column-1">&nbsp;</th>
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let ig of implementationGuides">
-    <td>{{ig.id}}</td>
-    <td>{{ig.name}}</td>
-    <td *ngIf="configService.isFhirR4">{{ig.title}}</td>
+    <td>{{ig.data.resource.id}}</td>
+    <td>{{ig.data.resource.name}}</td>
+    <td *ngIf="configService.isFhirR4">{{ig.data.resource.title}}</td>
+    <td>
+      <i *ngIf="ig.published === true" class="fas fa-check" title="Success"></i>
+      <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
+      <i *ngIf="ig.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
+    </td>
+
     <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.id}}/home" title="Select this implementation guide project">
+        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/home" title="Select this implementation guide project">
           <i class="fas fa-hand-pointer"></i>
         </a>
       </div>
@@ -87,12 +94,12 @@
   </tr>
   </tbody>
   <tfoot>
-  <tr *ngIf="results && results.total === 0">
+  <tr *ngIf="results && total === 0">
     <td colspan="3">No implementation guides! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/implementation-guide/new">here</a>...</td>
   </tr>
-  <tr *ngIf="results && results.total > 0">
+  <tr *ngIf="results && total > 0">
     <td colspan="3">
-      <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true"
+      <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="total" [(page)]="page" [boundaryLinks]="true"
                       (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
     </td>
   </tr>

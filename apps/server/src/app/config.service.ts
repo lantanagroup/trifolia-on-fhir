@@ -14,7 +14,8 @@ export class ConfigService {
     supportUrl: 'http://test.com/support',
     enableSecurity: false,
     maxRequestSizeMegabytes: 50,
-    maxAsyncQueueRequests: 4
+    maxAsyncQueueRequests: 4,
+    publishStatusPath: ""
   };
   public fhir: IFhirConfig = {
     nonEditableResources: {},

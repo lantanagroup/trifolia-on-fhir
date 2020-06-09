@@ -13,6 +13,10 @@ import {
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { ConfigService } from './config.service';
 import { Router } from '@angular/router';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 export class PublishedGuideModel {
   public name: string;
@@ -76,7 +80,7 @@ export class ImplementationGuideService {
     }
 
     url += '_sort=name';
-    return this.http.get<Bundle>(url);
+    return this.http.get<SearchImplementationGuideResponseContainer>(url);
   }
 
   public getImplementationGuide(id: string) {
