@@ -35,11 +35,11 @@
 
 <br/>
 
-<div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="results && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
   <ngb-pagination
     class="d-flex justify-content-center"
     [maxSize]="5"
-    [collectionSize]="results.total"
+    [collectionSize]="total"
     [(page)]="page"
     [boundaryLinks]="true"
     (pageChange)="criteriaChangedEvent.next()">
