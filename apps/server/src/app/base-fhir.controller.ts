@@ -82,7 +82,7 @@ export class BaseFhirController extends BaseController {
     return preparedQuery;
   }
 
-  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<SearchImplementationGuideResponseContainer> {
+  protected async baseSearch(user: ITofUser, fhirServerBase: string, query?: any, headers?: { [key: string]: string}): Promise<Bundle> {
     const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
 
     const options = <AxiosRequestConfig> {
@@ -95,25 +95,7 @@ export class BaseFhirController extends BaseController {
 
     try {
       const results = await this.httpService.request(options).toPromise();
-      const searchIGResponses: SearchImplementationGuideResponse[] = [];
-      results.data.entry.forEach(bundle => {
-        if(this.configService.server && this.configService.server.publishStatusPath){
-          searchIGResponses.push({
-            data: bundle,
-            published: this.getPublishStatus(bundle.resource.id),
-          });
-        }
-        else{
-          searchIGResponses.push({
-            data: bundle
-          });
-        }
-      });
-      const searchIGContainer: SearchImplementationGuideResponseContainer = {
-        responses: searchIGResponses,
-        total: results.data.total
-      };
-      return searchIGContainer;
+      return results.data;
     } catch (ex) {
       let message = `Failed to search for resource type ${this.resourceType}: ${ex.message}`;
 
