@@ -74,7 +74,7 @@ export class ImplementationGuideController extends BaseFhirController {
       const results = await this.httpService.request(options).toPromise();
       const searchIGResponses: SearchImplementationGuideResponse[] = [];
       results.data.entry.forEach(bundle => {
-        if(bundle.resource.resourceType === "ImplementationGuide" && this.configService.server && this.configService.server.publishStatusPath){
+        if(this.configService.server && this.configService.server.publishStatusPath){
           searchIGResponses.push({
             data: bundle,
             published: this.getPublishStatus(bundle.resource.id),
