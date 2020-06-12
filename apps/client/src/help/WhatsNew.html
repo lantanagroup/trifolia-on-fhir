@@ -185,57 +185,30 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.9.0</span></p>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts21">Specify an IG Jurisdiction</span></span></h3>
-<p class="rvps8"><span class="rvts22">You can now add Jurisdictions to your IG. </span></p>
-<p class="rvps8"><span class="rvts22">IGs with no specified jurisdiction may result in this warning from the publisher: </span></p>
-<p class="rvps9"><span class="rvts22">ImplementationGuide.jurisdiction warning The resource should declare its jurisdiction to match the package id (hl7.fhir.us.ccda, jurisdiction = urn:iso:std:iso:3166:-2#US)</span></p>
-<p class="rvps8"><span class="rvts22">Package IDs that contains "hl7.fhir.us" populate the Jurisdiction fields with a CodeableConcept. The system is "urn:iso:std:iso:3166:-2" and the code is "US."</span></p>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts21">Select the IG Publisher Version when Exporting/publishing</span></span></h3>
-<p class="rvps10"><span class="rvts22"><br/></span></p>
-<p class="rvps10"><span class="rvts22">On the </span><span class="rvts23">Publish</span><span class="rvts22">&nbsp;screen, you can now select which version of the IG publisher to run. The server uses the IG publisher version to run the publishing process.</span></p>
-<p class="rvps10"><span class="rvts22"><br/></span></p>
-<p class="rvps10"><span class="rvts23">Resolve Common Pre-Publishing Errors</span></p>
-<p class="rvps10"><span class="rvts22">If you encounter errors during the publishing process, check chat.fhir.org for guidance.</span></p>
-<p class="rvps10"><span class="rvts22"><br/></span></p>
-<p class="rvps10"><span class="rvts22">The new Publishing section in the Help Documentation documents steps how to resolve common pre-publishing errors encountered with the current version: </span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li style="margin-left: 0px" class="rvps11"><span class="rvts24">IG Version</span></li>
-<li style="margin-left: 0px" class="rvps11"><span class="rvts24">Generating Snapshot</span></li>
-<li style="margin-left: 0px" class="rvps11"><span class="rvts24">IG Package ID</span></li>
-<li style="margin-left: 0px" class="rvps11"><span class="rvts24">Terminology Server Connection</span></li>
-<li style="margin-left: 0px" class="rvps11"><span class="rvts24">Dependency</span></li>
+<p class="rvps3"><span class="rvts16">Release 1.10.0</span></p>
+<h3 class="rvps7"><span class="rvts0"><span class="rvts20">Select a Published Implementation Guide (IG) as a Dependency</span></span></h3>
+<p class="rvps3"><span class="rvts17"><br/></span></p>
+<p class="rvps3"><span class="rvts17">We have added a new icon to the dependency list. Users can select dependencies from existing IGs. </span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts17">Click the hand icon to display IGs from fhir-ig-list.json. </span></li>
+<li class="rvps3"><span class="rvts17">Select an IG, and then select the IG version.</span></li>
 </ul>
+<h1 class="rvps9"><span class="rvts0"><span class="rvts25">Display Successfully Published IGs</span></span></h1>
+<p class="rvps3"><span class="rvts17">When opening a new file (project), users are now able to see the publishing status of each IG on the server based on the status of last publishing attempt. The status will be based on last IG publisher running, which IGs finished with a code of 0, and which IG finished with a code of not-zero.</span></p>
+<p class="rvps8"><span class="rvts21"><br/></span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (16)</span></span></h3>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts25">New Features</span></span></h4>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-316">TRIFFHIR-316</a><span class="rvts17">] - When Importing Images, you can now specify SVG files</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-336">TRIFFHIR-336</a><span class="rvts17">] - </span><span class="rvts24">Users can select a published IG as a dependency</span></li>
 </ul>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-325">TRIFFHIR-325</a><span class="rvts17">] - When IG Publisher fails, re-display the notification using Zulip</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-370">TRIFFHIR-370</a><span class="rvts17">] - Support specifying "Jurisdiction" in IG editing</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-372">TRIFFHIR-372</a><span class="rvts17">] - Allow user to select version of IG Publisher to use when exporting/publishing</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-375">TRIFFHIR-375</a><span class="rvts17">] - Support support for hosting as HTTPS natively in server</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-365">TRIFFHIR-365</a><span class="rvts17">] - Display Implementation Guides that have successfully publish (based on last publish attempt)</span></li>
 </ul>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts26">Improvements</span></span></h4>
+<p class="rvps3"><span class="rvts17"><br/></span></p>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts23">Resolve Defects</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-332">TRIFFHIR-332</a><span class="rvts17">] - Cannot import XLSX file to Trifolia</span></li>
-</ul>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-335">TRIFFHIR-335</a><span class="rvts17">] - Allow editing profile's base definition</span></li>
-</ul>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-377">TRIFFHIR-377</a><span class="rvts17">] - Can't set Everyone to Read only</span></li>
-</ul>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts26">Resolve Defects</span></span></h4>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-252">TRIFFHIR-252</a><span class="rvts17">] - Should not be able to remove self from permissions</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-315">TRIFFHIR-315</a><span class="rvts17">] - Error appearing for all Media Files within the IG</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-388">TRIFFHIR-388</a><span class="rvts17">] - </span><span class="rvts24">ValueSet 'Add' button in inactive</span></li>
 <li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-337">TRIFFHIR-337</a><span class="rvts17">] - Importing examples (i.e. not Structure Definitions) doesn't set permissions on those examples</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-363">TRIFFHIR-363</a><span class="rvts17">] - </span><span class="rvts20">Incorrect server id in local storage causes ToF not to launch</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-368">TRIFFHIR-368</a><span class="rvts17">] - </span><span class="rvts20">Date fields don't work with keyboard entry</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-369">TRIFFHIR-369</a><span class="rvts17">] - </span><span class="rvts20">CapabilityStatement.format + button does not work</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-378">TRIFFHIR-378</a><span class="rvts17">] - </span><span class="rvts20">Invalid Message on QA page - "The links in this QA report are not functional...."</span></li>
 </ul>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts19"><br/></span></span></h4>
 <p></p>
