@@ -9,6 +9,10 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 @Component({
   selector: 'app-implementation-guides',
@@ -16,7 +20,8 @@ import {AuthService} from '../shared/auth.service';
   styleUrls: ['./implementation-guides.component.css']
 })
 export class ImplementationGuidesComponent extends BaseComponent implements OnInit {
-  public results: Bundle = null;
+  public results: SearchImplementationGuideResponse[] = null;
+  public total = 0;
   public page = 1;
   public nameText: string;
   public titleText: string;
@@ -49,8 +54,9 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     this.configService.setStatusMessage('Loading implementation guides');
 
     this.igService.getImplementationGuides(this.page, this.nameText, this.titleText)
-      .subscribe((res: Bundle) => {
-        this.results = res;
+      .subscribe((res: SearchImplementationGuideResponseContainer) => {
+        this.results = res.responses;
+        this.total = res.total;
         this.configService.setStatusMessage('');
       }, err => {
         this.configService.handleError(err, 'Error loading implementation guides.');
@@ -64,9 +70,9 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
 
     this.igService.removeImplementationGuide(implementationGuide.id)
       .subscribe(() => {
-        const foundEntry = (this.results.entry || []).find((entry) => entry.resource === implementationGuide);
-        const index = this.results.entry.indexOf(foundEntry);
-        this.results.entry.splice(index, 1);
+        const foundEntry = (this.results || []).find((entry) => entry.data.resource === implementationGuide);
+        const index = this.results.indexOf(foundEntry);
+        this.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the implementation guide');
       });
@@ -85,8 +91,8 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     if (!this.results) {
       return [];
     }
-
-    return (this.results.entry || []).map((entry) => <ImplementationGuide>entry.resource);
+    return this.results;
+    //return (this.results || []).map((entry) => <ImplementationGuide>entry.data.resource);
   }
 
   public nameTextChanged(value: string) {

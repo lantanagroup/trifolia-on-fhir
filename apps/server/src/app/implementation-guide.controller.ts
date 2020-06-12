@@ -6,13 +6,18 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {BundleExporter} from './export/bundle';
-import {getHumanNameDisplay, getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, getHumanNameDisplay, getHumanNamesDisplay } from '../../../../libs/tof-lib/src/lib/helper';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
 import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirController} from './fhir.controller';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -21,7 +26,8 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService,
+              protected configService: ConfigService) {
     super(httpService, configService);
   }
 
@@ -53,8 +59,49 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get()
-  public search(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query() query?: any, @RequestHeaders() headers?) {
-    return super.baseSearch(user, fhirServerBase, query, headers);
+  public async search(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
+    const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
+
+    const options = <AxiosRequestConfig> {
+      url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    };
+
+    try {
+      const results = await this.httpService.request(options).toPromise();
+      const searchIGResponses: SearchImplementationGuideResponse[] = [];
+      results.data.entry.forEach(bundle => {
+        if(this.configService.server && this.configService.server.publishStatusPath){
+          searchIGResponses.push({
+            data: bundle,
+            published: this.getPublishStatus(bundle.resource.id),
+          });
+        }
+        else{
+          searchIGResponses.push({
+            data: bundle
+          });
+        }
+      });
+      return {
+        responses: searchIGResponses,
+        total: results.data.total
+      };
+    } catch (ex) {
+      let message = `Failed to search for resource type ${this.resourceType}: ${ex.message}`;
+
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        message = getErrorString(null, ex.response.data);
+        this.logger.error(message, ex.stack);
+        throw new InternalServerErrorException(message);
+      }
+
+      this.logger.error(message, ex.stack);
+      throw ex;
+    }
   }
 
   @Get(':id')

@@ -149,6 +149,10 @@ export class R4HtmlExporter extends HtmlExporter {
   protected populatePageInfos() {
     this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
 
+    if (!this.r4ImplementationGuide.definition) {
+      return;
+    }
+
     if (this.pageInfos.length === 0 || !this.pageInfos[0].fileName || !this.pageInfos[0].fileName.startsWith('index.')) {
       const originalFirstPage = this.r4ImplementationGuide.definition.page;
       this.r4ImplementationGuide.definition.page = {

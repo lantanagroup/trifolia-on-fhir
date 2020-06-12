@@ -10,12 +10,19 @@ import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent} from './helper';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import * as fs from 'fs-extra';
+
 
 export class BaseFhirController extends BaseController {
   protected resourceType: string;
   protected readonly logger = new TofLogger(BaseFhirController.name);
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService,
+              protected configService: ConfigService) {
     super(configService, httpService);
   }
 
@@ -101,6 +108,14 @@ export class BaseFhirController extends BaseController {
       this.logger.error(message, ex.stack);
       throw ex;
     }
+  }
+
+  public getPublishStatus(implementationGuideId: string): boolean{
+    let publishStatuses: { [implementationGuideId: string]: boolean } = {};
+    if (fs.existsSync(this.configService.server.publishStatusPath)) {
+      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
+    }
+    return publishStatuses.hasOwnProperty(implementationGuideId) ? publishStatuses[implementationGuideId] : null;
   }
 
   protected async baseGet(baseUrl, id: string, query?: any, user?: ITofUser): Promise<any> {

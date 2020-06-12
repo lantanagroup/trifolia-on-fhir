@@ -83,7 +83,7 @@ export class PublishComponent implements OnInit {
       tap(() => this.searching = true),
       switchMap((term) => {
         return this.implementationGuideService.getImplementationGuides(1, term).pipe(map((bundle) => {
-          return (bundle.entry || []).map((entry) => <ImplementationGuide>entry.resource);
+          return (bundle.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
         }));
       }),
       tap(() => this.searching = false)
