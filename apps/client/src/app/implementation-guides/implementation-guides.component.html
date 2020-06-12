@@ -65,7 +65,7 @@
     <td>{{ig.data.resource.name}}</td>
     <td *ngIf="configService.isFhirR4">{{ig.data.resource.title}}</td>
     <td>
-      <i *ngIf="ig.published === true" class="fas fa-check" title="Success"></i>
+      <i *ngIf="ig.published === true" class="fas fa-check" style="color:green" title="Success"></i>
       <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
       <i *ngIf="ig.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
     </td>
