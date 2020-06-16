@@ -10,6 +10,7 @@ export class ConstraintManager {
   readonly fhirParser: ParseConformance;
   public elements: ElementTreeModel[];
   private readonly elementDefinitionType: (new(obj?: any) => IElementDefinition);
+  public getStructureDefinition: (url: string) => Promise<IStructureDefinition>;
 
   /**
    *
@@ -38,13 +39,15 @@ export class ConstraintManager {
     }
 
     this.structureDefinition.differential.element = this.structureDefinition.differential.element.map(e => new elementDefinitionType(e));
+  }
 
-    const rootElement = this.createElementTreeModel(this.base.snapshot.element[0]);
+  async initializeRoot() {
+    const rootElement = await this.createElementTreeModel(this.base.snapshot.element[0]);
     this.elements = [rootElement];
     this.associate(this.elements);
 
     // Expand the first element
-    this.toggleExpand(rootElement);
+    await this.toggleExpand(rootElement);
   }
 
   static findElementChildren(element: IElementDefinition, elements: IElementDefinition[]): IElementDefinition[] {
@@ -71,26 +74,32 @@ export class ConstraintManager {
     return value;
   }
 
-  createElementTreeModel(base: IElementDefinition, parent?: ElementTreeModel): ElementTreeModel {
+  async createElementTreeModel(base: IElementDefinition, parent?: ElementTreeModel): Promise<ElementTreeModel> {
     const etm = new ElementTreeModel();
     etm.baseElement = base;
     etm.parent = parent;
     etm.depth = parent ? parent.depth + 1 : 0;
-    const children = this.findChildren(base);
+    const children = await this.findChildren(base);
     etm.hasChildren = children.length > 0;
+
+    // If no child elements are defined in *this* profile, but the element references another single profile, assume the referenced profile has elements
+    if (!etm.hasChildren && etm.baseElement && etm.baseElement.type && etm.baseElement.type.length === 1 && etm.baseElement.type[0].code) {
+      etm.hasChildren = true;
+    }
+
     return etm;
   }
 
-  toggleExpand(etm: ElementTreeModel) {
+  async toggleExpand(etm: ElementTreeModel) {
     if (!etm.expanded) {
       // Find all children of the requested element
-      const children = this.findChildren(etm.baseElement, etm.constrainedElement);
+      const children = await this.findChildren(etm.baseElement, etm.constrainedElement);
       const nextIndex = this.elements.indexOf(etm) + 1;
       const newTreeModels = [];
 
       for (let i = children.length - 1; i >= 0; i--) {
         // Insert the element right after the element that is being expanded
-        const newEtm = this.createElementTreeModel(children[i], etm);
+        const newEtm = await this.createElementTreeModel(children[i], etm);
         this.elements.splice(nextIndex, 0, newEtm);
         newTreeModels.push(newEtm);
       }
@@ -102,7 +111,7 @@ export class ConstraintManager {
       for (let i = childElementTreeModels.length - 1; i >= 0; i--) {
         // Recursively collapse children of the child
         if (childElementTreeModels[i].expanded) {
-          this.toggleExpand(childElementTreeModels[i]);
+          await this.toggleExpand(childElementTreeModels[i]);
         }
         // Remove the child from the elements list
         const index = this.elements.indexOf(childElementTreeModels[i]);
@@ -112,7 +121,7 @@ export class ConstraintManager {
     }
   }
 
-  findChildren(parent: IElementDefinition, constrained?: IElementDefinition): IElementDefinition[] {
+  async findChildren(parent: IElementDefinition, constrained?: IElementDefinition): Promise<IElementDefinition[]> {
     let structure = this.base;
     let type = parent.type && parent.type.length === 1 ? parent.type[0].code : undefined;
 
@@ -132,7 +141,11 @@ export class ConstraintManager {
     }
 
     if (type && type !== 'BackboneElement') {
-      const nextStructure = this.fhirParser.structureDefinitions.find(sd => sd.id.toLowerCase() === type.toLowerCase());
+      let nextStructure = this.fhirParser.structureDefinitions.find(sd => sd.id.toLowerCase() === type.toLowerCase());
+
+      if (!nextStructure && type.startsWith('http://') || type.startsWith('https://')) {
+        nextStructure = await this.getStructureDefinition(type);
+      }
 
       if (nextStructure) {
         structure = <IStructureDefinition> JSON.parse(JSON.stringify(nextStructure));
@@ -144,7 +157,9 @@ export class ConstraintManager {
       }
     }
 
-    return ConstraintManager.findElementChildren(parent, structure.snapshot.element);
+    // TODO: Debug the logic here to see how it is different for a referenced profile
+    const nextChildren = ConstraintManager.findElementChildren(parent, structure.snapshot.element);
+    return nextChildren;
   }
 
   private findPreviousSiblings(elementTreeModel: ElementTreeModel) {

@@ -215,6 +215,20 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
     }
 
+    this.constraintManager.getStructureDefinition = (url: string) => {
+      return new Promise((resolve, reject) => {
+        this.strucDefService.getBaseStructureDefinition(url).toPromise()
+          .then(res => {
+            resolve(res.base);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    };
+
+    await this.constraintManager.initializeRoot();
+
     this.message = 'Done loading base structure definition.';
   }
 
@@ -417,7 +431,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  getSearchElement(){
+  async getSearchElement(){
     const structureDefElements = <IElementDefinition[]> this.structureDefinition.differential.element;
     let found = structureDefElements.find((element) => {
       return this.checkForMatchingElement(element);
@@ -442,13 +456,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         let currentPath = "";
         let currentElement;
         for (let i = 0; i < pathElements.length; i++) {
-          currentPath = currentPath == "" ? pathElements[i] : currentPath + "." + pathElements[i];
+          currentPath = currentPath === "" ? pathElements[i] : currentPath + "." + pathElements[i];
           currentElement = this.constraintManager.elements.find(e => {
             return e.path === currentPath;
           });
           //Expand all elements that are on the path except the last one
-          if (i != pathElements.length - 1 && !currentElement.expanded) {
-            this.constraintManager.toggleExpand(currentElement);
+          if (i !== pathElements.length - 1 && !currentElement.expanded) {
+            await this.constraintManager.toggleExpand(currentElement);
           }
         }
         this.selectedElement = currentElement;
