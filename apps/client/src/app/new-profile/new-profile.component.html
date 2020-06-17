@@ -30,11 +30,22 @@
                             tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
         </div>
         <div class="col-md-4">
-          <!-- new-profile-type class is defined in select-single-code.component.css -->
-          <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="type" title="Type"
-                                       valueSetUrl="http://hl7.org/fhir/ValueSet/defined-types" [isTypeahead]="true" customClass="new-profile-type"
-                                       [required]="true" tooltipPath="StructureDefinition.type" (change)="typeChanged()"
-                                       [defaultCode]="null"></app-fhir-select-single-code>
+          <div class="form-group">
+            <label>Type</label>
+            <input type="text" class="form-control"
+                   [(ngModel)]="selectedType"
+                   [ngbTypeahead]="searchSupportedLogicalTypes"
+                   [inputFormatter]="supportedLocalTypeFormatter"
+                   [resultTemplate]="typeTemplate"
+                   [editable]="false"
+                   [class.is-invalid]="!selectedType"
+                   (selectItem)="typeChanged($event.item)" />
+
+            <ng-template #typeTemplate let-r="result" let-t="term">
+              <ngb-highlight [result]="r.display || r.code" [term]="t"></ngb-highlight>
+              &nbsp;<i class="badge badge-info">{{r.spec}}</i>
+            </ng-template>
+          </div>
         </div>
         <div class="col-md-4">
           <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation"

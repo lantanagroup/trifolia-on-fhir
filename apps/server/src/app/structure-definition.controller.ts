@@ -13,6 +13,10 @@ import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {Fhir} from 'fhir/fhir';
 import {BaseDefinitionResponseModel} from '../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {IBundle, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import * as fs from 'fs';
+import * as path from 'path';
+import {ILogicalTypeDefinition} from '../../../../libs/tof-lib/src/lib/logical-type-definition';
+import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
 
 @Controller('api/structureDefinition')
 @UseGuards(AuthGuard('bearer'))
@@ -58,6 +62,33 @@ export class StructureDefinitionController extends BaseFhirController {
     } catch (ex) {
       this.logger.error(`Error while retrieving base structure definition ${url}: ${ex.message}`);
     }
+  }
+
+  @Get('type')
+  public async getSupportedLogicalTypes(@Query('search') search: string, @FhirServerId() fhirServerId: string) {
+    const typesConfigPath = path.join(__dirname, 'config/types.json');
+    if (!fs.existsSync(typesConfigPath)) return [];
+
+    const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
+    const typesConfigContent = fs.readFileSync(typesConfigPath).toString();
+    const typesConfig = <ITypeConfig[]> JSON.parse(typesConfigContent);
+
+    if (!fhirServer) throw new Error(`Could not find configuration for FHIR server with id ${fhirServerId}`);
+    if (!fhirServer.supportedLogicalTypes) return [];
+
+    const allTypes = fhirServer.supportedLogicalTypes
+      .map(slt => typesConfig.find(tc => tc.id.toLowerCase() === slt.toLowerCase()))
+      .reduce<ILogicalTypeDefinition[]>((previous, current) => {
+        if (current && current.types) {
+          previous.push(...current.types);
+        }
+        return previous;
+      }, []);
+
+    const filtered = allTypes
+      .filter(slt => search ? JSON.stringify(slt).toLowerCase().includes(search.toLowerCase()) : true);
+
+    return filtered.slice(0, 10);
   }
 
   /**

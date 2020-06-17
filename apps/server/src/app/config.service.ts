@@ -24,7 +24,8 @@ export class ConfigService {
       id: 'test',
       name: 'test',
       uri: 'http://test.com',
-      version: 'stu3'
+      version: 'stu3',
+      supportedLogicalTypes: []
     }]
   };
   public auth: IAuthConfig = {

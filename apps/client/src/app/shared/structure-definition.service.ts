@@ -6,6 +6,7 @@ import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 
 @Injectable()
 export class StructureDefinitionService {
@@ -19,6 +20,14 @@ export class StructureDefinitionService {
   public getBaseStructureDefinitions(type: string) {
     const url = `/api/structureDefinition/base/${type}`;
     return this.http.get<string[]>(url);
+  }
+
+  public getSupportedLogicalTypes(search?: string) {
+    let url = '/api/structureDefinition/type?';
+
+    if (search) url += `search=${encodeURIComponent(search)}&`;
+
+    return this.http.get<ILogicalTypeDefinition[]>(url);
   }
 
   public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<Bundle> {

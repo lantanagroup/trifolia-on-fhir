@@ -3,7 +3,7 @@ import {StructureDefinitionService} from '../shared/structure-definition.service
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
-import {StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   StructureDefinition as R4StructureDefinition,
   StructureDefinitionContextComponent
@@ -13,15 +13,19 @@ import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { BaseComponent } from '../base.component';
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
-export class NewProfileComponent extends BaseComponent implements OnInit {
+export class NewProfileComponent extends BaseComponent {
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
   public Globals: Globals;
+  public selectedType: ILogicalTypeDefinition;
 
   constructor(
     public configService: ConfigService,
@@ -38,6 +42,18 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
       new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
   }
 
+  public supportedLocalTypeFormatter = (result: ILogicalTypeDefinition) => {
+    return result.code;
+  };
+
+  public searchSupportedLogicalTypes = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term) => this.strucDefService.getSupportedLogicalTypes(term))
+    );
+  };
+
   public saveDisabled() {
     return !this.structureDefinition.url ||
       !this.structureDefinition.baseDefinition ||
@@ -48,7 +64,8 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
       !this.structureDefinition.hasOwnProperty('abstract') ||
-      !this.canEdit(this.structureDefinition);
+      !this.canEdit(this.structureDefinition) ||
+      !this.selectedType;
   }
 
   public save() {
@@ -60,8 +77,15 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
       });
   }
 
-  public typeChanged() {
-    this.structureDefinition.baseDefinition = `http://hl7.org/fhir/StructureDefinition/${this.structureDefinition.type}`;
+  public typeChanged(selectedType: ILogicalTypeDefinition) {
+    if (!selectedType) {
+      delete this.structureDefinition.type;
+      delete this.structureDefinition.baseDefinition;
+      return;
+    }
+
+    this.structureDefinition.type = selectedType.code;
+    this.structureDefinition.baseDefinition = selectedType.uri;
   }
 
   public urlChanged() {
@@ -70,9 +94,5 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     if (lastIndex) {
       this.structureDefinition.id = this.structureDefinition.url.substring(lastIndex + 1);
     }
-  }
-
-  ngOnInit() {
-    this.typeChanged();
   }
 }
