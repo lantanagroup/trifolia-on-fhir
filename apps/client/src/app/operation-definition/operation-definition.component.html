@@ -27,6 +27,8 @@
 
           <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
 
+          <app-fhir-reference [parentObject]="operationDefinition" propertyName="base" title="Base" resourceType="OperationDefinition" [hideResourceType]="true" [isCanonical]="true"></app-fhir-reference>
+
           <div class="form-group">
             <label>Status
               <app-tooltip-icon tooltipPath="OperationDefinition.status"></app-tooltip-icon>
