@@ -147,6 +147,23 @@ export class TofLogger extends Logger {
     }
   }
 
+  verbose(message: string, context?: string) {
+    super.verbose(message, context);
+
+    if (this.serverConfig.logFileName) {
+      this.rotateLogs();
+
+      try {
+        fs.appendFileSync(this.serverConfig.logFileName, `VERBOSE - ${new Date().toUTCString()} - ${message}\r\n`);
+      } catch (ex) {
+        if (!TofLogger.loggedFileError) {
+          super.error(`Could not write logs to file: ${ex.message}`);
+          TofLogger.loggedFileError = true;
+        }
+      }
+    }
+  }
+
   warn(message: string, context?: string) {
     if (this.serverConfig.logLevel && this.serverConfig.logLevel === 'error') {
       return;

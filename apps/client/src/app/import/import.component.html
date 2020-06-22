@@ -10,7 +10,7 @@
       <span [attr.data-intro]="Globals.introText['import.file-tab']">Files</span>
     </ng-template>
     <ng-template ngbTabContent>
-      <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML and XLSX (excel) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
+      <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML, XLSX (excel) and image (JPG, PNG, GIF, etc.) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
       </div>
 
       <div class="alert alert-danger" *ngIf="errorMessage !== ''">{{errorMessage}}</div>

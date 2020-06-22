@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
-import {BadRequestException, HttpService, UnauthorizedException} from '@nestjs/common';
+import {BadRequestException, HttpService, Logger, UnauthorizedException} from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,
@@ -307,6 +307,10 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     return Promise.resolve();
   }
 
+  const logger = new Logger('Helper.addToImplementationGuide');
+
+  logger.verbose(`Adding resource ${resource.resourceType}/${resource.id} to context implementation guide.`);
+
   let igUrl;
   let changed = false;
   const resourceReferenceString = `${resource.resourceType}/${resource.id}`;
@@ -315,11 +319,15 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     const implementationGuideId = <string>implementationGuide;
     igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
 
+    logger.verbose(`Retrieving implementation guide ${implementationGuideId}`);
+
     const igResults = await httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     implementationGuide = igResults.data;
   } else {
     igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuide.id);
   }
+
+  logger.verbose(`Asserting that user can edit the implementation guide ${implementationGuide.id}`);
 
   assertUserCanEdit(configService, userSecurityInfo, implementationGuide);
 
@@ -337,6 +345,9 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
     if (!foundResource) {
       const display = (<any>resource).title || (<any>resource).name;
+
+      logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
+
       r4.definition.resource.push({
         reference: {
           reference: resourceReferenceString,
@@ -373,6 +384,8 @@ export async function addToImplementationGuide(httpService: HttpService, configS
       };
 
       if (stu3.package.length === 0) {
+        logger.verbose('STU3 IG does not contain a package, adding a default package with the resource added to it.');
+
         stu3.package.push({
           name: 'Default Package',
           resource: [newResource]
@@ -382,6 +395,8 @@ export async function addToImplementationGuide(httpService: HttpService, configS
         if (!stu3.package[0].resource) {
           stu3.package[0].resource = [];
         }
+
+        logger.verbose(`Adding resource to implementation guide's ${stu3.package[0].name} package.`);
 
         stu3.package[0].resource.push(newResource);
         changed = true;
@@ -400,6 +415,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     };
 
     if (changed) {
+      logger.verbose(`Persisting the implementation guide ${implementationGuide.id} with the resource added.`);
       await httpService.request(updateOptions).toPromise();
     }
   }
