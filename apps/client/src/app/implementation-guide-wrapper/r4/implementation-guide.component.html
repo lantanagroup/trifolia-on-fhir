@@ -151,13 +151,6 @@
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-fhir-markdown
-          [parentObject]="implementationGuide"
-          propertyName="description" title="Description"
-          [isOptional]="true"
-          tooltipPath="ImplementationGuide.description">
-        </app-fhir-markdown>
-
         <div class="card">
           <div class="card-header">Pages</div>
           <table class="table">
