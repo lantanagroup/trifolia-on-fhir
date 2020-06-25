@@ -123,6 +123,7 @@
                   <table class="table table-striped" *ngIf="searchUsersBundle">
                     <thead>
                     <tr>
+                      <th>ID</th>
                       <th>User</th>
                       <th>Email</th>
                       <th class="actions-column-1"></th>
@@ -130,6 +131,7 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let u of searchUserResults">
+                      <td>{{u.id}}</td>
                       <td>{{getHumanNamesDisplay(u.name)}}</td>
                       <td>{{getPractitionerEmail(u)}}</td>
                       <td>

@@ -2,3 +2,11 @@
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+.identifier .input-group-text {
+  min-width: 125px;
+}
+
+.identifier .form-control {
+  min-width: 250px;
+}

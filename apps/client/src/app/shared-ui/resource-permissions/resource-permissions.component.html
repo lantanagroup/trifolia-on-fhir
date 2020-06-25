@@ -165,6 +165,7 @@
         <table class="table table-striped" *ngIf="foundUsersBundle">
           <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Read</th>
@@ -173,6 +174,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let u of foundUsers">
+            <td>{{u.id}}</td>
             <td title="{{getIdentifierDisplay(u)}}">{{getHumanNamesDisplay(u.name)}}</td>
             <td>{{getPractitionerEmail(u)}}</td>
             <td class="actions-column-1">

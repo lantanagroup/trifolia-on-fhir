@@ -1,8 +1,15 @@
-
-<p>Identifiers:</p>
-<ul>
-  <li *ngFor="let i of practitioner.identifier">{{i.value}} {{i.system ? '(' + i.system + ')' : ''}}</li>
-</ul>
+<div class="input-group identifier">
+  <div class="input-group-prepend">
+    <div class="input-group-text">Internal ID</div>
+    <input type="text" class="form-control" [ngModel]="practitioner.id" readonly="readonly" />
+  </div>
+</div>
+<div class="input-group identifier" *ngFor="let i of practitioner.identifier; let ii = index">
+  <div class="input-group-prepend">
+    <div class="input-group-text" title="{{i.system}}">Other #{{ii + 1}}</div>
+    <input type="text" class="form-control" value="{{i.value}}" readonly="readonly" />
+  </div>
+</div>
 
 <div class="row">
   <div class="col-md-6">
