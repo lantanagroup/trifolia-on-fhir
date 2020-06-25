@@ -27,7 +27,6 @@ export class Globals {
     'extension-ig-dependency-name': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
     'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
     'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
-    'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
@@ -39,7 +38,10 @@ export class Globals {
     'extension-ig-parameter': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-parameter',
     'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
     'elementdefinition-profile-element': 'http://hl7.org/fhir/StructureDefinition/elementdefinition-profile-element',
-    'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-package-list'
+    'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-package-list',
+    'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
+    'extension-ig-page-filename': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-filename',
+    'extension-ig-page-reuse-description': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description'
   };
 
   static readonly introText = {

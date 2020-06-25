@@ -264,6 +264,7 @@ export interface IImplementationGuide extends IDomainResource {
   fhirVersion?: string|string[];
   description?: string;
   experimental?: boolean;
+  contact?: IContactDetail[];
 }
 
 export interface ICodeSystemConceptProperty {

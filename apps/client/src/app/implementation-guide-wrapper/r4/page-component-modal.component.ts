@@ -20,7 +20,6 @@ export class PageComponentModalComponent implements OnInit {
   public page: ImplementationGuidePageComponent;
   public implementationGuide: ImplementationGuide;
   public rootPage: boolean;
-  public pageBinary: Binary;
   public pageNavMenus: string[];
 
   constructor(public activeModal: NgbActiveModal) {
@@ -33,20 +32,7 @@ export class PageComponentModalComponent implements OnInit {
 
   public setPage(value: ImplementationGuidePageComponent) {
     this.inputPage = value;
-
-    // Make a clone of the page provided in the component's input so that
-    // the modal window doesn't make changes directly to the page
-    this.page = JSON.parse(JSON.stringify(this.inputPage));
-
-    // Make sure the page has the required name property
-    if (this.page && !this.page.nameReference && !this.page.nameUrl) {
-      this.page.nameReference = { reference: '', display: '' };
-    }
-
-    if (this.page && this.page.nameReference && this.page.nameReference.reference && this.page.nameReference.reference.startsWith('#')) {
-      // Find the Binary in the contained resources
-      this.pageBinary = <Binary>(this.implementationGuide.contained || []).find((extension) => extension.id === this.page.nameReference.reference.substring(1));
-    }
+    this.page = new ImplementationGuidePageComponent(this.inputPage);
   }
 
   public get nameType(): 'Url'|'Reference' {
@@ -64,28 +50,11 @@ export class PageComponentModalComponent implements OnInit {
 
     if (this.nameType === 'Reference' && value === 'Url') {
       delete this.page.nameReference;
-      this.pageBinary = null;
       this.page.nameUrl = '';
     } else if (this.nameType === 'Url' && value === 'Reference') {
       delete this.page.nameUrl;
       this.page.nameReference = { reference: '', display: '' };
     }
-  }
-
-  public get pageContent() {
-    if (!this.pageBinary || !this.pageBinary.data) {
-      return '';
-    }
-
-    return atob(this.pageBinary.data);
-  }
-
-  public set pageContent(value: string) {
-    if (!this.pageBinary) {
-      return;
-    }
-
-    this.pageBinary.data = btoa(value);
   }
 
   public get hasPageNavMenu(): boolean {
@@ -131,47 +100,14 @@ export class PageComponentModalComponent implements OnInit {
       distinctUntilChanged(),
       map(term => term.length < 2 ? [] : this.pageNavMenus.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10)),
       distinct()
-    );
-
-  public  initializePageContent() {
-    this.implementationGuide.contained = this.implementationGuide.contained || [];
-
-    const newBinary = new Binary();
-    newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
-    newBinary.contentType = 'text/markdown';
-    newBinary.data = '';
-    this.implementationGuide.contained.push(newBinary);
-
-    this.nameType = 'Reference';
-    this.page.nameReference.reference = '#' + newBinary.id;
-    this.page.nameReference.display = 'Page content ' + newBinary.id;
-
-    this.pageBinary = newBinary;
-  }
+    )
 
   public importFile(file: File) {
     const reader = new FileReader();
 
     reader.onload = (e: any) => {
       const result = e.target.result;
-
-      this.implementationGuide.contained = this.implementationGuide.contained || [];
-
-      const newBinary = new Binary();
-      newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
-      newBinary.contentType = file.type;
-      newBinary.data = result.substring(5 + file.type.length + 8);
-      this.implementationGuide.contained.push(newBinary);
-
-      if (!this.page.extension) {
-        this.page.extension = [];
-      }
-
-      this.nameType = 'Reference';
-      this.page.nameReference.reference = '#' + newBinary.id;
-      this.page.nameReference.display = 'Page content ' + newBinary.id;
-
-      this.pageBinary = newBinary;
+      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
     };
 
     reader.readAsDataURL(file);

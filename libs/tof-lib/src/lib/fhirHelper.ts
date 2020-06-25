@@ -1,6 +1,21 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
+import * as semver from 'semver';
+import {Versions} from 'fhir/fhir';
+
+
+export function identifyRelease(fhirVersion: string): Versions {
+  if (!fhirVersion) {
+    return Versions.STU3;
+  } else if (semver.satisfies(fhirVersion, '>= 3.2.0 < 4.2.0')) {
+    return Versions.R4;
+  } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.2')) {
+    return Versions.STU3;
+  } else {
+    throw new Error('Unexpected FHIR Version ' + fhirVersion);
+  }
+}
 
 export function joinUrl(...parts: string[]) {
   let url = '';

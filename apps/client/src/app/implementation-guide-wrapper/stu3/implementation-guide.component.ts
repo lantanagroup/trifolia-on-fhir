@@ -460,7 +460,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       this.implementationGuide.page.kind = 'page';
       this.implementationGuide.page.title = 'New Page';
       this.implementationGuide.page.format = 'markdown';
-      this.implementationGuide.page.source = 'newPage.md';
+      this.implementationGuide.page.source = 'newPage.html';
     } else if (!value && this.implementationGuide.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.page);
       this.removePage(foundPageDef);

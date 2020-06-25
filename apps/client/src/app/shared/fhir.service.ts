@@ -30,6 +30,7 @@ import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -68,7 +69,7 @@ export class FhirService {
         this.loadAssets();
       }
 
-      if (ConfigService.identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
         this.customValidator = new CustomR4Validator();
       } else {            // Assume default of STU3
         this.customValidator = new CustomSTU3Validator();
@@ -117,7 +118,7 @@ export class FhirService {
 
   public loadAssets() {
     this.loaded = false;
-    const fhirVersion = ConfigService.identifyRelease(this.configService.fhirConformanceVersion);
+    const fhirVersion = identifyRelease(this.configService.fhirConformanceVersion);
     const isFhirR4 = fhirVersion === Versions.R4;
     const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 

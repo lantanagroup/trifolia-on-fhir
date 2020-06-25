@@ -167,10 +167,6 @@
                 Title
                 <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
               </th>
-              <th>
-                Generation
-                <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.generation"></app-tooltip-icon>
-              </th>
               <th class="actions-column-5">&nbsp;</th>
             </tr>
             </thead>
@@ -179,15 +175,6 @@
               <td>
                 <input type="text" class="form-control" [(ngModel)]="p.page.title"
                        [class.is-invalid]="!p.page.title"/>
-              </td>
-              <td>
-                <app-fhir-select-single-code
-                  [parentObject]="p.page"
-                  propertyName="generation"
-                  [required]="true"
-                  valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
-                  [isFormGroup]="false">
-                </app-fhir-select-single-code>
               </td>
               <td>
                 <div class="btn-group pull-right">

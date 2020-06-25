@@ -5,6 +5,7 @@ import {ConfigService} from '../shared/config.service';
 import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
 import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {Versions} from 'fhir/fhir';
+import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -26,7 +27,7 @@ export class ImplementationGuideWrapperComponent implements OnInit {
   }
 
   versionChanged() {
-    let componentFactory;
+    let componentFactory: any;
     let version = this.configService.fhirConformanceVersion;
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -34,7 +35,7 @@ export class ImplementationGuideWrapperComponent implements OnInit {
       version = this.fileService.file.fhirVersion;
     }
 
-    if (ConfigService.identifyRelease(version) === Versions.R4) {
+    if (identifyRelease(version) === Versions.R4) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
     } else {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);

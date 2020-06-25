@@ -88,55 +88,12 @@ export class R4HtmlExporter extends HtmlExporter {
 
     const pageInfo = new PageInfo();
     pageInfo.page = page;
+    pageInfo.fileName = page.fileName || page.nameUrl;
 
-    if (page.nameReference && page.nameReference.reference) {
-      const reference = page.nameReference.reference;
-
-      if (reference.startsWith('#')) {
-        const contained = (implementationGuide.contained || []).find((contained) => contained.id === reference.substring(1));
-        const binary = contained && contained.resourceType === 'Binary' ? <R4Binary>contained : undefined;
-
-        if (binary) {
-          pageInfo.fileName = Globals.getCleanFileName(page.title);
-
-          if (pageInfo.fileName.indexOf('.') < 0) {
-            pageInfo.fileName += HtmlExporter.getPageExtension(page);
-          }
-        }
-
-        if (binary && binary.data) {
-          pageInfo.content = Buffer.from(binary.data, 'base64').toString();
-        }
-      }
-    } else if (page.nameUrl) {
-      pageInfo.fileName = page.nameUrl;
-
-      if (pageInfo.fileName.indexOf('.') > 0) {
-        pageInfo.fileName = pageInfo.fileName.substring(0, pageInfo.fileName.lastIndexOf('.'));
-      }
-
-      pageInfo.fileName += HtmlExporter.getPageExtension(page);
-    }
-
-    // Populate the index.md page with default content based on the IG
-    if (pageInfo.fileName === 'index.md' && !pageInfo.content) {
-      pageInfo.content = '### Overview\n\n';
-
-      if (implementationGuide.description) {
-        const descriptionContent = implementationGuide.description + '\n\n';
-        pageInfo.content += descriptionContent + '\n\n';
-      } else {
-        pageInfo.content += 'This implementation guide does not have a description, yet.\n\n';
-      }
-
-      if (implementationGuide.contact) {
-        const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-        });
-        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-        pageInfo.content += authorsContent;
-      }
+    if (page.reuseDescription) {
+      pageInfo.content = this.getIndexContent(implementationGuide);
+    } else {
+      pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
     }
 
     theList.push(pageInfo);
@@ -148,47 +105,6 @@ export class R4HtmlExporter extends HtmlExporter {
 
   protected populatePageInfos() {
     this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
-
-    if (!this.r4ImplementationGuide.definition) {
-      return;
-    }
-
-    if (this.pageInfos.length === 0 || !this.pageInfos[0].fileName || !this.pageInfos[0].fileName.startsWith('index.')) {
-      const originalFirstPage = this.r4ImplementationGuide.definition.page;
-      this.r4ImplementationGuide.definition.page = {
-        title: 'IG Home Page',
-        nameUrl: 'index.html',
-        generation: 'markdown',
-        page: originalFirstPage ? [originalFirstPage] : []
-      };
-
-      const rootPageInfo = new PageInfo();
-      rootPageInfo.fileName = 'index.md';
-      rootPageInfo.page = this.r4ImplementationGuide.definition.page;
-      this.pageInfos.splice(0, 0, rootPageInfo);
-    }
-
-    if (!this.pageInfos[0].content) {
-      let indexContent = '### Overview\n\n';
-
-      if (this.r4ImplementationGuide.description) {
-        const descriptionContent = this.r4ImplementationGuide.description + '\n\n';
-        indexContent += descriptionContent + '\n\n';
-      } else {
-        indexContent += 'This implementation guide does not have a description, yet.\n\n';
-      }
-
-      if (this.r4ImplementationGuide.contact) {
-        const authorsData = (<any> this.r4ImplementationGuide.contact || []).map((contact: ContactDetail) => {
-          const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-          return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
-        });
-        const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
-        indexContent += authorsContent;
-      }
-
-      this.pageInfos[0].content = indexContent;
-    }
   }
 
   protected prepareImplementationGuide(): DomainResource {

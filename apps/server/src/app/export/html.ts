@@ -2,6 +2,7 @@ import { Fhir as FhirModule } from 'fhir/fhir';
 import { Server } from 'socket.io';
 import { spawn } from 'child_process';
 import {
+  ContactDetail,
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
@@ -30,10 +31,10 @@ import {
   getExtensionString
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { IBundle, IExtension } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { PackageListModel } from '../../../../../libs/tof-lib/src/lib/package-list-model';
 import { FhirInstances, unzip } from '../helper';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import {createTableFromArray, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import { ConfigService } from '../config.service';
 import { FileService } from '../../../../client/src/app/shared/file.service';
 
@@ -272,9 +273,17 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-    this.implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
+    const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
       .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
       .resource;
+
+    if (this.fhirVersion === 'r4') {
+      this.implementationGuide = new R4ImplementationGuide(implementationGuide);
+    } else if (this.fhirVersion === 'stu3') {
+      this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
+    } else {
+      throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
+    }
 
     this.removeNonExampleMedia();
     this.populatePageInfos();
@@ -786,5 +795,27 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(resourcePath, resourceContent);
+  }
+
+  protected static getIndexContent(implementationGuide: IImplementationGuide) {
+    let content = '### Overview\n\n';
+
+    if (implementationGuide.description) {
+      const descriptionContent = implementationGuide.description + '\n\n';
+      content += descriptionContent + '\n\n';
+    } else {
+      content += 'This implementation guide does not have a description, yet.\n\n';
+    }
+
+    if (implementationGuide.contact) {
+      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+        const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
+        return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+      });
+      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+      content += authorsContent;
+    }
+
+    return content;
   }
 }

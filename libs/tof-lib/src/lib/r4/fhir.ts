@@ -20,6 +20,7 @@ import {
   IStructureDefinition,
   setChoice
 } from '../fhirInterfaces';
+import {Globals} from '../globals';
 
 export class Base {
   public fhir_comments?: string[];
@@ -347,13 +348,19 @@ export class DomainResource extends Resource implements IDomainResource {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
+      if (obj.hasOwnProperty('resourceType')) {
+        this.resourceType = obj.resourceType;
+      }
       if (obj.hasOwnProperty('text')) {
         this.text = new Narrative(obj.text);
       }
       if (obj.hasOwnProperty('contained')) {
         this.contained = [];
         for (const o of obj.contained || []) {
-          this.contained.push(new DomainResource(o));
+          if (o.resourceType && classMapping[o.resourceType]) {
+            const contained = new classMapping[o.resourceType](o);
+            this.contained.push(<DomainResource> contained);
+          }
         }
       }
       if (obj.hasOwnProperty('extension')) {
@@ -14647,6 +14654,93 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     }
   }
 
+  public setTitle(value: string) {
+    this.title = value;
+
+    if (value) {
+      this.fileName = value.toLowerCase().replace(/\s/g, '_') + '.html';
+    }
+  }
+
+  public get fileName() {
+    const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
+    if (fileNameExt) return fileNameExt.valueUri;
+  }
+
+  public set fileName(value: string) {
+    this.extension = this.extension || [];
+    let fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
+
+    if (!fileNameExt && value) {
+      fileNameExt = {
+        url: Globals.extensionUrls['extension-ig-page-filename'],
+        valueUri: value.replace(/\s/g, '_')
+      };
+      this.extension.push(fileNameExt);
+    } else if (fileNameExt && !value) {
+      const index = this.extension.indexOf(fileNameExt);
+      this.extension.splice(index, 1);
+    } else if (fileNameExt && value) {
+      fileNameExt.valueUri = value.replace(/\s/g, '_');
+    }
+
+    if (this.hasOwnProperty('nameUrl')) {
+      if (value) {
+        this.nameUrl = value;
+      } else {
+        delete this.nameUrl;
+      }
+    }
+  }
+
+  public get reuseDescription() {
+    const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
+    if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
+    return false;
+  }
+
+  public set reuseDescription(value: boolean) {
+    this.extension = this.extension || [];
+    let reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
+
+    if (!reuseDescriptionExt) {
+      reuseDescriptionExt = {
+        url: Globals.extensionUrls['extension-ig-page-reuse-description'],
+        valueBoolean: value
+      };
+      this.extension.push(reuseDescriptionExt);
+    } else if (reuseDescriptionExt) {
+      reuseDescriptionExt.valueBoolean = value;
+    }
+
+    if (value) {
+      this.contentMarkdown = null;
+    }
+  }
+
+  public get contentMarkdown() {
+    const contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
+    if (contentExt) return contentExt.valueMarkdown;
+  }
+
+  public set contentMarkdown(value: string) {
+    this.extension = this.extension || [];
+    let contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
+
+    if (!contentExt && value) {
+      contentExt = {
+        url: Globals.extensionUrls['extension-ig-page-content'],
+        valueMarkdown: value
+      };
+      this.extension.push(contentExt);
+    } else if (contentExt && !value) {
+      const index = this.extension.indexOf(contentExt);
+      this.extension.splice(index, 1);
+    } else if (contentExt && value) {
+      contentExt.valueMarkdown = value;
+    }
+  }
+
 }
 
 export class ImplementationGuideParameterComponent extends BackboneElement {
@@ -28831,6 +28925,152 @@ export class VisionPrescription extends DomainResource {
       }
     }
   }
-
 }
 
+export const classMapping = {
+  'Account': Account,
+  'ActivityDefinition': ActivityDefinition,
+  'AdverseEvent': AdverseEvent,
+  'AllergyIntolerance': AllergyIntolerance,
+  'Appointment': Appointment,
+  'AppointmentResponse': AppointmentResponse,
+  'AuditEvent': AuditEvent,
+  'Basic': Basic,
+  'Binary': Binary,
+  'BiologicallyDerivedProduct': BiologicallyDerivedProduct,
+  'BodyStructure': BodyStructure,
+  'Bundle': Bundle,
+  'CapabilityStatement': CapabilityStatement,
+  'CarePlan': CarePlan,
+  'CareTeam': CareTeam,
+  //'CatalogEntry': CatalogEntry,
+  'ChargeItem': ChargeItem,
+  'ChargeItemDefinition': ChargeItemDefinition,
+  'Claim': Claim,
+  'ClaimResponse': ClaimResponse,
+  'ClinicalImpression': ClinicalImpression,
+  'CodeSystem': CodeSystem,
+  'Communication': Communication,
+  'CommunicationRequest': CommunicationRequest,
+  'CompartmentDefinition': CompartmentDefinition,
+  'Composition': Composition,
+  'ConceptMap': ConceptMap,
+  'Condition': Condition,
+  'Consent': Consent,
+  'Contract': Contract,
+  'Coverage': Coverage,
+  'CoverageEligibilityRequest': CoverageEligibilityRequest,
+  'CoverageEligibilityResponse': CoverageEligibilityResponse,
+  'DetectedIssue': DetectedIssue,
+  'Device': Device,
+  'DeviceDefinition': DeviceDefinition,
+  'DeviceMetric': DeviceMetric,
+  'DeviceRequest': DeviceRequest,
+  'DeviceUseStatement': DeviceUseStatement,
+  'DiagnosticReport': DiagnosticReport,
+  'DocumentManifest': DocumentManifest,
+  'DocumentReference': DocumentReference,
+  //'EffectEvidenceSynthesis': EffectEvidenceSynthesis,
+  'Encounter': Encounter,
+  'Endpoint': Endpoint,
+  'EnrollmentRequest': EnrollmentRequest,
+  'EnrollmentResponse': EnrollmentResponse,
+  'EpisodeOfCare': EpisodeOfCare,
+  'EventDefinition': EventDefinition,
+  //'Evidence': Evidence,
+  //'EvidenceVariable': EvidenceVariable,
+  'ExampleScenario': ExampleScenario,
+  'ExplanationOfBenefit': ExplanationOfBenefit,
+  'FamilyMemberHistory': FamilyMemberHistory,
+  'Flag': Flag,
+  'Goal': Goal,
+  'GraphDefinition': GraphDefinition,
+  'Group': Group,
+  'GuidanceResponse': GuidanceResponse,
+  'HealthcareService': HealthcareService,
+  'ImagingStudy': ImagingStudy,
+  'Immunization': Immunization,
+  'ImmunizationEvaluation': ImmunizationEvaluation,
+  'ImmunizationRecommendation': ImmunizationRecommendation,
+  'ImplementationGuide': ImplementationGuide,
+  'InsurancePlan': InsurancePlan,
+  'Invoice': Invoice,
+  'Library': Library,
+  'Linkage': Linkage,
+  'List': List,
+  'Location': Location,
+  'Measure': Measure,
+  'MeasureReport': MeasureReport,
+  'Media': Media,
+  'Medication': Medication,
+  'MedicationAdministration': MedicationAdministration,
+  'MedicationDispense': MedicationDispense,
+  'MedicationKnowledge': MedicationKnowledge,
+  'MedicationRequest': MedicationRequest,
+  'MedicationStatement': MedicationStatement,
+  'MedicinalProduct': MedicinalProduct,
+  'MedicinalProductAuthorization': MedicinalProductAuthorization,
+  'MedicinalProductContraindication': MedicinalProductContraindication,
+  'MedicinalProductIndication': MedicinalProductIndication,
+  'MedicinalProductIngredient': MedicinalProductIngredient,
+  'MedicinalProductInteraction': MedicinalProductInteraction,
+  'MedicinalProductManufactured': MedicinalProductManufactured,
+  'MedicinalProductPackaged': MedicinalProductPackaged,
+  'MedicinalProductPharmaceutical': MedicinalProductPharmaceutical,
+  'MedicinalProductUndesirableEffect': MedicinalProductUndesirableEffect,
+  'MessageDefinition': MessageDefinition,
+  'MessageHeader': MessageHeader,
+  //'MolecularSequence': MolecularSequence,
+  'NamingSystem': NamingSystem,
+  'NutritionOrder': NutritionOrder,
+  'Observation': Observation,
+  'ObservationDefinition': ObservationDefinition,
+  'OperationDefinition': OperationDefinition,
+  'OperationOutcome': OperationOutcome,
+  'Organization': Organization,
+  'OrganizationAffiliation': OrganizationAffiliation,
+  'Parameters': Parameters,
+  'Patient': Patient,
+  'PaymentNotice': PaymentNotice,
+  'PaymentReconciliation': PaymentReconciliation,
+  'Person': Person,
+  'PlanDefinition': PlanDefinition,
+  'Practitioner': Practitioner,
+  'PractitionerRole': PractitionerRole,
+  'Procedure': Procedure,
+  'Provenance': Provenance,
+  'Questionnaire': Questionnaire,
+  'QuestionnaireResponse': QuestionnaireResponse,
+  'RelatedPerson': RelatedPerson,
+  'RequestGroup': RequestGroup,
+  //'ResearchDefinition': ResearchDefinition,
+  //'ResearchElementDefinition': ResearchElementDefinition,
+  'ResearchStudy': ResearchStudy,
+  'ResearchSubject': ResearchSubject,
+  'RiskAssessment': RiskAssessment,
+  //'RiskEvidenceSynthesis': RiskEvidenceSynthesis,
+  'Schedule': Schedule,
+  'SearchParameter': SearchParameter,
+  'ServiceRequest': ServiceRequest,
+  'Slot': Slot,
+  'Specimen': Specimen,
+  'SpecimenDefinition': SpecimenDefinition,
+  'StructureDefinition': StructureDefinition,
+  'StructureMap': StructureMap,
+  'Subscription': Subscription,
+  'Substance': Substance,
+  'SubstancePolymer': SubstancePolymer,
+  //'SubstanceProtein': SubstanceProtein,
+  'SubstanceReferenceInformation': SubstanceReferenceInformation,
+  'SubstanceSpecification': SubstanceSpecification,
+  //'SubstanceSourceMaterial': SubstanceSourceMaterial,
+  'SupplyDelivery': SupplyDelivery,
+  'SupplyRequest': SupplyRequest,
+  'Task': Task,
+  'TerminologyCapabilities': TerminologyCapabilities,
+  'TestReport': TestReport,
+  'TestScript': TestScript,
+  'ValueSet': ValueSet,
+  'VerificationResult': VerificationResult,
+  'VisionPrescription': VisionPrescription,
+};

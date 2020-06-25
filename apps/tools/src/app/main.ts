@@ -4,6 +4,7 @@ import * as Yargs from 'yargs';
 import {RemoveExtras} from './removeExtras';
 import {UserListCommand} from './user-list';
 import {PopulateFromAuth0} from './populateFromAuth0';
+import {Migrate} from './migrate';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
 const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
@@ -20,7 +21,29 @@ const removeExtrasDescription = 'Removes extra properties from resources that ar
 const userListFormat = 'users';
 const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
+const migrateFormat = 'migrate';
+const migrateDescription = 'Migrates data in previous versions of ToF to new versions of ToF';
+
 const argv = Yargs
+  .command(migrateFormat, migrateDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('server', {
+        description: 'The FHIR server to migrate',
+        required: true
+      })
+      .positional('output', {
+        description: 'File path to where the migrated content should be stored as a transaction bundle to commit to the FHIR server after inspection',
+        required: true
+      });
+  }, async (args: any) => {
+    try {
+      const migrator = new Migrate(args);
+      await migrator.init();
+      await migrator.migrate();
+    } catch (ex) {
+      console.error(ex.message);
+    }
+  })
   .command(populateFromAuth0Format, populateFromAuth0Description, (yargs: Yargs.Argv) => {
     return yargs
       .positional('server', {

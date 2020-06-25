@@ -7,7 +7,12 @@
 <div class="modal-body" *ngIf="page">
   <div class="form-group">
     <label>Title</label>
-    <input type="text" class="form-control" [(ngModel)]="page.title" [class.is-invalid]="!page.hasOwnProperty('title')"/>
+    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event)" [class.is-invalid]="!page.hasOwnProperty('title')"/>
+  </div>
+
+  <div class="form-group">
+    <label>File Name (Source)</label>
+    <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
   </div>
 
   <div class="form-group">
@@ -19,11 +24,6 @@
   </div>
 
   <div class="form-group">
-    <label>Source</label>
-    <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
-  </div>
-
-  <div class="form-group">
     <label>
       <input type="checkbox" [(ngModel)]="hasPageNavMenu"/> Show on top nav menu
     </label>
@@ -31,14 +31,14 @@
   </div>
 
   <div class="form-group">
+    <label>
+      <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
+    </label>
+  </div>
+
+  <div class="form-group" *ngIf="!page.reuseDescription">
     <label>Content</label>
-    <trifolia-fhir-markdown [(value)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
-    <div class="help-block" *ngIf="!pageBinary">
-      A contained Binary resource could not be found for this source. This will result in an incomplete FHIR IG Publisher build package.
-      <br/>
-      <input type="file" style="display: none" (change)="importFile(fileInput.files[0])" accept=".html,.txt,.md" #fileInput/>
-      <button type="button" class="btn btn-default" (click)="fileInput.click()">Import from computer (HTML, Text, MD/Markdown)</button>
-    </div>
+    <trifolia-fhir-markdown [(value)]="page.contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
   </div>
 
   <div class="card">

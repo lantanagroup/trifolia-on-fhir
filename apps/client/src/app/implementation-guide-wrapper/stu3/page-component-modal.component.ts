@@ -14,7 +14,6 @@ export class PageComponentModalComponent implements OnInit {
   private inputPage: PageComponent;
   public page: PageComponent;
   public implementationGuide: ImplementationGuide;
-  public pageBinary: Binary;
   public Globals = Globals;
   public pageNavMenus: string[];
 
@@ -76,36 +75,7 @@ export class PageComponentModalComponent implements OnInit {
 
     // Make a clone of the page provided in the component's input so that
     // the modal window doesn't make changes directly to the page
-    this.page = JSON.parse(JSON.stringify(this.inputPage));
-
-    if (this.page && this.page.source) {
-      const contentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
-
-      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-          // Find the Binary in the contained resources
-          this.pageBinary = <Binary>(this.implementationGuide.contained || []).find((extension) => extension.id === reference.substring(1));
-        }
-      }
-    }
-  }
-
-  public get pageContent() {
-    if (!this.pageBinary || !this.pageBinary.content) {
-      return '';
-    }
-
-    return atob(this.pageBinary.content);
-  }
-
-  public set pageContent(value: string) {
-    if (!this.pageBinary) {
-      return;
-    }
-
-    this.pageBinary.content = btoa(value);
+    this.page = new PageComponent(this.inputPage);
   }
 
   public importFile(file: File) {
@@ -113,40 +83,7 @@ export class PageComponentModalComponent implements OnInit {
 
     reader.onload = (e: any) => {
       const result = e.target.result;
-
-      if (!this.implementationGuide.contained) {
-        this.implementationGuide.contained = [];
-      }
-
-      const newBinary = new Binary();
-      newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
-      newBinary.contentType = file.type;
-      newBinary.content = result.substring(5 + file.type.length + 8);
-      this.implementationGuide.contained.push(newBinary);
-
-      if (!this.page.extension) {
-        this.page.extension = [];
-      }
-
-      let contentExtension = (this.page.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-ig-page-content']);
-
-      if (!contentExtension) {
-        contentExtension = {
-          url: Globals.extensionUrls['extension-ig-page-content'],
-          valueReference: {
-            reference: '#' + newBinary.id,
-            display: 'Page content ' + newBinary.id
-          }
-        };
-        this.page.extension.push(contentExtension);
-      } else {
-        contentExtension.valueReference = {
-          reference: '#' + newBinary.id,
-          display: 'Page content ' + newBinary.id
-        };
-      }
-
-      this.pageBinary = newBinary;
+      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
     };
 
     reader.readAsDataURL(file);

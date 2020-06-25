@@ -23,6 +23,7 @@ import {
   IStructureDefinition,
   setChoice
 } from '../fhirInterfaces';
+import {Globals} from '../globals';
 
 export class Base {
   public fhir_comments?: string[];
@@ -211,7 +212,7 @@ export class Narrative extends Element {
 }
 
 export class DomainResource extends Resource implements IDomainResource {
-  public resourceType = '';
+  public resourceType = 'DomainResource';
   public text?: Narrative;
   public contained?: DomainResource[];
   public extension?: Extension[];
@@ -220,6 +221,9 @@ export class DomainResource extends Resource implements IDomainResource {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
+      if (obj.hasOwnProperty('resourceType')) {
+        this.resourceType = obj.resourceType;
+      }
       this.resourceType = obj.resourceType;
       if (obj.text) {
         this.text = new Narrative(obj.text);
@@ -227,7 +231,10 @@ export class DomainResource extends Resource implements IDomainResource {
       if (obj.contained) {
         this.contained = [];
         for (const o of obj.contained || []) {
-          this.contained.push(new DomainResource(o));
+          if (o.resourceType && classMapping[o.resourceType]) {
+            const contained = new classMapping[o.resourceType](o);
+            this.contained.push(<DomainResource> contained);
+          }
         }
       }
       if (obj.extension) {
@@ -10918,6 +10925,61 @@ export class PageComponent extends BackboneElement {
     }
   }
 
+  public setTitle(value: string) {
+    this.title = value;
+
+    if (value) {
+      this.source = value.toLowerCase().replace(/\s/g, '_') + '.html';
+    }
+  }
+
+  public get reuseDescription() {
+    const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
+    if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
+    return false;
+  }
+
+  public set reuseDescription(value: boolean) {
+    this.extension = this.extension || [];
+    let reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
+
+    if (!reuseDescriptionExt) {
+      reuseDescriptionExt = {
+        url: Globals.extensionUrls['extension-ig-page-reuse-description'],
+        valueBoolean: value
+      };
+      this.extension.push(reuseDescriptionExt);
+    } else if (reuseDescriptionExt) {
+      reuseDescriptionExt.valueBoolean = value;
+    }
+
+    if (value) {
+      this.contentMarkdown = null;
+    }
+  }
+
+  public get contentMarkdown() {
+    const contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
+    if (contentExt) return contentExt.valueMarkdown;
+  }
+
+  public set contentMarkdown(value: string) {
+    this.extension = this.extension || [];
+    let contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
+
+    if (!contentExt && value) {
+      contentExt = {
+        url: Globals.extensionUrls['extension-ig-page-content'],
+        valueMarkdown: value
+      };
+      this.extension.push(contentExt);
+    } else if (contentExt && !value) {
+      const index = this.extension.indexOf(contentExt);
+      this.extension.splice(index, 1);
+    } else if (contentExt && value) {
+      contentExt.valueMarkdown = value;
+    }
+  }
 }
 
 export class ImplementationGuide extends DomainResource implements IImplementationGuide {
@@ -18344,3 +18406,122 @@ export class VisionPrescription extends DomainResource {
 
 }
 
+export const classMapping = {
+  'Account': Account,
+  'ActivityDefinition': ActivityDefinition,
+  'AllergyIntolerance': AllergyIntolerance,
+  'AdverseEvent': AdverseEvent,
+  'Appointment': Appointment,
+  'AppointmentResponse': AppointmentResponse,
+  'AuditEvent': AuditEvent,
+  'Basic': Basic,
+  'Binary': Binary,
+  'BodySite': BodySite,
+  'Bundle': Bundle,
+  'CapabilityStatement': CapabilityStatement,
+  'CarePlan': CarePlan,
+  'CareTeam': CareTeam,
+  'ChargeItem': ChargeItem,
+  'Claim': Claim,
+  'ClaimResponse': ClaimResponse,
+  'ClinicalImpression': ClinicalImpression,
+  'CodeSystem': CodeSystem,
+  'Communication': Communication,
+  'CommunicationRequest': CommunicationRequest,
+  'CompartmentDefinition': CompartmentDefinition,
+  'Composition': Composition,
+  'ConceptMap': ConceptMap,
+  'Condition': Condition,
+  'Consent': Consent,
+  'Contract': Contract,
+  'Coverage': Coverage,
+  'DataElement': DataElement,
+  'DetectedIssue': DetectedIssue,
+  'Device': Device,
+  'DeviceComponent': DeviceComponent,
+  'DeviceMetric': DeviceMetric,
+  'DeviceRequest': DeviceRequest,
+  'DeviceUseStatement': DeviceUseStatement,
+  'DiagnosticReport': DiagnosticReport,
+  'DocumentManifest': DocumentManifest,
+  'DocumentReference': DocumentReference,
+  'EligibilityRequest': EligibilityRequest,
+  'EligibilityResponse': EligibilityResponse,
+  'Encounter': Encounter,
+  'Endpoint': Endpoint,
+  'EnrollmentRequest': EnrollmentRequest,
+  'EnrollmentResponse': EnrollmentResponse,
+  'EpisodeOfCare': EpisodeOfCare,
+  'ExpansionProfile': ExpansionProfile,
+  'ExplanationOfBenefit': ExplanationOfBenefit,
+  'FamilyMemberHistory': FamilyMemberHistory,
+  'Flag': Flag,
+  'Goal': Goal,
+  'GraphDefinition': GraphDefinition,
+  'Group': Group,
+  'GuidanceResponse': GuidanceResponse,
+  'HealthcareService': HealthcareService,
+  'ImagingManifest': ImagingManifest,
+  'ImagingStudy': ImagingStudy,
+  'Immunization': Immunization,
+  'ImmunizationRecommendation': ImmunizationRecommendation,
+  'ImplementationGuide': ImplementationGuide,
+  'Library': Library,
+  'Linkage': Linkage,
+  'List': List,
+  'Location': Location,
+  'Measure': Measure,
+  'MeasureReport': MeasureReport,
+  'Media': Media,
+  'Medication': Medication,
+  'MedicationAdministration': MedicationAdministration,
+  'MedicationDispense': MedicationDispense,
+  'MedicationRequest': MedicationRequest,
+  'MedicationStatement': MedicationStatement,
+  'MessageDefinition': MessageDefinition,
+  'MessageHeader': MessageHeader,
+  'NamingSystem': NamingSystem,
+  'NutritionOrder': NutritionOrder,
+  'Observation': Observation,
+  'OperationDefinition': OperationDefinition,
+  'OperationOutcome': OperationOutcome,
+  'Organization': Organization,
+  'Parameters': Parameters,
+  'Patient': Patient,
+  'PaymentNotice': PaymentNotice,
+  'PaymentReconciliation': PaymentReconciliation,
+  'Person': Person,
+  'PlanDefinition': PlanDefinition,
+  'Practitioner': Practitioner,
+  'PractitionerRole': PractitionerRole,
+  'Procedure': Procedure,
+  'ProcedureRequest': ProcedureRequest,
+  'ProcessRequest': ProcessRequest,
+  'ProcessResponse': ProcessResponse,
+  'Provenance': Provenance,
+  'Questionnaire': Questionnaire,
+  'QuestionnaireResponse': QuestionnaireResponse,
+  'ReferralRequest': ReferralRequest,
+  'RelatedPerson': RelatedPerson,
+  'RequestGroup': RequestGroup,
+  'ResearchStudy': ResearchStudy,
+  'ResearchSubject': ResearchSubject,
+  'RiskAssessment': RiskAssessment,
+  'Schedule': Schedule,
+  'SearchParameter': SearchParameter,
+  'Sequence': Sequence,
+  'ServiceDefinition': ServiceDefinition,
+  'Slot': Slot,
+  'Specimen': Specimen,
+  'StructureDefinition': StructureDefinition,
+  'StructureMap': StructureMap,
+  'Subscription': Subscription,
+  'Substance': Substance,
+  'SupplyDelivery': SupplyDelivery,
+  'SupplyRequest': SupplyRequest,
+  'Task': Task,
+  'TestScript': TestScript,
+  'TestReport': TestReport,
+  'ValueSet': ValueSet,
+  'VisionPrescription': VisionPrescription
+};

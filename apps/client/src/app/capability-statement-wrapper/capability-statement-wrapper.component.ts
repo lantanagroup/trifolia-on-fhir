@@ -5,6 +5,7 @@ import {R4CapabilityStatementComponent} from './r4/capability-statement.componen
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../shared/file.service';
 import {Versions} from 'fhir/fhir';
+import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 /**
  * This class is responsible for determining which capability-statement component to render
@@ -34,7 +35,7 @@ export class CapabilityStatementWrapperComponent implements OnInit {
       version = this.fileService.file.fhirVersion;
     }
 
-    if (ConfigService.identifyRelease(version) === Versions.R4) {
+    if (identifyRelease(version) === Versions.R4) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4CapabilityStatementComponent);
     } else {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3CapabilityStatementComponent);

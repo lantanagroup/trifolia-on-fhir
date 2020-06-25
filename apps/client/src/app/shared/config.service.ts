@@ -4,10 +4,10 @@ import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
 import {CapabilityStatement as STU3CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {CapabilityStatement as R4CapabilityStatement, Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
 import {ExportOptions} from './export.service';
+import {identifyRelease as identifyReleaseFunc} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Injectable()
 export class ConfigService {
@@ -25,18 +25,6 @@ export class ConfigService {
 
   constructor(private injector: Injector) {
     this.fhirServer = localStorage.getItem('fhirServer');
-  }
-
-  public static identifyRelease(fhirVersion: string): Versions {
-    if (!fhirVersion) {
-      return Versions.STU3;
-    } else if (semver.satisfies(fhirVersion, '>= 3.2.0 < 4.2.0')) {
-      return Versions.R4;
-    } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.2')) {
-      return Versions.STU3;
-    } else {
-      throw new Error('Unexpected FHIR Version ' + fhirVersion);
-    }
   }
 
   public async getTemplateVersions(options: ExportOptions): Promise<string[]> {
@@ -89,11 +77,11 @@ export class ConfigService {
   }
 
   public get isFhirSTU3() {
-    return ConfigService.identifyRelease(this.fhirConformanceVersion) === Versions.STU3;
+    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.STU3;
   }
 
   public get isFhirR4() {
-    return ConfigService.identifyRelease(this.fhirConformanceVersion) === Versions.R4;
+    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R4;
   }
 
   public setTitle(value: string) {
@@ -124,7 +112,7 @@ export class ConfigService {
             localStorage.removeItem('fhirServer');
           }
         }
-        
+
         if (!this.fhirServer && this.config.fhirServers.length > 0) {
           this.fhirServer = this.config.fhirServers[0].id;
         }
@@ -171,7 +159,7 @@ export class ConfigService {
 
   public identifyRelease(): Versions {
     if (this.fhirConformanceVersion) {
-      return ConfigService.identifyRelease(this.fhirConformanceVersion);
+      return identifyReleaseFunc(this.fhirConformanceVersion);
     }
 
     return Versions.STU3;

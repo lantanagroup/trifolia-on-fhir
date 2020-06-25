@@ -1,7 +1,6 @@
 import {BaseTools} from './baseTools';
 import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import * as rp from 'request-promise';
 
 export interface PermissionOptions {

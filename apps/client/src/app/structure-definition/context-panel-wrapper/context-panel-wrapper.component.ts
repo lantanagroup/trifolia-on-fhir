@@ -14,6 +14,7 @@ import {ContextPanelR4Component} from './r4/context-panel-r4.component';
 import {ContextPanelStu3Component} from './stu3/context-panel-stu3.component';
 import {StructureDefinition as STU3StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface IContextPanelComponent {
   structureDefinition: STU3StructureDefinition | R4StructureDefinition;
@@ -40,7 +41,7 @@ export class ContextPanelWrapperComponent implements OnInit, OnChanges {
     let componentFactory;
     const version = this.configService.fhirConformanceVersion;
 
-    if (ConfigService.identifyRelease(version) === Versions.R4) {
+    if (identifyRelease(version) === Versions.R4) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(ContextPanelR4Component);
     } else {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(ContextPanelStu3Component);

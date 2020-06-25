@@ -6,6 +6,41 @@
 </div>
 <div class="modal-body" *ngIf="page">
   <div class="form-group">
+    <label>Title</label>
+    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event)" [class.is-invalid]="!page.title" />
+  </div>
+
+  <div class="form-group">
+    <label>File Name</label>
+    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith('.html')" />
+    <p class="text-muted" *ngIf="!page.fileName">File name is required, or the page will not export/publish correctly.</p>
+    <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith('.html')">All page's file names must end with the .html extension, or the page will not export/publish correctly.</p>
+  </div>
+
+  <div class="form-group" *ngIf="page.generation !== 'generated'">
+    <label>
+      <input type="checkbox" [(ngModel)]="hasPageNavMenu" /> Show on top nav menu
+    </label>
+    <input type="text" class="form-control" [(ngModel)]="pageNavMenu" [disabled]="!hasPageNavMenu" [ngbTypeahead]="pageNavMenuSearch" />
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
+    </label>
+  </div>
+
+  <div class="form-group" *ngIf="!page.reuseDescription">
+    <label>Content</label>
+    <trifolia-fhir-markdown [(value)]="page.contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
+  </div>
+
+  <hr />
+
+  <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true"></app-fhir-select-single-code>
+  <p class="text-muted">Currently, Trifolia-on-FHIR only supports specifying Markdown content. It is recommended that you leave the "Generation" field as "Markdown".</p>
+
+  <div class="form-group">
     <label>Name Type</label>
     <select class="form-control" [(ngModel)]="nameType">
       <option>Url</option>
@@ -16,30 +51,6 @@
   <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Name URL" [required]="true"></app-fhir-string>
 
   <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')" title="Name Reference" [required]="true"></app-fhir-reference>
-
-  <app-fhir-string [parentObject]="page" propertyName="title" title="Title" [required]="true"></app-fhir-string>
-
-  <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation"
-                               [required]="true"></app-fhir-select-single-code>
-
-  <div class="form-group" *ngIf="page.generation !== 'generated'">
-    <label>
-      <input type="checkbox" [(ngModel)]="hasPageNavMenu" /> Show on top nav menu
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="pageNavMenu" [disabled]="!hasPageNavMenu" [ngbTypeahead]="pageNavMenuSearch" />
-  </div>
-
-  <div class="form-group">
-    <label>Content</label>
-    <trifolia-fhir-markdown [(value)]="pageContent" *ngIf="pageBinary" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
-    <div class="help-block" *ngIf="!pageBinary">
-      <span *ngIf="page.nameUrl === 'index.md'">This home page can be automatically generated based on the description of the implementation guide. Alternatively, you can import content from a file on your computer or <a href="javascript:void()" (click)="initializePageContent()">click here</a> to override the content of the home page.</span>
-      <span *ngIf="page.nameUrl !== 'index.md'">No content has been specified for this page. <a href="javascript:void(0)" (click)="initializePageContent()">click here</a> to specify content for the page.</span>
-      <br/>
-      <input type="file" style="display: none" (change)="importFile(fileInput.files[0])" accept=".html,.txt,.md" #fileInput/>
-      <button type="button" class="btn btn-default" (click)="fileInput.click()">Import from computer (HTML, Text, MD/Markdown)</button>
-    </div>
-  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="ok()">OK</button>

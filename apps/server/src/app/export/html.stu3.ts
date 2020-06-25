@@ -1,7 +1,7 @@
 import {HtmlExporter} from './html';
 import {PageInfo} from './html.models';
 import {
-  Binary as STU3Binary,
+  Binary as STU3Binary, ContactDetail,
   DomainResource,
   ImplementationGuide,
   PackageResourceComponent,
@@ -10,7 +10,7 @@ import {
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {release} from 'os';
@@ -226,39 +226,12 @@ export class STU3HtmlExporter extends HtmlExporter {
 
       const pageInfo = new PageInfo();
       pageInfo.page = page;
-      pageInfo.fileName = Globals.getCleanFileName(page.source);
+      pageInfo.fileName = page.source;
 
-      // the page in the ImplementationGuide should be what we want the page to output as
-      // while the file might have a different extension
-      const extension = page.source.substring(page.source.lastIndexOf('.'));
-      page.source = page.source.substring(0, page.source.lastIndexOf('.')) + '.html';
-
-      if (!page.format) {
-        switch (extension) {
-          case '.md':
-            page.format = 'markdown';
-            break;
-          case '.html':
-            page.format = 'html';
-            break;
-        }
-      }
-
-      if (contentExtension && contentExtension.valueReference && contentExtension.valueReference.reference && page.source) {
-        const reference = contentExtension.valueReference.reference;
-
-        if (reference.startsWith('#')) {
-          const contained = (implementationGuide.contained || []).find((next: DomainResource) => next.id === reference.substring(1));
-          const binary = contained && contained.resourceType === 'Binary' ? <STU3Binary>contained : undefined;
-
-          if (binary) {
-            if (binary.content) {
-              pageInfo.content = Buffer.from(binary.content, 'base64').toString();
-            } else {
-              pageInfo.content = 'No content has been specified for this page.';
-            }
-          }
-        }
+      if (page.reuseDescription) {
+        pageInfo.content = this.getIndexContent(implementationGuide);
+      } else {
+        pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
       }
 
       theList.push(pageInfo);
@@ -270,17 +243,6 @@ export class STU3HtmlExporter extends HtmlExporter {
   }
 
   protected populatePageInfos() {
-    if (!this.stu3ImplementationGuide.page || !this.stu3ImplementationGuide.page.source || !this.stu3ImplementationGuide.page.source.startsWith('index.')) {
-      const originalFirstPage = this.stu3ImplementationGuide.page;
-      this.stu3ImplementationGuide.page = {
-        title: 'IG Home Page',
-        source: 'index.md',
-        kind: 'page',
-        format: 'markdown',
-        page: originalFirstPage ? [originalFirstPage] : []
-      };
-    }
-
     this.pageInfos = STU3HtmlExporter.getPagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
   }
 

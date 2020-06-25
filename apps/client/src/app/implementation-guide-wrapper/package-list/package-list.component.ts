@@ -4,6 +4,7 @@ import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof
 import {DocumentReference} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
   selector: 'trifolia-fhir-package-list',
@@ -21,7 +22,7 @@ export class PackageListComponent implements OnInit {
   constructor(private configService: ConfigService) {
     this.packageListChanged
       .debounceTime(1000)
-      .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, ConfigService.identifyRelease(this.configService.fhirConformanceVersion)));
+      .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
   }
 
   initPackageList() {
@@ -36,7 +37,7 @@ export class PackageListComponent implements OnInit {
       status: 'ci-build',
       current: true
     });
-    PackageListModel.setPackageList(this.implementationGuide, this.packageList, ConfigService.identifyRelease(this.configService.fhirConformanceVersion));
+    PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion));
   }
 
   remove() {
