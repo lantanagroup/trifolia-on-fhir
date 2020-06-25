@@ -13,6 +13,8 @@
   <div class="form-group">
     <label>File Name (Source)</label>
     <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
+    <p class="text-muted" *ngIf="!page.source">File name is required, or the page will not export/publish correctly.</p>
+    <p class="text-muted" *ngIf="page.source && !page.source.endsWith('.html')">All page's file names must end with the .html extension, or the page will not export/publish correctly.</p>
   </div>
 
   <div class="form-group">
@@ -24,10 +26,8 @@
   </div>
 
   <div class="form-group">
-    <label>
-      <input type="checkbox" [(ngModel)]="hasPageNavMenu"/> Show on top nav menu
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="pageNavMenu" [disabled]="!hasPageNavMenu" [ngbTypeahead]="pageNavMenuSearch"/>
+    <label>Show on top nav menu</label>
+    <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
   <div class="form-group">
@@ -63,8 +63,13 @@
       <tbody>
       <tr *ngFor="let type of page.type; let ti = index">
         <td>
-          <app-fhir-select-single-code [parentObject]="page.type" [propertyName]="ti" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types" [required]="true"
-                                       [isFormGroup]="false"></app-fhir-select-single-code>
+          <app-fhir-select-single-code
+            [parentObject]="page.type"
+            [propertyName]="ti"
+            valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"
+            [required]="true"
+            [isFormGroup]="false">
+          </app-fhir-select-single-code>
         </td>
         <td>
           <div class="pull-right">

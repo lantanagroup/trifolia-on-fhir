@@ -332,7 +332,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.implementationGuide = <ImplementationGuide>this.fileService.file.resource;
+        this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
         this.nameChanged();
         this.initPages();
       } else {
@@ -352,7 +352,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             return;
           }
 
-          this.implementationGuide = <ImplementationGuide>results;
+          this.implementationGuide = new ImplementationGuide(results);
           this.nameChanged();
           this.initPages();
         }, (err) => {
@@ -393,7 +393,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
       this.implementationGuide.definition.page.title = 'Home Page';
       this.implementationGuide.definition.page.generation = 'markdown';
-      this.implementationGuide.definition.page.nameUrl = 'index.md';
+      this.implementationGuide.definition.page.nameUrl = 'index.html';
+      this.implementationGuide.definition.page.fileName = 'index.html';
+      this.implementationGuide.definition.page.reuseDescription = true;
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);
@@ -413,6 +415,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     componentInstance.setPage(pageDef.page);
+
+    modalRef.result.then((page: ImplementationGuidePageComponent) => {
+      Object.assign(pageDef.page, page);
+      this.initPages();
+    });
   }
 
   private getNewPageTitles(next = this.implementationGuide.definition.page, pageTitles: string[] = []) {
@@ -431,43 +438,24 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public addChildPage(pageDef: PageDefinition, template?: 'downloads') {
-    if (!this.implementationGuide.contained) {
-      this.implementationGuide.contained = [];
-    }
-
     if (!pageDef.page.page) {
       pageDef.page.page = [];
     }
 
-    const newBinary = new Binary();
-    newBinary.contentType = 'text/markdown';
-    newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
-    this.implementationGuide.contained.push(newBinary);
-
-    if (template === 'downloads') {
-      newBinary.data = 'KipGdWxsIEltcGxlbWVudGF0aW9uIEd1aWRlKioKClRoZSBlbnRpcmUgaW1wbGVtZW50YXRpb24gZ3VpZGUgKGluY2x1ZGluZyB0aGUgSFRNTCBmaWxlcywgZGVmaW5pdGlvbnMsIHZhbGlkYXRpb24gaW5mb3JtYXRpb24sIGV0Yy4pIG1heSBiZSBkb3dubG9hZGVkIFtoZXJlXShmdWxsLWlnLnppcCkuCgoqKlZhbGlkYXRvciBQYWNrIGFuZCBEZWZpbml0aW9ucyoqCgpUaGUgdmFsaWRhdG9yLnBhY2sgZmlsZSBpcyBhIHppcCBmaWxlIHRoYXQgY29udGFpbnMgYWxsIHRoZSB2YWx1ZSBzZXRzLCBwcm9maWxlcywgZXh0ZW5zaW9ucywgbGlzdCBvZiBwYWdlcyBhbmQgdXJscyBpbiB0aGUgSUcsIGV0YyBkZWZpbmVkIGFzIHBhcnQgb2YgdGhlIHRoaXMgSW1wbGVtZW50YXRpb24gR3VpZGVzLgoKSXQgaXMgdXNlZDoKCiogYnkgdGhlIHZhbGlkYXRvciBpZiB5b3UgcmVmZXIgdG8gdGhlIElHIGRpcmVjdGx5IGJ5IGl04oCZcyBjYW5vbmljYWwgVVJMCiogYnkgdGhlIElHIHB1Ymxpc2hlciBpZiB5b3UgZGVjbGFyZSB0aGF0IG9uZSBJRyBkZXBlbmRzIG9uIGFub3RoZXIKKiBieSBhIEZISVIgc2VydmVyLCBpZiB5b3UgYWRkIHRoZSBJRyB0byBzZXJ2ZXIgbG9hZCBsaXN0CgpZb3UgbWF5IFtkb3dubG9hZCB0aGUgdmFsaWRhdG9yLnBhY2tdKHZhbGlkYXRvci5wYWNrKSBmaWxlIGhlcmUuCgpJbiBhZGRpdGlvbiB0aGVyZSBhcmUgZm9ybWF0IHNwZWNpZmljIGRlZmluaXRpb25zIGZpbGVzLgoKKiBbWE1MXShkZWZpbml0aW9ucy54bWwuemlwKQoqIFtKU09OXShkZWZpbml0aW9ucy5qc29uLnppcCkKKiBbVFRMXShkZWZpbml0aW9ucy50dGwuemlwKQoKKipFeGFtcGxlczoqKiBhbGwgdGhlIGV4YW1wbGVzIHRoYXQgYXJlIHVzZWQgaW4gdGhpcyBJbXBsZW1lbnRhdGlvbiBHdWlkZSBhdmFpbGFibGUgZm9yIGRvd25sb2FkOgoKKiBbWE1MXShleGFtcGxlcy54bWwuemlwKQoqIFtKU09OXShleGFtcGxlcy5qc29uLnppcCkKKiBbVFRsXShleGFtcGxlcy50dGwuemlwKQ==';
-    } else {
-      newBinary.data = btoa('No page content yet');
-    }
-
     const newPage = new ImplementationGuidePageComponent();
+    newPage.generation = 'markdown';
 
     if (template === 'downloads') {
       newPage.title = 'Downloads';
-      newPage.extension = newPage.extension || [];
-      const extension = (newPage.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-      if (!extension) {
-        newPage.extension.push(new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'], valueString: 'Downloads' }));
-      }
+      newPage.navMenu = 'Downloads';
+      newPage.fileName = 'downloads.html';
+      newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\n**Validator Pack and Definitions**\n\nThe validator.pack file is a zip file that contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.\n\nIt is used:\n\n* by the validator if you refer to the IG directly by it’s canonical URL\n* by the IG publisher if you declare that one IG depends on another\n* by a FHIR server, if you add the IG to server load list\n\nYou may [download the validator.pack](validator.pack) file here.\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
+      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
 
-    newPage.generation = 'markdown';
-    newPage.nameReference = new ResourceReference();
-    newPage.nameReference.reference = '#' + newBinary.id;
-    newPage.nameReference.display = `Page content ${newBinary.id}`;
+    newPage.nameUrl = newPage.fileName;
     pageDef.page.page.push(newPage);
 
     this.initPages();
@@ -477,14 +465,22 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!pageDef) {
       return;
     }
-    // Remove the page
+
     if (pageDef.parent) {
+      // Move child pages to the parent's children
+      if (pageDef.page.page) {
+        pageDef.parent.page.push(...pageDef.page.page);
+      }
+
+      // Remove the page
       const pageIndex = pageDef.parent.page.indexOf(pageDef.page);
       pageDef.parent.page.splice(pageIndex, 1);
     } else {
+      // Remove the root page
       const children = this.implementationGuide.definition.page.page;
       delete this.implementationGuide.definition.page;
 
+      // If there are children, move the first child to the root page
       if (children && children.length >= 1) {
         this.implementationGuide.definition.page = children[0];
         children.splice(0, 1);
@@ -493,16 +489,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           this.implementationGuide.definition.page.page = this.implementationGuide.definition.page.page || [];
           this.implementationGuide.definition.page.page.splice(0, 0, ...children);
         }
-      }
-    }
-
-    if (pageDef.page && pageDef.page.nameReference && pageDef.page.nameReference.reference && pageDef.page.nameReference.reference.startsWith('#')) {
-      const pageContentId = pageDef.page.nameReference.reference.substring(1);
-      const foundContainedContent = (this.implementationGuide.contained || []).find(c => c.id === pageContentId && c.resourceType === 'Binary');
-
-      if (foundContainedContent) {
-        const containedIndex = this.implementationGuide.contained.indexOf(foundContainedContent);
-        this.implementationGuide.contained.splice(containedIndex, 1);
       }
     }
 

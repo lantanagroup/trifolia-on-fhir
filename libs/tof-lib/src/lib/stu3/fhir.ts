@@ -10925,6 +10925,29 @@ export class PageComponent extends BackboneElement {
     }
   }
 
+  public get navMenu() {
+    const navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+    if (navMenuExt) return navMenuExt.valueString;
+  }
+
+  public set navMenu(value: string) {
+    this.extension = this.extension || [];
+    let navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+    if (!navMenuExt && value) {
+      navMenuExt = {
+        url: Globals.extensionUrls['extension-ig-page-nav-menu'],
+        valueString: value
+      };
+      this.extension.push(navMenuExt);
+    } else if (navMenuExt && !value) {
+      const index = this.extension.indexOf(navMenuExt);
+      this.extension.splice(index, 1);
+    } else if (navMenuExt && value) {
+      navMenuExt.valueString = value
+    }
+  }
+
   public setTitle(value: string) {
     this.title = value;
 

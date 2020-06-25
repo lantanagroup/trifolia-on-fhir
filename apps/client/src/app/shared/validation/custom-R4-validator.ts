@@ -112,19 +112,32 @@ export class CustomR4Validator extends CustomValidator {
     });
 
     allPages.forEach((page: ImplementationGuidePageComponent) => {
-      if (!page.nameReference || !page.nameReference.reference) {
+      const pageClone = new ImplementationGuidePageComponent(page);
+
+      if (page === implementationGuide.definition.page && pageClone.fileName !== 'index.html') {
         messages.push({
-          location: 'ImplementationGuide.definition.page+',
+          location: 'ImplementationGuide.definition.page',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `Page with title ${page.title} does not specify a reference to the content of the page`
+          message: `It is strongly encouraged that the root page of the implementation guide have a file name of "index.html".`
         });
-      } else if (!page.nameReference.reference.startsWith('#')) {
+      }
+
+      if (!pageClone.fileName) {
         messages.push({
           location: 'ImplementationGuide.definition.page+',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `The reference for the page with the title ${page.title} should be a Binary resource contained within the ImplementationGuide so that ToF knows how to export it`
+          message: `Page with title ${page.title} does not specify a file name and will not publish correctly.`
+        });
+      }
+
+      if (!pageClone.reuseDescription && !pageClone.contentMarkdown) {
+        messages.push({
+          location: 'ImplementationGuide.definition.page+',
+          resourceId: implementationGuide.id,
+          severity: Severities.Warning,
+          message: `Page with title ${page.title} does not have any content`
         });
       }
     });

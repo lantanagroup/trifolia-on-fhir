@@ -21,43 +21,6 @@ export class PageComponentModalComponent implements OnInit {
 
   }
 
-  public get hasPageNavMenu(): boolean {
-    const extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-    return !!extension;
-  }
-
-  public set hasPageNavMenu(value: boolean) {
-    let extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-    if (value && !extension) {
-      this.page.extension = this.page.extension || [];
-      this.page.extension.push(new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'], valueString: '' }));
-    } else if (!value && extension) {
-      const index = this.page.extension.indexOf(extension);
-      this.page.extension.splice(index, 1);
-    }
-  }
-
-  public get pageNavMenu(): string {
-    const extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-    if (extension) {
-      return extension.valueString;
-    }
-  }
-
-  public set pageNavMenu(value: string) {
-    let extension = (this.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-    if (!extension) {
-      this.page.extension = this.page.extension || [];
-      extension = new Extension({ url: Globals.extensionUrls['extension-ig-page-nav-menu'] });
-      this.page.extension.push(extension);
-    }
-
-    extension.valueString = value;
-  }
-
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -90,12 +53,7 @@ export class PageComponentModalComponent implements OnInit {
   }
 
   ok() {
-    if (this.inputPage) {
-      // Update the properties of the input page with the changes from the cloned version
-      Object.assign(this.inputPage, this.page);
-    }
-
-    this.activeModal.close();
+    this.activeModal.close(this.page);
   }
 
   ngOnInit() {

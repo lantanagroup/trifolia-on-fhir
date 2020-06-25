@@ -385,7 +385,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.implementationGuide = <ImplementationGuide>this.fileService.file.resource;
+        this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
         this.nameChanged();
         this.initPages();
         this.initParameters();
@@ -406,7 +406,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             return;
           }
 
-          this.implementationGuide = <ImplementationGuide>results;
+          this.implementationGuide = new ImplementationGuide(results);
           this.nameChanged();
           this.initPages();
           this.initParameters();
@@ -458,9 +458,10 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (value && !this.implementationGuide.page) {
       this.implementationGuide.page = new PageComponent();
       this.implementationGuide.page.kind = 'page';
-      this.implementationGuide.page.title = 'New Page';
+      this.implementationGuide.page.title = 'Home Page';
       this.implementationGuide.page.format = 'markdown';
-      this.implementationGuide.page.source = 'newPage.html';
+      this.implementationGuide.page.source = 'index.html';
+      this.implementationGuide.page.reuseDescription = true;
     } else if (!value && this.implementationGuide.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.page);
       this.removePage(foundPageDef);
@@ -475,6 +476,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     componentInstance.implementationGuide = this.implementationGuide;
     componentInstance.setPage(pageDef.page);
+
+    modalRef.result.then((page: PageComponent) => {
+      Object.assign(pageDef.page, page);
+      this.initPages();
+    });
   }
 
   private getNewPageSources(next = this.implementationGuide.page, pageSources: string[] = []) {
@@ -489,52 +495,59 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   private getNewPageSource() {
     const sources = this.getNewPageSources();
-    return 'newPage' + (sources.length + 1).toString() + '.md';
+    return 'newpage' + (sources.length + 1).toString() + '.html';
   }
 
   public addChildPage(pageDef: PageDefinition) {
-    if (!this.implementationGuide.contained) {
-      this.implementationGuide.contained = [];
-    }
-
     if (!pageDef.page.page) {
       pageDef.page.page = [];
     }
 
-    const newBinary = new Binary();
-    newBinary.contentType = 'text/markdown';
-    newBinary.content = btoa('No page content yet');
-    newBinary.id = Globals.generateRandomNumber(5000, 10000).toString();
-    this.implementationGuide.contained.push(newBinary);
-
     const newPage = new PageComponent();
     newPage.kind = 'page';
     newPage.format = 'markdown';
-    newPage.extension = [{
-      url: Globals.extensionUrls['extension-ig-page-content'],
-      valueReference: {
-        reference: '#' + newBinary.id,
-        display: `Page content ${newBinary.id}`
-      }
-    }];
     newPage.source = this.getNewPageSource();
+    newPage.title = this.getNewPageTitle();
     pageDef.page.page.push(newPage);
 
     this.initPages();
+  }
+
+  private getNewPageTitles(next = this.implementationGuide.page, pageTitles: string[] = []) {
+    if (next.title && next.title.match(/New Page( \d+)?/)) {
+      pageTitles.push(next.title);
+    }
+
+    (next.page || []).forEach((childPage) => this.getNewPageTitles(childPage, pageTitles));
+
+    return pageTitles;
+  }
+
+  private getNewPageTitle() {
+    const titles = this.getNewPageTitles();
+    return 'New Page ' + (titles.length + 1).toString();
   }
 
   public removePage(pageDef: PageDefinition) {
     if (!pageDef) {
       return;
     }
-    // Remove the page
+
     if (pageDef.parent) {
+      // Move child pages to the parent's children
+      if (pageDef.page.page) {
+        pageDef.parent.page.push(...pageDef.page.page);
+      }
+
+      // Remove the page
       const pageIndex = pageDef.parent.page.indexOf(pageDef.page);
       pageDef.parent.page.splice(pageIndex, 1);
     } else {
+      // Remove the root page
       const children = this.implementationGuide.page.page;
       delete this.implementationGuide.page;
 
+      // If there are children, move the first child to the root page
       if (children && children.length >= 1) {
         this.implementationGuide.page = children[0];
         children.splice(0, 1);
@@ -543,18 +556,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.implementationGuide.page.page = this.implementationGuide.page.page || [];
           this.implementationGuide.page.page.splice(0, 0, ...children);
         }
-      }
-    }
-
-    const pageContentExt = (pageDef.page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
-
-    if (pageContentExt && pageContentExt.valueReference && pageContentExt.valueReference.reference && pageContentExt.valueReference.reference.startsWith('#')) {
-      const pageContentId = pageContentExt.valueReference.reference.substring(1);
-      const foundContainedContent = (this.implementationGuide.contained || []).find(c => c.id === pageContentId && c.resourceType === 'Binary');
-
-      if (foundContainedContent) {
-        const containedIndex = this.implementationGuide.contained.indexOf(foundContainedContent);
-        this.implementationGuide.contained.splice(containedIndex, 1);
       }
     }
 

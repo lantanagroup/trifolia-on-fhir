@@ -104,9 +104,18 @@ export class CustomSTU3Validator extends CustomValidator {
     });
 
     allPages.forEach((page: PageComponent) => {
-      const foundContentExtension = (page.extension || []).find((extension) => extension.url === 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content');
+      const pageClone = new PageComponent(page);
 
-      if (!foundContentExtension) {
+      if (page === implementationGuide.page && pageClone.source !== 'index.html') {
+        messages.push({
+          location: 'ImplementationGuide.definition.page',
+          resourceId: implementationGuide.id,
+          severity: Severities.Warning,
+          message: `It is strongly encouraged that the root page of the implementation guide have a file name of "index.html".`
+        });
+      }
+
+      if (!pageClone.contentMarkdown) {
         messages.push({
           location: 'ImplementationGuide.page+',
           resourceId: implementationGuide.id,

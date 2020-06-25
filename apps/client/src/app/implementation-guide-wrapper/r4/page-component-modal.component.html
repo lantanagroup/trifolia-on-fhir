@@ -12,16 +12,15 @@
 
   <div class="form-group">
     <label>File Name</label>
-    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith('.html')" />
+    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith('.html') || (rootPage && page.fileName !== 'index.html')" />
     <p class="text-muted" *ngIf="!page.fileName">File name is required, or the page will not export/publish correctly.</p>
     <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith('.html')">All page's file names must end with the .html extension, or the page will not export/publish correctly.</p>
+    <p class="text-muted" *ngIf="rootPage && page.fileName !== 'index.html'">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index.html".</p>
   </div>
 
   <div class="form-group" *ngIf="page.generation !== 'generated'">
-    <label>
-      <input type="checkbox" [(ngModel)]="hasPageNavMenu" /> Show on top nav menu
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="pageNavMenu" [disabled]="!hasPageNavMenu" [ngbTypeahead]="pageNavMenuSearch" />
+    <label>Show on top nav menu</label>
+    <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
   <div class="form-group">

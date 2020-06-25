@@ -14662,6 +14662,29 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     }
   }
 
+  public get navMenu() {
+    const navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+    if (navMenuExt) return navMenuExt.valueString;
+  }
+
+  public set navMenu(value: string) {
+    this.extension = this.extension || [];
+    let navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
+
+    if (!navMenuExt && value) {
+      navMenuExt = {
+        url: Globals.extensionUrls['extension-ig-page-nav-menu'],
+        valueString: value
+      };
+      this.extension.push(navMenuExt);
+    } else if (navMenuExt && !value) {
+      const index = this.extension.indexOf(navMenuExt);
+      this.extension.splice(index, 1);
+    } else if (navMenuExt && value) {
+      navMenuExt.valueString = value
+    }
+  }
+
   public get fileName() {
     const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
     if (fileNameExt) return fileNameExt.valueUri;
@@ -14684,7 +14707,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
       fileNameExt.valueUri = value.replace(/\s/g, '_');
     }
 
-    if (this.hasOwnProperty('nameUrl')) {
+    if (this.hasOwnProperty('nameUrl') || !this.nameReference) {
       if (value) {
         this.nameUrl = value;
       } else {
