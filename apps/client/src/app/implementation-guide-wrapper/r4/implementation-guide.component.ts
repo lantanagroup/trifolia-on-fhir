@@ -1,4 +1,11 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
+import {
+  Component,
+  DoCheck,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -29,6 +36,7 @@ import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaRe
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
+import {CanComponentDeactivate} from '../../guards/resource.guard';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -40,8 +48,8 @@ class PageDefinition {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
-  public implementationGuide: ImplementationGuide;
+export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
+  @Input() public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];
@@ -198,6 +206,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.result.then(() => {this.isDirty = true;});
   }
 
   public removeGroup(group: ImplementationGuideGroupingComponent) {
@@ -217,6 +226,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.result.then(() => {this.isDirty = true;})
   }
 
   public changeId() {
@@ -227,6 +237,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
+
+    modalRef.result.then(() => this.isDirty = true);
   }
 
   public addResources() {
@@ -315,6 +327,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         dependsOn.packageId = guide['npm-name'];
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
+        this.isDirty = true;
       }
     });
   }
@@ -324,6 +337,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
+    this.isDirty = false;
     this.getImplementationGuide();
   }
 
@@ -413,6 +427,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     componentInstance.setPage(pageDef.page);
+    modalRef.result.then(() => this.isDirty = true);
   }
 
   private getNewPageTitles(next = this.implementationGuide.definition.page, pageTitles: string[] = []) {
@@ -614,6 +629,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public save() {
+
     // Add the new fhir version if they forgot to click the + button
     if (this.newFhirVersion && this.implementationGuide.fhirVersion) {
       this.implementationGuide.fhirVersion.push(this.newFhirVersion);
@@ -625,6 +641,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.isFile) {
       this.fileService.saveFile();
+      this.isDirty = false;
       return;
     }
 
@@ -643,6 +660,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
 
           this.message = 'Your changes have been saved!';
+          this.isDirty = false;
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -688,6 +706,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.getImplementationGuide();
       }
     });
+  }
+
+  public canDeactivate(): boolean{
+    return !this.isDirty;
   }
 
   nameChanged() {

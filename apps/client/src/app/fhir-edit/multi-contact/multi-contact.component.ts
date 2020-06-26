@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ContactDetail} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,8 @@ export class FhirMultiContactComponent implements OnInit {
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
 
+  @Output() contactChangeEmitter: EventEmitter<void> = new EventEmitter<void>();
+
   public tooltip: string;
   public Globals = Globals;
 
@@ -29,6 +31,7 @@ export class FhirMultiContactComponent implements OnInit {
   public editContact(contact: ContactDetail) {
     const ref = this.modalService.open(FhirContactModalComponent, {size: 'lg', backdrop: 'static'});
     ref.componentInstance.contact = contact;
+    ref.result.then(() => {this.contactChangeEmitter.emit();})
   }
 
   public firstContact(index: number){

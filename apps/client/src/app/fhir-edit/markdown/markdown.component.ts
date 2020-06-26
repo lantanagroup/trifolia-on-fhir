@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MarkdownModalComponent} from '../../modals/markdown-modal/markdown-modal.component';
@@ -23,6 +23,7 @@ export class FhirMarkdownComponent implements OnInit {
   @Input() displayOnly = false;
   @Input() mediaReferences?: MediaReference[];
 
+  @Output() valueChangeEmitter: EventEmitter<void> = new EventEmitter<void>();
   public Globals = Globals;
 
   constructor(

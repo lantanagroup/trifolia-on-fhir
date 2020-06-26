@@ -1,10 +1,11 @@
-import {Component, ComponentFactoryResolver, OnInit, ViewContainerRef} from '@angular/core';
+import { Component, ComponentFactoryResolver, ComponentRef, OnInit, ViewContainerRef } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../shared/file.service';
 import {ConfigService} from '../shared/config.service';
 import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
 import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {Versions} from 'fhir/fhir';
+import { CanComponentDeactivate } from '../guards/resource.guard';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -14,7 +15,8 @@ import {Versions} from 'fhir/fhir';
   selector: 'app-implementation-guide-wrapper',
   template: '<div></div>'
 })
-export class ImplementationGuideWrapperComponent implements OnInit {
+export class ImplementationGuideWrapperComponent implements OnInit, CanComponentDeactivate {
+  igComponent: ComponentRef<STU3ImplementationGuideComponent | R4ImplementationGuideComponent>;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -23,6 +25,10 @@ export class ImplementationGuideWrapperComponent implements OnInit {
     private fileService: FileService,
     private configService: ConfigService) {
     this.versionChanged();
+  }
+
+  canDeactivate(){
+    return this.igComponent.instance.canDeactivate();
   }
 
   versionChanged() {
@@ -41,7 +47,7 @@ export class ImplementationGuideWrapperComponent implements OnInit {
     }
 
     this.viewContainerRef.clear();
-    this.viewContainerRef.createComponent(componentFactory);
+    this.igComponent = this.viewContainerRef.createComponent(componentFactory);
   }
 
   ngOnInit() {

@@ -17,10 +17,10 @@
         <td>{{s.canRead ? 'Yes' : 'No'}}</td>
         <td>
           {{s.canWrite ? 'Yes' : 'No'}}
-          <i class="fas fa-times clickable" *ngIf="s.canWrite" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id)"></i>
+          <i class="fas fa-times clickable" *ngIf="s.canWrite" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id); permissionChangeEmitter.emit();"></i>
         </td>
         <td>
-          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" (click)="removePermission(s.type, 'read', s.id)">
+          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" (click)="removePermission(s.type, 'read', s.id); permissionChangeEmitter.emit();">
             <i class="fas fa-trash"></i>
           </button>
         </td>
@@ -53,7 +53,7 @@
       <div class="card-body">
         <p>Add permissions from this IG to resources referenced by the IG. This <em>does not</em> overwrite or remove permissions that already exist on the resources, it <em>adds</em> permissions from the IG that don't already exist.</p>
       </div>
-      <button type="button" class="btn btn-primary" (click)="copyIgPermissions()">
+      <button type="button" class="btn btn-primary" (click)="copyIgPermissions(); permissionChangeEmitter.emit();">
         <i class="fas fa-copy"></i> Copy
       </button>
     </div>
@@ -87,7 +87,7 @@
       </div>
 
       <button type="button" class="btn btn-primary" title="Copy the selected resource's permissions to this resource"
-              (click)="copyPermissions()"
+              (click)="copyPermissions(); permissionChangeEmitter.emit();"
               [disabled]="!copyResource || !copyResource.resourceType"
               [attr.data-intro]="Globals.introText['resource-permissions.copy.copy-btn']">
         <i class="fas fa-copy"></i> Copy
@@ -121,12 +121,12 @@
           <tr>
             <td><i>Everyone</i></td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for everyone" (click)="addPermission('everyone', 'read')">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for everyone" (click)="addPermission('everyone', 'read'); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for everyone" (click)="addPermission('everyone', 'write')">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for everyone" (click)="addPermission('everyone', 'write'); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
@@ -134,12 +134,12 @@
           <tr *ngFor="let g of foundGroups">
             <td>{{g.name}}</td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('group', 'read', g.id)">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('group', 'read', g.id); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('group', 'write', g.id)">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('group', 'write', g.id); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
@@ -176,12 +176,12 @@
             <td title="{{getIdentifierDisplay(u)}}">{{getHumanNamesDisplay(u.name)}}</td>
             <td>{{getPractitionerEmail(u)}}</td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id)">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('user', 'write', u.id)">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('user', 'write', u.id); permissionChangeEmitter.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>

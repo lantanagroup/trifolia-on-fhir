@@ -77,6 +77,7 @@ import {UsersComponent} from './manage/users/users.component';
 import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
 import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
 import { PackageListComponent } from './implementation-guide-wrapper/package-list/package-list.component';
+import { ResourceGuard } from './guards/resource.guard';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -135,7 +136,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
   {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
   {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
@@ -231,7 +232,8 @@ const authModuleConfig: OAuthModuleConfig = {
     OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent, GroupModalComponent, OtherResourcesResultComponent, PackageListComponent
+    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent
   ],
   imports: [
     RouterModule.forRoot(

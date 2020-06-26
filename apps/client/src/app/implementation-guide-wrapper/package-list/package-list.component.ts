@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
 import {DocumentReference} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -16,7 +16,7 @@ export class PackageListComponent implements OnInit {
   @Input() defaultName: string;
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
-  public packageListChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public packageListChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private configService: ConfigService) {
     this.packageListChanged
@@ -42,6 +42,7 @@ export class PackageListComponent implements OnInit {
   remove() {
     PackageListModel.removePackageList(this.implementationGuide);
     this.packageList = null;
+    this.packageListChanged.emit()
   }
 
   import(file: File) {
