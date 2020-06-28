@@ -31,6 +31,7 @@ import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper
 import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {Severities, ValidatorResponse} from 'fhir/validator';
+import { debug } from 'util';
 
 @Component({
   templateUrl: './structure-definition.component.html',

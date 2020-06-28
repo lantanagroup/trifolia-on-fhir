@@ -2,6 +2,7 @@ import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ElementTreeModel} from './element-tree-model';
 import {element} from 'protractor';
+import { debug } from 'util';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -11,6 +12,7 @@ export class ConstraintManager {
   public elements: ElementTreeModel[];
   private readonly elementDefinitionType: (new(obj?: any) => IElementDefinition);
   public getStructureDefinition: (url: string) => Promise<IStructureDefinition>;
+  private expandedStructure: IElementDefinition;
 
   /**
    *
@@ -50,14 +52,14 @@ export class ConstraintManager {
     await this.toggleExpand(rootElement);
   }
 
-  static findElementChildren(element: IElementDefinition, elements: IElementDefinition[]): IElementDefinition[] {
-    if (!element || !element.id) return [];
+  static findElementChildren(parentPath: string, elements: IElementDefinition[]): IElementDefinition[] {
+    if (!parentPath) return [];
 
-    const parentIdParts = element.id.split('.');
+    const parentIdParts = parentPath.split('.');
     return elements.filter(e => {
       const idParts = e.id ? e.id.split('.') : [];
       return e.id &&
-        e.id.startsWith(element.id + '.') &&
+        e.id.startsWith(parentPath + '.') &&
         idParts.length === parentIdParts.length + 1;
     });
   }
@@ -92,6 +94,7 @@ export class ConstraintManager {
 
   async toggleExpand(etm: ElementTreeModel) {
     if (!etm.expanded) {
+      this.expandedStructure = etm.baseElement;
       // Find all children of the requested element
       const children = await this.findChildren(etm.baseElement, etm.constrainedElement);
       const nextIndex = this.elements.indexOf(etm) + 1;
@@ -144,7 +147,9 @@ export class ConstraintManager {
       let nextStructure = this.fhirParser.structureDefinitions.find(sd => sd.id.toLowerCase() === type.toLowerCase());
 
       if (!nextStructure && type.startsWith('http://') || type.startsWith('https://')) {
-        nextStructure = await this.getStructureDefinition(type);
+        if (this.expandedStructure.path === 'ClinicalDocument' || (this.expandedStructure.id === parent.id)) {
+          nextStructure = await this.getStructureDefinition(type);
+        }
       }
 
       if (nextStructure) {
@@ -157,8 +162,7 @@ export class ConstraintManager {
       }
     }
 
-    // TODO: Debug the logic here to see how it is different for a referenced profile
-    const nextChildren = ConstraintManager.findElementChildren(parent, structure.snapshot.element);
+    const nextChildren = ConstraintManager.findElementChildren(structure !== this.base ? structure.snapshot.element[0].id : parent.id, structure.snapshot.element);
     return nextChildren;
   }
 
