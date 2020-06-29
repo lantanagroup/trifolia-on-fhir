@@ -3,6 +3,7 @@ import {ConceptSetComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/f
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ClientHelper} from '../../clientHelper';
 
 @Component({
   selector: 'app-valueset-include-panel',
@@ -13,6 +14,7 @@ export class IncludePanelComponent implements OnInit {
   @Input() include: ConceptSetComponent;
 
   public Globals = Globals;
+  public ClientHelper = ClientHelper;
 
   constructor(private modalService: NgbModal) {
   }
