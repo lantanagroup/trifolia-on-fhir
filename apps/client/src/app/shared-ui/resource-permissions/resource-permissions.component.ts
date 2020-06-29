@@ -53,7 +53,7 @@ class ResourceSecurity {
 export class ResourcePermissionsComponent implements OnInit {
   @Input() resource: DomainResource;
 
-  @Output() permissionChangeEmitter: EventEmitter<void> = new EventEmitter<void>();
+  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
 
   public groupsBundle: Bundle;
   public usersBundle: Bundle;

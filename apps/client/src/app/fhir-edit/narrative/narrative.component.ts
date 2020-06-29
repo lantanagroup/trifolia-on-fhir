@@ -62,7 +62,7 @@ export class NarrativeComponent implements OnInit {
   public message: string;
   public editorConfig: AngularEditorConfig;
 
-  @Output() narrativeChangeEmitter: EventEmitter<void> = new EventEmitter<void>();
+  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private http: HttpClient,
@@ -253,7 +253,7 @@ export class NarrativeComponent implements OnInit {
         const view = this.getNarrativeView(this.resource);
         const html = Mustache.render(results, view);
         this.resource.text.div = '<div>' + html + '</div>';
-        this.narrativeChangeEmitter.emit();
+        this.changed.emit();
       });
   }
 

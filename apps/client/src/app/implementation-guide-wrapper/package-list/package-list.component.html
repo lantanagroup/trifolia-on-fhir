@@ -19,11 +19,11 @@
     </div>
   </div>
   <div class="card-body" *ngIf="packageList">
-    <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="packageListChanged.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="changed.emit()"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="packageListChanged.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="changed.emit()"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="packageListChanged.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="changed.emit()"></app-fhir-string>
 
     <table class="table table-striped">
       <thead>
@@ -44,19 +44,19 @@
       <tbody>
       <tr *ngFor="let v of packageList.list; let vi = index">
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="packageListChanged.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="changed.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="packageListChanged.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="changed.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="packageListChanged.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="changed.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="packageListChanged.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="changed.emit()" />
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="packageListChanged.emit()">
+          <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="changed.emit()">
             <option value="ci-build">CI Build</option>
             <option value="draft">Draft</option>
             <option value="ballot">Ballot</option>
@@ -65,7 +65,7 @@
           </select>
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="v.current" (change)="packageListChanged.emit()">
+          <select class="form-control" [(ngModel)]="v.current" (change)="changed.emit()">
             <option [ngValue]="undefined">Unspecified</option>
             <option [ngValue]="true">Yes</option>
             <option [ngValue]="false">No</option>

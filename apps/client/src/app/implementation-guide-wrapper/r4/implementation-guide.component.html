@@ -232,7 +232,7 @@
 
         <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright" (valueChangeEmitter)="isDirty=true;"></app-fhir-markdown>
 
-        <app-fhir-narrative [resource]="implementationGuide" (narrativeChangeEmitter)="isDirty=true;"></app-fhir-narrative>
+        <app-fhir-narrative [resource]="implementationGuide" (changed)="isDirty=true;"></app-fhir-narrative>
       </ng-template>
     </ngb-tab>
 
@@ -398,14 +398,16 @@
           [implementationGuide]="implementationGuide"
           [defaultPackageId]="packageId"
           [defaultTitle]="this.implementationGuide.title"
-          [defaultName]="this.implementationGuide.name" (packageListChanged)="isDirty = true">
+          [defaultName]="this.implementationGuide.name" (changed)="isDirty = true">
         </trifolia-fhir-package-list>
 
-        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (jurisdictionChangeEmitter)="isDirty=true;"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"
+                                     (changed)="isDirty=true;"></app-fhir-multi-jurisdiction>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental" (change)="isDirty=true;"></app-fhir-boolean>
 
-        <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact" (contactChangeEmitter)="isDirty=true;"></app-fhir-multi-contact>
+        <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"
+                                (changed)="isDirty=true;"></app-fhir-multi-contact>
 
         <div class="card">
           <div class="card-header">
@@ -526,7 +528,7 @@
           <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="implementationGuide" (permissionChangeEmitter)="isDirty=true;"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide" (changed)="isDirty=true;"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 

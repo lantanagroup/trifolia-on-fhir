@@ -1,12 +1,12 @@
 <div *ngIf="resource">
     <label>
-        <input type="checkbox" [ngModel]="resource.text && resource.text.hasOwnProperty('div')" (ngModelChange)="toggleNarrative($event)" (change)="narrativeChangeEmitter.emit()"/>
+        <input type="checkbox" [ngModel]="resource.text && resource.text.hasOwnProperty('div')" (ngModelChange)="toggleNarrative($event)" (change)="changed.emit()"/>
         Resource Text
     </label>
 
     <div class="help-block" *ngIf="message">{{message}}</div>
 
-    <angular-editor placeholder="Enter narrative text here..." [(ngModel)]="textDiv" [config]="editorConfig" (ngModelChange)="narrativeChangeEmitter.emit()"></angular-editor>
+    <angular-editor placeholder="Enter narrative text here..." [(ngModel)]="textDiv" [config]="editorConfig" (ngModelChange)="changed.emit()"></angular-editor>
 
     <button type="button" class="btn btn-default" (click)="generateNarrative()" *ngIf="resource.text && resource.text.hasOwnProperty('div')">
         <i class="fas fa-certificate"></i> Generate

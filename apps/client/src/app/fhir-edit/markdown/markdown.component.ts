@@ -46,6 +46,8 @@ export class FhirMarkdownComponent implements OnInit {
         delete this.parentObject[this.propertyName];
       }
     }
+
+    this.valueChangeEmitter.emit();
   }
 
   ngOnInit() {

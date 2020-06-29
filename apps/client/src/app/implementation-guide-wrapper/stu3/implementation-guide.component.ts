@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -601,7 +601,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     if (this.isFile) {
       this.fileService.saveFile();
-      this.isDirty = false;
+      //this.isDirty = false;
       return;
     }
 
@@ -612,7 +612,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
+          //this.isDirty = false;
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -690,7 +690,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   ngOnInit() {
-    this.isDirty = false;
+    //this.isDirty = false;
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/implementation-guide/')) {
         this.getImplementationGuide();

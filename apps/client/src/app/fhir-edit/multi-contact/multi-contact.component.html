@@ -1,7 +1,7 @@
 <div class="card" *ngIf="parentObject">
   <div class="card-header">
     <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)"
-           (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ name: '' }]); contactChangeEmitter.emit()"/>
+           (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{ name: '' }]); changed.emit()"/>
     {{title || 'Contacts'}}
     <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </div>
@@ -15,7 +15,7 @@
       <th class="actions-column-2">
         <div class="pull-right">
           <button type="button" class="btn btn-primary" title="Add a {{title || 'contact'}}"
-                  (click)="parentObject[propertyName].push({ name: '' }); contactChangeEmitter.emit()">
+                  (click)="parentObject[propertyName].push({ name: '' }); changed.emit()">
             <i class="fa fa-plus"></i>
           </button>
         </div>
@@ -26,7 +26,7 @@
     <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
       <td>
         <app-fhir-string [parentObject]="c" propertyName="name" [isFormGroup]="false"
-                         [required]="true" (change)="contactChangeEmitter.emit()"></app-fhir-string>
+                         [required]="true" (change)="changed.emit()"></app-fhir-string>
       </td>
       <td>
         <div class="btn-group pull-right">
@@ -35,14 +35,14 @@
             <i class="fa fa-edit"></i>
           </button>
           <!-- Add buttons for sorting up and down -->
-          <button type="button" class="btn btn-primary" title="Push contact up" title="Rearrange with above contact" (click)="pushContactUp(c, ci); contactChangeEmitter.emit();" [disabled]="firstContact(ci)">
+          <button type="button" class="btn btn-primary" title="Push contact up" title="Rearrange with above contact" (click)="pushContactUp(c, ci); changed.emit();" [disabled]="firstContact(ci)">
             <i class="fas fa-arrow-up"></i>
           </button>
-          <button type="button" class="btn btn-primary" title="Push contact down" title="Rearrange with below contact" (click)="pushContactDown(c, ci); contactChangeEmitter.emit();" [disabled]="lastContact(ci)">
+          <button type="button" class="btn btn-primary" title="Push contact down" title="Rearrange with below contact" (click)="pushContactDown(c, ci); changed.emit();" [disabled]="lastContact(ci)">
             <i class="fas fa-arrow-down"></i>
           </button>
           <button type="button" class="btn btn-primary" title="Remove this {{title || 'contact'}}"
-                  (click)="parentObject[propertyName].splice(ci, 1); contactChangeEmitter.emit()">
+                  (click)="parentObject[propertyName].splice(ci, 1); changed.emit()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
