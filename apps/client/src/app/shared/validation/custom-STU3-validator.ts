@@ -111,7 +111,7 @@ export class CustomSTU3Validator extends CustomValidator {
           location: 'ImplementationGuide.definition.page',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
-          message: `It is strongly encouraged that the root page of the implementation guide have a file name of "index.html".`
+          message: `It is strongly encouraged that the root page of the implementation guide have a file name of "index.html". Otherwise, the published implementation guide may not contain a home page.`
         });
       }
 
