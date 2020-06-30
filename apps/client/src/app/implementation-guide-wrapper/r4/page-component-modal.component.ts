@@ -92,16 +92,12 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     this.pageNavMenus = allPages
-      .filter(p => {
-        const extension = (p.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return !!extension;
-      })
-      .map(p => {
-        const extension = (p.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-        if (extension) {
-          return extension.valueString;
-        }
-      });
+      .filter(p => !!p.navMenu)
+      .map(p => p.navMenu)
+      .reduce<string[]>((prev, curr) => {
+        if (prev.indexOf(curr) < 0) prev.push(curr);
+        return prev;
+      }, [])
+      .sort((a, b) => (a > b ? 1 : -1));
   }
 }
