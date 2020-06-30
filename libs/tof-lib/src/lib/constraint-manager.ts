@@ -1,8 +1,6 @@
-import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
-import {ParseConformance} from 'fhir/parseConformance';
-import {ElementTreeModel} from './element-tree-model';
-import {element} from 'protractor';
-import { debug } from 'util';
+import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
+import { ParseConformance } from 'fhir/parseConformance';
+import { ElementTreeModel } from './element-tree-model';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -12,7 +10,7 @@ export class ConstraintManager {
   public elements: ElementTreeModel[];
   private readonly elementDefinitionType: (new(obj?: any) => IElementDefinition);
   public getStructureDefinition: (url: string) => Promise<IStructureDefinition>;
-  private expandedStructure: IElementDefinition;
+  private expandedStructure: IElementDefinition = null;
 
   /**
    *
@@ -92,6 +90,11 @@ export class ConstraintManager {
     return etm;
   }
 
+  /**
+   * This method is called when a user clicks on the + to expand structure. The expandedStructure attribute
+   * is set to keep track of the structure that was expanded. This is needed to avoid calling redundant method calls
+   * @param etm
+   */
   async toggleExpand(etm: ElementTreeModel) {
     if (!etm.expanded) {
       this.expandedStructure = etm.baseElement;
@@ -110,6 +113,7 @@ export class ConstraintManager {
       this.associate(newTreeModels);
       etm.expanded = true;
     } else {
+      this.expandedStructure = null;
       const childElementTreeModels = this.elements.filter(next => next.parent === etm);
       for (let i = childElementTreeModels.length - 1; i >= 0; i--) {
         // Recursively collapse children of the child
@@ -147,7 +151,7 @@ export class ConstraintManager {
       let nextStructure = this.fhirParser.structureDefinitions.find(sd => sd.id.toLowerCase() === type.toLowerCase());
 
       if (!nextStructure && type.startsWith('http://') || type.startsWith('https://')) {
-        if (this.expandedStructure.path === 'ClinicalDocument' || (this.expandedStructure.id === parent.id)) {
+        if (this.expandedStructure.id === parent.id) {
           nextStructure = await this.getStructureDefinition(type);
         }
       }

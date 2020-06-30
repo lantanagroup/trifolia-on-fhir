@@ -1,23 +1,49 @@
-import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, StructureDefinition, TypeRefComponent} from './stu3/fhir';
 import {
-  ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent,
+  ElementDefinition as STU3ElementDefinition,
+  ElementDefinitionBindingComponent,
+  TypeRefComponent
+} from './stu3/fhir';
+import {
+  ElementDefinition as R4ElementDefinition,
+  ElementDefinitionElementDefinitionBindingComponent,
   ElementDefinitionTypeRefComponent
 } from './r4/fhir';
-import {Globals} from './globals';
-import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
+import { Globals } from './globals';
+import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
 
 export class ElementTreeModel {
   public constrainedElement?: IElementDefinition;
   public baseElement: IElementDefinition;
   public depth: number;
   public expanded = false;
-  public hasChildren = false;
+  private _hasChildren = false;
   public position: number;
   public parent?: ElementTreeModel;
   public profile: IStructureDefinition;
   public profilePath: string;
 
   constructor() {
+  }
+
+  /**
+   * this method checks to see if a typeDisplay contains a url. if it does then this will render true and show the +
+   * to expand the element
+   * @param typeDisplay
+   */
+  public checkTypeUrl(typeDisplay: string): boolean {
+    if (typeDisplay.includes('http') || typeDisplay.includes('https')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  get hasChildren(): boolean {
+    return this._hasChildren;
+  }
+
+  set hasChildren(value: boolean) {
+    this._hasChildren = value;
   }
 
   get display(): string {
@@ -251,7 +277,7 @@ export class ElementTreeModel {
   clone(constrainedElement?: IElementDefinition) {
     const newElementTreeModel = new ElementTreeModel();
     newElementTreeModel.baseElement = this.baseElement;
-    newElementTreeModel.hasChildren = this.hasChildren;
+    newElementTreeModel._hasChildren = this._hasChildren;
     newElementTreeModel.constrainedElement = constrainedElement || this.constrainedElement;
     newElementTreeModel.parent = this.parent;
     newElementTreeModel.depth = this.depth;

@@ -1,9 +1,19 @@
-import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
+import {
+  Component,
+  DoCheck,
+  HostListener,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { StructureDefinitionService } from '../shared/structure-definition.service';
+import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   ConstraintComponent,
   DifferentialComponent,
@@ -17,21 +27,19 @@ import {
   ElementDefinitionTypeRefComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {RecentItemService} from '../shared/recent-item.service';
-import {FhirService} from '../shared/fhir.service';
-import {FileService} from '../shared/file.service';
-import {DOCUMENT} from '@angular/common';
-import {ConfigService} from '../shared/config.service';
-import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
-import {AuthService} from '../shared/auth.service';
-import {BaseComponent} from '../base.component';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {IElementDefinition, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
-import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import {Severities, ValidatorResponse} from 'fhir/validator';
-import { debug } from 'util';
+import { RecentItemService } from '../shared/recent-item.service';
+import { FhirService } from '../shared/fhir.service';
+import { FileService } from '../shared/file.service';
+import { DOCUMENT } from '@angular/common';
+import { ConfigService } from '../shared/config.service';
+import { ElementDefinitionPanelComponent } from './element-definition-panel/element-definition-panel.component';
+import { AuthService } from '../shared/auth.service';
+import { BaseComponent } from '../base.component';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { IElementDefinition, IExtension } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
+import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import { Severities, ValidatorResponse } from 'fhir/validator';
 
 @Component({
   templateUrl: './structure-definition.component.html',
