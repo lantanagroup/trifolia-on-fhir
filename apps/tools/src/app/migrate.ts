@@ -93,17 +93,15 @@ export class Migrate extends BaseTools {
           } else if (foundContained.resourceType === 'Binary') {
             const foundBinary = <R4Binary>foundContained;
 
-            if (foundBinary.contentType === 'text/markdown') {
-              if (foundBinary.data) {
-                page.contentMarkdown = Buffer.from(foundBinary.data, 'base64').toString('ascii');
-              }
-
-              const containedIndex = ig.contained.indexOf(foundContained);
-              ig.contained.splice(containedIndex, 1);
-              if (!ig.contained.length) delete ig.contained;
-              delete page.nameReference;
+            if (foundBinary.contentType === 'text/markdown' && foundBinary.data) {
+              page.contentMarkdown = Buffer.from(foundBinary.data, 'base64').toString('ascii');
               changed = true;
             }
+
+            const containedIndex = ig.contained.indexOf(foundContained);
+            ig.contained.splice(containedIndex, 1);
+            if (!ig.contained.length) delete ig.contained;
+            delete page.nameReference;
           }
         }
       }
