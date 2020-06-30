@@ -1,57 +1,61 @@
 <div class="modal-header">
-    <h4 class="modal-title">Edit concept</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+  <h4 class="modal-title">Edit concept</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 <div class="modal-body" *ngIf="concept">
-    <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
+  <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="concept" propertyName="display" title="Display"></app-fhir-string>
+  <app-fhir-string [parentObject]="concept" propertyName="display" title="Display"></app-fhir-string>
 
-    <div class="card">
-        <div class="card-header">
-            <input type="checkbox" [ngModel]="concept.hasOwnProperty('designation')" (ngModelChange)="Globals.toggleProperty(concept, 'designation', [{ value: '' }])"/>
-            Designations
-        </div>
-        <table class="table table-striped" *ngIf="concept.hasOwnProperty('designation')">
-            <thead>
-            <tr>
-                <th>Language</th>
-                <th>Use</th>
-                <th>Value</th>
-                <th class="actions-column-1">
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default" (click)="concept.designation.push({ value: '' })">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let designation of concept.designation; let di = index">
-                <td>
-                    <app-fhir-string [parentObject]="designation" propertyName="language" [isFormGroup]="false"></app-fhir-string>
-                </td>
-                <td>
-                    ...TODO...
-                </td>
-                <td>
-                    <app-fhir-string [parentObject]="designation" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
-                </td>
-                <td>
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default" title="Remove this designation" (click)="Globals.promptForRemove(concept.designation, di)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+  <div class="card">
+    <div class="card-header">Designations</div>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Language</th>
+        <th>Use</th>
+        <th>Value</th>
+        <th class="actions-column-1">
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary" (click)="addDesignation()">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody *ngIf="concept.designation?.length">
+      <tr *ngFor="let designation of concept.designation; let di = index">
+        <td>
+          <app-fhir-string [parentObject]="designation" propertyName="language" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
+          <select class="form-control" [(ngModel)]="designation.use">
+            <option *ngFor="let u of uses" [ngValue]="u">{{u.display}}</option>
+          </select>
+        </td>
+        <td>
+          <app-fhir-string [parentObject]="designation" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary" title="Remove this designation" (click)="ClientHelper.promptForRemove(concept.designation, di)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+      <tfoot *ngIf="!concept.designation?.length">
+      <tr>
+        <td colspan="4">This concept does not have any designations. Click <a href="javascript:void(0)" (click)="addDesignation()">here</a> to add one.</td>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="activeModal.close()">Close</button>
+  <button type="button" class="btn btn-primary" (click)="activeModal.close()">Close</button>
 </div>

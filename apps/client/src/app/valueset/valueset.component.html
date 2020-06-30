@@ -44,7 +44,8 @@
   <ngb-tab>
     <ng-template ngbTabTitle>Compose</ng-template>
     <ng-template ngbTabContent>
-      <input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="Globals.toggleProperty(valueSet, 'compose', { include: [{}] })"/> Value set has a "compose" definition
+      <label><input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="Globals.toggleProperty(valueSet, 'compose', { include: [{}] })"/> Value set has a "compose" definition</label>
+
       <app-tooltip-icon tooltipPath="ValueSet.compose"></app-tooltip-icon>
 
       <div *ngIf="valueSet.hasOwnProperty('compose')">
@@ -52,62 +53,67 @@
 
         <app-fhir-boolean [parentObject]="valueSet.compose" propertyName="inactive" title="Inactive" tooltipPath="ValueSet.compose.inactive"></app-fhir-boolean>
 
-        <p>
-          <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="Globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include
-          entries
-        </p>
+        <!-- Includes -->
+        <div class="card">
+          <div class="card-header">
+            <label><input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('include')" (ngModelChange)="Globals.toggleProperty(valueSet.compose, 'include', [{}])"/> This value set has include entries</label>
+          </div>
+          <div class="card-body" *ngIf="valueSet.compose.hasOwnProperty('include')">
+            <div class="enumerate dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="enumerateFromButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Enumerate from...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="enumerateFromButton">
+                <a class="dropdown-item" href="javascript:void(0)" (click)="enumerateFromValueSetFile()">Other ValueSet resource/file</a>
+              </div>
+            </div>
 
-        <div class="enumerate dropdown" *ngIf="valueSet.compose.hasOwnProperty('include')">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="enumerateFromButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Enumerate from...
-          </button>
-          <div class="dropdown-menu" aria-labelledby="enumerateFromButton">
-            <a class="dropdown-item" href="javascript:void(0)" (click)="enumerateFromValueSetFile()">Other ValueSet resource/file</a>
+            <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
+              <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
+                <ng-template ngbTabTitle>
+                  Include {{ii + 1}}
+                  <i class="fas fa-trash-alt" title="Remove this include"
+                     (click)="ClientHelper.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
+                </ng-template>
+                <ng-template ngbTabContent>
+                  <app-valueset-include-panel [include]="include"></app-valueset-include-panel>
+                </ng-template>
+              </ngb-tab>
+              <ngb-tab>
+                <ng-template ngbTabTitle>
+                  <button type="button" class="btn btn-primary" title="Add an include entry" (click)="addIncludeEntry(includeTabSet)">Add</button>
+                </ng-template>
+                <ng-template ngbTabContent></ng-template>
+              </ngb-tab>
+            </ngb-tabset>
           </div>
         </div>
 
-        <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
-          <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
-            <ng-template ngbTabTitle>
-              Include {{ii + 1}}
-              <i class="fas fa-trash-alt" title="Remove this include"
-                 (click)="ClientHelper.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
-            </ng-template>
-            <ng-template ngbTabContent>
-              <app-valueset-include-panel [include]="include"></app-valueset-include-panel>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab>
-            <ng-template ngbTabTitle>
-              <button type="button" class="btn btn-default" title="Add an include entry" (click)="addIncludeEntry(includeTabSet)">Add</button>
-            </ng-template>
-            <ng-template ngbTabContent></ng-template>
-          </ngb-tab>
-        </ngb-tabset>
-
-        <p>
-          <input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('exclude')" (ngModelChange)="Globals.toggleProperty(valueSet.compose, 'exclude', [{}])"/> This value set has exclude
-          entries
-        </p>
-
-        <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('exclude')" #excludeTabSet [destroyOnHide]="false">
-          <ngb-tab *ngFor="let exclude of valueSet.compose.exclude; let ei = index" id="exclude-{{ei}}">
-            <ng-template ngbTabTitle>
-              Exclude {{ei + 1}}
-              <i class="fas fa-trash-alt" title="Remove this exclude"
-                 (click)="ClientHelper.promptForRemove(valueSet.compose.exclude, ei, 'Are you sure you want to remove this item?', $event)"></i>
-            </ng-template>
-            <ng-template ngbTabContent>
-              <app-valueset-include-panel [include]="exclude"></app-valueset-include-panel>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab [disabled]="true">
-            <ng-template ngbTabTitle>
-              <button type="button" class="btn btn-default" title="Add an exclude entry" (click)="addIncludeEntry(excludeTabSet)">Add</button>
-            </ng-template>
-            <ng-template ngbTabContent></ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+        <!-- Excludes -->
+        <div class="card">
+          <div class="card-header">
+            <label><input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('exclude')" (ngModelChange)="Globals.toggleProperty(valueSet.compose, 'exclude', [{}])"/> This value set has exclude entries</label>
+          </div>
+          <div class="card-body" *ngIf="valueSet.compose.hasOwnProperty('exclude')">
+            <ngb-tabset #excludeTabSet [destroyOnHide]="false">
+              <ngb-tab *ngFor="let exclude of valueSet.compose.exclude; let ei = index" id="exclude-{{ei}}">
+                <ng-template ngbTabTitle>
+                  Exclude {{ei + 1}}
+                  <i class="fas fa-trash-alt" title="Remove this exclude" (click)="ClientHelper.promptForRemove(valueSet.compose.exclude, ei, 'Are you sure you want to remove this item?', $event)"></i>
+                </ng-template>
+                <ng-template ngbTabContent>
+                  <app-valueset-include-panel [include]="exclude"></app-valueset-include-panel>
+                </ng-template>
+              </ngb-tab>
+              <ngb-tab>
+                <ng-template ngbTabTitle>
+                  <button type="button" class="btn btn-primary" title="Add an exclude entry" (click)="addExcludeEntry(excludeTabSet)">Add</button>
+                </ng-template>
+                <ng-template ngbTabContent></ng-template>
+              </ngb-tab>
+            </ngb-tabset>
+          </div>
+        </div>
       </div>
     </ng-template>
   </ngb-tab>

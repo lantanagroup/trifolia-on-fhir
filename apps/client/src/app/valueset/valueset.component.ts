@@ -71,6 +71,15 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }, 50);
   }
 
+  public addExcludeEntry(excludeTabSet) {
+    this.valueSet.compose.exclude.push({});
+    setTimeout(() => {
+      const lastIndex = this.valueSet.compose.exclude.length - 1;
+      const newExcludeTabId = 'exclude-' + lastIndex.toString();
+      excludeTabSet.select(newExcludeTabId);
+    }, 50);
+  }
+
   public enumerateFromValueSetFile() {
     if (!this.valueSet.compose) {
       return;

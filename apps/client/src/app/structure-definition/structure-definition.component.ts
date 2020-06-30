@@ -1,9 +1,19 @@
-import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
+import {
+  Component,
+  DoCheck,
+  HostListener,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { StructureDefinitionService } from '../shared/structure-definition.service';
+import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   ConstraintComponent,
   DifferentialComponent,
@@ -17,20 +27,19 @@ import {
   ElementDefinitionTypeRefComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {RecentItemService} from '../shared/recent-item.service';
-import {FhirService} from '../shared/fhir.service';
-import {FileService} from '../shared/file.service';
-import {DOCUMENT} from '@angular/common';
-import {ConfigService} from '../shared/config.service';
-import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
-import {AuthService} from '../shared/auth.service';
-import {BaseComponent} from '../base.component';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {IElementDefinition, IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
-import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import {Severities, ValidatorResponse} from 'fhir/validator';
+import { RecentItemService } from '../shared/recent-item.service';
+import { FhirService } from '../shared/fhir.service';
+import { FileService } from '../shared/file.service';
+import { DOCUMENT } from '@angular/common';
+import { ConfigService } from '../shared/config.service';
+import { ElementDefinitionPanelComponent } from './element-definition-panel/element-definition-panel.component';
+import { AuthService } from '../shared/auth.service';
+import { BaseComponent } from '../base.component';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { IElementDefinition, IExtension } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
+import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import { Severities, ValidatorResponse } from 'fhir/validator';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -214,6 +223,20 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     } else if (this.configService.isFhirR4) {
       this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
     }
+
+    this.constraintManager.getStructureDefinition = (url: string) => {
+      return new Promise((resolve, reject) => {
+        this.strucDefService.getBaseStructureDefinition(url).toPromise()
+          .then(res => {
+            resolve(res.base);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    };
+
+    await this.constraintManager.initializeRoot();
 
     this.message = 'Done loading base structure definition.';
   }
@@ -417,7 +440,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  getSearchElement(){
+  async getSearchElement(){
     const structureDefElements = <IElementDefinition[]> this.structureDefinition.differential.element;
     let found = structureDefElements.find((element) => {
       return this.checkForMatchingElement(element);
@@ -442,13 +465,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         let currentPath = "";
         let currentElement;
         for (let i = 0; i < pathElements.length; i++) {
-          currentPath = currentPath == "" ? pathElements[i] : currentPath + "." + pathElements[i];
+          currentPath = currentPath === "" ? pathElements[i] : currentPath + "." + pathElements[i];
           currentElement = this.constraintManager.elements.find(e => {
             return e.path === currentPath;
           });
           //Expand all elements that are on the path except the last one
-          if (i != pathElements.length - 1 && !currentElement.expanded) {
-            this.constraintManager.toggleExpand(currentElement);
+          if (i !== pathElements.length - 1 && !currentElement.expanded) {
+            await this.constraintManager.toggleExpand(currentElement);
           }
         }
         this.selectedElement = currentElement;

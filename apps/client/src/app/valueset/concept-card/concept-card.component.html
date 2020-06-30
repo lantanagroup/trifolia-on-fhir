@@ -1,7 +1,6 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="toggleConcepts()"/>
-        Concepts
+        <label><input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="toggleConcepts()"/> Concepts </label>
         <app-tooltip-icon tooltipPath="ValueSet.compose.include.concept"></app-tooltip-icon>&nbsp;<span class="badge badge-info">{{concepts.length}} total</span>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
@@ -15,7 +14,7 @@
             </th>
             <th class="actions-column-2">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default" (click)="addConcept()">
+                    <button type="button" class="btn btn-primary" (click)="addConcept()">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -32,10 +31,10 @@
             </td>
             <td>
                 <div class="btn-group pull-right">
-                    <button type="button" class="btn btn-default" title="Edit this concept" (click)="editConcept(concept)">
+                    <button type="button" class="btn btn-primary" title="Edit this concept" (click)="editConcept(concept)">
                         <i class="fa fa-edit"></i>
                     </button>
-                    <button type="button" class="btn btn-default" title="Remove this concept" (click)="removeConcept(concept)">
+                    <button type="button" class="btn btn-primary" title="Remove this concept" (click)="removeConcept(concept)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
