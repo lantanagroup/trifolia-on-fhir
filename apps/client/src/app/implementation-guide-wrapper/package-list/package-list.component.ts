@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
 import {DocumentReference} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -17,10 +17,10 @@ export class PackageListComponent implements OnInit {
   @Input() defaultName: string;
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
-  public packageListChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public changed: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private configService: ConfigService) {
-    this.packageListChanged
+    this.changed
       .debounceTime(1000)
       .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
   }
@@ -43,6 +43,7 @@ export class PackageListComponent implements OnInit {
   remove() {
     PackageListModel.removePackageList(this.implementationGuide);
     this.packageList = null;
+    this.changed.emit()
   }
 
   import(file: File) {
@@ -60,7 +61,7 @@ export class PackageListComponent implements OnInit {
           throw new Error('Not a package-list.json file');
         }
 
-        this.packageListChanged.emit();
+        this.changed.emit();
       } catch (ex) {
         alert('The uploaded file does not appear to be a package-list.json');
       }
@@ -71,12 +72,12 @@ export class PackageListComponent implements OnInit {
 
   addVersion() {
     this.packageList.list.push(new PackageListItemModel());
-    this.packageListChanged.emit();
+    this.changed.emit();
   }
 
   removeVersion(index: number) {
     this.packageList.list.splice(index, 1);
-    this.packageListChanged.emit();
+    this.changed.emit();
   }
 
   ngOnInit() {

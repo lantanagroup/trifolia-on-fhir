@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
 import {ICodeableConcept} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
@@ -13,6 +13,8 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   @Input() propertyName: string;
   @Input() tooltipPath: string;
   @Input() tooltipKey: string;
+
+  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public Globals = Globals;

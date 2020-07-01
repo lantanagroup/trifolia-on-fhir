@@ -1,4 +1,4 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -10,7 +10,7 @@ import {
   PackageResourceComponent,
   PageComponent
 } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src
 import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
+import { CanComponentDeactivate } from '../../guards/resource.guard';
 
 class Parameter {
   public extension: Extension;
@@ -95,7 +96,7 @@ class ImplementationGuideResource {
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
 })
-export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck {
+export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
@@ -105,6 +106,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public igNotFound = false;
   public ClientHelper = ClientHelper;
   public parameters: Parameter[] = [];
+  public isDirty = false;
 
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -597,8 +599,10 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
+
     if (this.isFile) {
       this.fileService.saveFile();
+      //this.isDirty = false;
       return;
     }
 
@@ -609,6 +613,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
           this.message = 'Your changes have been saved!';
+          //this.isDirty = false;
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -686,6 +691,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   ngOnInit() {
+    //this.isDirty = false;
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/implementation-guide/')) {
         this.getImplementationGuide();
@@ -704,6 +710,10 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   nameChanged() {
     this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`);
+  }
+
+  public canDeactivate(): boolean{
+    return !this.isDirty;
   }
 
   ngOnDestroy() {

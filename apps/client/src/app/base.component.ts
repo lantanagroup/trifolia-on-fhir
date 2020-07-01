@@ -4,6 +4,8 @@ import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './shared/config.service';
 
 export class BaseComponent {
+  protected isDirty = false;
+
   constructor(
     protected configService: ConfigService,
     protected authService: AuthService) {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {Bundle, DomainResource, Group, Meta, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
@@ -52,6 +52,8 @@ class ResourceSecurity {
 })
 export class ResourcePermissionsComponent implements OnInit {
   @Input() resource: DomainResource;
+
+  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
 
   public groupsBundle: Bundle;
   public usersBundle: Bundle;

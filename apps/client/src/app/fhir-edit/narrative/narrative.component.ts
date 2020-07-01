@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as Mustache from 'mustache';
 import {HttpClient} from '@angular/common/http';
@@ -61,6 +61,8 @@ export class NarrativeComponent implements OnInit {
   @Input() resource: DomainResource;
   public message: string;
   public editorConfig: AngularEditorConfig;
+
+  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private http: HttpClient,
@@ -251,6 +253,7 @@ export class NarrativeComponent implements OnInit {
         const view = this.getNarrativeView(this.resource);
         const html = Mustache.render(results, view);
         this.resource.text.div = '<div>' + html + '</div>';
+        this.changed.emit();
       });
   }
 
