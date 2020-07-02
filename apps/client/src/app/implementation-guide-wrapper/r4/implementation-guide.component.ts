@@ -206,7 +206,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true;});
+    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
   }
 
   public removeGroup(group: ImplementationGuideGroupingComponent) {
@@ -226,7 +226,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true;})
+    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();})
   }
 
   public changeId() {
@@ -238,7 +238,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => this.isDirty = true);
+    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
   }
 
   public addResources() {
@@ -328,6 +328,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
         this.isDirty = true;
+        this.nameChanged();
       }
     });
   }
@@ -338,6 +339,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.isDirty = false;
+    this.nameChanged();
     this.getImplementationGuide();
   }
 
@@ -434,6 +436,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       Object.assign(pageDef.page, page);
       this.initPages();
       this.isDirty = true;
+      this.nameChanged();
     });
 
   }
@@ -629,6 +632,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.isFile) {
       this.fileService.saveFile();
       this.isDirty = false;
+      this.nameChanged();
       return;
     }
 
@@ -648,6 +652,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
           this.message = 'Your changes have been saved!';
           this.isDirty = false;
+          this.nameChanged();
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -700,7 +705,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`);
+    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}` + (this.isDirty ? "*" : ""));
   }
 
   ngOnDestroy() {
