@@ -186,27 +186,26 @@
                 
 <p></p>
 <p class="rvps3"><span class="rvts16">Release 1.11.0</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts17">New Prompt to Avoid Losing Unsaved Changes</span></span></h3>
-<p class="rvps3"><span class="rvts18">Multiple times we've heard of IG designers accidentally leaving the screen when they had a lot of unsaved work, having lost all of those changes. Now, if the user has made changes that have not been saved while on the R4 implementation guide editing screen, the user will be prompted to confirm that they will lose their changes if they leave the screen. Our original hope was to make this a system-wide feature right away, but the changes are complex enough that they will have to be staged in one edit screen at a time. This release will include this functionality for the R4 edit IG screen, and future releases will include this functionality for additional screens.</span></p>
-<p class="rvps3"><span class="rvts23">Improvements to page editing</span></p>
-<p class="rvps3"><span class="rvts18">A new field has been added to the "edit page" popup windows to represent "File Name". The screen also includes a checkbox that allows the user to specify that the content of the page should be automatically generated based on the description and contacts of the IG. The over-all layout of the popup window has been simplified and some extra validation messages have been added to make it clear to the user what the requirements of a page are.</span></p>
-<p class="rvps3"><span class="rvts18">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed a bit. Instead of using a contained Binary resource to represent page content, we're instead using an extension on the page to hold the page content - markdown, at this time. For self-installs of ToF, the tools command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<p class="rvps3"><span class="rvts23">Problem with GitHub exports</span></p>
-<p class="rvps3"><span class="rvts18">The day before this release we identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts21">New Prompt to Avoid Losing Unsaved Changes</span></span></h3>
+<p class="rvps3"><span class="rvts17">Multiple times we've heard of IG designers accidentally leaving the screen when they had a lot of unsaved work, having lost all of those changes. Now, if the user has made changes that have not been saved while on the R4 implementation guide editing screen, the user will be prompted to confirm that they will lose their changes if they leave the screen. Our original hope was to make this a system-wide feature right away, but the changes are complex enough that they will have to be staged in one edit screen at a time. This release will include this functionality for the R4 edit IG screen, and future releases will include this functionality for additional screens.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts22">Improvements to page editing</span></span></h3>
+<p class="rvps3"><span class="rvts17">A new field has been added to the "edit page" popup windows to represent "File Name". The screen also includes a checkbox that allows the user to specify that the content of the page should be automatically generated based on the description and contacts of the IG. The over-all layout of the popup window has been simplified and some extra validation messages have been added to make it clear to the user what the requirements of a page are.</span></p>
+<p class="rvps3"><span class="rvts17">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed a bit. Instead of using a contained Binary resource to represent page content, we're instead using an extension on the page to hold the page content - markdown, at this time. For self-installs of ToF, the tools command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
+<h3 class="rvps5"><span class="rvts0"><span class="rvts22">Problem with GitHub exports</span></span></h3>
+<p class="rvps3"><span class="rvts17">The day before this release we identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (5)</span></span></h3>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts21">New Features</span></span></h4>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts23">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts18">[</span><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts18">] - Add "Base" for OperationDefinition editing</span></li>
-<li class="rvps3"><span class="rvts18">[</span><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts18">] - Allow configuration of types listed for selection on new profile creation</span></li>
-<li class="rvps3"><span class="rvts18">[</span><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts18">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
-<li class="rvps3"><span class="rvts18">[</span><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts18">] - Allow user to edit "use" on value set concept designations</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts17">] - Add "Base" for OperationDefinition editing</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts17">] - Allow configuration of types listed for selection on new profile creation</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts17">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts17">] - Allow user to edit "use" on value set concept designations</span></li>
 </ul>
-<p class="rvps3"><span class="rvts18"><br/></span></p>
-<p class="rvps3"><span class="rvts23">Improvements</span></p>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts19">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts18">[</span><a class="rvts19" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts18">] - </span><span class="rvts22">Improve page editing functionality</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts17">] - </span><span class="rvts20">Improve page editing functionality</span></li>
 </ul>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts20"><br/></span></span></h4>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts19"><br/></span></span></h4>
 <p></p>
 
             </div>
