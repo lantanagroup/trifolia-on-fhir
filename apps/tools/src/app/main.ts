@@ -21,7 +21,7 @@ const removeExtrasDescription = 'Removes extra properties from resources that ar
 const userListFormat = 'users';
 const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
-const migrateFormat = 'migrate <server>';
+const migrateFormat = 'migrate [server]';
 const migrateDescription = 'Migrates data in previous versions of ToF to new versions of ToF';
 
 const argv = Yargs

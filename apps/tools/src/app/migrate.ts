@@ -24,6 +24,10 @@ export class Migrate extends BaseTools {
   }
 
   public async init() {
+    if (!this.options.server) {
+      throw new Error('server must be specified!');
+    }
+
     const caps = await this.getConformance(this.options.server);
     this.fhirVersion = identifyRelease(caps.fhirVersion);
   }
