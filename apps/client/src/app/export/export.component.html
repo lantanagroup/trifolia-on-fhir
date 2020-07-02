@@ -142,6 +142,7 @@
   <ngb-tab title="GitHub" id="github">
     <ng-template ngbTabContent>
       <div [attr.data-intro]="Globals.introText['export.github']">
+        <div class="alert alert-danger">GitHub exports have been temporarily disabled while a bug in the export is investigated. Alternatively, you may export the IG as an "IG Publisher Package", clone your GitHub repository locally, and commit changed files to your local clone using a third party Git tool.</div>
         <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"></trifolia-fhir-export-github-panel>
       </div>
     </ng-template>

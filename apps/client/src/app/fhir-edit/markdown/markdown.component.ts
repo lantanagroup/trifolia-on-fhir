@@ -38,6 +38,7 @@ export class FhirMarkdownComponent implements OnInit {
   }
 
   valueChanged(value) {
+    const changed = this.parentObject[this.propertyName] !== value;
     this.parentObject[this.propertyName] = value;
 
     if (this.parentObject[this.propertyName] === '') {
@@ -47,7 +48,9 @@ export class FhirMarkdownComponent implements OnInit {
       }
     }
 
-    this.valueChangeEmitter.emit();
+    if (changed) {
+      this.valueChangeEmitter.emit();
+    }
   }
 
   ngOnInit() {

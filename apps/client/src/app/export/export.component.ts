@@ -163,6 +163,11 @@ export class ExportComponent implements OnInit {
       return true;
     }
 
+    // TODO: Remove this after the Export GitHub issue is fixed
+    if (this.options.exportFormat === ExportFormats.GitHub) {
+      return true;
+    }
+
     if (this.options.exportFormat === ExportFormats.HTML) {
       if (this.options.templateType === 'custom-uri' && !this.options.template) {
         return true;
@@ -171,9 +176,11 @@ export class ExportComponent implements OnInit {
       }
     }
 
+    /* TODO: Uncomment after Export GitHub issue is fixed
     if (this.options.exportFormat === ExportFormats.GitHub && this.githubPanel) {
       return !this.githubPanel.canExport;
     }
+     */
 
     return !this.options.responseFormat;
   }

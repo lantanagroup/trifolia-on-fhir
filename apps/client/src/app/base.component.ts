@@ -4,12 +4,20 @@ import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './shared/config.service';
 
 export class BaseComponent {
-  protected isDirty = false;
+  protected _isDirty = false;
 
   constructor(
     protected configService: ConfigService,
     protected authService: AuthService) {
 
+  }
+
+  protected get isDirty() {
+    return this._isDirty;
+  }
+
+  protected set isDirty(value: boolean) {
+    this._isDirty = value;
   }
 
   private canReadOrWrite(resource: DomainResource, permission: 'read'|'write') {

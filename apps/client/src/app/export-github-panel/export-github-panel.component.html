@@ -1,6 +1,4 @@
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
-<div class="alert alert-info" *ngIf="!message">The "GitHub" export format places all the resources within the IG in the specified GitHub repository/branch.</div>
-<div class="alert alert-warning">Only resources that have a repository, branch and path will be exported to GitHub. If the file already exists in GitHub, it will be completely overwritten by this export. At least one resource must have GitHub location information specified to export.</div>
 
 <button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubService.login()">Login to GitHub</button>
 
