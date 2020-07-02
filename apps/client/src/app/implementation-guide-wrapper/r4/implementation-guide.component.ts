@@ -705,7 +705,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}` + (this.isDirty ? "*" : ""));
+    this.configService.setTitle((this.isDirty ? "*" : "") + `ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`);
   }
 
   ngOnDestroy() {
