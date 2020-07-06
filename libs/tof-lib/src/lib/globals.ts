@@ -164,7 +164,7 @@ export class Globals {
     'vsac.remember': 'If checked, these credentials will be stored in your browser\'s cookies. These credentials are never stored on the server, and are only used to authenticate requests to the VSAC on your behalf.'
   };
 
-  static readonly igParameters = ['logging', 'generate', 'path-resource', 'autoload-resources', 'codesystem-property', 'path-pages', 'path-qa', 'path-tx-cache', 'path-liquid', 'path-temp', 'path-output', 'path-history', 'path-expansion-params', 'path-suppressed-warnings', 'html-exempt', 'extension-domain', 'active-tables', 'ig-expansion-parameters', 'special-url', 'template-openapi', 'template-html', 'template-md', 'apply-contact', 'apply-context', 'apply-copyright', 'apply-jurisdiction', 'apply-license', 'apply-publisher', 'apply-version', 'validation', 'show-inherited-invariants', 'usage-stats-opt-out'];
+  static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links'];
 
   static readonly hl7WorkGroups = [
     { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },
