@@ -256,12 +256,18 @@ function getJsonFromFile(relativePath: string) {
   return JSON.parse(content);
 }
 
-export function getFhirStu3Instance() {
+export function getFhirStu3Instance(tool = false) {
+  let rootDir = __dirname;
+
+  if (tool) {
+    rootDir = '../server';
+  }
+
   const parser = new ParseConformance(false, FhirVersions.STU3);
-  const valueSets = getJsonFromFile('assets/stu3/valuesets.json');
-  const types = getJsonFromFile('assets/stu3/profiles-types.json');
-  const resources = getJsonFromFile('assets/stu3/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/stu3/codesystem-iso3166.json');
+  const valueSets = getJsonFromFile(path.join(rootDir, 'assets/stu3/valuesets.json'));
+  const types = getJsonFromFile(path.join(rootDir, 'assets/stu3/profiles-types.json'));
+  const resources = getJsonFromFile(path.join(rootDir, 'assets/stu3/profiles-resources.json'));
+  const iso3166 = getJsonFromFile(path.join(rootDir, 'assets/stu3/codesystem-iso3166.json'));
 
   parser.parseBundle(valueSets);
   parser.parseBundle(types);
@@ -271,12 +277,18 @@ export function getFhirStu3Instance() {
   return new Fhir(parser);
 }
 
-export function getFhirR4Instance() {
+export function getFhirR4Instance(tool = false) {
+  let rootDir = __dirname;
+
+  if (tool) {
+    rootDir = '../server';
+  }
+
   const parser = new ParseConformance(false, FhirVersions.R4);
-  const valueSets = getJsonFromFile('assets/r4/valuesets.json');
-  const types = getJsonFromFile('assets/r4/profiles-types.json');
-  const resources = getJsonFromFile('assets/r4/profiles-resources.json');
-  const iso3166 = getJsonFromFile('assets/r4/codesystem-iso3166.json');
+  const valueSets = getJsonFromFile(path.join(rootDir, 'assets/r4/valuesets.json'));
+  const types = getJsonFromFile(path.join(rootDir, 'assets/r4/profiles-types.json'));
+  const resources = getJsonFromFile(path.join(rootDir, 'assets/r4/profiles-resources.json'));
+  const iso3166 = getJsonFromFile(path.join(rootDir, 'assets/r4/codesystem-iso3166.json'));
 
   parser.parseBundle(valueSets);
   parser.parseBundle(types);

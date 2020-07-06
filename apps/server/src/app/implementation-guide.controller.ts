@@ -73,19 +73,22 @@ export class ImplementationGuideController extends BaseFhirController {
     try {
       const results = await this.httpService.request(options).toPromise();
       const searchIGResponses: SearchImplementationGuideResponse[] = [];
-      results.data.entry.forEach(bundle => {
-        if(this.configService.server && this.configService.server.publishStatusPath){
-          searchIGResponses.push({
-            data: bundle,
-            published: this.getPublishStatus(bundle.resource.id),
-          });
-        }
-        else{
-          searchIGResponses.push({
-            data: bundle
-          });
-        }
-      });
+
+      if (results.data && results.data.entry) {
+        results.data.entry.forEach(bundle => {
+          if (this.configService.server && this.configService.server.publishStatusPath) {
+            searchIGResponses.push({
+              data: bundle,
+              published: this.getPublishStatus(bundle.resource.id),
+            });
+          } else {
+            searchIGResponses.push({
+              data: bundle
+            });
+          }
+        });
+      }
+
       return {
         responses: searchIGResponses,
         total: results.data.total

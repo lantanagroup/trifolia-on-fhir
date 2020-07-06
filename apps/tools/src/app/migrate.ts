@@ -7,10 +7,12 @@ import {ImplementationGuide as STU3ImplementationGuide, PageComponent} from '../
 import {IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import * as fs from 'fs';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {back} from 'nock';
 
 interface MigrateOptions {
   server: string;
   output: string;
+  backup?: string;
 }
 
 export class Migrate extends BaseTools {
@@ -35,6 +37,25 @@ export class Migrate extends BaseTools {
   public async migrate() {
     if (!this.fhirVersion) throw new Error('init() has not been called or the server doesn\'t supported /metadata');
     const igs = await this.getAllResources(this.options.server, 'ImplementationGuide');
+
+    if (this.options.backup) {
+      const backupTransaction = {
+        resourceType: 'Bundle',
+        type: 'transaction',
+        entry: igs.map(ig => {
+          return {
+            request: {
+              method: 'PUT',
+              url: `ImplementationGuide/${ig.id}`
+            },
+            resource: ig
+          }
+        })
+      };
+
+      console.log(`Creating a backup of the IGs at ${this.options.backup}`);
+      fs.writeFileSync(this.options.backup, JSON.stringify(backupTransaction));
+    }
 
     switch (this.fhirVersion) {
       case Versions.R4:
@@ -61,6 +82,7 @@ export class Migrate extends BaseTools {
         })
       };
 
+      console.log(`Migrated ${this.changedResources.length} IGs, and storing them in a transaction bundle in ${this.options.output}`);
       fs.writeFileSync(this.options.output, JSON.stringify(bundle));
       console.log(`Writing ${this.changedResources.length} resources to transaction bundle in ${this.options.output}`);
     }

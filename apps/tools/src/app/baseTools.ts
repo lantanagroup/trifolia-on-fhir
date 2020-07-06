@@ -1,12 +1,25 @@
 import {Bundle, CapabilityStatement, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as rp from 'request-promise';
 import {HttpService} from '@nestjs/common';
+import {Versions} from 'fhir/fhir';
+import {getFhirR4Instance, getFhirStu3Instance} from '../../../server/src/app/helper';
 
 export class BaseTools {
   protected readonly httpService: HttpService;
 
   constructor() {
     this.httpService = new HttpService();
+  }
+
+  protected getFhirInstance(version: Versions) {
+    switch (version) {
+      case Versions.STU3:
+        return getFhirStu3Instance(true);
+      case Versions.R4:
+        return getFhirR4Instance(true);
+      default:
+        throw new Error(`FHIR Version ${version} not yet supported by this tool!`);
+    }
   }
 
   protected getConformance(server: string): Promise<CapabilityStatement> {

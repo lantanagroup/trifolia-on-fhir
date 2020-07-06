@@ -5,6 +5,7 @@ import {RemoveExtras} from './removeExtras';
 import {UserListCommand} from './user-list';
 import {PopulateFromAuth0} from './populateFromAuth0';
 import {Migrate} from './migrate';
+import {ChangeId, ChangeIdOptions} from './change-id';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
 const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
@@ -21,10 +22,40 @@ const removeExtrasDescription = 'Removes extra properties from resources that ar
 const userListFormat = 'users';
 const userListDescription = 'Gets a list of all distinct users (Practitioner resources) in all of the FHIR servers specified';
 
-const migrateFormat = 'migrate [server]';
+const migrateFormat = 'migrate [server] [output]';
 const migrateDescription = 'Migrates data in previous versions of ToF to new versions of ToF';
 
+const changeIdFormat = 'change-id [directory] [resourceType] [oldId] [newId]';
+const changeIdDescription = 'Changes the ID of a resource in one or more files in a directory';
+
 const argv = Yargs
+  .command(changeIdFormat, changeIdDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('directory', {
+        required: true,
+        description: 'The directory that .json and .xml resource files should be updated.'
+      })
+      .positional('resourceType', {
+        required: true,
+        description: 'The resource type of the resource to change the ID for.'
+      })
+      .positional('oldId', {
+        required: true,
+        description: 'The old ID to change from.'
+      })
+      .positional('newId', {
+        required: true,
+        description: 'The new ID to change to.'
+      })
+      .option('version', {
+        required: false,
+        choices: ['stu3', 'r4'],
+        description: 'The version of FHIR that these resources are based on.'
+      })
+  }, async (args: any) => {
+    const changeId = new ChangeId(args);
+    changeId.execute();
+  })
   .command(migrateFormat, migrateDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('server', {
@@ -34,6 +65,9 @@ const argv = Yargs
       .positional('output', {
         description: 'File path to where the migrated content should be stored as a transaction bundle to commit to the FHIR server after inspection',
         required: true
+      })
+      .option('backup', {
+        description: "File path to where to store the backup of the fhir server, prior to making any changes."
       });
   }, async (args: any) => {
     try {
