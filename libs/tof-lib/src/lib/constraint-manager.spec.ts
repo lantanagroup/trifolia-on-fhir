@@ -21,10 +21,11 @@ describe('ConstraintManager', () => {
     let cm;
     let testData: IStructureDefinition;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testData = JSON.parse(JSON.stringify(testData4));
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Composition');
       cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
 
       expect(cm.elements.length).toBe(43);
     });
@@ -39,8 +40,8 @@ describe('ConstraintManager', () => {
       expect(actualSliceIds).toStrictEqual(expectedSliceIds);
     });
 
-    it('should expand section slices and have the correct children', () => {
-      cm.toggleExpand(cm.elements[24]);
+    it('should expand section slices and have the correct children', async () => {
+      await cm.toggleExpand(cm.elements[24]);
       expect(cm.elements.length).toBe(57);
 
       let actualIds = cm.elements
@@ -50,7 +51,7 @@ describe('ConstraintManager', () => {
       expect(actualIds).toStrictEqual(expectedIds);
 
       // expand medications section
-      cm.toggleExpand(cm.elements[39]);
+      await cm.toggleExpand(cm.elements[39]);
       expect(cm.elements.length).toBe(71);
       actualIds = cm.elements
         .filter((e, i) => i >= 40 && i <= 53 && e.depth === 2)
@@ -61,7 +62,7 @@ describe('ConstraintManager', () => {
   });
 
   describe('associate resprate2 observation', () => {
-    it('should associate sub-sub constraint', () => {
+    it('should associate sub-sub constraint', async () => {
       const testData: IStructureDefinition = JSON.parse(JSON.stringify(testData3));
 
       // Add a sub-sub constraint element to the resprate2 profile
@@ -73,9 +74,10 @@ describe('ConstraintManager', () => {
 
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
       const cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
 
-      cm.toggleExpand(cm.elements[14]);
-      cm.toggleExpand(cm.elements[17]);
+      await cm.toggleExpand(cm.elements[14]);
+      await cm.toggleExpand(cm.elements[17]);
       expect(cm.elements[22].basePath).toBe('Observation.code.coding.code');
       expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[2]);
     });
@@ -85,16 +87,17 @@ describe('ConstraintManager', () => {
     let cm;
     let testData: IStructureDefinition;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testData = JSON.parse(JSON.stringify(testData3));
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
       cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
 
       expect(cm.elements.length).toBe(33);
     });
 
-    it('should constrain code.coding', () => {
-      cm.toggleExpand(cm.elements[14]);
+    it('should constrain code.coding', async () => {
+      await cm.toggleExpand(cm.elements[14]);
       expect(cm.elements.length).toBe(37);
 
       expect(testData.differential.element.length).toBe(7);
@@ -104,9 +107,9 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element[2].path).toBe('Observation.code.coding');
     });
 
-    it('should constraint code.coding.code', () => {
-      cm.toggleExpand(cm.elements[14]);
-      cm.toggleExpand(cm.elements[17]);
+    it('should constraint code.coding.code', async () => {
+      await cm.toggleExpand(cm.elements[14]);
+      await cm.toggleExpand(cm.elements[17]);
       expect(cm.elements.length).toBe(44);
 
       expect(testData.differential.element.length).toBe(7);
@@ -116,10 +119,10 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element[2].path).toBe('Observation.code.coding.code');
     });
 
-    it('should remove the constraint for valueQuantity', () => {
+    it('should remove the constraint for valueQuantity', async () => {
       expect(testData.differential.element.length).toBe(7);
       expect(cm.elements.length).toBe(33);
-      cm.toggleExpand(cm.elements[21]);
+      await cm.toggleExpand(cm.elements[21]);
       expect(cm.elements.length).toBe(40);
       cm.removeConstraint(cm.elements[21]);
       expect(cm.elements.length).toBe(33);
@@ -133,10 +136,11 @@ describe('ConstraintManager', () => {
     let cm;
     let testData: IStructureDefinition;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testData = JSON.parse(JSON.stringify(testData3));
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
       cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
 
       expect(cm.elements.length).toBe(33);
       expect(testData.differential.element.length).toBe(7);
@@ -148,12 +152,12 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element.length).toBe(7);
     });
 
-    it('should slice category', () => {
+    it('should slice category', async () => {
       cm.constrain(cm.elements[13]);
       expect(cm.elements.length).toBe(33);
       expect(testData.differential.element.length).toBe(8);
 
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       expect(cm.elements.length).toBe(37);
 
       // slice category
@@ -169,15 +173,15 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element[2].path).toBe('Observation.category');
       expect(testData.differential.element[2].sliceName).toBe('mySlice');
 
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
       expect(cm.elements.length).toBe(42);
     });
 
-    it('should slice category and category.coding', () => {
+    it('should slice category and category.coding', async () => {
       cm.constrain(cm.elements[13]);
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       cm.slice(cm.elements[13], 'mySlice');
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
 
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       expect(testData.differential.element.length).toBe(10);
@@ -194,11 +198,11 @@ describe('ConstraintManager', () => {
       expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[4]);
     });
 
-    it('should slice category.coding twice', () => {
+    it('should slice category.coding twice', async () => {
       cm.constrain(cm.elements[13]);
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       cm.slice(cm.elements[13], 'mySlice');
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
       cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
@@ -210,11 +214,11 @@ describe('ConstraintManager', () => {
       expect(cm.elements[23].constrainedElement).toBe(testData.differential.element[5]);
     });
 
-    it('should delete the slices', () => {
+    it('should delete the slices', async () => {
       cm.constrain(cm.elements[13]);
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       cm.slice(cm.elements[13], 'mySlice');
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
       cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
@@ -225,11 +229,11 @@ describe('ConstraintManager', () => {
       expect(testData.differential.element.length).toBe(11);
     });
 
-    it('should delete the category.coding slicing and all slices associated with it', () => {
+    it('should delete the category.coding slicing and all slices associated with it', async () => {
       cm.constrain(cm.elements[13]);
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       cm.slice(cm.elements[13], 'mySlice');
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
       cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
@@ -244,11 +248,11 @@ describe('ConstraintManager', () => {
       expect(actualIds).toStrictEqual(expectedIds);
     });
 
-    it('should delete the category slicing and all slices associated with it', () => {
+    it('should delete the category slicing and all slices associated with it', async () => {
       cm.constrain(cm.elements[13]);
-      cm.toggleExpand(cm.elements[13]);   // expand category
+      await cm.toggleExpand(cm.elements[13]);   // expand category
       cm.slice(cm.elements[13], 'mySlice');
-      cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
       cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
       cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
       cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
@@ -269,10 +273,11 @@ describe('ConstraintManager', () => {
     let cm;
     let testData: IStructureDefinition;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testData = <IStructureDefinition> JSON.parse(JSON.stringify(testData2));
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
       cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
 
       expect(cm.elements.length).toBe(33);
       expect(cm.elements[0].constrainedElement).toBe(testData.differential.element[0]);
@@ -280,8 +285,8 @@ describe('ConstraintManager', () => {
       expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[6]);
     });
 
-    it('should expand constrained code', () => {
-      cm.toggleExpand(cm.elements[14]);           // expand code
+    it('should expand constrained code', async () => {
+      await cm.toggleExpand(cm.elements[14]);           // expand code
 
       expect(cm.elements[14].expanded).toBe(true);
       expect(cm.elements.length).toBe(38);
@@ -305,9 +310,9 @@ describe('ConstraintManager', () => {
         });
     });
 
-    it('should expand constrained code.coding', () => {
-      cm.toggleExpand(cm.elements[14]);     // expand code
-      cm.toggleExpand(cm.elements[17]);     // expand code.coding
+    it('should expand constrained code.coding', async () => {
+      await cm.toggleExpand(cm.elements[14]);     // expand code
+      await cm.toggleExpand(cm.elements[17]);     // expand code.coding
 
       expect(cm.elements[17].expanded).toBe(true);
       expect(cm.elements.length).toBe(45);
@@ -322,17 +327,17 @@ describe('ConstraintManager', () => {
         expect(e.depth).toBe(3);
       });
 
-      cm.toggleExpand(cm.elements[25]);
+      await cm.toggleExpand(cm.elements[25]);
       expect(cm.elements.length).toBe(52);
 
       expect(cm.elements[28].constrainedElement).toBe(testData.differential.element[4]);
       expect(cm.elements[30].constrainedElement).toBe(testData.differential.element[5]);
     });
 
-    it('should expand code.coding.code', () => {
-      cm.toggleExpand(cm.elements[14]);     // expand code
-      cm.toggleExpand(cm.elements[17]);     // expand code.coding
-      cm.toggleExpand(cm.elements[22]);     // expand code.coding.code
+    it('should expand code.coding.code', async () => {
+      await cm.toggleExpand(cm.elements[14]);     // expand code
+      await cm.toggleExpand(cm.elements[17]);     // expand code.coding
+      await cm.toggleExpand(cm.elements[22]);     // expand code.coding.code
 
       expect(cm.elements[22].expanded).toBe(true);
       expect(cm.elements.length).toBe(48);
@@ -350,22 +355,22 @@ describe('ConstraintManager', () => {
       });
     });
 
-    it('should collapse code with code.coding.code', () => {
+    it('should collapse code with code.coding.code', async () => {
       expect(cm.elements.length).toBe(33);
-      cm.toggleExpand(cm.elements[14]);     // expand code
-      cm.toggleExpand(cm.elements[17]);     // expand code.coding
-      cm.toggleExpand(cm.elements[24]);     // expand code.coding.code
+      await cm.toggleExpand(cm.elements[14]);     // expand code
+      await cm.toggleExpand(cm.elements[17]);     // expand code.coding
+      await cm.toggleExpand(cm.elements[24]);     // expand code.coding.code
 
-      cm.toggleExpand(cm.elements[14]);     // collapse code
+      await cm.toggleExpand(cm.elements[14]);     // collapse code
       expect(cm.elements.length).toBe(33);
 
       const actualIds = cm.elements.map(e => e.baseId);
       expect(actualIds).toStrictEqual(["Observation","Observation.id","Observation.meta","Observation.implicitRules","Observation.language","Observation.text","Observation.contained","Observation.extension","Observation.modifierExtension","Observation.identifier","Observation.basedOn","Observation.partOf","Observation.status","Observation.category","Observation.code","Observation.subject","Observation.focus","Observation.encounter","Observation.effective[x]","Observation.issued","Observation.performer","Observation.value[x]","Observation.dataAbsentReason","Observation.interpretation","Observation.note","Observation.bodySite","Observation.method","Observation.specimen","Observation.device","Observation.referenceRange","Observation.hasMember","Observation.derivedFrom","Observation.component"]);
     });
 
-    it('should expand constrained valueQuantity', () => {
+    it('should expand constrained valueQuantity', async () => {
       // Expand the Observation.valueQuantity constraint, and we should get child properties for the Quantity data type
-      cm.toggleExpand(cm.elements[21]);
+      await cm.toggleExpand(cm.elements[21]);
       expect(cm.elements.length).toBe(40);
 
       const newElements = cm.elements.filter((e, i) => i >= 22 && i <= 28);
@@ -395,9 +400,11 @@ describe('ConstraintManager', () => {
   describe('ctor(), toggleExpand(), associate()', () => {
     const testData: IStructureDefinition = <IStructureDefinition> JSON.parse(JSON.stringify(testData1));
 
-    it('should initialize with the first level expanded', () => {
+    it('should initialize with the first level expanded', async () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
       const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
+      await cm.initializeRoot();
+
       expect(cm.elements).toBeTruthy();
       expect(cm.elements.length).toBe(40);
       const ids = cm.elements.map(e => e.baseId);
@@ -430,7 +437,7 @@ describe('ConstraintManager', () => {
 
     it('should find children of a regular element', () => {
       const goalElement = testData.snapshot.element[38];
-      const children = ConstraintManager.findElementChildren(goalElement, testData.snapshot.element);
+      const children = ConstraintManager.findElementChildren(goalElement.path, testData.snapshot.element);
       expect(children).toBeTruthy();
       expect(children.length).toEqual(10);
       expect(children[0].id).toEqual('PlanDefinition.goal.id');
@@ -483,14 +490,14 @@ describe('ConstraintManager', () => {
         path: 'PlanDefinition.goal.target.id'
       }];
 
-      const rootChildren = ConstraintManager.findElementChildren(elements[0], elements);
+      const rootChildren = ConstraintManager.findElementChildren(elements[0].path, elements);
       expect(rootChildren).toBeTruthy();
       expect(rootChildren.length).toBe(2);
       expect(rootChildren[0].id).toBe('PlanDefinition.goal');
       expect(rootChildren[1].id).toBe('PlanDefinition.goal:someSlice');
 
       // Asking for children of PlanDefinition.goal:someSlice
-      const children1 = ConstraintManager.findElementChildren(elements[3], elements);
+      const children1 = ConstraintManager.findElementChildren(elements[3].id, elements);
       expect(children1).toBeTruthy();
       expect(children1.length).toBe(4);
       expect(children1[0].id).toEqual('PlanDefinition.goal:someSlice.id');
@@ -499,13 +506,13 @@ describe('ConstraintManager', () => {
       expect(children1[3].id).toEqual('PlanDefinition.goal:someSlice.target:targetSlice2');
 
       // Should return single grand-child of the slice
-      const children2 = ConstraintManager.findElementChildren(elements[5], elements);
+      const children2 = ConstraintManager.findElementChildren(elements[5].id, elements);
       expect(children2).toBeTruthy();
       expect(children2.length).toBe(1);
       expect(children2[0].id).toEqual('PlanDefinition.goal:someSlice.target.id');
 
       // Asking for children of PlanDefinition.goal:someSlice.target:targetSlice1
-      const children3 = ConstraintManager.findElementChildren(elements[7], elements);
+      const children3 = ConstraintManager.findElementChildren(elements[7].id, elements);
       expect(children3).toBeTruthy();
       expect(children3.length).toBe(3);
       expect(children3[0].id).toBe('PlanDefinition.goal:someSlice.target:targetSlice1.id');
@@ -513,13 +520,13 @@ describe('ConstraintManager', () => {
       expect(children3[2].id).toBe('PlanDefinition.goal:someSlice.target:targetSlice1.reference');
 
       // Asking for children of PlanDefinition.goal:someSlice.target:targetSlice1.reference
-      const children4 = ConstraintManager.findElementChildren(elements[10], elements);
+      const children4 = ConstraintManager.findElementChildren(elements[10].id, elements);
       expect(children4).toBeTruthy();
       expect(children4.length).toBe(1);
       expect(children4[0].id).toBe('PlanDefinition.goal:someSlice.target:targetSlice1.reference.reference');
 
       // Asking for children of PlanDefinition.goal:someSlice.target:targetSlice2
-      const children5 = ConstraintManager.findElementChildren(elements[12], elements);
+      const children5 = ConstraintManager.findElementChildren(elements[12].id, elements);
       expect(children5).toBeTruthy();
       expect(children5.length).toBe(1);
       expect(children5[0].id).toBe('PlanDefinition.goal:someSlice.target:targetSlice2.id');
@@ -529,18 +536,18 @@ describe('ConstraintManager', () => {
   describe('findChildren(element)', () => {
     const testData: IStructureDefinition = <IStructureDefinition> JSON.parse(JSON.stringify(testData1));
 
-    it('should find children', () => {
+    it('should find children', async () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
       const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
-      const children = cm.findChildren(planDefModel.snapshot.element[0]);     // ask for children of PlanDefinition
+      const children = await cm.findChildren(planDefModel.snapshot.element[0]);     // ask for children of PlanDefinition
       expect(children).toBeTruthy();
       expect(children.length).toBe(39);
     });
 
-    it('should find children of a child type', () => {
+    it('should find children of a child type', async () => {
       const planDefModel = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.id === 'PlanDefinition');
       const cm = new ConstraintManager(ElementDefinition, planDefModel, testData, fhir.parser);
-      const children = cm.findChildren(planDefModel.snapshot.element[2]);     // ask for children of PlanDefinition.meta
+      const children = await cm.findChildren(planDefModel.snapshot.element[2]);     // ask for children of PlanDefinition.meta
       expect(children).toBeTruthy();
       expect(children.length).toBe(8);
 
@@ -552,5 +559,27 @@ describe('ConstraintManager', () => {
       expect(children[7].id).toBe('PlanDefinition.meta.tag');
       expect(children[7].path).toBe('PlanDefinition.meta.tag');
     });
+
+    /*
+    it('should find children for a type that is no loaded', async () => {
+      const getStructureDefinitionCalled = false;
+
+      fhir.parser.parseBundle(cdaBundle);
+      const cdaObs = <IStructureDefinition> fhir.parser.structureDefinitions.find(sd => sd.url === 'http://cda.../Observation');
+      const cm = new ConstraintManager(ElementDefinition, cdaObs, someNewCdaTestData, fhir.parser);
+
+      cm.getStructureDefinition = (url: string) => {
+        // TODO: Return the requested StructureDefinition
+        getStructureDefinitionCalled = true;
+        return null;
+      };
+
+      await cm.initializeRoot();
+
+      const children = await cm.findChildren(someParentElementWithATypeNotLoaded);
+
+      expect(getStructureDefinitionCalled).toBe(true);
+    });
+       */
   });
 });
