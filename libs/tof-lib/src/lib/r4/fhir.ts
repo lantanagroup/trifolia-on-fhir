@@ -14710,6 +14710,10 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     if (this.hasOwnProperty('nameUrl') || !this.nameReference) {
       if (value) {
         this.nameUrl = value;
+
+        if (this.nameUrl === 'index.html' && this.generation === 'markdown') {
+          this.nameUrl = 'index.md';
+        }
       } else {
         delete this.nameUrl;
       }
