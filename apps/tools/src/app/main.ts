@@ -52,6 +52,11 @@ const argv = Yargs
         choices: ['stu3', 'r4'],
         description: 'The version of FHIR that these resources are based on.'
       })
+      .option('silent', {
+        type: 'boolean',
+        description: 'Runs the tool without prompting the user to confirm that files should be changed.',
+        default: false
+      });
   }, async (args: any) => {
     const changeId = new ChangeId(args);
     changeId.execute();

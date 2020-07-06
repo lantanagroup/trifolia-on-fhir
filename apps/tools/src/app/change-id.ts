@@ -11,6 +11,7 @@ export class ChangeIdOptions {
   oldId: string;
   newId: string;
   version: 'stu3'|'r4' = 'r4';
+  silent = false;
 }
 
 export class ChangeId extends BaseTools {
@@ -69,13 +70,15 @@ export class ChangeId extends BaseTools {
   }
 
   private processFile(fileName: string) {
+    if (!fileName.toLowerCase().endsWith('.xml') && !fileName.toLowerCase().endsWith('.json')) {
+      return;
+    }
+
     let fileContent = fs.readFileSync(fileName).toString();
     let changed = false;
     let resource: IDomainResource;
 
-    if (!fileName.toLowerCase().endsWith('.xml') && !fileName.toLowerCase().endsWith('.json')) {
-      return;
-    }
+    console.log(`Checking ${fileName}`);
 
     if (fileName.toLowerCase().endsWith('.xml')) {
       resource = this.fhir.xmlToObj(fileContent);
@@ -113,12 +116,21 @@ export class ChangeId extends BaseTools {
       output: process.stdout
     });
 
-    rl.question('This process will change the files in the directory specified.\r\nConsider backing up these files.\r\nAre you sure you want to continue?\r\nPress ENTER to continue, or CTRL-C to cancel.', () => {
+    const processFiles = () => {
       files
         .filter(fileName => fileName.toLowerCase().endsWith('.xml') || fileName.toLowerCase().endsWith('.json'))
         .forEach(fileName => this.processFile(path.join(this.options.directory, fileName)));
 
-      rl.close();
-    });
+      process.exit(0);
+    };
+
+    if (!this.options.silent) {
+      rl.question('This process will change the files in the directory specified.\r\nConsider backing up these files.\r\nAre you sure you want to continue?\r\nPress ENTER to continue, or CTRL-C to cancel.', () => {
+        processFiles();
+        rl.close();
+      });
+    } else {
+      processFiles();
+    }
   }
 }

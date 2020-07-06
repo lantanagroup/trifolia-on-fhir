@@ -249,8 +249,7 @@ export function parseFhirUrl(url: string) {
   return parsed;
 }
 
-function getJsonFromFile(relativePath: string) {
-  const actualPath = path.join(__dirname, relativePath);
+function getJsonFromFile(actualPath: string) {
   const contentStream = fs.readFileSync(actualPath);
   const content = contentStream.toString('utf8');
   return JSON.parse(content);
