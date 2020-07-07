@@ -163,11 +163,6 @@ export class ExportComponent implements OnInit {
       return true;
     }
 
-    // TODO: Remove this after the Export GitHub issue is fixed
-    if (this.options.exportFormat === ExportFormats.GitHub) {
-      return true;
-    }
-
     if (this.options.exportFormat === ExportFormats.HTML) {
       if (this.options.templateType === 'custom-uri' && !this.options.template) {
         return true;

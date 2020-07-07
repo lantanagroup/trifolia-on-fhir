@@ -123,12 +123,11 @@ export class ExportGithubPanelComponent implements OnInit {
       this.igFiles = [];
 
       for (let i = 0; i < filePaths.length; i++) {
-        const b64Content = await zip.files[filePaths[i]].async('base64');
-        const content = b64Content ? atob(b64Content) : undefined;
+        const content = await zip.files[filePaths[i]].async('text');
 
         const file: FileModel = {
           path: filePaths[i],
-          content: b64Content,
+          content: content,
           action: 'update'
         };
 
