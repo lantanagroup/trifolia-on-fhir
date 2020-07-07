@@ -288,7 +288,7 @@
             <td class="element-name" [class.has-children]="e.hasChildren">
               <div>
                 <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
-                <div class="expand-collapse" *ngIf="e.checkTypeUrl(e.typeDisplay)" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
+                <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
                   <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                 </div>
                 {{e.display}}
