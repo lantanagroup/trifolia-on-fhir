@@ -39,6 +39,10 @@ export class ElementTreeModel {
   }
 
   get hasChildren(): boolean {
+    if (this.checkTypeUrl(this.typeDisplay)) {
+      return true;
+    }
+
     return this._hasChildren;
   }
 
