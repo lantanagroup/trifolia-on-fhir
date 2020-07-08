@@ -144,6 +144,12 @@ export class Migrate extends BaseTools {
 
       if (!page.nameReference && !page.nameUrl && page.fileName) {
         page.nameUrl = page.fileName;
+        changed = true;
+      }
+
+      if (page.nameUrl && page.generation === 'markdown' && !page.nameUrl.endsWith('.md')) {
+        page.nameUrl = page.nameUrl.substring(0, page.nameUrl.lastIndexOf('.')) + '.md';
+        changed = true;
       }
 
       (page.page || []).forEach(childPage => migratePage(childPage));
