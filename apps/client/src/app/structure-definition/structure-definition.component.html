@@ -291,7 +291,7 @@
                 <div class="expand-collapse" [class.clickable]="e.hasChildren" (click)="constraintManager.toggleExpand(e)">
                   <i class="fa" [class.fa-plus]="!e.expanded" [class.fa-minus]="e.expanded" *ngIf="e.hasChildren"></i>
                 </div>
-                {{e.display}}
+                {{e.baseElement.sliceName ? e.baseElement.sliceName : e.displayId}}
                 <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
               </div>
             </td>
