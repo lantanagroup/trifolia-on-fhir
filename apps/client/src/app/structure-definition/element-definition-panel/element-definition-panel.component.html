@@ -31,7 +31,7 @@
             <input type="text" class="form-control" [(ngModel)]="editedSliceName"/>
             <div class="input-group-btn">
               <button type="button" class="btn btn-default" (click)="toggleEditSliceName(true)"
-                      title="Finish editing the slice name">
+                      title="Finish editing the slice name" [disabled]="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">
                 <i class="fa fa-check"></i>
               </button>
               <button type="button" class="btn btn-default" (click)="toggleEditSliceName(false)"
@@ -39,6 +39,7 @@
                 <i class="fa fa-ban"></i>
               </button>
             </div>
+            <span class="alert alert-warning status-message" *ngIf="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">Slice names can't contain spaces or dots within their name.</span>
           </div>
         </div>
 

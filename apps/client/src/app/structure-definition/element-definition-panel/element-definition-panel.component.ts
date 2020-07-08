@@ -125,7 +125,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   toggleEditSliceName(commit?: boolean) {
-    if (this.editingSliceName) {
+    if (this.editingSliceName && commit) {
       let newId = this.element.id.substring(0, this.element.id.lastIndexOf(':'));
       newId = newId + ':' + this.editedSliceName;
 
@@ -144,6 +144,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
       this.element.sliceName = this.editedSliceName;
       this.element.id = newId;
+      this.editingSliceName = false;
+    } else if(commit !== undefined && !commit) {
       this.editingSliceName = false;
     } else {
       this.editingSliceName = true;
