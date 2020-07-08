@@ -14709,11 +14709,13 @@ export class ImplementationGuidePageComponent extends BackboneElement {
 
     if (this.hasOwnProperty('nameUrl') || !this.nameReference) {
       if (value) {
-        this.nameUrl = value;
+        let generatedNameUrl = value;
 
-        if (this.nameUrl === 'index.html' && this.generation === 'markdown') {
-          this.nameUrl = 'index.md';
+        if (generatedNameUrl.endsWith('.html') && this.generation === 'markdown') {
+          generatedNameUrl = generatedNameUrl.substring(0, generatedNameUrl.lastIndexOf('.html')) + '.md';
         }
+
+        this.nameUrl = generatedNameUrl;
       } else {
         delete this.nameUrl;
       }
