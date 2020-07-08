@@ -15,3 +15,7 @@ input[type=text]::-webkit-search-results-decoration { display: none; }
 .form-control.is-invalid {
   background-image: none;
 }
+
+.card {
+  margin-bottom: 15px;
+}

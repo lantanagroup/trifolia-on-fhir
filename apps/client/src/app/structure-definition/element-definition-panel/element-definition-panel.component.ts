@@ -9,7 +9,9 @@ import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../shared/config.service';
 import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
-import {IElementDefinition} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IElementDefinition, IElementDefinitionConstraint} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ElementDefinitionConstraintComponent} from '../../modals/element-definition-constraint/element-definition-constraint.component';
+import {generateId} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -26,6 +28,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public editedSliceName: string;
   public definedTypeCodes: Coding[] = [];
   public Globals = Globals;
+  public editingConstraint: IElementDefinitionConstraint;
 
   @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
   @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
@@ -99,6 +102,25 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
     modalRef.componentInstance.structureDefinition = this.structureDefinition;
+  }
+
+  addConstraint() {
+    this.element.constraint = this.element.constraint || [];
+    this.element.constraint.push({
+      key: generateId(),
+      severity: 'warning',
+      human: ''
+    });
+  }
+
+  editConstraint(constraint: IElementDefinitionConstraint) {
+    const modalRef = this.modalService.open(ElementDefinitionConstraintComponent, { backdrop: 'static' });
+    modalRef.componentInstance.constraint = constraint;
+  }
+
+  addCondition() {
+    this.element.condition = this.element.condition || [];
+    this.element.condition.push('');
   }
 
   toggleMaxUnlimited() {

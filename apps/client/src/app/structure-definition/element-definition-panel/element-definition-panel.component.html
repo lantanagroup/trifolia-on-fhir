@@ -186,52 +186,82 @@
 
         <div class="card">
           <div class="card-header">
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('condition')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'condition', [''])"/>
             Condition
             <app-tooltip-icon tooltipPath="ElementDefinition.condition"></app-tooltip-icon>
           </div>
-          <table class="table table-striped" *ngIf="element.hasOwnProperty('condition')">
+          <table class="table table-striped">
             <thead>
             <tr>
-              <td>ID</td>
-              <td class="actions-column-1">
-                <div class="pull-right">
-                  <button type="button" class="btn btn-default btn-sm" title="Add a condition"
-                          (click)="element.condition.push('')">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
-              </td>
+              <th>ID</th>
+              <th class="actions-column-1">
+                <button type="button" class="btn btn-primary btn-sm" title="Add a condition" (click)="addCondition()">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let c of element.condition; let ci = index; trackBy: Globals.trackByFn">
+            <tr *ngFor="let c of element.condition || []; let ci = index; trackBy: Globals.trackByFn">
               <td>
                 <input type="text" class="form-control" [(ngModel)]="element.condition[ci]"/>
               </td>
               <td>
-                <div class="pull-right">
-                  <button type="button" class="btn btn-default btn-sm" title="Remove this condition"
-                          (click)="element.condition.splice(ci, 1)">
+                <button type="button" class="btn btn-primary btn-sm" title="Remove this condition" (click)="element.condition.splice(ci, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot *ngIf="!element.condition?.length">
+            <tr>
+              <td colspan="2">No conditions. Click <a href="javascript:void(0)" (click)="addCondition()">here</a> to add one.</td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Constraint(s)</div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Key</th>
+              <th>Human</th>
+              <th class="actions-column-1">
+                <div class="float-right">
+                  <button type="button" class="btn btn-primary btn-sm" title="Add a constraint." (click)="addConstraint()">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of element.constraint || []; let i = index">
+              <td>
+                <app-fhir-string [parentObject]="c" propertyName="key" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="c" propertyName="human" [isFormGroup]="false" [required]="true"></app-fhir-string>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary btn-sm" title="Edit additional details for this constraint." (click)="editConstraint(c, editConstraintModal)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary btn-sm" title="Remove this constraint." (click)="element.constraint.splice(i, 1)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </td>
             </tr>
             </tbody>
+            <tfoot *ngIf="!element.constraint?.length">
+            <tr>
+              <td colspan="4">No constraints defined. Click <a href="javascript:void(0)" (click)="addConstraint()">here</a> to add one.</td>
+            </tr>
+            </tfoot>
           </table>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('constraint')" (ngModelChange)="Globals.toggleProperty(element, 'constraint', [{ key: 'key', severity: 'severity', human: 'human', expression: 'expression' }])"/>
-            Constraint
-            <app-tooltip-icon tooltipPath="ElementDefinition.constraint"></app-tooltip-icon>
-          </label>
-          <p *ngFor="let c of element.constraint">{{c.key}} | {{c.severity}} | {{c.human}} | {{c.expression}}</p>
-          <button type="button" class="btn btn-default btn-sm" *ngIf="element.hasOwnProperty('constraint')">Edit
-          </button>
         </div>
 
         <!-- Mapping -->
@@ -277,7 +307,7 @@
             <input type="text" class="form-control" placeholder="display"
                    [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-default clickable" (click)="element.code.splice(i, 1)"
+              <button type="button" class="btn btn-primary clickable" (click)="element.code.splice(i, 1)"
                       title="Remove this code"><i class="fas fa-trash-alt"></i></button>
             </div>
           </div>
@@ -317,7 +347,7 @@
               </th>
               <th>
                 <div class="pull-right">
-                  <button type="button" class="btn btn-default btn-sm" title="Add a discriminator"
+                  <button type="button" class="btn btn-primary btn-sm" title="Add a discriminator"
                           (click)="element.slicing.discriminator.push({ type: 'value', path: '' })">
                     <i class="fa fa-plus"></i>
                   </button>
@@ -338,7 +368,7 @@
               </td>
               <td>
                 <div class="pull-right">
-                  <button type="button" class="btn btn-default btn-sm"
+                  <button type="button" class="btn btn-primary btn-sm"
                           title="Remove this discriminator"
                           (click)="element.slicing.disciminator.splice(di, 1)">
                     <i class="fas fa-trash-alt"></i>
@@ -382,7 +412,7 @@
             <input type="text" class="form-control" [(ngModel)]="element.alias[ai]"
                     [disabled]="!element.hasOwnProperty('alias')"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-default clickable" (click)="element.alias.splice(ai, 1)"
+              <button type="button" class="btn btn-primary clickable" (click)="element.alias.splice(ai, 1)"
                       title="Remove this alias">
                 <i class="fas fa-trash-alt"></i>
               </button>

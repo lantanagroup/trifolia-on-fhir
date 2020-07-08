@@ -78,6 +78,7 @@ import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-mod
 import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
 import { PackageListComponent } from './implementation-guide-wrapper/package-list/package-list.component';
 import { ResourceGuard } from './guards/resource.guard';
+import {ElementDefinitionConstraintComponent} from './modals/element-definition-constraint/element-definition-constraint.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -217,7 +218,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
     MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent
+    GroupModalComponent, ElementDefinitionConstraintComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -233,7 +234,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent
   ],
   imports: [
     RouterModule.forRoot(

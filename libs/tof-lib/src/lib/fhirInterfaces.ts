@@ -227,6 +227,7 @@ export interface IElementDefinition extends IElement {
   isSummary?: boolean;
   isModifier?: boolean;
   mustSupport?: boolean;
+  condition?: string[];
 }
 
 export interface IStructureDefinition extends IDomainResource {

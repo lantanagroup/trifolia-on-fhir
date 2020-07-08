@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Edit constraint</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <app-fhir-string [parentObject]="constraint" propertyName="key" [required]="true" tooltipPath="ElementDefinition.constraint.key" title="Key"></app-fhir-string>
+
+  <app-fhir-string [parentObject]="constraint" propertyName="requirements" tooltipPath="ElementDefinition.constraint.requirements" title="Requirements"></app-fhir-string>
+
+  <div class="form-group">
+    <label>Severity</label>
+    <select class="form-control" [(ngModel)]="constraint.severity" [class.is-invalid]="!constraint.severity">
+      <option value="error">Error</option>
+      <option value="warning">Warning</option>
+    </select>
+  </div>
+
+  <app-fhir-string [parentObject]="constraint" propertyName="human" [required]="true" tooltipPath="ElementDefinition.constraint.human" title="Human"></app-fhir-string>
+
+  <app-fhir-string [parentObject]="constraint" propertyName="expression" [required]="false" tooltipPath="ElementDefinition.constraint.expression" title="Expression"></app-fhir-string>
+
+  <app-fhir-reference [parentObject]="constraint" propertyName="source" resourceType="StructureDefinition" [hideResourceType]="true" [isCanonical]="true" title="Source"></app-fhir-reference>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Done</button>
+</div>
