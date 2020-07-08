@@ -203,7 +203,6 @@ export class ExportComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
-    const extension = this.options.responseFormat === 'application/xml' ? '.xml' : this.options.responseFormat === 'application/msword' ? '.docx' : '.json';
 
     try {
       switch (this.options.exportFormat) {
@@ -220,6 +219,7 @@ export class ExportComponent implements OnInit {
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
             .subscribe((response) => {
+              const extension = this.options.responseFormat === 'application/xml' ? '.xml' : '.json';
               saveAs(response.body, igName + extension);
               this.message = 'Done exporting.';
             }, (err) => {
@@ -229,7 +229,7 @@ export class ExportComponent implements OnInit {
         case ExportFormats.MSWORD:
             this.exportService.exportMsWord(this.options)
               .subscribe((response) => {
-                saveAs(response.body, igName + extension);
+                saveAs(response.body, igName + '.docx');
                 this.message = 'Done exporting.';
               }, (err) => {
                 this.message = getErrorString(err);
