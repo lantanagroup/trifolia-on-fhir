@@ -309,8 +309,9 @@ export class HtmlExporter {
     this.writeResourceContent(inputDir, igToWrite, isXml);
 
     // Go through all of the other resources and write them to the file system
+    // Don't re-write the main implementation guide
     this.bundle.entry
-      .filter((e) => this.implementationGuide !== e.resource)
+      .filter((e) => e.resource.resourceType !== 'ImplementationGuide' || e.resource.id !== this.implementationGuideId)
       .forEach((entry) => this.writeResourceContent(inputDir, entry.resource, isXml));
 
     this.logger.log('Done writing resources to file system.');
