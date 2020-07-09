@@ -106,7 +106,7 @@ export class PublishComponent implements OnInit {
   }
 
   public get publishDisabled(): boolean {
-    return !this.options.implementationGuideId || !this.options.responseFormat || this.inProgress;
+    return !this.options.implementationGuideId || !this.options.responseFormat || this.inProgress || !this.options.version;
   }
 
   public responseFormatChanged() {
