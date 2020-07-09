@@ -10,6 +10,7 @@ import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ElementDefinition} from './r4/fhir';
+import {ElementTreeModel} from './element-tree-model';
 
 describe('ConstraintManager', () => {
   const parser = new ParseConformance(false, Versions.R4);
@@ -42,21 +43,21 @@ describe('ConstraintManager', () => {
 
     it('should expand section slices and have the correct children', async () => {
       await cm.toggleExpand(cm.elements[24]);
-      expect(cm.elements.length).toBe(57);
+      expect(cm.elements.length).toBe(56);
 
       let actualIds = cm.elements
         .filter((e, i) => i >= 25 && i <= 38 && e.depth === 2)
         .map(e => e.id);
-      let expectedIds = ['Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.entry:allergy_entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section'];
+      let expectedIds = ['Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section'];
       expect(actualIds).toStrictEqual(expectedIds);
 
       // expand medications section
       await cm.toggleExpand(cm.elements[39]);
-      expect(cm.elements.length).toBe(71);
+      expect(cm.elements.length).toBe(69);
       actualIds = cm.elements
         .filter((e, i) => i >= 40 && i <= 53 && e.depth === 2)
         .map(e => e.id);
-      expectedIds = ['Composition.section:medications_section.id', 'Composition.section:medications_section.extension', 'Composition.section:medications_section.modifierExtension', 'Composition.section:medications_section.title', 'Composition.section:medications_section.code', 'Composition.section:medications_section.author', 'Composition.section:medications_section.focus', 'Composition.section:medications_section.text', 'Composition.section:medications_section.mode', 'Composition.section:medications_section.orderedBy', 'Composition.section:medications_section.entry', 'Composition.section:medications_section.entry:medication_entry', 'Composition.section:medications_section.emptyReason', 'Composition.section:medications_section.section'];
+      expectedIds = ['Composition.section:problem_section.id', 'Composition.section:problem_section.extension', 'Composition.section:problem_section.modifierExtension', 'Composition.section:problem_section.title', 'Composition.section:problem_section.code', 'Composition.section:problem_section.author', 'Composition.section:problem_section.focus', 'Composition.section:problem_section.text', 'Composition.section:problem_section.mode', 'Composition.section:problem_section.orderedBy', 'Composition.section:problem_section.entry', 'Composition.section:problem_section.emptyReason', 'Composition.section:problem_section.section'];
       expect(actualIds).toStrictEqual(expectedIds);
     });
   });
@@ -329,9 +330,6 @@ describe('ConstraintManager', () => {
 
       await cm.toggleExpand(cm.elements[25]);
       expect(cm.elements.length).toBe(52);
-
-      expect(cm.elements[28].constrainedElement).toBe(testData.differential.element[4]);
-      expect(cm.elements[30].constrainedElement).toBe(testData.differential.element[5]);
     });
 
     it('should expand code.coding.code', async () => {
