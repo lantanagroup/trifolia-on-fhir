@@ -24,6 +24,7 @@ export class ResourceGuard implements CanDeactivate<CanComponentDeactivate> {
 
     //If the source url is the same as the destination url, DO NOTHING. Returning true will reload the page which will remove all changed data.
     if (source === destination) return false;
+    if (!component) return false;
     if (!component.canDeactivate || component.canDeactivate()) return true;
     if (!component.canDeactivate()) {
       return window.confirm("You have unsaved changes on this resource. Are you sure you'd like to navigate to a new page?");

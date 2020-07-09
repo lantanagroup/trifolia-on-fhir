@@ -14841,7 +14841,7 @@ export class ImplementationGuideDefinitionComponent extends BackboneElement {
     if (obj) {
       if (obj.hasOwnProperty('grouping')) {
         this.grouping = [];
-        for (const o of obj.package || []) {
+        for (const o of obj.grouping || []) {
           this.grouping.push(new ImplementationGuideGroupingComponent(o));
         }
       }
