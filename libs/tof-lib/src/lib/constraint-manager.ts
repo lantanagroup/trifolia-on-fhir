@@ -313,13 +313,15 @@ export class ConstraintManager {
    */
   private associate(elementTreeModels: ElementTreeModel[]) {
     for (const elementTreeModel of elementTreeModels) {
+      if (elementTreeModel.constrainedElement) continue;
+
       const base = elementTreeModel.baseElement;
       const sliceCounts: { [ path: string ]: number } = {};
 
       for (const diff of this.structureDefinition.differential.element) {
         if (!base.path || !base.id || !diff.path || !diff.id) continue;
 
-        const baseId = ConstraintManager.normalizePath(elementTreeModel.id);
+        const baseId = ConstraintManager.normalizePath(base.id);
         const diffId = ConstraintManager.normalizePath(diff.id);
         const idMatch = baseId === diffId;
         const baseIdDepth = baseId.split('.').length;
