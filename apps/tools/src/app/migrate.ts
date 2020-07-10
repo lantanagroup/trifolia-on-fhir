@@ -2,12 +2,10 @@ import {identifyRelease} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {BaseTools} from './baseTools';
 import {Versions} from 'fhir/fhir';
 import {Binary as R4Binary, ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Binary as STU3Binary} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as STU3ImplementationGuide, PageComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {Binary as STU3Binary, ImplementationGuide as STU3ImplementationGuide, PageComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {IBundle, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import * as fs from 'fs';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {back} from 'nock';
 
 interface MigrateOptions {
   server: string;
@@ -19,6 +17,7 @@ export class Migrate extends BaseTools {
   private options: MigrateOptions;
   private fhirVersion: Versions;
   private changedResources: IDomainResource[] = [];
+  private backupBundle: IBundle;
 
   constructor(options: MigrateOptions) {
     super();
@@ -39,22 +38,29 @@ export class Migrate extends BaseTools {
     const igs = await this.getAllResources(this.options.server, 'ImplementationGuide');
 
     if (this.options.backup) {
-      const backupTransaction = {
+      this.backupBundle = {
         resourceType: 'Bundle',
         type: 'transaction',
         entry: igs.map(ig => {
+          let cleanIg: IImplementationGuide;
+
+          if (this.fhirVersion === Versions.R4) {
+            cleanIg = new R4ImplementationGuide(ig);
+          } else if (this.fhirVersion === Versions.STU3) {
+            cleanIg = new STU3ImplementationGuide(ig);
+          }
+
+          delete cleanIg.meta;
+
           return {
             request: {
               method: 'PUT',
               url: `ImplementationGuide/${ig.id}`
             },
-            resource: ig
+            resource: cleanIg
           }
         })
       };
-
-      console.log(`Creating a backup of the IGs at ${this.options.backup}`);
-      fs.writeFileSync(this.options.backup, JSON.stringify(backupTransaction));
     }
 
     switch (this.fhirVersion) {
@@ -86,6 +92,15 @@ export class Migrate extends BaseTools {
       fs.writeFileSync(this.options.output, JSON.stringify(bundle));
       console.log(`Writing ${this.changedResources.length} resources to transaction bundle in ${this.options.output}`);
     }
+
+    if (this.options.backup) {
+      this.backupBundle.entry = this.backupBundle.entry.filter(e => {
+        return !!this.changedResources.find(cr => cr.id === e.resource.id);
+      });
+
+      console.log(`Creating a backup of the IGs at ${this.options.backup}`);
+      fs.writeFileSync(this.options.backup, JSON.stringify(this.backupBundle, null, '\t'));
+    }
   }
 
   private migrateR4ImplementationGuide(ig: R4ImplementationGuide) {
@@ -101,7 +116,7 @@ export class Migrate extends BaseTools {
       }
 
       if (!page.fileName && page.title) {
-        page.fileName = page.title.toLowerCase().replace(/\s/g, '_') + '.html';
+        page.fileName = page.title.toLowerCase().replace(/\s/g, '_') + page.getExtension();
         changed = true;
       }
 
@@ -132,11 +147,6 @@ export class Migrate extends BaseTools {
         }
       }
 
-      if (page.fileName === 'index.md') {
-        page.fileName = 'index.html';
-        changed = true;
-      }
-
       if (!page.reuseDescription && page.fileName === 'index.html' && !page.contentMarkdown) {
         page.reuseDescription = true;
         changed = true;
@@ -147,8 +157,13 @@ export class Migrate extends BaseTools {
         changed = true;
       }
 
-      if (page.nameUrl && page.generation === 'markdown' && !page.nameUrl.endsWith('.md')) {
-        page.nameUrl = page.nameUrl.substring(0, page.nameUrl.lastIndexOf('.')) + '.md';
+      if (page.fileName && !page.fileName.endsWith(page.getExtension())) {
+        page.fileName = page.fileName.substring(0, page.fileName.lastIndexOf('.')) + page.getExtension();
+        changed = true;
+      }
+
+      if (page.nameUrl && page.nameUrl.indexOf('.') > 0 && !page.nameUrl.endsWith('.html')) {
+        page.nameUrl = page.nameUrl.substring(0, page.nameUrl.lastIndexOf('.')) + '.html';
         changed = true;
       }
 
@@ -170,13 +185,18 @@ export class Migrate extends BaseTools {
     const migratePage = (page: PageComponent) => {
       const contentExt = (page.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
 
-      if (page.source === 'index.md') {
-        page.source = 'index.html';
+      if (page.source === 'index.html') {
+        page.source = 'index.md';
         changed = true;
       }
 
-      if (page.source === 'index.html' && !page.contentMarkdown) {
+      if (page.source === 'index.md' && !page.contentMarkdown) {
         page.reuseDescription = true;
+        changed = true;
+      }
+
+      if (page.format === 'markdown' && page.source && page.source.indexOf('.') && !page.source.endsWith('.md')) {
+        page.source = page.source.substring(0, page.source.lastIndexOf('.')) + '.md';
         changed = true;
       }
 
