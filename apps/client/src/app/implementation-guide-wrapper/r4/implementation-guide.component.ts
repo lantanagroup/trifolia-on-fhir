@@ -407,11 +407,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (value && !this.implementationGuide.definition.page) {
       this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
-      this.implementationGuide.definition.page.title = 'Home Page';
       this.implementationGuide.definition.page.generation = 'markdown';
-      this.implementationGuide.definition.page.nameUrl = 'index.html';
-      this.implementationGuide.definition.page.fileName = 'index.html';
       this.implementationGuide.definition.page.reuseDescription = true;
+      this.implementationGuide.definition.page.setTitle('Home Page', true);
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);

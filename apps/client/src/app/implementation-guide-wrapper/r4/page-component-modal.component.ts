@@ -16,7 +16,7 @@ import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators'
   styleUrls: ['./page-component-modal.component.css']
 })
 export class PageComponentModalComponent implements OnInit {
-  private inputPage: ImplementationGuidePageComponent;
+  public inputPage: ImplementationGuidePageComponent;
   public page: ImplementationGuidePageComponent;
   public implementationGuide: ImplementationGuide;
   public rootPage: boolean;
@@ -24,6 +24,11 @@ export class PageComponentModalComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal) {
 
+  }
+
+  public get isRootPageValid() {
+    if (!this.rootPage) return true;
+    return this.page.fileName === 'index' + this.page.getExtension();
   }
 
   public getMediaReferences(): MediaReference[] {

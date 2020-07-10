@@ -10948,11 +10948,25 @@ export class PageComponent extends BackboneElement {
     }
   }
 
-  public setTitle(value: string) {
+  public getExtension() {
+    switch (this.format) {
+      case 'html':
+      case 'xhtml':
+      case 'xml':
+        return `.${this.format}`;
+      case 'markdown':
+      default:
+        return `.md`;
+    }
+  }
+
+  public setTitle(value: string, isRoot = false) {
     this.title = value;
 
-    if (value) {
-      this.source = value.toLowerCase().replace(/\s/g, '_') + '.html';
+    if (!isRoot && value) {
+      this.source = value.toLowerCase().replace(/\s/g, '_') + this.getExtension();
+    } else if (isRoot) {
+      this.source = `index${this.getExtension()}`;
     }
   }
 

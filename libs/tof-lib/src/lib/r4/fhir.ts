@@ -14654,11 +14654,23 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     }
   }
 
-  public setTitle(value: string) {
+  public getExtension() {
+    switch (this.generation) {
+      case 'markdown':
+      case 'generated':
+        return '.md';
+      default:
+        return `.${this.generation}`;
+    }
+  }
+
+  public setTitle(value: string, isRoot = false) {
     this.title = value;
 
-    if (value) {
-      this.fileName = value.toLowerCase().replace(/\s/g, '_') + '.html';
+    if (!isRoot && value) {
+      this.fileName = value.toLowerCase().replace(/\s/g, '_') + this.getExtension();
+    } else if (isRoot) {
+      this.fileName = 'index' + this.getExtension();
     }
   }
 
@@ -14709,7 +14721,13 @@ export class ImplementationGuidePageComponent extends BackboneElement {
 
     if (this.hasOwnProperty('nameUrl') || !this.nameReference) {
       if (value) {
-        this.nameUrl = value;
+        let generatedNameUrl = value;
+
+        if (!generatedNameUrl.endsWith('.html')) {
+          generatedNameUrl = generatedNameUrl.substring(0, generatedNameUrl.lastIndexOf('.')) + '.html';
+        }
+
+        this.nameUrl = generatedNameUrl;
       } else {
         delete this.nameUrl;
       }
