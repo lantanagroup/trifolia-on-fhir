@@ -31,12 +31,13 @@ RUN npm prune --production
 
 FROM node:10-alpine
 
+# Install ruby, open-jdk
 RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre
+# Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
+RUN apk add --no-cache fontconfig ttf-dejavu
 RUN gem install sassc -- --disable-march-tune-native
 RUN gem install jekyll bundler --no-document
 RUN jekyll -v
-
-RUN echo -e "version=1\nsequence.allfonts=default" > $JAVA_HOME/lib/fontconfig.properties
 
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
