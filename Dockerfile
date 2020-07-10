@@ -36,6 +36,8 @@ RUN gem install sassc -- --disable-march-tune-native
 RUN gem install jekyll bundler --no-document
 RUN jekyll -v
 
+RUN echo -e "version=1\nsequence.allfonts=default" > $JAVA_HOME/lib/fontconfig.properties
+
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 
