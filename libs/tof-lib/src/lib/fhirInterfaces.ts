@@ -122,7 +122,7 @@ export interface IBundleEntry {
   };
 }
 
-export interface IBundle {
+export interface IBundle extends IDomainResource {
   type?: string;
   total?: number;
   link?: {
