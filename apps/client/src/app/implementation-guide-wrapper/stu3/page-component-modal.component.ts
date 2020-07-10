@@ -11,7 +11,7 @@ import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators'
   styleUrls: ['./page-component-modal.component.css']
 })
 export class PageComponentModalComponent implements OnInit {
-  private inputPage: PageComponent;
+  public inputPage: PageComponent;
   public page: PageComponent;
   public implementationGuide: ImplementationGuide;
   public Globals = Globals;

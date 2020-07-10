@@ -7,19 +7,25 @@
 <div class="modal-body" *ngIf="page">
   <div class="form-group">
     <label>Title</label>
-    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event)" [class.is-invalid]="!page.title" />
+    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.definition.page === inputPage)" [class.is-invalid]="!page.title" />
   </div>
 
   <div class="form-group">
-    <label>File Name</label>
-    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith('.html') || (rootPage && page.fileName !== 'index.html')" />
+    <label>
+      File Name
+      <app-tooltip-icon tooltipKey="ig.page.fileName"></app-tooltip-icon>
+    </label>
+    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith(page.getExtension()) || !isRootPageValid" />
     <p class="text-muted" *ngIf="!page.fileName">File name is required, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith('.html')">All page's file names must end with the .html extension, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="rootPage && page.fileName !== 'index.html'">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index.html". Otherwise, the published implementation guide may not contain a home page.</p>
+    <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith(page.getExtension())">This page's file names must end with the {{page.getExtension()}} extension, or the page will not export/publish correctly.</p>
+    <p class="text-muted" *ngIf="isRootPageValid">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index.{{page.getExtension()}}". Otherwise, the published implementation guide may not contain a home page.</p>
   </div>
 
   <div class="form-group" *ngIf="page.generation !== 'generated'">
-    <label>Show on top nav menu</label>
+    <label>
+      Show on top nav menu
+      <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
+    </label>
     <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
@@ -36,8 +42,7 @@
 
   <hr />
 
-  <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true"></app-fhir-select-single-code>
-  <p class="text-muted">Currently, Trifolia-on-FHIR only supports specifying Markdown content. It is recommended that you leave the "Generation" field as "Markdown".</p>
+  <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true" tooltipKey="ig.page.generation"></app-fhir-select-single-code>
 
   <div class="form-group">
     <label>Name Type</label>
@@ -47,7 +52,7 @@
     </select>
   </div>
 
-  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Name URL" [required]="true"></app-fhir-string>
+  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Name URL" [required]="true" tooltipKey="ig.page.name"></app-fhir-string>
 
   <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')" title="Name Reference" [required]="true"></app-fhir-reference>
 </div>

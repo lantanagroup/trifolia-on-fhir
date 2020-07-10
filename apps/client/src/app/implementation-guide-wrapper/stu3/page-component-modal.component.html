@@ -7,26 +7,32 @@
 <div class="modal-body" *ngIf="page">
   <div class="form-group">
     <label>Title</label>
-    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event)" [class.is-invalid]="!page.hasOwnProperty('title')"/>
-  </div>
-
-  <div class="form-group">
-    <label>File Name (Source)</label>
-    <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
-    <p class="text-muted" *ngIf="!page.source">File name is required, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="page.source && !page.source.endsWith('.html')">All page's file names must end with the .html extension, or the page will not export/publish correctly.</p>
+    <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.page === inputPage)" [class.is-invalid]="!page.hasOwnProperty('title')"/>
   </div>
 
   <div class="form-group">
     <label>
-      <input type="checkbox" [ngModel]="page.hasOwnProperty('format')" (ngModelChange)="Globals.toggleProperty(page, 'format', 'markdown')"/>
-      Format
+      File Name (Source)
+      <app-tooltip-icon tooltipKey="ig.page.fileName"></app-tooltip-icon>
     </label>
-    <input type="text" class="form-control" [disabled]="!page.hasOwnProperty('format')" [(ngModel)]="page.format"/>
+    <input type="text" class="form-control" [(ngModel)]="page.source" [class.is-invalid]="!page.source"/>
+    <p class="text-muted" *ngIf="!page.source">File name is required, or the page will not export/publish correctly.</p>
+    <p class="text-muted" *ngIf="page.source && !page.source.endsWith(page.getExtension())">This page's file names must end with the {{page.getExtension()}} extension, or the page will not export/publish correctly.</p>
   </div>
 
   <div class="form-group">
-    <label>Show on top nav menu</label>
+    <label>
+      Format
+      <app-tooltip-icon tooltipKey="ig.page.format"></app-tooltip-icon>
+    </label>
+    <input type="text" class="form-control" [(ngModel)]="page.format"/>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Show on top nav menu
+      <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
+    </label>
     <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 

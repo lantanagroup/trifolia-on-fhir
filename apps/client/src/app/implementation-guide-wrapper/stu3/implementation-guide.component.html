@@ -168,7 +168,7 @@
           <tbody *ngIf="pages?.length">
           <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
             <td>
-              <input type="text" class="form-control" [(ngModel)]="p.page.title" [class.is-invalid]="!p.page.title"/>
+              <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, implementationGuide.page === p.page)" [class.is-invalid]="!p.page.title"/>
             </td>
             <td>
               <input type="text" class="form-control" [(ngModel)]="p.page.source" [class.is-invalid]="!p.page.source" />
