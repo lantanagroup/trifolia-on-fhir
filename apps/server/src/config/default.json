@@ -15,7 +15,7 @@
     "maxRequestSizeMegabytes": 50,
     "latestIgPublisherPath": "assets/ig-publisher",
     "maxAsyncQueueRequests": 10,
-    "publishStatusPath": "assets/publishedIGs.json"
+    "publishStatusPath": "igs/publishedIGs.json"
   },
   "publish": {
     "queueLimit": 2,
