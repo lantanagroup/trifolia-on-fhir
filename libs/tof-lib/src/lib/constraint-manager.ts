@@ -1,6 +1,6 @@
-import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
-import { ParseConformance } from 'fhir/parseConformance';
-import { ElementTreeModel } from './element-tree-model';
+import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
+import {ParseConformance} from 'fhir/parseConformance';
+import {ElementTreeModel} from './element-tree-model';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -280,10 +280,17 @@ export class ConstraintManager {
     if (elementTreeModel.constrainedElement) return;
 
     // Create a new instance of the ELementDefinition
-    elementTreeModel.constrainedElement = new this.elementDefinitionType({
-      id: elementTreeModel.id,
-      path: elementTreeModel.path
-    });
+    if (elementTreeModel.baseId.startsWith(elementTreeModel.id + ':')) {
+      elementTreeModel.constrainedElement = new this.elementDefinitionType({
+        id: elementTreeModel.baseId,
+        path: elementTreeModel.path
+      });
+    } else {
+      elementTreeModel.constrainedElement = new this.elementDefinitionType({
+        id: elementTreeModel.id,
+        path: elementTreeModel.path
+      });
+    }
 
     let prevConstrainedElementTreeModel: ElementTreeModel;
     let nextElementTreeModel = elementTreeModel;
