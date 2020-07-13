@@ -242,7 +242,8 @@ export class StructureDefinitionController extends BaseFhirController {
       const results = await this.httpService.post(snapshotUrl, body).toPromise();
 
       if (results.data && results.data.resourceType === 'StructureDefinition' && results.data.snapshot) {
-        return results.data;
+        body.snapshot = results.data.snapshot;
+        return body;
       }
     } catch (ex) {
       let msg = ex.message;
