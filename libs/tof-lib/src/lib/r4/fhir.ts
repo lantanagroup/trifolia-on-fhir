@@ -14668,7 +14668,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     this.title = value;
 
     if (!isRoot && value) {
-      this.fileName = value.toLowerCase().replace(/\s/g, '_') + this.getExtension();
+      this.fileName = value.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '') + this.getExtension();
     } else if (isRoot) {
       this.fileName = 'index' + this.getExtension();
     }
