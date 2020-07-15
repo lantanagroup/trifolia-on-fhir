@@ -106,7 +106,8 @@ export class STU3HtmlExporter extends HtmlExporter {
 
       const ret = new ImplementationGuidePageComponent();
       ret.title = stu3Page.title;
-      ret.generation = stu3Page.format;
+      ret.generation = stu3Page.format || 'markdown';
+      ret.nameUrl = stu3Page.source;
 
       if (stu3Page.extension && stu3Page.extension.length > 0) {
         ret.extension = stu3Page.extension;
@@ -114,10 +115,6 @@ export class STU3HtmlExporter extends HtmlExporter {
 
       if (stu3Page.page) {
         ret.page = stu3Page.page.map(nextPage => getPage(nextPage));
-      }
-
-      if (stu3Page.source) {
-        ret.nameUrl = Globals.getCleanFileName(stu3Page.source);
       }
 
       return ret;
@@ -226,7 +223,14 @@ export class STU3HtmlExporter extends HtmlExporter {
 
       const pageInfo = new PageInfo();
       pageInfo.page = page;
-      pageInfo.fileName = page.source;
+
+      if (page.source) {
+        if (page.source.lastIndexOf('.') > 0) {
+          pageInfo.fileName = page.source.substring(0, page.source.lastIndexOf('.')) + page.getExtension();
+        } else {
+          pageInfo.fileName = page.source;
+        }
+      }
 
       if (page.reuseDescription) {
         pageInfo.content = this.getIndexContent(implementationGuide);
