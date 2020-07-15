@@ -292,6 +292,12 @@ export class ConstraintManager {
       });
     }
 
+    if (elementTreeModel.baseElement.sliceName) {
+      const sliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+      elementTreeModel.constrainedElement.sliceName = `${elementTreeModel.baseElement.sliceName}/${sliceName}`;
+      elementTreeModel.constrainedElement.id += `/${sliceName}`;
+    }
+
     let prevConstrainedElementTreeModel: ElementTreeModel;
     let nextElementTreeModel = elementTreeModel;
 
