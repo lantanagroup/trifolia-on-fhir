@@ -22,7 +22,7 @@
   <div class="col-md-8" *ngIf="compareResource">
     <h3>
       Comparing version {{resource.meta.versionId}} to version {{compareResource.meta.versionId}}
-      <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Load this version">
+      <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Restore this version. Must press 'Save' before this restored version is persisted.">
         <i class="fas fa-upload"></i>
       </button>
     </h3>
