@@ -43,6 +43,10 @@ export class BundleExporter {
       const extensionUrls = extensionUrlKeys.map((key) => Globals.extensionUrls[key]);
       const keys = Object.keys(obj);
 
+      if (obj.meta && obj.meta.tag) {
+        delete obj.meta.tag;
+      }
+
       if (obj.meta && obj.meta.security) {
         delete obj.meta.security;
       }
