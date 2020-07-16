@@ -5,6 +5,8 @@ import * as testData1 from '../../../../test/data/shareableplandefinition.profil
 import * as testData2 from '../../../../test/data/resprate.profile.json';
 import * as testData3 from '../../../../test/data/resprate2.profile.json';
 import * as testData4 from '../../../../test/data/ccd.json';
+import * as testData5 from '../../../../test/data/dentalReferral.json';
+import * as testData6 from '../../../../test/data/referralNote.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
@@ -83,6 +85,22 @@ describe('ConstraintManager', () => {
       expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[2]);
     });
   });
+
+  describe('dental-referralnote tests', () => {
+    it('should expand dental referral', async () => {
+      const testData: IStructureDefinition = JSON.parse(JSON.stringify(testData5));
+      const referralNote: IStructureDefinition = JSON.parse(JSON.stringify(testData6));
+
+      const cm = new ConstraintManager(ElementDefinition, referralNote, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      // await cm.toggleExpand(cm.elements[14]);
+      // await cm.toggleExpand(cm.elements[17]);
+      // expect(cm.elements[22].basePath).toBe('Observation.code.coding.code');
+      // expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[2]);
+    });
+  });
+
 
   describe('[un]constrain resprate2 observation', () => {
     let cm;
