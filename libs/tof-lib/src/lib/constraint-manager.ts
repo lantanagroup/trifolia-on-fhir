@@ -292,6 +292,15 @@ export class ConstraintManager {
       });
     }
 
+    // If we're constraining a base element that represents a slice from another profile, then
+    // we need to make sure this constraint has a slice name with "<baseSliceName>/<newSliceName>
+    // See re-slicing http://www.hl7.org/fhir/profiling.html#reslicing
+    if (elementTreeModel.baseElement.sliceName) {
+      const sliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+      elementTreeModel.constrainedElement.sliceName = `${elementTreeModel.baseElement.sliceName}/${sliceName}`;
+      elementTreeModel.constrainedElement.id += `/${sliceName}`;
+    }
+
     let prevConstrainedElementTreeModel: ElementTreeModel;
     let nextElementTreeModel = elementTreeModel;
 

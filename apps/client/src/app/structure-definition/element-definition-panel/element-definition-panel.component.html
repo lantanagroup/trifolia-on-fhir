@@ -22,25 +22,24 @@
             <input type="text" class="form-control" [ngModel]="element.sliceName" readonly="readonly"
                    *ngIf="!editingSliceName"/>
             <div class="input-grp-btn">
-              <button type="button" class="btn btn-default" (click)="toggleEditSliceName()" title="Edit the slice name">
+              <button type="button" class="btn btn-primary" (click)="toggleEditSliceName()" title="Edit the slice name">
                 <i class="fa fa-edit"></i>
               </button>
             </div>
           </div>
           <div class="input-group" *ngIf="editingSliceName">
             <input type="text" class="form-control" [(ngModel)]="editedSliceName"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-default" (click)="toggleEditSliceName(true)"
-                      title="Finish editing the slice name" [disabled]="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">
+            <div class="input-group-append btn-group">
+              <button type="button" class="btn btn-primary" (click)="toggleEditSliceName(true)" title="Finish editing the slice name" [disabled]="disableEditSliceName()">
                 <i class="fa fa-check"></i>
               </button>
-              <button type="button" class="btn btn-default" (click)="toggleEditSliceName(false)"
-                      title="Cancel editing the slice name">
+              <button type="button" class="btn btn-outline-primary" (click)="toggleEditSliceName(false)" title="Cancel editing the slice name">
                 <i class="fa fa-ban"></i>
               </button>
             </div>
             <span class="alert alert-warning status-message" *ngIf="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">Slice names can't contain spaces or dots within their name.</span>
           </div>
+          <p *ngIf="!editedResliceNameValid()">This is a re-slice. The slice name of the re-slice must start with "{{elementTreeModel.baseElement.sliceName}}/".</p>
         </div>
 
         <div class="row">
@@ -136,11 +135,11 @@
                    value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
                    title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-default clickable" (click)="openTypeModel(element, t)"
+              <button type="button" class="btn btn-primary clickable" (click)="openTypeModel(element, t)"
                       title="Edit this type">
                 <i class="fa fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-default clickable" (click)="element.type.splice(i, 1)"
+              <button type="button" class="btn btn-primary clickable" (click)="element.type.splice(i, 1)"
                       title="Remove this type">
                 <i class="fas fa-trash-alt"></i>
               </button>
@@ -169,7 +168,7 @@
               <option>xhtml</option>
             </select>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-default clickable" (click)="element.representation.splice(i, 1)"
+              <button type="button" class="btn btn-primary clickable" (click)="element.representation.splice(i, 1)"
                       title="Remove this representation">
                 <i class="fas fa-trash-alt"></i>
               </button>
