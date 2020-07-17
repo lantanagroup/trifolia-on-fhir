@@ -185,72 +185,72 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps24"><span class="rvts38">Common Pre-publishing Errors</span></p>
-<p class="rvps24"><span class="rvts39"><br/></span></p>
-<p class="rvps24"><span class="rvts40">A pre-publishing error has occurred when the string of codes results in IG Publisher finished with code 1. This means that there’s an error in your implementation guide (IG) that needs to be resolved before Trifolia-on-FHIR can publish the IG. This guide provides the steps for resolving these pre-publishing error examples:</span></p>
-<p class="rvps24"><span class="rvts40"><br/></span></p>
+<p class="rvps26"><span class="rvts56">Common Pre-publishing Errors</span></p>
+<p class="rvps26"><span class="rvts57"><br/></span></p>
+<p class="rvps26"><span class="rvts58">A pre-publishing error has occurred when the string of codes results in IG Publisher finished with code 1. This means that there’s an error in your implementation guide (IG) that needs to be resolved before Trifolia-on-FHIR can publish the IG. This guide provides the steps for resolving these pre-publishing error examples:</span></p>
+<p class="rvps26"><span class="rvts58"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li style="margin-left: 0px" class="rvps12"><span class="rvts24">IG Version</span></li>
-<li style="margin-left: 0px" class="rvps12"><span class="rvts24">Generating Snapshot</span></li>
-<li style="margin-left: 0px" class="rvps12"><span class="rvts24">IG Package ID</span></li>
-<li style="margin-left: 0px" class="rvps12"><span class="rvts24">Terminology server connection</span></li>
-<li style="margin-left: 0px" class="rvps12"><span class="rvts24">Dependency</span></li>
+<li style="margin-left: 0px" class="rvps25"><span class="rvts54">IG Version</span></li>
+<li style="margin-left: 0px" class="rvps25"><span class="rvts54">Generating Snapshot</span></li>
+<li style="margin-left: 0px" class="rvps25"><span class="rvts54">IG Package ID</span></li>
+<li style="margin-left: 0px" class="rvps25"><span class="rvts54">Terminology server connection</span></li>
+<li style="margin-left: 0px" class="rvps25"><span class="rvts54">Dependency</span></li>
 </ul>
-<p class="rvps24"><span class="rvts40"><br/></span></p>
-<p class="rvps24"><span class="rvts40">For other pre-publishing errors, go to </span><a class="rvts41" href="https://chat.fhir.org/login/" target="_blank">chat.fhir.org</a><span class="rvts40">. </span></p>
-<p class="rvps24"><span class="rvts38">&nbsp;</span></p>
-<p class="rvps24"><span class="rvts38">Identifying the Error</span></p>
-<p class="rvps24"><span class="rvts38"><br/></span></p>
-<p class="rvps24"><span class="rvts40">To identify the type of error, follow these steps: &nbsp;</span></p>
+<p class="rvps26"><span class="rvts58"><br/></span></p>
+<p class="rvps26"><span class="rvts58">For other pre-publishing errors, go to </span><a class="rvts59" href="https://chat.fhir.org/login/" target="_blank">chat.fhir.org</a><span class="rvts58">. </span></p>
+<p class="rvps26"><span class="rvts56">&nbsp;</span></p>
+<p class="rvps26"><span class="rvts56">Identifying the Error</span></p>
+<p class="rvps26"><span class="rvts56"><br/></span></p>
+<p class="rvps26"><span class="rvts58">To identify the type of error, follow these steps: &nbsp;</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" style="margin-left: 0px" class="rvps12"><span class="rvts24">In the Publishing Status text, find the phrase, “Publishing Content Failed.”</span></li>
+<li value="1" style="margin-left: 0px" class="rvps25"><span class="rvts54">In the Publishing Status text, find the phrase, “Publishing Content Failed.”</span></li>
 </ol>
-<p class="rvps25"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error.png"></p>
-<p class="rvps25"><span class="rvts24">2. &nbsp;Look at the error message that follows this phrase to determine the type of pre-publishing error. </span></p>
-<p class="rvps25"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error-2.png"></p>
-<p class="rvps24"><span class="rvts39">Note:</span><span class="rvts40">&nbsp;IG Version and IG Package ID errors have similar error codes. Look at the numbers and letters bolded for emphasis to determine which error is occurring. </span></p>
-<p class="rvps24"><span class="rvts40"><br/></span></p>
-<div class="rvps26"><table border="1" cellpadding="4" cellspacing="-1" style="border-width: 0px; border-collapse: collapse;">
+<p class="rvps27"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error.png"></p>
+<p class="rvps27"><span class="rvts54">2. &nbsp;Look at the error message that follows this phrase to determine the type of pre-publishing error. </span></p>
+<p class="rvps27"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error-2.png"></p>
+<p class="rvps26"><span class="rvts57">Note:</span><span class="rvts58">&nbsp;IG Version and IG Package ID errors have similar error codes. Look at the numbers and letters bolded for emphasis to determine which error is occurring. </span></p>
+<p class="rvps26"><span class="rvts58"><br/></span></p>
+<div class="rvps28"><table border="1" cellpadding="4" cellspacing="-1" style="border-width: 0px; border-collapse: collapse;">
 <tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts39">Error Message</span></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts57">Error Message</span></p>
 </td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts39">Type of Pre-publishing Error</span></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts57">Type of Pre-publishing Error</span></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts40">Fatal error during transformation using XXXXXX-</span><span class="rvts39">1t1UQG0X5t3Cm</span></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts58">Fatal error during transformation using XXXXXX-</span><span class="rvts57">1t1UQG0X5t3Cm</span></p>
 </td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><a class="rvts41" href="IGVersion.html">IG Version</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts40">Error generating snapshot </span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><a class="rvts41" href="GeneratingSnapshot.html">Generating Snapshot</a></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><a class="rvts59" href="IGVersion.html">IG Version</a></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts40">Fatal error during transformation using XXXXX</span><span class="rvts42">-</span><span class="rvts39">1lBB6wlpjUFlB</span></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts58">Error generating snapshot </span></p>
 </td>
-<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><a class="rvts41" href="IGPackageID.html">IG Package ID</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts40">Unable to connect to terminology server</span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><a class="rvts41" href="TerminologyServerConnection.html">Terminology Server Connection</a></p>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><a class="rvts59" href="GeneratingSnapshot.html">Generating Snapshot</a></p>
 </td>
 </tr>
 <tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><span class="rvts40">The package “hl7.fhir.us” has no entry on the current build server</span></p>
+<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts58">Fatal error during transformation using XXXXX</span><span class="rvts60">-</span><span class="rvts57">1lBB6wlpjUFlB</span></p>
 </td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps21"><a class="rvts41" href="Dependency.html">Dependency</a></p>
+<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><a class="rvts59" href="IGPackageID.html">IG Package ID</a></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts58">Unable to connect to terminology server</span></p>
+</td>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><a class="rvts59" href="TerminologyServerConnection.html">Terminology Server Connection</a></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><span class="rvts58">The package “hl7.fhir.us” has no entry on the current build server</span></p>
+</td>
+<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps22"><a class="rvts59" href="Dependency.html">Dependency</a></p>
 </td>
 </tr>
 </table>
 </div>
-<p class="rvps24"><span class="rvts40"><br/></span></p>
-<p class="rvps25"><span class="rvts24"><br/></span></p>
+<p class="rvps26"><span class="rvts58"><br/></span></p>
+<p class="rvps27"><span class="rvts54"><br/></span></p>
 <p></p>
 
             </div>

@@ -244,16 +244,19 @@
                 <app-tooltip-icon tooltipPath="ImplementationGuide.definition.grouping.name"></app-tooltip-icon>
               </th>
               <th class="actions-column-2">
-                <div class="pull-right">
+                <div class="pull-right btn-group">
                   <button type="button" class="btn btn-primary" (click)="addGrouping(); isDirty=true; nameChanged();" title="Add a new group">
                     <i class="fa fa-plus"></i>
                   </button>
+                  <button type="button" class="btn btn-primary" (click)="sortGroups()" title="Sort the groups alphabetically">
+                    <i class="fas fa-sort"></i>
+                  </button> 
                 </div>
               </th>
             </tr>
             </thead>
             <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.grouping && implementationGuide.definition.grouping.length > 0">
-            <tr *ngFor="let group of implementationGuide.definition.grouping">
+            <tr *ngFor="let group of implementationGuide.definition.grouping; let i = index">
               <td>
                 {{group.id || ''}}
                 <span *ngIf="!group.id" style="color: red;">A group ID is required to associate resources to this group. Edit the group and create assign an ID to it.</span>
@@ -265,6 +268,12 @@
                 <div class="pull-right btn-group">
                   <button type="button" class="btn btn-primary" (click)="editGroup(group)" title="Edit this group">
                     <i class="fa fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="moveGroupUp(group)" [disabled]="i === 0" title="Move this group up">
+                    <i class="fa fa-arrow-up"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="moveGroupDown(group)" [disabled]="i === implementationGuide.definition.grouping.length - 1" title="Move this group down">
+                    <i class="fa fa-arrow-down"></i>
                   </button>
                   <button type="button" class="btn btn-primary" title="Remove this grouping" (click)="removeGroup(group); isDirty=true; nameChanged();">
                     <i class="fas fa-trash-alt"></i>

@@ -185,32 +185,37 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.11.2</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts22">New Prompt to Avoid Losing Unsaved Changes </span></span></h2>
-<p class="rvps8"><span class="rvts20">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen. </span></p>
-<p class="rvps3"><span class="rvts17">We will add this pop-up to additional edit screens in future releases.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts22">Improvements to Page Editing</span></span></h2>
-<p class="rvps8"><span class="rvts20">The </span><span class="rvts23">Edit Page</span><span class="rvts20">&nbsp;popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps9"><span class="rvts24">A </span><span class="rvts25">File Name </span><span class="rvts24">field </span></li>
-<li class="rvps9"><span class="rvts24">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts </span></li>
+<p class="rvps3"><span class="rvts16">Release 1.12.0</span></p>
+<h1 class="rvps8"><span class="rvts0"><span class="rvts23">Editing Element Constraints</span></span><br/><span class="rvts0"><span class="rvts22">You can now select or edit these element constraints:</span></span></h1>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts22">Key</span></li>
+<li class="rvps3"><span class="rvts22">Severity</span></li>
+<li class="rvps3"><span class="rvts22">Human</span></li>
+<li class="rvps3"><span class="rvts22">Expression</span></li>
 </ul>
-<p class="rvps8"><span class="rvts20">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts23">tools</span><span class="rvts20">&nbsp;command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts26">Disabled GitHub Exports</span></span></h2>
-<p class="rvps8"><span class="rvts20">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
+<p class="rvps9"><span class="rvts22">Each of these four elements constraints have an editable text box that allows users to input values into the @value.</span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts24">Slice Name Warning</span></span><br/><span class="rvts0"><span class="rvts26">A</span></span><span class="rvts0"><span class="rvts25">&nbsp;warning now displays when you create a slice name containing spaces or periods.</span></span></h2>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (5)</span></span></h3>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts21">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts17">] - Add "Base" for OperationDefinition editing</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts17">] - Allow configuration of types listed for selection on new profile creation</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts17">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts17">] - Allow user to edit "use" on value set concept designations</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-419">TRIFFHIR-419</a><span class="rvts17">] - Support for editing element constraints</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts27" href="https://trifolia.atlassian.net/browse/TRIFFHIR-419" target="_blank">TRIFFHIR-431</a><span class="rvts17">] - Allow sorting within Groups and reordering of Groups in Artifact Index</span></li>
 </ul>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts19">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts17">] - </span><span class="rvts20">Improve page editing functionality</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-380">TRIFFHIR-380</a><span class="rvts17">] - </span><span class="rvts20">Warn users when adding slice names with spaces</span></li>
+<li class="rvps3"><span class="rvts20">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-430" target="_blank">TRIFFHIR-430</a><span class="rvts20">] - Support URLs for contacts in generated "Authors" section of index/homepage</span></li>
 </ul>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts19"><br/></span></span></h4>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts19">Defects</span></span></h4>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-429">TRIFFHIR-429</a><span class="rvts17">] - Default Filename extention to .html instead of .md in FHIR STU3 IG narrative pages</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-418">TRIFFHIR-418</a><span class="rvts17">] - Export MS Word incorrectly exports a .json/.xml instead of .docx</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-412">TRIFFHIR-412</a><span class="rvts17">] - Name URL for R4 IGs should default to index.md not index.html</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-410">TRIFFHIR-410</a><span class="rvts17">] - Export -&gt; GitHub exports ig.ini and .md files into binary (files) and breaks CI build</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-408">TRIFFHIR-408</a><span class="rvts17">] - Snapshot being deleted when editing differential of a profile slice dependent on another sliced profile</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-407">TRIFFHIR-407</a><span class="rvts17">] - Update parameters codes in drop-down</span></li>
+<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-383">TRIFFHIR-383</a><span class="rvts17">] - Elements tab (UI) incorrectly displaying dependent StructureDefinitions differential</span></li>
+</ul>
 <p></p>
 
             </div>

@@ -18,7 +18,7 @@
     <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith(page.getExtension()) || !isRootPageValid" />
     <p class="text-muted" *ngIf="!page.fileName">File name is required, or the page will not export/publish correctly.</p>
     <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith(page.getExtension())">This page's file names must end with the {{page.getExtension()}} extension, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="isRootPageValid">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index.{{page.getExtension()}}". Otherwise, the published implementation guide may not contain a home page.</p>
+    <p class="text-muted" *ngIf="isRootPageValid">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index{{page.getExtension()}}". Otherwise, the published implementation guide may not contain a home page.</p>
   </div>
 
   <div class="form-group" *ngIf="page.generation !== 'generated'">
