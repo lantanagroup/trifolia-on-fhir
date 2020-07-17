@@ -129,304 +129,382 @@ span.rvts22
 }
 span.rvts23
 {
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
+ font-size: 14pt;
+ font-style: italic;
  font-weight: bold;
+ color: #000000;
 }
 span.rvts24
 {
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
+ font-size: 14pt;
+ font-weight: bold;
 }
 span.rvts25
+{
+ font-style: italic;
+}
+span.rvts26
+{
+ font-size: 16pt;
+ font-weight: bold;
+}
+span.rvts27
+{
+ font-size: 11pt;
+ font-family: 'calibri';
+}
+span.rvts28
+{
+ color: #000000;
+ background-color: #f8f8f8;
+}
+span.rvts29
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+span.rvts30
+{
+}
+span.rvts31
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+a.rvts32, span.rvts32
+{
+ font-family: 'Courier New', 'Courier', monospace;
+ color: #0000ff;
+ text-decoration: underline;
+}
+span.rvts33
+{
+ font-family: 'Times New Roman', 'Times', serif;
+}
+span.rvts34
+{
+}
+span.rvts35
+{
+ color: #000000;
+ background-color: #ffffff;
+}
+a.rvts36, span.rvts36
+{
+ color: #0563c1;
+ text-decoration: underline;
+}
+span.rvts37
+{
+ color: #333333;
+}
+span.rvts38
+{
+ color: #005c00;
+ background-color: #f9f2f4;
+}
+a.rvts39, span.rvts39
+{
+ color: #333333;
+ text-decoration: underline;
+}
+span.rvts40
+{
+ font-size: 7pt;
+ font-family: 'Verdana', 'Geneva', sans-serif;
+ color: #333333;
+ background-color: #ffffff;
+}
+a.rvts41, span.rvts41
+{
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
+ color: #000000;
+ background-color: #f8f8f8;
+ text-decoration: underline;
+}
+span.rvts42
+{
+ font-style: italic;
+ color: #000000;
+}
+span.rvts43
+{
+ color: #333333;
+ text-decoration: underline;
+}
+a.rvts44, span.rvts44
+{
+ color: #000000;
+ text-decoration: none;
+}
+span.rvts45
+{
+ color: #000000;
+ background-color: #f9f2f4;
+}
+a.rvts46, span.rvts46
+{
+ color: #000000;
+ background-color: #f8f8f8;
+ text-decoration: underline;
+}
+span.rvts47
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
 }
-span.rvts26
+span.rvts48
+{
+ font-size: 12pt;
+ font-family: 'Garamond';
+}
+span.rvts49
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+}
+span.rvts50
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
+}
+span.rvts51
+{
+ font-size: 14pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts52
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
+}
+span.rvts53
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+}
+a.rvts54, span.rvts54
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #0000ff;
+ text-decoration: underline;
+}
+span.rvts55
+{
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #000000;
+}
+span.rvts56
+{
+ font-size: 12pt;
+}
+a.rvts57, span.rvts57
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts58, span.rvts58
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #0000ff;
+ text-decoration: underline;
+}
+span.rvts59
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
+}
+span.rvts60
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+}
+span.rvts61
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+span.rvts62
+{
+ font-weight: bold;
+}
+span.rvts63
+{
+ font-size: 11pt;
+ font-weight: bold;
+}
+span.rvts64
+{
+ font-weight: bold;
+ color: #c00000;
+}
+span.rvts65
+{
+ font-size: 14pt;
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts66
+{
+ font-weight: bold;
+}
+a.rvts67, span.rvts67
+{
+ color: #0000ff;
+ text-decoration: underline;
+}
+span.rvts68
+{
+ font-style: italic;
+}
+a.rvts69, span.rvts69
+{
+ color: #0000ff;
+ text-decoration: none;
+}
+span.rvts70
+{
+ font-size: 14pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
+}
+span.rvts71
+{
+ font-size: 14pt;
+ font-family: 'Garamond';
+ font-weight: bold;
+}
+span.rvts72
+{
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts73
+{
+ font-style: italic;
+}
+span.rvts74
+{
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts75
 {
  font-size: 18pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-style: italic;
  font-weight: bold;
 }
-span.rvts27
-{
- font-size: 14pt;
- font-weight: bold;
-}
-span.rvts28
-{
- font-style: italic;
-}
-span.rvts29
-{
- font-size: 16pt;
- font-weight: bold;
-}
-span.rvts30
-{
- font-family: 'Courier New', 'Courier', monospace;
-}
-span.rvts31
-{
-}
-span.rvts32
-{
- font-family: 'Courier New', 'Courier', monospace;
-}
-a.rvts33, span.rvts33
-{
- font-family: 'Courier New', 'Courier', monospace;
- color: #0000ff;
- text-decoration: underline;
-}
-span.rvts34
-{
- font-family: 'Times New Roman', 'Times', serif;
-}
-span.rvts35
-{
- color: #0c5460;
- background-color: #d1ecf1;
-}
-span.rvts36
-{
-}
-span.rvts37
-{
- font-size: 12pt;
- font-family: 'Garamond';
-}
-span.rvts38
-{
- font-size: 14pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-style: italic;
- font-weight: bold;
-}
-span.rvts39
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
-}
-span.rvts40
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
-}
-a.rvts41, span.rvts41
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- color: #0000ff;
- text-decoration: underline;
-}
-span.rvts42
-{
- font-family: 'Times New Roman', 'Times', serif;
- color: #000000;
-}
-span.rvts43
-{
- font-size: 12pt;
-}
-a.rvts44, span.rvts44
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
- color: #0000ff;
- text-decoration: underline;
-}
-a.rvts45, span.rvts45
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- color: #0000ff;
- text-decoration: underline;
-}
-span.rvts46
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
-}
-span.rvts47
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
-}
-span.rvts48
-{
- font-family: 'Courier New', 'Courier', monospace;
-}
-span.rvts49
-{
- font-weight: bold;
-}
-span.rvts50
-{
- font-size: 11pt;
- font-weight: bold;
-}
-span.rvts51
-{
- font-weight: bold;
- color: #c00000;
-}
-span.rvts52
-{
- font-size: 14pt;
- font-style: italic;
- font-weight: bold;
-}
-span.rvts53
-{
- font-weight: bold;
-}
-a.rvts54, span.rvts54
-{
- color: #0000ff;
- text-decoration: underline;
-}
-span.rvts55
-{
- font-style: italic;
-}
-a.rvts56, span.rvts56
-{
- color: #0000ff;
- text-decoration: none;
-}
-span.rvts57
-{
- font-size: 14pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
-}
-span.rvts58
-{
- font-size: 14pt;
- font-family: 'Garamond';
- font-weight: bold;
-}
-span.rvts59
-{
- font-style: italic;
- font-weight: bold;
-}
-span.rvts60
-{
- font-style: italic;
-}
-span.rvts61
-{
- font-style: italic;
- font-weight: bold;
-}
-span.rvts62
+span.rvts76
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  color: #000000;
 }
-span.rvts63
+span.rvts77
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
 }
-span.rvts64
+span.rvts78
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
  color: #000000;
 }
-span.rvts65
+span.rvts79
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
  color: #000000;
 }
-span.rvts66
+span.rvts80
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  color: #000000;
 }
-span.rvts67
+span.rvts81
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
  color: #000000;
 }
-span.rvts68
+span.rvts82
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  color: #000000;
 }
-span.rvts69
+span.rvts83
 {
  font-size: 12pt;
 }
-span.rvts70
+span.rvts84
 {
  font-size: 12pt;
  font-style: italic;
  font-weight: bold;
 }
-span.rvts71
+span.rvts85
 {
  font-size: 12pt;
  color: #000000;
 }
-a.rvts72, span.rvts72
+a.rvts86, span.rvts86
 {
  font-size: 12pt;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts73
+span.rvts87
 {
  font-size: 12pt;
  font-style: italic;
  font-weight: bold;
  color: #000000;
 }
-span.rvts74
+span.rvts88
 {
  font-size: 11pt;
  font-family: 'Calibri';
  color: #000000;
 }
-span.rvts75
+span.rvts89
 {
  font-weight: bold;
  color: #000000;
 }
-span.rvts76
+span.rvts90
 {
  font-weight: bold;
  color: #000000;
 }
-span.rvts77
+span.rvts91
 {
  color: #000000;
 }
-span.rvts78
+span.rvts92
 {
  font-size: 13pt;
  font-style: italic;
  font-weight: bold;
 }
-a.rvts79, span.rvts79
+a.rvts93, span.rvts93
 {
  font-size: 11pt;
  font-family: 'Calibri';
@@ -490,13 +568,12 @@ p,ul,ol /* Paragraph Style */
 }
 .rvps8
 {
- margin: 7px 0px 7px 0px;
+ text-align: left;
+ text-indent: 0px;
+ padding: 0px 0px 0px 0px;
+ margin: 15px 0px 15px 0px;
 }
 .rvps9
-{
- margin: 7px 0px 7px 0px;
-}
-.rvps10
 {
  text-align: left;
  text-indent: 0px;
@@ -504,46 +581,48 @@ p,ul,ol /* Paragraph Style */
  padding: 0px 0px 0px 0px;
  margin: 16px 0px 4px 0px;
 }
-.rvps11
+.rvps10
 {
  background: #ffffff;
 }
+.rvps11
+{
+}
 .rvps12
 {
- margin: 0px 0px 0px 48px;
+ margin: 0px 0px 14px 0px;
 }
 .rvps13
 {
- widows: 2;
- orphans: 2;
- margin: 7px 0px 7px 48px;
+ margin: 0px 0px 5px 0px;
 }
 .rvps14
 {
- widows: 2;
- orphans: 2;
- margin: 7px 0px 7px 48px;
+ margin: 0px 0px 6px 0px;
 }
 .rvps15
 {
  widows: 2;
  orphans: 2;
- margin: 7px 0px 7px 96px;
+ margin: 7px 0px 7px 48px;
 }
 .rvps16
 {
- margin: 0px 0px 0px 96px;
+ widows: 2;
+ orphans: 2;
+ margin: 7px 0px 7px 96px;
 }
 .rvps17
 {
- margin: 0px 0px 0px 144px;
+ margin: 0px 0px 0px 96px;
 }
 .rvps18
 {
- margin: 0px 0px 0px 48px;
+ margin: 0px 0px 0px 144px;
 }
 .rvps19
 {
+ margin: 0px 0px 0px 48px;
 }
 .rvps20
 {
@@ -571,33 +650,37 @@ p,ul,ol /* Paragraph Style */
 }
 .rvps24
 {
- widows: 2;
- orphans: 2;
+ margin: 0px 0px 0px 48px;
 }
 .rvps25
 {
- margin: 0px 0px 0px 24px;
+ widows: 2;
+ orphans: 2;
 }
 .rvps26
 {
- margin: 0px 0px 0px 1px;
+ margin: 0px 0px 0px 24px;
 }
 .rvps27
+{
+ margin: 0px 0px 0px 1px;
+}
+.rvps28
 {
  line-height: 1.50;
  widows: 2;
  orphans: 2;
  margin: 0px 0px 8px 0px;
 }
-.rvps28
+.rvps29
 {
  margin: 0px 0px 0px 24px;
 }
-.rvps29
+.rvps30
 {
  margin: 0px 0px 0px 72px;
 }
-.rvps30
+.rvps31
 {
  border-color: #000000;
  border-style: solid;
@@ -605,7 +688,15 @@ p,ul,ol /* Paragraph Style */
  padding: 4px 4px 4px 4px;
  margin: 3px 19px 3px 19px;
 }
-.rvps31
+.rvps32
+{
+ margin: 7px 0px 7px 0px;
+}
+.rvps33
+{
+ margin: 7px 0px 7px 0px;
+}
+.rvps34
 {
  text-align: left;
  text-indent: 0px;
@@ -615,29 +706,22 @@ p,ul,ol /* Paragraph Style */
  padding: 0px 0px 0px 0px;
  margin: 16px 0px 4px 0px;
 }
-.rvps32
-{
- text-align: left;
- text-indent: 0px;
- padding: 0px 0px 0px 0px;
- margin: 15px 0px 15px 0px;
-}
-.rvps33
+.rvps35
 {
  widows: 2;
  orphans: 2;
  margin: 7px 0px 7px 0px;
 }
-.rvps34
+.rvps36
 {
  widows: 2;
  orphans: 2;
  margin: 7px 0px 7px 24px;
 }
-.rvps35
+.rvps37
 {
 }
-.rvps36
+.rvps38
 {
  line-height: 1.07;
  widows: 2;
@@ -651,12 +735,16 @@ p,ul,ol /* Paragraph Style */
 .list3 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
 .list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
 .list5 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
-.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-alpha;}
-.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-roman;}
-.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: disc;}
-.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
-.list10 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
-.list11 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
-.list12 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;}
-.list13 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: circle;}
-.list14 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: square;}
+.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 0px; list-style-position: inside; list-style-type: decimal;}
+.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;}
+.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: circle;}
+.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: square;}
+.list10 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-alpha;}
+.list11 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-roman;}
+.list12 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: disc;}
+.list13 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
+.list14 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
+.list15 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
+.list16 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;}
+.list17 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: circle;}
+.list18 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: square;}
