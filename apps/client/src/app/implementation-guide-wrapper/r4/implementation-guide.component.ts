@@ -202,6 +202,34 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
+  public moveGroupUp(group: ImplementationGuideGroupingComponent) {
+    const index = this.implementationGuide.definition.grouping.indexOf(group);
+
+    if (index === 0) return;
+
+    this.implementationGuide.definition.grouping.splice(index, 1);
+    this.implementationGuide.definition.grouping.splice(index - 1, 0, group);
+  }
+
+  public sortGroups() {
+    if (!this.implementationGuide.definition || !this.implementationGuide.definition.grouping) return;
+
+    this.implementationGuide.definition.grouping.sort((a, b) => {
+      const aName = a.name || '';
+      const bName = b.name || '';
+      return aName.localeCompare(bName);
+    });
+  }
+
+  public moveGroupDown(group: ImplementationGuideGroupingComponent) {
+    const index = this.implementationGuide.definition.grouping.indexOf(group);
+
+    if (index === this.implementationGuide.definition.grouping.length - 1) return;
+
+    this.implementationGuide.definition.grouping.splice(index, 1);
+    this.implementationGuide.definition.grouping.splice(index + 1, 0, group);
+  }
+
   public editGroup(group: ImplementationGuideGroupingComponent) {
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;

@@ -8,6 +8,7 @@
     "build:all": "concurrently \"ng build server\" \"ng build client\" \"ng build tools\"",
     "build-prod:all": "concurrently \"ng build server --prod\" \"ng build client --prod\" \"ng build tools --prod\"",
     "build-watch:all": "concurrently \"ng build server --poll 1000 --watch\" \"ng build client --poll 1000 --watch\" \"ng build tools --poll 1000 --watch\"",
+    "build-watch:main": "concurrently \"ng build server --poll 1000 --watch\" \"ng build client --poll 1000 --watch\"",
     "test:server": "ng test server",
     "test:client": "ng test client",
     "test:lib": "ng test tof-lib",
