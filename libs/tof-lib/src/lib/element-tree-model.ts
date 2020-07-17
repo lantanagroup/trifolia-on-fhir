@@ -61,6 +61,27 @@ export class ElementTreeModel {
   }
 
   get displayId(): string {
+    let sliceName: string;
+
+    if (this.constrainedElement && this.constrainedElement.sliceName) {
+      sliceName = this.constrainedElement.sliceName;
+    } else if (this.baseElement && this.baseElement.sliceName) {
+      sliceName = this.baseElement.sliceName;
+    }
+
+    if (sliceName && sliceName.length > 20) {
+      sliceName = '...' + sliceName.substring(sliceName.length - 20);
+    }
+
+    if (sliceName) {
+      if (this.baseElement && this.baseElement.path && this.baseElement.path.indexOf('.') > 0) {
+        const baseLeafId = this.baseElement.path.substring(this.baseElement.path.lastIndexOf('.') + 1);
+        return `${baseLeafId}:${sliceName}`;
+      } else {
+        return sliceName;
+      }
+    }
+
     let leafId = this.id;
 
     if (leafId.indexOf('.') > 0) {

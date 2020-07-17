@@ -345,10 +345,10 @@ export class ConstraintManager {
         const isNewSlice = diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth;
         const isReSlice = diffId.startsWith(baseId + '/') && diffIdDepth-1 === baseIdDepth;
 
-        if (idMatch) {
+        if ((idMatch || isReSlice) && !elementTreeModel.constrainedElement) {
           // This is a constraint on something in the base
           elementTreeModel.constrainedElement = diff;
-        } else if (isNewSlice || isReSlice) {
+        } else if (isNewSlice) {
           // This is a new slice
           const index = this.elements.indexOf(elementTreeModel);
           const clone = elementTreeModel.clone(diff);
