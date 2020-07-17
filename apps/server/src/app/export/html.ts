@@ -810,10 +810,20 @@ export class HtmlExporter {
 
     if (implementationGuide.contact) {
       const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-        const foundEmail = (contact.telecom || []).find((telecom) => telecom.system === 'email');
-        return [contact.name, foundEmail ? `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>` : ''];
+        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
+        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
+
+        let display: string;
+
+        if (foundEmail) {
+          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
+        } else if (foundURL) {
+          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
+        }
+
+        return [contact.name, display || ''];
       });
-      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email'], authorsData) + '\n\n';
+      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
       content += authorsContent;
     }
 
