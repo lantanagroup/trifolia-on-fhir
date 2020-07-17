@@ -11,7 +11,7 @@ import * as testData6 from '../../../../test/data/referralNote.json';
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
-import {ElementDefinition} from './r4/fhir';
+import {ElementDefinition, StructureDefinition} from './r4/fhir';
 import {ElementTreeModel} from './element-tree-model';
 
 describe('ConstraintManager', () => {
@@ -88,11 +88,13 @@ describe('ConstraintManager', () => {
 
   describe('dental-referralnote tests', () => {
     it('should expand dental referral', async () => {
-      const testData: IStructureDefinition = JSON.parse(JSON.stringify(testData5));
-      const referralNote: IStructureDefinition = JSON.parse(JSON.stringify(testData6));
+      const testData = new StructureDefinition(JSON.parse(JSON.stringify(testData5)));
+      const referralNote = new StructureDefinition(JSON.parse(JSON.stringify(testData6)));
 
       const cm = new ConstraintManager(ElementDefinition, referralNote, testData, fhir.parser);
       await cm.initializeRoot();
+
+      console.log('test');
 
       // await cm.toggleExpand(cm.elements[14]);
       // await cm.toggleExpand(cm.elements[17]);

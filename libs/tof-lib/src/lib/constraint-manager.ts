@@ -340,13 +340,15 @@ export class ConstraintManager {
         const baseId = ConstraintManager.normalizePath(base.id);
         const diffId = ConstraintManager.normalizePath(diff.id);
         const idMatch = baseId === diffId;
-        const baseIdDepth = baseId.split('.').length;
-        const diffIdDepth = diffId.split('.').length;
+        const baseIdDepth = baseId.split(/[\.\/]/g).length;
+        const diffIdDepth = diffId.split(/[\.\/]/g).length;
+        const isNewSlice = diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth;
+        const isReSlice = diffId.startsWith(baseId + '/') && diffIdDepth-1 === baseIdDepth;
 
         if (idMatch) {
           // This is a constraint on something in the base
           elementTreeModel.constrainedElement = diff;
-        } else if (diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth) {
+        } else if (isNewSlice || isReSlice) {
           // This is a new slice
           const index = this.elements.indexOf(elementTreeModel);
           const clone = elementTreeModel.clone(diff);
