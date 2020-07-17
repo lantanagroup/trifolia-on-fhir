@@ -186,17 +186,17 @@
                 
 <p></p>
 <p class="rvps3"><span class="rvts16">Release 1.11.2</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts27">New Prompt to Avoid Losing Unsaved Changes </span></span></h2>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts28">New Prompt to Avoid Losing Unsaved Changes </span></span></h2>
 <p class="rvps9"><span class="rvts20">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen. </span></p>
 <p class="rvps3"><span class="rvts17">We will add this pop-up to additional edit screens in future releases.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts27">Improvements to Page Editing</span></span></h2>
-<p class="rvps9"><span class="rvts20">The </span><span class="rvts51">Edit Page</span><span class="rvts20">&nbsp;popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts28">Improvements to Page Editing</span></span></h2>
+<p class="rvps9"><span class="rvts20">The </span><span class="rvts52">Edit Page</span><span class="rvts20">&nbsp;popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps33"><span class="rvts53">A </span><span class="rvts54">File Name </span><span class="rvts53">field </span></li>
-<li class="rvps33"><span class="rvts53">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts </span></li>
+<li class="rvps33"><span class="rvts54">A </span><span class="rvts55">File Name </span><span class="rvts54">field </span></li>
+<li class="rvps33"><span class="rvts54">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts </span></li>
 </ul>
-<p class="rvps9"><span class="rvts20">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts51">tools</span><span class="rvts20">&nbsp;command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts79">Disabled GitHub Exports</span></span></h2>
+<p class="rvps9"><span class="rvts20">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts52">tools</span><span class="rvts20">&nbsp;command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts80">Disabled GitHub Exports</span></span></h2>
 <p class="rvps9"><span class="rvts20">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (5)</span></span></h3>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts21">New Features</span></span></h4>

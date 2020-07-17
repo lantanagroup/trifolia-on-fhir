@@ -186,29 +186,29 @@
                 
 <p></p>
 <p class="rvps3"><span class="rvts8"><br/></span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts27">Elements</span></span></h2>
-<p class="rvps3"><span class="rvts39">As the base type for all elements included in a resource, </span><span class="rvts49">Element</span><span class="rvts39">&nbsp;is an important structural element of FHIR. Even the primitive types inherit the base features and representation rules that apply to the Element type.</span></p>
-<p class="rvps3"><span class="rvts39"><br/></span></p>
+<h2 class="rvps7"><span class="rvts0"><span class="rvts28">Elements</span></span></h2>
+<p class="rvps3"><span class="rvts40">As the base type for all elements included in a resource, </span><span class="rvts50">Element</span><span class="rvts40">&nbsp;is an important structural element of FHIR. Even the primitive types inherit the base features and representation rules that apply to the Element type.</span></p>
+<p class="rvps3"><span class="rvts40"><br/></span></p>
 <p class="rvps13"><span class="rvts15">content:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps14"><a class="rvts48" href="https://www.hl7.org/fhir/extensibility.html">Extensions</a></li>
+<li class="rvps14"><a class="rvts49" href="https://www.hl7.org/fhir/extensibility.html">Extensions</a></li>
 <li class="rvps14"><span class="rvts15">An internal id</span></li>
 </ul>
-<p class="rvps13"><span class="rvts15">There are 3 kinds of descendant types that specialize </span><span class="rvts49">Element</span><span class="rvts15">:</span></p>
+<p class="rvps13"><span class="rvts15">There are 3 kinds of descendant types that specialize </span><span class="rvts50">Element</span><span class="rvts15">:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps14"><a class="rvts48" href="https://www.hl7.org/fhir/datatypes.html#primitive">Primitive data types</a><span class="rvts15">, that add a primitive value property of the specified type</span></li>
-<li class="rvps14"><a class="rvts48" href="https://www.hl7.org/fhir/datatypes.html#complex">Complex data types</a><span class="rvts15">, that add their own children (all of which are also elements)</span></li>
-<li class="rvps14"><a class="rvts48" href="https://www.hl7.org/fhir/backboneelement.html">BackboneElement</a><span class="rvts15">, A specialization that adds modifierExtension, which is the super-type of all the element types defined in resource definitions (e.g. </span><a class="rvts48" href="https://www.hl7.org/fhir/patient.html#resource">Patient.contact</a><span class="rvts15">)</span></li>
+<li class="rvps14"><a class="rvts49" href="https://www.hl7.org/fhir/datatypes.html#primitive">Primitive data types</a><span class="rvts15">, that add a primitive value property of the specified type</span></li>
+<li class="rvps14"><a class="rvts49" href="https://www.hl7.org/fhir/datatypes.html#complex">Complex data types</a><span class="rvts15">, that add their own children (all of which are also elements)</span></li>
+<li class="rvps14"><a class="rvts49" href="https://www.hl7.org/fhir/backboneelement.html">BackboneElement</a><span class="rvts15">, A specialization that adds modifierExtension, which is the super-type of all the element types defined in resource definitions (e.g. </span><a class="rvts49" href="https://www.hl7.org/fhir/patient.html#resource">Patient.contact</a><span class="rvts15">)</span></li>
 </ul>
-<p class="rvps13"><span class="rvts15">Note that resources themselves all specialize the base type </span><a class="rvts48" href="https://www.hl7.org/fhir/resource.html">Resource</a><span class="rvts15">. For more information on the backbone element, visit </span><a class="rvts50" href="https://www.hl7.org/fhir/backboneelement.html">https://www.hl7.org/fhir/backboneelement.html </a></p>
+<p class="rvps13"><span class="rvts15">Note that resources themselves all specialize the base type </span><a class="rvts49" href="https://www.hl7.org/fhir/resource.html">Resource</a><span class="rvts15">. For more information on the backbone element, visit </span><a class="rvts51" href="https://www.hl7.org/fhir/backboneelement.html">https://www.hl7.org/fhir/backboneelement.html </a></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Element Definition in Trifolia on FHIR</span></span></h3>
-<p class="rvps3"><span class="rvts37"><br/></span></p>
+<p class="rvps3"><span class="rvts38"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
 <li style="margin-left: 0px" class="rvps16"><span class="rvts8">The profile editor loads the elements from the snapshot of the “base definition” profile. </span></li>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
 <li style="margin-left: 0px" class="rvps21"><span class="rvts8">If the base definition represents a profile that does not yet have a snapshot, it attempts to create a snapshot for the base definition profile.</span></li>
 <li style="margin-left: 0px" class="rvps21"><span class="rvts8">If the base definition has other base definition profiles that are not in the system, the snapshot it returns will simply be the core FHIR profile for the “type” selected (ex: the underlying profile for “Observation”)</span></li>
-<li style="margin-left: 0px" class="rvps17"><span class="rvts8">The “Base Definition” field should allow you to select pre-existing profiles that are based on a matching “type”, or the core FHIR specification’s profile </span><span class="rvts29">for </span><span class="rvts8">the underlying type. </span></li>
+<li style="margin-left: 0px" class="rvps17"><span class="rvts8">The “Base Definition” field should allow you to select pre-existing profiles that are based on a matching “type”, or the core FHIR specification’s profile </span><span class="rvts30">for </span><span class="rvts8">the underlying type. </span></li>
 </ul>
 <li style="margin-left: 0px" class="rvps16"><span class="rvts8">Cardinality</span></li>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
