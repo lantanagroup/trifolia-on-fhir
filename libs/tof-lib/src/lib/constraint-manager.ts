@@ -345,6 +345,7 @@ export class ConstraintManager {
         const isNewSlice = diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth;
         const isReSlice = diffId.startsWith(baseId + '/') && diffIdDepth-1 === baseIdDepth;
 
+        // TODO: support multiple re-slices later, after we have conferred with FHIR WG@HL7
         if ((idMatch || isReSlice) && !elementTreeModel.constrainedElement) {
           // This is a constraint on something in the base
           elementTreeModel.constrainedElement = diff;
