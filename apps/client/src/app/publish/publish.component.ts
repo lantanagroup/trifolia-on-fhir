@@ -156,18 +156,18 @@ export class PublishComponent implements OnInit {
     }
   }
 
-  public publish() {
+  public async publish() {
+    this.message = '';
     this.inProgress = true;
     this.socketOutput = '';
     this.tabs.select('status');
 
-    this.exportService.publish(this.options)
-      .subscribe((packageId: string) => {
-        this.packageId = packageId;
-      }, (err) => {
-        this.message = getErrorString(err);
-        this.inProgress = false;
-      });
+    try {
+      this.packageId = await this.exportService.publish(this.options).toPromise();
+    } catch (ex) {
+      this.message = getErrorString(ex);
+      this.inProgress = false;
+    }
   }
 
   public cancel(){
