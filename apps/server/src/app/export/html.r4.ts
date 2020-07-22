@@ -176,6 +176,8 @@ export class R4HtmlExporter extends HtmlExporter {
     const pagesPath = path.join(rootPath, 'input/pagecontent');
     fs.ensureDirSync(pagesPath);
 
-    this.writePage(pagesPath, this.r4ImplementationGuide.definition.page, 1);
+    if (this.r4ImplementationGuide.definition.page) {
+      this.writePage(pagesPath, this.r4ImplementationGuide.definition.page, 1);
+    }
   }
 }
