@@ -250,7 +250,7 @@
                   </button>
                   <button type="button" class="btn btn-primary" (click)="sortGroups()" title="Sort the groups alphabetically">
                     <i class="fas fa-sort"></i>
-                  </button> 
+                  </button>
                 </div>
               </th>
             </tr>
@@ -327,6 +327,7 @@
             <tr>
               <th>Reference</th>
               <th>Name</th>
+              <th>Group</th>
               <th>Example?</th>
               <th class="actions-column-1">
                 <div class="pull-right">
@@ -353,6 +354,11 @@
               </td>
               <td>
                 <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false" (change)="isDirty=true; nameChanged();"></app-fhir-string>
+              </td>
+              <td>
+                <select class="form-control" [(ngModel)]="resource.groupingId">
+                  <option *ngFor="let g of implementationGuide.definition?.grouping" [ngValue]="g.id">{{g.name || g.id}}</option>
+                </select>
               </td>
               <td>
                 <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')" (change)="isDirty=true; nameChanged();"></app-fhir-boolean>
