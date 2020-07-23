@@ -13,6 +13,8 @@ import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/
 import {ContactDetail, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {Formats} from '../models/export-options';
+import {ExceptionHandler} from '@nestjs/core/errors/exception-handler';
+import {HttpException, HttpStatus} from '@nestjs/common';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -104,6 +106,15 @@ export class R4HtmlExporter extends HtmlExporter {
   }
 
   protected populatePageInfos() {
+    // Ensure that the implementation guide has an index page
+    if (!this.r4ImplementationGuide.definition.page) {
+      this.r4ImplementationGuide.definition.page = new ImplementationGuidePageComponent();
+      this.r4ImplementationGuide.definition.page.setTitle('Home Page');
+      this.r4ImplementationGuide.definition.page.fileName = 'index.md';
+      this.r4ImplementationGuide.definition.page.reuseDescription = true;
+      this.r4ImplementationGuide.definition.page.generation = 'markdown';
+    }
+
     this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
@@ -173,6 +184,8 @@ export class R4HtmlExporter extends HtmlExporter {
   }
 
   protected writePages(rootPath: string) {
+    if (!this.r4ImplementationGuide.definition.page) return;
+
     const pagesPath = path.join(rootPath, 'input/pagecontent');
     fs.ensureDirSync(pagesPath);
 

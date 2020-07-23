@@ -176,7 +176,9 @@ export class HtmlExporter {
             this.updatePublishStatuses(false);
           }
 
-          if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          if (downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          else this.sendSocketMessage('error', 'Done. The IG Publisher failed.');
+
           reject('Return code from IG Publisher is not 0');
         } else {
           this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
