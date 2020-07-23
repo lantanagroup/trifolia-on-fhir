@@ -174,7 +174,9 @@ export class STU3HtmlExporter extends HtmlExporter {
     (this.stu3ImplementationGuide.package || []).forEach(p => {
       newIg.definition.resource = newIg.definition.resource.concat((p.resource || []).map(r => {
         const ret = new ImplementationGuideResourceComponent();
+        ret.extension = r.extension;
         ret.description = r.description;
+        ret.name = r.name;
 
         if (r.sourceReference) {
           ret.reference = {
