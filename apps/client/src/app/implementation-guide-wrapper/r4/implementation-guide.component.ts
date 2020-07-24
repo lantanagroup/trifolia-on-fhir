@@ -250,6 +250,22 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.implementationGuide.definition.grouping.splice(index, 1);
   }
 
+  public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up'|'down') {
+    const index = this.implementationGuide.definition.resource.indexOf(resource);
+
+    if (direction === 'up') {
+      if (index > 0) {
+        this.implementationGuide.definition.resource.splice(index, 1);
+        this.implementationGuide.definition.resource.splice(index - 1, 0, resource);
+      }
+    } else if (direction === 'down') {
+      if (index < this.implementationGuide.definition.resource.length - 1) {
+        this.implementationGuide.definition.resource.splice(index, 1);
+        this.implementationGuide.definition.resource.splice(index + 1, 0, resource);
+      }
+    }
+  }
+
   public editResource(resource: ImplementationGuideResourceComponent) {
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
