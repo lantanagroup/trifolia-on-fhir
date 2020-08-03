@@ -173,7 +173,7 @@
                         <li>Version History</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails_SecurityandPerm.html" title="Security and Permissions" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v1100.html" title="v1.10.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="v1120.html" title="v1.12.0" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v1100.html" title="v1.10.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,30 +185,30 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts16">Release 1.11.2</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts28">New Prompt to Avoid Losing Unsaved Changes </span></span></h2>
-<p class="rvps9"><span class="rvts20">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen. </span></p>
-<p class="rvps3"><span class="rvts17">We will add this pop-up to additional edit screens in future releases.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts28">Improvements to Page Editing</span></span></h2>
-<p class="rvps9"><span class="rvts20">The </span><span class="rvts52">Edit Page</span><span class="rvts20">&nbsp;popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
+<p class="rvps3"><span class="rvts17">Release 1.11.2</span></p>
+<h2 class="rvps8"><span class="rvts0"><span class="rvts25">New Prompt to Avoid Losing Unsaved Changes </span></span></h2>
+<p class="rvps32"><span class="rvts51">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen. </span></p>
+<p class="rvps3"><span class="rvts16">We will add this pop-up to additional edit screens in future releases.</span></p>
+<h2 class="rvps8"><span class="rvts0"><span class="rvts25">Improvements to Page Editing</span></span></h2>
+<p class="rvps32"><span class="rvts51">The </span><span class="rvts52">Edit Page</span><span class="rvts51">&nbsp;popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
 <li class="rvps33"><span class="rvts54">A </span><span class="rvts55">File Name </span><span class="rvts54">field </span></li>
 <li class="rvps33"><span class="rvts54">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts </span></li>
 </ul>
-<p class="rvps9"><span class="rvts20">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts52">tools</span><span class="rvts20">&nbsp;command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<h2 class="rvps7"><span class="rvts0"><span class="rvts80">Disabled GitHub Exports</span></span></h2>
-<p class="rvps9"><span class="rvts20">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
+<p class="rvps32"><span class="rvts51">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts52">tools</span><span class="rvts51">&nbsp;command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
+<h2 class="rvps8"><span class="rvts0"><span class="rvts82">Disabled GitHub Exports</span></span></h2>
+<p class="rvps32"><span class="rvts51">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
 <h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (5)</span></span></h3>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts21">New Features</span></span></h4>
+<h4 class="rvps6"><span class="rvts0"><span class="rvts20">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts17">] - Add "Base" for OperationDefinition editing</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts17">] - Allow configuration of types listed for selection on new profile creation</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts17">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts17">] - Allow user to edit "use" on value set concept designations</span></li>
+<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts16">] - Add "Base" for OperationDefinition editing</span></li>
+<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts16">] - Allow configuration of types listed for selection on new profile creation</span></li>
+<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts16">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
+<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts16">] - Allow user to edit "use" on value set concept designations</span></li>
 </ul>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts19">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts17">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts17">] - </span><span class="rvts20">Improve page editing functionality</span></li>
+<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts16">] - </span><span class="rvts51">Improve page editing functionality</span></li>
 </ul>
 <h4 class="rvps6"><span class="rvts0"><span class="rvts19"><br/></span></span></h4>
 <p></p>
