@@ -115,6 +115,10 @@ export class HtmlExporter {
         this.igPublisherLocation = await this.getIgPublisher(version);
       }
 
+      if (!this.igPublisherLocation) {
+        throw new Error('The HL7 IG Publisher could not be downloaded/found.');
+      }
+
       const igPublisherVersion = 'latest';
       const process = this.serverConfig.javaLocation || 'java';
       const jarParams = ['-jar', this.igPublisherLocation, '-ig', this.controlPath];
@@ -176,7 +180,9 @@ export class HtmlExporter {
             this.updatePublishStatuses(false);
           }
 
-          if(downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          if (downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
+          else this.sendSocketMessage('error', 'Done. The IG Publisher failed.');
+
           reject('Return code from IG Publisher is not 0');
         } else {
           this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
@@ -370,18 +376,17 @@ export class HtmlExporter {
     if (includeIgPublisherJar && this.igPublisherLocation) {
       this.logger.log('Copying IG Publisher JAR to working directory.');
 
-      const jarFileName = this.igPublisherLocation.substring(this.igPublisherLocation.lastIndexOf(path.sep) + 1);
-      const destJarPath = path.join(this.rootPath, jarFileName);
+      const destJarPath = path.join(this.rootPath, 'org.hl7.fhir.publisher.jar');
       fs.copySync(this.igPublisherLocation, destJarPath);
 
       // Create .sh and .bat files for easy execution of the IG publisher jar
       // noinspection SpellCheckingInspection
       const shContent = '#!/bin/bash\n' +
         'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-        'java -jar ' + version + '.jar -ig ig.ini';
+        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
       fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
 
-      const batContent = 'java -jar ' + version + '.jar -ig ig.ini';
+      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
       fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
     }
 
@@ -564,14 +569,20 @@ export class HtmlExporter {
    */
   // tslint:disable-next-line:no-shadowed-variable
   private async downloadJarFile(path: string, url: string) {
-    const writer = fs.createWriteStream(path);
-
+    const pathInfo = fs.existsSync(path) ? fs.statSync(path) : null;
     const response = await this.httpService.axiosRef({
       url: url,
       method: 'GET',
       responseType: 'stream',
     });
 
+    if (pathInfo && pathInfo.size.toString() === response.headers['content-length']) {
+      this.sendSocketMessage('progress', 'Already have this version of the IG Publisher; not going to download.');
+      response.data.destroy();
+      return Promise.resolve();
+    }
+
+    const writer = fs.createWriteStream(path);
     response.data.pipe(writer);
 
     return new Promise((resolve, reject) => {
@@ -585,35 +596,55 @@ export class HtmlExporter {
    * we already have it downloaded just use it. If it doesn't exist in the file system then download it first then use
    * it. If an error is thrown it will also delete the empty jar file in the directory.
    * @param useLatest
-   * @param version
+   * @param versionId
    */
-  private async getIgPublisher(version: string): Promise<string> {
-    const fileName = 'org.hl7.fhir.igpublisher.jar';
-    const defaultPath = path.join(__dirname, 'assets', 'ig-publisher');
-    const defaultFilePath = path.join(defaultPath, fileName);
+  private async getIgPublisher(versionId: string): Promise<string> {
     const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher');
-    const filePath = path.join(latestPath, version + '.jar');
+    const filePath = path.join(latestPath, versionId + '.jar');
 
+    // if the version is 'dev', always download the latest dev version
     // check to see if the jar file is already downloaded, if so use it otherwise download it
-    if (fs.existsSync(filePath)) {
-      this.sendSocketMessage('progress', 'Already have the version ' + version + ' of the IG publisher... Won\'t download again.', true);
-      this.logger.log('The jar file ' + version + ' for the selected version already exists. Not downloading it again.');
+    if (versionId === 'dev') {
+      // TODO: may have write conflict with other simultaneous requests to use dev version of ig publisher
+      const sonatypeData = await this.httpService.get('https://oss.sonatype.org/service/local/repositories/snapshots/index_content/?groupIdHint=org.hl7.fhir.publisher&artifactIdHint=org.hl7.fhir.publisher&', { headers: { 'Accept': 'application/json' }}).toPromise();
+      const sonatypeVersions = sonatypeData.data.data.children[0].children[0].children[0].children[0].children[0].children;
+      const latestSonatypeVersion = sonatypeVersions[sonatypeVersions.length - 1].version;
+      const downloadUrl = `https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=${latestSonatypeVersion}`;
+
+      this.sendSocketMessage('progress', 'Downloading dev version of IG Publisher from sonatype.');
+      this.logger.log(`Downloading dev version of IG Publisher from sonatype: ${downloadUrl}`);
+
+      fs.ensureDirSync(path.dirname(filePath));
+      await this.downloadJarFile(filePath, downloadUrl);
+
+      return filePath;
+    } else if (fs.existsSync(filePath)) {
+      this.sendSocketMessage('progress', 'Already have the version ' + versionId + ' of the IG publisher... Won\'t download again.', true);
+      this.logger.log('The jar file ' + versionId + ' for the selected version already exists. Not downloading it again.');
       return filePath;
     } else {
       try {
-        this.sendSocketMessage('progress', 'Server does not have version ' + version + ' of the IG publisher... Downloading.', true);
-        const url = 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=' + version + '&e=jar';
-        this.logger.log('Downloading version: ' + version + '.jar file with this url: ' + url);
+        this.sendSocketMessage('progress', 'Server does not have this version of the IG publisher... Downloading.', true);
+        const infoUrl = `https://api.github.com/repos/hl7/fhir-ig-publisher/releases/${versionId}`;
+        this.logger.log(`Getting version info for id ${versionId} from GitHub`);
+
+        const versionInfo = await this.httpService.get(infoUrl).toPromise();
+        const downloadUrl = versionInfo.data.assets[0]['browser_download_url'];
+        const version = versionInfo.data.name;
+
+        this.logger.log(`Downloading version ${version} (id: ${versionId}) from GitHub URL ${downloadUrl}`);
+        this.sendSocketMessage('progress', `Downloading IG Publisher version ${version} from GitHub releases`);
+
         fs.ensureDirSync(path.dirname(filePath));
-        await this.downloadJarFile(filePath, url);
+        await this.downloadJarFile(filePath, downloadUrl);
+
         return filePath;
       } catch (ex) {
         // this check for errors and logs errors. If error is caught it also deletes the empty jar file from the directory. This returns the default file path
-        this.logger.error(`Error getting version ${version} of FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('progress', 'Encountered error downloading IG publisher version ' + version + ', will use pre-loaded/default IG publisher');
-        this.logger.error('deleting the empty jar file from ' + filePath);
+        this.logger.error(`Error getting version ${versionId} of FHIR IG publisher: ${ex.message}`);
+        this.sendSocketMessage('error', 'Encountered error downloading IG publisher version ' + versionId + ', will use pre-loaded/default IG publisher');
         fs.unlinkSync(filePath);
-        return defaultFilePath;
+        return;
       }
     }
   }
