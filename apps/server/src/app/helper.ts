@@ -15,7 +15,7 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuditEvent as R4AuditEvent, DomainResource as R4DomainResource, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
-import {addPermission, findPermission, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
+import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
@@ -427,7 +427,12 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
     if (changed) {
       logger.verbose(`Persisting the implementation guide ${implementationGuide.id} with the resource added.`);
-      await httpService.request(updateOptions).toPromise();
+
+      try {
+        await httpService.request(updateOptions).toPromise();
+      } catch (ex) {
+        logger.error(`An error occurred when adding the resource to the implementation guide in context: ${getErrorString(ex)}`);
+      }
     }
   }
 
