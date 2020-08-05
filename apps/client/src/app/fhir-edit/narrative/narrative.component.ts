@@ -89,7 +89,9 @@ export class NarrativeComponent implements OnInit {
       return;
     }
 
-    this.resource.text.div = '<div>' + value + '</div>';
+    this.resource.text.div = '<div>' +
+      (value.indexOf("<br>") > 0 ? value.replace("<br>", "") : value) +
+      '</div>';
   }
 
   private populateCodeSystemView(view: CodeSystemView, resource: any) {
