@@ -1,6 +1,6 @@
-import { Fhir as FhirModule } from 'fhir/fhir';
-import { Server } from 'socket.io';
-import { spawn } from 'child_process';
+import {Fhir as FhirModule} from 'fhir/fhir';
+import {Server} from 'socket.io';
+import {spawn} from 'child_process';
 import {
   ContactDetail,
   DomainResource,
@@ -15,28 +15,23 @@ import {
   ImplementationGuideResourceComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { BundleExporter } from './bundle';
-import { IServerConfig } from '../models/server-config';
-import { IFhirConfig } from '../models/fhir-config';
-import { HttpService, Logger, MethodNotAllowedException } from '@nestjs/common';
-import { InvalidModuleConfigException } from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {BundleExporter} from './bundle';
+import {IServerConfig} from '../models/server-config';
+import {IFhirConfig} from '../models/fhir-config';
+import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
+import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {Formats} from '../models/export-options';
+import {PageInfo} from './html.models';
+import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import {FhirInstances, unzip} from '../helper';
+import {createTableFromArray, escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import { Formats } from '../models/export-options';
-import { PageInfo } from './html.models';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getExtensionString
-} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { PackageListModel } from '../../../../../libs/tof-lib/src/lib/package-list-model';
-import { FhirInstances, unzip } from '../helper';
-import {createTableFromArray, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { ConfigService } from '../config.service';
-import { FileService } from '../../../../client/src/app/shared/file.service';
 
 export class HtmlExporter {
   readonly homedir: string;
@@ -519,7 +514,7 @@ export class HtmlExporter {
       .map(pi => {
         const extensions = <IExtension[]>(pi.page.extension || []);
         const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return extension.valueString;
+        return escapeForXml(extension.valueString);
       });
     const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
       if (init.indexOf(next) < 0) init.push(next);
@@ -534,13 +529,15 @@ export class HtmlExporter {
         });
 
       if (menuPages.length === 1) {
+        const title = escapeForXml(menuPages[0].title);
         const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
-        return `  <li><a href="${fileName}">${menuPages[0].title}</a></li>\n`;
+        return `  <li><a href="${fileName}">${title}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
+            const title = escapeForXml(pi.title);
             const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
-            return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
           });
 
         return '  <li class="dropdown">\n' +
