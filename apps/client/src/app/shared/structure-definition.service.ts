@@ -92,6 +92,10 @@ export class StructureDefinitionService {
   public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition> {
     let url = '/api/structureDefinition';
 
+    if(structureDefinition.text && structureDefinition.text.div && structureDefinition.text.div.indexOf("<br>") > 0){
+      structureDefinition.text.div = structureDefinition.text.div.replace("<br>", "");
+    }
+
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);
       return this.http.put<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
