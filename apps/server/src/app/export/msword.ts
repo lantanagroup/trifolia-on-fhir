@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import {R4HtmlExporter} from './html.r4';
 import {PageInfo} from './html.models';
 import {STU3HtmlExporter} from './html.stu3';
+import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 /**
  * This class is responsible for creating an MSWord DOCX document from a bundle of
@@ -69,9 +70,12 @@ export class MSWordExporter {
   }
 
   private static createMarkdown(title: string, content: string) {
+    const lines = content.replace(/\r/g, '').split('\n');
+    const paragraphs = lines.map(l => this.createPara(l, null, false));
+
     return [
       this.createPara(title, null, true),
-      this.createPara(content, null, false)
+      ...paragraphs
     ];
   }
 
@@ -87,8 +91,17 @@ export class MSWordExporter {
     }));
 
     const implementationGuideEntry = (bundle.entry || []).find(entry => entry.resource && entry.resource.resourceType === 'ImplementationGuide');
-    const implementationGuide = implementationGuideEntry ? <STU3ImplementationGuide | R4ImplementationGuide> implementationGuideEntry.resource : undefined;
+
+    if (!implementationGuideEntry) throw new Error('No ImplementationGuide was included in the bundle for export');
+
+    let implementationGuide: IImplementationGuide;
     const profiles = bundle.entry.filter(entry => entry.resource && (entry.resource.resourceType === 'StructureDefinition'));
+
+    if (version === 'stu3') {
+      implementationGuide = new STU3ImplementationGuide(implementationGuideEntry.resource);
+    } else if (version === 'r4') {
+      implementationGuide = new R4ImplementationGuide(implementationGuideEntry.resource);
+    }
 
     if (implementationGuide) {
       this.body.push(MSWordExporter.createPara('IG Overview', HeadingLevel.HEADING_2));

@@ -96,6 +96,9 @@ export class Extension extends Element implements IExtension {
       if (obj.hasOwnProperty('valueMarkdown')) {
         this.valueMarkdown = obj.valueMarkdown;
       }
+      if (obj.hasOwnProperty('valueUri')) {
+        this.valueUri = obj.valueUri;
+      }
     }
   }
 

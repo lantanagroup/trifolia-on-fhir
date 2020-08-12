@@ -250,6 +250,22 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.implementationGuide.definition.grouping.splice(index, 1);
   }
 
+  public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up'|'down') {
+    const index = this.implementationGuide.definition.resource.indexOf(resource);
+
+    if (direction === 'up') {
+      if (index > 0) {
+        this.implementationGuide.definition.resource.splice(index, 1);
+        this.implementationGuide.definition.resource.splice(index - 1, 0, resource);
+      }
+    } else if (direction === 'down') {
+      if (index < this.implementationGuide.definition.resource.length - 1) {
+        this.implementationGuide.definition.resource.splice(index, 1);
+        this.implementationGuide.definition.resource.splice(index + 1, 0, resource);
+      }
+    }
+  }
+
   public editResource(resource: ImplementationGuideResourceComponent) {
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
@@ -493,11 +509,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (template === 'downloads') {
       newPage.title = 'Downloads';
       newPage.navMenu = 'Downloads';
-      newPage.fileName = 'downloads.html';
+      newPage.fileName = 'downloads.md';
       newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\n**Validator Pack and Definitions**\n\nThe validator.pack file is a zip file that contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.\n\nIt is used:\n\n* by the validator if you refer to the IG directly by it’s canonical URL\n* by the IG publisher if you declare that one IG depends on another\n* by a FHIR server, if you add the IG to server load list\n\nYou may [download the validator.pack](validator.pack) file here.\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
-      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
+      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
 
     newPage.nameUrl = newPage.fileName;

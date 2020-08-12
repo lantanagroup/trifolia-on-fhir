@@ -4,6 +4,11 @@ import { ExportOptions } from '../../shared/export.service';
 import { Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
+interface PublisherVersion {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'trifolia-fhir-ig-publisher-selection',
   templateUrl: './ig-publisher-selection.component.html',
@@ -12,9 +17,7 @@ import { debounceTime, map } from 'rxjs/operators';
 export class IgPublisherSelectionComponent implements OnInit {
   @Input() public options: ExportOptions;
 
-  public publisherVersions : any;
-  public recentPublisherVersions : any;
-  public versionDropdown: any;
+  public versions: PublisherVersion[];
   public versionTypeahead: string;
 
   constructor(
@@ -23,12 +26,10 @@ export class IgPublisherSelectionComponent implements OnInit {
 
   ngOnInit() {
     this.http.get('/api/export/publisher-version')
-      .subscribe(data => {
-          this.publisherVersions = data;
-          this.recentPublisherVersions = data;
-          this.versionTypeahead = this.publisherVersions[0];
-          const version = this.publisherVersions[0].replace(' (Current)', '');
-          this.options.version = version;
+      .subscribe((data: PublisherVersion[]) => {
+          this.versions = data;
+          this.versionTypeahead = this.versions[0].name;
+          this.options.version = this.versions[0].id;
         },
         error => {
           console.error(error);
@@ -41,28 +42,25 @@ export class IgPublisherSelectionComponent implements OnInit {
    */
   typeaheadSelectedVersion($e) {
     $e.preventDefault();
-    const item = $e.item;
-    this.versionTypeahead = item;
-    this.versionDropdown = item;
-    const version = item.replace(' (Current)', '');
-    this.options.version = version;
+    const item: PublisherVersion = $e.item;
+    this.versionTypeahead = item.name;
+    this.options.version = item.id;
   }
 
   /**
    * this method is called when the user selects an item in the IG Publisher top 10 versions drop down
    * @param version
    */
-  selectRecentVersion(version){
-    this.versionDropdown = version;
-    this.versionTypeahead = version;
-    this.options.version = version.replace(' (Current)', '');
+  selectRecentVersion(version: PublisherVersion){
+    this.versionTypeahead = version.name;
+    this.options.version = version.id;
   }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       map(term => term.length < 2 ? []
-        : this.publisherVersions.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.versions.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
 }

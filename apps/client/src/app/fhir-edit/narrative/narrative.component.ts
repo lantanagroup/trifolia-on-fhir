@@ -61,35 +61,18 @@ export class NarrativeComponent implements OnInit {
   @Input() resource: DomainResource;
   public message: string;
   public editorConfig: AngularEditorConfig;
+  public theDiv = '';
 
   @Output() changed: EventEmitter<void> = new EventEmitter<void>();
+  public textChanged: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private http: HttpClient,
     private configService: ConfigService) {
-  }
 
-  public get textDiv(): string {
-    if (!this.resource || !this.resource.text || !this.resource.text.div) {
-      return '';
-    }
-
-    const div = this.resource.text.div.trim();
-
-    if (div.startsWith('<div>') && div.endsWith('</div>')) {
-      const ret = div.substring('<div>'.length, div.length - '</div>'.length);
-      return ret;
-    }
-
-    return this.resource.text.div;
-  }
-
-  public set textDiv(value: string) {
-    if (!this.resource || !this.resource.text || !this.resource.text.div) {
-      return;
-    }
-
-    this.resource.text.div = '<div>' + value + '</div>';
+    this.textChanged.subscribe(() => {
+      this.resource.text.div = '<div>' + this.theDiv + '</div>';
+    });
   }
 
   private populateCodeSystemView(view: CodeSystemView, resource: any) {
@@ -276,5 +259,16 @@ export class NarrativeComponent implements OnInit {
     this.editorConfig = {
       editable: editable
     };
+
+    if (!this.resource || !this.resource.text || !this.resource.text.div) {
+      this.theDiv = '';
+    }
+    else{
+      this.theDiv = this.resource.text.div.trim();
+
+      if (this.theDiv.startsWith('<div>') && this.theDiv.endsWith('</div>')) {
+        this.theDiv = this.theDiv.substring('<div>'.length, this.theDiv.length - '</div>'.length);
+      }
+    }
   }
 }

@@ -110,7 +110,7 @@ export class ImportService {
       }
 
       const foundValueSet = <ValueSet>foundValueSetEntry.resource;
-      let foundInclude = (foundValueSet.compose.include || []).find((include) => include.system === sheetRow['E']);
+      let foundInclude = (foundValueSet.compose.include || []).find((include) => include.system === codeSystem);
 
       if (!foundInclude) {
         foundInclude = {
@@ -120,7 +120,7 @@ export class ImportService {
         foundValueSet.compose.include.push(foundInclude);
       }
 
-      let foundConcept = (foundInclude.concept || []).find((concept) => concept.code === sheetRow['C']);
+      let foundConcept = (foundInclude.concept || []).find((concept) => concept.code === code);
 
       if (!foundConcept) {
         foundConcept = {

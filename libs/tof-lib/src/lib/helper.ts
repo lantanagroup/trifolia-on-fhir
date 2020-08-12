@@ -10,12 +10,27 @@ export class ParsedUrlModel {
   public historyId: string;
 }
 
+export function escapeForXml(value: string) {
+  if (!value) return value;
+  return value
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   if (err && err.error) {
     if (err.error.message) {
       return err.error.message;
     } else if (typeof err.error === 'string') {
-      return err.error;
+      if (err.error.startsWith('{')) {
+        const obj = JSON.parse(err.error);
+        return getErrorString(obj);
+      } else {
+        return err.error;
+      }
     } else if (typeof err.error === 'object') {
       if (err.error.resourceType === 'OperationOutcome') {
         if (err.error.issue && err.error.issue.length > 0 && err.error.issue[0].diagnostics) {
