@@ -214,11 +214,20 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public sortGroups() {
     if (!this.implementationGuide.definition || !this.implementationGuide.definition.grouping) return;
 
+    const originalSortNames = this.implementationGuide.definition.grouping.map(g => g.name || '');
+
     this.implementationGuide.definition.grouping.sort((a, b) => {
       const aName = a.name || '';
       const bName = b.name || '';
       return aName.localeCompare(bName);
     });
+
+    const newSortNames = this.implementationGuide.definition.grouping.map(g => g.name || '');
+    const isSame = originalSortNames.every((value, index) => value === newSortNames[index]);
+
+    if (isSame) {
+      this.implementationGuide.definition.grouping = this.implementationGuide.definition.grouping.reverse();
+    }
   }
 
   public moveGroupDown(group: ImplementationGuideGroupingComponent) {
@@ -283,6 +292,25 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
     modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+  }
+
+  public sortResources() {
+    if (!this.implementationGuide.definition || !this.implementationGuide.definition.resource) return;
+
+    const originalSortNames = this.implementationGuide.definition.resource.map(r => r.name || '');
+
+    this.implementationGuide.definition.resource.sort((a, b) => {
+      const compareA = a.name || '';
+      const compareB = b.name || '';
+      return compareA.localeCompare(compareB);
+    });
+
+    const newSortNames = this.implementationGuide.definition.resource.map(r => r.name || '');
+    const isSame = originalSortNames.every((value, index) => value === newSortNames[index]);
+
+    if (isSame) {
+      this.implementationGuide.definition.resource = this.implementationGuide.definition.resource.reverse();
+    }
   }
 
   public addResources() {
