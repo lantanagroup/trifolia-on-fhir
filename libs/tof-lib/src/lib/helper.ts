@@ -10,6 +10,16 @@ export class ParsedUrlModel {
   public historyId: string;
 }
 
+export function escapeForXml(value: string) {
+  if (!value) return value;
+  return value
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   if (err && err.error) {
     if (err.error.message) {

@@ -1,0 +1,47 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "dental-referralnote",
+  "url": "http://hl7.org/fhir/us/dentalreferral/StructureDefinition/dental-referralnote",
+  "name": "DentalReferralNote",
+  "title": "Dental Referral Note",
+  "status": "active",
+  "description": "This Profile defines the Dental Referral Note profile. It contains the textual information regarding a referral to a general dentist or dental specialist as well as references to supplemental dental profiles for the referral",
+  "fhirVersion": "4.0.1",
+  "kind": "resource",
+  "abstract": false,
+  "type": "Composition",
+  "baseDefinition": "http://hl7.org/fhir/us/ccda/StructureDefinition/Referral-Note",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Composition",
+        "path": "Composition"
+      },
+      {
+        "id": "Composition.type",
+        "path": "Composition.type",
+        "short": "type",
+        "mustSupport": true
+      },
+      {
+        "id": "Composition.section",
+        "path": "Composition.section",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "value",
+              "path": "code"
+            }
+          ],
+          "rules": "open"
+        }
+      },
+      {
+        "id": "Composition.section:problem_section/newSlice",
+        "path": "Composition.section",
+        "sliceName": "problem_section/newSlice"
+      }
+    ]
+  }
+}

@@ -146,6 +146,25 @@ export class ElementDefinitionPanelComponent implements OnInit {
     modalRef.componentInstance.type = type;
   }
 
+  editedResliceNameValid() {
+    if (!this.editingSliceName) return true;
+
+    if (this.elementTreeModel.baseElement.sliceName && this.element.sliceName) {
+      const prefix = this.elementTreeModel.baseElement.sliceName + '/';
+      if (!this.editedSliceName || !this.editedSliceName.startsWith(prefix)) return false;
+      return this.editedSliceName !== prefix;
+    }
+
+    return true;
+  }
+
+  disableEditSliceName() {
+    if (!this.editingSliceName) return false;
+    if (!this.editedSliceName) return true;
+    if (this.editedSliceName.indexOf(' ') >= 0 || this.editedSliceName.indexOf('.') >= 0) return true;
+    return !this.editedResliceNameValid();
+  }
+
   toggleEditSliceName(commit?: boolean) {
     if (this.editingSliceName && commit) {
       let newId = this.element.id.substring(0, this.element.id.lastIndexOf(':'));

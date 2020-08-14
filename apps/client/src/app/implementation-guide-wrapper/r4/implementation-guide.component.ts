@@ -214,11 +214,20 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public sortGroups() {
     if (!this.implementationGuide.definition || !this.implementationGuide.definition.grouping) return;
 
+    const originalSortNames = this.implementationGuide.definition.grouping.map(g => g.name || '');
+
     this.implementationGuide.definition.grouping.sort((a, b) => {
       const aName = a.name || '';
       const bName = b.name || '';
       return aName.localeCompare(bName);
     });
+
+    const newSortNames = this.implementationGuide.definition.grouping.map(g => g.name || '');
+    const isSame = originalSortNames.every((value, index) => value === newSortNames[index]);
+
+    if (isSame) {
+      this.implementationGuide.definition.grouping = this.implementationGuide.definition.grouping.reverse();
+    }
   }
 
   public moveGroupDown(group: ImplementationGuideGroupingComponent) {
@@ -283,6 +292,25 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
     modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+  }
+
+  public sortResources() {
+    if (!this.implementationGuide.definition || !this.implementationGuide.definition.resource) return;
+
+    const originalSortNames = this.implementationGuide.definition.resource.map(r => r.name || '');
+
+    this.implementationGuide.definition.resource.sort((a, b) => {
+      const compareA = a.name || '';
+      const compareB = b.name || '';
+      return compareA.localeCompare(compareB);
+    });
+
+    const newSortNames = this.implementationGuide.definition.resource.map(r => r.name || '');
+    const isSame = originalSortNames.every((value, index) => value === newSortNames[index]);
+
+    if (isSame) {
+      this.implementationGuide.definition.resource = this.implementationGuide.definition.resource.reverse();
+    }
   }
 
   public addResources() {
@@ -509,11 +537,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (template === 'downloads') {
       newPage.title = 'Downloads';
       newPage.navMenu = 'Downloads';
-      newPage.fileName = 'downloads.html';
+      newPage.fileName = 'downloads.md';
       newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\n**Validator Pack and Definitions**\n\nThe validator.pack file is a zip file that contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.\n\nIt is used:\n\n* by the validator if you refer to the IG directly by it’s canonical URL\n* by the IG publisher if you declare that one IG depends on another\n* by a FHIR server, if you add the IG to server load list\n\nYou may [download the validator.pack](validator.pack) file here.\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
-      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
+      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
 
     newPage.nameUrl = newPage.fileName;
