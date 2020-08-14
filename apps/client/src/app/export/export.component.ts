@@ -154,7 +154,10 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public responseFormatChanged() {
+  public responseFormatChanged(format) {
+    if(format === 'application/json' || format === 'application/xml'){
+      this.options.responseFormat = format;
+    }
     this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
@@ -181,7 +184,10 @@ export class ExportComponent implements OnInit {
   }
 
   private async exportGithub() {
-    if (!this.githubPanel.canExport) return;
+    if (!this.githubPanel.canExport) {
+      this.message = "The repository, branch, and commit message must be filled for a GitHub export.";
+      return;
+    }
 
     try {
       await this.githubPanel.export();
