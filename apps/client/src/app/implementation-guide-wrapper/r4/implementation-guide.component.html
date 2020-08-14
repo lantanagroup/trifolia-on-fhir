@@ -144,6 +144,28 @@
             <ng-container *ngTemplateOutlet="dependsOn"></ng-container>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"
+                                           (changed)="isDirty=true; nameChanged();"></app-fhir-multi-jurisdiction>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <trifolia-fhir-package-list
+                [implementationGuide]="implementationGuide"
+                [defaultPackageId]="packageId"
+                [defaultTitle]="this.implementationGuide.title"
+                [defaultName]="this.implementationGuide.name" (changed)="isDirty = true; nameChanged();">
+              </trifolia-fhir-package-list>
+            </div>
+          </div>
+        </div>
       </ng-template>
     </ngb-tab>
 
@@ -401,15 +423,6 @@
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-package-list
-          [implementationGuide]="implementationGuide"
-          [defaultPackageId]="packageId"
-          [defaultTitle]="this.implementationGuide.title"
-          [defaultName]="this.implementationGuide.name" (changed)="isDirty = true; nameChanged();">
-        </trifolia-fhir-package-list>
-
-        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"
-                                     (changed)="isDirty=true; nameChanged();"></app-fhir-multi-jurisdiction>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental" (change)="isDirty=true; nameChanged();"></app-fhir-boolean>
 
