@@ -126,6 +126,10 @@
               </select>
             </div>
           </div>
+
+          <div class="col-md-3">
+            <app-fhir-date [parentObject]="implementationGuide" propertyName="date" title="Date" [allowTime]="true"></app-fhir-date>
+          </div>
         </div>
         <div class="row">
           <div class="col-md-12">
