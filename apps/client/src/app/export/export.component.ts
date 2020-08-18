@@ -190,7 +190,7 @@ export class ExportComponent implements OnInit {
     }
 
     try {
-      await this.githubPanel.export();
+      await this.githubPanel.export(this.options.responseFormat);
       this.message = 'Done exporting to GitHub!';
     } catch (ex) {
       this.message = getErrorString(ex);

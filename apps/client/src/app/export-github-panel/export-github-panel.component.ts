@@ -178,9 +178,9 @@ export class ExportGithubPanelComponent implements OnInit {
     return !!this.repository && !!this.branch && !!this.igFiles && this.igFiles.length > 0 && !!this.commitMessage;
   }
 
-  async export() {
+  async export(responseFormat: string) {
     try {
-      await this.githubService.updateContents(this.repository.owner.login, this.repository.name, this.commitMessage, this.allFiles, this.branch);
+      await this.githubService.updateContents(this.repository.owner.login, this.repository.name, this.commitMessage, this.allFiles, this.branch, responseFormat);
     } catch (ex) {
       this.message = getErrorString(ex);
     }
