@@ -103,6 +103,7 @@ export class FhirReferenceComponent implements OnInit {
       }
 
       this.changeDebouncer.next(this.parentObject[this.propertyName]);
+      this.change.emit();
     });
   }
 

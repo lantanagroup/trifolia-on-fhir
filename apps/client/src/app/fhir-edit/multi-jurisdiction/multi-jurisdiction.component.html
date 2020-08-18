@@ -10,7 +10,7 @@
       <th>Codes</th>
       <th class="actions-column-1">
         <div class="pull-right">
-          <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="addJurisdiction(); changed.emit();">
+          <button type="button" class="btn btn-primary" title="Add a jurisdiction" (click)="addJurisdiction(); change.emit();">
             <i class="fa fa-plus"></i>
           </button>
         </div>
@@ -20,24 +20,24 @@
     <tbody *ngIf="jurisdictions && jurisdictions.length > 0">
     <tr *ngFor="let j of jurisdictions; let ji = index">
       <td>
-        <input type="text" class="form-control" [ngModel]="getText(j)" (ngModelChange)="setText(j, $event); changed.emit();" />
+        <input type="text" class="form-control" [ngModel]="getText(j)" (ngModelChange)="setText(j, $event); change.emit();" />
       </td>
       <td>
         <div class="input-group" *ngFor="let c of (j.coding || []); let ci = index">
-          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="changed.emit()" />
-          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="changed.emit()"/>
-          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="changed.emit()"/>
+          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" />
+          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()"/>
+          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()"/>
           <div class="input-group-append">
-            <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1); changed.emit();">
+            <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1); change.emit();">
               <i class="fa fa-times"></i>
             </button>
           </div>
         </div>
-        <a href="javascript:void(0)" (click)="addCoding(j); changed.emit();">Add a code</a>
+        <a href="javascript:void(0)" (click)="addCoding(j); change.emit();">Add a code</a>
       </td>
       <td>
         <div class="pull-right">
-          <button type="button" class="btn btn-primary" title="Remove this jurisdiction" (click)="jurisdictions.splice(ji, 1); changed.emit();">
+          <button type="button" class="btn btn-primary" title="Remove this jurisdiction" (click)="jurisdictions.splice(ji, 1); change.emit();">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
@@ -46,7 +46,7 @@
     </tbody>
     <tbody *ngIf="!jurisdictions || jurisdictions.length === 0">
     <tr>
-      <td colspan="2">No jurisdictions have been specified. Click <a href="javascript:void(0)" (click)="addJurisdiction(); changed.emit();">here</a> to add one.</td>
+      <td colspan="2">No jurisdictions have been specified. Click <a href="javascript:void(0)" (click)="addJurisdiction(); change.emit();">here</a> to add one.</td>
     </tr>
     </tbody>
   </table>

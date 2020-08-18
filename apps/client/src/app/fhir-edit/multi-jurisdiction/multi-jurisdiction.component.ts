@@ -14,7 +14,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() tooltipKey: string;
 
-  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public Globals = Globals;

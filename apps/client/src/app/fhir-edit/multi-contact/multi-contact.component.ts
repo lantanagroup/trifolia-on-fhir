@@ -17,7 +17,7 @@ export class FhirMultiContactComponent implements OnInit {
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
 
-  @Output() changed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public Globals = Globals;
@@ -31,7 +31,7 @@ export class FhirMultiContactComponent implements OnInit {
   public editContact(contact: ContactDetail) {
     const ref = this.modalService.open(FhirContactModalComponent, {size: 'lg', backdrop: 'static'});
     ref.componentInstance.contact = contact;
-    ref.result.then(() => {this.changed.emit();})
+    ref.result.then(() => {this.change.emit();})
   }
 
   public firstContact(index: number){

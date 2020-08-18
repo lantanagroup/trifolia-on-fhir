@@ -17,10 +17,10 @@ export class PackageListComponent implements OnInit {
   @Input() defaultName: string;
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
-  @Output() public changed: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private configService: ConfigService) {
-    this.changed
+    this.change
       .debounceTime(1000)
       .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
   }
@@ -43,7 +43,7 @@ export class PackageListComponent implements OnInit {
   remove() {
     PackageListModel.removePackageList(this.implementationGuide);
     this.packageList = null;
-    this.changed.emit()
+    this.change.emit()
   }
 
   import(file: File) {
@@ -61,7 +61,7 @@ export class PackageListComponent implements OnInit {
           throw new Error('Not a package-list.json file');
         }
 
-        this.changed.emit();
+        this.change.emit();
       } catch (ex) {
         alert('The uploaded file does not appear to be a package-list.json');
       }
@@ -72,12 +72,12 @@ export class PackageListComponent implements OnInit {
 
   addVersion() {
     this.packageList.list.push(new PackageListItemModel());
-    this.changed.emit();
+    this.change.emit();
   }
 
   removeVersion(index: number) {
     this.packageList.list.splice(index, 1);
-    this.changed.emit();
+    this.change.emit();
   }
 
   ngOnInit() {
