@@ -5,7 +5,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>
     {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <button class="badge badge-danger" *ngIf="isDirty" (click)="isDirty=false; nameChanged()">Changed!</button>
+    <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
   </h2>
   <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
     <ngb-tab id="general">
