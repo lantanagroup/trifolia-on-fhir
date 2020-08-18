@@ -10,6 +10,12 @@ export class ParsedUrlModel {
   public historyId: string;
 }
 
+export function pad(num:number, size:number): string {
+  let s = num+"";
+  while (s.length < size) s = "0" + s;
+  return s;
+}
+
 export function escapeForXml(value: string) {
   if (!value) return value;
   return value
