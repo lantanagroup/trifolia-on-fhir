@@ -1,0 +1,32 @@
+{
+	"resourceType": "StructureDefinition",
+	"id": "dental-ccd",
+	"url": "http://hl7.org/fhir/us/dental-data-exchange/StructureDefinition/dental-ccd",
+	"name": "DentalCCD",
+	"status": "active",
+	"kind": "resource",
+	"abstract": false,
+	"type": "Composition",
+	"baseDefinition": "http://hl7.org/fhir/us/ccda-r4/StructureDefinition/CCDA-on-FHIR-Continuity-of-Care-Document",
+	"derivation": "constraint",
+	"differential": {
+		"element": [
+			{
+				"id": "Composition",
+				"path": "Composition"
+			},
+			{
+				"id": "Composition.extension:information_recipient_extension/slice9442",
+				"path": "Composition.extension",
+				"sliceName": "information_recipient_extension/slice9442"
+			},
+			{
+				"id": "Composition.extension:order_extension/slice4823",
+				"path": "Composition.extension",
+				"sliceName": "order_extension/slice4823",
+				"min": 1,
+				"max": "1"
+			}
+		]
+	}
+}
