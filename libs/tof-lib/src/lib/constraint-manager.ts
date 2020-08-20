@@ -180,8 +180,8 @@ export class ConstraintManager {
     if (!elementTreeModel.constrainedElement) return;
     if (elementTreeModel.expanded) this.toggleExpand(elementTreeModel);
 
-    const hasSlicing = elementTreeModel.constrainedElement.slicing;
-    const removeEtm = !!elementTreeModel.constrainedElement.sliceName;
+    const hasSlicing = !!elementTreeModel.constrainedElement.slicing;
+    const shouldRemoveSlice = !!elementTreeModel.constrainedElement.sliceName && !elementTreeModel.baseElement.sliceName;
     const index = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
     const toRemove = [elementTreeModel.constrainedElement];
 
@@ -219,7 +219,7 @@ export class ConstraintManager {
     delete elementTreeModel.constrainedElement;
 
     // Remove the element from the tree model if it is a slice
-    if (removeEtm) {
+    if (shouldRemoveSlice) {
       const etmIndex = this.elements.indexOf(elementTreeModel);
       this.elements.splice(etmIndex, etmIndex >= 0 ? 1 : 0);
     }
