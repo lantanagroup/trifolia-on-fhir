@@ -170,10 +170,10 @@
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li>Introduction</li>
+                        <li><a href="Introduction.html">Introduction</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="AdditionalHelp.html" title="Additional Help" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Navigation.html" title="Navigation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,21 +185,46 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps3"><span class="rvts17">Release 1.13.0</span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts22">Select an IG Publisher Based on GitHub Releases</span></span></h2>
-<p class="rvps7"><span class="rvts21">In the </span><span class="rvts24">Export</span><span class="rvts21">&nbsp;and </span><span class="rvts24">Publish</span><span class="rvts21">&nbsp;screens, you can now select IG Publishers available on </span><a class="rvts23" href="https://github.com/hl7/fhir-ig-publisher/releases">GitHub "Releases."</a></p>
-<p class="rvps7"><span class="rvts21">Select </span><span class="rvts24">dev</span><span class="rvts21">&nbsp;to use the latest IG Publisher from </span><a class="rvts23" href="https://oss.sonatype.org/service/local/repositories/snapshots/index_content/?groupIdHint=org.hl7.fhir.publisher&artifactIdHint=org.hl7.fhir.publisher">SonaType</a><span class="rvts21">.</span></p>
-<h3 class="rvps5"><span class="rvts0"><span class="rvts14">Development Log (5)</span></span></h3>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts20">New Features</span></span></h4>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-442">TRIFFHIR-442</a><span class="rvts16">] - IG Publisher selection is based on GitHub releases instead of SonaType</span></li>
+<p class="rvps2"><span class="rvts19">Release 1.14.0</span></p>
+<p class="rvps2"><span class="rvts19"><br/></span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Editing Improvements</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps2"><span class="rvts6">On the </span><span class="rvts25">Edit Implementation Guide</span><span class="rvts6">&nbsp;screen, a </span><span class="rvts25">Changed!</span><span class="rvts6">&nbsp;icon appears beside the implementation guide (IG) name when any edit is made before </span><span class="rvts25">Save</span><span class="rvts6">&nbsp;is clicked.</span></li>
+<li class="rvps2"><span class="rvts6">A pop-up warns you of unsaved content when you navigate from the </span><span class="rvts25">Edit Implementation Guide</span><span class="rvts6">&nbsp;screen to confirm you wish to discard changes.</span></li>
+<li class="rvps2"><span class="rvts6">In the </span><span class="rvts25">Constraints Editor</span><span class="rvts6">, re-slicing now follows the correct syntax and the content on the </span><span class="rvts25">RAW</span><span class="rvts6">&nbsp;tab matches the Element user interface.</span></li>
 </ul>
-<h4 class="rvps6"><span class="rvts0"><span class="rvts19">Defects</span></span></h4>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Resources</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps2"><span class="rvts6">In the </span><span class="rvts25">Edit Implementation Guide's Resources</span><span class="rvts6">&nbsp;tab, we added a new </span><span class="rvts25">Sort</span><span class="rvts6">&nbsp;button next to hand icon for adding resources. Click the </span><span class="rvts25">Sort</span><span class="rvts6">&nbsp;button to alphabetize resources.</span></li>
+<li class="rvps2"><span class="rvts6">Click the </span><span class="rvts25">Sort</span><span class="rvts6">&nbsp;button twice to reverse the sort.</span></li>
+<li class="rvps2"><span class="rvts6">On the </span><span class="rvts25">Other Resources</span><span class="rvts6">&nbsp;screen, we've added a </span><span class="rvts25">History</span><span class="rvts6">&nbsp;tab that functions like the </span><span class="rvts25">History</span><span class="rvts6">&nbsp;tab for Profiles, ImplementationGuide editing, etc.</span></li>
+</ul>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Publishing</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps2"><span class="rvts6">All required fields for publishing are now on the </span><span class="rvts25">General</span><span class="rvts6">&nbsp;tab in the </span><span class="rvts25">Edit Implementation Guide</span><span class="rvts6">&nbsp;screen.</span></li>
+<li class="rvps2"><span class="rvts6">The </span><span class="rvts25">copyrightyear</span><span class="rvts6">&nbsp;and </span><span class="rvts25">releaselabel</span><span class="rvts6">&nbsp;are inserted automatically during publishing, so you don't have to complete those fields.</span></li>
+</ul>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (12)</span></span></h3>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-411">TRIFFHIR-411</a><span class="rvts16">] - Error handling in export/publish when IG has no pages</span></li>
-<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-422">TRIFFHIR-422</a><span class="rvts16">] - Page content not contained in MS Word Export</span></li>
-<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-437">TRIFFHIR-437</a><span class="rvts16">] - STU3 resource "name" property not exporting</span></li>
-<li class="rvps3"><span class="rvts16">[</span><a class="rvts18" href="https://trifolia.atlassian.net/browse/TRIFFHIR-440">TRIFFHIR-440</a><span class="rvts16">] - Importing ValueSet XLSX file repeats ValueSet.compose.include for every concept</span></li>
+<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-457">TRIFFHIR-457</a><span class="rvts18">] - </span><span class="rvts23">Add History tab to "Other Resources"</span></li>
+<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-402">TRIFFHIR-402]</a><span class="rvts23">&nbsp;- Prompt user when leaving Edit IG (STU3) screen without saving changes</span></li>
+<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-306">TRIFFHIR-306] </a><span class="rvts23">- By Default, Import StructureDefintion should have IG permissions applied</span></li>
+</ul>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts22">Improvements</span></span></h4>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps2"><span class="rvts24">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-453">TRIFFHIR-453]</a><span class="rvts23">&nbsp;- Add button to sort resources in an IG by name</span></li>
+<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-452">TRIFFHIR-452]</a><span class="rvts23">&nbsp;- Place all required fields for an IG on the "General" tab</span></li>
+<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-452">TRIFFHIR-452] </a><span class="rvts23">- </span><span class="rvts23">Correct re-slicing syntax</span></li>
+</ul>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts21">Defects</span></span></h4>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-371">TRIFFHIR-371</a><span class="rvts18">] - </span><span class="rvts23">Error when saving profile text</span></li>
+<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-413">TRIFFHIR-413</a><span class="rvts18">] - </span><span class="rvts23">Add "date" field for implementation guide</span></li>
+<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-414">TRIFFHIR-414</a><span class="rvts18">] - </span><span class="rvts23">JSON FHIRVersion should be array, not string</span></li>
+<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-447">TRIFFHIR-447</a><span class="rvts18">] - </span><span class="rvts23">MsWord export proofing language incorrect</span></li>
+<li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-440">[</a><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-448">TRIFFHIR-448</a><span class="rvts18">] - </span><span class="rvts23">encode special characters for XML when exporting page menu titles</span></li>
+<li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-440">[</a><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-449">TRIFFHIR-449</a><span class="rvts18">] - </span><span class="rvts23">Serializing patient's name with an extension, without a value, fails</span></li>
 </ul>
 <p></p>
 

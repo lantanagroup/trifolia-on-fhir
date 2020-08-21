@@ -173,7 +173,7 @@
                         <li><a href="TechnicalDetails.html">Technical Details</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="FHIRVersions.html" title="FHIR Versions" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="RESTAPI.html" title="REST API" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,27 +185,27 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps9"><span class="rvts0"><span class="rvts28">System Requirements </span></span></h1>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts25">End-Users</span></span></h2>
-<p class="rvps3"><span class="rvts8">End-users will need a modern browser (e.g., Chrome, Firefox, Internet Explorer, Safari) to use Trifolia-on-FHIR.</span></p>
-<h2 class="rvps8"><span class="rvts0"><span class="rvts25">Administrators</span></span></h2>
-<p class="rvps3"><span class="rvts8">Administrators must ensure the following requirements to install Trifolia-on-FHIR in their individual servers:</span></p>
+<p class="rvps2"><span class="rvts6">The only requirement for using Trifolia-on-FHIR (ToF) is a browser. Organizations may want to install ToF to keep data in their own database or to keep their users separate from a publicly available tool.</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Browser </span></span></h2>
+<p class="rvps2"><span class="rvts6">ToF requires Chrome, Firefox, Internet Explorer, Microsoft Edge, Safari, or another modern &nbsp;browser.</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Installation </span></span></h2>
+<p class="rvps2"><span class="rvts6">To install ToF on your individual servers, administrators must have the following requirements :</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps3"><span class="rvts50">Windows </span><span class="rvts77">or </span><span class="rvts50">Linux</span></li>
-<li class="rvps3"><span class="rvts50">Java 8+</span><span class="rvts8">&nbsp;(to execute the publish process using the FHIR IG Publisher)</span></li>
-<li class="rvps3"><span class="rvts50">Jekyll </span><span class="rvts8">(to successfully complete the publish process using the FHIR IG Publisher)</span></li>
-<li class="rvps3"><span class="rvts50">FHIR Server </span><span class="rvts8">(STU3 or R4)</span></li>
+<li class="rvps10"><span class="rvts29">Windows </span><span class="rvts30">or</span><span class="rvts31">&nbsp;</span><span class="rvts29">Linux</span></li>
+<li class="rvps10"><span class="rvts29">Java 8+</span><span class="rvts30">&nbsp;(to execute the publish process using the FHIR IG Publisher)</span></li>
+<li class="rvps10"><span class="rvts29">Jekyll </span><span class="rvts30">(to successfully complete the publish process using the FHIR IG Publisher)</span></li>
+<li class="rvps10"><span class="rvts29">FHIR Server </span><span class="rvts30">(STU3 or R4) must support:</span></li>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps3"><span class="rvts8">Must support creating resources via a PUT with an ID</span></li>
-<li class="rvps3"><span class="rvts8">Must support the </span><a class="rvts13" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a></li>
-<li class="rvps3"><span class="rvts8">Must support the </span><a class="rvts13" href="https://www.hl7.org/fhir/operation-resource-meta-delete.html" target="_blank">$meta-delete operation</a></li>
-<li class="rvps3"><span class="rvts8">Must support ImplementationGuide search query parameters:</span></li>
+<li class="rvps2"><span class="rvts6">Creating resources via a PUT with an ID</span></li>
+<li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a></li>
+<li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-meta-delete.html" target="_blank">$meta-delete operation</a></li>
+<li class="rvps2"><span class="rvts6">ImplementationGuide search query parameters:</span></li>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
-<li class="rvps3"><span class="rvts8">resource</span></li>
-<li class="rvps3"><span class="rvts8">global</span></li>
+<li class="rvps2"><span class="rvts6">resource</span></li>
+<li class="rvps2"><span class="rvts6">global</span></li>
 </ul>
-<li class="rvps3"><span class="rvts8">Must support _has (reverse chaining) search criteria. For example: GET /StructureDefinition?_has:ImplementationGuide:resource:_id=&lt;IG_ID&gt;</span></li>
-<li class="rvps3"><span class="rvts8">Must support _include search criteria to get a list of all resources related to an implementation guide. For example: GET /ImplementationGuide?_id=some-ig-id&amp;_include=ImplementationGuide:resource&amp;ImplementationGuide:global</span></li>
+<li class="rvps2"><span class="rvts6">&nbsp;_has (reverse chaining) search criteria. For example: GET /StructureDefinition?_has:ImplementationGuide:resource:_id=&lt;IG_ID&gt;</span></li>
+<li class="rvps2"><span class="rvts6">&nbsp;_include search criteria to get a list of all resources related to an implementation guide. For example: GET /ImplementationGuide?_id=some-ig-id&amp;_include=ImplementationGuide:resource&amp;ImplementationGuide:global</span></li>
 </ul></ul>
 <p></p>
 
