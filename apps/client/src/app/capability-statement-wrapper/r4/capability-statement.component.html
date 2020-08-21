@@ -144,7 +144,7 @@
       <div class="card">
         <div class="card-header">
           <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementation')"
-                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementation', { description: '', url: '', custodian: ''})"/>
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementation', {})"/>
           Implementation
         </div>
         <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementation')">
@@ -166,9 +166,8 @@
             <td>
               <app-fhir-reference
                 [parentObject]="capabilityStatement.implementation"
-                propertyName="description"
+                propertyName="custodian"
                 [isFormGroup]="false"
-                [isCanonical]="true"
                 [hideResourceType]="true"
                 resourceType="Organization"></app-fhir-reference>
             </td>
