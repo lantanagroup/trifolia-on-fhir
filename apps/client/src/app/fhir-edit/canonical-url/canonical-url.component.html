@@ -1,0 +1,11 @@
+<div class="input-group">
+  <input class="form-control" [(ngModel)]="parentObject[propertyName]" title="{{title}}"/>
+  <div class="input-group-append">
+    <button type="button" class="btn btn-secondary" title="Select a CapabilityStatement for the instantiate" (click)="selectCanonical()">
+      <i class="fas fa-hand-pointer"></i>
+    </button>
+    <button type="button" class="btn btn-secondary" title="Clear the CabilityStatement URL" (click)="clear()">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+</div>

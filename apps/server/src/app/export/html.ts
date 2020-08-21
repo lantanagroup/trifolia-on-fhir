@@ -34,14 +34,6 @@ import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 
 export class HtmlExporter {
-  readonly homedir: string;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
-  public bundle: IBundle;
-  public packageId: string;
-  public rootPath: string;
-  public controlPath: string;
-  protected igPublisherLocation: string;
-  protected pageInfos: PageInfo[];
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
@@ -67,6 +59,14 @@ export class HtmlExporter {
   protected get r4ImplementationGuide(): R4ImplementationGuide {
     return <R4ImplementationGuide>this.implementationGuide;
   }
+  readonly homedir: string;
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public bundle: IBundle;
+  public packageId: string;
+  public rootPath: string;
+  public controlPath: string;
+  protected igPublisherLocation: string;
+  protected pageInfos: PageInfo[];
 
   protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
@@ -77,6 +77,52 @@ export class HtmlExporter {
       default:
         return '.json';
     }
+  }
+
+  protected static getPageExtension(page: ImplementationGuidePageComponent) {
+    switch (page.generation) {
+      case 'html':
+      case 'generated':
+        return '.html';
+      case 'xml':
+        return '.xml';
+      case 'markdown':
+        return '.md';
+      default:
+        return '.md';
+    }
+  }
+
+  protected static getIndexContent(implementationGuide: IImplementationGuide) {
+    let content = '### Overview\n\n';
+
+    if (implementationGuide.description) {
+      const descriptionContent = implementationGuide.description + '\n\n';
+      content += descriptionContent + '\n\n';
+    } else {
+      content += 'This implementation guide does not have a description, yet.\n\n';
+    }
+
+    if (implementationGuide.contact) {
+      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
+        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
+
+        let display: string;
+
+        if (foundEmail) {
+          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
+        } else if (foundURL) {
+          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
+        }
+
+        return [contact.name, display || ''];
+      });
+      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
+      content += authorsContent;
+    }
+
+    return content;
   }
 
   /**
@@ -482,20 +528,6 @@ export class HtmlExporter {
     return this.implementationGuide;
   }
 
-  protected static getPageExtension(page: ImplementationGuidePageComponent) {
-    switch (page.generation) {
-      case 'html':
-      case 'generated':
-        return '.html';
-      case 'xml':
-        return '.xml';
-      case 'markdown':
-        return '.md';
-      default:
-        return '.md';
-    }
-  }
-
   /**
    * Updates the default templates for the pages "Profiles", "Terminology", "Capability Statements", etc.
    * with links to the resources in the implementation guide.
@@ -824,37 +856,5 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(resourcePath, resourceContent);
-  }
-
-  protected static getIndexContent(implementationGuide: IImplementationGuide) {
-    let content = '### Overview\n\n';
-
-    if (implementationGuide.description) {
-      const descriptionContent = implementationGuide.description + '\n\n';
-      content += descriptionContent + '\n\n';
-    } else {
-      content += 'This implementation guide does not have a description, yet.\n\n';
-    }
-
-    if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
-        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
-
-        let display: string;
-
-        if (foundEmail) {
-          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
-        } else if (foundURL) {
-          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
-        }
-
-        return [contact.name, display || ''];
-      });
-      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
-      content += authorsContent;
-    }
-
-    return content;
   }
 }

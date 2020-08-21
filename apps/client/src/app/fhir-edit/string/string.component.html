@@ -1,5 +1,5 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
-    <label>
+    <label *ngIf="label">
         <span>{{title || propertyName}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>

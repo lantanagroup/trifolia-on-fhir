@@ -19,6 +19,7 @@ export class FhirDateComponent implements OnInit {
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
   @Input() allowTime = false;
+  @Input() label? = true;
 
   /**
    * Indicates that the value of the component should be remembered in cookies
@@ -137,7 +138,7 @@ export class FhirDateComponent implements OnInit {
       return;
     }
 
-    const timeMatch = timeRegex.exec(dateTimeMatched[8].substring(1));
+    const timeMatch = dateTimeMatched[8] ? timeRegex.exec(dateTimeMatched[8].substring(1)) : null;
     const hourText = timeMatch && timeMatch.length > 1 ? timeMatch[1] : null;
     const minuteText = timeMatch && timeMatch.length > 3 ? timeMatch[3] : null;
     const secondText = timeMatch && timeMatch.length > 5 ? timeMatch[5] : null;

@@ -129,6 +129,16 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     rest.resource.push(resourceCopy);
   }
 
+  public selectCanonical(property: string[], index: number){
+    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
+    modalRef.componentInstance.resourceType = "CapabilityStatement";
+    modalRef.componentInstance.hideResourceType = true;
+
+    modalRef.result.then((results: ResourceSelection) => {
+      property[index] = results.fullUrl;
+    });
+  }
+
   public selectResourceProfile(resource: CapabilityStatementResourceComponent) {
     const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
@@ -196,7 +206,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   }
 
   public get wrongDateFormat(){
-    if(!this.capabilityStatement.date) return false;
+    if(!this.capabilityStatement || !this.capabilityStatement.date) return false;
     const dateParts = this.capabilityStatement.date.toString().split('-');
 
     return dateParts.length > 1 && (dateParts.length !== 3 || dateParts[0].length < 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2);

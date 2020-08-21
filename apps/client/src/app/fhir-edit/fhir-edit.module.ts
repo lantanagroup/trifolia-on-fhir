@@ -46,6 +46,7 @@ import {AngularEditorModule} from '@kolkov/angular-editor';
 import {SharedUiModule} from '../shared-ui/shared-ui.module';
 import {FhirEditIdentifierCardComponent} from './identifier-card/identifier-card.component';
 import {SimplemdeModule} from 'ngx-simplemde';
+import {FhirCanonicalUrlComponent} from './canonical-url/canonical-url.component';
 
 const components = [
   FhirAddressModalComponent,
@@ -86,6 +87,7 @@ const components = [
   FhirSelectMultiCodingComponent,
   FhirSelectSingleCodeComponent,
   FhirStringComponent,
+  FhirCanonicalUrlComponent,
   FhirValueSetIncludeConceptModalComponent,
   FhirEditIdentifierCardComponent
 ];
