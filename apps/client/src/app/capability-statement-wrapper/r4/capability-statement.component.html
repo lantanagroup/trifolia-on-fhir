@@ -208,11 +208,9 @@
 
       <div class="card">
         <div class="card-header">
-          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('imports')"
-                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'imports', [''])"/>
           Imports
         </div>
-        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('imports')">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Canonical URL</th>
@@ -240,16 +238,19 @@
               </td>
             </tr>
           </tbody>
+          <tbody *ngIf="!capabilityStatement.imports || capabilityStatement.imports.length === 0">
+            <tr>
+              <td colspan="2">No imports have been specified. Click <a href="javascript:void(0)" (click)="capabilityStatement.imports.push('')">here</a> to add one.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('instantiates')"
-                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'instantiates', [''])"/>
           Instantiates
         </div>
-        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('instantiates')">
+        <table class="table table-striped">
           <thead>
           <tr>
             <th>Canonical URL</th>
@@ -277,16 +278,19 @@
             </td>
           </tr>
           </tbody>
+          <tbody *ngIf="!capabilityStatement.instantiates || capabilityStatement.instantiates.length === 0">
+            <tr>
+              <td colspan="2">No instantiates have been specified. Click <a href="javascript:void(0)" (click)="capabilityStatement.instantiates.push('')">here</a> to add one.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementationGuide')"
-                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementationGuide', [''])"/>
           Implementation Guides
         </div>
-        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementationGuide')">
+        <table class="table table-striped">
           <thead>
           <tr>
             <th>Canonical URL</th>
@@ -313,6 +317,11 @@
               </div>
             </td>
           </tr>
+          </tbody>
+          <tbody *ngIf="!capabilityStatement.implementationGuide || capabilityStatement.implementationGuide.length === 0">
+            <tr>
+              <td colspan="2">No implementation guides have been specified. Click <a href="javascript:void(0)" (click)="capabilityStatement.implementationGuide.push('')">here</a> to add one.</td>
+            </tr>
           </tbody>
         </table>
       </div>
