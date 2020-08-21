@@ -199,7 +199,7 @@
               <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="version" title="Version" [label]="false"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-date [parentObject]="capabilityStatement" propertyName="releaseDate" title="Release Date" [label]="false"></app-fhir-date>
+              <app-fhir-date [parentObject]="capabilityStatement.software" propertyName="releaseDate" title="Release Date" [label]="false"></app-fhir-date>
             </td>
           </tr>
           </tbody>
@@ -228,8 +228,8 @@
           <tbody *ngIf="capabilityStatement.imports && capabilityStatement.imports.length > 0">
             <tr *ngFor="let j of capabilityStatement.imports; let ji = index">
               <td>
-                <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="imports" [index]="ji" title="Import Canonical URL"
-                                        resourceType="CapabilityStatement"></app-fhir-canonical-url>
+                <app-fhir-canonical-url [property]="j" title="Import Canonical URL"
+                                        resourceType="CapabilityStatement" (change)="capabilityStatement.imports[ji]=$event"></app-fhir-canonical-url>
               </td>
               <td>
                 <div class="pull-right">
@@ -265,8 +265,8 @@
           <tbody *ngIf="capabilityStatement.instantiates && capabilityStatement.instantiates.length > 0">
           <tr *ngFor="let j of capabilityStatement.instantiates; let ji = index">
             <td>
-              <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="instantiates" [index]="ji" title="Instantiate Canonical URL"
-                                      resourceType="CapabilityStatement"></app-fhir-canonical-url>
+              <app-fhir-canonical-url [property]="j" title="Instantiate Canonical URL"
+                                      resourceType="CapabilityStatement" (change)="capabilityStatement.instantiates[ji]=$event"></app-fhir-canonical-url>
             </td>
             <td>
               <div class="pull-right">
@@ -302,8 +302,8 @@
           <tbody *ngIf="capabilityStatement.implementationGuide && capabilityStatement.implementationGuide.length > 0">
           <tr *ngFor="let j of capabilityStatement.implementationGuide; let ji = index">
             <td>
-              <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="implementationGuide" [index]="ji" title="Implementation Guide Canonical URL"
-                                      resourceType="ImplementationGuide"></app-fhir-canonical-url>
+              <app-fhir-canonical-url [property]="j" title="Implementation Guide Canonical URL"
+                                      resourceType="ImplementationGuide" (change)="capabilityStatement.implementationGuide[ji]=$event"></app-fhir-canonical-url>
             </td>
             <td>
               <div class="pull-right">

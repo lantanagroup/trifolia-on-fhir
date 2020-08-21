@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirReferenceModalComponent, ResourceSelection} from '../reference-modal/reference-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -8,11 +8,12 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./canonical-url.component.css']
 })
 export class FhirCanonicalUrlComponent implements OnInit {
-  @Input() parentObject: any;
-  @Input() propertyName: string;
+  @Input() property: any;
   @Input() resourceType: string;
   @Input() title? = "";
   @Input() index?: number;
+
+  @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private modal: NgbModal) { }
 
@@ -22,20 +23,14 @@ export class FhirCanonicalUrlComponent implements OnInit {
     modalRef.componentInstance.hideResourceType = true;
 
     modalRef.result.then((results: ResourceSelection) => {
-      if(this.index !== undefined){
-        this.parentObject[this.propertyName][this.index] = results.fullUrl;
-      }else{
-        this.parentObject[this.propertyName] = results.fullUrl;
-      }
+      this.property = results.fullUrl;
+      this.change.emit(this.property);
     });
   }
 
   public clear(){
-    if(this.index !== undefined){
-      this.parentObject[this.propertyName][this.index] = "";
-    }else{
-      this.parentObject[this.propertyName] = "";
-    }
+    this.property = "";
+    this.change.emit(this.property);
   }
 
   ngOnInit() {
