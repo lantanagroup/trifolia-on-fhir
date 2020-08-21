@@ -170,10 +170,10 @@
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="TechnicalDetails.html">Technical Details</a></li>
+                        <li><a href="AccessandPermissions.html">Access and Permissions</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="TechnicalDetails.html" title="Technical Details" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="SystemRequirements.html" title="System Requirements" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="RESTAPI.html" title="REST API" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="AccessandPermissions.html" title="Access and Permissions" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="AccountsandLogin.html" title="Accounts and Login" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="ResourcePermissions.html" title="Resource Permissions" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,8 +185,16 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps9"><span class="rvts0"><span class="rvts28">FHIR Versions</span></span></h1>
-<p class="rvps3"><span class="rvts8">Trifolia-on-FHIR supports multiple versions of the FHIR standard. ToF currently supports STU3 and R4. Users can select a FHIR server with the drop down menu at the top right of every screen.</span></p>
+<p class="rvps2"><span class="rvts6">Trifolia-on-FHIR (ToF) supports multiple versions of the FHIR standard: STU3 and R4. It defaults to the FHIR server selected during previous login.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts6">To select a different FHIR server: </span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+<li value="1" class="rvps2"><span class="rvts6">Click the FHIR server button to display the Edit Settings screen. </span></li>
+<li value="2" class="rvps2"><span class="rvts6">In the </span><span class="rvts25">Selected FHIR Server</span><span class="rvts6">&nbsp;field, click drop down menu and select the FHIR server.</span></li>
+</ol>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">FHIR Versions in the UI</span></span></h2>
+<p class="rvps2"><span class="rvts6">Depending on the FHIR server and the version it supports, the screens for editing resources may appear (e.g., STU3 vs. R4). The screens in ToF reflect the changes between STU3 and R4 resources. In STU3, for example, ImplementationGuide has "packages" with "resources" inside each package. In R4, ImplementationGuide has "resources" parallel to "packages," and each resource references a package.</span></p>
 <p></p>
 
             </div>
