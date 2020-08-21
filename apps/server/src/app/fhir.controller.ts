@@ -451,7 +451,7 @@ export class FhirController extends BaseController {
 
     proxyUrl += url;
 
-    if (headers['implementationguideid']) {
+    if (method === 'GET' && headers['implementationguideid']) {
       const parsed: UrlWithStringQuery = parseUrl(proxyUrl);
 
       if (!parsed.search) {
@@ -469,7 +469,6 @@ export class FhirController extends BaseController {
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
     const contextImplementationGuide = headers.implementationguideid ? await this.getImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
-    const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : undefined;
 
     if (isBatch && !parsedUrl.resourceType) {
       // When dealing with a transaction, process each individual resource within the bundle
@@ -568,6 +567,7 @@ export class FhirController extends BaseController {
     delete proxyHeaders['content-length'];
     delete proxyHeaders['cookie'];
     delete proxyHeaders['connection'];
+    delete proxyHeaders['implementationguideid'];
 
     // Make sure that caching is turned off for proxied FHIR requests
     proxyHeaders['Cache-Control'] = 'no-cache';
@@ -595,13 +595,13 @@ export class FhirController extends BaseController {
       }
 
       let action = '';
-      if(method === 'POST'){
+      if (method === 'POST') {
         action = 'C';
-      } else if(method === 'GET'){
+      } else if (method === 'GET') {
         action = 'R';
-      } else if(method === 'PUT'){
+      } else if (method === 'PUT') {
         action = 'U';
-      } else if(method.indexOf('DEL') > 0){
+      } else if (method.indexOf('DEL') > 0) {
         action = 'D';
       }
 

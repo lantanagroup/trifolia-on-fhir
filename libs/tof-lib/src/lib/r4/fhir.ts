@@ -1076,6 +1076,10 @@ export class ElementDefinition extends BackboneElement implements IElementDefini
       setChoice(obj, this, 'maxValue', 'date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity');
     }
   }
+
+  public toString() {
+    return this.id || this.path;
+  }
 }
 
 export class StructureDefinitionSnapshotComponent extends BackboneElement {

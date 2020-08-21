@@ -30,6 +30,15 @@
       </select>
     </div>
   </div>
+  <div class="col-md-4">
+    <div class="form-group" *ngIf="repository">
+      <label>Output Format</label>
+      <select class="form-control" [(ngModel)]="responseFormat" (change)="change.emit(responseFormat)">
+        <option value="application/json">JSON</option>
+        <option value="application/xml">XML</option>
+      </select>
+    </div>
+  </div>
 
   <div class="col-md-12" *ngIf="allFiles">
     <table class="table table-striped">

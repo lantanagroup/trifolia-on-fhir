@@ -1,6 +1,6 @@
-import { Fhir as FhirModule } from 'fhir/fhir';
-import { Server } from 'socket.io';
-import { spawn } from 'child_process';
+import {Fhir as FhirModule} from 'fhir/fhir';
+import {Server} from 'socket.io';
+import {spawn} from 'child_process';
 import {
   ContactDetail,
   DomainResource,
@@ -15,38 +15,25 @@ import {
   ImplementationGuideResourceComponent,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { BundleExporter } from './bundle';
-import { IServerConfig } from '../models/server-config';
-import { IFhirConfig } from '../models/fhir-config';
-import { HttpService, Logger, MethodNotAllowedException } from '@nestjs/common';
-import { InvalidModuleConfigException } from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {BundleExporter} from './bundle';
+import {IServerConfig} from '../models/server-config';
+import {IFhirConfig} from '../models/fhir-config';
+import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
+import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
+import {Formats} from '../models/export-options';
+import {PageInfo} from './html.models';
+import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import {FhirInstances, unzip} from '../helper';
+import {createTableFromArray, escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import { Formats } from '../models/export-options';
-import { PageInfo } from './html.models';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getExtensionString
-} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { PackageListModel } from '../../../../../libs/tof-lib/src/lib/package-list-model';
-import { FhirInstances, unzip } from '../helper';
-import {createTableFromArray, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { ConfigService } from '../config.service';
-import { FileService } from '../../../../client/src/app/shared/file.service';
 
 export class HtmlExporter {
-  readonly homedir: string;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
-  public bundle: IBundle;
-  public packageId: string;
-  public rootPath: string;
-  public controlPath: string;
-  protected igPublisherLocation: string;
-  protected pageInfos: PageInfo[];
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
@@ -72,6 +59,14 @@ export class HtmlExporter {
   protected get r4ImplementationGuide(): R4ImplementationGuide {
     return <R4ImplementationGuide>this.implementationGuide;
   }
+  readonly homedir: string;
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public bundle: IBundle;
+  public packageId: string;
+  public rootPath: string;
+  public controlPath: string;
+  protected igPublisherLocation: string;
+  protected pageInfos: PageInfo[];
 
   protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
@@ -82,6 +77,52 @@ export class HtmlExporter {
       default:
         return '.json';
     }
+  }
+
+  protected static getPageExtension(page: ImplementationGuidePageComponent) {
+    switch (page.generation) {
+      case 'html':
+      case 'generated':
+        return '.html';
+      case 'xml':
+        return '.xml';
+      case 'markdown':
+        return '.md';
+      default:
+        return '.md';
+    }
+  }
+
+  protected static getIndexContent(implementationGuide: IImplementationGuide) {
+    let content = '### Overview\n\n';
+
+    if (implementationGuide.description) {
+      const descriptionContent = implementationGuide.description + '\n\n';
+      content += descriptionContent + '\n\n';
+    } else {
+      content += 'This implementation guide does not have a description, yet.\n\n';
+    }
+
+    if (implementationGuide.contact) {
+      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
+        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
+
+        let display: string;
+
+        if (foundEmail) {
+          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
+        } else if (foundURL) {
+          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
+        }
+
+        return [contact.name, display || ''];
+      });
+      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
+      content += authorsContent;
+    }
+
+    return content;
   }
 
   /**
@@ -487,20 +528,6 @@ export class HtmlExporter {
     return this.implementationGuide;
   }
 
-  protected static getPageExtension(page: ImplementationGuidePageComponent) {
-    switch (page.generation) {
-      case 'html':
-      case 'generated':
-        return '.html';
-      case 'xml':
-        return '.xml';
-      case 'markdown':
-        return '.md';
-      default:
-        return '.md';
-    }
-  }
-
   /**
    * Updates the default templates for the pages "Profiles", "Terminology", "Capability Statements", etc.
    * with links to the resources in the implementation guide.
@@ -519,7 +546,7 @@ export class HtmlExporter {
       .map(pi => {
         const extensions = <IExtension[]>(pi.page.extension || []);
         const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return extension.valueString;
+        return escapeForXml(extension.valueString);
       });
     const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
       if (init.indexOf(next) < 0) init.push(next);
@@ -534,13 +561,15 @@ export class HtmlExporter {
         });
 
       if (menuPages.length === 1) {
+        const title = escapeForXml(menuPages[0].title);
         const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
-        return `  <li><a href="${fileName}">${menuPages[0].title}</a></li>\n`;
+        return `  <li><a href="${fileName}">${title}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
+            const title = escapeForXml(pi.title);
             const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
-            return `      <li><a href="${fileName}">${pi.title}</a></li>`;   // TODO: Should not show fileName
+            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
           });
 
         return '  <li class="dropdown">\n' +
@@ -827,37 +856,5 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(resourcePath, resourceContent);
-  }
-
-  protected static getIndexContent(implementationGuide: IImplementationGuide) {
-    let content = '### Overview\n\n';
-
-    if (implementationGuide.description) {
-      const descriptionContent = implementationGuide.description + '\n\n';
-      content += descriptionContent + '\n\n';
-    } else {
-      content += 'This implementation guide does not have a description, yet.\n\n';
-    }
-
-    if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
-        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
-
-        let display: string;
-
-        if (foundEmail) {
-          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
-        } else if (foundURL) {
-          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
-        }
-
-        return [contact.name, display || ''];
-      });
-      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
-      content += authorsContent;
-    }
-
-    return content;
   }
 }

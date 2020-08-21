@@ -192,6 +192,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
+
+    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
   }
 
   public selectPublishedIg(dependency: Extension) {
@@ -200,6 +202,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
       this.setDependencyVersion(dependency, guide.version);
+      this.isDirty = true;
+      this.nameChanged();
     });
   }
 
@@ -263,6 +267,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       });
 
       this.initResources();
+      this.isDirty = true;
+      this.nameChanged();
     });
   }
 
@@ -427,9 +433,19 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
   }
 
+  public prompt(array, index, text, event=null){
+    const result = ClientHelper.promptForRemove(array, index, text, event);
+    if(result){
+      this.isDirty = true;
+      this.nameChanged();
+    }
+  }
+
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    this.modalService.open(content, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(content, {size: 'lg', backdrop: 'static'});
+
+    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();})
   }
 
   public tabChange(event) {
@@ -481,6 +497,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.result.then((page: PageComponent) => {
       Object.assign(pageDef.page, page);
       this.initPages();
+      this.isDirty = true;
+      this.nameChanged();
     });
   }
 
@@ -601,7 +619,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     if (this.isFile) {
       this.fileService.saveFile();
-      //this.isDirty = false;
+      this.isDirty = false;
       return;
     }
 
@@ -612,7 +630,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
           this.message = 'Your changes have been saved!';
-          //this.isDirty = false;
+          this.isDirty = false;
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -626,6 +644,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.resource = igResource.resource;
+
+    modalRef.result.then(() => {this.isDirty=true; this.nameChanged();});
   }
 
   public initResources() {
@@ -657,6 +677,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
 
     this.initResources();
+    this.isDirty = true;
+    this.nameChanged();
   }
 
   public changeResourcePackage(igResource: ImplementationGuideResource, newPackage: PackageComponent) {
@@ -708,7 +730,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`);
+    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
   }
 
   public canDeactivate(): boolean{

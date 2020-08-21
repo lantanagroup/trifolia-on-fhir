@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {StructureDefinition} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {StructureDefinition, StructureDefinitionContextComponent} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {IContextPanelComponent} from '../context-panel-wrapper.component';
 import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 
@@ -17,6 +17,10 @@ export class ContextPanelR4Component implements OnInit, IContextPanelComponent {
   }
 
   ngOnInit() {
+  }
+
+  addContext(){
+    this.structureDefinition.context.push(new StructureDefinitionContextComponent);
   }
 
 }

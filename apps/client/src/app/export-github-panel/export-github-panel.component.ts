@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BranchModel, FileModel, GithubService, RepositoryModel} from '../shared/github.service';
 import {ConfigService} from '../shared/config.service';
 import {ExportService} from '../shared/export.service';
@@ -31,6 +31,8 @@ export class ExportGithubPanelComponent implements OnInit {
     deleted: true,
     nothing: true
   };
+  @Input() responseFormat: string;
+  @Output() change: EventEmitter<String> = new EventEmitter();
 
   constructor(
     public githubService: GithubService,
@@ -162,6 +164,7 @@ export class ExportGithubPanelComponent implements OnInit {
     try {
       this.loadingRepositories = true;
       this.repositories = await this.githubService.getRepositories(true);
+      this.change.emit('application/xml')
     } catch (ex) {
       this.message = getErrorString(ex);
     } finally {
@@ -175,9 +178,9 @@ export class ExportGithubPanelComponent implements OnInit {
     return !!this.repository && !!this.branch && !!this.igFiles && this.igFiles.length > 0 && !!this.commitMessage;
   }
 
-  async export() {
+  async export(responseFormat: string) {
     try {
-      await this.githubService.updateContents(this.repository.owner.login, this.repository.name, this.commitMessage, this.allFiles, this.branch);
+      await this.githubService.updateContents(this.repository.owner.login, this.repository.name, this.commitMessage, this.allFiles, this.branch, responseFormat);
     } catch (ex) {
       this.message = getErrorString(ex);
     }

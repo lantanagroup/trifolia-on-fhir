@@ -53,7 +53,18 @@
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
     </ngb-tab>
+    <!-- Version History -->
+    <ngb-tab id="history">
+      <ng-template ngbTabTitle>
+        <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <app-resource-history [(resource)]="data"></app-resource-history>
+      </ng-template>
+    </ngb-tab>
   </ngb-tabset>
+
+
 </div>
 
 <footer class="footer">

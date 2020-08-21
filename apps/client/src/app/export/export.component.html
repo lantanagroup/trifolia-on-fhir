@@ -142,7 +142,8 @@
   <ngb-tab title="GitHub" id="github">
     <ng-template ngbTabContent>
       <div [attr.data-intro]="Globals.introText['export.github']">
-        <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"></trifolia-fhir-export-github-panel>
+        <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"
+                                           [responseFormat]="options.responseFormat" (change)="responseFormatChanged($event)" ></trifolia-fhir-export-github-panel>
       </div>
     </ng-template>
   </ngb-tab>

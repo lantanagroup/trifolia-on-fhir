@@ -5,6 +5,7 @@
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>
     {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
+    <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
   </h2>
   <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
     <ngb-tab id="general">
@@ -15,12 +16,12 @@
         <fieldset>
           <div class="row">
             <div class="col-md-8">
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url"></app-fhir-string>
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
               <app-fhir-string
                 [parentObject]="implementationGuide"
                 [required]="true"
-                (change)="nameChanged()"
+                (change)="nameChanged(); isDirty=true"
                 [pattern]="Globals.regexPatterns.namePattern"
                 [patternMessage]="Globals.tooltips['name.validation.failed']"
                 propertyName="name"
@@ -28,13 +29,13 @@
                 tooltipPath="ImplementationGuide.name">
               </app-fhir-string>
 
-              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description"></app-fhir-markdown>
+              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="description" title="Description" [isOptional]="true" tooltipPath="ImplementationGuide.description" (change)="isDirty=true; nameChanged()"></app-fhir-markdown>
 
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher"></app-fhir-string>
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="publisher" title="Publisher" tooltipPath="ImplementationGuide.publisher" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
-              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright"></app-fhir-markdown>
+              <app-fhir-markdown [parentObject]="implementationGuide" propertyName="copyright" title="Copyright" tooltipPath="ImplementationGuide.copyright" (change)="isDirty=true; nameChanged()"></app-fhir-markdown>
 
-              <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact"></app-fhir-multi-contact>
+              <app-fhir-multi-contact [parentObject]="implementationGuide" propertyName="contact" title="Contacts" tooltipPath="ImplementationGuide.contact" (change)="isDirty=true; nameChanged()"></app-fhir-multi-contact>
 
               <div class="card">
                 <div class="card-header">Dependencies
@@ -48,7 +49,7 @@
                     <th>Version</th>
                     <th class="actions-column-1">
                       <div class="pull-right">
-                        <button type="button" class="btn btn-default" title="Add a dependency" (click)="addDependency()">
+                        <button type="button" class="btn btn-default" title="Add a dependency" (click)="addDependency(); isDirty = true; nameChanged()">
                           <i class="fa fa-plus"></i>
                         </button>
                       </div>
@@ -60,7 +61,7 @@
                     <td>
                       <div class="input-group">
                         <input type="text" class="form-control" [class.is-invalid]="!getDependencyName(dependency)" [ngModel]="getDependencyName(dependency)"
-                               (ngModelChange)="setDependencyName(dependency, $event)"/>
+                               (ngModelChange)="setDependencyName(dependency, $event)" (change)="isDirty=true; nameChanged()"/>
                         <div class="input-group-btn">
                           <button type="button" class="btn btn-default" (click)="selectPublishedIg(dependency)">
                             <i class="fas fa-hand-pointer"></i>
@@ -70,15 +71,15 @@
                     </td>
                     <td>
                       <input type="text" class="form-control" [class.is-invalid]="!getDependencyLocation(dependency)" [ngModel]="getDependencyLocation(dependency)"
-                             (ngModelChange)="setDependencyLocation(dependency, $event)"/>
+                             (ngModelChange)="setDependencyLocation(dependency, $event)" (change)="isDirty=true; nameChanged()"/>
                     </td>
                     <td>
                       <input type="text" class="form-control" [class.is-invalid]="!getDependencyVersion(dependency)" [ngModel]="getDependencyVersion(dependency)"
-                             (ngModelChange)="setDependencyVersion(dependency, $event)"/>
+                             (ngModelChange)="setDependencyVersion(dependency, $event)" (change)="isDirty=true; nameChanged()"/>
                     </td>
                     <td>
                       <div class="pull-right">
-                        <button type="button" class="btn btn-default" title="Remove this dependency" (click)="removeDependency(dependency)">
+                        <button type="button" class="btn btn-default" title="Remove this dependency" (click)="removeDependency(dependency); isDirty=true; nameChanged()">
                           <i class="fas fa-trash-alt"></i>
                         </button>
                       </div>
@@ -101,9 +102,11 @@
                 </div>
               </div>
 
+              <app-fhir-date [parentObject]="implementationGuide" propertyName="date" title="Date" [allowTime]="true"></app-fhir-date>
+
               <div class="form-group">
                 <label>Package ID</label>
-                <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" />
+                <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" (change)="isDirty=true; nameChanged()"/>
                 <span class="help-block" *ngIf="!packageId">You must specify Package ID.</span>
                 <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
                   <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
@@ -112,19 +115,20 @@
 
               <div class="form-group" *ngIf="packageId && packageId.startsWith('hl7.')">
                 <label>HL7 Work Group</label>
-                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup">
+                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="isDirty=true; nameChanged()">
                   <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
                   <option [ngValue]="undefined">Unspecified</option>
                 </select>
               </div>
 
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" [required]="true"></app-fhir-string>
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" [required]="true"
+                               (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
               <div class="form-group">
                 <label>Status
                   <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
                 </label>
-                <select class="form-control" [(ngModel)]="implementationGuide.status">
+                <select class="form-control" [(ngModel)]="implementationGuide.status" (change)="isDirty=true; nameChanged()">
                   <option [ngValue]="'draft'">Draft</option>
                   <option [ngValue]="'active'">Active</option>
                   <option [ngValue]="'retired'">Retired</option>
@@ -132,9 +136,10 @@
                 </select>
               </div>
 
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="fhirVersion" title="FHIR Version"></app-fhir-string>
+              <app-fhir-string [parentObject]="implementationGuide" propertyName="fhirVersion" title="FHIR Version" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
-              <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"></app-fhir-boolean>
+              <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental"
+                                (change)="isDirty=true; nameChanged()"></app-fhir-boolean>
             </div>
           </div>
         </fieldset>
@@ -168,13 +173,14 @@
           <tbody *ngIf="pages?.length">
           <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
             <td>
-              <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, implementationGuide.page === p.page)" [class.is-invalid]="!p.page.title"/>
+              <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, implementationGuide.page === p.page)" [class.is-invalid]="!p.page.title"
+              (change)="isDirty=true; nameChanged()"/>
             </td>
             <td>
-              <input type="text" class="form-control" [(ngModel)]="p.page.source" [class.is-invalid]="!p.page.source" />
+              <input type="text" class="form-control" [(ngModel)]="p.page.source" [class.is-invalid]="!p.page.source" (change)="isDirty=true; nameChanged()"/>
             </td>
             <td>
-              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind">
+              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="isDirty=true; nameChanged()">
                 <option value="page">Page</option>
                 <option value="example">Example</option>
                 <option value="list">List</option>
@@ -190,16 +196,16 @@
                 <button type="button" class="btn btn-default" (click)="editPage(p)" title="Edit this page">
                   <i class="fa fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="removePage(p)" title="Remove this page and all children">
+                <button type="button" class="btn btn-default" (click)="removePage(p); isDirty=true; nameChanged()" title="Remove this page and all children">
                   <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="addChildPage(p)" title="Add a page as a child of this page">
+                <button type="button" class="btn btn-default" (click)="addChildPage(p); isDirty=true; nameChanged()" title="Add a page as a child of this page">
                   <i class="fa fa-plus"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up">
+                <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p); isDirty=true; nameChanged()" title="Move sibling page up">
                   <i class="fa fa-arrow-up"></i>
                 </button>
-                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down">
+                <button type="button" class="btn btn-default" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p); isDirty=true; nameChanged()" title="Move sibling page down">
                   <i class="fa fa-arrow-down"></i>
                 </button>
               </div>
@@ -210,7 +216,7 @@
           <tr>
             <th colspan="3">
               <p>No pages have been defined for this implementation guide.</p>
-              <button type="button" class="btn btn-primary" (click)="toggleRootPage(true)">
+              <button type="button" class="btn btn-primary" (click)="toggleRootPage(true); isDirty=true; nameChanged()">
                 Add a narrative page
               </button>
             </th>
@@ -226,9 +232,9 @@
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultName]="implementationGuide.name" [defaultPackageId]="packageId"></trifolia-fhir-package-list>
+        <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultName]="implementationGuide.name" [defaultPackageId]="packageId" (change)="isDirty=true; nameChanged()"></trifolia-fhir-package-list>
 
-        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="isDirty=true; nameChanged()"></app-fhir-multi-jurisdiction>
 
         <div class="card">
           <div class="card-header">
@@ -245,7 +251,7 @@
               </th>
               <th class="actions-column-1">
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary" (click)="addParameter()" title="Add a new parameter">
+                  <button type="button" class="btn btn-primary" (click)="addParameter(); isDirty=true; nameChanged()" title="Add a new parameter">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -256,7 +262,7 @@
             <tr *ngFor="let param of parameters; let pi = index">
               <td>
                 <div class="input-group">
-                  <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" />
+                  <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" (change)="isDirty=true; nameChanged()"/>
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                     <div class="dropdown-menu">
@@ -266,11 +272,11 @@
                 </div>
               </td>
               <td>
-                <app-fhir-string [parentObject]="param" propertyName="value" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                <app-fhir-string [parentObject]="param" propertyName="value" [isFormGroup]="false" [required]="true" (change)="isDirty=true; nameChanged()"></app-fhir-string>
               </td>
               <td>
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary" (click)="removeParameter(param)" title="Remove this parameter">
+                  <button type="button" class="btn btn-primary" (click)="removeParameter(param); isDirty=true; nameChanged()" title="Remove this parameter">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
@@ -280,7 +286,7 @@
             <tfoot *ngIf="parameters.length === 0">
             <tr>
               <td colspan="3">
-                No parameters have been defined. Click <a href="javascript:void(0)" (click)="addParameter()">here</a> to add one.
+                No parameters have been defined. Click <a href="javascript:void(0)" (click)="addParameter(); isDirty=true; nameChanged()">here</a> to add one.
               </td>
             </tr>
             </tfoot>
@@ -303,7 +309,7 @@
               </th>
               <th class="actions-column-1">
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary" title="Add global" (click)="addGlobal()">
+                  <button type="button" class="btn btn-primary" title="Add global" (click)="addGlobal(); isDirty=true; nameChanged()">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
@@ -313,17 +319,17 @@
             <tbody *ngIf="implementationGuide.hasOwnProperty('global')">
             <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
               <td>
-                <select class="form-control" [(ngModel)]="g.type">
+                <select class="form-control" [(ngModel)]="g.type" (change)="isDirty=true; nameChanged()">
                   <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
                 </select>
               </td>
               <td>
-                <app-fhir-reference [parentObject]="g" propertyName="profile" [isFormGroup]="false"></app-fhir-reference>
+                <app-fhir-reference [parentObject]="g" propertyName="profile" [isFormGroup]="false" (change)="isDirty=true; nameChanged()"></app-fhir-reference>
               </td>
               <td>
                 <div class="pull-right">
                   <button type="button" class="btn btn-default" title="Remove global"
-                          (click)="implementationGuide.global.splice(i, 1)"><i class="fas fa-trash-alt"></i>
+                          (click)="implementationGuide.global.splice(i, 1); isDirty=true; nameChanged()"><i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </td>
@@ -333,7 +339,7 @@
             <tr>
               <td colspan="3">
                 <p><em>This implementation guide does not have any global definitions.</em></p>
-                <button type="button" class="btn btn-primary" (click)="addGlobal()">Add a global definition</button>
+                <button type="button" class="btn btn-primary" (click)="addGlobal(); isDirty=true; nameChanged()">Add a global definition</button>
               </td>
             </tr>
             </tfoot>
@@ -371,15 +377,16 @@
           <tbody>
           <tr *ngFor="let ir of resources">
             <td>
-              <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)">
+              <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)" (change)="isDirty=true; nameChanged()">
                 <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
               </select>
             </td>
             <td>
-              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" resourceType="StructureDefinition" [isFormGroup]="false" [required]="true" [hideDisplay]="true"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="ir.resource" propertyName="sourceReference" resourceType="StructureDefinition" [isFormGroup]="false" [required]="true" [hideDisplay]="true"
+                                  (change)="isDirty=true; nameChanged()"></app-fhir-reference>
             </td>
             <td>
-              <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false"></app-fhir-boolean>
+              <app-fhir-boolean [parentObject]="ir.resource" propertyName="example" [isFormGroup]="false" (change)="isDirty=true; nameChanged()"></app-fhir-boolean>
             </td>
             <td>
               <div class="btn-group pull-right">
@@ -387,7 +394,7 @@
                   <i class="fa fa-edit"></i>
                 </button>
                 <button type="button" class="btn btn-secondary" title="Remove this resource (and package, if no resources are left in it) from this implementation guide"
-                        (click)="removeResource(ir)">
+                        (click)="removeResource(ir);">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -410,7 +417,8 @@
       </ng-template>
       <ng-template ngbTabContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
-               (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"/> This
+               (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"
+        (change)="isDirty=true; nameChanged()"/> This
         implementation guide has packages
         <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
         <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
@@ -418,24 +426,24 @@
             <ng-template ngbTabTitle>
               <span title="{{p.name}}">#{{pi + 1}}</span>
               <i class="fas fa-trash-alt" title="Remove this package"
-                 (click)="ClientHelper.promptForRemove(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
+                 (click)="prompt(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
             </ng-template>
             <ng-template ngbTabContent>
               <div class="form-group">
                 <label>Name
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.name"></app-tooltip-icon>
                 </label>
-                <input type="text" class="form-control" [(ngModel)]="p.name"/>
+                <input type="text" class="form-control" [(ngModel)]="p.name" (change)="isDirty=true; nameChanged()"/>
               </div>
 
               <div class="form-group">
                 <label>
                   <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
-                         (ngModelChange)="Globals.toggleProperty(p, 'description', '')"/>
+                         (ngModelChange)="Globals.toggleProperty(p, 'description', '')" (change)="isDirty=true; nameChanged()"/>
                   Description
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
                 </label>
-                <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')"></trifolia-fhir-markdown>
+                <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')" (valueChange)="isDirty=true; nameChanged()"></trifolia-fhir-markdown>
               </div>
 
               <h4>Resources
@@ -464,24 +472,25 @@
                     <div class="input-group">
                       <div class="input-group-addon">
                         <input type="checkbox" [ngModel]="r.hasOwnProperty('name')"
-                               (ngModelChange)="Globals.toggleProperty(r, 'name', '')"/>
+                               (ngModelChange)="Globals.toggleProperty(r, 'name', '')" (change)="isDirty=true; nameChanged()"/>
                       </div>
                       <input type="text" class="form-control" [(ngModel)]="r.name"
-                             [disabled]="!r.hasOwnProperty('name')"/>
+                             [disabled]="!r.hasOwnProperty('name')" (change)="isDirty=true; nameChanged()"/>
                     </div>
                   </td>
                   <td>
                     <div class="input-group">
                       <select class="form-control" [ngModel]="getResourceSourceType(r)"
-                              (ngModelChange)="setResourceSourceType(r, $event)">
+                              (ngModelChange)="setResourceSourceType(r, $event)" (change)="isDirty=true; nameChanged()">
                         <option value="uri">URI</option>
                         <option value="reference">Reference</option>
                       </select>
                     </div>
                   </td>
                   <td>
-                    <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')" [(ngModel)]="r.sourceUri" placeholder="URI"/>
-                    <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [parentObject]="r" propertyName="sourceReference" [required]="true" [isFormGroup]="false"></app-fhir-reference>
+                    <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')" [(ngModel)]="r.sourceUri" placeholder="URI" (change)="isDirty=true; nameChanged()"/>
+                    <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [parentObject]="r" propertyName="sourceReference" [required]="true" [isFormGroup]="false"
+                                        (change)="isDirty=true; nameChanged()"></app-fhir-reference>
                   </td>
                   <td>
                     <div class="btn-group pull-right">
@@ -489,7 +498,7 @@
                         <i class="fa fa-edit"></i>
                       </button>
                       <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1"
-                              (click)="ClientHelper.promptForRemove(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
+                              (click)="prompt(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -501,7 +510,7 @@
           </ngb-tab>
           <ngb-tab [disabled]="true">
             <ng-template ngbTabTitle>
-              <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet)">Add</button>
+              <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet); isDirty=true; nameChanged()">Add</button>
             </ng-template>
             <ng-template ngbTabContent></ng-template>
           </ngb-tab>
@@ -512,7 +521,8 @@
     <!-- Binary -->
     <ngb-tab id="binary" title="Binary">
       <ng-template ngbTabContent>
-        <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'binary', [''])"/>
+        <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'binary', [''])"
+               (change)="isDirty=true; nameChanged()"/>
         Implementation guide has binary URIs
         <app-tooltip-icon tooltipPath="ImplementationGuide.binary"></app-tooltip-icon>
 
@@ -522,7 +532,7 @@
             <th>URI</th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push('')">
+                <button type="button" class="btn btn-default" title="Add a new binary URI" (click)="implementationGuide.binary.push(''); isDirty=true; nameChanged()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -532,11 +542,11 @@
           <tbody>
           <tr *ngFor="let b of implementationGuide.binary; let i = index; trackBy: Globals.trackByFn">
             <td>
-              <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]"/>
+              <input type="text" class="form-control" [(ngModel)]="implementationGuide.binary[i]" (change)="isDirty=true; nameChanged()"/>
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1)">
+                <button type="button" class="btn btn-default" title="Remove this binary URI" (click)="implementationGuide.binary.splice(i, 1); isDirty=true; nameChanged()">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -553,7 +563,7 @@
         <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="implementationGuide"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="implementationGuide" (change)="isDirty=true; nameChanged()"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 
@@ -583,7 +593,7 @@
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
+        <app-resource-history [(resource)]="implementationGuide" (change)="isDirty=true; nameChanged()"></app-resource-history>
       </ng-template>
     </ngb-tab>
   </ngb-tabset>
@@ -597,31 +607,31 @@
     </button>
   </div>
   <div class="modal-body">
-    <app-fhir-string [parentObject]="currentResource" propertyName="name" title="Name"></app-fhir-string>
+    <app-fhir-string [parentObject]="currentResource" propertyName="name" title="Name" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
     <div class="form-group">
       <label>Source type</label>
       <div class="input-group">
-        <select class="form-control" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)">
+        <select class="form-control" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="isDirty=true; nameChanged()">
           <option value="uri">URI</option>
           <option value="reference">Reference</option>
         </select>
       </div>
     </div>
 
-    <app-fhir-string *ngIf="currentResource.hasOwnProperty('sourceUri')" [parentObject]="currentResource" propertyName="sourceUri" title="Source URI" [required]="true"></app-fhir-string>
+    <app-fhir-string *ngIf="currentResource.hasOwnProperty('sourceUri')" [parentObject]="currentResource" propertyName="sourceUri" title="Source URI" [required]="true" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
     <app-fhir-reference *ngIf="currentResource.hasOwnProperty('sourceReference')" [parentObject]="currentResource" propertyName="sourceReference" [required]="true"
-                        title="Source Reference"></app-fhir-reference>
+                        title="Source Reference" (change)="isDirty=true; nameChanged()"></app-fhir-reference>
 
-    <app-fhir-string [parentObject]="currentResource" propertyName="description" title="Description"></app-fhir-string>
+    <app-fhir-string [parentObject]="currentResource" propertyName="description" title="Description" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="currentResource" propertyName="acronym" title="Acronym"></app-fhir-string>
+    <app-fhir-string [parentObject]="currentResource" propertyName="acronym" title="Acronym" (change)="isDirty=true; nameChanged()"></app-fhir-string>
 
-    <app-fhir-boolean [parentObject]="currentResource" propertyName="example" title="Example"></app-fhir-boolean>
+    <app-fhir-boolean [parentObject]="currentResource" propertyName="example" title="Example" (change)="isDirty=true; nameChanged()"></app-fhir-boolean>
 
     <app-fhir-reference [parentObject]="currentResource" propertyName="exampleFor" resourceType="StructureDefinition" *ngIf="currentResource.example || currentResource.exampleFor"
-                        title="Example for"></app-fhir-reference>
+                        title="Example for" (change)="isDirty=true; nameChanged()"></app-fhir-reference>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="closePackageResourceModal(c)">Close</button>

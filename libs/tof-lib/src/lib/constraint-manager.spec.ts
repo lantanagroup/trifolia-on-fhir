@@ -5,11 +5,14 @@ import * as testData1 from '../../../../test/data/shareableplandefinition.profil
 import * as testData2 from '../../../../test/data/resprate.profile.json';
 import * as testData3 from '../../../../test/data/resprate2.profile.json';
 import * as testData4 from '../../../../test/data/ccd.json';
+import * as testData5 from '../../../../test/data/dentalReferral.json';
+import * as testData6 from '../../../../test/data/referralNote.json';
+import * as testData7 from '../../../../test/data/dental-ccd.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
 import {ParseConformance} from 'fhir/parseConformance';
-import {ElementDefinition} from './r4/fhir';
+import {ElementDefinition, StructureDefinition} from './r4/fhir';
 import {ElementTreeModel} from './element-tree-model';
 
 describe('ConstraintManager', () => {
@@ -84,6 +87,24 @@ describe('ConstraintManager', () => {
     });
   });
 
+  describe('dental-referralnote tests', () => {
+    it('should expand dental referral', async () => {
+      const testData = new StructureDefinition(JSON.parse(JSON.stringify(testData5)));
+      const referralNote = new StructureDefinition(JSON.parse(JSON.stringify(testData6)));
+
+      const cm = new ConstraintManager(ElementDefinition, referralNote, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      console.log('test');
+
+      // await cm.toggleExpand(cm.elements[14]);
+      // await cm.toggleExpand(cm.elements[17]);
+      // expect(cm.elements[22].basePath).toBe('Observation.code.coding.code');
+      // expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[2]);
+    });
+  });
+
+
   describe('[un]constrain resprate2 observation', () => {
     let cm;
     let testData: IStructureDefinition;
@@ -134,137 +155,155 @@ describe('ConstraintManager', () => {
   });
 
   describe('slice resprate2 observation', () => {
-    let cm;
-    let testData: IStructureDefinition;
+    let resperate2CM;
+    let resperate2: IStructureDefinition;
+    let dentalCCD: IStructureDefinition;
+    let dentalCCDCM;
 
     beforeEach(async () => {
-      testData = JSON.parse(JSON.stringify(testData3));
-      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
-      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
-      await cm.initializeRoot();
+      resperate2 = JSON.parse(JSON.stringify(testData3));
+      dentalCCD = JSON.parse(JSON.stringify(testData7));
 
-      expect(cm.elements.length).toBe(33);
-      expect(testData.differential.element.length).toBe(7);
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      resperate2CM = new ConstraintManager(ElementDefinition, obsModel, resperate2, fhir.parser);
+      await resperate2CM.initializeRoot();
+
+      const ccdModel = JSON.parse(JSON.stringify(testData4));
+      dentalCCDCM = new ConstraintManager(ElementDefinition, ccdModel, dentalCCD, fhir.parser);
+      await dentalCCDCM.initializeRoot();
+
+      expect(resperate2CM.elements.length).toBe(33);
+      expect(resperate2.differential.element.length).toBe(7);
     });
 
     it('should not slice code because it is not repeatable', () => {
-      cm.slice(cm.elements[14]);
-      expect(cm.elements.length).toBe(33);
-      expect(testData.differential.element.length).toBe(7);
+      resperate2CM.slice(resperate2CM.elements[14]);
+      expect(resperate2CM.elements.length).toBe(33);
+      expect(resperate2.differential.element.length).toBe(7);
     });
 
     it('should slice category', async () => {
-      cm.constrain(cm.elements[13]);
-      expect(cm.elements.length).toBe(33);
-      expect(testData.differential.element.length).toBe(8);
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      expect(resperate2CM.elements.length).toBe(33);
+      expect(resperate2.differential.element.length).toBe(8);
 
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      expect(cm.elements.length).toBe(37);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      expect(resperate2CM.elements.length).toBe(37);
 
       // slice category
-      cm.slice(cm.elements[13], 'mySlice');
-      expect(cm.elements.length).toBe(38);
-      expect(cm.elements[18].id).toBe('Observation.category:mySlice');
-      expect(cm.elements[18].constrainedElement).toBeTruthy();
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      expect(resperate2CM.elements.length).toBe(38);
+      expect(resperate2CM.elements[18].id).toBe('Observation.category:mySlice');
+      expect(resperate2CM.elements[18].constrainedElement).toBeTruthy();
 
-      expect(testData.differential.element.length).toBe(9);
-      expect(testData.differential.element[1].slicing).toBeTruthy();
-      expect(testData.differential.element[1].slicing.rules).toBe('open');
-      expect(testData.differential.element[2].id).toBe('Observation.category:mySlice');
-      expect(testData.differential.element[2].path).toBe('Observation.category');
-      expect(testData.differential.element[2].sliceName).toBe('mySlice');
+      expect(resperate2.differential.element.length).toBe(9);
+      expect(resperate2.differential.element[1].slicing).toBeTruthy();
+      expect(resperate2.differential.element[1].slicing.rules).toBe('open');
+      expect(resperate2.differential.element[2].id).toBe('Observation.category:mySlice');
+      expect(resperate2.differential.element[2].path).toBe('Observation.category');
+      expect(resperate2.differential.element[2].sliceName).toBe('mySlice');
 
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
-      expect(cm.elements.length).toBe(42);
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
+      expect(resperate2CM.elements.length).toBe(42);
     });
 
     it('should slice category and category.coding', async () => {
-      cm.constrain(cm.elements[13]);
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      cm.slice(cm.elements[13], 'mySlice');
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
 
-      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
-      expect(testData.differential.element.length).toBe(10);
-      expect(testData.differential.element[3].id).toBe('Observation.category:mySlice.coding');
-      expect(testData.differential.element[3].path).toBe('Observation.category.coding');
-      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[3]);
+      resperate2CM.constrain(resperate2CM.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      expect(resperate2.differential.element.length).toBe(10);
+      expect(resperate2.differential.element[3].id).toBe('Observation.category:mySlice.coding');
+      expect(resperate2.differential.element[3].path).toBe('Observation.category.coding');
+      expect(resperate2CM.elements[21].constrainedElement).toBe(resperate2.differential.element[3]);
 
-      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
-      expect(testData.differential.element.length).toBe(11);
-      expect(testData.differential.element[4].sliceName).toBe('mySlice2');
-      expect(testData.differential.element[4].id).toBe('Observation.category:mySlice.coding:mySlice2');
-      expect(testData.differential.element[4].path).toBe('Observation.category.coding');
-      expect(cm.elements.length).toBe(43);
-      expect(cm.elements[22].constrainedElement).toBe(testData.differential.element[4]);
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice2');            // slice the category.coding element
+      expect(resperate2.differential.element.length).toBe(11);
+      expect(resperate2.differential.element[4].sliceName).toBe('mySlice2');
+      expect(resperate2.differential.element[4].id).toBe('Observation.category:mySlice.coding:mySlice2');
+      expect(resperate2.differential.element[4].path).toBe('Observation.category.coding');
+      expect(resperate2CM.elements.length).toBe(43);
+      expect(resperate2CM.elements[22].constrainedElement).toBe(resperate2.differential.element[4]);
     });
 
     it('should slice category.coding twice', async () => {
-      cm.constrain(cm.elements[13]);
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      cm.slice(cm.elements[13], 'mySlice');
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
-      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
-      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
-      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
-      expect(cm.elements.length).toBe(44);
-      expect(testData.differential.element.length).toBe(12);
-      expect(testData.differential.element[5].sliceName).toBe('mySlice3');
-      expect(testData.differential.element[5].id).toBe('Observation.category:mySlice.coding:mySlice3');
-      expect(testData.differential.element[5].path).toBe('Observation.category.coding');
-      expect(cm.elements[23].constrainedElement).toBe(testData.differential.element[5]);
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
+      resperate2CM.constrain(resperate2CM.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice2');            // slice the category.coding element
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice3');            // slice category.coding a second time
+      expect(resperate2CM.elements.length).toBe(44);
+      expect(resperate2.differential.element.length).toBe(12);
+      expect(resperate2.differential.element[5].sliceName).toBe('mySlice3');
+      expect(resperate2.differential.element[5].id).toBe('Observation.category:mySlice.coding:mySlice3');
+      expect(resperate2.differential.element[5].path).toBe('Observation.category.coding');
+      expect(resperate2CM.elements[23].constrainedElement).toBe(resperate2.differential.element[5]);
     });
 
     it('should delete the slices', async () => {
-      cm.constrain(cm.elements[13]);
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      cm.slice(cm.elements[13], 'mySlice');
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
-      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
-      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
-      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
-      cm.removeConstraint(cm.elements[23]);
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
+      resperate2CM.constrain(resperate2CM.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice2');            // slice the category.coding element
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice3');            // slice category.coding a second time
+      resperate2CM.removeConstraint(resperate2CM.elements[23]);
 
-      expect(cm.elements.length).toBe(43);
-      expect(cm.elements[23].baseId).toBe('Observation.category.text');
-      expect(testData.differential.element.length).toBe(11);
+      expect(resperate2CM.elements.length).toBe(43);
+      expect(resperate2CM.elements[23].baseId).toBe('Observation.category.text');
+      expect(resperate2.differential.element.length).toBe(11);
+    });
+
+    it('should delete the re-slice', async () => {
+      const originalConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
+      dentalCCDCM.removeConstraint(dentalCCDCM.elements[11]);
+
+      // Should have one less constrained elements, but the same number of base elements
+      const updatedConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
+      expect(updatedConstrainedElements.length).toBe(originalConstrainedElements.length - 1);
+      expect(dentalCCDCM.elements.length).toBe(54);
     });
 
     it('should delete the category.coding slicing and all slices associated with it', async () => {
-      cm.constrain(cm.elements[13]);
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      cm.slice(cm.elements[13], 'mySlice');
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
-      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
-      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
-      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
-      cm.removeConstraint(cm.elements[21]);
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
+      resperate2CM.constrain(resperate2CM.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice2');            // slice the category.coding element
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice3');            // slice category.coding a second time
+      resperate2CM.removeConstraint(resperate2CM.elements[21]);
 
-      expect(cm.elements.length).toBe(42);
-      expect(cm.elements[22].baseId).toBe('Observation.category.text');
-      expect(testData.differential.element.length).toBe(9);
+      expect(resperate2CM.elements.length).toBe(42);
+      expect(resperate2CM.elements[22].baseId).toBe('Observation.category.text');
+      expect(resperate2.differential.element.length).toBe(9);
 
-      const actualIds = testData.differential.element.map(e => e.id);
+      const actualIds = resperate2.differential.element.map(e => e.id);
       const expectedIds = ['Observation', 'Observation.category', 'Observation.category:mySlice', 'Observation.code', 'Observation.valueQuantity', 'Observation.valueQuantity.value', 'Observation.valueQuantity.unit', 'Observation.valueQuantity.system', 'Observation.valueQuantity.code'];
       expect(actualIds).toStrictEqual(expectedIds);
     });
 
     it('should delete the category slicing and all slices associated with it', async () => {
-      cm.constrain(cm.elements[13]);
-      await cm.toggleExpand(cm.elements[13]);   // expand category
-      cm.slice(cm.elements[13], 'mySlice');
-      await cm.toggleExpand(cm.elements[18]);     // expand the new slice
-      cm.constrain(cm.elements[21]);        // constrain the category.coding element so that it *can* be sliced
-      cm.slice(cm.elements[21], 'mySlice2');            // slice the category.coding element
-      cm.slice(cm.elements[21], 'mySlice3');            // slice category.coding a second time
-      cm.removeConstraint(cm.elements[13]);
+      resperate2CM.constrain(resperate2CM.elements[13]);
+      await resperate2CM.toggleExpand(resperate2CM.elements[13]);   // expand category
+      resperate2CM.slice(resperate2CM.elements[13], 'mySlice');
+      await resperate2CM.toggleExpand(resperate2CM.elements[18]);     // expand the new slice
+      resperate2CM.constrain(resperate2CM.elements[21]);        // constrain the category.coding element so that it *can* be sliced
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice2');            // slice the category.coding element
+      resperate2CM.slice(resperate2CM.elements[21], 'mySlice3');            // slice category.coding a second time
+      resperate2CM.removeConstraint(resperate2CM.elements[13]);
 
-      expect(cm.elements.length).toBe(33);
-      expect(cm.elements[13].baseId).toBe('Observation.category');
-      expect(cm.elements[14].baseId).toBe('Observation.code');
-      expect(testData.differential.element.length).toBe(7);
+      expect(resperate2CM.elements.length).toBe(33);
+      expect(resperate2CM.elements[13].baseId).toBe('Observation.category');
+      expect(resperate2CM.elements[14].baseId).toBe('Observation.code');
+      expect(resperate2.differential.element.length).toBe(7);
 
-      const actualIds = testData.differential.element.map(e => e.id);
+      const actualIds = resperate2.differential.element.map(e => e.id);
       const expectedIds = ['Observation', 'Observation.code', 'Observation.valueQuantity', 'Observation.valueQuantity.value', 'Observation.valueQuantity.unit', 'Observation.valueQuantity.system', 'Observation.valueQuantity.code'];
       expect(actualIds).toStrictEqual(expectedIds);
     });

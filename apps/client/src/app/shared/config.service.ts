@@ -84,8 +84,8 @@ export class ConfigService {
     return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R4;
   }
 
-  public setTitle(value: string) {
-    const mainTitle = 'Trifolia-on-FHIR';
+  public setTitle(value: string, isDirty: boolean = false) {
+    const mainTitle = (isDirty ? "*" : "") + 'Trifolia-on-FHIR';
 
     if (value) {
       this.titleService.setTitle(`${mainTitle}: ${value}`);

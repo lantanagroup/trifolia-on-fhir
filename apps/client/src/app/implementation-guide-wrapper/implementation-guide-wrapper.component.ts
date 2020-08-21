@@ -29,10 +29,7 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
   }
 
   canDeactivate(){
-    if(this.configService.isFhirR4){
-      return this.igComponent.instance.canDeactivate();
-    }
-    return true;
+    return this.igComponent.instance.canDeactivate();
   }
 
   versionChanged() {

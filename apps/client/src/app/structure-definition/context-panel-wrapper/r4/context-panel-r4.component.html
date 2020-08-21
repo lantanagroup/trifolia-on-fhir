@@ -6,12 +6,19 @@
     <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
         <thead>
         <tr>
-            <th>
-                Type <app-tooltip-icon tooltipKey="StructureDefinition.context.type"></app-tooltip-icon>
-            </th>
-            <th>
-                Expression <app-tooltip-icon tooltipKey="StructureDefinition.context.expression"></app-tooltip-icon>
-            </th>
+          <th>
+              Type <app-tooltip-icon tooltipKey="StructureDefinition.context.type"></app-tooltip-icon>
+          </th>
+          <th>
+              Expression <app-tooltip-icon tooltipKey="StructureDefinition.context.expression"></app-tooltip-icon>
+          </th>
+          <th class="actions-column-1">
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" title="Add a Context" (click)="addContext()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </th>
         </tr>
         </thead>
         <tbody>

@@ -11,6 +11,7 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 export class ResourceHistoryComponent implements OnInit {
   @Input() public resource: any;
   @Output() public resourceChange = new EventEmitter<any>();
+  @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
   public historyBundle: Bundle;
   public message: string;
@@ -43,6 +44,7 @@ export class ResourceHistoryComponent implements OnInit {
 
     this.compareResource = null;
     this.resourceChange.emit(resource);
+    this.change.emit();
     this.message = `Done loading version ${this.compareResource.meta.versionId}`;
   }
 

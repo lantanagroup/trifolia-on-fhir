@@ -142,29 +142,186 @@
                                    propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
 
       <div class="card">
-        <div class="card-header">Software</div>
-        <div class="card-body">...</div>
+        <div class="card-header">
+          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementation')"
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementation', { description: '', url: '', custodian: ''})"/>
+          Implementation
+        </div>
+        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementation')">
+          <thead>
+          <tr>
+            <th>Description</th>
+            <th>URL</th>
+            <th>Custodian</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="description" title="Description" [required]="true" [label]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="url" title="URL" [label]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-reference
+                [parentObject]="capabilityStatement.implementation"
+                propertyName="description"
+                [isFormGroup]="false"
+                [isCanonical]="true"
+                [hideResourceType]="true"
+                resourceType="Organization"></app-fhir-reference>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="card">
-        <div class="card-header">Implementation</div>
-        <div class="card-body">...</div>
+        <div class="card-header">
+          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('software')"
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'software', {})"/>
+          Software
+        </div>
+        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('software')">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Release Date</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="name" title="Name" [required]="true" [label]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="version" title="Version" [label]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-date [parentObject]="capabilityStatement" propertyName="releaseDate" title="Release Date" [label]="false"></app-fhir-date>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="card">
-        <div class="card-header">Instantiates</div>
-        <div class="card-body">...</div>
+        <div class="card-header">
+          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('imports')"
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'imports', [''])"/>
+          Imports
+        </div>
+        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('imports')">
+          <thead>
+            <tr>
+              <th>Canonical URL</th>
+              <th class="actions-column-1">
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" title="Add an import" (click)="capabilityStatement.imports.push('')">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody *ngIf="capabilityStatement.imports && capabilityStatement.imports.length > 0">
+            <tr *ngFor="let j of capabilityStatement.imports; let ji = index">
+              <td>
+                <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="imports" [index]="ji" title="Import Canonical URL"
+                                        resourceType="CapabilityStatement"></app-fhir-canonical-url>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-primary" title="Remove this import" (click)="capabilityStatement.imports.splice(ji, 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="card">
-        <div class="card-header">Implementation Guides</div>
-        <div class="card-body">...</div>
+        <div class="card-header">
+          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('instantiates')"
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'instantiates', [''])"/>
+          Instantiates
+        </div>
+        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('instantiates')">
+          <thead>
+          <tr>
+            <th>Canonical URL</th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Add an instantiate" (click)="capabilityStatement.instantiates.push('')">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody *ngIf="capabilityStatement.instantiates && capabilityStatement.instantiates.length > 0">
+          <tr *ngFor="let j of capabilityStatement.instantiates; let ji = index">
+            <td>
+              <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="instantiates" [index]="ji" title="Instantiate Canonical URL"
+                                      resourceType="CapabilityStatement"></app-fhir-canonical-url>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Remove this instantiate" (click)="capabilityStatement.instantiates.splice(ji, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="card">
+        <div class="card-header">
+          <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementationGuide')"
+                 (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementationGuide', [''])"/>
+          Implementation Guides
+        </div>
+        <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementationGuide')">
+          <thead>
+          <tr>
+            <th>Canonical URL</th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Add a supported implementation guide" (click)="capabilityStatement.implementationGuide.push('')">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody *ngIf="capabilityStatement.implementationGuide && capabilityStatement.implementationGuide.length > 0">
+          <tr *ngFor="let j of capabilityStatement.implementationGuide; let ji = index">
+            <td>
+              <app-fhir-canonical-url [parentObject]="capabilityStatement" propertyName="implementationGuide" [index]="ji" title="Implementation Guide Canonical URL"
+                                      resourceType="ImplementationGuide"></app-fhir-canonical-url>
+            </td>
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Remove this implementation guide" (click)="capabilityStatement.implementationGuide.splice(ji, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!--div class="card">
         <div class="card-header">Profiles</div>
         <div class="card-body">...</div>
-      </div>
+      </div-->
     </ng-template>
   </ngb-tab>
   <ngb-tab>
@@ -681,7 +838,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(capabilityStatement) || wrongDateFormat">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(capabilityStatement && !canEdit(capabilityStatement)) || wrongDateFormat">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

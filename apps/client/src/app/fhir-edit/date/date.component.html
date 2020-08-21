@@ -1,14 +1,16 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
-  <label>
+  <label *ngIf="label">
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </label>
   <div class="input-group">
-    <input class="form-control" placeholder="yyyy-mm-dd"
-           name="dp" [(ngModel)]="value"
-           [class.is-invalid]="required && !value"
-           ngbDatepicker #d="ngbDatepicker">
+    <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
     <div class="input-group-append">
-      <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+      <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
+        <i class="fa fa-calendar"></i>
+      </button>
+      <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
+        <i class="fas fa-clock"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -16,11 +18,70 @@
   <div class="input-group-addon" *ngIf="!required || title">
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </div>
-  <input class="form-control" placeholder="yyyy-mm-dd"
-         name="dp" [(ngModel)]="value"
-         [class.is-invalid]="required && !value"
-         ngbDatepicker #d="ngbDatepicker">
+  <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
   <div class="input-group-append">
-    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+    <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
+      <i class="fa fa-calendar"></i>
+    </button>
+    <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
+      <i class="fas fa-clock"></i>
+    </button>
   </div>
 </div>
+
+<ng-template #dateSelector>
+  <ngb-datepicker [(ngModel)]="dateModel"></ngb-datepicker>
+</ng-template>
+
+<ng-template #timeSelector>
+  <ngb-timepicker [(ngModel)]="timeModel"></ngb-timepicker>
+  <select class="form-control" [(ngModel)]="tz" (change)="setTimeFromModel()">
+    <option>-23:00</option>
+    <option>-22:00</option>
+    <option>-21:00</option>
+    <option>-20:00</option>
+    <option>-19:00</option>
+    <option>-18:00</option>
+    <option>-17:00</option>
+    <option>-16:00</option>
+    <option>-15:00</option>
+    <option>-14:00</option>
+    <option>-13:00</option>
+    <option>-12:00</option>
+    <option>-11:00</option>
+    <option>-10:00</option>
+    <option>-09:00</option>
+    <option>-08:00</option>
+    <option>-07:00</option>
+    <option>-06:00</option>
+    <option>-05:00</option>
+    <option>-04:00</option>
+    <option>-03:00</option>
+    <option>-02:00</option>
+    <option>-01:00</option>
+    <option>+00:00</option>
+    <option>+01:00</option>
+    <option>+02:00</option>
+    <option>+03:00</option>
+    <option>+04:00</option>
+    <option>+05:00</option>
+    <option>+06:00</option>
+    <option>+07:00</option>
+    <option>+08:00</option>
+    <option>+09:00</option>
+    <option>+10:00</option>
+    <option>+11:00</option>
+    <option>+12:00</option>
+    <option>+13:00</option>
+    <option>+14:00</option>
+    <option>+15:00</option>
+    <option>+16:00</option>
+    <option>+17:00</option>
+    <option>+18:00</option>
+    <option>+19:00</option>
+    <option>+20:00</option>
+    <option>+21:00</option>
+    <option>+22:00</option>
+    <option>+23:00</option>
+  </select>
+</ng-template>

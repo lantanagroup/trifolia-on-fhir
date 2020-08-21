@@ -17,7 +17,7 @@ export class BaseImplementationGuideComponent extends BaseComponent {
 
   public get packageIdFormatValid() {
     if (!this.packageId) return true;
-    return !!this.packageId.match(/(^hl7\.(fhir|cda)\.(us|uv)\.[0-9A-z]+$)|(^(?!hl7).+)/gi);
+    return !!this.packageId.match(/(^hl7\.(fhir|cda)\.(us|uv)\.[0-9A-z\-]+$)|(^(?!hl7).+)/gi);
   }
 
   public get hl7WorkGroup() {

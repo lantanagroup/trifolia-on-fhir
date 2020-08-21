@@ -180,8 +180,8 @@ export class ConstraintManager {
     if (!elementTreeModel.constrainedElement) return;
     if (elementTreeModel.expanded) this.toggleExpand(elementTreeModel);
 
-    const hasSlicing = elementTreeModel.constrainedElement.slicing;
-    const removeEtm = !!elementTreeModel.constrainedElement.sliceName;
+    const hasSlicing = !!elementTreeModel.constrainedElement.slicing;
+    const shouldRemoveSlice = !!elementTreeModel.constrainedElement.sliceName && !elementTreeModel.baseElement.sliceName;
     const index = this.structureDefinition.differential.element.indexOf(elementTreeModel.constrainedElement);
     const toRemove = [elementTreeModel.constrainedElement];
 
@@ -219,7 +219,7 @@ export class ConstraintManager {
     delete elementTreeModel.constrainedElement;
 
     // Remove the element from the tree model if it is a slice
-    if (removeEtm) {
+    if (shouldRemoveSlice) {
       const etmIndex = this.elements.indexOf(elementTreeModel);
       this.elements.splice(etmIndex, etmIndex >= 0 ? 1 : 0);
     }
@@ -292,6 +292,15 @@ export class ConstraintManager {
       });
     }
 
+    // If we're constraining a base element that represents a slice from another profile, then
+    // we need to make sure this constraint has a slice name with "<baseSliceName>/<newSliceName>
+    // See re-slicing http://www.hl7.org/fhir/profiling.html#reslicing
+    if (elementTreeModel.baseElement.sliceName) {
+      const sliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+      elementTreeModel.constrainedElement.sliceName = `${elementTreeModel.baseElement.sliceName}/${sliceName}`;
+      elementTreeModel.constrainedElement.id += `/${sliceName}`;
+    }
+
     let prevConstrainedElementTreeModel: ElementTreeModel;
     let nextElementTreeModel = elementTreeModel;
 
@@ -331,13 +340,16 @@ export class ConstraintManager {
         const baseId = ConstraintManager.normalizePath(base.id);
         const diffId = ConstraintManager.normalizePath(diff.id);
         const idMatch = baseId === diffId;
-        const baseIdDepth = baseId.split('.').length;
-        const diffIdDepth = diffId.split('.').length;
+        const baseIdDepth = baseId.split(/[\.\/]/g).length;
+        const diffIdDepth = diffId.split(/[\.\/]/g).length;
+        const isNewSlice = diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth;
+        const isReSlice = diffId.startsWith(baseId + '/') && diffIdDepth-1 === baseIdDepth;
 
-        if (idMatch) {
+        // TODO: support multiple re-slices later, after we have conferred with FHIR WG@HL7
+        if ((idMatch || isReSlice) && !elementTreeModel.constrainedElement) {
           // This is a constraint on something in the base
           elementTreeModel.constrainedElement = diff;
-        } else if (diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth) {
+        } else if (isNewSlice) {
           // This is a new slice
           const index = this.elements.indexOf(elementTreeModel);
           const clone = elementTreeModel.clone(diff);
