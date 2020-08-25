@@ -8,6 +8,7 @@ import * as testData4 from '../../../../test/data/ccd.json';
 import * as testData5 from '../../../../test/data/dentalReferral.json';
 import * as testData6 from '../../../../test/data/referralNote.json';
 import * as testData7 from '../../../../test/data/dental-ccd.json';
+import * as testData8 from '../../../../test/data/dental-ccd-2.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
@@ -157,12 +158,13 @@ describe('ConstraintManager', () => {
   describe('slice resprate2 observation', () => {
     let resperate2CM;
     let resperate2: IStructureDefinition;
-    let dentalCCD: IStructureDefinition;
-    let dentalCCDCM;
+    let dentalCCD: IStructureDefinition, dentalCCD2: IStructureDefinition;
+    let dentalCCDCM, dentalCCDCM2;
 
     beforeEach(async () => {
       resperate2 = JSON.parse(JSON.stringify(testData3));
       dentalCCD = JSON.parse(JSON.stringify(testData7));
+      dentalCCD2 = JSON.parse(JSON.stringify(testData8));
 
       const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
       resperate2CM = new ConstraintManager(ElementDefinition, obsModel, resperate2, fhir.parser);
@@ -172,8 +174,17 @@ describe('ConstraintManager', () => {
       dentalCCDCM = new ConstraintManager(ElementDefinition, ccdModel, dentalCCD, fhir.parser);
       await dentalCCDCM.initializeRoot();
 
+      dentalCCDCM2 = new ConstraintManager(ElementDefinition, ccdModel, dentalCCD2, fhir.parser);
+      await dentalCCDCM2.initializeRoot();
+
       expect(resperate2CM.elements.length).toBe(33);
       expect(resperate2.differential.element.length).toBe(7);
+    });
+
+    it('it should have a child of a slice', async () => {
+      await dentalCCDCM2.toggleExpand(dentalCCDCM2.elements[15]);
+      expect(dentalCCDCM2.elements[16].constrainedElement).toBeTruthy();
+      console.log('test');
     });
 
     it('should not slice code because it is not repeatable', () => {
