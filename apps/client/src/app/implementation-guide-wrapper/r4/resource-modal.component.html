@@ -38,13 +38,6 @@
 
   <div class="form-group">
     <label>
-      File Path <app-tooltip-icon tooltipKey="ig.resource.filePath"></app-tooltip-icon>
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="filePath" />
-  </div>
-
-  <div class="form-group">
-    <label>
       Group <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.groupingId"></app-tooltip-icon>
       <i *ngIf="!enableGroups" class="fas fa-exclamation-circle" ngbTooltip="You cannot select a group for the resource because the implementation guide does not define any groups."></i>
     </label>

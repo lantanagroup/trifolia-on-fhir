@@ -791,13 +791,9 @@ export class HtmlExporter {
     }
 
     const implementationGuideResource = <ImplementationGuideResourceComponent>this.getImplementationGuideResource(resource.resourceType, resource.id);
-    let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
-
-    if (!resourcePath) {
-      resourcePath = getDefaultImplementationGuideResourcePath({
-        reference: `${resource.resourceType}/${resource.id}`
-      });
-    }
+    let resourcePath = getDefaultImplementationGuideResourcePath({
+      reference: `${resource.resourceType}/${resource.id}`
+    })
 
     if (!resourcePath) {
       this.sendSocketMessage('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);

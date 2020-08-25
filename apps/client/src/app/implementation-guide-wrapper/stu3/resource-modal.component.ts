@@ -20,14 +20,6 @@ export class STU3ResourceModalComponent implements OnInit {
 
   }
 
-  get filePath() {
-    return getExtensionString(this.resource, Globals.extensionUrls['extension-ig-resource-file-path']);
-  }
-
-  set filePath(value: string) {
-    setExtensionString(this.resource, Globals.extensionUrls['extension-ig-resource-file-path'], value);
-  }
-
   sourceReferenceChanged() {
     if (this.resource.sourceReference) {
       this.filePath = getDefaultImplementationGuideResourcePath(this.resource.sourceReference);
