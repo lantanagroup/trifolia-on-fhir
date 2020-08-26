@@ -21,7 +21,7 @@ import {FhirService} from '../../shared/fhir.service';
   templateUrl: './resource-modal.component.html',
   styleUrls: ['./resource-modal.component.css']
 })
-export class R4ResourceModalComponent implements OnInit {
+export class R4ResourceModalComponent {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
 
@@ -75,17 +75,7 @@ export class R4ResourceModalComponent implements OnInit {
     }
   }
 
-  referenceChanged() {
-    this.filePath = getDefaultImplementationGuideResourcePath(this.resource.reference);
-  }
-
   ok() {
     this.activeModal.close();
-  }
-
-  ngOnInit() {
-    if (!this.filePath) {
-      this.filePath = getDefaultImplementationGuideResourcePath(this.resource.reference);
-    }
   }
 }

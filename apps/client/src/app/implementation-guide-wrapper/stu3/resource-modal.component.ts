@@ -12,7 +12,7 @@ import {
   templateUrl: './resource-modal.component.html',
   styleUrls: ['./resource-modal.component.css']
 })
-export class STU3ResourceModalComponent implements OnInit {
+export class STU3ResourceModalComponent {
   @Input() resource: PackageResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
 
@@ -20,41 +20,7 @@ export class STU3ResourceModalComponent implements OnInit {
 
   }
 
-  sourceReferenceChanged() {
-    if (this.resource.sourceReference) {
-      this.filePath = getDefaultImplementationGuideResourcePath(this.resource.sourceReference);
-    } else if (!this.resource.sourceUri) {
-      this.filePath = null;
-    }
-  }
-
-  sourceUriChanged() {
-    if (this.resource.sourceUri) {
-      let newFilePath = this.resource.sourceUri;
-
-      if (newFilePath.lastIndexOf('/') > 0) {
-        newFilePath = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
-      }
-
-      if (newFilePath.lastIndexOf('.') > 0) {
-        newFilePath = newFilePath.substring(0, newFilePath.lastIndexOf('.'));
-      }
-
-      this.filePath = newFilePath + '.xml';
-    } else if (!this.resource.sourceReference) {
-      this.filePath = null;
-    }
-  }
-
   ok() {
     this.activeModal.close();
-  }
-
-  ngOnInit() {
-    if (this.resource.sourceReference && !this.filePath) {
-      this.sourceReferenceChanged();
-    } else if (this.resource.sourceUri && !this.filePath) {
-      this.sourceUriChanged();
-    }
   }
 }

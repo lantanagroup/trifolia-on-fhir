@@ -5,7 +5,7 @@
     </button>
 </div>
 <div class="modal-body">
-  <app-fhir-reference [parentObject]="resource" propertyName="reference" [required]="true" (change)="referenceChanged()" title="Reference" tooltipPath="ImplementationGuide.definition.resource.reference"></app-fhir-reference>
+  <app-fhir-reference [parentObject]="resource" propertyName="reference" [required]="true" title="Reference" tooltipPath="ImplementationGuide.definition.resource.reference"></app-fhir-reference>
 
   <app-fhir-string [parentObject]="resource" propertyName="name" title="Name" tooltipPath="ImplementationGuide.definition.resource.name"></app-fhir-string>
 
