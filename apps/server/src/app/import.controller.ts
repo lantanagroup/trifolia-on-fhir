@@ -25,6 +25,7 @@ import {
   ValueSetConceptSetComponent
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {addToImplementationGuide} from './helper';
+import {IBundle} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -36,6 +37,51 @@ export class ImportController extends BaseController {
 
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
+  }
+
+  /**
+   * Checks on the status of each of the resources specified in the post to determine if
+   * it exists (update), doesn't exist (add) or has an authorization issue for the currently logged in user.
+   * @param resourceReferences {string[]} A list of resource references to check on the FHIR server for
+   * @param fhirServerBase The FHIR server's base URL that is currently in context
+   * @param user The current user to determine authorization on each of the referenced resources
+   */
+  @Post('resourcesStatus')
+  public async checkResourcesStatus(@Body() resourceReferences: string[], @FhirServerBase() fhirServerBase: string, @User() user: ITofUser) {
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    const requestBundle = {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: resourceReferences.map(rr => {
+        return {
+          request: {
+            method: 'GET',
+            url: rr
+          }
+        };
+      })
+    };
+
+    const results = await this.httpService.post<IBundle>(fhirServerBase, requestBundle).toPromise();
+    const response: { [resourceReference: string]: string } = {};
+
+    results.data.entry.forEach((e, i) => {
+      const resourceReference = requestBundle.entry[i].request.url;
+
+      if (e.resource) {
+        if (this.userHasPermission(userSecurityInfo, 'write', e.resource)) {
+          response[resourceReference] = 'update';
+        } else {
+          response[resourceReference] = 'unauthorized';
+        }
+      } else if (e.response && e.response.status && e.response.status.startsWith('404')) {
+        response[resourceReference] = 'add';
+      } else {
+        response[resourceReference] = 'unknown';
+      }
+    });
+
+    return response;
   }
 
   @Post('phinvads')

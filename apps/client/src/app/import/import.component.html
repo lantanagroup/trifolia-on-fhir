@@ -26,6 +26,7 @@
           <th>File Name</th>
           <th>ID(s)</th>
           <th>Type</th>
+          <th>Action</th>
           <th></th>
         </tr>
         </thead>
@@ -34,6 +35,7 @@
           <td>{{f.name}}</td>
           <td>{{getIdDisplay(f)}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
+          <td>{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}</td>
           <td class="actions-column-1">
             <div class="pull-right">
               <i class="fas fa-trash-alt" (click)="removeImportFile(fi)"></i>
