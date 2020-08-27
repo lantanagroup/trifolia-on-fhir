@@ -328,35 +328,46 @@ export class ConstraintManager {
    * @param elementTreeModels The tree models to associate to constraints
    */
   private associate(elementTreeModels: ElementTreeModel[]) {
-    for (const elementTreeModel of elementTreeModels) {
-      if (elementTreeModel.constrainedElement) continue;
+    //const baseInfo = this.base.snapshot.element.map(e => e.id + ' - ' + e.path);
+    //console.log(JSON.stringify(baseInfo, null, '\t'));
+    const unassociated = this.structureDefinition.differential.element.filter(e => !this.elements.find(etm => etm.constrainedElement === e));
 
-      const base = elementTreeModel.baseElement;
-      const sliceCounts: { [ path: string ]: number } = {};
+    unassociated.forEach(u => {
+      const uDepth = u.id.split('.').length;
 
-      for (const diff of this.structureDefinition.differential.element) {
-        if (!base.path || !base.id || !diff.path || !diff.id) continue;
+      // First match for most exact elements
+      let foundElement = this.elements.find(etm => etm.baseElement.id === u.id);
 
-        const baseId = ConstraintManager.normalizePath(base.id);
-        const diffId = ConstraintManager.normalizePath(diff.id);
-        const idMatch = baseId === diffId;
-        const baseIdDepth = baseId.split(/[\.\/]/g).length;
-        const diffIdDepth = diffId.split(/[\.\/]/g).length;
-        const isNewSlice = diffId.startsWith(baseId + ':') && diffIdDepth === baseIdDepth;
-        const isReSlice = diffId.startsWith(baseId + '/') && diffIdDepth-1 === baseIdDepth;
+      // Then match based on less-precise criteria (a re-slice)
+      if (!foundElement) {
+        foundElement = this.elements.find(etm => {
+          const etmDepth = etm.baseElement.id.split('.').length;
+          return u.id.startsWith(etm.baseElement.id + '/') && uDepth === etmDepth;
+        });
+      }
 
-        // TODO: support multiple re-slices later, after we have conferred with FHIR WG@HL7
-        if ((idMatch || isReSlice) && !elementTreeModel.constrainedElement) {
-          // This is a constraint on something in the base
-          elementTreeModel.constrainedElement = diff;
-        } else if (isNewSlice) {
+      // Then match based on even LESS-precise criteria (match on parent id and path)
+      if (!foundElement) {
+        foundElement = this.elements.find(etm => {
+          const etmParentId = etm.id.substring(0, etm.id.lastIndexOf('.'));
+          const uParentId = u.id.substring(0, u.id.lastIndexOf('.'));
+          return etmParentId === uParentId && ConstraintManager.normalizePath(etm.path) === ConstraintManager.normalizePath(u.path);
+        });
+      }
+
+      if (foundElement) {
+        if (!foundElement.constrainedElement) {
+          foundElement.constrainedElement = u;
+        } else if (u.sliceName) {
           // This is a new slice
-          const index = this.elements.indexOf(elementTreeModel);
-          const clone = elementTreeModel.clone(diff);
-          sliceCounts[elementTreeModel.basePath] = (sliceCounts[elementTreeModel.basePath] || 0) + 1;
-          this.elements.splice(index + sliceCounts[elementTreeModel.basePath], 0, clone);
+          const index = this.elements.indexOf(foundElement);
+          const clone = foundElement.clone(u);
+          const sliceCount = this.elements.filter(n => n.basePath === clone.basePath).length;
+          this.elements.splice(index + sliceCount, 0, clone);
+        } else {
+          console.error(`ConstraintManager: incorrectly formatted constraint: ${u.id} - ${u.path}`);
         }
       }
-    }
+    });
   }
 }

@@ -8,6 +8,7 @@ import * as testData4 from '../../../../test/data/ccd.json';
 import * as testData5 from '../../../../test/data/dentalReferral.json';
 import * as testData6 from '../../../../test/data/referralNote.json';
 import * as testData7 from '../../../../test/data/dental-ccd.json';
+import * as testData8 from '../../../../test/data/dental-ccd-2.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IStructureDefinition} from './fhirInterfaces';
@@ -46,21 +47,22 @@ describe('ConstraintManager', () => {
 
     it('should expand section slices and have the correct children', async () => {
       await cm.toggleExpand(cm.elements[24]);
-      expect(cm.elements.length).toBe(56);
+      const ids = cm.elements.map(e => e.id);
+      let expectedIds = ['Composition', 'Composition.id', 'Composition.meta', 'Composition.implicitRules', 'Composition.language', 'Composition.text', 'Composition.contained', 'Composition.extension', 'Composition.modifierExtension', 'Composition.identifier', 'Composition.status', 'Composition.type', 'Composition.category', 'Composition.subject', 'Composition.encounter', 'Composition.date', 'Composition.author', 'Composition.title', 'Composition.confidentiality', 'Composition.attester', 'Composition.custodian', 'Composition.relatesTo', 'Composition.event', 'Composition.section', 'Composition.section:allergies_and_intolerances_section', 'Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.entry:allergy_entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section', 'Composition.section:medications_section', 'Composition.section:problem_section', 'Composition.section:results_section', 'Composition.section:social_history_section', 'Composition.section:vital_signs_section', 'Composition.section:plan_of_treatment_section', 'Composition.section:procedures_section', 'Composition.section:family_history_section', 'Composition.section:advance_directives_section', 'Composition.section:encounters_section', 'Composition.section:functional_status_section', 'Composition.section:immunizations_section', 'Composition.section:nutrition_section', 'Composition.section:mental_status_section', 'Composition.section:medical_equipment_section', 'Composition.section:payers_section', 'Composition.section:goals_section', 'Composition.section:health_concerns_section'];
+      expect(ids).toStrictEqual(expectedIds);
 
       let actualIds = cm.elements
         .filter((e, i) => i >= 25 && i <= 38 && e.depth === 2)
         .map(e => e.id);
-      let expectedIds = ['Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section'];
+      expectedIds = ['Composition.section:allergies_and_intolerances_section.id', 'Composition.section:allergies_and_intolerances_section.extension', 'Composition.section:allergies_and_intolerances_section.modifierExtension', 'Composition.section:allergies_and_intolerances_section.title', 'Composition.section:allergies_and_intolerances_section.code', 'Composition.section:allergies_and_intolerances_section.author', 'Composition.section:allergies_and_intolerances_section.focus', 'Composition.section:allergies_and_intolerances_section.text', 'Composition.section:allergies_and_intolerances_section.mode', 'Composition.section:allergies_and_intolerances_section.orderedBy', 'Composition.section:allergies_and_intolerances_section.entry', 'Composition.section:allergies_and_intolerances_section.entry:allergy_entry', 'Composition.section:allergies_and_intolerances_section.emptyReason', 'Composition.section:allergies_and_intolerances_section.section'];
       expect(actualIds).toStrictEqual(expectedIds);
 
       // expand medications section
       await cm.toggleExpand(cm.elements[39]);
-      expect(cm.elements.length).toBe(69);
       actualIds = cm.elements
         .filter((e, i) => i >= 40 && i <= 53 && e.depth === 2)
         .map(e => e.id);
-      expectedIds = ['Composition.section:problem_section.id', 'Composition.section:problem_section.extension', 'Composition.section:problem_section.modifierExtension', 'Composition.section:problem_section.title', 'Composition.section:problem_section.code', 'Composition.section:problem_section.author', 'Composition.section:problem_section.focus', 'Composition.section:problem_section.text', 'Composition.section:problem_section.mode', 'Composition.section:problem_section.orderedBy', 'Composition.section:problem_section.entry', 'Composition.section:problem_section.emptyReason', 'Composition.section:problem_section.section'];
+      expectedIds = ['Composition.section:medications_section.id', 'Composition.section:medications_section.extension', 'Composition.section:medications_section.modifierExtension', 'Composition.section:medications_section.title', 'Composition.section:medications_section.code', 'Composition.section:medications_section.author', 'Composition.section:medications_section.focus', 'Composition.section:medications_section.text', 'Composition.section:medications_section.mode', 'Composition.section:medications_section.orderedBy', 'Composition.section:medications_section.entry', 'Composition.section:medications_section.emptyReason', 'Composition.section:medications_section.section', 'Composition.section:medications_section.entry:medication_entry'];
       expect(actualIds).toStrictEqual(expectedIds);
     });
   });
@@ -154,23 +156,57 @@ describe('ConstraintManager', () => {
     });
   });
 
-  describe('slice resprate2 observation', () => {
-    let resperate2CM;
-    let resperate2: IStructureDefinition;
+  describe('dental CCD tests', () => {
     let dentalCCD: IStructureDefinition;
     let dentalCCDCM;
 
     beforeEach(async () => {
-      resperate2 = JSON.parse(JSON.stringify(testData3));
       dentalCCD = JSON.parse(JSON.stringify(testData7));
-
-      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
-      resperate2CM = new ConstraintManager(ElementDefinition, obsModel, resperate2, fhir.parser);
-      await resperate2CM.initializeRoot();
 
       const ccdModel = JSON.parse(JSON.stringify(testData4));
       dentalCCDCM = new ConstraintManager(ElementDefinition, ccdModel, dentalCCD, fhir.parser);
       await dentalCCDCM.initializeRoot();
+    });
+
+    it('should delete the re-slice', async () => {
+      const originalConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
+      dentalCCDCM.removeConstraint(dentalCCDCM.elements[11]);
+
+      // Should have one less constrained elements, but the same number of base elements
+      const updatedConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
+      expect(updatedConstrainedElements.length).toBe(originalConstrainedElements.length - 1);
+      expect(dentalCCDCM.elements.length).toBe(54);
+    });
+  });
+
+  describe('dental CCD2 tests', () => {
+    let dentalCCD2: IStructureDefinition;
+    let dentalCCDCM2;
+
+    beforeEach(async () => {
+      dentalCCD2 = JSON.parse(JSON.stringify(testData8));
+
+      const ccdModel = JSON.parse(JSON.stringify(testData4));
+      dentalCCDCM2 = new ConstraintManager(ElementDefinition, ccdModel, dentalCCD2, fhir.parser);
+      await dentalCCDCM2.initializeRoot();
+    });
+
+    it('it should have a child of a slice', async () => {
+      await dentalCCDCM2.toggleExpand(dentalCCDCM2.elements[15]);
+      expect(dentalCCDCM2.elements[16].constrainedElement).toBeTruthy();
+    });
+  });
+
+  describe('reseperate2 tests', () => {
+    let resperate2CM;
+    let resperate2: IStructureDefinition;
+
+    beforeEach(async () => {
+      resperate2 = JSON.parse(JSON.stringify(testData3));
+
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      resperate2CM = new ConstraintManager(ElementDefinition, obsModel, resperate2, fhir.parser);
+      await resperate2CM.initializeRoot();
 
       expect(resperate2CM.elements.length).toBe(33);
       expect(resperate2.differential.element.length).toBe(7);
@@ -257,16 +293,6 @@ describe('ConstraintManager', () => {
       expect(resperate2CM.elements.length).toBe(43);
       expect(resperate2CM.elements[23].baseId).toBe('Observation.category.text');
       expect(resperate2.differential.element.length).toBe(11);
-    });
-
-    it('should delete the re-slice', async () => {
-      const originalConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
-      dentalCCDCM.removeConstraint(dentalCCDCM.elements[11]);
-
-      // Should have one less constrained elements, but the same number of base elements
-      const updatedConstrainedElements = dentalCCDCM.elements.filter(e => !!e.constrainedElement);
-      expect(updatedConstrainedElements.length).toBe(originalConstrainedElements.length - 1);
-      expect(dentalCCDCM.elements.length).toBe(54);
     });
 
     it('should delete the category.coding slicing and all slices associated with it', async () => {
