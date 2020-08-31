@@ -362,7 +362,7 @@ export class ConstraintManager {
           // This is a new slice
           const index = this.elements.indexOf(foundElement);
           const clone = foundElement.clone(u);
-          const sliceCount = this.elements.filter(n => n.basePath === clone.basePath).length;
+          const sliceCount = this.elements.filter(n => n.parent === clone.parent && n.basePath === clone.basePath).length;
           this.elements.splice(index + sliceCount, 0, clone);
         } else {
           console.error(`ConstraintManager: incorrectly formatted constraint: ${u.id} - ${u.path}`);

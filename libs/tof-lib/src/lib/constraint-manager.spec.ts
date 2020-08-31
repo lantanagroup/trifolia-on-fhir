@@ -8,6 +8,7 @@ import * as ccdData from '../../../../test/data/ccd.json';
 import * as dentalReferralData from '../../../../test/data/dentalReferral.json';
 import * as referralNoteData from '../../../../test/data/referralNote.json';
 import * as dentalCCDData from '../../../../test/data/dental-ccd.json';
+import * as fetalDeathReportdata from '../../../../test/data/composition-jurisdiction-fetal-death-report.json';
 
 import {Fhir, Versions} from 'fhir/fhir';
 import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
@@ -61,8 +62,44 @@ describe('ConstraintManager', () => {
       actualIds = cm.elements
         .filter((e, i) => i >= 40 && i <= 53 && e.depth === 2)
         .map(e => e.id);
-      expectedIds = ['Composition.section:medications_section.id', 'Composition.section:medications_section.extension', 'Composition.section:medications_section.modifierExtension', 'Composition.section:medications_section.title', 'Composition.section:medications_section.code', 'Composition.section:medications_section.author', 'Composition.section:medications_section.focus', 'Composition.section:medications_section.text', 'Composition.section:medications_section.mode', 'Composition.section:medications_section.orderedBy', 'Composition.section:medications_section.entry', 'Composition.section:medications_section.emptyReason', 'Composition.section:medications_section.section', 'Composition.section:medications_section.entry:medication_entry'];
+      expectedIds = ['Composition.section:medications_section.id', 'Composition.section:medications_section.extension', 'Composition.section:medications_section.modifierExtension', 'Composition.section:medications_section.title', 'Composition.section:medications_section.code', 'Composition.section:medications_section.author', 'Composition.section:medications_section.focus', 'Composition.section:medications_section.text', 'Composition.section:medications_section.mode', 'Composition.section:medications_section.orderedBy', 'Composition.section:medications_section.entry', 'Composition.section:medications_section.entry:medication_entry', 'Composition.section:medications_section.emptyReason', 'Composition.section:medications_section.section'];
       expect(actualIds).toStrictEqual(expectedIds);
+    });
+  });
+
+  describe('fetal death report', () => {
+    let cm: ConstraintManager;
+
+    beforeEach(async () => {
+      const testData: IStructureDefinition = JSON.parse(JSON.stringify(fetalDeathReportdata));
+      const compositionModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Composition');
+
+      cm = new ConstraintManager(ElementDefinition, compositionModel, testData, fhir.parser);
+      await cm.initializeRoot();
+    });
+
+    it('should expand elements in correct order', async () => {
+      const sectionMotherPrentalSliceElement = cm.elements.find(e => e.constrainedElement && e.constrainedElement.sliceName === 'motherPrenatal');
+      expect(sectionMotherPrentalSliceElement).toBeTruthy();
+
+      const sectionFetusSliceElement = cm.elements.find(e => e.constrainedElement && e.constrainedElement.sliceName === 'fetus');
+      expect(sectionFetusSliceElement).toBeTruthy();
+
+      // Expand motherPrenatal
+      await cm.toggleExpand(sectionMotherPrentalSliceElement);
+
+      // Check that the elements are in the order expected after the expand of motherPrenatal slice
+      let ids = cm.elements.map(e => e.constrainedElement ? e.constrainedElement.id : e.id);
+      let expectedIds = ['Composition', 'Composition.id', 'Composition.meta', 'Composition.implicitRules', 'Composition.language', 'Composition.text', 'Composition.contained', 'Composition.extension:dateReceivedByRegistrar', 'Composition.extension:relatedPersonFather', 'Composition.modifierExtension', 'Composition.identifier', 'Composition.status', 'Composition.type', 'Composition.category', 'Composition.subject', 'Composition.encounter', 'Composition.date', 'Composition.author', 'Composition.author:personCompletingReport', 'Composition.title', 'Composition.confidentiality', 'Composition.attester', 'Composition.custodian', 'Composition.relatesTo', 'Composition.event', 'Composition.section', 'Composition.section:motherPrenatal', 'Composition.section:motherPrenatal.id', 'Composition.section:motherPrenatal.extension', 'Composition.section:motherPrenatal.modifierExtension', 'Composition.section:motherPrenatal.title', 'Composition.section:motherPrenatal.code', 'Composition.section:motherPrenatal.author', 'Composition.section:motherPrenatal.focus', 'Composition.section:motherPrenatal.text', 'Composition.section:motherPrenatal.mode', 'Composition.section:motherPrenatal.orderedBy', 'Composition.section:motherPrenatal.entry', 'Composition.section:motherPrenatal.entry:plannedToDeliverAtHome', 'Composition.section:motherPrenatal.entry:firstPrenatalCareVisit', 'Composition.section:motherPrenatal.entry:dateLastNormalMenses', 'Composition.section:motherPrenatal.entry:numberNowLiving', 'Composition.section:motherPrenatal.entry:numberNowDead', 'Composition.section:motherPrenatal.entry:dateLastLiveBirth', 'Composition.section:motherPrenatal.entry:mothersHeight', 'Composition.section:motherPrenatal.entry:mothersPrepregnancyWeight', 'Composition.section:motherPrenatal.entry:motherReceivedWICFood', 'Composition.section:motherPrenatal.entry:cigaretteSmokingBeforeDuringPregnancy', 'Composition.section:motherPrenatal.emptyReason', 'Composition.section:motherPrenatal.section', 'Composition.section:medicalHealthInformation', 'Composition.section:fetus', 'Composition.section:motherInformation'];
+      expect(ids).toStrictEqual(expectedIds);
+
+      // Expand fetus
+      await cm.toggleExpand(sectionFetusSliceElement);
+
+      // Check that the elements are in the order expected after the expand of fetus slice
+      ids = cm.elements.map(e => e.constrainedElement ? e.constrainedElement.id : e.id);
+      expectedIds = ['Composition', 'Composition.id', 'Composition.meta', 'Composition.implicitRules', 'Composition.language', 'Composition.text', 'Composition.contained', 'Composition.extension:dateReceivedByRegistrar', 'Composition.extension:relatedPersonFather', 'Composition.modifierExtension', 'Composition.identifier', 'Composition.status', 'Composition.type', 'Composition.category', 'Composition.subject', 'Composition.encounter', 'Composition.date', 'Composition.author', 'Composition.author:personCompletingReport', 'Composition.title', 'Composition.confidentiality', 'Composition.attester', 'Composition.custodian', 'Composition.relatesTo', 'Composition.event', 'Composition.section', 'Composition.section:motherPrenatal', 'Composition.section:motherPrenatal.id', 'Composition.section:motherPrenatal.extension', 'Composition.section:motherPrenatal.modifierExtension', 'Composition.section:motherPrenatal.title', 'Composition.section:motherPrenatal.code', 'Composition.section:motherPrenatal.author', 'Composition.section:motherPrenatal.focus', 'Composition.section:motherPrenatal.text', 'Composition.section:motherPrenatal.mode', 'Composition.section:motherPrenatal.orderedBy', 'Composition.section:motherPrenatal.entry', 'Composition.section:motherPrenatal.entry:plannedToDeliverAtHome', 'Composition.section:motherPrenatal.entry:firstPrenatalCareVisit', 'Composition.section:motherPrenatal.entry:dateLastNormalMenses', 'Composition.section:motherPrenatal.entry:numberNowLiving', 'Composition.section:motherPrenatal.entry:numberNowDead', 'Composition.section:motherPrenatal.entry:dateLastLiveBirth', 'Composition.section:motherPrenatal.entry:mothersHeight', 'Composition.section:motherPrenatal.entry:mothersPrepregnancyWeight', 'Composition.section:motherPrenatal.entry:motherReceivedWICFood', 'Composition.section:motherPrenatal.entry:cigaretteSmokingBeforeDuringPregnancy', 'Composition.section:motherPrenatal.emptyReason', 'Composition.section:motherPrenatal.section', 'Composition.section:medicalHealthInformation', 'Composition.section:fetus', 'Composition.section:fetus.id', 'Composition.section:fetus.extension', 'Composition.section:fetus.modifierExtension', 'Composition.section:fetus.title', 'Composition.section:fetus.code', 'Composition.section:fetus.author', 'Composition.section:fetus.focus', 'Composition.section:fetus.text', 'Composition.section:fetus.mode', 'Composition.section:fetus.orderedBy', 'Composition.section:fetus.entry', 'Composition.section:fetus.entry:deliveryWeight', 'Composition.section:fetus.entry:gestationalAgeAtDelivery', 'Composition.section:fetus.entry:causeOfFetalDeath', 'Composition.section:fetus.entry:otherCauseOfDeath', 'Composition.section:fetus.entry:estimatedTimeFetalDeath', 'Composition.section:fetus.entry:autopsyPerformed', 'Composition.section:fetus.entry:histologicalExamPerformed', 'Composition.section:fetus.entry:autopsyOrHistologicalExamUsed', 'Composition.section:fetus.entry:plurality', 'Composition.section:fetus.emptyReason', 'Composition.section:fetus.section', 'Composition.section:motherInformation'];
+      expect(ids).toStrictEqual(expectedIds);
     });
   });
 
