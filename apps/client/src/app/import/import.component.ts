@@ -9,7 +9,7 @@ import {
   OperationOutcome,
   RequestComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FileSystemFileEntry, UploadEvent, UploadFile} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
@@ -23,6 +23,8 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {UpdateDiffComponent} from './update-diff/update-diff.component';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -81,7 +83,8 @@ export class ImportComponent implements OnInit {
     private importService: ImportService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
-    public githubService: GithubService) {
+    public githubService: GithubService,
+    public modalService: NgbModal) {
 
     const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
     const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
@@ -91,6 +94,11 @@ export class ImportComponent implements OnInit {
       this.vsacCriteria.password = atob(vsacPassword);
       this.rememberVsacCredentials = true;
     }
+  }
+
+  viewUpdateDiff(resource: IDomainResource) {
+    const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
+    modalRef.componentInstance.importResource = resource;
   }
 
   private createMedia(name: string, buffer: ArrayBuffer) {

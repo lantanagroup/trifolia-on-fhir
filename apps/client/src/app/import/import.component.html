@@ -35,10 +35,17 @@
           <td>{{f.name}}</td>
           <td>{{getIdDisplay(f)}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
-          <td>{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}</td>
+          <td>
+            <span>{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
+            <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f.resource)">
+              <i class="fas fa-eye"></i>
+            </a>
+          </td>
           <td class="actions-column-1">
             <div class="pull-right">
-              <i class="fas fa-trash-alt" (click)="removeImportFile(fi)"></i>
+              <a href="javascript:void(0)" (click)="removeImportFile(fi)">
+                <i class="fas fa-trash-alt"></i>
+              </a>
             </div>
           </td>
         </tr>
