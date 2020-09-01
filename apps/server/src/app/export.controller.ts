@@ -29,7 +29,6 @@ import {HtmlExporter} from './export/html';
 @ApiOAuth2Auth()
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
-  protected publishPromise;
 
   constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
     super(configService, httpService);
@@ -236,8 +235,7 @@ export class ExportController extends BaseController {
       }
 
       try {
-        this.publishPromise = exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);
-        await this.publishPromise;
+        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);;
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
       } finally {
