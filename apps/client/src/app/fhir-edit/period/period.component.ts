@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,6 +16,7 @@ export class FhirPeriodComponent implements OnInit {
   @Input() defaultValue = '';
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public Globals = Globals;
 

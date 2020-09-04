@@ -30,12 +30,12 @@
 </div>
 
 <ng-template #dateSelector>
-  <ngb-datepicker [(ngModel)]="dateModel"></ngb-datepicker>
+  <ngb-datepicker [(ngModel)]="dateModel" (change)="change.emit()"></ngb-datepicker>
 </ng-template>
 
 <ng-template #timeSelector>
   <ngb-timepicker [(ngModel)]="timeModel"></ngb-timepicker>
-  <select class="form-control" [(ngModel)]="tz" (change)="setTimeFromModel()">
+  <select class="form-control" [(ngModel)]="tz" (change)="setTimeFromModel(); change.emit()">
     <option>-23:00</option>
     <option>-22:00</option>
     <option>-21:00</option>

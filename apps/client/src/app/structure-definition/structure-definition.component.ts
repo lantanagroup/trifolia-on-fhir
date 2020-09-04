@@ -40,12 +40,13 @@ import { IElementDefinition, IExtension } from '../../../../../libs/tof-lib/src/
 import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
 import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import { Severities, ValidatorResponse } from 'fhir/validator';
+import {CanComponentDeactivate} from '../guards/resource.guard';
 
 @Component({
   templateUrl: './structure-definition.component.html',
   styleUrls: ['./structure-definition.component.css']
 })
-export class StructureDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class StructureDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   private readonly dataTypes = ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation', 'CodeableConcept', 'Coding', 'Money',
     'Timing', 'Age', 'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity', 'Quantity', 'SampledData', 'Signature', 'Address', 'ContactPoint', 'HumanName',
     'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
@@ -203,7 +204,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   }
 
   public nameChanged() {
-    this.configService.setTitle(`StructureDefinition - ${this.structureDefinition.title || this.structureDefinition.name || 'no-name'}`);
+    this.configService.setTitle(`StructureDefinition - ${this.structureDefinition.title || this.structureDefinition.name || 'no-name'}`, this.isDirty);
   }
 
   public async loadBaseDefinition() {
@@ -302,6 +303,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
+    this.isDirty = false;
+    this.nameChanged();
     // noinspection JSIgnoredPromiseFromCall
     this.getStructureDefinition();
   }
@@ -313,6 +316,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     if (this.isFile) {
       this.fileService.saveFile();
+      this.isDirty = false;
+      this.nameChanged();
       return;
     }
 
@@ -325,6 +330,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
+          this.isDirty = false;
+          this.nameChanged();
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -438,6 +445,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
       return true;
     }
+  }
+
+  public canDeactivate(): boolean{
+    return !this.isDirty;
   }
 
   async getSearchElement(){

@@ -1,6 +1,7 @@
 <div class="card context" *ngIf="structureDefinition">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'context', [{ type: '', expression: '' }])"/>
+        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')"
+               (ngModelChange)="Globals.toggleProperty(structureDefinition, 'context', [{ type: '', expression: '' }]); change.emit()"/>
         Context <app-tooltip-icon tooltipPath="StructureDefinition.context"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
@@ -14,7 +15,7 @@
           </th>
           <th class="actions-column-1">
             <div class="pull-right">
-              <button type="button" class="btn btn-primary" title="Add a Context" (click)="addContext()">
+              <button type="button" class="btn btn-primary" title="Add a Context" (click)="addContext(); change.emit()">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -24,7 +25,7 @@
         <tbody>
         <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn" >
             <td>
-                <select class="form-control" [(ngModel)]="structureDefinition.context[cii].type">
+                <select class="form-control" [(ngModel)]="structureDefinition.context[cii].type" (change)="change.emit()">
                   <option value="fhirpath">FHIR Path</option>
                   <option value="element">Element</option>
                   <option value="extension">Extension</option>
@@ -33,13 +34,13 @@
                   There must be a context type selected</span>
             </td>
             <td>
-              <input type="text" class="form-control" [(ngModel)]="ci.expression"/>
+              <input type="text" class="form-control" [(ngModel)]="ci.expression" (change)="change.emit()"/>
               <span *ngIf="structureDefinition.type==='Extension' && structureDefinition.context[cii].expression===''">
                 There must be a context expression inputted</span>
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.context.splice(cii, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.context.splice(cii, 1); change.emit()">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {
   ElementDefinition as STU3ElementDefinition,
   ElementDefinitionBindingComponent,
@@ -22,6 +22,7 @@ export class BindingPanelComponent implements OnInit {
   @Input() element: STU3ElementDefinition | R4ElementDefinition;
   public Globals = Globals;
   public valueSetChoices = ['Uri', 'Reference'];
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public get STU3Element() {
     if (this.configService.isFhirSTU3) {
@@ -86,6 +87,7 @@ export class BindingPanelComponent implements OnInit {
     modalRef.result.then((result) => {
       const valueSet: ValueSet = result.resource;
       this.R4Element.binding.valueSet = valueSet.url;
+      this.change.emit();
     });
   }
 

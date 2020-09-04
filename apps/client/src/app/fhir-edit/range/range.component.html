@@ -1,12 +1,12 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {})"/>
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {}); change.emit()"/>
         {{ title || 'Range' }}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
-        <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeLow"/>
-        <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeHigh"/>
+        <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeLow" (change)="change.emit()"/>
+        <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeHigh" (change)="change.emit()"/>
         <div class="input-group-btn">
             <button class="btn btn-default" [disabled]="!parentObject.hasOwnProperty(propertyName)" (click)="editRange()" title="Edit this range">
                 <i class="fa fa-edit"></i>
@@ -16,12 +16,12 @@
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="!required">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {})"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {}); change.emit()"/>
         {{title || 'Range'}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
-    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeLow"/>
-    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeHigh"/>
+    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeLow" (change)="change.emit()"/>
+    <input type="number" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="rangeHigh" (change)="change.emit()"/>
     <div class="input-group-btn">
         <button class="btn btn-default" [disabled]="!parentObject.hasOwnProperty(propertyName)" (click)="editRange()" title="Edit this range">
             <i class="fa fa-edit"></i>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirRatioModalComponent} from '../ratio-modal/ratio-modal.component';
@@ -17,6 +17,8 @@ export class FhirRatioComponent implements OnInit {
   @Input() defaultValue = '';
   @Input() tooltipPath: string;
   @Input() tooltipKey: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
+
 
   public Globals = Globals;
 
@@ -107,6 +109,9 @@ export class FhirRatioComponent implements OnInit {
   editRatio() {
     const modalRef = this.modalService.open(FhirRatioModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.ratio = this.parentObject[this.propertyName];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   ngOnInit() {

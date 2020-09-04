@@ -35,6 +35,9 @@ export class FhirMarkdownComponent implements OnInit {
     const modalRef = this.modalService.open(MarkdownModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.parentObject = this.parentObject;
     modalRef.componentInstance.propertyName = this.propertyName;
+    modalRef.result.then(() => {
+      this.valueChangeEmitter.emit();
+    });
   }
 
   valueChanged(value) {
