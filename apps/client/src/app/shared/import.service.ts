@@ -22,6 +22,10 @@ export class ImportService {
   constructor(private http: HttpClient) {
   }
 
+  public async checkResourcesStatus(resourceReferences: string[]) {
+    return this.http.post<{ [resourceReference: string]: 'add'|'update'|'unauthorized'|'unknown'}>('/api/import/resourcesStatus', resourceReferences).toPromise();
+  }
+
   public importVsac(criteria: VSACImportCriteria): Observable<any> {
     return new Observable<any>((subscriber) => {
       const url = `/api/import/vsac/${encodeURIComponent(criteria.id)}`;

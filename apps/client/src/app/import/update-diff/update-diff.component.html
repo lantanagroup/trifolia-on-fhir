@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title">Compare differences</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="alert alert-info" *ngIf="message">{{message}}</div>
+  <select class="form-control" style="width: 100px; margin-bottom: 5px;" [(ngModel)]="showJson" (change)="reSerialize()">
+    <option [ngValue]="false">XML</option>
+    <option [ngValue]="true">JSON</option>
+  </select>
+  <pre *ngIf="left && right" diff [right]="right" [left]="left"></pre>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
+</div>

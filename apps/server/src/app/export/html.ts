@@ -1,6 +1,6 @@
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
-import {spawn} from 'child_process';
+import {ChildProcess, spawn} from 'child_process';
 import {
   ContactDetail,
   DomainResource,
@@ -32,6 +32,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
+
 
 export class HtmlExporter {
 
@@ -65,6 +66,7 @@ export class HtmlExporter {
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
+  public igPublisherProcess: ChildProcess;
   protected igPublisherLocation: string;
   protected pageInfos: PageInfo[];
 
@@ -147,7 +149,6 @@ export class HtmlExporter {
     if (!this.packageId) {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
-
     return new Promise(async (resolve, reject) => {
       const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
@@ -172,11 +173,11 @@ export class HtmlExporter {
 
       this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
-      const igPublisherProcess = spawn(process, jarParams, {
+      this.igPublisherProcess = spawn(process, jarParams, {
         cwd: this.rootPath
       });
 
-      igPublisherProcess.stdout.on('data', (data) => {
+      this.igPublisherProcess.stdout.on('data', (data) => {
         const message = data.toString()
           .replace(tmp.tmpdir, 'XXX')
           .replace(tmp.tmpdir.replace(/\\/g, path.sep), 'XXX')
@@ -187,7 +188,7 @@ export class HtmlExporter {
         }
       });
 
-      igPublisherProcess.stderr.on('data', (data) => {
+      this.igPublisherProcess.stderr.on('data', (data) => {
         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(this.homedir, 'XXX');
 
         if (this.serverConfig.publishStatusPath) {
@@ -199,7 +200,7 @@ export class HtmlExporter {
         }
       });
 
-      igPublisherProcess.on('error', (err) => {
+      this.igPublisherProcess.on('error', (err) => {
         const message = 'Error executing FHIR IG Publisher: ' + err;
         this.logger.error(message);
         if (this.serverConfig.publishStatusPath) {
@@ -209,7 +210,7 @@ export class HtmlExporter {
         reject("Error publishing IG");
       });
 
-      igPublisherProcess.on('exit', (code) => {
+      this.igPublisherProcess.on('exit', (code) => {
         this.logger.log(`IG Publisher is done executing for ${this.rootPath}`);
 
         this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
@@ -791,13 +792,9 @@ export class HtmlExporter {
     }
 
     const implementationGuideResource = <ImplementationGuideResourceComponent>this.getImplementationGuideResource(resource.resourceType, resource.id);
-    let resourcePath = getExtensionString(implementationGuideResource, Globals.extensionUrls['extension-ig-resource-file-path']);
-
-    if (!resourcePath) {
-      resourcePath = getDefaultImplementationGuideResourcePath({
-        reference: `${resource.resourceType}/${resource.id}`
-      });
-    }
+    let resourcePath = getDefaultImplementationGuideResourcePath({
+      reference: `${resource.resourceType}/${resource.id}`
+    })
 
     if (!resourcePath) {
       this.sendSocketMessage('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);

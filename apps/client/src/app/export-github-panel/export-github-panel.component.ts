@@ -164,7 +164,6 @@ export class ExportGithubPanelComponent implements OnInit {
     try {
       this.loadingRepositories = true;
       this.repositories = await this.githubService.getRepositories(true);
-      this.change.emit('application/xml')
     } catch (ex) {
       this.message = getErrorString(ex);
     } finally {

@@ -1,0 +1,807 @@
+{
+	"resourceType": "StructureDefinition",
+	"id": "Composition-jurisdiction-fetal-death-report",
+	"meta": {
+		"versionId": "21",
+		"lastUpdated": "2020-08-28T03:24:18.384+00:00",
+		"source": "#AAKWJn2A5i7I88A7",
+		"security": [
+			{
+				"system": "https://trifolia-fhir.lantanagroup.com/security",
+				"code": "everyone^write"
+			},
+			{
+				"system": "https://trifolia-fhir.lantanagroup.com/security",
+				"code": "everyone^read"
+			}
+		]
+	},
+	"url": "http://hl7.org/fhir/us/bfdr/StructureDefinition/Composition-jurisdiction-fetal-death-report",
+	"version": "1.0.0",
+	"name": "CompositionJurisdictionFetalDeathReport",
+	"title": "Composition - Jurisdiction Fetal Death Report",
+	"status": "active",
+	"experimental": false,
+	"publisher": "HL7 Public Health Work Group",
+	"description": "This Composition profile contains information of a fetal death and the creation of a jurisdictional file to be recorded and communicated to NCHS.\n\nThe data requirements for jurisdictional reporting of fetal deaths are based on the Fetal Death Edit Specifications for the 2003 Revision of the U.S. Standard Report of Fetal Death.",
+	"jurisdiction": [
+		{
+			"coding": [
+				{
+					"system": "urn:iso:std:iso:3166",
+					"code": "US",
+					"display": "United States of America"
+				}
+			]
+		}
+	],
+	"fhirVersion": "4.0.1",
+	"kind": "resource",
+	"abstract": false,
+	"type": "Composition",
+	"baseDefinition": "http://hl7.org/fhir/StructureDefinition/Composition",
+	"derivation": "constraint",
+	"differential": {
+		"element": [
+			{
+				"id": "Composition",
+				"path": "Composition"
+			},
+			{
+				"id": "Composition.extension:dateReceivedByRegistrar",
+				"path": "Composition.extension",
+				"sliceName": "dateReceivedByRegistrar",
+				"min": 1,
+				"max": "1",
+				"type": [
+					{
+						"code": "Extension",
+						"profile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Extension-date-received-by-registrar"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.extension:relatedPersonFather",
+				"path": "Composition.extension",
+				"sliceName": "relatedPersonFather",
+				"min": 0,
+				"max": "1",
+				"type": [
+					{
+						"code": "Extension",
+						"profile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Extension-relatedperson-father"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.type",
+				"path": "Composition.type",
+				"short": "Jurisdiction fetal death report Document",
+				"definition": "Jurisdiction fetal death report Document",
+				"patternCodeableConcept": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "92010-8"
+						}
+					]
+				}
+			},
+			{
+				"id": "Composition.subject",
+				"path": "Composition.subject",
+				"short": "The subject of the composition is the decedent fetus",
+				"definition": "The subject of the composition as a whole is the decedent fetus. Different sections in the composition have different focus (e.g.: the mother).",
+				"min": 1,
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Patient-decedent-fetus"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.encounter",
+				"path": "Composition.encounter",
+				"short": "The Encounter for the Composition is the mother's maternity encounter.",
+				"definition": "The Encounter for the Composition is the mother's maternity encounter.",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Encounter-maternity"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.date",
+				"path": "Composition.date",
+				"short": "Date report completed",
+				"definition": "Date report completed",
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.author",
+				"path": "Composition.author",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "profile",
+							"path": "$this.resolve()"
+						}
+					],
+					"rules": "open"
+				}
+			},
+			{
+				"id": "Composition.author:personCompletingReport",
+				"path": "Composition.author",
+				"sliceName": "personCompletingReport",
+				"short": "The person who completed the report.",
+				"definition": "The person who completed the report.",
+				"min": 1,
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Practitioner-live-birth-fetal-death"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section",
+				"path": "Composition.section",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "pattern",
+							"path": "code"
+						}
+					],
+					"rules": "open"
+				},
+				"short": "The Composition is broken into sections that, where possible, align with the sections in the Fetal Death Report.",
+				"definition": "The Composition is broken into sections that, where possible, align with the sections in the Fetal Death Report. The sections are Mother, Father, Mother Prenatal,  Medical and Health, and fetus. Various administrative and demographic data in the Birth Certificate are contained in other locations in the Composition, such as the Patient and Encounter profiles."
+			},
+			{
+				"id": "Composition.section:motherPrenatal",
+				"path": "Composition.section",
+				"sliceName": "motherPrenatal",
+				"short": "Mother (prenatal) section on the Fetal Death Report",
+				"definition": "This section contains items from the Mother (prenatal) on the Fetal Death Report."
+			},
+			{
+				"id": "Composition.section:motherPrenatal.code",
+				"path": "Composition.section.code",
+				"short": "Prenatal records",
+				"definition": "Prenatal records",
+				"patternCodeableConcept": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "57073-9"
+						}
+					]
+				}
+			},
+			{
+				"id": "Composition.section:motherPrenatal.focus",
+				"path": "Composition.section.focus",
+				"short": "The focus of this section is the mother",
+				"definition": "The subject of the composition as a whole is the fetus baby. The focus of this section in the composition is the mother.",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Patient-mother"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry",
+				"path": "Composition.section.entry",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "profile",
+							"path": "$this.resolve()"
+						}
+					],
+					"ordered": false,
+					"rules": "open"
+				},
+				"short": "Entries that are contained in the Mother Prenatal section",
+				"definition": "Entries that are contained in the Mother Prenatal section"
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:plannedToDeliverAtHome",
+				"path": "Composition.section.entry",
+				"sliceName": "plannedToDeliverAtHome",
+				"short": "Planned to deliver at home",
+				"definition": "Planned to deliver at home",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-planned-to-deliver-at-home"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:firstPrenatalCareVisit",
+				"path": "Composition.section.entry",
+				"sliceName": "firstPrenatalCareVisit",
+				"short": "First prenatal care visit",
+				"definition": "Date that mother had her first prenatal care visit.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-date-of-first-prenatal-care-visit"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:dateLastNormalMenses",
+				"path": "Composition.section.entry",
+				"sliceName": "dateLastNormalMenses",
+				"short": "Date last normal menses began",
+				"definition": "Date that the mother's last normal menses began. This item is used to compute the gestational age of the infant.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-last-menstrual-period"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:numberNowLiving",
+				"path": "Composition.section.entry",
+				"sliceName": "numberNowLiving",
+				"short": "Number of previous live births now living",
+				"definition": "The pregnancy history of the mother with respect to previous children born alive",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-number-births-now-living"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:numberNowDead",
+				"path": "Composition.section.entry",
+				"sliceName": "numberNowDead",
+				"short": "Number of previous live births now dead",
+				"definition": "The pregnancy history of the mother with respect to previous children born alive",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-number-births-now-dead"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:dateLastLiveBirth",
+				"path": "Composition.section.entry",
+				"sliceName": "dateLastLiveBirth",
+				"short": "Date of last live birth",
+				"definition": "The pregnancy history of the mother with respect to previous children born alive",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-date-of-last-live-birth"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:mothersHeight",
+				"path": "Composition.section.entry",
+				"sliceName": "mothersHeight",
+				"short": "Mother's height",
+				"definition": "The mother's height",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-mother-height"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:mothersPrepregnancyWeight",
+				"path": "Composition.section.entry",
+				"sliceName": "mothersPrepregnancyWeight",
+				"short": "Mother's prepregnancy weight",
+				"definition": "The mother's prepregnancy weight",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-mother-prepregnancy-weight"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:motherReceivedWICFood",
+				"path": "Composition.section.entry",
+				"sliceName": "motherReceivedWICFood",
+				"short": "Use of the WIC nutritional program by the mother",
+				"definition": "Use of the Women, Infant's, and Children (WIC) nutritional program by the mother during the pregnancy.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-mother-received-wic-food"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherPrenatal.entry:cigaretteSmokingBeforeDuringPregnancy",
+				"path": "Composition.section.entry",
+				"sliceName": "cigaretteSmokingBeforeDuringPregnancy",
+				"short": "Cigarettes smoked by the mother before and during the pregnancy",
+				"definition": "The number of cigarettes or packs of cigarettes the mother smoked 3 months before and at various intervals during the pregnancy",
+				"max": "4",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-cigarette-smoking-before-during-pregnancy"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation",
+				"path": "Composition.section",
+				"sliceName": "medicalHealthInformation",
+				"short": "Medical and Health Informatino section on the Fetal Death Report",
+				"definition": "This section contains items from the Medical and Health Information section on the Fetal Death Report."
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.code",
+				"path": "Composition.section.code",
+				"short": "Clinical information",
+				"definition": "Clinical information",
+				"patternCodeableConcept": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "55752-0"
+						}
+					]
+				}
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.focus",
+				"path": "Composition.section.focus",
+				"short": "The focus of this section is the mother",
+				"definition": "The subject of the composition as a whole is the fetus baby. The focus of this section in the composition is the mother.",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Patient-mother"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry",
+				"path": "Composition.section.entry",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "profile",
+							"path": "$this.resolve()"
+						}
+					],
+					"ordered": false,
+					"rules": "open"
+				},
+				"short": "Entries that are contained in the medical and health information section",
+				"definition": "Entries that are contained in the medical and health information section"
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:pregnancyRiskFactors",
+				"path": "Composition.section.entry",
+				"sliceName": "pregnancyRiskFactors",
+				"short": "Risk factors in this pregnancy",
+				"definition": "Selected medical risk factors of the mother during this pregnancy",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-pregnancy-risk-factor"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:numberPreviousCesareans",
+				"path": "Composition.section.entry",
+				"sliceName": "numberPreviousCesareans",
+				"short": "If mother had a previous cesarean delivery, how many",
+				"definition": "Number of previous cesarean deliveries.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-number-previous-cesareans"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:fetalPresentation",
+				"path": "Composition.section.entry",
+				"sliceName": "fetalPresentation",
+				"short": "Fetal presentation at birth",
+				"definition": "Fetal presentation at birth",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Condition-fetal-presentation"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:finalRouteMethodDelivery",
+				"path": "Composition.section.entry",
+				"sliceName": "finalRouteMethodDelivery",
+				"short": "Final route and method of delivery",
+				"definition": "Final route and method of delivery",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Procedure-final-route-method-delivery"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:trialLaborAttempted",
+				"path": "Composition.section.entry",
+				"sliceName": "trialLaborAttempted",
+				"short": "If cesearean, was a trial of labor attempted?",
+				"definition": "If cesarean, was a trial of labor attempted? (Labor was allowed, augmented, or induced with plans for a vaginal delivery.)",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-labor-trial-attempted"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:medicalHealthInformation.entry:maternalMorbidity",
+				"path": "Composition.section.entry",
+				"sliceName": "maternalMorbidity",
+				"short": "Maternal morbidity (complications associated with labor and delivery)",
+				"definition": "Serious complications experienced by the mother associated with labor and delivery",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Condition-maternal-morbidity"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus",
+				"path": "Composition.section",
+				"sliceName": "fetus",
+				"short": "fetus section on the Fetal Death Report",
+				"definition": "This section contains items from the fetus section on the Fetal Death Report."
+			},
+			{
+				"id": "Composition.section:fetus.code",
+				"path": "Composition.section.code",
+				"short": "Fetal delivery information Document [US Standard Report of Fetal Death]",
+				"definition": "Fetal delivery information Document [US Standard Report of Fetal Death]",
+				"patternCodeableConcept": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "76400-1"
+						}
+					]
+				}
+			},
+			{
+				"id": "Composition.section:fetus.entry",
+				"path": "Composition.section.entry",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "profile",
+							"path": "$this.resolve()"
+						}
+					],
+					"ordered": false,
+					"rules": "open"
+				},
+				"short": "Entries that are contained in the fetus section",
+				"definition": "Entries that are contained in the fetus section"
+			},
+			{
+				"id": "Composition.section:fetus.entry:deliveryWeight",
+				"path": "Composition.section.entry",
+				"sliceName": "deliveryWeight",
+				"short": "Delivery weight",
+				"definition": "The weight of the infant/fetus at birth/delivery",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-birth-weight"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:gestationalAgeAtDelivery",
+				"path": "Composition.section.entry",
+				"sliceName": "gestationalAgeAtDelivery",
+				"short": "Obstetric estimate of gestation",
+				"definition": "The obstetric estimate of the infant’s gestation in completed weeks based on the birth/delivery attendant’s final estimate of gestation which should be determined by all perinatal factors and assessments such as ultrasound, but not the neonatal exam",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-gestational-age-at-delivery"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:causeOfFetalDeath",
+				"path": "Composition.section.entry",
+				"sliceName": "causeOfFetalDeath",
+				"short": "Initiating cause or condition of fetal death",
+				"definition": "Initiating cause or condition of fetal death",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Condition-fetal-death-cause-or-condition"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:otherCauseOfDeath",
+				"path": "Composition.section.entry",
+				"sliceName": "otherCauseOfDeath",
+				"short": "Another significant cause or condition for the death of the fetus.",
+				"definition": "Another significant cause or condition for the death of the fetus.",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Condition-fetal-death-other-significant-cause-or-condition"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:estimatedTimeFetalDeath",
+				"path": "Composition.section.entry",
+				"sliceName": "estimatedTimeFetalDeath",
+				"short": "When the fetus died with respect to labor and assessment",
+				"definition": "When the fetus died with respect to labor and assessment",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-estimated-fetal-death-time-point"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:autopsyPerformed",
+				"path": "Composition.section.entry",
+				"sliceName": "autopsyPerformed",
+				"short": "An indication if an autopsy has been performed on the subject.",
+				"definition": "An indication if an autopsy has been performed on the subject.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-autopsy-performed"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:histologicalExamPerformed",
+				"path": "Composition.section.entry",
+				"sliceName": "histologicalExamPerformed",
+				"short": "Whether or not a histological placental examination was performed.",
+				"definition": "Whether or not a histological placental examination was performed.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-histological-placental-exam-performed"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:autopsyOrHistologicalExamUsed",
+				"path": "Composition.section.entry",
+				"sliceName": "autopsyOrHistologicalExamUsed",
+				"short": "Whether or not the results of a performed autopsy or a performed histological placental examination were used as part of determining the cause of death.",
+				"definition": "Whether or not the results of a performed autopsy or a performed histological placental examination were used as part of determining the cause of death.",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/bfdr/StructureDefinition/Observation-autopsy-histological-exam-results-used"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:fetus.entry:plurality",
+				"path": "Composition.section.entry",
+				"sliceName": "plurality",
+				"short": "Plurality - Single, Twin, Triplet, etc.",
+				"definition": "Plurality – The number of fetuses delivered live or dead at any time in the pregnancy regardless of gestational age or if the fetuses were delivered at different dates in the pregnancy. (“Reabsorbed” fetuses, those which are not “delivered” (expulsed or extracted from the mother) should not be counted.)",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-plurality"
+						]
+					}
+				],
+				"mustSupport": true
+			},
+			{
+				"id": "Composition.section:motherInformation",
+				"path": "Composition.section",
+				"sliceName": "motherInformation",
+				"short": "Mother administrative section on the Fetal Death Report",
+				"definition": "This section contains items from the Mother administrative section on the Fetal Death Report."
+			},
+			{
+				"id": "Composition.section:motherInformation.code",
+				"path": "Composition.section.code",
+				"short": "Mother's administrative information",
+				"definition": "Mother's administrative information",
+				"patternCodeableConcept": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "92014-0"
+						}
+					]
+				}
+			},
+			{
+				"id": "Composition.section:motherInformation.focus",
+				"path": "Composition.section.focus",
+				"short": "The focus of this section is the mother",
+				"definition": "The subject of the composition as a whole is the fetus baby. The focus of this section in the composition is the mother.",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Patient-mother"
+						]
+					}
+				]
+			},
+			{
+				"id": "Composition.section:motherInformation.entry",
+				"path": "Composition.section.entry",
+				"slicing": {
+					"discriminator": [
+						{
+							"type": "profile",
+							"path": "$this.resolve()"
+						}
+					],
+					"ordered": false,
+					"rules": "open"
+				},
+				"short": "Entries that are contained in the motherInformation section",
+				"definition": "Entries that are contained in the motherInformation section"
+			},
+			{
+				"id": "Composition.section:motherInformation.entry:mothersEducation",
+				"path": "Composition.section.entry",
+				"sliceName": "mothersEducation",
+				"short": "Mother's education",
+				"definition": "Mother's education",
+				"max": "1",
+				"type": [
+					{
+						"code": "Reference",
+						"targetProfile": [
+							"http://hl7.org/fhir/us/fhir-vr-common-ig/StructureDefinition/Observation-parent-education-level"
+						]
+					}
+				],
+				"mustSupport": true
+			}
+		]
+	}
+}

@@ -9,8 +9,8 @@ import {
   OperationOutcome,
   RequestComponent
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {FileSystemFileEntry, UploadEvent} from 'ngx-file-drop';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {FileSystemFileEntry, UploadEvent, UploadFile} from 'ngx-file-drop';
 import {FhirService} from '../shared/fhir.service';
 import {CookieService} from 'angular2-cookie/core';
 import {ContentModel, GithubService} from '../shared/github.service';
@@ -23,6 +23,8 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {UpdateDiffComponent} from './update-diff/update-diff.component';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -40,6 +42,7 @@ class ImportFileModel {
   public resource?: DomainResource;
   public vsBundle?: Bundle;
   public message: string;
+  public status: 'add'|'update'|'unauthorized'|'pending'|'unknown' = 'pending';
 }
 
 class GitHubImportContent {
@@ -80,7 +83,8 @@ export class ImportComponent implements OnInit {
     private importService: ImportService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
-    public githubService: GithubService) {
+    public githubService: GithubService,
+    public modalService: NgbModal) {
 
     const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
     const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
@@ -90,6 +94,11 @@ export class ImportComponent implements OnInit {
       this.vsacCriteria.password = atob(vsacPassword);
       this.rememberVsacCredentials = true;
     }
+  }
+
+  viewUpdateDiff(resource: IDomainResource) {
+    const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
+    modalRef.componentInstance.importResource = resource;
   }
 
   private createMedia(name: string, buffer: ArrayBuffer) {
@@ -138,79 +147,84 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    reader.onload = (e: any) => {
-      const result = e.target.result;
-      const importFileModel = new ImportFileModel();
-      this.errorMessage = '';
-      importFileModel.name = file.name;
-      importFileModel.content = result;
+    return new Promise((resolve, reject) => {
+      reader.onload = (e: any) => {
+        const result = e.target.result;
+        const importFileModel = new ImportFileModel();
+        this.errorMessage = '';
+        importFileModel.name = file.name;
+        importFileModel.content = result;
 
-      if (extension === '.json') {
-        importFileModel.contentType = ContentTypes.Json;
-      } else if (extension === '.xml') {
-        importFileModel.contentType = ContentTypes.Xml;
-      } else if (extension === '.xlsx') {
-        importFileModel.contentType = ContentTypes.Xlsx;
-      } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
-        importFileModel.contentType = ContentTypes.Image;
-      }
-
-      try {
-        if (importFileModel.contentType === ContentTypes.Xml) {
-          importFileModel.resource = this.fhirService.deserialize(result);
-        } else if (importFileModel.contentType === ContentTypes.Json) {
-          importFileModel.resource = JSON.parse(result);
-        } else if (importFileModel.contentType === ContentTypes.Xlsx) {
-          const convertResults = this.importService.convertExcelToValueSetBundle(result);
-          if (!convertResults.success) {
-            this.errorMessage = "The XLSX that you're attempting to import is not valid. " + convertResults.message + " Please refer to the help documentation for guidance on the proper format of the XLSX.";
-            throw new Error(convertResults.message);
-          } else {
-            this.errorMessage = '';
-          }
-
-          importFileModel.vsBundle = convertResults.bundle;
-        } else if (importFileModel.contentType === ContentTypes.Image) {
-          importFileModel.resource = this.createMedia(file.name, result);
+        if (extension === '.json') {
+          importFileModel.contentType = ContentTypes.Json;
+        } else if (extension === '.xml') {
+          importFileModel.contentType = ContentTypes.Xml;
+        } else if (extension === '.xlsx') {
+          importFileModel.contentType = ContentTypes.Xlsx;
+        } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
+          importFileModel.contentType = ContentTypes.Image;
         }
-      } catch (ex) {
-        importFileModel.message = ex.message;
+
+        try {
+          if (importFileModel.contentType === ContentTypes.Xml) {
+            importFileModel.resource = this.fhirService.deserialize(result);
+          } else if (importFileModel.contentType === ContentTypes.Json) {
+            importFileModel.resource = JSON.parse(result);
+          } else if (importFileModel.contentType === ContentTypes.Xlsx) {
+            const convertResults = this.importService.convertExcelToValueSetBundle(result);
+            if (!convertResults.success) {
+              this.errorMessage = "The XLSX that you're attempting to import is not valid. " + convertResults.message + " Please refer to the help documentation for guidance on the proper format of the XLSX.";
+              throw new Error(convertResults.message);
+            } else {
+              this.errorMessage = '';
+            }
+
+            importFileModel.vsBundle = convertResults.bundle;
+          } else if (importFileModel.contentType === ContentTypes.Image) {
+            importFileModel.resource = this.createMedia(file.name, result);
+          }
+        } catch (ex) {
+          importFileModel.message = ex.message;
+        }
+
+        // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
+        let foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
+
+        // If another file with the same name can't be found, determine if there is a file with the same resource id as this one, and replace it
+        if (!foundImportFile && importFileModel.resource) {
+          foundImportFile = this.files.find((importFile) => importFile.resource && importFile.resource.id === importFileModel.resource.id);
+        }
+
+        if (foundImportFile) {
+          const index = this.files.indexOf(foundImportFile);
+          this.files.splice(index, 1);
+        }
+
+        // only add to the list of files to import if it doesn't have a formatting error.
+        if (this.errorMessage === '') {
+          this.files.push(importFileModel);
+        }
+        this.importBundle = this.getFileBundle();
+
+        this.cdr.detectChanges();
+
+        resolve();
+      };
+
+      if (extension === '.json' || extension === '.xml') {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
       }
-
-      // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
-      let foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
-
-      // If another file with the same name can't be found, determine if there is a file with the same resource id as this one, and replace it
-      if (!foundImportFile && importFileModel.resource) {
-        foundImportFile = this.files.find((importFile) => importFile.resource && importFile.resource.id === importFileModel.resource.id);
-      }
-
-      if (foundImportFile) {
-        const index = this.files.indexOf(foundImportFile);
-        this.files.splice(index, 1);
-      }
-
-      // only add to the list of files to import if it doesn't have a formatting error.
-      if (this.errorMessage === '') {
-        this.files.push(importFileModel);
-      }
-      this.importBundle = this.getFileBundle();
-
-      this.cdr.detectChanges();
-    };
-
-    if (extension === '.json' || extension === '.xml') {
-      reader.readAsText(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
+    });
   }
 
-  public filesChanged(event) {
+  public async filesChanged(event) {
     const files = event.target.files;
     if (files.length === 1) {
       try {
-        this.populateFile(files[0]);
+        await this.populateFile(files[0]);
+        this.updateFileStatus();
       } catch (ex) {
         this.message = ex.message;
       }
@@ -224,18 +238,64 @@ export class ImportComponent implements OnInit {
     this.importBundle = this.getFileBundle();
   }
 
-  public dropped(event: UploadEvent) {
+  /**
+   * Called/triggered when one or more files have been drag-and-dropped onto the import
+   * panel, needing to be loaded into the list of files to be imported.
+   * @param event
+   */
+  public async dropped(event: UploadEvent) {
+    // Create an inline function that returns an awaitable promise
+    // when the file has been loaded/populated
+    const populateFile = (droppedFile: UploadFile) => {
+      return new Promise(resolve => {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file(async (file: File) => {
+          await this.populateFile(file);
+          resolve();
+        });
+      });
+    }
+
     for (const droppedFile of event.files) {
       if (droppedFile.fileEntry.isFile) {
-        try {
-          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-          fileEntry.file((file: File) => {
-            this.populateFile(file);
-          });
-        } catch (ex) {
-          this.message = ex.message;
-        }
+        await populateFile(droppedFile);
       }
+    }
+
+    // Make sure to update the status of the resources after they have all been added
+    // the files list by the drag-and-drop event. Loading the file is asynchronous,
+    // so we have to make sure to await above for all the files to be loaded
+    this.updateFileStatus();
+  }
+
+  /**
+   * Asks the server for the status of each of the resources being imported, so that
+   * the user knows if the import of a file/resource results in creating a new resource,
+   * updating an existing resource, or if there are permission problems with one of
+   * the resources being imported.
+   * @private
+   */
+  private updateFileStatus() {
+    const pendingResources = this.files
+      .filter(f => !!f.resource && f.resource.id && f.status === 'pending');
+
+    const resourceReferences = pendingResources
+      .map(pr => `${pr.resource.resourceType}/${pr.resource.id}`);
+
+    this.files.filter(f => !!f.resource && !f.resource.id)
+      .forEach(f => f.status = 'add');
+
+    // Only ask the server if we have one or more resources with an ID that hasn't already been checked
+    if (resourceReferences.length > 0) {
+      this.importService.checkResourcesStatus(resourceReferences)
+        .then((statuses) => {
+          pendingResources.forEach(pr => {
+            pr.status = statuses[`${pr.resource.resourceType}/${pr.resource.id}`] || 'unknown';
+          });
+        })
+        .catch((err) => {
+          this.message = `Error retrieving status of imports: ${getErrorString(err)}`;
+        });
     }
   }
 
@@ -606,7 +666,8 @@ export class ImportComponent implements OnInit {
 
   public importDisabled(): boolean {
     if (this.activeTab === 'file') {
-      return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0;
+      const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
+      return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0 || unauthorizedResources.length > 0;
     } else if (this.activeTab === 'text') {
       return !this.textContent;
     } else if (this.activeTab === 'vsac') {

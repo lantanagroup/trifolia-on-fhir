@@ -41,7 +41,7 @@ export class ExportController extends BaseController {
       let validationRequests = [];
 
       const validateResource = (resource: DomainResource) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((innerResolve, innerReject) => {
           const options: AxiosRequestConfig = {
             url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
             method: 'POST',
@@ -52,7 +52,7 @@ export class ExportController extends BaseController {
             .then((results) => resolve(results.data))
             .catch((err) => {
               if (err.response) {
-                resolve(err.response.data);
+                innerResolve(err.response.data);
               }
             });
         });
@@ -235,12 +235,12 @@ export class ExportController extends BaseController {
       }
 
       try {
-        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version)
+        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);;
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
       } finally {
         const index = this.exportService.exports.indexOf(exporter);
-        this.exportService.exports.splice(index, 1);
+        if(index >= 0) this.exportService.exports.splice(index, 1);
       }
     };
 
@@ -263,15 +263,8 @@ export class ExportController extends BaseController {
   @Post(':packageId/cancel')
   public cancel(@Param('packageId') packageId: string) {
     this.logger.log(`User has requested that package id ${packageId} be removed from the queue`);
-
-    const exporter = this.exportService.exports.find(e => e.packageId === packageId);
-    const index = this.exportService.exports.indexOf(exporter);
-
-    if (index >= 0) {
-      this.exportService.exports.splice(index, 1);
-      exporter.sendSocketMessage('progress', 'You have been removed from the queue');
-      this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
-    }
+    const res = this.exportService.cancel(packageId);
+    if(res) this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
   }
 
   private async sendPackageResponse(packageId: string, res: Response) {

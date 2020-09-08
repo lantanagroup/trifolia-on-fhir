@@ -22,7 +22,7 @@ import {StructureDefinitionsComponent} from './structure-definitions/structure-d
 import {UserComponent} from './user/user.component';
 import {NewProfileComponent} from './new-profile/new-profile.component';
 import {CookieService} from 'angular2-cookie/core';
-import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
@@ -65,20 +65,15 @@ import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 import {R4ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
 import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/resource-modal.component';
-import {
-  OAuthModule,
-  JwksValidationHandler,
-  ValidationHandler,
-  OAuthStorage,
-  OAuthModuleConfig,
-  OAuthService
-} from 'angular-oauth2-oidc';
+import {JwksValidationHandler, OAuthModule, OAuthModuleConfig, OAuthService, OAuthStorage, ValidationHandler} from 'angular-oauth2-oidc';
 import {UsersComponent} from './manage/users/users.component';
-import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
-import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
-import { PackageListComponent } from './implementation-guide-wrapper/package-list/package-list.component';
-import { ResourceGuard } from './guards/resource.guard';
+import {GroupModalComponent} from './implementation-guide-wrapper/r4/group-modal.component';
+import {OtherResourcesResultComponent} from './other-resources/other-resources-result/other-resources-result.component';
+import {PackageListComponent} from './implementation-guide-wrapper/package-list/package-list.component';
+import {ResourceGuard} from './guards/resource.guard';
 import {ElementDefinitionConstraintComponent} from './modals/element-definition-constraint/element-definition-constraint.component';
+import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
+import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -218,7 +213,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
     MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent
+    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -234,7 +229,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -254,7 +249,8 @@ const authModuleConfig: OAuthModuleConfig = {
     SharedModule,
     SharedUiModule,
     FhirEditModule,
-    ModalsModule
+    ModalsModule,
+    DiffMatchPatchModule
   ],
   providers: [
     {

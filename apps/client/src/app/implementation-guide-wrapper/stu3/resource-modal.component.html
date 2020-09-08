@@ -11,18 +11,11 @@
 
   <app-fhir-string [parentObject]="resource" propertyName="description" title="Description"></app-fhir-string>
 
-  <app-fhir-reference [parentObject]="resource" propertyName="sourceReference" title="Source Reference" (change)="sourceReferenceChanged()" [disabled]="!resource.sourceReference && resource.sourceUri" [required]="!resource.sourceReference && !resource.sourceUri"></app-fhir-reference>
+  <app-fhir-reference [parentObject]="resource" propertyName="sourceReference" title="Source Reference" [disabled]="!resource.sourceReference && !!resource.sourceUri" [required]="!resource.sourceReference && !resource.sourceUri"></app-fhir-reference>
 
-  <app-fhir-string [parentObject]="resource" propertyName="sourceUri" title="Source URI" (change)="sourceUriChanged()" [disabled]="!resource.sourceUri && resource.sourceReference" [required]="!resource.sourceUri && !resource.sourceReference"></app-fhir-string>
+  <app-fhir-string [parentObject]="resource" propertyName="sourceUri" title="Source URI" [disabled]="!resource.sourceUri && !!resource.sourceReference" [required]="!resource.sourceUri && !resource.sourceReference"></app-fhir-string>
 
   <app-fhir-reference [parentObject]="resource" propertyName="exampleFor" title="Example For"></app-fhir-reference>
-
-  <div class="form-group">
-    <label>
-      File Path <app-tooltip-icon tooltipKey="ig.resource.filePath"></app-tooltip-icon>
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="filePath" />
-  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="ok()">Done</button>
