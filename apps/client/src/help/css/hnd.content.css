@@ -139,11 +139,11 @@ span.rvts24
 }
 span.rvts25
 {
+ font-size: 16pt;
  font-weight: bold;
 }
 span.rvts26
 {
- font-size: 16pt;
  font-weight: bold;
 }
 span.rvts27
@@ -805,21 +805,21 @@ p,ul,ol /* Paragraph Style */
 .list1 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;}
 .list2 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;}
 .list3 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
-.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;}
-.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: circle;}
-.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: square;}
-.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
-.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
-.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 0px; list-style-position: inside; list-style-type: decimal;}
-.list10 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;}
-.list11 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: circle;}
-.list12 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: square;}
-.list13 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-alpha;}
-.list14 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-roman;}
-.list15 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: disc;}
-.list16 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
-.list17 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
-.list18 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
+.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
+.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;}
+.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 0px; list-style-position: inside; list-style-type: decimal;}
+.list7 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;}
+.list8 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: circle;}
+.list9 {text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: square;}
+.list10 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-alpha;}
+.list11 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: lower-roman;}
+.list12 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: disc;}
+.list13 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;}
+.list14 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-alpha;}
+.list15 {text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: lower-roman;}
+.list16 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: disc;}
+.list17 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: circle;}
+.list18 {text-indent: 0px; padding: 0; margin: 0 0 0 27px; list-style-position: outside; list-style-type: square;}
 .list19 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;}
 .list20 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: circle;}
 .list21 {text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: square;}
