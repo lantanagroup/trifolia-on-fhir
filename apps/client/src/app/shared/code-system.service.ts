@@ -11,8 +11,8 @@ export class CodeSystemService {
 
   }
 
-    public save(codeSystem: CodeSystem): Observable<CodeSystem> {
-        if (codeSystem.id) {
+    public save(codeSystem: CodeSystem, id?: String): Observable<CodeSystem> {
+        if (id) {
             const url = '/api/codeSystem/' + encodeURIComponent(codeSystem.id);
             return this.http.put<CodeSystem>(url, codeSystem);
         } else {
@@ -26,7 +26,7 @@ export class CodeSystemService {
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
         }
-        
+
         if (implementationGuideId) {
           url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
         }

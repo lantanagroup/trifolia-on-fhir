@@ -158,7 +158,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       return;
     }
 
-    this.codeSystemService.save(this.codeSystem)
+    this.codeSystemService.save(this.codeSystem, this.getCodeSystemID())
       .subscribe((codeSystem: CodeSystem) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
@@ -175,8 +175,12 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       });
   }
 
+  private getCodeSystemID(){
+    return this.route.snapshot.paramMap.get('id');
+  }
+
   private getCodeSystem() {
-    const codeSystemId = this.route.snapshot.paramMap.get('id');
+    const codeSystemId = this.getCodeSystemID();
 
     if (this.isFile) {
       if (this.fileService.file) {

@@ -90,10 +90,34 @@ export class FhirController extends BaseController {
       method: 'PUT',
       data: resource
     };
+    const checkOptions: AxiosRequestConfig = {
+      url: buildUrl(fhirServerBase, resourceType, newId),
+      method: 'GET'
+    };
     const deleteOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'DELETE'
     };
+
+    this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
+    let check = null;
+    try{
+      await this.httpService.request(checkOptions).toPromise();
+    }catch (ex){
+      check = ex;
+      if(ex.response.status !== 404){
+        throw ex;
+      }
+    }
+    if(!check){
+      this.logger.error(`Resource id ${newId} already exists`);
+      return `Resource id ${newId} already exists`;
+    }
+
+    this.logger.log('Sending DELETE request to FHIR server for original resource');
+
+    // Delete the original resource with the original id
+    await this.httpService.request(deleteOptions).toPromise();
 
     try {
       // Create the new resource with the new id
@@ -180,10 +204,10 @@ export class FhirController extends BaseController {
     }
 
 
-    this.logger.log('Sending DELETE request to FHIR server for original resource');
-
-    // Delete the original resource with the original id
-    await this.httpService.request(deleteOptions).toPromise();
+    // this.logger.log('Sending DELETE request to FHIR server for original resource');
+    //
+    // // Delete the original resource with the original id
+    // await this.httpService.request(deleteOptions).toPromise();
 
     this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
