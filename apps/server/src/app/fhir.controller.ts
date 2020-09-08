@@ -100,18 +100,14 @@ export class FhirController extends BaseController {
     };
 
     this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
-    let check = null;
     try{
       await this.httpService.request(checkOptions).toPromise();
+      this.logger.error(`Resource id ${newId} already exists`);
+      return `Resource id ${newId} already exists`;
     }catch (ex){
-      check = ex;
       if(ex.response.status !== 404){
         throw ex;
       }
-    }
-    if(!check){
-      this.logger.error(`Resource id ${newId} already exists`);
-      return `Resource id ${newId} already exists`;
     }
 
     this.logger.log('Sending DELETE request to FHIR server for original resource');
