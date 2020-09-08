@@ -105,7 +105,7 @@ export class FhirController extends BaseController {
       this.logger.error(`Resource id ${newId} already exists`);
       return `Resource id ${newId} already exists`;
     }catch (ex){
-      if(ex.response.status !== 404){
+      if(ex.response && ex.response.status !== 404){
         throw ex;
       }
     }
