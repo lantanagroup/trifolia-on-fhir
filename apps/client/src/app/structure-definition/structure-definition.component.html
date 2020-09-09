@@ -3,7 +3,11 @@
 <div class="alert alert-danger" *ngIf="sdNotFound">Structure Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="sd-main" *ngIf="structureDefinition">
-  <h2>{{structureDefinition.name || 'No name'}} <span class="badge badge-warning" *ngIf="!canEdit(structureDefinition)">View-only</span></h2>
+  <h2>
+    {{structureDefinition.name || 'No name'}} <span class="badge badge-warning" *ngIf="!canEdit(structureDefinition)">View-only</span>
+    <button class="badge badge-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
+    <!--span class="badge badge-danger" *ngIf="isDirty">Changed!</span-->
+  </h2>
 
   <ngb-tabset (tabChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs>
     <ngb-tab id="general">
@@ -14,11 +18,11 @@
         <fieldset>
           <div class="row">
             <div class="col-md-6">
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url" (change)="nameChanged()"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" tooltipPath="StructureDefinition.url" (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
               <app-fhir-string
                 [parentObject]="structureDefinition"
-                (change)="nameChanged()"
+                (change)="isDirty = true; nameChanged();"
                 [pattern]="Globals.regexPatterns.namePattern"
                 [patternMessage]="Globals.tooltips['name.validation.failed']"
                 propertyName="name"
@@ -26,22 +30,27 @@
                 tooltipPath="StructureDefinition.name">
               </app-fhir-string>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="title" title="Title" tooltipPath="StructureDefinition.title" (change)="isDirty = true; nameChanged();"></app-fhir-string>
             </div>
 
             <div class="col-md-3">
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="status" title="Status" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"
-                                           [required]="true" tooltipPath="StructureDefinition.status"></app-fhir-select-single-code>
+                                           [required]="true" tooltipPath="StructureDefinition.status" (change)="isDirty = true; nameChanged();"></app-fhir-select-single-code>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"
+                               (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"
+                               (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"
+                               (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
-              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="experimental" title="Experimental" tooltipPath="StructureDefinition.experimental"></app-fhir-boolean>
+              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="experimental" title="Experimental" tooltipPath="StructureDefinition.experimental"
+                                (change)="isDirty = true; nameChanged();"></app-fhir-boolean>
 
-              <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipPath="StructureDefinition.date"></app-fhir-date>
+              <app-fhir-date [parentObject]="structureDefinition" propertyName="date" title="Date" tooltipPath="StructureDefinition.date"
+                             (change)="isDirty = true; nameChanged();"></app-fhir-date>
             </div>
 
             <div class="col-md-3">
@@ -49,7 +58,7 @@
                 <label>ID
                   <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
-                <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id"/>
+                <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id" (change)="isDirty = true; nameChanged();"/>
               </div>
 
               <div class="form-group">
@@ -57,23 +66,25 @@
                   <app-tooltip-icon tooltipKey="sd.type"></app-tooltip-icon>
                 </label>
                 <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true"
-                        title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type.">
+                        title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type." (change)="isDirty = true; nameChanged();">
                   <option>{{structureDefinition.type}}</option>
                 </select>
               </div>
 
-              <app-fhir-reference [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" [isCanonical]="true" resourceType="StructureDefinition" [structureDefinitionType]="structureDefinition.type" [hideResourceType]="true" (change)="loadBaseDefinition()"></app-fhir-reference>
+              <app-fhir-reference [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" [isCanonical]="true" resourceType="StructureDefinition"
+                                  [structureDefinitionType]="structureDefinition.type" [hideResourceType]="true" (change)="loadBaseDefinition(); isDirty = true; nameChanged();"></app-fhir-reference>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="kind" title="Kind" valueSetUrl="http://hl7.org/fhir/ValueSet/structure-definition-kind"
-                                           [required]="true" tooltipPath="StructureDefinition.kind"></app-fhir-select-single-code>
+                                           [required]="true" tooltipPath="StructureDefinition.kind" (change)="isDirty = true; nameChanged();"></app-fhir-select-single-code>
 
-              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
+              <app-fhir-boolean [parentObject]="structureDefinition" propertyName="abstract" title="Abstract" [required]="true" tooltipPath="StructureDefinition.abstract"
+                                (change)="isDirty = true; nameChanged();"></app-fhir-boolean>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="contextType" title="Context Type" valueSetUrl="http://hl7.org/fhir/ValueSet/extension-context"
-                                           tooltipPath="StructureDefinition.contextType" *ngIf="structureDefinition.type === 'Extension'"></app-fhir-select-single-code>
+                                           tooltipPath="StructureDefinition.contextType" *ngIf="structureDefinition.type === 'Extension'" (change)="isDirty = true; nameChanged();"></app-fhir-select-single-code>
 
               <app-fhir-select-single-code [parentObject]="structureDefinition" propertyName="derivation" title="Derivation" valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
-                                           tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
+                                           tooltipPath="StructureDefinition.derivation" (change)="isDirty = true; nameChanged();"></app-fhir-select-single-code>
             </div>
           </div>
         </fieldset>
@@ -85,17 +96,20 @@
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-fhir-narrative [resource]="structureDefinition"></app-fhir-narrative>
+        <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
-        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"
+                           (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="this" propertyName="intro" title="Intro"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="this" propertyName="intro" title="Intro" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="this" propertyName="notes" title="Notes"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="this" propertyName="notes" title="Notes" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"
+                           (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"
+                           (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
       </ng-template>
     </ngb-tab>
 
@@ -106,22 +120,28 @@
       <ng-template ngbTabContent>
         <div class="row">
           <div class="col-md-6">
-            <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"></app-fhir-multi-identifier>
+            <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"
+                                       (change)="isDirty = true; nameChanged();"></app-fhir-multi-identifier>
 
-            <app-fhir-multi-use-context [parentObject]="structureDefinition" propertyName="useContext" tooltipPath="StructureDefinition.useContext"></app-fhir-multi-use-context>
+            <app-fhir-multi-use-context [parentObject]="structureDefinition" propertyName="useContext" tooltipPath="StructureDefinition.useContext"
+                                        (change)="isDirty = true; nameChanged();"></app-fhir-multi-use-context>
 
-            <app-fhir-multi-jurisdiction [parentObject]="structureDefinition" propertyName="jurisdiction" tooltipPath="StructureDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
+            <app-fhir-multi-jurisdiction [parentObject]="structureDefinition" propertyName="jurisdiction" tooltipPath="StructureDefinition.jurisdiction"
+                                         (change)="isDirty = true; nameChanged();"></app-fhir-multi-jurisdiction>
 
-            <app-fhir-multi-contact [parentObject]="structureDefinition" propertyName="contact" tooltipPath="StructureDefinition.contact"></app-fhir-multi-contact>
+            <app-fhir-multi-contact [parentObject]="structureDefinition" propertyName="contact" tooltipPath="StructureDefinition.contact"
+                                    (change)="isDirty = true; nameChanged();"></app-fhir-multi-contact>
           </div>
           <div class="col-md-6">
-            <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)" tooltipPath="StructureDefinition.keyword"></app-fhir-select-multi-coding>
+            <app-fhir-select-multi-coding [parentObject]="structureDefinition" propertyName="keyword" title="Keyword(s)" tooltipPath="StructureDefinition.keyword"
+                                          (change)="isDirty = true; nameChanged();"></app-fhir-select-multi-coding>
 
-            <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
+            <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-structure-definition-context-panel-wrapper>
 
             <div class="card context-invariant">
               <div class="card-header">
-                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('contextInvariant')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'contextInvariant', [''])"/>
+                <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('contextInvariant')"
+                       (ngModelChange)="Globals.toggleProperty(structureDefinition, 'contextInvariant', ['']); isDirty = true; nameChanged();"/>
                 Context Invariant
                 <app-tooltip-icon tooltipPath="StructureDefinition.contextInvariant"></app-tooltip-icon>
               </div>
@@ -134,7 +154,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push('')">
+                      <button type="button" class="btn btn-default btn-sm" title="Add a context invariant" (click)="structureDefinition.contextInvariant.push(''); isDirty = true; nameChanged();">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -144,11 +164,11 @@
                 <tbody>
                 <tr *ngFor="let ci of structureDefinition.contextInvariant; let cii = index; trackBy: Globals.trackByFn">
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="structureDefinition.contextInvariant[cii]"/>
+                    <input type="text" class="form-control" [(ngModel)]="structureDefinition.contextInvariant[cii]" (change)="isDirty = true; nameChanged();"/>
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1)">
+                      <button type="button" class="btn btn-default btn-sm" title="Remove this context invariant" (click)="structureDefinition.contextInvariant.splice(cii, 1); isDirty = true; nameChanged();">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -168,7 +188,7 @@
       </ng-template>
       <ng-template ngbTabContent>
         <p>
-          <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings()"/>
+          <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings(); isDirty = true; nameChanged();"/>
           This structure definition includes mappings
           <app-tooltip-icon tooltipPath="StructureDefinition.mapping"></app-tooltip-icon>
         </p>
@@ -194,7 +214,7 @@
             </th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a mapping" (click)="structureDefinition.mapping.push({ identity: '' })">
+                <button type="button" class="btn btn-default btn-sm" title="Add a mapping" (click)="structureDefinition.mapping.push({ identity: '' }); isDirty = true; nameChanged();">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -204,20 +224,20 @@
           <tbody>
           <tr *ngFor="let m of structureDefinition.mapping; let mi = index">
             <td>
-              <input type="text" class="form-control" [(ngModel)]="m.identity" [class.is-invalid]="!m.identity"/>
+              <input type="text" class="form-control" [(ngModel)]="m.identity" [class.is-invalid]="!m.identity" (change)="isDirty = true; nameChanged();"/>
             </td>
             <td>
-              <app-fhir-string [parentObject]="m" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="m" propertyName="uri" [isFormGroup]="false" (change)="isDirty = true; nameChanged();"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="m" propertyName="name" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="m" propertyName="name" [isFormGroup]="false" (change)="isDirty = true; nameChanged();"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="m" propertyName="comment" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="m" propertyName="comment" [isFormGroup]="false" (change)="isDirty = true; nameChanged();"></app-fhir-string>
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1)">
+                <button type="button" class="btn btn-default btn-sm" title="Remove this mapping" (click)="structureDefinition.mapping.splice(mi, 1); isDirty = true; nameChanged();">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -248,12 +268,12 @@
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
               <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
-              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e)"></i> </span>
+              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e); isDirty = true; nameChanged();"></i> </span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0 && cardinalityAllowsMultiple(e.baseElement.max) && e.constrainedElement.slicing">
-                <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e)"></i>
+                <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e); isDirty = true; nameChanged();"></i>
               </span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0">
-                <i class="fas fa-trash-alt" title="Remove this element" (click)="constraintManager.removeConstraint(e)"></i>
+                <i class="fas fa-trash-alt" title="Remove this element" (click)="constraintManager.removeConstraint(e); isDirty = true; nameChanged();"></i>
               </span>
               <br/>
               <span title="Type">{{e.typeDisplay}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
@@ -263,7 +283,7 @@
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search elements" [ngModel]="elementSearch" (ngModelChange)="elementSearchChanged($event)"/>
           <div class="input-group-btn">
-            <button type="button" class="btn btn-primary" title="Search" (click)="getSearchElement()">
+            <button type="button" class="btn btn-primary" title="Search" (click)="getSearchElement(); isDirty = true; nameChanged();">
               <i class="fas fa-search"></i>
             </button>
           </div>
@@ -304,11 +324,11 @@
             </td>
             <td class="element-cardinality">
               <div class="input-group">
-                <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" />
+                <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
                 <div class="input-group-append">
                   <span class="input-group-text">...</span>
                 </div>
-                <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" />
+                <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
               </div>
             </td>
             <td class="element-type">{{e.typeDisplay}}</td>
@@ -328,7 +348,7 @@
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
       </ng-template>
     </ngb-tab>
 
@@ -352,7 +372,7 @@
     <!-- Version History -->
     <ngb-tab id="history" title="History">
       <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()"></app-resource-history>
+        <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
       </ng-template>
     </ngb-tab>
   </ngb-tabset>
@@ -365,12 +385,12 @@
         <div class="btn-group mr-2">
           <button type="button" class="btn btn-primary btn-sm" title="Slice this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0 || !cardinalityAllowsMultiple(selectedElement.baseElement.max)"
-                  (click)="constraintManager.slice(selectedElement)">
+                  (click)="constraintManager.slice(selectedElement); isDirty = true; nameChanged();">
             <i class="fa fa-cut"></i>
           </button>
           <button type="button" class="btn btn-primary btn-sm" title="Remove this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0"
-                  (click)="constraintManager.removeConstraint(selectedElement)">
+                  (click)="constraintManager.removeConstraint(selectedElement); isDirty = true; nameChanged();">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
@@ -387,12 +407,12 @@
         [elementTreeModel]="selectedElement"
         [disabled]="false"
         [elementTreeModels]="constraintManager.elements"
-        [structureDefinition]="structureDefinition" #edPanel>
+        [structureDefinition]="structureDefinition" #edPanel (change)="isDirty=true; nameChanged()">
       </app-element-definition-panel>
 
       <div *ngIf="!selectedElement.constrainedElement">
         <p>This element has not been constrained.</p>
-        <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement)" id="edConstraintBtn">
+        <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement); isDirty=true; nameChanged()" id="edConstraintBtn">
           <i class="fa fa-edit"></i> Constrain this element
         </button>
       </div>
@@ -409,7 +429,7 @@
 </footer>
 
 <ng-template #elementPropertiesPopover>
-  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isSummary" /> Is Summary <br />
-  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isModifier" /> Is Modifier <br />
-  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.mustSupport" /> Must Support
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isSummary" (change)="isDirty=true; nameChanged()"/> Is Summary <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.isModifier" (change)="isDirty=true; nameChanged()"/> Is Modifier <br />
+  <input type="checkbox" [(ngModel)]="selectedElement.constrainedElement.mustSupport" (change)="isDirty=true; nameChanged()"/> Must Support
 </ng-template>

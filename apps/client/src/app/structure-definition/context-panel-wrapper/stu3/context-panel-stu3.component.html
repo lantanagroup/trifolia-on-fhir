@@ -1,6 +1,7 @@
 <div class="card context" *ngIf="structureDefinition">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')" (ngModelChange)="Globals.toggleProperty(structureDefinition, 'context', [''])"/>
+        <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('context')"
+               (ngModelChange)="Globals.toggleProperty(structureDefinition, 'context', ['']); change.emit()"/>
         Context <app-tooltip-icon tooltipPath="StructureDefinition.context"></app-tooltip-icon>
     </div>
     <table class="table table-striped" *ngIf="structureDefinition.hasOwnProperty('context')">
@@ -11,7 +12,7 @@
             </th>
             <th class="actions-column-1">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push('')">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a context" (click)="structureDefinition.context.push(''); change.emit()">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -21,11 +22,11 @@
         <tbody>
         <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn">
             <td>
-                <input type="text" class="form-control" [(ngModel)]="structureDefinition.context[cii]"/>
+                <input type="text" class="form-control" [(ngModel)]="structureDefinition.context[cii]" (change)="change.emit()"/>
             </td>
             <td>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.context.splice(cii, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this context" (click)="structureDefinition.context.splice(cii, 1); change.emit()">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>

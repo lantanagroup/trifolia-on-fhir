@@ -1,6 +1,7 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{}])"/>
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, [{}])"
+        (change)="change.emit()"/>
         {{title || 'Identifiers'}}
         <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
     </div>
@@ -21,7 +22,7 @@
             </th>
             <th class="actions-column-2">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'identifier'}}" (click)="parentObject[propertyName].push({})">
+                    <button type="button" class="btn btn-default btn-sm" title="Add a {{title || 'identifier'}}" (click)="parentObject[propertyName].push({}); change.emit()">
                         <i class="fa fa-plus"></i>
                     </button>
                 </div>
@@ -31,20 +32,20 @@
         <tbody>
         <tr *ngFor="let id of parentObject[propertyName]; let idi = index">
             <td>
-                <app-fhir-select-single-code [parentObject]="id" propertyName="use" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use"></app-fhir-select-single-code>
+                <app-fhir-select-single-code [parentObject]="id" propertyName="use" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use" (change)="change.emit()"></app-fhir-select-single-code>
             </td>
             <td>
-                <app-fhir-string [parentObject]="id" propertyName="system" [isFormGroup]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="id" propertyName="system" [isFormGroup]="false" (change)="change.emit()"></app-fhir-string>
             </td>
             <td>
-                <app-fhir-string [parentObject]="id" propertyName="value" [isFormGroup]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="id" propertyName="value" [isFormGroup]="false" (change)="change.emit()"></app-fhir-string>
             </td>
             <td>
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'identifier'}}" (click)="editIdentifier(id)">
                         <i class="fa fa-edit"></i>
                     </button>
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'identifier'}}" (click)="parentObject[propertyName].splice(idi, 1)">
+                    <button type="button" class="btn btn-default btn-sm" title="Remove this {{title || 'identifier'}}" (click)="parentObject[propertyName].splice(idi, 1); change.emit()">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>

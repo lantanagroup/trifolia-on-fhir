@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {CookieService} from 'angular2-cookie/core';
 import {NgbDateStruct, NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,7 @@ export class FhirDateComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() allowTime = false;
   @Input() label? = true;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   /**
    * Indicates that the value of the component should be remembered in cookies
@@ -104,6 +105,7 @@ export class FhirDateComponent implements OnInit {
         this.cookieService.put(this.cookieKey, newValue);
       }
     }
+    this.change.emit();
   }
 
   public valueChanged() {

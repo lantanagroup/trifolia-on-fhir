@@ -249,9 +249,7 @@ export class NarrativeComponent implements OnInit {
     } else if (!hasNarrative && this.resource.text) {
       delete this.resource.text;
     }
-
-    const editable = !!this.resource && !!this.resource.text && this.resource.text.hasOwnProperty('div');
-    this.editorConfig.editable = editable;
+    this.editorConfig.editable = !!this.resource && !!this.resource.text && this.resource.text.hasOwnProperty('div');;
   }
 
   ngOnInit() {
