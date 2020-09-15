@@ -10,6 +10,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
+import {ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
@@ -48,6 +49,10 @@ describe('FhirController', () => {
     });
 
     it('should change the id of a resource', async () => {
+      const implementationGuide = new ImplementationGuide({
+        id: "test-ig-id"
+      });
+
       const persistedResource = new StructureDefinition({
         resourceType: 'StructureDefinition',
         id: 'test',
@@ -59,6 +64,8 @@ describe('FhirController', () => {
       const req = nock(fhirServerBase)
         .get('/StructureDefinition/test')
         .reply(200, persistedResource)
+        .get('/ImplementationGuide/test-ig-id')
+        .reply(200, implementationGuide)
         .get('/ImplementationGuide?resource=StructureDefinition%2Ftest')
         .reply(200, persistedResource)
         .get('/ImplementationGuide?global=StructureDefinition%2Ftest')
@@ -68,7 +75,7 @@ describe('FhirController', () => {
         .delete('/StructureDefinition/test')
         .reply(200);
 
-      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, 'r4');
+      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, "test-ig-id",'r4');
 
       req.done();
       expect(results).toBeTruthy();
