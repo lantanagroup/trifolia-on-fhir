@@ -158,18 +158,18 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       return;
     }
 
-    this.codeSystemService.save(this.codeSystem, this.getCodeSystemID())
+    this.codeSystemService.save(this.codeSystem)
       .subscribe((codeSystem: CodeSystem) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
-          this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
         }
+        this.message = 'Your changes have been saved!';
       }, (err) => {
         this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
       });

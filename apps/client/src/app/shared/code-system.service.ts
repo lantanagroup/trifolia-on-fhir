@@ -11,8 +11,8 @@ export class CodeSystemService {
 
   }
 
-    public save(codeSystem: CodeSystem, id?: String): Observable<CodeSystem> {
-        if (id) {
+    public save(codeSystem: CodeSystem): Observable<CodeSystem> {
+        if (codeSystem.id) {
             const url = '/api/codeSystem/' + encodeURIComponent(codeSystem.id);
             return this.http.put<CodeSystem>(url, codeSystem);
         } else {
