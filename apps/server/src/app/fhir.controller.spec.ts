@@ -10,7 +10,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
-import {ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide, ImplementationGuideDefinitionComponent, ImplementationGuideResourceComponent} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
@@ -49,14 +49,21 @@ describe('FhirController', () => {
     });
 
     it('should change the id of a resource', async () => {
-      const implementationGuide = new ImplementationGuide({
-        id: "test-ig-id"
-      });
-
       const persistedResource = new StructureDefinition({
         resourceType: 'StructureDefinition',
         id: 'test',
         meta: {}
+      });
+
+      const implementationGuide = new ImplementationGuide({
+        id: "test-ig-id",
+        definition: {
+          resource: [
+            {"reference":
+                { "reference": "StructureDefinition/test" }
+            }
+          ]
+        }
       });
 
       addPermission(persistedResource.meta, 'everyone', 'write');
@@ -71,6 +78,13 @@ describe('FhirController', () => {
         .get('/ImplementationGuide?global=StructureDefinition%2Ftest')
         .reply(200, persistedResource)
         .put('/StructureDefinition/new-test-id')
+        .reply(200)
+        .put('/ImplementationGuide/test-ig-id', (ig) => {
+          expect(ig).toBeTruthy();
+          expect(ig.resourceType).toBe('ImplementationGuide');
+          expect(ig.definition.resource.reference.reference).toBe("StructureDefinition/new-test-id");
+          return true;
+        })
         .reply(200)
         .delete('/StructureDefinition/test')
         .reply(200);
