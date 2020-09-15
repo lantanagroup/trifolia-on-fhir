@@ -544,7 +544,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
 
-    newPage.nameUrl = newPage.fileName;
     pageDef.page.page.push(newPage);
 
     this.initPages();
