@@ -15,8 +15,8 @@ export class FhirBooleanComponent implements OnInit {
   @Input() defaultValue = false;
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
-  @Input() noLabel = 'No';
-  @Input() yesLabel = 'Yes';
+  @Input() falseLabel = 'false';
+  @Input() trueLabel = 'true';
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   /**
