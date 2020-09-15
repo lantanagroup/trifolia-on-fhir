@@ -223,6 +223,12 @@
                   <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p); isDirty=true; nameChanged();" title="Move sibling page down (requires multiple pages on the same level)">
                     <i class="fa fa-arrow-down"></i>
                   </button>
+                  <button type="button" class="btn btn-primary" [disabled]="isMovePageOutDisabled(p)" (click)="movePageOut(p); isDirty=true; nameChanged();" title="Move page out a level">
+                    <i class="fa fa-arrow-left"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" [disabled]="isMovePageInDisabled(p)" (click)="movePageIn(p); isDirty=true; nameChanged();" title="Move page in a level, as a child of the previous sibling page">
+                    <i class="fa fa-arrow-right"></i>
+                  </button>
                 </div>
               </td>
             </tr>

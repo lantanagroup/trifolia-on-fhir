@@ -613,6 +613,53 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.initPages();
   }
 
+  public isMovePageOutDisabled(pageDef: PageDefinition) {
+    if (!pageDef.parent || pageDef.parent === this.implementationGuide.definition.page) return true;
+
+    // Must have a grand-parent to move this page to a child of
+    const parentPageDef = this.pages.find(y => y.page === pageDef.parent);
+    return !parentPageDef.parent;
+  }
+
+  public movePageOut(pageDef: PageDefinition) {
+    if (this.isMovePageOutDisabled(pageDef)) return;
+    const parentPage = pageDef.parent;
+
+    // Remove the page from it's current parent
+    const currentIndex = parentPage.page.indexOf(pageDef.page);
+    parentPage.page.splice(currentIndex, currentIndex >= 0 ? 1 : 0);
+
+    // Add the page the grand-parent
+    const parentPageDef = this.pages.find(y => y.page === parentPage);
+    const grandParentPage = parentPageDef.parent;
+    const parentIndex = grandParentPage.page.indexOf(parentPage);
+    grandParentPage.page.splice(parentIndex + 1, 0, pageDef.page);
+
+    this.initPages();
+  }
+
+  public isMovePageInDisabled(pageDef: PageDefinition) {
+    if (!pageDef.parent) return true;
+    const currentIndex = pageDef.parent.page.indexOf(pageDef.page);
+    return pageDef.page === this.implementationGuide.definition.page || pageDef.parent.page.length === 1 || currentIndex === 0;
+  }
+
+  public movePageIn(pageDef: PageDefinition) {
+    if (this.isMovePageInDisabled(pageDef)) return;
+    const parentPage = pageDef.parent;
+
+    // Remove the page from it's current parent
+    const currentIndex = parentPage.page.indexOf(pageDef.page);
+    parentPage.page.splice(currentIndex, currentIndex >= 0 ? 1 : 0);
+
+    // Add the current page to the previous sibling
+    const newParentPage = parentPage.page[currentIndex - 1];
+    newParentPage.page = newParentPage.page || [];
+    newParentPage.page.push(pageDef.page);
+
+    this.initPages();
+  }
+
   public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
     const extension = (dependsOn.extension || []).find((ext) => ext.url === Globals.extensionUrls['ig-depends-on-name']);
 
