@@ -19,3 +19,6 @@ tr.page-prefix-6 td:first-child {
 .card {
     margin-bottom: 15px;
 }
+tr.page-highlight {
+  background-color: lightgray;
+}
