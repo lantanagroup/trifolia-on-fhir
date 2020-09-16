@@ -48,7 +48,33 @@ describe('FhirController', () => {
       nock.cleanAll();
     });
 
-    it('should change the id of a resource', async () => {
+    it('should change the id of a resource when not in context of an IG', async () => {
+      const persistedResource = new StructureDefinition({
+        resourceType: 'StructureDefinition',
+        id: 'test',
+        meta: {}
+      });
+
+      const req = nock(fhirServerBase)
+        .get('/StructureDefinition/test')
+        .reply(200, persistedResource)
+        .get('/ImplementationGuide?resource=StructureDefinition%2Ftest')
+        .reply(200, persistedResource)
+        .get('/ImplementationGuide?global=StructureDefinition%2Ftest')
+        .reply(200, persistedResource)
+        .put('/StructureDefinition/new-test-id')
+        .reply(200)
+        .delete('/StructureDefinition/test')
+        .reply(200)
+        .log(console.log);
+
+      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, null,'r4');
+
+      req.done();
+      expect(results).toBeTruthy();
+    });
+
+    it('should change the id of a resource and update the context IG\'s reference', async () => {
       const persistedResource = new StructureDefinition({
         resourceType: 'StructureDefinition',
         id: 'test',
@@ -59,14 +85,17 @@ describe('FhirController', () => {
         id: "test-ig-id",
         definition: {
           resource: [
-            {"reference":
+            {
+              "reference":
                 { "reference": "StructureDefinition/test" }
             }
           ]
-        }
+        },
+        meta: {}
       });
 
       addPermission(persistedResource.meta, 'everyone', 'write');
+      addPermission(implementationGuide.meta, 'everyone', 'write');
 
       const req = nock(fhirServerBase)
         .get('/StructureDefinition/test')
@@ -79,17 +108,29 @@ describe('FhirController', () => {
         .reply(200, persistedResource)
         .put('/StructureDefinition/new-test-id')
         .reply(200)
-        .put('/ImplementationGuide/test-ig-id', (ig) => {
-          expect(ig).toBeTruthy();
-          expect(ig.resourceType).toBe('ImplementationGuide');
-          expect(ig.definition.resource.reference.reference).toBe("StructureDefinition/new-test-id");
+        .post('/', (bundle) => {
+          expect(bundle).toBeTruthy();
+          expect(bundle.entry).toBeTruthy();
+          const igEntry = bundle.entry.find(e => e.request && e.request.url === 'ImplementationGuide/test-ig-id');
+          expect(igEntry).toBeTruthy();
+          expect(igEntry.resource).toBeTruthy();
+          expect(igEntry.resource.resourceType).toBe('ImplementationGuide');
+
+          const ig = igEntry.resource;
+          expect(ig.definition).toBeTruthy();
+          expect(ig.definition.resource).toBeTruthy();
+          expect(ig.definition.resource.length).toBe(1);
+          expect(ig.definition.resource[0].reference).toBeTruthy();
+          expect(ig.definition.resource[0].reference.reference).toBe('StructureDefinition/new-test-id');
+
           return true;
         })
         .reply(200)
         .delete('/StructureDefinition/test')
-        .reply(200);
+        .reply(200)
+        .log(console.log);
 
-      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, "test-ig-id",'r4');
+      const results = await controller.changeId(fhirServerBase, 'StructureDefinition', 'test', 'new-test-id', testUser, 'test-ig-id','r4');
 
       req.done();
       expect(results).toBeTruthy();
