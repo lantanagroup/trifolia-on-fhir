@@ -33,7 +33,7 @@
     <td>{{example.id}}</td>
     <td>{{example.name}}</td>
     <td>
-      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/{{example.resourceType}}/{{example.id}}">
+      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/{{example.resourceType}}/{{example.id}}" [class.disabled]="!example.resourceType || !example.id">
         <i class="fa fa-edit"></i>
       </a>
     </td>
