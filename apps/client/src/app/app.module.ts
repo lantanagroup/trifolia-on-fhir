@@ -74,6 +74,7 @@ import {ResourceGuard} from './guards/resource.guard';
 import {ElementDefinitionConstraintComponent} from './modals/element-definition-constraint/element-definition-constraint.component';
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import {ExamplesComponent} from './examples/examples.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -155,6 +156,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
+  {path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent},
   {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
@@ -229,7 +231,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent
   ],
   imports: [
     RouterModule.forRoot(

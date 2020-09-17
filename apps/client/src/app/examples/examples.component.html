@@ -1,0 +1,42 @@
+<h2>Examples</h2>
+
+<div class="card">
+  <div class="card-header">Search</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Enter search text..." [(ngModel)]="searchText" />
+          <div class="input-group-append">
+            <button type="button" class="btn btn-primary" title="Clear the current search text" (click)="searchText = ''">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Resource Type</th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="examples">
+  <tr *ngFor="let example of filteredExamples">
+    <td>{{example.resourceType}}</td>
+    <td>{{example.id}}</td>
+    <td>{{example.name}}</td>
+    <td>
+      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/{{example.resourceType}}/{{example.id}}">
+        <i class="fa fa-edit"></i>
+      </a>
+    </td>
+  </tr>
+  </tbody>
+</table>
