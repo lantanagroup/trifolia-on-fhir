@@ -1,0 +1,42 @@
+<h2>Bulk Edit</h2>
+
+<div *ngIf="implementationGuide">
+  <ngb-tabset>
+    <ngb-tab title="Profiles">
+      <ng-template ngbTabContent>
+        <div class="card" *ngFor="let profile of profiles; let pIndex = index;">
+          <div class="card-header">Profile {{profile.name}}</div>
+          <div class="card-body">
+            <app-fhir-markdown [parentObject]="profile" propertyName="description" title="Description"></app-fhir-markdown>
+
+            <app-fhir-markdown [parentObject]="profile" propertyName="intro" title="Intro"></app-fhir-markdown>
+
+            <app-fhir-markdown [parentObject]="profile" propertyName="notes" title="Notes"></app-fhir-markdown>
+
+            <div class="card">
+              <div class="card-header">Elements</div>
+              <div class="card-body">
+                <div *ngFor="let element of profile.differential?.element; let eIndex = index">
+                  <p>Element {{eIndex + 1}}: {{element.id}}</p>
+
+                  <app-fhir-string [parentObject]="element" propertyName="short" title="Short"></app-fhir-string>
+
+                  <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition"></app-fhir-markdown>
+
+                  <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"></app-fhir-markdown>
+
+                  <hr/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Pages">
+      <ng-template ngbTabContent>
+        <trifolia-fhir-page-wrapper [implementationGuide]="implementationGuide"></trifolia-fhir-page-wrapper>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</div>

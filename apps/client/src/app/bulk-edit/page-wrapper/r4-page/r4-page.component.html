@@ -1,0 +1,8 @@
+<div class="card" *ngFor="let page of pages; let pIndex = index;">
+  <div class="card-header">Page {{pIndex + 1}}</div>
+  <div class="card-body">
+    <app-fhir-string [parentObject]="page" propertyName="title" title="Title"></app-fhir-string>
+
+    <app-fhir-markdown [parentObject]="page" propertyName="contentMarkdown" title="Content"></app-fhir-markdown>
+  </div>
+</div>

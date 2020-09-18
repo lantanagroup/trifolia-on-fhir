@@ -16,7 +16,7 @@ import {
   IHumanName,
   IImplementationGuide,
   INetworkComponent,
-  IPractitioner,
+  IPractitioner, IResourceReference,
   IStructureDefinition,
   setChoice
 } from '../fhirInterfaces';
@@ -271,7 +271,7 @@ export class Identifier extends Element {
 
 }
 
-export class ResourceReference extends Element {
+export class ResourceReference extends Element implements IResourceReference {
   public reference?: string;
   public type?: string;
   public identifier?: Identifier;
@@ -1272,6 +1272,57 @@ export class StructureDefinition extends DomainResource implements IStructureDef
     }
   }
 
+  get notes() {
+    if (!this.extension) return '';
+    const extensions: IExtension[] = this.extension;
+    const notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
+    return notes ? notes.valueMarkdown || '' : '';
+  }
+
+  set notes(value: string) {
+    this.extension = this.extension || [];
+    const extensions: IExtension[] = this.extension;
+    let notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
+
+    if (!notes && value) {
+      notes = {
+        url: Globals.extensionUrls['extension-sd-notes'],
+        valueMarkdown: value
+      };
+      extensions.push(notes);
+    } else if (notes && !value) {
+      const index = extensions.indexOf(notes);
+      extensions.splice(index, index >= 0 ? 1 : 0);
+    } else if (notes && value) {
+      notes.valueMarkdown = value;
+    }
+  }
+
+  get intro() {
+    if (!this.extension) return '';
+    const extensions: IExtension[] = this.extension;
+    const intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+    return intro ? intro.valueMarkdown || '' : '';
+  }
+
+  set intro(value: string) {
+    this.extension = this.extension || [];
+    const extensions: IExtension[] = this.extension;
+    let intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
+
+    if (!intro && value) {
+      intro = {
+        url: Globals.extensionUrls['extension-sd-intro'],
+        valueMarkdown: value
+      };
+      extensions.push(intro);
+    } else if (intro && !value) {
+      const index = extensions.indexOf(intro);
+      extensions.splice(index, index >= 0 ? 1 : 0);
+    } else if (intro && value) {
+      intro.valueMarkdown = value;
+    }
+  }
 }
 
 export class ParametersParameterComponent extends BackboneElement {

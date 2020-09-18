@@ -75,6 +75,10 @@ import {ElementDefinitionConstraintComponent} from './modals/element-definition-
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {ExamplesComponent} from './examples/examples.component';
+import {BulkEditComponent} from './bulk-edit/bulk-edit.component';
+import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.component';
+import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
+import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -157,6 +161,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
   {path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent},
+  {path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent},
   {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
@@ -215,7 +220,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
     MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent
+    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -231,7 +236,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent
   ],
   imports: [
     RouterModule.forRoot(
