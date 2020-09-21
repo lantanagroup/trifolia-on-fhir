@@ -17,6 +17,7 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export class PublishedGuideModel {
   public name: string;
@@ -59,6 +60,10 @@ export class ImplementationGuideService {
       return Observable.throw(err || 'backend server error');
   }
   */
+
+  public getProfiles(implementationGuideId: string) {
+    return this.http.get<IBundle>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
+  }
 
   public getExamples(implementationGuideId: string) {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);

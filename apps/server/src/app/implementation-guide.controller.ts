@@ -10,11 +10,11 @@ import {getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReferenc
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
 import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {AxiosRequestConfig} from 'axios';
-import {IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide, IResourceReference} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
 
 @Controller('api/implementationGuide')
@@ -60,6 +60,66 @@ export class ImplementationGuideController extends BaseFhirController {
           name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
         };
       });
+  }
+
+  private getR4ProfileReferences(ig: R4ImplementationGuide): IResourceReference[] {
+    if (!ig || !ig.definition || !ig.definition.resource) return [];
+    return ig.definition.resource
+      .filter(r => r.reference && r.reference.reference)
+      .filter(r => {
+        const parsedReference = parseReference(r.reference.reference);
+        return parsedReference.resourceType === 'StructureDefinition';
+      })
+      .map(r => r.reference);
+  }
+
+  private getSTU3ProfileReferences(ig: STU3ImplementationGuide): IResourceReference[] {
+    if (!ig || !ig.package) return [];
+    const profileReferences = [];
+
+    ig.package.forEach(p => {
+      (p.resource || [])
+        .filter(r => r.sourceReference && r.sourceReference.reference)
+        .forEach(r => {
+          const parsedReference = parseReference(r.sourceReference.reference);
+
+          if (parsedReference.resourceType === 'StructureDefinition') {
+            profileReferences.push(r.sourceReference);
+          }
+        });
+    });
+
+    return profileReferences;
+  }
+
+  @Get(':id/profile')
+  public async getProfiles(@Param('id') id: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
+    const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
+    const ig = igResults.data;
+    let profileReferences: IResourceReference[];
+
+    if (fhirServerVersion === 'r4') {
+      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide> ig);
+    } else {
+      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig);
+    }
+
+    const batch = <Bundle> {
+      resourceType: 'Bundle',
+      type: 'batch',
+      entry: profileReferences.map(pr => {
+        return {
+          request: {
+            method: 'GET',
+            url: pr.reference
+          }
+        };
+      })
+    };
+
+    const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
+    return bundleResults.data;
   }
 
   @Get(':id/example')

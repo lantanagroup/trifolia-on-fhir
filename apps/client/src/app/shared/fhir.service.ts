@@ -387,6 +387,10 @@ export class FhirService {
     return this.http.post<DomainResource>(url, resource);
   }
 
+  public transaction(bundle: IBundle) {
+    return this.http.post<IBundle>('/api/fhir', bundle);
+  }
+
   public batch(data: string, contentType: string, shouldRemovePermissions = true, applyContextPermissions = true) {
     let url = '/api/fhir?';
 

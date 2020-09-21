@@ -5,27 +5,49 @@
     <ngb-tab title="Profiles">
       <ng-template ngbTabContent>
         <div class="card" *ngFor="let profile of profiles; let pIndex = index;">
-          <div class="card-header">Profile {{profile.name}}</div>
-          <div class="card-body">
-            <app-fhir-markdown [parentObject]="profile" propertyName="description" title="Description"></app-fhir-markdown>
+          <div class="card-header clickable" (click)="expandedProfiles[profile.id] = !expandedProfiles[profile.id]">
+            <i class="fa" [class.fa-plus]="!expandedProfiles[profile.id]" [class.fa-minus]="expandedProfiles[profile.id]"></i>
+            Profile {{profile.name}}
+          </div>
+          <div class="card-body" *ngIf="expandedProfiles[profile.id]">
 
-            <app-fhir-markdown [parentObject]="profile" propertyName="intro" title="Intro"></app-fhir-markdown>
+            <div class="form-group">
+              <label>Description [ <a href="javascript:void(0)" (click)="editFields[profile.id + 'description'] = !editFields[profile.id + 'description']">edit</a> ]</label>
+              <pre *ngIf="!editFields[profile.id + 'description']" (click)="editFields[profile.id + 'description'] = true">{{profile.description}}</pre>
+              <app-fhir-markdown [parentObject]="profile" propertyName="description" [isFormGroup]="false" *ngIf="editFields[profile.id + 'description']"></app-fhir-markdown>
+            </div>
 
-            <app-fhir-markdown [parentObject]="profile" propertyName="notes" title="Notes"></app-fhir-markdown>
+            <div class="form-group">
+              <label>Intro [ <a href="javascript:void(0)" (click)="editFields[profile.id + 'intro'] = !editFields[profile.id + 'intro']">edit</a> ]</label>
+              <pre *ngIf="!editFields[profile.id + 'intro']" (click)="editFields[profile.id + 'intro'] = true">{{profile.intro}}</pre>
+              <app-fhir-markdown [parentObject]="profile" propertyName="intro" [isFormGroup]="false" *ngIf="editFields[profile.id + 'intro']"></app-fhir-markdown>
+            </div>
 
-            <div class="card">
-              <div class="card-header">Elements</div>
+            <div class="form-group">
+              <label>Notes [ <a href="javascript:void(0)" (click)="editFields[profile.id + 'notes'] = !editFields[profile.id + 'notes']">edit</a> ]</label>
+              <pre *ngIf="!editFields[profile.id + 'notes']" (click)="editFields[profile.id + 'notes'] = true">{{profile.notes}}</pre>
+              <app-fhir-markdown [parentObject]="profile" propertyName="notes" [isFormGroup]="false" *ngIf="editFields[profile.id + 'notes']"></app-fhir-markdown>
+            </div>
+
+            <div class="card" *ngFor="let element of profile.differential?.element; let eIndex = index">
+              <div class="card-header">Element {{eIndex + 1}}: {{element.id}}</div>
               <div class="card-body">
-                <div *ngFor="let element of profile.differential?.element; let eIndex = index">
-                  <p>Element {{eIndex + 1}}: {{element.id}}</p>
+                <div class="form-group">
+                  <label>Short [ <a href="javascript:void(0)" (click)="editFields[profile.id + element.id + 'short'] = !editFields[profile.id + element.id + 'short']">edit</a> ]</label>
+                  <pre *ngIf="!editFields[profile.id + element.id + 'short']" (click)="editFields[profile.id + element.id + 'short'] = true">{{element.short}}</pre>
+                  <app-fhir-string [parentObject]="element" propertyName="short" [isFormGroup]="false" *ngIf="editFields[profile.id + element.id + 'short']"></app-fhir-string>
+                </div>
 
-                  <app-fhir-string [parentObject]="element" propertyName="short" title="Short"></app-fhir-string>
+                <div class="form-group">
+                  <label>Definition [ <a href="javascript:void(0)" (click)="editFields[profile.id + element.id + 'definition'] = !editFields[profile.id + element.id + 'definition']">edit</a> ]</label>
+                  <pre *ngIf="!editFields[profile.id + element.id + 'definition']" (click)="editFields[profile.id + element.id + 'definition'] = true">{{element.definition}}</pre>
+                  <app-fhir-markdown [parentObject]="element" propertyName="definition" [isFormGroup]="false" *ngIf="editFields[profile.id + element.id + 'definition']"></app-fhir-markdown>
+                </div>
 
-                  <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition"></app-fhir-markdown>
-
-                  <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"></app-fhir-markdown>
-
-                  <hr/>
+                <div class="form-group">
+                  <label>Requirements [ <a href="javascript:void(0)" (click)="editFields[profile.id + element.id + 'requirements'] = !editFields[profile.id + element.id + 'requirements']">edit</a> ]</label>
+                  <pre *ngIf="!editFields[profile.id + element.id + 'requirements']" (click)="editFields[profile.id + element.id + 'requirements'] = true">{{element.requirements}}</pre>
+                  <app-fhir-markdown [parentObject]="element" propertyName="requirements" [isFormGroup]="false" *ngIf="editFields[profile.id + element.id + 'requirements']"></app-fhir-markdown>
                 </div>
               </div>
             </div>
@@ -40,3 +62,10 @@
     </ngb-tab>
   </ngb-tabset>
 </div>
+
+<footer class="footer">
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary">Save</button>
+  </div>
+  <span class="message">{{message}}</span>
+</footer>
