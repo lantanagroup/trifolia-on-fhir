@@ -11,6 +11,7 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './valuesets.component.html',
@@ -31,7 +32,8 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     protected authService: AuthService,
     private fhirService: FhirService,
     private valueSetService: ValueSetService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -105,11 +107,15 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     });
   }
 
+  public getImplementationGuideId(){
+    return this.route.snapshot.paramMap.get('implementationGuideId');
+  }
+
   public getValueSets() {
     this.results = null;
     this.message = 'Searching value sets...';
 
-    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText)
+    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText, this.getImplementationGuideId())
       .subscribe((results: Bundle) => {
         this.results = results;
         this.message = '';
