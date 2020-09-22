@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
@@ -23,6 +23,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   @Input() elementTreeModels: ElementTreeModel[];
   @Input() structureDefinition: StructureDefinition;
   @Input() disabled = false;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public editingSliceName: boolean;
   public editedSliceName: string;
@@ -102,6 +103,10 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
     modalRef.componentInstance.structureDefinition = this.structureDefinition;
+
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   addConstraint() {
@@ -116,6 +121,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
   editConstraint(constraint: IElementDefinitionConstraint) {
     const modalRef = this.modalService.open(ElementDefinitionConstraintComponent, { backdrop: 'static' });
     modalRef.componentInstance.constraint = constraint;
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   addCondition() {
@@ -144,6 +152,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     modalRef.componentInstance.element = element;
     modalRef.componentInstance.type = type;
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   editedResliceNameValid() {

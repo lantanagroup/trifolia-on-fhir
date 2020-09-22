@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Attachment} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +18,7 @@ export class FhirAttachmentComponent implements OnInit {
   @Input() defaultValue = {};
   @Input() tooltip: string;
   @Input() tooltipKey: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public Globals = Globals;
 
@@ -28,6 +29,9 @@ export class FhirAttachmentComponent implements OnInit {
   editAttachment() {
     const modalRef = this.modalService.open(FhirAttachmentModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.attachment = this.parentObject[this.propertyName];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   getDisplay() {

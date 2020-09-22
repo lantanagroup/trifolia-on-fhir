@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StructureDefinition} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {IContextPanelComponent} from '../context-panel-wrapper.component';
 import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
@@ -10,6 +10,7 @@ import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 })
 export class ContextPanelStu3Component implements OnInit, IContextPanelComponent {
   @Input()
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
   public structureDefinition: StructureDefinition;
 
   public Globals = Globals;

@@ -1,14 +1,14 @@
 <div class="form-group" *ngIf="parentObject && isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="identifier && identifier.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue)"/>
+        <input type="checkbox" *ngIf="!required" [ngModel]="identifier && identifier.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()"/>
         {{title || 'Identifier'}}
     </label>
     <div class="input-group">
         <!-- use -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', ''); change.emit()"/>
         </div>
-        <select class="form-control" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
+        <select class="form-control" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
             <option value="usual">Usual</option>
             <option value="official">Official</option>
             <option value="temp">Temporary</option>
@@ -16,22 +16,22 @@
         </select>
         <!-- system -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', ''); change.emit()"/>
         </div>
-        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
+        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System" (change)="change.emit()"/>
         <!-- value -->
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')"/>
+            <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', ''); change.emit()"/>
         </div>
-        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
+        <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value" (change)="change.emit()"/>
     </div>
 </div>
 <div class="input-group" *ngIf="parentObject && !isFormGroup">
     <!-- use -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', ''); change.emit()"/>
     </div>
-    <select class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse">
+    <select class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
         <option value="usual">Usual</option>
         <option value="official">Official</option>
         <option value="temp">Temporary</option>
@@ -39,12 +39,12 @@
     </select>
     <!-- system -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('system')" (ngModelChange)="Globals.toggleProperty(identifier, 'system', ''); change.emit()"/>
     </div>
-    <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System"/>
+    <input type="text" [disabled]="!identifier || identifier.hasOwnProperty('system')" [(ngModel)]="identifierSystem" placeholder="System" title="System" (change)="change.emit()"/>
     <!-- value -->
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')"/>
+        <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(identifier, 'value', '')" (change)="change.emit()"/>
     </div>
-    <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"/>
+    <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value" (change)="change.emit()"/>
 </div>

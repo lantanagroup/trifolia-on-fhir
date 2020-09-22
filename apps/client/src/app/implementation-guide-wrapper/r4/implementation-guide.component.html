@@ -179,6 +179,11 @@
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
       </ng-template>
       <ng-template ngbTabContent>
+        <ng-template #pageKeyboardShortcuts>
+          ALT + UP/DOWN = Select previous/next page<br/>
+          CTRL + ALT + &lt;ARROW KEY&gt; = Move page
+        </ng-template>
+
         <div class="card">
           <div class="card-header">Pages</div>
           <table class="table">
@@ -191,11 +196,13 @@
               <th>
                 File Name
               </th>
-              <th class="actions-column-5">&nbsp;</th>
+              <th class="actions-column-5">
+                <i class="fas fa-keyboard" [ngbTooltip]="pageKeyboardShortcuts" triggers="click"></i>
+              </th>
             </tr>
             </thead>
             <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.page">
-            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
+            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}" [class.page-highlight]="selectedPage === p" (click)="selectedPage = p" (focusin)="selectedPage = p">
               <td>
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="isDirty=true; nameChanged();"/>
               </td>
@@ -207,21 +214,36 @@
                   <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" (click)="removePage(p); isDirty=true; nameChanged();" title="Remove this page">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p); isDirty=true; nameChanged();">New Generic Page</a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads'); isDirty=true; nameChanged();">New "Downloads" Page</a>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="addPageMenu">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p); isDirty=true; nameChanged();">New Generic Page</a>
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads'); isDirty=true; nameChanged();">New "Downloads" Page</a>
+                    </div>
                   </div>
-                  <button type="button" class="btn btn-primary" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p); isDirty=true; nameChanged();" title="Move sibling page up (requires multiple pages on the same level)">
-                    <i class="fa fa-arrow-up"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary" [disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p); isDirty=true; nameChanged();" title="Move sibling page down (requires multiple pages on the same level)">
-                    <i class="fa fa-arrow-down"></i>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-arrows-alt"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="rearrangePages">
+                      <a class="dropdown-item" href="javascript:void(0)" [class.disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p)" title="Move sibling page up (requires multiple pages on the same level)">
+                        Move up (CTRL+ALT+UP)
+                      </a>
+                      <a class="dropdown-item" href="javascript:void(0)" [class.disabled]="isMovePageDownDisabled(p)" (click)="movePageDown(p)" title="Move sibling page down (requires multiple pages on the same level)">
+                        Move down (CTRL+ALT+DOWN)
+                      </a>
+                      <a class="dropdown-item" href="javascript:void(0)" [class.disabled]="isMovePageOutDisabled(p)" (click)="movePageOut(p)" title="Move page in a level">
+                        Move left (CTRL+ALT+LEFT)
+                      </a>
+                      <a class="dropdown-item" href="javascript:void(0)" [class.disabled]="isMovePageInDisabled(p)" (click)="movePageIn(p)" title="Move page out a level, as a child of the previous sibling page">
+                        Move right (CTRL+ALT+RIGHT)
+                      </a>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-primary" (click)="removePage(p);" title="Remove this page">
+                    <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </td>
