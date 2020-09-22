@@ -10967,7 +10967,7 @@ export class PageComponent extends BackboneElement {
     this.title = value;
 
     if (!isRoot && value) {
-      this.source = value.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '') + '.html';
+      this.source = value.toLowerCase().replace(/\s/g, '_').replace(/[()]:/g, '') + '.html';
     } else if (isRoot) {
       this.source = `index.html`;
     }
