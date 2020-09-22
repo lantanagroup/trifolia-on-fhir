@@ -5,12 +5,11 @@
     <ngb-tab title="Profiles">
       <ng-template ngbTabContent>
         <div class="card" *ngFor="let profile of profiles; let pIndex = index;">
-          <div class="card-header clickable" (click)="expandedProfiles[profile.id] = !expandedProfiles[profile.id]">
+          <div class="card-header clickable" (click)="expandProfile(profile)">
             <i class="fa" [class.fa-plus]="!expandedProfiles[profile.id]" [class.fa-minus]="expandedProfiles[profile.id]"></i>
             Profile {{profile.name}}
           </div>
           <div class="card-body" *ngIf="expandedProfiles[profile.id]">
-
             <div class="form-group">
               <label>Description [ <a href="javascript:void(0)" (click)="editFields[profile.id + 'description'] = !editFields[profile.id + 'description']">edit</a> ]</label>
               <pre *ngIf="!editFields[profile.id + 'description']" (click)="editFields[profile.id + 'description'] = true">{{profile.description}}</pre>

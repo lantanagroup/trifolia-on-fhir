@@ -31,7 +31,42 @@ export class BulkEditComponent implements OnInit {
 
   }
 
+  public async expandProfile(profile: IStructureDefinition) {
+    this.expandedProfiles[profile.id] = !this.expandedProfiles[profile.id];
+
+    if (profile.differential && profile.differential.element) {
+      profile.differential.element.forEach(e => {
+        delete this.editFields[profile.id + e.id + 'short'];
+        delete this.editFields[profile.id + e.id + 'definition'];
+        delete this.editFields[profile.id + e.id + 'requirements'];
+      });
+    }
+
+    const editFieldWithWait = (elementId: string, field: string) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          this.editFields[profile.id + elementId + field] = true;
+          resolve();
+        }, 5);
+      });
+    };
+
+    if (this.expandedProfiles[profile.id]) {
+      if (profile.differential && profile.differential.element) {
+        for (const element of profile.differential.element) {
+          await editFieldWithWait(element.id, 'short');
+          await editFieldWithWait(element.id, 'definition');
+          await editFieldWithWait(element.id, 'requirements');
+        }
+      }
+    }
+  }
+
   private async init() {
+    this.profiles = [];
+    this.expandedProfiles = {};
+    this.editFields = {};
+
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (implementationGuideId) {
