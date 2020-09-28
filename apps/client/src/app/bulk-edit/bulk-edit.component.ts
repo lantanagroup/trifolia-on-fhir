@@ -19,9 +19,12 @@ import {FhirService} from '../shared/fhir.service';
 export class BulkEditComponent implements OnInit {
   public implementationGuide: IImplementationGuide;
   public profiles: (STU3StructureDefinition | R4StructureDefinition)[];
-  public expandedProfiles: { [profileId: string]: boolean } = {};
+  public expandedProfileId: string;
+  public changedProfiles: { [key: string]: boolean } = {};
   public editFields: { [key: string]: boolean } = {};
   public message: string;
+  public loading = false;
+  public searchProfileText: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,41 +34,55 @@ export class BulkEditComponent implements OnInit {
 
   }
 
-  public async expandProfile(profile: IStructureDefinition) {
-    this.expandedProfiles[profile.id] = !this.expandedProfiles[profile.id];
+  public get filteredProfiles() {
+    if (!this.searchProfileText || !this.profiles) return this.profiles;
+    return this.profiles.filter(p => {
+      const profileTitle = p.title || '';
+      const profileName = p.name || '';
+      const profileDescription = p.description || '';
+      const profileIntro = p.intro || '';
+      const profileNotes = p.notes || '';
+      return (profileTitle + profileName + profileDescription + profileIntro + profileNotes).toLowerCase().indexOf(this.searchProfileText.toLowerCase()) >= 0;
+    })
+  }
 
-    if (profile.differential && profile.differential.element) {
-      profile.differential.element.forEach(e => {
-        delete this.editFields[profile.id + e.id + 'short'];
-        delete this.editFields[profile.id + e.id + 'definition'];
-        delete this.editFields[profile.id + e.id + 'requirements'];
-      });
+  public async toggleExpandProfile(profile: IStructureDefinition) {
+    if (this.expandedProfileId === profile.id) {
+      this.expandedProfileId = null;
+      this.editFields = {};
+      return;
     }
 
-    const editFieldWithWait = (elementId: string, field: string) => {
+    this.expandedProfileId = profile.id;
+
+    const editFieldWithWait = (field: string, elementId?: string) => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          this.editFields[profile.id + elementId + field] = true;
+          this.editFields[profile.id + (elementId || '') + field] = true;
           resolve();
         }, 5);
       });
     };
 
-    if (this.expandedProfiles[profile.id]) {
-      if (profile.differential && profile.differential.element) {
-        for (const element of profile.differential.element) {
-          await editFieldWithWait(element.id, 'short');
-          await editFieldWithWait(element.id, 'definition');
-          await editFieldWithWait(element.id, 'requirements');
-        }
+    await editFieldWithWait('description');
+    await editFieldWithWait('intro');
+    await editFieldWithWait('notes');
+
+    if (profile.differential && profile.differential.element) {
+      for (const element of profile.differential.element) {
+        await editFieldWithWait('short', element.id);
+        await editFieldWithWait('definition', element.id);
+        await editFieldWithWait('requirements', element.id);
       }
     }
   }
 
   private async init() {
+    this.loading = true;
     this.profiles = [];
-    this.expandedProfiles = {};
+    this.expandedProfileId = null;
     this.editFields = {};
+    this.changedProfiles = {};
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
@@ -84,6 +101,8 @@ export class BulkEditComponent implements OnInit {
         this.profiles = profilesBundle.entry.map(e => <STU3StructureDefinition | R4StructureDefinition> e.resource);
       }
     }
+
+    this.loading = false;
   }
 
   async ngOnInit() {

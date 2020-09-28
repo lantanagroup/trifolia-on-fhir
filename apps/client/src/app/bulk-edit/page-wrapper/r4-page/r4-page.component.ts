@@ -9,17 +9,35 @@ import {ImplementationGuide, ImplementationGuidePageComponent} from '../../../..
 export class R4PageComponent implements OnInit {
   @Input() implementationGuide: ImplementationGuide;
   public pages: ImplementationGuidePageComponent[];
+  public expanded: { [fileName: string]: boolean } = {};
+  public changed: { [fileName: string]: boolean } = {};
 
   constructor() { }
+
+  public toggleExpandPage(page: ImplementationGuidePageComponent) {
+    this.expanded[page.fileName] = !this.expanded[page.fileName];
+  }
 
   private populatePages(parent?: ImplementationGuidePageComponent) {
     if (!parent) {
       this.pages = [this.implementationGuide.definition.page];
       this.populatePages(this.implementationGuide.definition.page);
+
+      // Ensure all pages have a file name
+      if (!this.implementationGuide.definition.page.fileName) {
+        this.implementationGuide.definition.page.setTitle(this.implementationGuide.definition.page.title, true);
+        this.changed[this.implementationGuide.definition.page.fileName] = true;
+      }
     } else if (parent.page) {
       parent.page.forEach(p => {
         this.pages.push(p);
         this.populatePages(p);
+
+        // Ensure all pages have a file name
+        if (!p.fileName) {
+          p.setTitle(p.title);
+          this.changed[p.fileName] = true;
+        }
       });
     }
   }
