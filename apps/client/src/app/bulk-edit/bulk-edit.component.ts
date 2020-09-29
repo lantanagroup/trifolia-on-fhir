@@ -25,6 +25,14 @@ export class BulkEditComponent implements OnInit {
   public message: string;
   public loading = false;
   public searchProfileText: string;
+  public enabledFields = {
+    profileDescription: true,
+    profileIntro: true,
+    profileNotes: true,
+    elementShort: true,
+    elementDefinition: true,
+    elementRequirements: true
+  };
 
   constructor(
     private route: ActivatedRoute,
