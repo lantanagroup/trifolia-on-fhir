@@ -73,7 +73,7 @@ export class ImportComponent implements OnInit {
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
-  @ViewChild('importGithubPanel', { static: true })
+  @ViewChild('importGithubPanel', { static: false })
   private importGithubPanel: ImportGithubPanelComponent;
 
   constructor(
@@ -665,17 +665,18 @@ export class ImportComponent implements OnInit {
   }
 
   public importDisabled(): boolean {
-    if (this.activeTab === 'file') {
-      const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
-      return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0 || unauthorizedResources.length > 0;
-    } else if (this.activeTab === 'text') {
-      return !this.textContent;
-    } else if (this.activeTab === 'vsac') {
-      return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password;
-    } else if (this.activeTab === 'github') {
-      return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
+    if (this.activeTab) {
+      if (this.activeTab === 'file') {
+        const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
+        return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0 || unauthorizedResources.length > 0;
+      } else if (this.activeTab === 'text') {
+        return !this.textContent;
+      } else if (this.activeTab === 'vsac') {
+        return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password;
+      } else if (this.importGithubPanel && this.activeTab === 'github') {
+        return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
+      }
     }
-
     return true;
   }
 
