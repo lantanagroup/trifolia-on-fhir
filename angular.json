@@ -122,8 +122,8 @@
               "node_modules/ng2-tree/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/ngx-simplemde/src/index.css",
-              "apps/client/src/styles.css"
+              "apps/client/src/styles.css",
+              "node_modules/ngx-simplemde/index.less"
             ],
             "scripts": [
               "node_modules/popper.js/dist/umd/popper.min.js",
