@@ -776,3 +776,19 @@ div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > di
 div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) > div[id="json/xml-panel"] {
   height: 100%;
 }
+
+simplemde .editor-statusbar {
+  display: none;
+}
+
+.CodeMirror,
+.CodeMirror-scroll {
+  max-height: 300px;
+  min-height: 100px !important;
+}
+
+.bulk-edit .CodeMirror,
+.bulk-edit .CodeMirror-scroll {
+  max-height: 200px;
+  min-height: 50px !important;
+}

@@ -19,7 +19,7 @@ import {FhirService} from '../shared/fhir.service';
 export class BulkEditComponent implements OnInit {
   public implementationGuide: IImplementationGuide;
   public profiles: (STU3StructureDefinition | R4StructureDefinition)[];
-  public expandedProfileId: string;
+  public expandedElementsProfileId: string;
   public changedProfiles: { [key: string]: boolean } = {};
   public editFields: { [key: string]: boolean } = {};
   public message: string;
@@ -54,33 +54,29 @@ export class BulkEditComponent implements OnInit {
     })
   }
 
-  public async toggleExpandProfile(profile: IStructureDefinition) {
-    if (this.expandedProfileId === profile.id) {
-      this.expandedProfileId = null;
+  private editFieldWithWait(profileId: string, field: string, elementId?: string) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.editFields[profileId + (elementId || '') + field] = true;
+        resolve();
+      }, 5);
+    });
+  };
+
+  public async toggleExpandElementsProfile(profile: IStructureDefinition) {
+    if (this.expandedElementsProfileId === profile.id) {
+      this.expandedElementsProfileId = null;
       this.editFields = {};
       return;
     }
 
-    this.expandedProfileId = profile.id;
-
-    const editFieldWithWait = (field: string, elementId?: string) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          this.editFields[profile.id + (elementId || '') + field] = true;
-          resolve();
-        }, 5);
-      });
-    };
-
-    await editFieldWithWait('description');
-    await editFieldWithWait('intro');
-    await editFieldWithWait('notes');
+    this.expandedElementsProfileId = profile.id;
 
     if (profile.differential && profile.differential.element) {
       for (const element of profile.differential.element) {
-        await editFieldWithWait('short', element.id);
-        await editFieldWithWait('definition', element.id);
-        await editFieldWithWait('requirements', element.id);
+        await this.editFieldWithWait(profile.id, 'short', element.id);
+        await this.editFieldWithWait(profile.id, 'definition', element.id);
+        await this.editFieldWithWait(profile.id, 'requirements', element.id);
       }
     }
   }
@@ -88,7 +84,7 @@ export class BulkEditComponent implements OnInit {
   private async init() {
     this.loading = true;
     this.profiles = [];
-    this.expandedProfileId = null;
+    this.expandedElementsProfileId = null;
     this.editFields = {};
     this.changedProfiles = {};
 
@@ -111,6 +107,20 @@ export class BulkEditComponent implements OnInit {
     }
 
     this.loading = false;
+    this.changeTab('profiles');
+  }
+
+  public async changeTab(tabId: 'profiles'|'elements'|'pages'|any) {
+    this.expandedElementsProfileId = null;
+    this.editFields = {};
+
+    if (tabId === 'profiles') {
+      for (const profile of this.profiles) {
+        await this.editFieldWithWait(profile.id, 'description');
+        await this.editFieldWithWait(profile.id, 'intro');
+        await this.editFieldWithWait(profile.id, 'notes');
+      }
+    }
   }
 
   async ngOnInit() {

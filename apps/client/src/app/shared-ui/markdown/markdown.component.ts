@@ -230,5 +230,6 @@ export class MarkdownComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 }
