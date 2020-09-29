@@ -19,11 +19,7 @@ export class PackageListComponent implements OnInit {
   public packageList: PackageListModel;
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private configService: ConfigService) {
-    this.change
-      .debounceTime(1000)
-      .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
-  }
+  constructor(private configService: ConfigService) {  }
 
   initPackageList() {
     this.packageList = new PackageListModel();

@@ -107,7 +107,7 @@ export class FhirController extends BaseController {
       this.logger.error(`Resource id ${newId} already exists`);
       return `Resource id ${newId} already exists`;
     }catch (ex){
-      if(ex.response && ex.response.status !== 404){
+      if(ex.response && ex.response.status !== 404 && ex.response.status !== 410){
         throw ex;
       }
     }
@@ -147,8 +147,18 @@ export class FhirController extends BaseController {
       allResults.push(await searchForReference('ImplementationGuide', 'global'));
     }
 
+    let igFound = false;
+    allResults.forEach(result => {
+      if(!igFound){
+        result.forEach(r => {
+          if(r.id === contextImplementationGuideId && r.resourceType === "ImplementationGuide"){
+            igFound = true;
+          }
+        });
+      }
+    });
 
-    if (contextImplementationGuideId) {
+    if (contextImplementationGuideId && !igFound) {
       allResults.push(await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId));
     }
 
@@ -156,7 +166,7 @@ export class FhirController extends BaseController {
       return prev.concat(curr);
     }, []);
 
-    const references: any[] = [];
+    let references: any[] = [];
     const findReferences = (obj: any) => {
       if (!obj) return;
 
@@ -177,6 +187,7 @@ export class FhirController extends BaseController {
     };
 
     allResults.forEach(result => {
+      references = [];
       findReferences(result);
       if (references.length > 0) {
         const anyResource = <any> resource;
@@ -205,14 +216,15 @@ export class FhirController extends BaseController {
           }
         };
       });
-      await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
+
+      try{
+        await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
+      }
+      catch(ex){
+        this.logger.error(`Error from FHIR server when persisting changes to the resources: ${ex.message}`);
+        throw ex;
+      }
     }
-
-
-    // this.logger.log('Sending DELETE request to FHIR server for original resource');
-    //
-    // // Delete the original resource with the original id
-    // await this.httpService.request(deleteOptions).toPromise();
 
     this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
