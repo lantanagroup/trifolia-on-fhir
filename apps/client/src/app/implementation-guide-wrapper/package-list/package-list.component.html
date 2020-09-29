@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <span>package-list.json</span>
+    <span>Package List</span>
     <input type="file" style="display: none;" #importFile (change)="import(importFile.files[0])" accept="application/json" />
     <div class="pull-right btn-group">
       <button type="button" class="btn btn-primary" title="Import the package-list.json from your computer" (click)="importFile.click(); change.emit()">

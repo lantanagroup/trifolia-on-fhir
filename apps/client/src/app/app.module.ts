@@ -75,6 +75,7 @@ import {ElementDefinitionConstraintComponent} from './modals/element-definition-
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import {ExamplesComponent} from './examples/examples.component';
+import { IgnoreWarningsComponent } from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -231,7 +232,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent, IgnoreWarningsComponent
   ],
   imports: [
     RouterModule.forRoot(
