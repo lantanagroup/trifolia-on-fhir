@@ -790,5 +790,5 @@ simplemde .editor-statusbar {
 .bulk-edit .CodeMirror,
 .bulk-edit .CodeMirror-scroll {
   max-height: 200px;
-  min-height: 50px !important;
+  min-height: 35px !important;
 }

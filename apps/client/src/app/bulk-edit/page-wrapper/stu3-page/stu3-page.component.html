@@ -1,1 +1,14 @@
-<p>stu3-page works!</p>
+<div class="card" *ngFor="let page of pages; let pIndex = index;">
+  <div class="card-header clickable" (click)="toggleExpandPage(page)">
+    <i class="fa" [class.fa-plus]="!expanded[page.source]" [class.fa-minus]="expanded[page.source]"></i>
+    Page {{pIndex + 1}}: {{page.title}}{{changed[page.source] ? '*' : ''}}
+  </div>
+  <div class="card-body" *ngIf="expanded[page.source]">
+    <app-fhir-string [parentObject]="page" propertyName="title" title="Title" (change)="changed[page.source] = true"></app-fhir-string>
+
+    <div class="form-group">
+      <label>Content</label>
+      <trifolia-fhir-markdown [(value)]="page.contentMarkdown" (change)="changed[page.source] = true"></trifolia-fhir-markdown>
+    </div>
+  </div>
+</div>

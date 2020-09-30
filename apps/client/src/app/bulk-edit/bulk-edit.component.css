@@ -1,5 +1,10 @@
 .card {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+}
+
+.card-body,
+.card-header {
+  padding: 5px 15px;
 }
 
 .row {

@@ -1,3 +1,8 @@
 .card {
   margin-bottom: 15px;
 }
+
+.card-body,
+.card-header {
+  padding: 5px 15px;
+}
