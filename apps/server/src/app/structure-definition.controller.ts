@@ -125,6 +125,7 @@ export class StructureDefinitionController extends BaseFhirController {
       } catch (ex) {
         ret.message = ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome' ? getErrorString(null, ex.response.data) : ex.message;
         ret.success = false;
+        this.logger.error(`Error while getting snapshot for base profile: ${ret.message}`);
       }
     }
 
