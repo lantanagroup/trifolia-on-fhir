@@ -79,6 +79,7 @@ import {BulkEditComponent} from './bulk-edit/bulk-edit.component';
 import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.component';
 import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
 import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
+import {IgnoreWarningsComponent} from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
