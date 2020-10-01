@@ -22,7 +22,7 @@ import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Formats} from '../models/export-options';
 import {PageInfo} from './html.models';
-import {getDefaultImplementationGuideResourcePath, getExtensionString} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {getDefaultImplementationGuideResourcePath, getExtensionString, getIgnoreWarningsValue} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
@@ -316,9 +316,6 @@ export class HtmlExporter {
     const inputDir = path.join(this.rootPath, 'input');
     fs.ensureDirSync(inputDir);
 
-    // Create the empty ignoreWarnings.txt file
-    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), '== Suppressed Messages ==\n\n');
-
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
     const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
@@ -332,6 +329,10 @@ export class HtmlExporter {
     } else {
       throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
     }
+
+    // Write the ignoreWarnings.txt file
+    const ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
+    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue || '');
 
     this.removeNonExampleMedia();
     this.populatePageInfos();

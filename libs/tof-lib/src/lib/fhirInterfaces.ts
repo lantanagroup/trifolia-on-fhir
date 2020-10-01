@@ -293,3 +293,27 @@ export interface ICodeSystem extends IDomainResource {
   title?: string;
   concept?: ICodeSystemConcept[];
 }
+
+export interface IAttachment {
+  contentType?: string;
+  language?: string;
+  data?: string;
+  url?: string;
+  size?: number;
+  hash?: string;
+  title?: string;
+  creation?: string;
+}
+
+export interface IDocumentReference extends IDomainResource {
+  masterIdentifier?: IResourceReference;
+  identifier?: IResourceReference[];
+  type?: ICodeableConcept;
+  subject?: IResourceReference;
+  status?: string;
+  docStatus?: string;
+  content: {
+    attachment: IAttachment;
+    format?: ICoding;
+  }[];
+}

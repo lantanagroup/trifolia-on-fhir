@@ -158,19 +158,6 @@
             </div>
           </div>
         </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <trifolia-fhir-package-list
-                [implementationGuide]="implementationGuide"
-                [defaultPackageId]="packageId"
-                [defaultTitle]="this.implementationGuide.title"
-                [defaultName]="this.implementationGuide.name" (change)="isDirty = true; nameChanged();">
-              </trifolia-fhir-package-list>
-            </div>
-          </div>
-        </div>
       </ng-template>
     </ngb-tab>
 
@@ -207,7 +194,8 @@
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="isDirty=true; nameChanged();"/>
               </td>
               <td>
-                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName" (change)="isDirty=true; nameChanged();"/>
+                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName || fileNameInvalid(p)" (change)="isDirty=true; nameChanged();"/>
+                <span *ngIf="fileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
               </td>
               <td>
                 <div class="btn-group pull-right">
@@ -564,6 +552,26 @@
             </tr>
             </tfoot>
           </table>
+        </div>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Publishing -->
+    <ngb-tab id="publishing" title="Publishing">
+      <ng-template ngbTabContent>
+        <div class="row">
+          <div class="col-md-12">
+            <trifolia-fhir-package-list
+              [implementationGuide]="implementationGuide"
+              [defaultPackageId]="packageId"
+              [defaultTitle]="this.implementationGuide.title"
+              [defaultName]="this.implementationGuide.name" (change)="isDirty = true; nameChanged();">
+            </trifolia-fhir-package-list>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-ignore-warnings [implementationGuide]="implementationGuide" (change)="isDirty = true; nameChanged();"></trifolia-fhir-ignore-warnings>
+          </div>
         </div>
       </ng-template>
     </ngb-tab>

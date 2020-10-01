@@ -232,8 +232,6 @@
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <trifolia-fhir-package-list [implementationGuide]="implementationGuide" [defaultName]="implementationGuide.name" [defaultPackageId]="packageId" (change)="isDirty=true; nameChanged()"></trifolia-fhir-package-list>
-
         <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="isDirty=true; nameChanged()"></app-fhir-multi-jurisdiction>
 
         <div class="card">
@@ -344,6 +342,26 @@
             </tr>
             </tfoot>
           </table>
+        </div>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- Publishing -->
+    <ngb-tab id="publishing" title="Publishing">
+      <ng-template ngbTabContent>
+        <div class="row">
+          <div class="col-md-12">
+            <trifolia-fhir-package-list
+              [implementationGuide]="implementationGuide"
+              [defaultName]="implementationGuide.name"
+              [defaultPackageId]="packageId"
+              (change)="isDirty=true; nameChanged()">
+            </trifolia-fhir-package-list>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-ignore-warnings [implementationGuide]="implementationGuide" (change)="isDirty = true; nameChanged();"></trifolia-fhir-ignore-warnings>
+          </div>
         </div>
       </ng-template>
     </ngb-tab>

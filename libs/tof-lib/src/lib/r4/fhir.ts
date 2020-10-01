@@ -1,5 +1,5 @@
 import {
-  IAgentComponent,
+  IAgentComponent, IAttachment,
   IAuditEvent,
   IBundle, ICodeableConcept,
   ICodeSystem,
@@ -2593,7 +2593,7 @@ export class Account extends DomainResource {
 
 }
 
-export class Attachment extends Element {
+export class Attachment extends Element implements IAttachment {
   public contentType?: string;
   public language?: string;
   public data?: string;
@@ -2601,7 +2601,7 @@ export class Attachment extends Element {
   public size?: number;
   public hash?: string;
   public title?: string;
-  public creation?: Date;
+  public creation?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -2628,7 +2628,7 @@ export class Attachment extends Element {
         this.title = obj.title;
       }
       if (obj.hasOwnProperty('creation')) {
-        this.creation = new Date(obj.creation);
+        this.creation = obj.creation;
       }
     }
   }

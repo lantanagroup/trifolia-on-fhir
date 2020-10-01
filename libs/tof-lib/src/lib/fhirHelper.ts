@@ -3,6 +3,8 @@ import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
+import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
+import {Globals} from './globals';
 
 
 export function identifyRelease(fhirVersion: string): Versions {
@@ -213,5 +215,54 @@ export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4', 
           mediaRef.description = resource.description;
           return mediaRef;
         });
+  }
+}
+
+/**
+ * Determines if the CodeableConcept has the specified code. If system is specified, both code and system must be found together.
+ * @param codeableConcept
+ * @param code
+ * @param system
+ */
+export function codeableConceptHasCode(codeableConcept: ICodeableConcept, code: string, system?: string) {
+  if (!codeableConcept || !codeableConcept.coding || codeableConcept.coding.length < 1) return false;
+  return !!codeableConcept.coding.find(c => {
+    if (system) {
+      return c.code === code && c.system === system;
+    } else {
+      return c.code === code;
+    }
+  });
+}
+
+export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide): string {
+  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+
+  // Find the extension that references the contained DocumentReference
+  const foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+  if (!foundExtension) return;
+  const ignoreWarningsReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+  if (!ignoreWarningsReference.startsWith('#')) return;
+
+  // Find the contained DocumentReference based on the extension reference
+  const foundContained = implementationGuide.contained.find(c => {
+    if (c.resourceType !== 'DocumentReference' || c.id !== ignoreWarningsReference.substring(1)) return false;
+    const docRef = <IDocumentReference> c;
+    return codeableConceptHasCode(docRef.type, 'ignore-warnings') &&
+      docRef.content &&
+      docRef.content.length === 1 &&
+      docRef.content[0].attachment &&
+      docRef.content[0].attachment.data;
+  });
+
+  if (foundContained) {
+    const documentReference = <IDocumentReference> foundContained;
+
+    // Set the data after decoding it from base64
+    if (typeof atob === 'function') {
+      return atob(documentReference.content[0].attachment.data);
+    } else {
+      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+    }
   }
 }
