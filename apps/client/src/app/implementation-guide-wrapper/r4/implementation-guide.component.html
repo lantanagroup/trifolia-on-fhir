@@ -166,7 +166,7 @@
                 [implementationGuide]="implementationGuide"
                 [defaultPackageId]="packageId"
                 [defaultTitle]="this.implementationGuide.title"
-                [defaultName]="this.implementationGuide.name" (change)="isDirty = true; nameChanged();">
+                [defaultName]="this.implementationGuide.name" (valueChange)="isDirty = true; nameChanged();">
               </trifolia-fhir-package-list>
             </div>
           </div>
