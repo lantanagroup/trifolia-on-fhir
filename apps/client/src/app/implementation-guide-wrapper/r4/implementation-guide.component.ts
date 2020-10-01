@@ -144,6 +144,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
+  public fileNameInvalid(page: PageDefinition): boolean {
+    const regexp: RegExp = /[^A-Za-z0-9\.]/;
+    return page.page && page.page.fileName && regexp.test(page.page.fileName);
+  }
+
   public get isFilterResourceTypeAll() {
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
   }
