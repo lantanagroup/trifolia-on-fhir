@@ -3,10 +3,10 @@
     <span>Package List</span>
     <input type="file" style="display: none;" #importFile (change)="import(importFile.files[0])" accept="application/json" />
     <div class="pull-right btn-group">
-      <button type="button" class="btn btn-primary" title="Import the package-list.json from your computer" (click)="importFile.click(); change.emit()">
+      <button type="button" class="btn btn-primary" title="Import the package-list.json from your computer" (click)="importFile.click(); valueChange.emit()">
         <i class="fas fa-file-upload"></i>
       </button>
-      <button type="button" class="btn btn-primary" title="Remove the package-list.json" *ngIf="packageList" (click)="remove(); change.emit()">
+      <button type="button" class="btn btn-primary" title="Remove the package-list.json" *ngIf="packageList" (click)="remove(); valueChange.emit()">
         <i class="fa fa-times"></i>
       </button>
     </div>
@@ -14,16 +14,16 @@
   <div class="card-body" *ngIf="!packageList">
     <p>No package-list.json has been specified for this IG.</p>
     <div class="btn-group">
-      <button type="button" class="btn btn-primary" (click)="initPackageList(); change.emit()">Add package-list.json</button>
-      <button type="button" class="btn btn-primary" (click)="importFile.click(); change.emit()">Import from computer</button>
+      <button type="button" class="btn btn-primary" (click)="initPackageList(); valueChange.emit()">Add package-list.json</button>
+      <button type="button" class="btn btn-primary" (click)="importFile.click(); valueChange.emit()">Import from computer</button>
     </div>
   </div>
   <div class="card-body" *ngIf="packageList">
-    <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="change.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="change.emit(); valueChange.emit()"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="change.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="change.emit(); valueChange.emit()"></app-fhir-string>
 
-    <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="change.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="change.emit(); valueChange.emit()"></app-fhir-string>
 
     <table class="table table-striped">
       <thead>
@@ -44,19 +44,19 @@
       <tbody>
       <tr *ngFor="let v of packageList.list; let vi = index">
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="change.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="change.emit(); valueChange.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="change.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="change.emit(); valueChange.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="change.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="change.emit(); valueChange.emit()" />
         </td>
         <td>
-          <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="change.emit()" />
+          <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="change.emit(); valueChange.emit()" />
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit()">
+          <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit(); valueChange.emit()">
             <option value="ci-build">CI Build</option>
             <option value="draft">Draft</option>
             <option value="ballot">Ballot</option>
@@ -65,14 +65,14 @@
           </select>
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="v.current" (change)="change.emit()">
+          <select class="form-control" [(ngModel)]="v.current" (change)="change.emit(); valueChange.emit()">
             <option [ngValue]="undefined">Unspecified</option>
             <option [ngValue]="true">Yes</option>
             <option [ngValue]="false">No</option>
           </select>
         </td>
         <td>
-          <button type="button" class="btn btn-primary" title="Remove this version from the list." (click)="removeVersion(vi); change.emit()">
+          <button type="button" class="btn btn-primary" title="Remove this version from the list." (click)="removeVersion(vi); change.emit(); valueChange.emit()">
             <i class="fas fa-trash-alt"></i>
           </button>
         </td>

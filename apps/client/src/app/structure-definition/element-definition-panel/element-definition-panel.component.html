@@ -118,7 +118,8 @@
         <!-- Type -->
         <div class="form-group">
           <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('type')"
+            <input type="checkbox"
+                   [ngModel]="element.hasOwnProperty('type')"
                    (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]); change.emit()"/>
             Type
             <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
@@ -128,24 +129,22 @@
           </div>
           <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
             <select class="form-control" [(ngModel)]="t.code" (change)="change.emit()">
-              <option [ngValue]="t.code">{{t.code}}</option>
-              <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{o.code}}</option>
+              <option [ngValue]="t.code">{{getTypeDisplay(t)}}</option>
+              <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{getTypeDisplay(o)}}</option>
             </select>
             <input type="text" class="form-control" readonly
                    value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
                    title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="openTypeModel(element, t)"
-                      title="Edit this type">
+              <button type="button" class="btn btn-primary clickable" (click)="openTypeModel(element, t)" title="Edit this type">
                 <i class="fa fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-primary clickable" (click)="element.type.splice(i, 1); change.emit()"
-                      title="Remove this type">
+              <button type="button" class="btn btn-primary clickable" (click)="element.type.splice(i, 1); change.emit()" title="Remove this type">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
           </div>
-          <div *ngIf="element.type && element.type.length == 0">No types</div>
+          <div *ngIf="element.type && element.type.length == 0">No constrained types</div>
         </div>
 
         <!-- Representation -->

@@ -194,7 +194,8 @@
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="isDirty=true; nameChanged();"/>
               </td>
               <td>
-                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName" (change)="isDirty=true; nameChanged();"/>
+                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName || fileNameInvalid(p)" (change)="isDirty=true; nameChanged();"/>
+                <span *ngIf="fileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
               </td>
               <td>
                 <div class="btn-group pull-right">
