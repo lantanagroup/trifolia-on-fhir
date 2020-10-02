@@ -247,8 +247,40 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
   // Find the contained DocumentReference based on the extension reference
   const foundContained = implementationGuide.contained.find(c => {
     if (c.resourceType !== 'DocumentReference' || c.id !== ignoreWarningsReference.substring(1)) return false;
-    const docRef = <IDocumentReference> c;
+    const docRef = <IDocumentReference>c;
     return codeableConceptHasCode(docRef.type, 'ignore-warnings') &&
+      docRef.content &&
+      docRef.content.length === 1 &&
+      docRef.content[0].attachment &&
+      docRef.content[0].attachment.data;
+  });
+
+  if (foundContained) {
+    const documentReference = <IDocumentReference>foundContained;
+
+    // Set the data after decoding it from base64
+    if (typeof atob === 'function') {
+      return atob(documentReference.content[0].attachment.data);
+    } else {
+      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+    }
+  }
+}
+
+export function getJiraSpecValue(implementationGuide: IImplementationGuide): string {
+  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+
+  // Find the extension that references the contained DocumentReference
+  const foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
+  if (!foundExtension) return;
+  const jiraSpecReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+  if (!jiraSpecReference.startsWith('#')) return;
+
+  // Find the contained DocumentReference based on the extension reference
+  const foundContained = implementationGuide.contained.find(c => {
+    if (c.resourceType !== 'DocumentReference' || c.id !== jiraSpecReference.substring(1)) return false;
+    const docRef = <IDocumentReference> c;
+    return codeableConceptHasCode(docRef.type, 'jira-spec') &&
       docRef.content &&
       docRef.content.length === 1 &&
       docRef.content[0].attachment &&

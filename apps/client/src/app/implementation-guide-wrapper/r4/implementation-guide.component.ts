@@ -145,7 +145,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public isFileNameInvalid(page: PageDefinition): boolean {
-    const regexp: RegExp = /[^A-Za-z0-9\.]/;
+    const regexp: RegExp = /[^A-Za-z0-9\._\-]/;
     return page.page && page.page.fileName && regexp.test(page.page.fileName);
   }
 

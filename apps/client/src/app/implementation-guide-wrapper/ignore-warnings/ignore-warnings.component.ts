@@ -25,13 +25,25 @@ export class IgnoreWarningsComponent implements OnInit, OnChanges {
   }
 
   public updateIgnoreWarningsValue() {
-    if (!this.value) {
-      // TODO: Delete the extension and contained DocumentReference
-    } else {
-      if (!this.implementationGuide) return;
-      this.implementationGuide.extension = this.implementationGuide.extension || [];
-      let foundExtension = this.implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+    if (!this.implementationGuide) return;
 
+    this.implementationGuide.extension = this.implementationGuide.extension || [];
+    let foundExtension = this.implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+    let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
+      this.implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+      null;
+
+    if (!this.value) {
+      if (foundExtension) {
+        const foundExtensionIndex = this.implementationGuide.extension.indexOf(foundExtension);
+        this.implementationGuide.extension.splice(foundExtensionIndex, foundExtensionIndex >= 0 ? 1 : 0);
+      }
+
+      if (foundContained) {
+        const foundContainedIndex = this.implementationGuide.contained.indexOf(foundContained);
+        this.implementationGuide.contained.splice(foundContainedIndex, foundContainedIndex >= 0 ? 1 : 0);
+      }
+    } else {
       if (!foundExtension) {
         foundExtension = {
           url: Globals.extensionUrls['extension-ig-ignore-warnings'],
@@ -43,7 +55,6 @@ export class IgnoreWarningsComponent implements OnInit, OnChanges {
       }
 
       this.implementationGuide.contained = this.implementationGuide.contained || [];
-      let foundContained = this.implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1));
 
       if (!foundContained) {
         foundContained = <IDocumentReference> {

@@ -1,0 +1,18 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-header-text">JIRA Spec</div>
+    <div class="card-header-btn">
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-sm" title="Generate a new JIRA spec based on the current IG." (click)="generateJiraSpec()">
+          <i class="fas fa-redo-alt"></i>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" title="Download the JIRA spec to your computer" (click)="download()" [disabled]="!value">
+          <i class="fa fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <textarea class="form-control" rows="4" [(ngModel)]="value" (change)="valueChanged.emit()" [ngModelOptions]="{ updateOn: 'change' }"></textarea>
+  </div>
+</div>
