@@ -132,7 +132,7 @@ export class CustomR4Validator extends CustomValidator {
         });
       }
 
-      const regexp: RegExp = /[^A-Za-z0-9\.]/;
+      const regexp: RegExp = /[^A-Za-z0-9\._\-]/;
       if(regexp.test(pageClone.fileName)) {
         messages.push({
           location: 'ImplementationGuide.definition.page+',
