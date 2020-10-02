@@ -137,7 +137,7 @@ export class CustomR4Validator extends CustomValidator {
         messages.push({
           location: 'ImplementationGuide.definition.page+',
           resourceId: implementationGuide.id,
-          severity: Severities.Warning,
+          severity: Severities.Error,
           message: `Page with title ${page.title} must not include special characters such as "&" and "/" in the file name.`
         })
       }
