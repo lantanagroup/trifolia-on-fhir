@@ -331,8 +331,15 @@ export class HtmlExporter {
     }
 
     // Write the ignoreWarnings.txt file
-    const ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
-    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue || '');
+    let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
+
+    if (!ignoreWarningsValue) {
+      ignoreWarningsValue = '== Suppressed Messages ==\r\n';
+    } else if (!ignoreWarningsValue.startsWith('== Suppressed Messages ==')) {
+      ignoreWarningsValue += '== Suppressed Messages ==\r\n';
+    }
+
+    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
 
     this.removeNonExampleMedia();
     this.populatePageInfos();
