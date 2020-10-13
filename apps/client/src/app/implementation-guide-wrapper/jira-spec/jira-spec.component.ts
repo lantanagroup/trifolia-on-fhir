@@ -9,10 +9,12 @@ import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {saveAs} from 'file-saver';
+import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 
-class JiraSpecPageDef {
+class JiraSpecDef {
   name: string;
   key: string;
+  id?: string;
 }
 
 @Component({
@@ -50,8 +52,57 @@ export class JiraSpecComponent implements OnInit, OnChanges {
       .toLowerCase();
   }
 
-  private getSTU3Pages(): JiraSpecPageDef[] {
-    const pageDefs: JiraSpecPageDef[] = [];
+  private getSTU3Artifacts(): JiraSpecDef[] {
+    const ig = <STU3ImplementationGuide> this.implementationGuide;
+    const artifacts: JiraSpecDef[] = [];
+
+    (ig.package || []).forEach(pkg => {
+      const nextArtifacts = (pkg.resource || [])
+        .filter(resource => {
+          if (!resource.sourceReference || !resource.sourceReference.reference) return false;
+          const parsedSourceRef = parseReference(resource.sourceReference.reference);
+          const isMediaForIG = parsedSourceRef.resourceType === 'Media' && !resource.example && !resource.exampleFor;
+          return !isMediaForIG;
+        })
+        .map(resource => {
+          const parsedSourceRef = parseReference(resource.sourceReference.reference);
+          return <JiraSpecDef> {
+            name: resource.name,
+            key: `${parsedSourceRef.resourceType}-${parsedSourceRef.id}`,
+            id: `${parsedSourceRef.resourceType}/${parsedSourceRef.id}`
+          };
+        });
+
+      artifacts.push(... nextArtifacts);
+    });
+
+    return artifacts;
+  }
+
+  private getR4Artifacts(): JiraSpecDef[] {
+    const ig = <R4ImplementationGuide> this.implementationGuide;
+
+    if (!ig || !ig.definition) return [];
+
+    return (ig.definition.resource || [])
+      .filter(resource => {
+        if (!resource.reference || !resource.reference.reference) return false;
+        const parsedRef = parseReference(resource.reference.reference);
+        const isMediaForIG = parsedRef.resourceType === 'Media' && !resource.exampleBoolean && !resource.exampleCanonical;
+        return !isMediaForIG;
+      })
+      .map(resource => {
+        const parsedRef = parseReference(resource.reference.reference);
+        return <JiraSpecDef> {
+          name: resource.name,
+          key: `${parsedRef.resourceType}-${parsedRef.id}`,
+          id: `${parsedRef.resourceType}/${parsedRef.id}`
+        };
+      });
+  }
+
+  private getSTU3Pages(): JiraSpecDef[] {
+    const pageDefs: JiraSpecDef[] = [];
     const stu3IG = <STU3ImplementationGuide> this.implementationGuide;
 
     const nextPage = (page: PageComponent) => {
@@ -77,8 +128,8 @@ export class JiraSpecComponent implements OnInit, OnChanges {
     return pageDefs;
   }
 
-  private getR4Pages(): JiraSpecPageDef[] {
-    const pageDefs: JiraSpecPageDef[] = [];
+  private getR4Pages(): JiraSpecDef[] {
+    const pageDefs: JiraSpecDef[] = [];
     const r4IG = <R4ImplementationGuide> this.implementationGuide;
 
     const nextPage = (page: ImplementationGuidePageComponent) => {
@@ -129,6 +180,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
             "type": "element",
             "name": "specification",
             "attributes": {
+              "ballotUrl": "http://hl7.org/fhir/realm/foo/version",
               "gitUrl": "https://github.com/HL7/foo",
               "url": "http://hl7.org/fhir/foo",
               "ciUrl": "http://build.fhir.org/ig/HL7/foo",
@@ -172,16 +224,50 @@ export class JiraSpecComponent implements OnInit, OnChanges {
       };
     }
 
-    let jiraSpecPages: JiraSpecPageDef[];
+    let jiraSpecArtifacts: JiraSpecDef[];
+    let jiraSpecPages: JiraSpecDef[];
 
     if (this.configSerivce.isFhirR4) {
+      jiraSpecArtifacts = this.getR4Artifacts();
       jiraSpecPages = this.getR4Pages();
     } else if (this.configSerivce.isFhirSTU3) {
+      jiraSpecArtifacts = this.getSTU3Artifacts();
       jiraSpecPages = this.getSTU3Pages();
     } else {
       throw new Error('Unexpected FHIR server version!');
     }
 
+    // Artifacts
+    jiraSpecArtifacts.forEach(jsp => {
+      let foundArtifact = jiraSpec.elements[0].elements.find(e => e.name === 'artifact' && e.attributes && e.attributes.key === jsp.key);
+
+      if (foundArtifact) {
+        foundArtifact.attributes.name = jsp.name;
+      } else {
+        foundArtifact = {
+          type: 'element',
+          name: 'artifact',
+          attributes: {
+            name: jsp.name,
+            key: jsp.key,
+            id: jsp.id
+          }
+        };
+        jiraSpec.elements[0].elements.push(foundArtifact);
+      }
+    });
+
+    jiraSpec.elements[0].elements
+      .filter(e => e.type === 'element' && e.name === 'artifact' && e.attributes && e.attributes.name && e.attributes.key)
+      .forEach(e => {
+        const foundArtifact = jiraSpecArtifacts.find(jsp => jsp.key === e.attributes.key);
+
+        if (!foundArtifact) {
+          e.attributes.deprecated = true;
+        }
+      });
+
+    // Pages
     jiraSpecPages.forEach(jsp => {
       let foundPage = jiraSpec.elements[0].elements.find(e => e.name === 'page' && e.attributes && e.attributes.key === jsp.key);
 
