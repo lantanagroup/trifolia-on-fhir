@@ -185,36 +185,36 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps29"><span class="rvts64">Generating Snapshot Errors</span></p>
-<p class="rvps29"><span class="rvts65">Generating Snapshot is a category of errors that have different root causes. This section provides the steps to resolve two types of Generating Snapshot errors: Base Definition and Authorization.</span></p>
-<p class="rvps29"><span class="rvts65">To determine the type of Generating Snapshot error, look at code next to the phrase, “Publishing Content Failed.”</span></p>
+<p class="rvps29"><span class="rvts66">Generating Snapshot Errors</span></p>
+<p class="rvps29"><span class="rvts67">Generating Snapshot is a category of errors that have different root causes. This section provides the steps to resolve two types of Generating Snapshot errors: Base Definition and Authorization.</span></p>
+<p class="rvps29"><span class="rvts67">To determine the type of Generating Snapshot error, look at code next to the phrase, “Publishing Content Failed.”</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li style="margin-left: 0px" class="rvps28"><span class="rvts62">Base Definition error code</span><span class="rvts61">: Cannot find or generate snapshot for base definition </span></li>
-<li style="margin-left: 0px" class="rvps28"><a class="rvts68" href="GeneratingSnapshot.html#Authorization">Authorization error code</a><span class="rvts62">: </span><span class="rvts61">Unable to generate snapshot for [resource URL]</span></li>
+<li style="margin-left: 0px" class="rvps28"><span class="rvts64">Base Definition error code</span><span class="rvts63">: Cannot find or generate snapshot for base definition </span></li>
+<li style="margin-left: 0px" class="rvps28"><a class="rvts70" href="GeneratingSnapshot.html#Authorization">Authorization error code</a><span class="rvts64">: </span><span class="rvts63">Unable to generate snapshot for [resource URL]</span></li>
 </ul>
-<p class="rvps28"><span class="rvts61">Example resource URL: https://trifolia-fhir-dev.lantanagroup.com/structure-definition/ccda-authorization-extension</span></p>
-<p class="rvps29"><span class="rvts64">Base Definition</span></p>
-<p class="rvps29"><span class="rvts65">To resolve a Base Definition error, follow these steps:</span></p>
+<p class="rvps28"><span class="rvts63">Example resource URL: https://trifolia-fhir-dev.lantanagroup.com/structure-definition/ccda-authorization-extension</span></p>
+<p class="rvps29"><span class="rvts66">Base Definition</span></p>
+<p class="rvps29"><span class="rvts67">To resolve a Base Definition error, follow these steps:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" style="margin-left: 0px" class="rvps28"><span class="rvts61">In the Publishing Status text, look at the code to identify the resource causing the error. The screenshot shows an example of a resource that might be causing the error.</span></li>
+<li value="1" style="margin-left: 0px" class="rvps28"><span class="rvts63">In the Publishing Status text, look at the code to identify the resource causing the error. The screenshot shows an example of a resource that might be causing the error.</span></li>
 </ol>
 <p class="rvps28"><img width="573" height="233" alt="" style="padding : 1px;" src="lib/base definition-2.png"></p>
-<p class="rvps30"><span class="rvts61">2. </span><span class="rvts61"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts61">In Browse-Profiles, check that a profile exists for the resource in the error.</span></p>
+<p class="rvps30"><span class="rvts63">2. </span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">In Browse-Profiles, check that a profile exists for the resource in the error.</span></p>
 <p class="rvps28"><img width="572" height="177" alt="" style="padding : 1px;" src="lib/base definition 3.jpg"></p>
-<p class="rvps30"><span class="rvts61">3.</span><span class="rvts61"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts61">In the </span><a class="rvts69" href="https://www.hl7.org/fhir/resourcelist.html">HL7 resource list</a><span class="rvts61">, search for the correct base definition URL.</span></p>
-<p class="rvps30"><span class="rvts61">4.</span><span class="rvts61"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts61">In the </span><span class="rvts62">Base Definition</span><span class="rvts61">&nbsp;field, paste the correct base definition URL.</span></p>
-<p class="rvps30"><span class="rvts61">5.</span><span class="rvts61"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts61">Click </span><span class="rvts62">Save </span><span class="rvts61">and and then publish.</span></p>
-<p class="rvps29"><a name="Authorization"></a><span class="rvts64"><br/></span></p>
-<p class="rvps29"><span class="rvts64">Authorization</span></p>
-<p class="rvps29"><span class="rvts65">To resolve an Authorization error, follow these steps:</span></p>
-<p class="rvps26"><span class="rvts65">1. &nbsp; Find the profile causing the error by looking in the Publishing Status text for the phrase “Caused by.” </span></p>
+<p class="rvps30"><span class="rvts63">3.</span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">In the </span><a class="rvts71" href="https://www.hl7.org/fhir/resourcelist.html">HL7 resource list</a><span class="rvts63">, search for the correct base definition URL.</span></p>
+<p class="rvps30"><span class="rvts63">4.</span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">In the </span><span class="rvts64">Base Definition</span><span class="rvts63">&nbsp;field, paste the correct base definition URL.</span></p>
+<p class="rvps30"><span class="rvts63">5.</span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">Click </span><span class="rvts64">Save </span><span class="rvts63">and and then publish.</span></p>
+<p class="rvps29"><a name="Authorization"></a><span class="rvts66"><br/></span></p>
+<p class="rvps29"><span class="rvts66">Authorization</span></p>
+<p class="rvps29"><span class="rvts67">To resolve an Authorization error, follow these steps:</span></p>
+<p class="rvps26"><span class="rvts67">1. &nbsp; Find the profile causing the error by looking in the Publishing Status text for the phrase “Caused by.” </span></p>
 <p class="rvps26"><img width="590" height="279" alt="" style="padding : 1px;" src="lib/authorization.png"></p>
-<p class="rvps26"><span class="rvts23">2.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">Using the Profile Editor, open the profile causing the error identified in step 1.</span><br/><span class="rvts23">3.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts59">Elements</span><span class="rvts23">&nbsp;tab, confirm the </span><span class="rvts59">Type</span><span class="rvts23">&nbsp;for each constrained element is correct. If not, correct any errors.</span></p>
+<p class="rvps26"><span class="rvts23">2.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">Using the Profile Editor, open the profile causing the error identified in step 1.</span><br/><span class="rvts23">3.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts61">Elements</span><span class="rvts23">&nbsp;tab, confirm the </span><span class="rvts61">Type</span><span class="rvts23">&nbsp;for each constrained element is correct. If not, correct any errors.</span></p>
 <p class="rvps26"><img width="593" height="191" alt="" style="padding : 1px;" src="lib/authorization-3.jpg"></p>
-<p class="rvps30"><span class="rvts61">4.</span><span class="rvts61"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts61">For each constrained element, confirm the Type profile URL is correct. If not, correct any errors.</span></p>
+<p class="rvps30"><span class="rvts63">4.</span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">For each constrained element, confirm the Type profile URL is correct. If not, correct any errors.</span></p>
 <p class="rvps30"><img width="595" height="192" alt="" style="padding : 1px;" src="lib/authorization-4.jpg"></p>
-<p class="rvps26"><span class="rvts23">5.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><a class="rvts20" href="https://www.hl7.org/fhir/resourcelist.html">HL7 resource list</a><span class="rvts23">, search for the correct element type URL.</span><br/><span class="rvts23">6.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts59">Element Definition</span><span class="rvts23">&nbsp;form, in the </span><span class="rvts59">Type URL</span><span class="rvts23">&nbsp;field, paste the correct element type URL.</span><br/><span class="rvts23">7.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">Click </span><span class="rvts59">Save </span><span class="rvts23">and</span><span class="rvts59">&nbsp;</span><span class="rvts23">then publish.</span></p>
-<p class="rvps28"><span class="rvts61"><br/></span></p>
+<p class="rvps26"><span class="rvts23">5.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><a class="rvts20" href="https://www.hl7.org/fhir/resourcelist.html">HL7 resource list</a><span class="rvts23">, search for the correct element type URL.</span><br/><span class="rvts23">6.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts61">Element Definition</span><span class="rvts23">&nbsp;form, in the </span><span class="rvts61">Type URL</span><span class="rvts23">&nbsp;field, paste the correct element type URL.</span><br/><span class="rvts23">7.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">Click </span><span class="rvts61">Save </span><span class="rvts23">and</span><span class="rvts61">&nbsp;</span><span class="rvts23">then publish.</span></p>
+<p class="rvps28"><span class="rvts63"><br/></span></p>
 <p></p>
 
             </div>
