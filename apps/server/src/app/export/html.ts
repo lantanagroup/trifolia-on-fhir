@@ -336,7 +336,7 @@ export class HtmlExporter {
     if (!ignoreWarningsValue) {
       ignoreWarningsValue = '== Suppressed Messages ==\r\n';
     } else if (!ignoreWarningsValue.startsWith('== Suppressed Messages ==')) {
-      ignoreWarningsValue += '== Suppressed Messages ==\r\n';
+      ignoreWarningsValue = '== Suppressed Messages ==\r\n' + ignoreWarningsValue;
     }
 
     fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
