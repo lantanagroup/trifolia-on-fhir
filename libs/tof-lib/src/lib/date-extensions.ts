@@ -8,17 +8,11 @@ declare global {
 
 Date.prototype.formatFhir = function() {
     const date: Date = this;
-    let month = '' + (date.getMonth() + 1);
-    let day = '' + date.getDate();
-    const year = date.getFullYear();
+    const ret = date.toISOString();
 
-    if (month.length < 2) {
-        month = '0' + month;
+    if (ret.endsWith('T00:00:00.000Z')) {
+      return ret.substring(0, 10);
     }
 
-    if (day.length < 2) {
-        day = '0' + day;
-    }
-
-    return [year, month, day].join('-');
+    return ret;
 }
