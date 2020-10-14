@@ -9,6 +9,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './codesystems.component.html',
@@ -25,7 +26,8 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     protected authService: AuthService,
     private codeSystemService: CodeSystemService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -89,10 +91,14 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
     });
   }
 
+  public getImplementationGuideId(){
+    return this.route.snapshot.paramMap.get('implementationGuideId');
+  }
+
   public getCodeSystems() {
     this.codeSystemsBundle = null;
 
-    this.codeSystemService.search(this.page, this.nameText)
+    this.codeSystemService.search(this.page, this.nameText, this.getImplementationGuideId())
       .subscribe((results) => {
         this.codeSystemsBundle = results;
       }, (err) => {

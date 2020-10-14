@@ -187,11 +187,11 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
           this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${results.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
-          this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
         }
+        this.message = 'Your changes have been saved!';
       }, (err) => {
         this.message = `An error occurred while saving the value set: ${err.message}`;
       });

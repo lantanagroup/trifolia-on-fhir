@@ -1,6 +1,6 @@
 import '../date-extensions';
 import {
-  IAgentComponent,
+  IAgentComponent, IAttachment,
   IAuditEvent,
   IBundle,
   ICodeableConcept,
@@ -2597,7 +2597,7 @@ export class Contributor extends Element {
 
 }
 
-export class Attachment extends Element {
+export class Attachment extends Element implements IAttachment {
   public contentType?: string;
   public language?: string;
   public data?: string;
@@ -2605,7 +2605,7 @@ export class Attachment extends Element {
   public size?: number;
   public hash?: string;
   public title?: string;
-  public creation?: Date;
+  public creation?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -2632,7 +2632,7 @@ export class Attachment extends Element {
         this.title = obj.title;
       }
       if (obj.creation) {
-        this.creation = new Date(obj.creation);
+        this.creation = obj.creation;
       }
     }
   }
@@ -10967,7 +10967,7 @@ export class PageComponent extends BackboneElement {
     this.title = value;
 
     if (!isRoot && value) {
-      this.source = value.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '') + '.html';
+      this.source = value.toLowerCase().replace(/\s/g, '_').replace(/[()]:/g, '') + '.html';
     } else if (isRoot) {
       this.source = `index.html`;
     }

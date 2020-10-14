@@ -22,7 +22,7 @@ import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestMethod, RequestUrl, User} from './server.decorators';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
@@ -53,7 +53,9 @@ export class FhirController extends BaseController {
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string, @Query('newId') newId: string, @User() user: ITofUser, @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {
+  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string,
+                 @Query('newId') newId: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId,
+                 @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
@@ -90,10 +92,30 @@ export class FhirController extends BaseController {
       method: 'PUT',
       data: resource
     };
+    const checkOptions: AxiosRequestConfig = {
+      url: buildUrl(fhirServerBase, resourceType, newId),
+      method: 'GET'
+    };
     const deleteOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
       method: 'DELETE'
     };
+
+    this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
+    try{
+      await this.httpService.request(checkOptions).toPromise();
+      this.logger.error(`Resource id ${newId} already exists`);
+      return `Resource id ${newId} already exists`;
+    }catch (ex){
+      if(ex.response && ex.response.status !== 404 && ex.response.status !== 410){
+        throw ex;
+      }
+    }
+
+    this.logger.log('Sending DELETE request to FHIR server for original resource');
+
+    // Delete the original resource with the original id
+    await this.httpService.request(deleteOptions).toPromise();
 
     try {
       // Create the new resource with the new id
@@ -118,24 +140,38 @@ export class FhirController extends BaseController {
       });
     };
 
-    const searchPromises = [];
+    const allResults = [];
     // These search parameters apply to both STU3 and R4 servers
-    searchPromises.push(searchForReference('ImplementationGuide', 'resource'));
+    allResults.push(await searchForReference('ImplementationGuide', 'resource'));
     if (fhirVersion === 'r4') {
-      searchPromises.push(searchForReference('ImplementationGuide', 'global'));
+      allResults.push(await searchForReference('ImplementationGuide', 'global'));
     }
 
-    const allResults = await Promise.all(searchPromises);
+    let igFound = false;
+    allResults.forEach(result => {
+      if(!igFound){
+        result.forEach(r => {
+          if(r.id === contextImplementationGuideId && r.resourceType === "ImplementationGuide"){
+            igFound = true;
+          }
+        });
+      }
+    });
+
+    if (contextImplementationGuideId && !igFound) {
+      allResults.push(await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId));
+    }
 
     const allResources = allResults.reduce((prev, curr) => {
       return prev.concat(curr);
     }, []);
 
-    const findReference = (obj: any) => {
+    let references: any[] = [];
+    const findReferences = (obj: any) => {
       if (!obj) return;
 
-      if (obj.reference === `${resourceType}/${currentId}`) {
-        return obj;
+      if (obj.hasOwnProperty("reference") && obj.reference === `${resourceType}/${currentId}`) {
+        references.push(obj);
       }
 
       const propertyNames = Object.keys(obj);
@@ -144,23 +180,27 @@ export class FhirController extends BaseController {
         const propertyName = propertyNames[i];
 
         if (typeof obj[propertyName] === 'object') {
-          const foundReference = findReference(obj[propertyName]);
-
-          if (foundReference) {
-            return foundReference;
-          }
+          findReferences(obj[propertyName]);
         }
       }
+      return;
     };
 
     allResults.forEach(result => {
-      const foundReference = findReference(result);
-      if(foundReference){
-        foundReference.reference =  `${resourceType}/${newId}`;
-        foundReference.display = newId;
+      references = [];
+      findReferences(result);
+      if (references.length > 0) {
+        const anyResource = <any> resource;
+        references.forEach(foundReference => {
+          foundReference.reference =  `${resourceType}/${newId}`;
+          if (anyResource.title) {
+            foundReference.display = anyResource.title;
+          } else if (typeof anyResource.name === 'string') {
+            foundReference.display = anyResource.name;
+          }
+        });
       }
-    }
-    );
+    });
 
     // Persist the changes to the resources
     if (allResources.length > 0) {
@@ -176,14 +216,15 @@ export class FhirController extends BaseController {
           }
         };
       });
-      await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
+
+      try{
+        await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
+      }
+      catch(ex){
+        this.logger.error(`Error from FHIR server when persisting changes to the resources: ${ex.message}`);
+        throw ex;
+      }
     }
-
-
-    this.logger.log('Sending DELETE request to FHIR server for original resource');
-
-    // Delete the original resource with the original id
-    await this.httpService.request(deleteOptions).toPromise();
 
     this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;

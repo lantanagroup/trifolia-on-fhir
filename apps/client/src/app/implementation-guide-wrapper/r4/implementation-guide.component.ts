@@ -1,7 +1,7 @@
 import {
   Component,
   DoCheck,
-  EventEmitter,
+  EventEmitter, HostListener,
   Input,
   OnDestroy,
   OnInit
@@ -62,6 +62,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   };
   public filterResourceQuery: string;
   public igNotFound = false;
+  public selectedPage: PageDefinition;
 
   constructor(
     private modal: NgbModal,
@@ -141,6 +142,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public get isFile(): boolean {
     return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
+  }
+
+  public isFileNameInvalid(page: PageDefinition): boolean {
+    const regexp: RegExp = /[^A-Za-z0-9\._\-]/;
+    return page.page && page.page.fileName && regexp.test(page.page.fileName);
   }
 
   public get isFilterResourceTypeAll() {
@@ -544,14 +550,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
 
-    newPage.nameUrl = newPage.fileName;
     pageDef.page.page.push(newPage);
 
     this.initPages();
   }
 
   public removePage(pageDef: PageDefinition) {
-    if (!pageDef) {
+    if (!pageDef || !confirm('Are you sure you want to remove this page?')) {
       return;
     }
 
@@ -582,6 +587,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.initPages();
+    this.isDirty=true;
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {
@@ -593,10 +599,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public movePageUp(pageDef: PageDefinition) {
+    if (this.isMovePageUpDisabled(pageDef)) return;
     const index = pageDef.parent.page.indexOf(pageDef.page);
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index - 1, 0, pageDef.page);
     this.initPages();
+    this.isDirty = true;
   }
 
   public isMovePageDownDisabled(pageDef: PageDefinition) {
@@ -608,10 +616,61 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public movePageDown(pageDef: PageDefinition) {
+    if (this.isMovePageDownDisabled(pageDef)) return;
     const index = pageDef.parent.page.indexOf(pageDef.page);
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index + 1, 0, pageDef.page);
     this.initPages();
+    this.isDirty = true;
+  }
+
+  public isMovePageOutDisabled(pageDef: PageDefinition) {
+    if (!pageDef.parent || pageDef.parent === this.implementationGuide.definition.page) return true;
+
+    // Must have a grand-parent to move this page to a child of
+    const parentPageDef = this.pages.find(y => y.page === pageDef.parent);
+    return !parentPageDef.parent;
+  }
+
+  public movePageOut(pageDef: PageDefinition) {
+    if (this.isMovePageOutDisabled(pageDef)) return;
+    const parentPage = pageDef.parent;
+
+    // Remove the page from it's current parent
+    const currentIndex = parentPage.page.indexOf(pageDef.page);
+    parentPage.page.splice(currentIndex, currentIndex >= 0 ? 1 : 0);
+
+    // Add the page the grand-parent
+    const parentPageDef = this.pages.find(y => y.page === parentPage);
+    const grandParentPage = parentPageDef.parent;
+    const parentIndex = grandParentPage.page.indexOf(parentPage);
+    grandParentPage.page.splice(parentIndex + 1, 0, pageDef.page);
+
+    this.initPages();
+    this.isDirty = true;
+  }
+
+  public isMovePageInDisabled(pageDef: PageDefinition) {
+    if (!pageDef.parent) return true;
+    const currentIndex = pageDef.parent.page.indexOf(pageDef.page);
+    return pageDef.page === this.implementationGuide.definition.page || pageDef.parent.page.length === 1 || currentIndex === 0;
+  }
+
+  public movePageIn(pageDef: PageDefinition) {
+    if (this.isMovePageInDisabled(pageDef)) return;
+    const parentPage = pageDef.parent;
+
+    // Remove the page from it's current parent
+    const currentIndex = parentPage.page.indexOf(pageDef.page);
+    parentPage.page.splice(currentIndex, currentIndex >= 0 ? 1 : 0);
+
+    // Add the current page to the previous sibling
+    const newParentPage = parentPage.page[currentIndex - 1];
+    newParentPage.page = newParentPage.page || [];
+    newParentPage.page.push(pageDef.page);
+
+    this.initPages();
+    this.isDirty = true;
   }
 
   public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
@@ -756,6 +815,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.implementationGuide.definition) {
       this.initPage(this.implementationGuide.definition.page);
     }
+
+    // Since the PageDefinitions have changed, we need to reset the selected page
+    if (this.selectedPage) {
+      this.selectedPage = this.pages.find(p => p.page === this.selectedPage.page);
+    }
   }
 
   ngOnInit() {
@@ -785,6 +849,86 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   ngDoCheck() {
     if (this.implementationGuide) {
       this.validation = this.fhirService.validate(this.implementationGuide);
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {  // right
+    if (this.selectedPage) {
+      if (event.altKey && !event.ctrlKey) {
+        if (this.selectedPage.page === this.implementationGuide.definition.page && event.code === 'ArrowDown') {
+          // Current page is root page and the user wants to navigate down
+          if (this.selectedPage.page.page && this.selectedPage.page.page.length > 0) {
+            // If the current page is the root page and there are child pages, select the first child
+            this.selectedPage = this.pages.find(p => p.page === this.selectedPage.page.page[0]);
+          }
+        } else {
+          const index = this.selectedPage.parent.page.indexOf(this.selectedPage.page);
+
+          if (event.code === 'ArrowUp') {
+            if (index > 0) {
+              // Select the previous sibling up
+              let previousPage = this.selectedPage.parent.page[index - 1];
+
+              if (previousPage.page && previousPage.page.length > 0) {
+                // Find the last leaf of the previous sibling
+                while (previousPage.page && previousPage.page.length > 0) {
+                  previousPage = previousPage.page[previousPage.page.length - 1];
+                }
+              }
+
+              this.selectedPage = this.pages.find(p => p.page === previousPage);
+            } else if (index === 0) {
+              // Select the parent
+              this.selectedPage = this.pages.find(p => p.page === this.selectedPage.parent);
+            }
+          } else if (event.code === 'ArrowDown') {
+            if (this.selectedPage.page.page && this.selectedPage.page.page.length > 0) {
+              // Select the first child
+              this.selectedPage = this.pages.find(p => p.page === this.selectedPage.page.page[0]);
+            } else if (this.selectedPage.parent.page.length > index + 1) {
+              // Select the next sibling down
+              this.selectedPage = this.pages.find(p => p.page === this.selectedPage.parent.page[index + 1]);
+            } else {
+              const findNextParentSibling = (nextParent: ImplementationGuidePageComponent) => {
+                const parentPageDef = this.pages.find(p => p.page === nextParent);
+
+                if (parentPageDef.parent) {
+                  const parentIndex = parentPageDef.parent.page.indexOf(parentPageDef.page);
+
+                  if (parentPageDef.parent.page.length > parentIndex + 1) {
+                    // Select the parent page's next sibling
+                    return parentPageDef.parent.page[parentIndex + 1];
+                  } else {
+                    return findNextParentSibling(parentPageDef.parent);
+                  }
+                }
+              };
+
+              const foundNextParentSibling = findNextParentSibling(this.selectedPage.parent);
+
+              if (foundNextParentSibling) {
+                this.selectedPage = this.pages.find(p => p.page === foundNextParentSibling);
+              }
+            }
+          }
+        }
+      } else if (event.altKey && event.ctrlKey) {
+        switch (event.code) {
+          case 'ArrowRight':
+            this.movePageIn(this.selectedPage);
+            break;
+          case 'ArrowLeft':
+            this.movePageOut(this.selectedPage);
+            break;
+          case 'ArrowUp':
+            this.movePageUp(this.selectedPage);
+            break;
+          case 'ArrowDown':
+            this.movePageDown(this.selectedPage);
+            break;
+        }
+      }
     }
   }
 }

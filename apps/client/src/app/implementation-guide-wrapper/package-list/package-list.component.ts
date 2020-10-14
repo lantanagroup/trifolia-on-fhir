@@ -18,11 +18,12 @@ export class PackageListComponent implements OnInit {
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public valueChange: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private configService: ConfigService) {
     this.change
-      .debounceTime(1000)
-      .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
+    .debounceTime(1000)
+    .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
   }
 
   initPackageList() {
@@ -43,7 +44,6 @@ export class PackageListComponent implements OnInit {
   remove() {
     PackageListModel.removePackageList(this.implementationGuide);
     this.packageList = null;
-    this.change.emit()
   }
 
   import(file: File) {

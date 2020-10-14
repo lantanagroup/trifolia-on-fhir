@@ -1,20 +1,20 @@
 <div [class.form-group]="isFormGroup" *ngIf="parentObject">
   <label *ngIf="isFormGroup && !hasChoice()">
-    <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
+    <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"/>
     {{title || 'Choice'}}
   </label>
-  <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"
+  <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"
          *ngIf="!isFormGroup && !hasChoice()"/>
   <app-tooltip-icon *ngIf="isFormGroup && !hasChoice()" [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   <div class="input-group" *ngIf="hasChoice()">
     <div class="input-group-prepend" *ngIf="!required || title">
       <div class="input-group-text">
-        <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event)"/>
+        <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"/>
         <span>{{title}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
       </div>
     </div>
-    <select class="form-control" *ngIf="hasChoice() && choices.length > 1" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event)" [class.is-invalid]="typeInvalid">
+    <select class="form-control" *ngIf="hasChoice() && choices.length > 1" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event); change.emit()" [class.is-invalid]="typeInvalid">
       <option *ngFor="let c of choices" [ngValue]="c">{{c}}</option>
     </select>
   </div>
@@ -27,18 +27,19 @@
     </div>
   </div>
   <div class="input-group" *ngIf="isString()">
-    <input type="text" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]"/>
+    <input type="text" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]" (change)="change.emit()"/>
   </div>
   <div class="input-group" *ngIf="getChoiceName() === 'date'">
-    <input type="date" class="form-control" [ngModel]="parentObject[getChoicePropertyName()] | date: 'yyyy-MM-dd'" (ngModelChange)="parentObject[getChoicePropertyName()] = $event"/>
+    <input type="date" class="form-control" [ngModel]="parentObject[getChoicePropertyName()] | date: 'yyyy-MM-dd'"
+           (ngModelChange)="parentObject[getChoicePropertyName()] = $event; change.emit()"/>
   </div>
   <div class="input-group" *ngIf="isNumber()">
-    <input type="number" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]"/>
+    <input type="number" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]" (change)="change.emit()"/>
   </div>
-  <app-fhir-identifier *ngIf="getChoiceName() === 'Identifier'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-identifier>
-  <app-fhir-attachment *ngIf="getChoiceName() === 'Attachment'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-attachment>
-  <app-fhir-boolean *ngIf="getChoiceName() === 'boolean'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-boolean>
-  <app-fhir-quantity *ngIf="isQuantity()" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false"></app-fhir-quantity>
+  <app-fhir-identifier *ngIf="getChoiceName() === 'Identifier'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" (change)="change.emit()"></app-fhir-identifier>
+  <app-fhir-attachment *ngIf="getChoiceName() === 'Attachment'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" (change)="change.emit()"></app-fhir-attachment>
+  <app-fhir-boolean *ngIf="getChoiceName() === 'boolean'" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-boolean>
+  <app-fhir-quantity *ngIf="isQuantity()" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" (change)="change.emit()"></app-fhir-quantity>
   <div class="input-group" *ngIf="getChoiceName() === 'CodeableConcept'">
     <input type="text" class="form-control" readonly [ngModel]="getCodeableConceptDisplay()"/>
     <div class="input-group-append">
@@ -59,21 +60,21 @@
     <div class="input-group-append">
       <div class="input-group-text">
         <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')"
-               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', '')"/>
+               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', ''); change.emit()"/>
       </div>
     </div>
     <select class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')"
-            [(ngModel)]="parentObject[getChoicePropertyName()].system">
+            [(ngModel)]="parentObject[getChoicePropertyName()].system" (change)="change.emit()">
       <option *ngFor="let cpc of contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
     </select>
     <div class="input-group-append">
       <div class="input-group-text">
         <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('value')"
-               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', '')"/>
+               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', ''); change.emit()"/>
       </div>
     </div>
     <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('value')"
-           [(ngModel)]="parentObject[getChoicePropertyName()].value"/>
+           [(ngModel)]="parentObject[getChoicePropertyName()].value" (change)="change.emit()"/>
     <div class="input-group-append">
       <button type="button" class="btn btn-default" (click)="editContactPoint()" title="Edit this contact point">
         <i class="fa fa-edit"></i>
@@ -82,18 +83,18 @@
   </div>
   <app-fhir-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject"
                        [propertyName]="getChoicePropertyName()" [isFormGroup]="false"
-                       [required]="true"></app-fhir-human-name>
+                       [required]="true" (change)="change.emit()"></app-fhir-human-name>
   <app-fhir-edit-period *ngIf="getChoiceName() === 'Period'" [parentObject]="parentObject"
                         [propertyName]="getChoicePropertyName()" [isFormGroup]="false"
-                        [required]="true"></app-fhir-edit-period>
+                        [required]="true" (change)="change.emit()"></app-fhir-edit-period>
   <app-fhir-edit-range *ngIf="getChoiceName() === 'Range'" [parentObject]="parentObject"
                        [propertyName]="getChoicePropertyName()" [isFormGroup]="false"
-                       [required]="true"></app-fhir-edit-range>
+                       [required]="true" (change)="change.emit()"></app-fhir-edit-range>
   <app-fhir-edit-ratio *ngIf="getChoiceName() === 'Ratio'" [parentObject]="parentObject"
                        [propertyName]="getChoicePropertyName()" [isFormGroup]="false"
-                       [required]="true"></app-fhir-edit-ratio>
+                       [required]="true" (change)="change.emit()"></app-fhir-edit-ratio>
   <app-fhir-reference *ngIf="getChoiceName() === 'Reference' || getChoiceName() === 'ResourceReference'"
-                      [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true"></app-fhir-reference>
+                      [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-reference>
   <div class="input-group" *ngIf="getChoiceName() === 'SampledData'">
     Not yet supported
   </div>

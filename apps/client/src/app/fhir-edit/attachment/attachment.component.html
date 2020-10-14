@@ -1,6 +1,6 @@
 <div class="form-group" *ngIf="isFormGroup">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()" />
         {{title || 'Attachment'}}
     </label>
     <div class="input-group">
@@ -14,7 +14,7 @@
 </div>
 <div class="input-group" *ngIf="!isFormGroup">
     <div class="input-group-addon" *ngIf="title">
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()" />
         {{title}}
     </div>
     <input type="text" class="form-control" readonly [ngModel]="getDisplay()" />

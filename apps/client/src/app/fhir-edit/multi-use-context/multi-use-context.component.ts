@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Coding, UsageContext} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
@@ -13,6 +13,7 @@ export class FhirMultiUseContextComponent implements OnInit {
   @Input() propertyName: string;
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public usageContextTypeCodes: Coding[] = [];

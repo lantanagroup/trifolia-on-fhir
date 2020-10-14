@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
@@ -15,6 +15,7 @@ export class FhirQuantityComponent implements OnInit {
   @Input() defaultValue = {};
   @Input() tooltip: string;
   @Input() tooltipKey: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public Globals = Globals;
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirRangeModalComponent} from '../range-modal/range-modal.component';
@@ -17,6 +17,7 @@ export class FhirRangeComponent implements OnInit {
   @Input() defaultValue = '';
   @Input() tooltipPath: string;
   @Input() tooltipKey: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public Globals = Globals;
 
@@ -107,6 +108,9 @@ export class FhirRangeComponent implements OnInit {
   editRange() {
     const modalRef = this.modalService.open(FhirRangeModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.range = this.parentObject[this.propertyName];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   ngOnInit() {

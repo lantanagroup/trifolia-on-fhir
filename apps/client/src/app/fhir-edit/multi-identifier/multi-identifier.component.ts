@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Identifier} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -16,6 +16,7 @@ export class FhirMultiIdentifierComponent implements OnInit {
   @Input() title: string;
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public Globals = Globals;
@@ -28,6 +29,9 @@ export class FhirMultiIdentifierComponent implements OnInit {
   public editIdentifier(identifier: Identifier) {
     const ref = this.modalService.open(FhirIdentifierModalComponent, {size: 'lg', backdrop: 'static'});
     ref.componentInstance.identifier = identifier;
+    ref.result.then(() => {
+        this.change.emit();
+    });
   }
 
   ngOnInit() {

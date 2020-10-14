@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirAddressModalComponent} from '../address-modal/address-modal.component';
@@ -23,6 +23,7 @@ export class FhirChoiceComponent implements OnInit {
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
   @Input() allowedType: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public tooltip: string;
   public contactPointSystemCodes: Coding[] = [];
@@ -166,6 +167,9 @@ export class FhirChoiceComponent implements OnInit {
   editAddress() {
     const modalRef = this.modalService.open(FhirAddressModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.address = this.parentObject[this.getChoicePropertyName()];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   getCodeableConceptDisplay() {
@@ -197,6 +201,9 @@ export class FhirChoiceComponent implements OnInit {
   editCodeableConcept() {
     const modalRef = this.modalService.open(FhirCodeableConceptModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.codeableConcept = this.parentObject[this.getChoicePropertyName()];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   getCodingDisplay() {
@@ -225,11 +232,17 @@ export class FhirChoiceComponent implements OnInit {
   editCoding() {
     const modalRef = this.modalService.open(FhirCodingModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.coding = this.parentObject[this.getChoicePropertyName()];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   editContactPoint() {
     const modalRef = this.modalService.open(FhirContactPointModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.contactPoint = this.parentObject[this.getChoicePropertyName()];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   ngOnInit() {

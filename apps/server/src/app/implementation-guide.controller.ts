@@ -6,18 +6,16 @@ import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {BundleExporter} from './export/bundle';
-import { getErrorString, getHumanNameDisplay, getHumanNamesDisplay } from '../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReference} from '../../../../libs/tof-lib/src/lib/helper';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
-import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {FhirController} from './fhir.controller';
+import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {
-  SearchImplementationGuideResponse,
-  SearchImplementationGuideResponseContainer
-} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {AxiosRequestConfig} from 'axios';
+import {IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -29,6 +27,56 @@ export class ImplementationGuideController extends BaseFhirController {
   constructor(protected httpService: HttpService,
               protected configService: ConfigService) {
     super(httpService, configService);
+  }
+
+  private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
+    if (!implementationGuide || !implementationGuide.package || implementationGuide.package.length === 0) return [];
+    const examples = implementationGuide.package.reduce((theList, p) => {
+      const packageExamples = (p.resource || []).filter(r => r.sourceReference && r.sourceReference.reference && (r.example || !!r.exampleFor));
+      return theList.concat(packageExamples);
+    }, []);
+
+    return examples.map((e: PackageResourceComponent) => {
+      const parsedReference = parseReference(e.sourceReference.reference);
+      return <IgExampleModel> {
+        id: parsedReference.id,
+        resourceType: parsedReference.resourceType,
+        name: e.name || `${parsedReference.resourceType}: ${parsedReference.id}`
+      }
+    });
+  }
+
+  private getR4Examples(implementationGuide: R4ImplementationGuide) {
+    if (!implementationGuide || !implementationGuide.definition || !implementationGuide.definition.resource || implementationGuide.definition.resource.length === 0) return [];
+
+    return implementationGuide.definition.resource
+      .filter(r => r.reference && r.reference.reference && (r.exampleBoolean || !!r.exampleCanonical))
+      .map(r => {
+        const parsedReference = parseReference(r.reference.reference);
+
+        return <IgExampleModel> {
+          resourceType: parsedReference.resourceType,
+          id: parsedReference.id,
+          name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
+        };
+      });
+  }
+
+  @Get(':id/example')
+  public async getExamples(@Param('id') id: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+    const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
+    const implementationGuideResponse = await this.httpService.get<IImplementationGuide>(implementationGuideUrl).toPromise();
+    const implementationGuide = implementationGuideResponse.data;
+
+    switch (fhirServerVersion) {
+      case 'stu3':
+        return this.getSTU3Examples(<STU3ImplementationGuide> implementationGuide);
+      case 'r4':
+        return this.getR4Examples(<R4ImplementationGuide> implementationGuide);
+      default:
+        this.logger.error(`Unexpected FHIR server version ${fhirServerVersion} when requesting IG examples`);
+        throw new InternalServerErrorException();
+    }
   }
 
   @Get('published')
