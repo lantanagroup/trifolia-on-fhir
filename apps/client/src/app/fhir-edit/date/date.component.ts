@@ -83,15 +83,23 @@ export class FhirDateComponent implements OnInit {
     }
   }
 
-  public get value(): any {
-    if (!this.parentObject) {
+  public get value(): string {
+    if (!this.parentObject || !this.parentObject[this.propertyName]) {
       return '';
     }
 
-    return this.parentObject[this.propertyName];
+    if (this.parentObject[this.propertyName] instanceof Date) {
+      const theDate = <Date> this.parentObject[this.propertyName];
+      return theDate.formatFhir();
+    } else if (typeof this.parentObject[this.propertyName] === 'string') {
+      return this.parentObject[this.propertyName];
+    } else {
+      console.error('Unexpected date type/value for DateComponent');
+      return this.parentObject[this.propertyName];
+    }
   }
 
-  public set value(newValue: any) {
+  public set value(newValue: string) {
     if (!newValue && this.parentObject && this.parentObject.hasOwnProperty(this.propertyName)) {
       delete this.parentObject[this.propertyName];
 
