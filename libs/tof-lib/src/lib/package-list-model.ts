@@ -23,6 +23,7 @@ export class PackageListModel {
   canonical: string;
   introduction?: string;
   list?: PackageListItemModel[] = [];
+  category?: string;
 
   public static removePackageList(implementationGuide: IImplementationGuide) {
     const found = PackageListModel.findContainedDocumentReference(implementationGuide);

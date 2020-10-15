@@ -1,9 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
-import {DocumentReference} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from '../../shared/config.service';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
@@ -17,13 +15,23 @@ export class PackageListComponent implements OnInit {
   @Input() defaultName: string;
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
+  public packageListJSON;
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public valueChange: EventEmitter<void> = new EventEmitter<void>();
+  public valueChange = new EventEmitter();
 
   constructor(private configService: ConfigService) {
     this.change
     .debounceTime(1000)
-    .subscribe(() => PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion)));
+    .subscribe(() => {
+      PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion))
+      this.packageListJSON = JSON.stringify(this.packageList, null, "\t");
+    });
+
+    this.valueChange
+      .debounceTime(1000)
+      .subscribe(() => {
+        this.packageList = JSON.parse(this.packageListJSON);
+      });
   }
 
   initPackageList() {
@@ -35,6 +43,8 @@ export class PackageListComponent implements OnInit {
       path: '',
       desc: '',
       fhirversion: '',
+      date: '',
+      sequence: '',
       status: 'ci-build',
       current: true
     });
@@ -82,5 +92,6 @@ export class PackageListComponent implements OnInit {
 
   ngOnInit() {
     this.packageList = PackageListModel.getPackageList(this.implementationGuide);
+    this.packageListJSON = JSON.stringify(this.packageList, null, "\t");
   }
 }
