@@ -66,7 +66,7 @@
                     <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="change.emit()" />
                   </td>
                   <td>
-                    <app-fhir-date label="false" isFormGroup="false" [parentObject]="v" propertyName="date" (change)="change.emit()"></app-fhir-date>
+                    <app-fhir-date [label]="false" [isFormGroup]="false" [parentObject]="v" propertyName="date" (change)="change.emit()"></app-fhir-date>
                   </td>
                   <td>
                     <input type="text" class="form-control" [(ngModel)]="v.sequence" (change)="change.emit()" />
