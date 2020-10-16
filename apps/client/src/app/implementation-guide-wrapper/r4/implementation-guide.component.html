@@ -153,7 +153,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction"
+              <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" [required]="true" propertyName="jurisdiction"
                                            (change)="isDirty=true; nameChanged();"></app-fhir-multi-jurisdiction>
             </div>
           </div>
@@ -296,7 +296,7 @@
             <tr *ngFor="let group of implementationGuide.definition.grouping; let i = index">
               <td>
                 {{group.id || ''}}
-                <span *ngIf="!group.id" style="color: red;">A group ID is required to associate resources to this group. Edit the group and create assign an ID to it.</span>
+                <span *ngIf="!group.id" style="color: red;">A group ID is required to associate resources to this group. Edit the group and create/assign an ID to it.</span>
               </td>
               <td>
                 <app-fhir-string [parentObject]="group" propertyName="name" [isFormGroup]="false" (change)="isDirty=true; nameChanged();"></app-fhir-string>
@@ -607,7 +607,7 @@
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
       </ng-template>
       <ng-template ngbTabContent>
-        <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
       </ng-template>
     </ngb-tab>
 

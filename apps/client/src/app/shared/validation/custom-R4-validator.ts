@@ -1,12 +1,8 @@
-import {
-  ImplementationGuide as R4ImplementationGuide,
-  ImplementationGuidePageComponent,
-  ImplementationGuideResourceComponent
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Severities, ValidatorMessage} from 'fhir/validator';
 import {CustomValidator} from './custom-validator';
-import { groupBy, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import {groupBy, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 export class CustomR4Validator extends CustomValidator {
   private getAllPages(implementationGuide: R4ImplementationGuide): ImplementationGuidePageComponent[] {
@@ -43,6 +39,15 @@ export class CustomR4Validator extends CustomValidator {
         severity: Severities.Error,
         message: `The url of the implementation guide should end with the ID of the implementation guide. If not, the publishing process will result in a "URL Mismatch" error.`
       });
+    }
+
+    if(!implementationGuide.jurisdiction || (implementationGuide.jurisdiction && implementationGuide.jurisdiction[0] === {})){
+      messages.push({
+        location: "ImplementationGuide.jurisdiction",
+        resourceId: implementationGuide.id,
+        severity: Severities.Error,
+        message: `The implementation guide must specify at least 1 jurisdiction`
+      })
     }
 
     allResources.forEach((resource: ImplementationGuideResourceComponent, index) => {
