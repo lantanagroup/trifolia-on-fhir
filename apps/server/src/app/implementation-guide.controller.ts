@@ -11,11 +11,12 @@ import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
 import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {AxiosRequestConfig} from 'axios';
 import {IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
+import {spawn} from 'child_process';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -160,13 +161,54 @@ export class ImplementationGuideController extends BaseFhirController {
     return super.baseGet(fhirServerBase, id, query, user);
   }
 
+  private downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4') {
+    this.configService.getIgPublisherForDependencies()
+      .then(igPublisherLocation => {
+        let packageIds: string[];
+
+        if (fhirServerVersion === 'r4') {
+          packageIds = getR4Dependencies(<R4ImplementationGuide> ig);
+        } else if (fhirServerVersion === 'stu3') {
+          packageIds = getSTU3Dependencies(<STU3ImplementationGuide> ig);
+        }
+
+        this.logger.log(`Executing IG Publisher to download package dependencies for IG ${ig.id}`);
+
+        const dependencyProcess = spawn('java', ['-jar', igPublisherLocation, '-package', packageIds.join(';')]);
+        dependencyProcess.stdout.on('data', (data) => {
+          const ignoreLines = [
+            'Detected Java version',
+            'dir = ',
+            'Cache = '
+          ];
+
+          const foundIgnoreLine = ignoreLines.find(il => data.toString().toLowerCase().startsWith(il.toLowerCase()));
+
+          if (!foundIgnoreLine) {
+            this.logger.log(data.toString().trim());
+          }
+        });
+        dependencyProcess.stderr.on('data', (data) => {
+          this.logger.error(data.toString().trim());
+        });
+        dependencyProcess.on('error', (err) => {
+          this.logger.error(`Error downloading dependencies using IG Publisher: ${err.toString().trim()}`);
+        });
+      })
+      .catch(err => {
+        this.logger.error(`Error downloading dependencies using IG Publisher: ${err}`);
+      });
+  }
+
   @Post()
   public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+    this.downloadDependencies(body, fhirServerVersion);
     return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
   }
 
   @Put(':id')
   public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+    this.downloadDependencies(body, fhirServerVersion);
     return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
   }
 

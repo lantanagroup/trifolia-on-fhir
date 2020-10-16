@@ -162,8 +162,7 @@ export class ExportController extends BaseController {
 
     const options = new ExportOptions(request.query);
     const exporter = createHtmlExporter(
-      this.configService.server,
-      this.configService.fhir,
+      this.configService,
       this.httpService,
       this.logger,
       request.fhirServerBase,
@@ -205,8 +204,7 @@ export class ExportController extends BaseController {
   public async publishImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
     const exporter: HtmlExporter = createHtmlExporter(
-      this.configService.server,
-      this.configService.fhir,
+      this.configService,
       this.httpService,
       this.logger,
       request.fhirServerBase,
