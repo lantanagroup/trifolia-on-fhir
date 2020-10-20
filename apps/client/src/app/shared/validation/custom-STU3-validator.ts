@@ -106,7 +106,7 @@ export class CustomSTU3Validator extends CustomValidator {
     allPages.forEach((page: PageComponent) => {
       const pageClone = new PageComponent(page);
 
-      if (page === implementationGuide.page && pageClone.source !== 'index.html') {
+      if (page === implementationGuide.page && pageClone.source !== 'index.md') {
         messages.push({
           location: 'ImplementationGuide.definition.page',
           resourceId: implementationGuide.id,
