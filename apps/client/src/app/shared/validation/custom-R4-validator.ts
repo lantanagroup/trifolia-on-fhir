@@ -119,7 +119,7 @@ export class CustomR4Validator extends CustomValidator {
     allPages.forEach((page: ImplementationGuidePageComponent) => {
       const pageClone = new ImplementationGuidePageComponent(page);
 
-      if (page === implementationGuide.definition.page && pageClone.fileName !== 'index.html') {
+      if (page === implementationGuide.definition.page && pageClone.fileName !== 'index.md') {
         messages.push({
           location: 'ImplementationGuide.definition.page',
           resourceId: implementationGuide.id,
