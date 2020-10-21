@@ -114,6 +114,9 @@
            title="Edit this resource">
           <i class="fas" [class.fa-edit]="canEdit(structureDefinition)" [class.fa-eye]="!canEdit(structureDefinition)"></i>
         </a>
+        <button type="button" class="btn btn-secondary" (click)="copy(structureDefinition.id)" title="Copy this resource">
+          <i class="fas fa-copy"></i>
+        </button>
         <button type="button" class="btn btn-secondary" (click)="remove(structureDefinition)"
                 [disabled]="!canEdit(structureDefinition)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>
