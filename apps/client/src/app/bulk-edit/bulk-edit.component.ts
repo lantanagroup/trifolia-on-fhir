@@ -1,15 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {IImplementationGuide, IResourceReference, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
-import {Bundle, ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {FhirService} from '../shared/fhir.service';
 
 @Component({
   selector: 'trifolia-fhir-bulk-edit',
