@@ -6,11 +6,11 @@ import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.
 import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {Bundle, Observation, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 // @ts-ignore
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
-import {ImplementationGuide, ImplementationGuideDefinitionComponent, ImplementationGuideResourceComponent} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
@@ -25,7 +25,7 @@ describe('FhirController', () => {
   let app: TestingModule;
   let controller: FhirController;
   const testUser = createTestUser();
-  const configService = new ConfigService();
+  const configService = ConfigService.create();
 
   beforeAll(async () => {
     app = await Test.createTestingModule({

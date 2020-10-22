@@ -1,11 +1,10 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
-import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
+import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
-
 
 export function identifyRelease(fhirVersion: string): Versions {
   if (!fhirVersion) {
@@ -247,8 +246,40 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
   // Find the contained DocumentReference based on the extension reference
   const foundContained = implementationGuide.contained.find(c => {
     if (c.resourceType !== 'DocumentReference' || c.id !== ignoreWarningsReference.substring(1)) return false;
-    const docRef = <IDocumentReference> c;
+    const docRef = <IDocumentReference>c;
     return codeableConceptHasCode(docRef.type, 'ignore-warnings') &&
+      docRef.content &&
+      docRef.content.length === 1 &&
+      docRef.content[0].attachment &&
+      docRef.content[0].attachment.data;
+  });
+
+  if (foundContained) {
+    const documentReference = <IDocumentReference>foundContained;
+
+    // Set the data after decoding it from base64
+    if (typeof atob === 'function') {
+      return atob(documentReference.content[0].attachment.data);
+    } else {
+      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+    }
+  }
+}
+
+export function getJiraSpecValue(implementationGuide: IImplementationGuide): string {
+  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+
+  // Find the extension that references the contained DocumentReference
+  const foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
+  if (!foundExtension) return;
+  const jiraSpecReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+  if (!jiraSpecReference.startsWith('#')) return;
+
+  // Find the contained DocumentReference based on the extension reference
+  const foundContained = implementationGuide.contained.find(c => {
+    if (c.resourceType !== 'DocumentReference' || c.id !== jiraSpecReference.substring(1)) return false;
+    const docRef = <IDocumentReference> c;
+    return codeableConceptHasCode(docRef.type, 'jira-spec') &&
       docRef.content &&
       docRef.content.length === 1 &&
       docRef.content[0].attachment &&
@@ -265,4 +296,31 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }
+}
+
+export function getSTU3Dependencies(ig: STU3ImplementationGuide): string[] {
+  if (!ig || !ig.extension) return [];
+  return ig.extension
+    .filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-dependency'] &&
+        e.extension &&
+        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-name'] && next.valueString) && // has ig-dependency-name
+        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-version'] && next.valueString); // has ig-dependency-version
+    })
+    .map(e => {
+      const nameExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-name']);
+      const versionExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-version']);
+      return nameExtension.valueString +
+        '#' +
+        (versionExtension.valueString || 'current');
+    });
+}
+
+export function getR4Dependencies(ig: R4ImplementationGuide): string[] {
+  if (!ig || !ig.dependsOn) return [];
+  return ig.dependsOn.map(dependency => {
+    return dependency.packageId +
+      '#' +
+      (dependency.version || 'current');
+  });
 }

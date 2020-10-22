@@ -6,11 +6,11 @@ import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {RequestHeaders} from './server.decorators';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 // @ts-ignore
 import nock = require('nock');
 // @ts-ignore
 import http = require('axios/lib/adapters/http');
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 nock.disableNetConnect();
 
@@ -18,7 +18,7 @@ jest.mock('nanoid/generate', () => () => {
   return 'test-new-id';
 });
 
-const mockConfigService = new ConfigService();
+const mockConfigService = ConfigService.create();
 
 @Controller('implementationGuide')
 class TestIGController extends BaseFhirController {

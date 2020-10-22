@@ -15,7 +15,7 @@
   </div>
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
-  <div class="input-group-addon" *ngIf="!required || title">
+  <div class="input-group-addon" *ngIf="label && (!required || title)">
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </div>
   <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">

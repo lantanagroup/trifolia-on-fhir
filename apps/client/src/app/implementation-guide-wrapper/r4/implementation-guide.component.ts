@@ -63,6 +63,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
+  public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     private modal: NgbModal,
@@ -77,6 +78,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+
+    this.igChanging.subscribe((value) => {
+      this.isDirty = value;
+      this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
+    });
   }
 
   protected get packageId(): string {
@@ -145,7 +151,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public isFileNameInvalid(page: PageDefinition): boolean {
-    const regexp: RegExp = /[^A-Za-z0-9\.]/;
+    const regexp: RegExp = /[^A-Za-z0-9\._\-]/;
     return page.page && page.page.fileName && regexp.test(page.page.fileName);
   }
 
@@ -249,7 +255,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+    modalRef.result.then(() => {this.igChanging.emit(true);});
   }
 
   public removeGroup(group: ImplementationGuideGroupingComponent) {
@@ -285,7 +291,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();})
+    modalRef.result.then(() => {this.igChanging.emit(true)})
   }
 
   public changeId() {
@@ -297,7 +303,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+    modalRef.result.then(() => {this.igChanging.emit(true)});
   }
 
   public sortResources() {
@@ -405,8 +411,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         dependsOn.packageId = guide['npm-name'];
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
-        this.isDirty = true;
-        this.nameChanged();
+        this.igChanging.emit(true);
       }
     });
   }
@@ -416,8 +421,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.isDirty = false;
-    this.nameChanged();
+    this.igChanging.emit(true);
     this.getImplementationGuide();
   }
 
@@ -427,7 +431,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
-        this.nameChanged();
+        this.igChanging.emit(false);
         this.initPages();
       } else {
         // noinspection JSIgnoredPromiseFromCall
@@ -447,7 +451,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
 
           this.implementationGuide = new ImplementationGuide(results);
-          this.nameChanged();
+          this.igChanging.emit(false);
           this.initPages();
         }, (err) => {
           this.igNotFound = err.status === 404;
@@ -511,8 +515,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.result.then((page: ImplementationGuidePageComponent) => {
       Object.assign(pageDef.page, page);
       this.initPages();
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     });
 
   }
@@ -587,7 +590,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.initPages();
-    this.isDirty=true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {
@@ -604,7 +607,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index - 1, 0, pageDef.page);
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageDownDisabled(pageDef: PageDefinition) {
@@ -621,7 +624,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index + 1, 0, pageDef.page);
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageOutDisabled(pageDef: PageDefinition) {
@@ -647,7 +650,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     grandParentPage.page.splice(parentIndex + 1, 0, pageDef.page);
 
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageInDisabled(pageDef: PageDefinition) {
@@ -670,7 +673,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     newParentPage.page.push(pageDef.page);
 
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
@@ -760,8 +763,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.isFile) {
       this.fileService.saveFile();
-      this.isDirty = false;
-      this.nameChanged();
+      this.igChanging.emit(false);
       return;
     }
 
@@ -780,8 +782,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
 
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
-          this.nameChanged();
+          this.igChanging.emit(false);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -836,10 +837,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public canDeactivate(): boolean{
     return !this.isDirty;
-  }
-
-  nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
   }
 
   ngOnDestroy() {

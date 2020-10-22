@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import {Component, DoCheck, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Binary,
@@ -106,6 +106,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public igNotFound = false;
   public ClientHelper = ClientHelper;
   public parameters: Parameter[] = [];
+  public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
   public isDirty = false;
 
   private navSubscription: any;
@@ -125,6 +126,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+
+    this.igChanging.subscribe((value) =>{
+      this.isDirty = value;
+      this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
+    });
   }
 
   public get isNew(): boolean {
@@ -193,7 +199,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+    modalRef.result.then(() => {this.igChanging.emit(true);});
   }
 
   public selectPublishedIg(dependency: Extension) {
@@ -202,8 +208,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyName(dependency, guide['npm-name']);
       this.setDependencyVersion(dependency, guide.version);
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     });
   }
 
@@ -267,8 +272,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       });
 
       this.initResources();
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     });
   }
 
@@ -394,7 +398,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
-        this.nameChanged();
+        this.igChanging.emit(false);
         this.initPages();
         this.initParameters();
       } else {
@@ -415,7 +419,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           }
 
           this.implementationGuide = new ImplementationGuide(results);
-          this.nameChanged();
+          this.igChanging.emit(false);
           this.initPages();
           this.initParameters();
         }, (err) => {
@@ -436,8 +440,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public prompt(array, index, text, event=null){
     const result = ClientHelper.promptForRemove(array, index, text, event);
     if(result){
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     }
   }
 
@@ -445,7 +448,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.currentResource = resource;
     const modalRef = this.modalService.open(content, {size: 'lg', backdrop: 'static'});
 
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();})
+    modalRef.result.then(() => {this.igChanging.emit(true);})
   }
 
   public tabChange(event) {
@@ -497,8 +500,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.result.then((page: PageComponent) => {
       Object.assign(pageDef.page, page);
       this.initPages();
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     });
   }
 
@@ -619,7 +621,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     if (this.isFile) {
       this.fileService.saveFile();
-      this.isDirty = false;
+      this.igChanging.emit(false);
       return;
     }
 
@@ -630,7 +632,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
         } else {
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
+          this.igChanging.emit(false);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -645,7 +647,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.resource = igResource.resource;
 
-    modalRef.result.then(() => {this.isDirty=true; this.nameChanged();});
+    modalRef.result.then(() => {this.igChanging.emit(true);});
   }
 
   public initResources() {
@@ -677,8 +679,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
 
     this.initResources();
-    this.isDirty = true;
-    this.nameChanged();
+    this.igChanging.emit(true);
   }
 
   public changeResourcePackage(igResource: ImplementationGuideResource, newPackage: PackageComponent) {
@@ -727,10 +728,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         this.getImplementationGuide();
       }
     });
-  }
-
-  nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
   }
 
   public canDeactivate(): boolean{

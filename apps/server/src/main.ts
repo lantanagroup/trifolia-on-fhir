@@ -19,7 +19,7 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
 import {FhirInstances} from './app/helper';
 
-const config = new ConfigService();
+const config = ConfigService.create();
 
 const logger = new TofLogger('main');
 const connections: ISocketConnection[] = [];

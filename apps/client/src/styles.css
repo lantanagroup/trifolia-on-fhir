@@ -792,3 +792,16 @@ simplemde .editor-statusbar {
   max-height: 200px;
   min-height: 35px !important;
 }
+
+.card-header-text {
+  float: left;
+}
+
+.card-header-btn {
+  float: right;
+}
+
+.pull-right {
+  float: right;
+}
+

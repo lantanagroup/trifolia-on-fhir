@@ -15,6 +15,7 @@ import {SharedModule} from '../shared/shared.module';
 import {FormsModule} from '@angular/forms';
 import {SharedUiModule} from '../shared-ui/shared-ui.module';
 import {MediaSelectionModalComponent} from './media-selection-modal/media-selection-modal.component';
+import {CopyProfileModalComponent} from './copy-profile-modal/copy-profile-modal.component';
 
 const modalComponents = [
   AdminMessageModalComponent,
@@ -26,7 +27,8 @@ const modalComponents = [
   PublishedIgEditionSelectModalComponent,
   SelectChoiceModalComponent,
   SettingsModalComponent,
-  MediaSelectionModalComponent
+  MediaSelectionModalComponent,
+  CopyProfileModalComponent
 ];
 
 @NgModule({

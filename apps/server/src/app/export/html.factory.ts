@@ -5,10 +5,11 @@ import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
 import {HttpService, Logger} from '@nestjs/common';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
+import {ConfigService} from '../config.service';
+import {config} from 'rxjs';
 
 export function createHtmlExporter(
-  serverConfig: IServerConfig,
-  fhirConfig: IFhirConfig,
+  configService: ConfigService,
   httpService: HttpService,
   logger: Logger,
   fhirServerBase: string,
@@ -19,7 +20,7 @@ export function createHtmlExporter(
   socketId: string,
   implementationGuideId: string) {
 
-  const fhirServerConfig = fhirConfig.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
+  const fhirServerConfig = configService.fhir.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
 
   let theClass;
   switch (fhirServerConfig.version) {
@@ -31,5 +32,5 @@ export function createHtmlExporter(
       break;
   }
 
-  return new theClass(serverConfig, fhirConfig, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
+  return new theClass(configService, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
 }

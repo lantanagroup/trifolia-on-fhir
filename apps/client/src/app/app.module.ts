@@ -80,6 +80,7 @@ import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.compon
 import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
 import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
 import {IgnoreWarningsComponent} from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
+import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -237,7 +238,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent
   ],
   imports: [
     RouterModule.forRoot(

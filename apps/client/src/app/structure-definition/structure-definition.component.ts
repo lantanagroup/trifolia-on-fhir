@@ -228,7 +228,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       Globals.cookieKeys.recentStructureDefinitions,
       this.structureDefinition.id,
       this.structureDefinition.name);
-    this.message = 'Done loading structure definition';
+
+    if (this.route.snapshot.queryParams.copy === 'true') {
+      this.message = 'Done copying structure definition';
+    } else {
+      this.message = 'Done loading structure definition';
+    }
   }
 
   public hasSlices(elementTreeModel: ElementTreeModel) {
