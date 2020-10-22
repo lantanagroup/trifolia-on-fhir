@@ -50,9 +50,13 @@ export class AppComponent implements OnInit {
           const fhirServer = event.state.root.firstChild.params.fhirServer;
           const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
-          this.configService.project = {
-            implementationGuideId: implementationGuideId
-          };
+          if (implementationGuideId) {
+            this.configService.project = {
+              implementationGuideId: implementationGuideId
+            };
+          } else {
+            this.configService.project = null;
+          }
 
           if (fhirServer) {
             await this.configService.changeFhirServer(fhirServer);
