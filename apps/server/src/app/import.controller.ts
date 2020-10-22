@@ -10,7 +10,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {TofLogger} from './tof-logger';
 import {FhirController} from './fhir.controller';
@@ -29,8 +29,8 @@ import {IBundle} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Import')
-@ApiOAuth2Auth()
+@ApiTags('Import')
+@ApiOAuth2([])
 export class ImportController extends BaseController {
   readonly vsacBaseUrl = 'https://cts.nlm.nih.gov/fhir/';
   readonly logger = new TofLogger(ImportController.name);

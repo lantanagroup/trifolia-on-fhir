@@ -21,7 +21,7 @@ import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
-import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
@@ -40,8 +40,8 @@ export interface ProxyResponse {
 
 @Controller('api/fhir')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('FHIR Proxy')
-@ApiOAuth2Auth()
+@ApiTags('FHIR Proxy')
+@ApiOAuth2([])
 export class FhirController extends BaseController {
   private readonly logger = new TofLogger(FhirController.name);
 
@@ -52,7 +52,7 @@ export class FhirController extends BaseController {
   @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
-  @ApiOperation({ title: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
+  @ApiOperation({ summary: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
   async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string,
                  @Query('newId') newId: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId,
                  @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {

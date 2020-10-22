@@ -2,7 +2,7 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {BundleExporter} from './export/bundle';
@@ -10,7 +10,7 @@ import {getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReferenc
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
 import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {AxiosRequestConfig} from 'axios';
@@ -20,8 +20,8 @@ import {spawn} from 'child_process';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Implementation Guide')
-@ApiOAuth2Auth()
+@ApiTags('Implementation Guide')
+@ApiOAuth2([])
 export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 

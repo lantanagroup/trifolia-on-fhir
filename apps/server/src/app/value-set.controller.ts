@@ -6,15 +6,15 @@ import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
 
 @Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Value Set')
-@ApiOAuth2Auth()
+@ApiTags('Value Set')
+@ApiOAuth2([])
 export class ValueSetController extends BaseFhirController {
   resourceType = 'ValueSet';
 

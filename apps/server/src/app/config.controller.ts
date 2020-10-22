@@ -5,13 +5,13 @@ import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
-import {ApiUseTags} from '@nestjs/swagger';
+import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
 import * as modulePackage from '../../../../package.json';
 
 @Controller('api/config')
-@ApiUseTags('Config')
+@ApiTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
 

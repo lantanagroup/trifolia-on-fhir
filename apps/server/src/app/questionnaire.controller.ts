@@ -2,14 +2,14 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/questionnaire')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Questionnaire')
-@ApiOAuth2Auth()
+@ApiTags('Questionnaire')
+@ApiOAuth2([])
 export class QuestionnaireController extends BaseFhirController {
   resourceType = 'Questionnaire';
 

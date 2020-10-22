@@ -2,14 +2,14 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/codeSystem')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Code System')
-@ApiOAuth2Auth()
+@ApiTags('Code System')
+@ApiOAuth2([])
 export class CodeSystemController extends BaseFhirController {
   resourceType = 'CodeSystem';
 
