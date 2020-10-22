@@ -6,7 +6,7 @@ import * as fs from 'fs-extra';
 export class TofLogger extends Logger {
   private static loggedFileError = false;
   private static configService = ConfigService.create();
-  private static rotateTimeout: NodeJS.Timer;
+  private static rotateTimeout: number;
   private serverConfig = TofLogger.configService.server;
 
   constructor(name?: string) {
