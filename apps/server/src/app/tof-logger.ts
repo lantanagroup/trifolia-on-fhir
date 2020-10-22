@@ -2,11 +2,12 @@ import {Logger} from '@nestjs/common';
 import {ConfigService} from './config.service';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import Timer = NodeJS.Timer;
 
 export class TofLogger extends Logger {
   private static loggedFileError = false;
   private static configService = ConfigService.create();
-  private static rotateTimeout: number;
+  private static rotateTimeout: Timer;
   private serverConfig = TofLogger.configService.server;
 
   constructor(name?: string) {
