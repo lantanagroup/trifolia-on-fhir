@@ -10,7 +10,7 @@ import { ExportOptions } from './models/export-options';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { TofLogger } from './tof-logger';
-import { ApiOAuth2Auth, ApiUseTags } from '@nestjs/swagger';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { AxiosRequestConfig } from 'axios';
 import { createHtmlExporter } from './export/html.factory';
@@ -25,8 +25,8 @@ import {HtmlExporter} from './export/html';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Export')
-@ApiOAuth2Auth()
+@ApiTags('Export')
+@ApiOAuth2([])
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
 

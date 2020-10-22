@@ -14,7 +14,7 @@ import {
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {FhirServerBase, User} from './server.decorators';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
@@ -30,8 +30,8 @@ interface MessageRequest {
 
 @Controller('api/manage')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Manage')
-@ApiOAuth2Auth()
+@ApiTags('Manage')
+@ApiOAuth2([])
 export class ManageController extends BaseController {
 
   constructor(protected httpService: HttpService, protected configService: ConfigService) {

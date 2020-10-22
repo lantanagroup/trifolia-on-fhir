@@ -4,7 +4,7 @@ import {ITofRequest} from './models/tof-request';
 import {Bundle, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
 import {FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
@@ -20,8 +20,8 @@ import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
 
 @Controller('api/structureDefinition')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Structure Definition')
-@ApiOAuth2Auth()
+@ApiTags('Structure Definition')
+@ApiOAuth2([])
 export class StructureDefinitionController extends BaseFhirController {
   resourceType = 'StructureDefinition';
 

@@ -2,14 +2,14 @@ import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/operationDefinition')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Operation Definition')
-@ApiOAuth2Auth()
+@ApiTags('Operation Definition')
+@ApiOAuth2([])
 export class OperationDefinitionController extends BaseFhirController {
   resourceType = 'OperationDefinition';
 
