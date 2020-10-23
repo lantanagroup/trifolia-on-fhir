@@ -10,12 +10,12 @@
 
   <div class="form-group">
     <label>New ID</label>
-    <input type="text" class="form-control" [(ngModel)]="newId" [class.is-invalid]="!idIsValid"/>
-    <span class="help-block" *ngIf="!idIsValid">ID is required, and must not contain any spaces or special characters.</span>
+    <input type="text" class="form-control" [(ngModel)]="newId" [class.is-invalid]="!idIsValid || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase())"/>
+    <span class="help-block" *ngIf="!idIsValid || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase())">ID is required, and must not contain any spaces or special characters. Also, the newID entered must include different characters from the old ID.  Capitalizing/lower casing a character does not count</span>
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!newId || newId.toLowerCase() === originalId.toLowerCase() || !idIsValid">OK
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!newId || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase()) || !idIsValid">OK
   </button>
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
 </div>
