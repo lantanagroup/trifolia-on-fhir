@@ -15,7 +15,7 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!newId || newId === originalId || !idIsValid">OK
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!newId || newId.toLowerCase() === originalId.toLowerCase() || !idIsValid">OK
   </button>
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
 </div>
