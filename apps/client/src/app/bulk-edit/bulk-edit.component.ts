@@ -8,6 +8,7 @@ import {Versions} from 'fhir/fhir';
 import {ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {FhirService} from '../shared/fhir.service';
 
 @Component({
   selector: 'trifolia-fhir-bulk-edit',
@@ -36,7 +37,8 @@ export class BulkEditComponent implements OnInit {
     private route: ActivatedRoute,
     private igService: ImplementationGuideService,
     private sdService: StructureDefinitionService,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private fhirService: FhirService) {
 
   }
 
@@ -118,6 +120,47 @@ export class BulkEditComponent implements OnInit {
         await this.editFieldWithWait(profile.id, 'intro');
         await this.editFieldWithWait(profile.id, 'notes');
       }
+    }
+  }
+
+  async save() {
+    this.message = 'Saving...';
+
+    try {
+      const savePromises = [];
+
+      if (this.configService.isFhirR4) {
+        const ig = <R4ImplementationGuide>this.implementationGuide;
+        const igPromise = this.fhirService.patch(
+          'ImplementationGuide',
+          this.implementationGuide.id,
+          [{
+            op: 'replace',
+            path: '/definition/page',
+            value: ig.definition.page }
+          ]).toPromise();
+        savePromises.push(igPromise);
+      } else if (this.configService.isFhirSTU3) {
+        const ig = <STU3ImplementationGuide>this.implementationGuide;
+        const igPromise = this.fhirService.patch(
+          'ImplementationGuide',
+          this.implementationGuide.id,
+          [{
+            op: 'replace',
+            path: '/page',
+            value: ig.page }
+          ]).toPromise();
+        savePromises.push(igPromise);
+      } else {
+        throw new Error('Unexpected FHIR version');
+      }
+
+      await Promise.all(savePromises);
+    } catch (ex) {
+      this.message = `Error while saving: ${ex.message}`;
+    } finally {
+      this.message = 'Done saving';
+      setTimeout(() => this.message = '', 5000);
     }
   }
 
