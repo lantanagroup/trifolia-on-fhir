@@ -153,7 +153,8 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="igChanging.emit(true)"></app-fhir-multi-jurisdiction>
+              <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="igChanging.emit(true)" [required]="true">
+              </app-fhir-multi-jurisdiction>
             </div>
           </div>
         </div>

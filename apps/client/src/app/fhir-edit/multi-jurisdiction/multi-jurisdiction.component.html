@@ -1,4 +1,4 @@
-<div class="card" *ngIf="parentObject">
+<div class="card" *ngIf="parentObject" [style.border-color]="required && jurisdictions === null ? 'red' : ''">
   <div class="card-header">
     Jurisdiction
     <app-tooltip-icon [tooltipKey]="tooltipKey" [tooltipPath]="tooltipPath"></app-tooltip-icon>
@@ -47,9 +47,9 @@
       A jurisdiction must exist with all fields filled in. Please note that it is required to match the jurisdiction of the package ID to Trifolia-on-FHIR's UI.</span>
     </tbody>
     <tbody *ngIf="!jurisdictions || jurisdictions.length === 0">
-    <tr>
-      <td colspan="2">No jurisdictions have been specified. Click <a href="javascript:void(0)" (click)="addJurisdiction(); change.emit();">here</a> to add one.</td>
-    </tr>
+      <tr>
+        <td colspan="2">No jurisdictions have been specified. Click <a href="javascript:void(0)" (click)="addJurisdiction(); change.emit();">here</a> to add one.</td>
+      </tr>
     </tbody>
 
   </table>
