@@ -8,7 +8,8 @@ import {Versions} from 'fhir/fhir';
 import {ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {FhirService} from '../shared/fhir.service';
+import {BulkUpdateRequest, BulkUpdateRequestProfile} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
   selector: 'trifolia-fhir-bulk-edit',
@@ -16,8 +17,10 @@ import {FhirService} from '../shared/fhir.service';
   styleUrls: ['./bulk-edit.component.css']
 })
 export class BulkEditComponent implements OnInit {
+  public originalImplementationGuide: IImplementationGuide;
   public implementationGuide: IImplementationGuide;
-  public profiles: (STU3StructureDefinition | R4StructureDefinition)[];
+  public originalProfiles: IStructureDefinition[];
+  public profiles: IStructureDefinition[];
   public expandedElementsProfileId: string;
   public changedProfiles: { [key: string]: boolean } = {};
   public editFields: { [key: string]: boolean } = {};
@@ -37,8 +40,7 @@ export class BulkEditComponent implements OnInit {
     private route: ActivatedRoute,
     private igService: ImplementationGuideService,
     private sdService: StructureDefinitionService,
-    private configService: ConfigService,
-    private fhirService: FhirService) {
+    private configService: ConfigService) {
 
   }
 
@@ -94,15 +96,34 @@ export class BulkEditComponent implements OnInit {
       const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
 
       if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+        this.originalImplementationGuide = new R4ImplementationGuide(ig);
         this.implementationGuide = new R4ImplementationGuide(ig);
       } else {
+        this.originalImplementationGuide = new STU3ImplementationGuide(ig);
         this.implementationGuide = new STU3ImplementationGuide(ig);
       }
 
       const profilesBundle = await this.igService.getProfiles(implementationGuideId).toPromise();
 
       if (profilesBundle && profilesBundle.entry) {
-        this.profiles = profilesBundle.entry.map(e => <STU3StructureDefinition | R4StructureDefinition> e.resource);
+        this.profiles = profilesBundle.entry.map(e => {
+          if (this.configService.isFhirSTU3) {
+            return new STU3StructureDefinition(e.resource);
+          } else if (this.configService.isFhirR4) {
+            return new R4StructureDefinition(e.resource);
+          } else {
+            throw new Error('Unexpected FHIR version!');
+          }
+        });
+        this.originalProfiles = this.profiles.map(p => {
+          if (this.configService.isFhirSTU3) {
+            return new STU3StructureDefinition(p);
+          } else if (this.configService.isFhirR4) {
+            return new R4StructureDefinition(p);
+          } else {
+            throw new Error('Unexpected FHIR version!');
+          }
+        });
       }
     }
 
@@ -125,42 +146,51 @@ export class BulkEditComponent implements OnInit {
 
   async save() {
     this.message = 'Saving...';
+    const bulkUpdateRequest = new BulkUpdateRequest();
 
     try {
-      const savePromises = [];
-
       if (this.configService.isFhirR4) {
-        const ig = <R4ImplementationGuide>this.implementationGuide;
-        const igPromise = this.fhirService.patch(
-          'ImplementationGuide',
-          this.implementationGuide.id,
-          [{
-            op: 'replace',
-            path: '/definition/page',
-            value: ig.definition.page }
-          ]).toPromise();
-        savePromises.push(igPromise);
+        const originalIg = <R4ImplementationGuide> this.originalImplementationGuide;
+        const ig = <R4ImplementationGuide> this.implementationGuide;
+        bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.pageOp = originalIg.definition && originalIg.definition.page ?
+          'replace' : (ig.definition && ig.definition.page ? 'add' : undefined);
       } else if (this.configService.isFhirSTU3) {
-        const ig = <STU3ImplementationGuide>this.implementationGuide;
-        const igPromise = this.fhirService.patch(
-          'ImplementationGuide',
-          this.implementationGuide.id,
-          [{
-            op: 'replace',
-            path: '/page',
-            value: ig.page }
-          ]).toPromise();
-        savePromises.push(igPromise);
+        const originalIg = <STU3ImplementationGuide> this.originalImplementationGuide;
+        const ig = <STU3ImplementationGuide> this.implementationGuide;
+        bulkUpdateRequest.page = ig.page;
+        bulkUpdateRequest.pageOp = originalIg.page ? 'replace' : (
+          ig.page ? 'add' : undefined);
       } else {
         throw new Error('Unexpected FHIR version');
       }
 
-      await Promise.all(savePromises);
-    } catch (ex) {
-      this.message = `Error while saving: ${ex.message}`;
-    } finally {
+      bulkUpdateRequest.profiles = this.profiles
+        .filter(profile => {
+          return this.changedProfiles[profile.id];
+        })
+        .map((profile, profileIndex) => {
+          const originalProfile = this.originalProfiles[profileIndex];
+          return <BulkUpdateRequestProfile> {
+            id: profile.id,
+            description: profile.description,
+            descriptionOp: originalProfile.description ? 'replace' :
+              (profile.description ? 'add' : undefined),
+            extension: profile.extension,
+            extensionOp: originalProfile.extension ? 'replace' :
+              (profile.extension ? 'add' : undefined),
+            diffElement: profile.differential && profile.differential.element ? profile.differential.element : null,
+            diffElementOp: originalProfile.differential && originalProfile.differential.element ? 'replace' :
+              (profile.differential && profile.differential.element ? 'add' : undefined)
+          };
+        });
+
+      await this.igService.bulkUpdate(this.implementationGuide.id, bulkUpdateRequest).toPromise();
+
       this.message = 'Done saving';
       setTimeout(() => this.message = '', 5000);
+    } catch (ex) {
+      this.message = `Error while saving: ${getErrorString(ex)}`;
     }
   }
 

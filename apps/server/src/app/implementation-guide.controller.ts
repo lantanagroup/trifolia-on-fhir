@@ -17,6 +17,19 @@ import {AxiosRequestConfig} from 'axios';
 import {IBundle, IImplementationGuide, IResourceReference} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
 import {spawn} from 'child_process';
+import {BulkUpdateRequest} from '../../../../libs/tof-lib/src/lib/bulk-update-request';
+
+class PatchRequest {
+  op: string;
+  path: string;
+  value: any;
+
+  constructor(op: string, path: string, value: any) {
+    this.op = op;
+    this.path = path;
+    this.value = value;
+  }
+}
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -91,6 +104,84 @@ export class ImplementationGuideController extends BaseFhirController {
     });
 
     return profileReferences;
+  }
+
+  @Post(':id/bulk-update')
+  public async bulkUpdate(@Param('id') id: string, @Body() body: BulkUpdateRequest, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+    if (!body) return;
+
+    const patchRequests: AxiosRequestConfig[] = [];
+
+    if (body.description || body.page) {
+      const igPatchRequests: PatchRequest[] = [];
+
+      if (body.descriptionOp) {
+        igPatchRequests.push(new PatchRequest(body.descriptionOp, '/description', body.description));
+      }
+
+      if (body.pageOp) {
+        if (fhirServerVersion === 'stu3') {
+          igPatchRequests.push(new PatchRequest(body.pageOp, '/page', body.page));
+        } else if (fhirServerVersion === 'r4') {
+          igPatchRequests.push(new PatchRequest(body.pageOp, '/definition/page', body.page));
+        }
+      }
+
+      patchRequests.push({
+        method: 'PATCH',
+        url: buildUrl(fhirServerBase, 'ImplementationGuide', id),
+        headers: {
+          'Content-Type': 'application/json-patch+json'
+        },
+        data: igPatchRequests
+      });
+    }
+
+    (body.profiles || []).forEach(profile => {
+      const profilePatchRequests: PatchRequest[] = [];
+
+      if (profile.descriptionOp) {
+        profilePatchRequests.push(new PatchRequest(profile.descriptionOp, '/description', profile.description));
+      }
+
+      if (profile.extensionOp) {
+        profilePatchRequests.push(new PatchRequest(profile.extensionOp, '/extension', profile.extension));
+      }
+
+      if (profile.diffElementOp) {
+        profilePatchRequests.push(new PatchRequest(profile.diffElementOp, '/differential/element', profile.diffElement));
+      }
+
+      patchRequests.push({
+        method: 'PATCH',
+        url: buildUrl(fhirServerBase, 'StructureDefinition', profile.id),
+        headers: {
+          'Content-Type': 'application/json-patch+json'
+        },
+        data: profilePatchRequests
+      });
+    });
+
+    const processQueue = async () => {
+      if (patchRequests.length === 0) return;
+      const asyncCount = 5;
+
+      const nextPatchRequests = patchRequests.splice(0, asyncCount - 1);
+      const nextPromises = nextPatchRequests
+        .map(patchRequest => this.httpService.request(patchRequest).toPromise());
+
+      const results = await Promise.all(nextPromises);
+      console.log(results);
+      await processQueue();
+    };
+
+    try {
+      await processQueue();
+      this.logger.log(`Done bulk-updating implementation guide ${id}`);
+    } catch (ex) {
+      this.logger.error(`Error while bulk updating: ${ex.message}`);
+      throw ex;
+    }
   }
 
   @Get(':id/profile')
