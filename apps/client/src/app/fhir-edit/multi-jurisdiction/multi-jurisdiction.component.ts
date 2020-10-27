@@ -25,9 +25,10 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   }
 
   get jurisdictions(): ICodeableConcept[] {
-    if (this.parentObject[this.propertyName]) {
+    if (this.parentObject.hasOwnProperty(this.propertyName)) {
       return <ICodeableConcept[]> this.parentObject[this.propertyName];
     }
+    return null;
   }
 
   addJurisdiction() {
@@ -63,7 +64,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   removeJurisdiction(index: number){
     this.jurisdictions.splice(index, 1);
     if(this.jurisdictions.length === 0){
-      this.parentObject[this.propertyName] = undefined;
+      delete this.parentObject[this.propertyName];
     }
   }
 
