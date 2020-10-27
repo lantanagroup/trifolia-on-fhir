@@ -8,9 +8,9 @@ import {ImplementationGuide, ImplementationGuidePageComponent} from '../../../..
 })
 export class R4PageComponent implements OnInit {
   @Input() implementationGuide: ImplementationGuide;
+  @Input() changedPages: { [fileName: string]: boolean };
   public pages: ImplementationGuidePageComponent[];
   public expanded: { [fileName: string]: boolean } = {};
-  public changed: { [fileName: string]: boolean } = {};
 
   constructor() { }
 
@@ -26,7 +26,7 @@ export class R4PageComponent implements OnInit {
       // Ensure all pages have a file name
       if (!this.implementationGuide.definition.page.fileName) {
         this.implementationGuide.definition.page.setTitle(this.implementationGuide.definition.page.title, true);
-        this.changed[this.implementationGuide.definition.page.fileName] = true;
+        this.changedPages[this.implementationGuide.definition.page.fileName] = true;
       }
     } else if (parent.page) {
       parent.page.forEach(p => {
@@ -36,7 +36,7 @@ export class R4PageComponent implements OnInit {
         // Ensure all pages have a file name
         if (!p.fileName) {
           p.setTitle(p.title);
-          this.changed[p.fileName] = true;
+          this.changedPages[p.fileName] = true;
         }
       });
     }

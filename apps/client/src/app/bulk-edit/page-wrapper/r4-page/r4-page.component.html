@@ -1,14 +1,14 @@
 <div class="card" *ngFor="let page of pages; let pIndex = index;">
   <div class="card-header clickable" (click)="toggleExpandPage(page)">
     <i class="fa" [class.fa-plus]="!expanded[page.fileName]" [class.fa-minus]="expanded[page.fileName]"></i>
-    Page {{pIndex + 1}}: {{page.title}}{{changed[page.fileName] ? '*' : ''}}
+    Page {{pIndex + 1}}: {{page.title}}{{changedPages[page.fileName] ? '*' : ''}}
   </div>
   <div class="card-body" *ngIf="expanded[page.fileName]">
-    <app-fhir-string [parentObject]="page" propertyName="title" title="Title" (change)="changed[page.fileName] = true"></app-fhir-string>
+    <app-fhir-string [parentObject]="page" propertyName="title" title="Title" (change)="changedPages[page.fileName] = true"></app-fhir-string>
 
     <div class="form-group">
       <label>Content</label>
-      <trifolia-fhir-markdown [(value)]="page.contentMarkdown" (change)="changed[page.fileName] = true"></trifolia-fhir-markdown>
+      <trifolia-fhir-markdown [(value)]="page.contentMarkdown" (change)="changedPages[page.fileName] = true"></trifolia-fhir-markdown>
     </div>
   </div>
 </div>

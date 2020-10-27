@@ -14,6 +14,7 @@ export class PageWrapperComponent implements OnInit, OnChanges {
   pageComponent: ComponentRef<STU3PageComponent | R4PageComponent>;
 
   @Input() implementationGuide: IImplementationGuide;
+  @Input() changedPages: { [fileName: string]: boolean };
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -40,6 +41,7 @@ export class PageWrapperComponent implements OnInit, OnChanges {
     }
 
     this.pageComponent.instance.implementationGuide = <any> this.implementationGuide;
+    this.pageComponent.instance.changedPages = this.changedPages;
   }
 
   ngOnInit() {

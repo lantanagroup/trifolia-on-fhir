@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
@@ -23,6 +23,7 @@ export class BulkEditComponent implements OnInit {
   public profiles: IStructureDefinition[];
   public expandedElementsProfileId: string;
   public changedProfiles: { [key: string]: boolean } = {};
+  public changedPages: { [fileName: string]: boolean } = {};
   public editFields: { [key: string]: boolean } = {};
   public message: string;
   public loading = false;
@@ -186,6 +187,9 @@ export class BulkEditComponent implements OnInit {
         });
 
       await this.igService.bulkUpdate(this.implementationGuide.id, bulkUpdateRequest).toPromise();
+
+      this.changedProfiles = {};
+      this.changedPages = {};
 
       this.message = 'Done saving';
       setTimeout(() => this.message = '', 5000);

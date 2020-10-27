@@ -9,9 +9,9 @@ import {ImplementationGuidePageComponent} from '../../../../../../../libs/tof-li
 })
 export class STU3PageComponent implements OnInit {
   @Input() implementationGuide: ImplementationGuide;
+  @Input() changedPages: { [fileName: string]: boolean };
   public pages: PageComponent[];
   public expanded: { [fileName: string]: boolean } = {};
-  public changed: { [fileName: string]: boolean } = {};
 
   constructor() { }
 
@@ -27,7 +27,7 @@ export class STU3PageComponent implements OnInit {
       // Ensure all pages have a file name
       if (!this.implementationGuide.page.source) {
         this.implementationGuide.page.setTitle(this.implementationGuide.page.title, true);
-        this.changed[this.implementationGuide.page.source] = true;
+        this.changedPages[this.implementationGuide.page.source] = true;
       }
     } else if (parent.page) {
       parent.page.forEach(p => {
@@ -37,7 +37,7 @@ export class STU3PageComponent implements OnInit {
         // Ensure all pages have a file name
         if (!p.source) {
           p.setTitle(p.title);
-          this.changed[p.source] = true;
+          this.changedPages[p.source] = true;
         }
       });
     }
