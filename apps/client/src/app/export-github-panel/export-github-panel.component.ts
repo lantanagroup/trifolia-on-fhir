@@ -68,6 +68,16 @@ export class ExportGithubPanelComponent implements OnInit {
 
     if (!this.repository) return;
 
+    const commits = await this.githubService.getCommits(this.repository.owner.login, this.repository.name, this.repository.default_branch);
+    let initialCommit;
+    if(commits === 409) {
+      try {
+        initialCommit = await this.githubService.createContent(this.repository.owner.login, this.repository.name, 'README.md', 'README.md file', 'Initial Commit');
+      } catch (err) {
+        console.log(initialCommit);
+        console.error(err);
+      }
+    }
     this.branches = await this.githubService.getBranches(this.repository.owner.login, this.repository.name);
 
     if (this.branches.length === 0 && this.repository.default_branch) {
