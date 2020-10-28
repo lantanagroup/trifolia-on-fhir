@@ -788,3 +788,26 @@ div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > di
 .pull-right {
   float: right;
 }
+
+ngb-tabset[orientation='vertical'] {
+  display: flex;
+}
+
+ngb-tabset[orientation='vertical'] > ul.nav {
+  float: left;
+  margin-right: 15px;
+  border-bottom: none;
+}
+
+ngb-tabset[orientation='vertical'] > ul.nav > li.nav-item > a.nav-link {
+  border: none;
+}
+
+ngb-tabset[orientation='vertical'] > ul.nav > li.nav-item > a.nav-link.active {
+  border: 1px solid #dee2e6;
+  border-radius: .25rem;
+}
+
+ngb-tabset[orientation='vertical'] > div.tab-content {
+  width: 100%;
+}

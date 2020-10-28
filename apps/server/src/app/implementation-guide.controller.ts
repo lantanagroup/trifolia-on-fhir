@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Logger, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
@@ -17,6 +17,9 @@ import {AxiosRequestConfig} from 'axios';
 import {IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
 import {spawn} from 'child_process';
+import path from "path";
+import os from "os";
+import * as fs from 'fs';
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -30,37 +33,59 @@ export class ImplementationGuideController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
-    if (!implementationGuide || !implementationGuide.package || implementationGuide.package.length === 0) return [];
-    const examples = implementationGuide.package.reduce((theList, p) => {
-      const packageExamples = (p.resource || []).filter(r => r.sourceReference && r.sourceReference.reference && (r.example || !!r.exampleFor));
-      return theList.concat(packageExamples);
-    }, []);
+  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4', configService: ConfigService, logger: Logger) {
+    try {
+      const igPublisherLocation = await configService.getIgPublisherForDependencies();
 
-    return examples.map((e: PackageResourceComponent) => {
-      const parsedReference = parseReference(e.sourceReference.reference);
-      return <IgExampleModel> {
-        id: parsedReference.id,
-        resourceType: parsedReference.resourceType,
-        name: e.name || `${parsedReference.resourceType}: ${parsedReference.id}`
+      let packageIds: string[];
+
+      if (fhirServerVersion === 'r4') {
+        packageIds = getR4Dependencies(<R4ImplementationGuide>ig);
+      } else if (fhirServerVersion === 'stu3') {
+        packageIds = getSTU3Dependencies(<STU3ImplementationGuide>ig);
       }
-    });
-  }
 
-  private getR4Examples(implementationGuide: R4ImplementationGuide) {
-    if (!implementationGuide || !implementationGuide.definition || !implementationGuide.definition.resource || implementationGuide.definition.resource.length === 0) return [];
+      // Only run the IG Publisher if there is something to do
+      const packageIdsForDownload = packageIds
+        .filter(packageId => {
+          const dependencyDir = path.join(os.homedir(), '.fhir', 'packages', packageId, 'package');
+          return !fs.existsSync(dependencyDir);
+        });
 
-    return implementationGuide.definition.resource
-      .filter(r => r.reference && r.reference.reference && (r.exampleBoolean || !!r.exampleCanonical))
-      .map(r => {
-        const parsedReference = parseReference(r.reference.reference);
+      if (packageIdsForDownload.length === 0) return;
 
-        return <IgExampleModel> {
-          resourceType: parsedReference.resourceType,
-          id: parsedReference.id,
-          name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
-        };
+      logger.log(`Executing IG Publisher to download package dependencies for IG ${ig.id}`);
+
+      return new Promise((resolve, reject) => {
+        const dependencyProcess = spawn('java', ['-jar', igPublisherLocation, '-package', packageIdsForDownload.join(';')]);
+
+        dependencyProcess.stdout.on('data', (data) => {
+          const ignoreLines = [
+            'Detected Java version',
+            'dir = ',
+            'Cache = '
+          ];
+
+          const foundIgnoreLine = ignoreLines.find(il => data.toString().toLowerCase().startsWith(il.toLowerCase()));
+
+          if (!foundIgnoreLine) {
+            logger.log(data.toString().trim());
+          }
+        });
+        dependencyProcess.stderr.on('data', (data) => {
+          logger.error(data.toString().trim());
+        });
+        dependencyProcess.on('error', (err) => {
+          logger.error(`Error downloading dependencies using IG Publisher: ${err.toString().trim()}`);
+          reject();
+        });
+        dependencyProcess.on('exit', () => {
+          resolve();
+        });
       });
+    } catch (ex) {
+      console.error(`Error preparing to download dependencies: ${ex.message}`);
+    }
   }
 
   @Get(':id/example')
@@ -161,54 +186,15 @@ export class ImplementationGuideController extends BaseFhirController {
     return super.baseGet(fhirServerBase, id, query, user);
   }
 
-  private downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4') {
-    this.configService.getIgPublisherForDependencies()
-      .then(igPublisherLocation => {
-        let packageIds: string[];
-
-        if (fhirServerVersion === 'r4') {
-          packageIds = getR4Dependencies(<R4ImplementationGuide> ig);
-        } else if (fhirServerVersion === 'stu3') {
-          packageIds = getSTU3Dependencies(<STU3ImplementationGuide> ig);
-        }
-
-        this.logger.log(`Executing IG Publisher to download package dependencies for IG ${ig.id}`);
-
-        const dependencyProcess = spawn('java', ['-jar', igPublisherLocation, '-package', packageIds.join(';')]);
-        dependencyProcess.stdout.on('data', (data) => {
-          const ignoreLines = [
-            'Detected Java version',
-            'dir = ',
-            'Cache = '
-          ];
-
-          const foundIgnoreLine = ignoreLines.find(il => data.toString().toLowerCase().startsWith(il.toLowerCase()));
-
-          if (!foundIgnoreLine) {
-            this.logger.log(data.toString().trim());
-          }
-        });
-        dependencyProcess.stderr.on('data', (data) => {
-          this.logger.error(data.toString().trim());
-        });
-        dependencyProcess.on('error', (err) => {
-          this.logger.error(`Error downloading dependencies using IG Publisher: ${err.toString().trim()}`);
-        });
-      })
-      .catch(err => {
-        this.logger.error(`Error downloading dependencies using IG Publisher: ${err}`);
-      });
-  }
-
   @Post()
   public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
-    this.downloadDependencies(body, fhirServerVersion);
+    ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
   }
 
   @Put(':id')
   public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
-    this.downloadDependencies(body, fhirServerVersion);
+    ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
   }
 
@@ -271,5 +257,38 @@ export class ImplementationGuideController extends BaseFhirController {
     await Promise.all(updated);
 
     return updated.length;
+  }
+
+  private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
+    if (!implementationGuide || !implementationGuide.package || implementationGuide.package.length === 0) return [];
+    const examples = implementationGuide.package.reduce((theList, p) => {
+      const packageExamples = (p.resource || []).filter(r => r.sourceReference && r.sourceReference.reference && (r.example || !!r.exampleFor));
+      return theList.concat(packageExamples);
+    }, []);
+
+    return examples.map((e: PackageResourceComponent) => {
+      const parsedReference = parseReference(e.sourceReference.reference);
+      return <IgExampleModel> {
+        id: parsedReference.id,
+        resourceType: parsedReference.resourceType,
+        name: e.name || `${parsedReference.resourceType}: ${parsedReference.id}`
+      }
+    });
+  }
+
+  private getR4Examples(implementationGuide: R4ImplementationGuide) {
+    if (!implementationGuide || !implementationGuide.definition || !implementationGuide.definition.resource || implementationGuide.definition.resource.length === 0) return [];
+
+    return implementationGuide.definition.resource
+      .filter(r => r.reference && r.reference.reference && (r.exampleBoolean || !!r.exampleCanonical))
+      .map(r => {
+        const parsedReference = parseReference(r.reference.reference);
+
+        return <IgExampleModel> {
+          resourceType: parsedReference.resourceType,
+          id: parsedReference.id,
+          name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
+        };
+      });
   }
 }
