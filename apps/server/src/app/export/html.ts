@@ -282,7 +282,9 @@ export class HtmlExporter {
     fs.writeFileSync(this.configService.server.publishStatusPath, JSON.stringify(publishStatuses));
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, version: string, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
+  public async export(format: Formats, includeIgPublisherJar: boolean,
+                      version: string, templateType = 'official', template = 'hl7.fhir.template',
+                      templateVersion = 'current', useTerminologyServer?: boolean): Promise<void> {
     if (!this.configService.fhir.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -431,10 +433,10 @@ export class HtmlExporter {
       // noinspection SpellCheckingInspection
       const shContent = '#!/bin/bash\n' +
         'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
+        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
       fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
 
-      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
+      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
       fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
     }
 

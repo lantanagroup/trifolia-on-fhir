@@ -70,6 +70,10 @@ export class ExportService {
       url += 'includeIgPublisherJar=true&';
     }
 
+    if (options.useTerminologyServer === true || options.useTerminologyServer === false) {
+      url += 'useTerminologyServer=' + options.useTerminologyServer.toString() + '&';
+    }
+
     if (options.version) {
       url += 'version=' + options.version + '&';
     }

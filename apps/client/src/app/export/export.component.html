@@ -52,6 +52,16 @@
         <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
           <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
         </div>
+
+        <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
+          <app-fhir-boolean
+            [parentObject]="options"
+            [required]="true"
+            propertyName="useTerminologyServer"
+            [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
+            title="Use terminology server?">
+          </app-fhir-boolean>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-4">
