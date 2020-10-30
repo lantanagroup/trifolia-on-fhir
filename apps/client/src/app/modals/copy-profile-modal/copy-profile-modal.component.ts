@@ -7,6 +7,7 @@ import {FhirService} from '../../shared/fhir.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {StructureDefinition as STU3StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
 @Component({
   selector: 'trifolia-fhir-copy-profile-modal',
@@ -21,6 +22,7 @@ export class CopyProfileModalComponent implements OnInit {
   public url: string;
   public autoUrl = true;
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  public Globals = Globals;
 
   @Input() originalID: string;
 
@@ -34,6 +36,12 @@ export class CopyProfileModalComponent implements OnInit {
     if (!this.id) return false;
     const theRegex = /^[A-Za-z0-9\-\.]{1,64}$/gm;
     return theRegex.test(this.id);
+  }
+
+  get nameIsValid(){
+    if(!this.name) return false;
+    const nameRegex = new RegExp(Globals.regexPatterns.namePattern);
+    return nameRegex.test(this.name);
   }
 
   get isValid(){
