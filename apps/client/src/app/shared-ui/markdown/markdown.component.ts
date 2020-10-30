@@ -29,8 +29,18 @@ export class MarkdownComponent implements OnInit {
 
   toolbar: any[];
 
-  constructor(private modalService: ModalService) {
+  get bindValue() {
+    return this.value;
+  }
 
+  set bindValue(value: string) {
+    const changed = this.value !== value;
+    this.value = value;
+
+    if (changed) this.valueChange.emit(value);
+  }
+
+  constructor(private modalService: ModalService) {
     this.toolbar = [
       {
         name: 'bold',
@@ -230,5 +240,6 @@ export class MarkdownComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 }

@@ -10,13 +10,26 @@ import {getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReferenc
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {copyPermissions} from './helper';
 import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {AxiosRequestConfig} from 'axios';
-import {IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide, IResourceReference} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
 import {spawn} from 'child_process';
+import {BulkUpdateRequest} from '../../../../libs/tof-lib/src/lib/bulk-update-request';
+
+class PatchRequest {
+  op: string;
+  path: string;
+  value: any;
+
+  constructor(op: string, path: string, value: any) {
+    this.op = op;
+    this.path = path;
+    this.value = value;
+  }
+}
 
 @Controller('api/implementationGuide')
 @UseGuards(AuthGuard('bearer'))
@@ -61,6 +74,144 @@ export class ImplementationGuideController extends BaseFhirController {
           name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
         };
       });
+  }
+
+  private getR4ProfileReferences(ig: R4ImplementationGuide): IResourceReference[] {
+    if (!ig || !ig.definition || !ig.definition.resource) return [];
+    return ig.definition.resource
+      .filter(r => r.reference && r.reference.reference)
+      .filter(r => {
+        const parsedReference = parseReference(r.reference.reference);
+        return parsedReference.resourceType === 'StructureDefinition';
+      })
+      .map(r => r.reference);
+  }
+
+  private getSTU3ProfileReferences(ig: STU3ImplementationGuide): IResourceReference[] {
+    if (!ig || !ig.package) return [];
+    const profileReferences = [];
+
+    ig.package.forEach(p => {
+      (p.resource || [])
+        .filter(r => r.sourceReference && r.sourceReference.reference)
+        .forEach(r => {
+          const parsedReference = parseReference(r.sourceReference.reference);
+
+          if (parsedReference.resourceType === 'StructureDefinition') {
+            profileReferences.push(r.sourceReference);
+          }
+        });
+    });
+
+    return profileReferences;
+  }
+
+  @Post(':id/bulk-update')
+  public async bulkUpdate(@Param('id') id: string, @Body() body: BulkUpdateRequest, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+    if (!body) return;
+
+    const patchRequests: AxiosRequestConfig[] = [];
+
+    if (body.description || body.page) {
+      const igPatchRequests: PatchRequest[] = [];
+
+      if (body.descriptionOp) {
+        igPatchRequests.push(new PatchRequest(body.descriptionOp, '/description', body.description));
+      }
+
+      if (body.pageOp) {
+        if (fhirServerVersion === 'stu3') {
+          igPatchRequests.push(new PatchRequest(body.pageOp, '/page', body.page));
+        } else if (fhirServerVersion === 'r4') {
+          igPatchRequests.push(new PatchRequest(body.pageOp, '/definition/page', body.page));
+        }
+      }
+
+      patchRequests.push({
+        method: 'PATCH',
+        url: buildUrl(fhirServerBase, 'ImplementationGuide', id),
+        headers: {
+          'Content-Type': 'application/json-patch+json'
+        },
+        data: igPatchRequests
+      });
+    }
+
+    (body.profiles || []).forEach(profile => {
+      const profilePatchRequests: PatchRequest[] = [];
+
+      if (profile.descriptionOp) {
+        profilePatchRequests.push(new PatchRequest(profile.descriptionOp, '/description', profile.description));
+      }
+
+      if (profile.extensionOp) {
+        profilePatchRequests.push(new PatchRequest(profile.extensionOp, '/extension', profile.extension));
+      }
+
+      if (profile.diffElementOp) {
+        profilePatchRequests.push(new PatchRequest(profile.diffElementOp, '/differential/element', profile.diffElement));
+      }
+
+      patchRequests.push({
+        method: 'PATCH',
+        url: buildUrl(fhirServerBase, 'StructureDefinition', profile.id),
+        headers: {
+          'Content-Type': 'application/json-patch+json'
+        },
+        data: profilePatchRequests
+      });
+    });
+
+    const processQueue = async () => {
+      if (patchRequests.length === 0) return;
+      const asyncCount = 5;
+
+      const nextPatchRequests = patchRequests.splice(0, asyncCount - 1);
+      const nextPromises = nextPatchRequests
+        .map(patchRequest => this.httpService.request(patchRequest).toPromise());
+
+      const results = await Promise.all(nextPromises);
+      console.log(results);
+      await processQueue();
+    };
+
+    try {
+      await processQueue();
+      this.logger.log(`Done bulk-updating implementation guide ${id}`);
+    } catch (ex) {
+      this.logger.error(`Error while bulk updating: ${ex.message}`);
+      throw ex;
+    }
+  }
+
+  @Get(':id/profile')
+  public async getProfiles(@Param('id') id: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
+    const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
+    const ig = igResults.data;
+    let profileReferences: IResourceReference[];
+
+    if (fhirServerVersion === 'r4') {
+      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide> ig);
+    } else {
+      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig);
+    }
+
+    const batch = <Bundle> {
+      resourceType: 'Bundle',
+      type: 'batch',
+      entry: profileReferences.map(pr => {
+        return {
+          request: {
+            method: 'GET',
+            url: pr.reference
+          }
+        };
+      })
+    };
+
+    const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
+    return bundleResults.data;
   }
 
   @Get(':id/example')

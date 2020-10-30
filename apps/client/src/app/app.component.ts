@@ -16,7 +16,6 @@ import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-mes
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
-import {FhirReferenceModalComponent, ResourceSelection} from './fhir-edit/reference-modal/reference-modal.component';
 import {Bundle, Coding, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Component({

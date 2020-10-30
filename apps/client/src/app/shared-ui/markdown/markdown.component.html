@@ -1,4 +1,4 @@
 <div [class.disable-markdown]="disabled">
-  <simplemde [(ngModel)]="value" [options]="{ toolbar: toolbar }" (ngModelChange)="valueChange.emit($event)" #smde></simplemde>
+  <simplemde [(ngModel)]="bindValue" [options]="{ toolbar: toolbar }" #smde></simplemde>
   <button type="button" class="btn btn-primary" (click)="insertImage()" style="display: none" #buttonElement>Test</button>
 </div>

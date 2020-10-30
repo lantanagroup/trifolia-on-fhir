@@ -374,6 +374,11 @@ export class FhirService {
     return this.http.put<Resource>(url, resource);
   }
 
+  public patch(resourceType: string, id: string, patches: {op: string, path: string, value: any}[]) {
+    const url = `/api/fhir/${resourceType}/${id}`;
+    return this.http.patch(url, patches);
+  }
+
   /**
    * Creates the specified resource on the FHIR server
    * @param {Resource} resource
@@ -385,6 +390,10 @@ export class FhirService {
 
     const url = `/api/fhir/${resource.resourceType}`;
     return this.http.post<DomainResource>(url, resource);
+  }
+
+  public transaction(bundle: IBundle) {
+    return this.http.post<IBundle>('/api/fhir', bundle);
   }
 
   public batch(data: string, contentType: string, shouldRemovePermissions = true, applyContextPermissions = true) {
