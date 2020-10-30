@@ -45,7 +45,7 @@ export class CopyProfileModalComponent implements OnInit {
   }
 
   get isValid(){
-    return this.idIsValid && this.name && this.title && this.url;
+    return this.idIsValid && this.nameIsValid && this.title && this.url;
   }
 
   async ngOnInit() {
