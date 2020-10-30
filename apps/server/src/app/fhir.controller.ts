@@ -617,7 +617,7 @@ export class FhirController extends BaseController {
       if (proxyHeaders['content-type'] === 'application/json') {
         proxyHeaders['content-type'] = 'application/json-patch+json';
       } else if (proxyHeaders['content-type'] === 'application/xml') {
-        proxyHeaders['content-type'] = 'application/xml-path+xml';
+        proxyHeaders['content-type'] = 'application/xml-patch+xml';
       }
     }
 
