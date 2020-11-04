@@ -201,6 +201,8 @@ export class FhirReferenceModalComponent implements OnInit {
       url += '_id=' + encodeURIComponent(this.idSearch) + '&';
     }
 
+    this.searching = true;
+
     this.http.get<IBundle>(url)
       .subscribe((results: IBundle) => {
         // If we are loading more results from the server, then concatenate the entries
@@ -209,8 +211,11 @@ export class FhirReferenceModalComponent implements OnInit {
         } else {
           this.results = results;
         }
+
+        this.searching = false;
       }, (err) => {
         this.message = getErrorString(err);
+        this.searching = false;
       }, () => this.searching = false);
   }
 

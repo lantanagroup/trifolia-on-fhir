@@ -41,8 +41,9 @@
           Browse/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="browseMenu">
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide/view" *ngIf="configService.project">View Implementation Guide</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Edit Implementation Guide</a>
+          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide/view" *ngIf="configService.project">View IG</a>
+          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Edit IG</a>
+          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/bulk-edit" *ngIf="configService.project">Bulk Edit IG</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/structure-definition">Profiles/Extensions</a>
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/capability-statement">Capability Statements</a>

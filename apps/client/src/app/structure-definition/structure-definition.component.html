@@ -101,9 +101,9 @@
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="this" propertyName="intro" title="Intro" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="intro" title="Intro" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="this" propertyName="notes" title="Notes" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="notes" title="Notes" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="purpose" title="Purpose" tooltipPath="StructureDefinition.purpose"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>

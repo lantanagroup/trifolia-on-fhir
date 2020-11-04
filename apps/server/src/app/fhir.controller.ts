@@ -619,6 +619,14 @@ export class FhirController extends BaseController {
     // Make sure that caching is turned off for proxied FHIR requests
     proxyHeaders['Cache-Control'] = 'no-cache';
 
+    if (method === 'PATCH') {
+      if (proxyHeaders['content-type'] === 'application/json') {
+        proxyHeaders['content-type'] = 'application/json-patch+json';
+      } else if (proxyHeaders['content-type'] === 'application/xml') {
+        proxyHeaders['content-type'] = 'application/xml-patch+xml';
+      }
+    }
+
     const options = <AxiosRequestConfig> {
       url: proxyUrl,
       method: method,
@@ -646,7 +654,7 @@ export class FhirController extends BaseController {
         action = 'C';
       } else if (method === 'GET') {
         action = 'R';
-      } else if (method === 'PUT') {
+      } else if (method === 'PUT' || method === 'PATCH') {
         action = 'U';
       } else if (method.indexOf('DEL') > 0) {
         action = 'D';

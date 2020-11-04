@@ -17,6 +17,8 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 
 export class PublishedGuideModel {
   public name: string;
@@ -59,6 +61,15 @@ export class ImplementationGuideService {
       return Observable.throw(err || 'backend server error');
   }
   */
+
+  public bulkUpdate(implementationGuideId: string, bulkUpdateRequest: BulkUpdateRequest) {
+    const url = `/api/implementationGuide/${implementationGuideId}/bulk-update`;
+    return this.http.post(url, bulkUpdateRequest);
+  }
+
+  public getProfiles(implementationGuideId: string) {
+    return this.http.get<IBundle>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
+  }
 
   public getExamples(implementationGuideId: string) {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);

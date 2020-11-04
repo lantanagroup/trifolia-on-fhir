@@ -9,7 +9,9 @@
   </div>
   <div class="form-group">
     <label>New Name</label>
-    <input type="text" class="form-control" [(ngModel)]="name" [class.is-invalid]="!name" placeholder="Current Name: {{structureDefinition.name}}"/>
+    <input type="text" class="form-control" [(ngModel)]="name"
+            [class.is-invalid]="!nameIsValid" placeholder="Current Name: {{structureDefinition.name}}"/>
+    <span class="help-block" *ngIf="name && !nameIsValid">{{Globals.tooltips['name.validation.failed']}}</span>
   </div>
   <div class="form-group">
     <label>New Title</label>
