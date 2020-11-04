@@ -172,7 +172,7 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion, options.useTerminologyServer);
 
       // Zip up the dir, send it to client, and then delete the directory
       await this.sendPackageResponse(exporter.packageId, response);
