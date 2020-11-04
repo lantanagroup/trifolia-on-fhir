@@ -1,26 +1,24 @@
-import { BaseController } from './base.controller';
-import { Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { BundleExporter } from './export/bundle';
-import { ITofRequest } from './models/tof-request';
-import { Bundle, DomainResource, OperationOutcome } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { ServerValidationResult } from '../../../../libs/tof-lib/src/lib/server-validation-result';
-import { emptydir, rmdir, zip } from './helper';
-import { ExportOptions } from './models/export-options';
-import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
-import { TofLogger } from './tof-logger';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { ConfigService } from './config.service';
-import { AxiosRequestConfig } from 'axios';
-import { createHtmlExporter } from './export/html.factory';
-
-
+import {BaseController} from './base.controller';
+import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
+import {BundleExporter} from './export/bundle';
+import {ITofRequest} from './models/tof-request';
+import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
+import {emptydir, rmdir, zip} from './helper';
+import {ExportOptions} from './models/export-options';
+import {AuthGuard} from '@nestjs/passport';
+import {Response} from 'express';
+import {TofLogger} from './tof-logger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
+import {createHtmlExporter} from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { MSWordExporter } from './export/msword';
-import { ExportService } from './export.service';
-import { FhirServerVersion } from './server.decorators';
+import {MSWordExporter} from './export/msword';
+import {ExportService} from './export.service';
+import {FhirServerVersion} from './server.decorators';
 import {HtmlExporter} from './export/html';
 
 @Controller('api/export')

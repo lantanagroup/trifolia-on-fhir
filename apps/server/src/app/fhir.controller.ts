@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Header,
   Headers,
   HttpCode,
@@ -16,7 +17,7 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -31,6 +32,11 @@ import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {default as PQueue} from 'p-queue';
+import {IBundle, IDomainResource, IImplementationGuide, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+import {ImplementationGuideController} from './implementation-guide.controller';
 
 export interface ProxyResponse {
   status: number;
@@ -675,6 +681,106 @@ export class FhirController extends BaseController {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  @Get('dependency')
+  public async searchDependency(
+    @FhirServerBase() fhirServerBase,
+    @Headers('implementationguideid') implementationGuideId: string,
+    @FhirServerVersion() fhirServerVersion: 'stu3'|'r4',
+    @Query('resourceType') resourceType?: string,
+    @Query('_id') resourceId?: string,
+    @Query('name') name?: string,
+    @Query('title') title?: string,
+    @Query('_content') resourceContent?: string,
+    @Query('type') structureDefinitionType?: string) {
+    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
+    const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
+    const ig = igResults.data;
+    let dependencies: string[];
+
+    await ImplementationGuideController.downloadDependencies(ig, fhirServerVersion, this.configService, this.logger);
+
+    switch (fhirServerVersion) {
+      case 'stu3':
+        dependencies = getSTU3Dependencies(<STU3ImplementationGuide> ig);
+        break;
+      case 'r4':
+        dependencies = getR4Dependencies(<R4ImplementationGuide> ig);
+        break;
+      default:
+        throw new Error(`Unexpected FHIR server version ${fhirServerVersion}`);
+    }
+
+    const responseBundle: IBundle = {
+      resourceType: 'Bundle',
+      entry: []
+    };
+
+    for (const dependency of dependencies) {
+      const dependencyDir = path.join(os.homedir(), '.fhir', 'packages', dependency, 'package');
+      if (!fs.existsSync(dependencyDir)) {
+        this.logger.error(`Could not find downloaded dependency ${dependency} for IG ${implementationGuideId}`);
+        continue;
+      }
+
+      const packageFiles = fs.readdirSync(dependencyDir);
+
+      for (const packageFile of packageFiles) {
+        if (!packageFile.toLowerCase().endsWith('.json')) continue;
+
+        const fileContent = fs.readFileSync(path.join(dependencyDir, packageFile)).toString();
+        const resource = JSON.parse(fileContent);
+
+        if (!resource.resourceType) continue;
+
+        // Filter resource type that doesn't match
+        if (resourceType && resource.resourceType !== resourceType) continue;
+
+        // id
+        if (resourceId && resource.id !== resourceId) continue;
+
+        // title
+        if (title) {
+          const resourceTitle = resource.title || '';
+
+          if (resourceTitle.toLowerCase().indexOf(title.toLowerCase()) < 0) continue;
+        }
+
+        // name
+        if (name) {
+          let resourceName = resource.name || '';
+
+          // name might be a complex object... convert it to a json string and search within it
+          if (typeof resourceName !== 'string') {
+            resourceName = JSON.stringify(resourceName);
+          }
+
+          if (resourceName.toLowerCase().indexOf(name.toLowerCase()) < 0) continue;
+        }
+
+        // _content search
+        if (resourceContent && fileContent.toLowerCase().indexOf(resourceContent.toLowerCase()) < 0) continue;
+
+        // type (only applies to StructureDefinition)
+        if (structureDefinitionType && resource.resourceType === 'StructureDefinition') {
+          const structureDefinition = <IStructureDefinition> resource;
+
+          if (!structureDefinition.type || structureDefinition.type !== structureDefinitionType) continue;
+        }
+
+        responseBundle.entry.push({
+          resource: <any>{
+            resourceType: resource.resourceType,
+            id: resource.id,
+            name: resource.name,
+            url: resource.url
+          }
+        });
+      }
+    }
+
+    return responseBundle;
   }
 
   @All()

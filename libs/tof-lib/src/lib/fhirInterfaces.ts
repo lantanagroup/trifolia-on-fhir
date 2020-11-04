@@ -233,6 +233,7 @@ export interface IElementDefinition extends IElement {
 export interface IStructureDefinition extends IDomainResource {
   url: string;
   identifier?: IIdentifier[];
+  type: string;
   name: string;
   description?: string;
   title?: string;
