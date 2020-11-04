@@ -101,6 +101,17 @@ export class ImplementationGuideController extends BaseFhirController {
     }
   }
 
+  private getR4ProfileReferences(ig: R4ImplementationGuide): IResourceReference[] {
+    if (!ig || !ig.definition || !ig.definition.resource) return [];
+    return ig.definition.resource
+      .filter(r => r.reference && r.reference.reference)
+      .filter(r => {
+        const parsedReference = parseReference(r.reference.reference);
+        return parsedReference.resourceType === 'StructureDefinition';
+      })
+      .map(r => r.reference);
+  }
+
   private getSTU3ProfileReferences(ig: STU3ImplementationGuide): IResourceReference[] {
     if (!ig || !ig.package) return [];
     const profileReferences = [];
