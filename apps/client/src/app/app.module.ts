@@ -74,6 +74,7 @@ import {ResourceGuard} from './guards/resource.guard';
 import {ElementDefinitionConstraintComponent} from './modals/element-definition-constraint/element-definition-constraint.component';
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import { QueueComponent } from './manage/queue/queue.component';
 import {ExamplesComponent} from './examples/examples.component';
 import { IgnoreWarningsComponent } from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
 import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
@@ -162,7 +163,8 @@ const appRoutes: Routes = [
   {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'}
+  {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always'}
 ];
 
 /**
@@ -233,7 +235,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, ExamplesComponent, IgnoreWarningsComponent, JiraSpecComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent, ExamplesComponent, IgnoreWarningsComponent, JiraSpecComponent
   ],
   imports: [
     RouterModule.forRoot(

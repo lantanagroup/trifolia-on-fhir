@@ -5,8 +5,9 @@ import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
 import {HttpService, Logger} from '@nestjs/common';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
+import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 
-export function createHtmlExporter(
+export async function createHtmlExporter(
   serverConfig: IServerConfig,
   fhirConfig: IFhirConfig,
   httpService: HttpService,
@@ -17,6 +18,7 @@ export function createHtmlExporter(
   fhir: FhirModule,
   io: Server,
   socketId: string,
+  user: ITofUser,
   implementationGuideId: string) {
 
   const fhirServerConfig = fhirConfig.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
@@ -31,5 +33,8 @@ export function createHtmlExporter(
       break;
   }
 
-  return new theClass(serverConfig, fhirConfig, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
+  const exporter = new theClass(serverConfig, fhirConfig, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
+  exporter.user = user;
+  await exporter.init();
+  return exporter;
 }

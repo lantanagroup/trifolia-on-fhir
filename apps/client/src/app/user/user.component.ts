@@ -29,11 +29,9 @@ export class UserComponent implements OnInit {
 
   constructor(
     private configService: ConfigService,
-    private modalService: NgbModal,
     private personService: PractitionerService,
     private groupService: GroupService,
     private authService: AuthService,
-    private fhirService: FhirService,
     private practitionerService: PractitionerService) {
 
   }
