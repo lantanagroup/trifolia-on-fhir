@@ -18,7 +18,7 @@ import {
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
   OperationOutcome,
-  ResourceReference
+  ResourceReference, StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
@@ -44,6 +44,10 @@ class PageDefinition {
   public level: number;
 }
 
+interface GroupFilterObject {
+  [key: string]: boolean
+}
+
 @Component({
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
@@ -60,6 +64,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     terminology: true,
     example: true
   };
+  public filterGroup: GroupFilterObject = {};
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
@@ -138,6 +143,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
          */
 
         return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
+      })
+      .filter((resource: ImplementationGuideResourceComponent) => {
+        if(!this.filterGroup || !this.filterGroup.hasOwnProperty(resource.groupingId)){
+          return true;
+        }
+        return this.filterGroup[resource.groupingId];
       });
   }
 
@@ -156,7 +167,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public get isFilterResourceTypeAll() {
-    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+    let check = true;
+    if(this.filterGroup && this.implementationGuide.definition.grouping){
+      this.implementationGuide.definition.grouping.forEach((group) => {
+        check = check && this.filterGroup[group.id];
+      });
+    }
+    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example && check;
   }
 
   public addDependencies(){
@@ -212,6 +229,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       id: newId,
       name: 'New Group'
     });
+
+    this.filterGroup[newId] = true;
   }
 
   public moveGroupUp(group: ImplementationGuideGroupingComponent) {
@@ -252,10 +271,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editGroup(group: ImplementationGuideGroupingComponent) {
+    const originalId = group.id;
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.igChanging.emit(true);});
+    modalRef.result.then((result: ImplementationGuideGroupingComponent) => {
+      this.filterGroup[result.id] = this.filterGroup[originalId];
+      delete this.filterGroup[originalId];
+      this.igChanging.emit(true);
+    });
   }
 
   public removeGroup(group: ImplementationGuideGroupingComponent) {
@@ -269,6 +293,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     const index = this.implementationGuide.definition.grouping.indexOf(group);
     this.implementationGuide.definition.grouping.splice(index, 1);
+    delete this.filterGroup[group.id];
   }
 
   public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up'|'down') {
@@ -359,12 +384,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
+  public toggleFilterGroup(type: string){
+    this.filterGroup[type] = !this.filterGroup[type];
+  }
+
   public toggleFilterResourceType(type: string) {
     switch (type) {
       case 'all':
         this.filterResourceType.profile = true;
         this.filterResourceType.terminology = true;
         this.filterResourceType.example = true;
+        if(this.filterGroup && this.implementationGuide.definition.grouping){
+          this.implementationGuide.definition.grouping.forEach((group) => {
+            this.filterGroup[group.id] = true;
+          });
+        }
         break;
       case 'profile':
         this.filterResourceType.profile = !this.filterResourceType.profile;
@@ -927,5 +961,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         }
       }
     }
+  }
+
+  public setExampleBoolean(resource: ImplementationGuideResourceComponent, value: boolean) {
+    if (!value) {
+      delete resource.exampleBoolean;
+      delete resource.exampleCanonical;
+    } else {
+      delete resource.exampleCanonical;
+      resource.exampleBoolean = value;
+    }
+  }
+
+  public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
+    delete resource.exampleBoolean;
+    resource.exampleCanonical = value;
+  }
+
+  public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
+    //Can only set Structure Definitions to exampleCanonical according to FHIR R4 standard
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = "StructureDefinition";
+    modalRef.componentInstance.hideResourceType = true;
+
+    modalRef.result.then((result: ResourceSelection) => {
+      delete resource.exampleBoolean;
+      resource.exampleCanonical = (<StructureDefinition> result.resource).url;
+    });
   }
 }
