@@ -10,12 +10,10 @@ import {ExportOptions} from './models/export-options';
 import {AuthGuard} from '@nestjs/passport';
 import {Response} from 'express';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
 import {createHtmlExporter} from './export/html.factory';
-
-
 import * as path from 'path';
 import * as tmp from 'tmp';
 import {MSWordExporter} from './export/msword';
@@ -26,8 +24,8 @@ import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Export')
-@ApiOAuth2Auth()
+@ApiTags('Export')
+@ApiOAuth2([])
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
 
@@ -164,8 +162,7 @@ export class ExportController extends BaseController {
 
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(
-      this.configService.server,
-      this.configService.fhir,
+      this.configService,
       this.httpService,
       this.logger,
       request.fhirServerBase,
@@ -178,7 +175,7 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion, options.useTerminologyServer);
 
       // Zip up the dir, send it to client, and then delete the directory
       await this.sendPackageResponse(exporter.packageId, response);
@@ -208,8 +205,7 @@ export class ExportController extends BaseController {
   public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
     const exporter: HtmlExporter = await createHtmlExporter(
-      this.configService.server,
-      this.configService.fhir,
+      this.configService,
       this.httpService,
       this.logger,
       request.fhirServerBase,

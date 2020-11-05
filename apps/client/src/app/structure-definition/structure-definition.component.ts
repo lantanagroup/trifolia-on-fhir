@@ -41,6 +41,8 @@ import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constrain
 import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import { Severities, ValidatorResponse } from 'fhir/validator';
 import {CanComponentDeactivate} from '../guards/resource.guard';
+import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Versions} from 'fhir/fhir';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -98,60 +100,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     return false;
-  }
-
-  get notes() {
-    if (!this.structureDefinition || !this.structureDefinition.extension) return '';
-    const extensions: IExtension[] = this.structureDefinition.extension;
-    const notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
-    return notes ? notes.valueMarkdown || '' : '';
-  }
-
-  set notes(value: string) {
-    if (!this.structureDefinition) return;
-    this.structureDefinition.extension = this.structureDefinition.extension || [];
-    const extensions: IExtension[] = this.structureDefinition.extension;
-    let notes = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
-
-    if (!notes && value) {
-      notes = {
-        url: Globals.extensionUrls['extension-sd-notes'],
-        valueMarkdown: value
-      };
-      extensions.push(notes);
-    } else if (notes && !value) {
-      const index = extensions.indexOf(notes);
-      extensions.splice(index, index >= 0 ? 1 : 0);
-    } else if (notes && value) {
-      notes.valueMarkdown = value;
-    }
-  }
-
-  get intro() {
-    if (!this.structureDefinition || !this.structureDefinition.extension) return '';
-    const extensions: IExtension[] = this.structureDefinition.extension;
-    const intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-    return intro ? intro.valueMarkdown || '' : '';
-  }
-
-  set intro(value: string) {
-    if (!this.structureDefinition) return;
-    this.structureDefinition.extension = this.structureDefinition.extension || [];
-    const extensions: IExtension[] = this.structureDefinition.extension;
-    let intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-
-    if (!intro && value) {
-      intro = {
-        url: Globals.extensionUrls['extension-sd-intro'],
-        valueMarkdown: value
-      };
-      extensions.push(intro);
-    } else if (intro && !value) {
-      const index = extensions.indexOf(intro);
-      extensions.splice(index, index >= 0 ? 1 : 0);
-    } else if (intro && value) {
-      intro.valueMarkdown = value;
-    }
   }
 
   ngOnDestroy() {
@@ -250,7 +198,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.constraintManager = null;
 
     try {
-      this.structureDefinition = await this.strucDefService.getStructureDefinition(sdId).toPromise();
+      const sd = await this.strucDefService.getStructureDefinition(sdId).toPromise();
+
+      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+        this.structureDefinition = new R4StructureDefinition(sd);
+      } else {
+        this.structureDefinition = new STU3StructureDefinition(sd);
+      }
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
@@ -259,10 +213,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.nameChanged();
-
-    if (!this.structureDefinition.differential) {
-      this.structureDefinition.differential = new DifferentialComponent({ element: [] });
-    }
 
     if (this.structureDefinition.differential.element.length === 0) {
       const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
@@ -278,7 +228,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       Globals.cookieKeys.recentStructureDefinitions,
       this.structureDefinition.id,
       this.structureDefinition.name);
-    this.message = 'Done loading structure definition';
+
+    if (this.route.snapshot.queryParams.copy === 'true') {
+      this.message = 'Done copying structure definition';
+    } else {
+      this.message = 'Done loading structure definition';
+    }
   }
 
   public hasSlices(elementTreeModel: ElementTreeModel) {

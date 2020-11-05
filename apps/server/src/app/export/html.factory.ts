@@ -1,15 +1,14 @@
 import {STU3HtmlExporter} from './html.stu3';
 import {R4HtmlExporter} from './html.r4';
-import {IServerConfig} from '../models/server-config';
-import {IFhirConfig, IFhirConfigServer} from '../models/fhir-config';
+import {IFhirConfigServer} from '../models/fhir-config';
 import {HttpService, Logger} from '@nestjs/common';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import {ConfigService} from '../config.service';
 
 export async function createHtmlExporter(
-  serverConfig: IServerConfig,
-  fhirConfig: IFhirConfig,
+  configService: ConfigService,
   httpService: HttpService,
   logger: Logger,
   fhirServerBase: string,
@@ -21,7 +20,7 @@ export async function createHtmlExporter(
   user: ITofUser,
   implementationGuideId: string) {
 
-  const fhirServerConfig = fhirConfig.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
+  const fhirServerConfig = configService.fhir.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
 
   let theClass;
   switch (fhirServerConfig.version) {
@@ -33,7 +32,7 @@ export async function createHtmlExporter(
       break;
   }
 
-  const exporter = new theClass(serverConfig, fhirConfig, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
+  const exporter = new theClass(configService, httpService, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
   exporter.user = user;
   await exporter.init();
   return exporter;

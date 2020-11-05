@@ -307,6 +307,25 @@ export class GithubService {
       });
   }
 
+  /**
+   * this method checks the commits history of the repo. If it returns 409 status with Git Repository is empty error then we know the repo is empty. Github doesn't provie an
+   * endpoint to directly see if the repo is empty or not.
+   * @param ownerLogin user login
+   * @param repositoryName repo name
+   * @param branchName branch name to look for commits
+   */
+  public async getCommits(ownerLogin: string, repositoryName: string, branchName?: string): Promise<any> {
+    await this.login();
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`;
+    try {
+      return await this.http.get<any>(url, this.getOptions()).toPromise();
+    } catch (ex) {
+      if (ex.status === 409 && ex.error['message'] === 'Git Repository is empty.') {
+        return ex.status;
+      }
+    }
+  }
+
   public async getBranches(ownerLogin: string, repositoryName: string): Promise<BranchModel[]> {
     await this.login();
 
@@ -453,6 +472,27 @@ export class GithubService {
     await this.updateHead(ownerLogin, repositoryName, newCommit.sha, branchName);
   }
 
+  /**
+   * this method creates a new README.md file for repos that are empty. This fixes an issue we were seeing when exporting to a github repo that is blank
+   * @param ownerLogin owner login id
+   * @param repositoryName repo name
+   * @param path filename
+   * @param content file contents
+   * @param message commit message
+   */
+  public async createContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string) {
+    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+    const encoded = btoa(content);
+    const options = this.getOptions();
+    const data = {
+      content: encoded
+    };
+    if (message) {
+      data['message'] = message;
+    }
+    await this.http.put<any>(url, data, options).toPromise();
+  }
+
   public async updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
     const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
     const encoded = btoa(content);
@@ -473,7 +513,6 @@ export class GithubService {
       if (message) {
         data['message'] = message;
       }
-
       await this.http.put<any>(url, data, this.getOptions()).toPromise();
     };
 

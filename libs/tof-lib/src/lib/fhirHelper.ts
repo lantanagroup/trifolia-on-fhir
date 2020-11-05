@@ -1,11 +1,10 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
-import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
+import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
-
 
 export function identifyRelease(fhirVersion: string): Versions {
   if (!fhirVersion) {
@@ -297,4 +296,31 @@ export function getJiraSpecValue(implementationGuide: IImplementationGuide): str
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }
+}
+
+export function getSTU3Dependencies(ig: STU3ImplementationGuide): string[] {
+  if (!ig || !ig.extension) return [];
+  return ig.extension
+    .filter(e => {
+      return e.url === Globals.extensionUrls['extension-ig-dependency'] &&
+        e.extension &&
+        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-name'] && next.valueString) && // has ig-dependency-name
+        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-version'] && next.valueString); // has ig-dependency-version
+    })
+    .map(e => {
+      const nameExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-name']);
+      const versionExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-version']);
+      return nameExtension.valueString +
+        '#' +
+        (versionExtension.valueString || 'current');
+    });
+}
+
+export function getR4Dependencies(ig: R4ImplementationGuide): string[] {
+  if (!ig || !ig.dependsOn) return [];
+  return ig.dependsOn.map(dependency => {
+    return dependency.packageId +
+      '#' +
+      (dependency.version || 'current');
+  });
 }

@@ -1,14 +1,14 @@
 import {Controller, Get, HttpService, Param, Query, UseGuards} from '@nestjs/common';
 import {BaseFhirController} from './base-fhir.controller';
 import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/auditEvent')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Audit')
-@ApiOAuth2Auth()
+@ApiTags('Audit')
+@ApiOAuth2([])
 export class AuditEventController extends BaseFhirController {
   resourceType = 'AuditEvent';
 

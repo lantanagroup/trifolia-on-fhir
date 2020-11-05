@@ -13,6 +13,7 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {CopyProfileModalComponent} from '../modals/copy-profile-modal/copy-profile-modal.component';
 
 @Component({
   templateUrl: './structure-definitions.component.html',
@@ -82,6 +83,15 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     modalRef.result.then((newId) => {
       structureDefinitionListItem.id = newId;
     });
+  }
+
+  public copy(structureDefinitionID: string){
+    const modalRef = this.modalService.open(CopyProfileModalComponent, {backdrop: 'static'});
+    modalRef.componentInstance.originalID = structureDefinitionID;
+    modalRef.result.then((result) => {
+      this.message = result ? result : `New profile that's a copy of the structure definition with id ${structureDefinitionID} has been made.`;
+    });
+
   }
 
   public nameTextChanged(value: string) {

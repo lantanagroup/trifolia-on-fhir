@@ -19,7 +19,7 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
 import {FhirInstances} from './app/helper';
 
-const config = new ConfigService();
+const config = ConfigService.create();
 
 const logger = new TofLogger('main');
 const connections: ISocketConnection[] = [];
@@ -226,7 +226,16 @@ async function bootstrap() {
     .setTitle('Trifolia-on-FHIR API')
     .setVersion(modulePackage.version)
     .setBasePath('/api')
-    .addOAuth2('implicit', `https://${config.auth.domain}/authorize`, `https://${config.auth.domain}/oauth/token`)//todo fix to oidc
+    .addOAuth2({
+      type: 'oauth2',
+      flows: {
+        implicit: {
+          scopes: [],
+          authorizationUrl: `https://${config.auth.domain}/authorize`,
+          tokenUrl: `https://${config.auth.domain}/oauth/token`
+        }
+      }
+    })
     .build();
   const document = fixSwagger(SwaggerModule.createDocument(app, options));
   SwaggerModule.setup('api-docs', app, document, {

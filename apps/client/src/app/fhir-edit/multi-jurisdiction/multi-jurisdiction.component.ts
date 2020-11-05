@@ -13,6 +13,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   @Input() propertyName: string;
   @Input() tooltipPath: string;
   @Input() tooltipKey: string;
+  @Input() required: boolean;
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
@@ -24,9 +25,10 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   }
 
   get jurisdictions(): ICodeableConcept[] {
-    if (this.parentObject[this.propertyName]) {
+    if (this.parentObject.hasOwnProperty(this.propertyName)) {
       return <ICodeableConcept[]> this.parentObject[this.propertyName];
     }
+    return null;
   }
 
   addJurisdiction() {
@@ -52,6 +54,18 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   addCoding(jurisdiction: ICodeableConcept) {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
+  }
+
+  isInvalid(){
+    return this.required && (!this.jurisdictions[0].text ||
+      (this.jurisdictions[0].coding && (!this.jurisdictions[0].coding[0].code || !this.jurisdictions[0].coding[0].display || !this.jurisdictions[0].coding[0].system)));
+  }
+
+  removeJurisdiction(index: number){
+    this.jurisdictions.splice(index, 1);
+    if(this.jurisdictions.length === 0){
+      delete this.parentObject[this.propertyName];
+    }
   }
 
   ngOnInit() {

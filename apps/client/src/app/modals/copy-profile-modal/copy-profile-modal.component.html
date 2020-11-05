@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Copy Profile</h4>
+</div>
+<div class="modal-body" *ngIf="structureDefinition">
+  <div class="form-group">
+    <label>New ID</label>
+    <input type="text" class="form-control" [(ngModel)]="id" [class.is-invalid]="!idIsValid" placeholder="Current ID: {{structureDefinition.id}}" (change)="updateUrl()"/>
+    <span class="help-block" *ngIf="!idIsValid">ID is required, and must not contain any spaces or special characters.</span>
+  </div>
+  <div class="form-group">
+    <label>New Name</label>
+    <input type="text" class="form-control" [(ngModel)]="name"
+            [class.is-invalid]="!nameIsValid" placeholder="Current Name: {{structureDefinition.name}}"/>
+    <span class="help-block" *ngIf="name && !nameIsValid">{{Globals.tooltips['name.validation.failed']}}</span>
+  </div>
+  <div class="form-group">
+    <label>New Title</label>
+    <input type="text" class="form-control" [(ngModel)]="title" [class.is-invalid]="!title" placeholder="Current Title: {{structureDefinition.title}}"/>
+  </div>
+  <div class="form-group">
+    <label>New URL</label>
+    <div class="input-group">
+      <input type="text" class="form-control" [(ngModel)]="url" [class.is-invalid]="!url" placeholder="Current URL: {{structureDefinition.url}}"/>
+      <label>
+        <input type="checkbox" [(ngModel)]="autoUrl" (click)="autoUrlChange()"/>
+        Automatically Update URL with Original Profile's URL + newID
+      </label>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="float-left" *ngIf="message">{{message}}</div>
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!isValid">OK</button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>
+</div>

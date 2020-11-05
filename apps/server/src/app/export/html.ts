@@ -33,6 +33,7 @@ import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import {ConfigService} from '../config.service';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -40,11 +41,9 @@ export class HtmlExporter {
   public user: ITofUser;
 
   private initPromise: Promise<void>;
-
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
-    protected serverConfig: IServerConfig,
-    protected fhirConfig: IFhirConfig,
+    protected configService: ConfigService,
     protected httpService: HttpService,
     protected logger: Logger,
     protected fhirServerBase: string,
@@ -202,11 +201,11 @@ export class HtmlExporter {
     this.publishing = new Promise(async (resolve, reject) => {
       this.publishStartedAt = new Date();
 
-      const deployDir = path.resolve(this.serverConfig.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
+      const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
 
       if (!this.igPublisherLocation) {
-        this.igPublisherLocation = await this.getIgPublisher(version);
+        this.igPublisherLocation = await this.configService.getIgPublisher(version);
       }
 
       if (!this.igPublisherLocation) {
@@ -214,7 +213,7 @@ export class HtmlExporter {
       }
 
       const igPublisherVersion = 'latest';
-      const process = this.serverConfig.javaLocation || 'java';
+      const process = this.configService.server.javaLocation || 'java';
       const jarParams = ['-jar', this.igPublisherLocation, '-ig', this.controlPath];
 
       if (!useTerminologyServer) {
@@ -243,7 +242,7 @@ export class HtmlExporter {
       this.igPublisherProcess.stderr.on('data', (data) => {
         const message = data.toString().replace(tmp.tmpdir, 'XXX').replace(this.homedir, 'XXX');
 
-        if (this.serverConfig.publishStatusPath) {
+        if (this.configService.server.publishStatusPath) {
           this.updatePublishStatuses(false);
         }
 
@@ -255,7 +254,7 @@ export class HtmlExporter {
       this.igPublisherProcess.on('error', (err) => {
         const message = 'Error executing FHIR IG Publisher: ' + err;
         this.logger.error(message);
-        if (this.serverConfig.publishStatusPath) {
+        if (this.configService.server.publishStatusPath) {
           this.updatePublishStatuses(false);
         }
         this.sendSocketMessage('error', message);
@@ -270,7 +269,7 @@ export class HtmlExporter {
         if (code !== 0) {
           this.sendSocketMessage('progress', 'The HL7 IG Publisher failed. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. If you are still having issues after having reviewed and addressed ToF errors reported in the log above, go to chat.fhir.org to get more information on how to proceed.', true);
 
-          if (this.serverConfig.publishStatusPath) {
+          if (this.configService.server.publishStatusPath) {
             this.updatePublishStatuses(false);
           }
 
@@ -284,7 +283,7 @@ export class HtmlExporter {
           const generatedPath = path.resolve(this.rootPath, 'generated_output');
           const outputPath = path.resolve(this.rootPath, 'output');
 
-          if (this.serverConfig.publishStatusPath) {
+          if (this.configService.server.publishStatusPath) {
             this.updatePublishStatuses(true);
           }
 
@@ -330,15 +329,17 @@ export class HtmlExporter {
 
   public updatePublishStatuses(status: boolean){
     let publishStatuses: { [implementationGuideId: string]: boolean } = {};
-    if (fs.existsSync(this.serverConfig.publishStatusPath)) {
-      publishStatuses = JSON.parse(fs.readFileSync(this.serverConfig.publishStatusPath));
+    if (fs.existsSync(this.configService.server.publishStatusPath)) {
+      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
     }
     publishStatuses[this.implementationGuide.id] = status;
-    fs.writeFileSync(this.serverConfig.publishStatusPath, JSON.stringify(publishStatuses));
+    fs.writeFileSync(this.configService.server.publishStatusPath, JSON.stringify(publishStatuses));
   }
 
-  public async export(format: Formats, includeIgPublisherJar: boolean, version: string, templateType = 'official', template = 'hl7.fhir.template', templateVersion = 'current'): Promise<void> {
-    if (!this.fhirConfig.servers) {
+  public async export(format: Formats, includeIgPublisherJar: boolean,
+                      version: string, templateType = 'official', template = 'hl7.fhir.template',
+                      templateVersion = 'current', useTerminologyServer?: boolean): Promise<void> {
+    if (!this.configService.fhir.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
 
@@ -441,7 +442,7 @@ export class HtmlExporter {
 
     this.writePages(this.rootPath);
 
-    this.igPublisherLocation = includeIgPublisherJar ? await this.getIgPublisher(version) : null;
+    this.igPublisherLocation = includeIgPublisherJar ? await this.configService.getIgPublisher(version) : null;
 
     if (includeIgPublisherJar && this.igPublisherLocation) {
       this.logger.log('Copying IG Publisher JAR to working directory.');
@@ -453,10 +454,10 @@ export class HtmlExporter {
       // noinspection SpellCheckingInspection
       const shContent = '#!/bin/bash\n' +
         'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
+        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
       fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
 
-      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini';
+      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
       fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
     }
 
@@ -617,94 +618,6 @@ export class HtmlExporter {
       '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
       '</ul>\n';
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
-  }
-
-  /**
-   * this method is called from the getIgPublisher method. This calls the get to download the specified version of the
-   * jar file for the IG Publisher
-   * @param path this is the path to the file system where the jar file will be saved
-   * @param url this is the url that is used to download the jar file
-   */
-  // tslint:disable-next-line:no-shadowed-variable
-  private async downloadJarFile(path: string, url: string) {
-    const pathInfo = fs.existsSync(path) ? fs.statSync(path) : null;
-    const response = await this.httpService.axiosRef({
-      url: url,
-      method: 'GET',
-      responseType: 'stream',
-    });
-
-    if (pathInfo && pathInfo.size.toString() === response.headers['content-length']) {
-      this.sendSocketMessage('progress', 'Already have this version of the IG Publisher; not going to download.');
-      response.data.destroy();
-      return Promise.resolve();
-    }
-
-    const writer = fs.createWriteStream(path);
-    response.data.pipe(writer);
-
-    return new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-  }
-
-  /**
-   * This method checks to see if the version of IG Publisher the user wants to use is already downloaded or not. If
-   * we already have it downloaded just use it. If it doesn't exist in the file system then download it first then use
-   * it. If an error is thrown it will also delete the empty jar file in the directory.
-   * @param useLatest
-   * @param versionId
-   */
-  private async getIgPublisher(versionId: string): Promise<string> {
-    const latestPath = path.resolve(this.serverConfig.latestIgPublisherPath || 'assets/ig-publisher');
-    const filePath = path.join(latestPath, versionId + '.jar');
-
-    // if the version is 'dev', always download the latest dev version
-    // check to see if the jar file is already downloaded, if so use it otherwise download it
-    if (versionId === 'dev') {
-      // TODO: may have write conflict with other simultaneous requests to use dev version of ig publisher
-      const sonatypeData = await this.httpService.get('https://oss.sonatype.org/service/local/repositories/snapshots/index_content/?groupIdHint=org.hl7.fhir.publisher&artifactIdHint=org.hl7.fhir.publisher&', { headers: { 'Accept': 'application/json' }}).toPromise();
-      const sonatypeVersions = sonatypeData.data.data.children[0].children[0].children[0].children[0].children[0].children;
-      const latestSonatypeVersion = sonatypeVersions[sonatypeVersions.length - 1].version;
-      const downloadUrl = `https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.hl7.fhir.publisher&a=org.hl7.fhir.publisher.cli&v=${latestSonatypeVersion}`;
-
-      this.sendSocketMessage('progress', 'Downloading dev version of IG Publisher from sonatype.');
-      this.logger.log(`Downloading dev version of IG Publisher from sonatype: ${downloadUrl}`);
-
-      fs.ensureDirSync(path.dirname(filePath));
-      await this.downloadJarFile(filePath, downloadUrl);
-
-      return filePath;
-    } else if (fs.existsSync(filePath)) {
-      this.sendSocketMessage('progress', 'Already have the version ' + versionId + ' of the IG publisher... Won\'t download again.', true);
-      this.logger.log('The jar file ' + versionId + ' for the selected version already exists. Not downloading it again.');
-      return filePath;
-    } else {
-      try {
-        this.sendSocketMessage('progress', 'Server does not have this version of the IG publisher... Downloading.', true);
-        const infoUrl = `https://api.github.com/repos/hl7/fhir-ig-publisher/releases/${versionId}`;
-        this.logger.log(`Getting version info for id ${versionId} from GitHub`);
-
-        const versionInfo = await this.httpService.get(infoUrl).toPromise();
-        const downloadUrl = versionInfo.data.assets[0]['browser_download_url'];
-        const version = versionInfo.data.name;
-
-        this.logger.log(`Downloading version ${version} (id: ${versionId}) from GitHub URL ${downloadUrl}`);
-        this.sendSocketMessage('progress', `Downloading IG Publisher version ${version} from GitHub releases`);
-
-        fs.ensureDirSync(path.dirname(filePath));
-        await this.downloadJarFile(filePath, downloadUrl);
-
-        return filePath;
-      } catch (ex) {
-        // this check for errors and logs errors. If error is caught it also deletes the empty jar file from the directory. This returns the default file path
-        this.logger.error(`Error getting version ${versionId} of FHIR IG publisher: ${ex.message}`);
-        this.sendSocketMessage('error', 'Encountered error downloading IG publisher version ' + versionId + ', will use pre-loaded/default IG publisher');
-        fs.unlinkSync(filePath);
-        return;
-      }
-    }
   }
 
   /**

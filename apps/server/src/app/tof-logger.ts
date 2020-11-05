@@ -5,8 +5,8 @@ import * as fs from 'fs-extra';
 
 export class TofLogger extends Logger {
   private static loggedFileError = false;
-  private static configService = new ConfigService();
-  private static rotateTimeout: NodeJS.Timer;
+  private static configService = ConfigService.create();
+  private static rotateTimeout: number;
   private serverConfig = TofLogger.configService.server;
 
   constructor(name?: string) {
@@ -85,7 +85,7 @@ export class TofLogger extends Logger {
       TofLogger.rotateTimeout = null;
     }
 
-    TofLogger.rotateTimeout = setTimeout(rotate, 1000);
+    TofLogger.rotateTimeout = <number> <any> setTimeout(rotate, 1000);
   }
 
   trace(message: string, context?: string) {

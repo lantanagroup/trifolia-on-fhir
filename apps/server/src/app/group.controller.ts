@@ -1,20 +1,8 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpService,
-  Param,
-  Post,
-  Put,
-  Query,
-  UnauthorizedException,
-  UseGuards
-} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {ApiOAuth2Auth, ApiOperation, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -25,8 +13,8 @@ import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/group')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Group')
-@ApiOAuth2Auth()
+@ApiTags('Group')
+@ApiOAuth2([])
 export class GroupController extends BaseFhirController {
   resourceType = 'Group';
 
@@ -42,7 +30,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'createManagingGroup',
+    summary: 'createManagingGroup',
     description: 'Creates a group where the currently logged-in user is the admin/manager'
   })
   @Post('managing')
@@ -88,7 +76,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'updateManagingGroup',
+    summary: 'updateManagingGroup',
     description: 'Updates the specified group if the user is the admin/manager of the group'
   })
   @Put('managing/:id')
@@ -151,7 +139,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'deleteManagingGroup',
+    summary: 'deleteManagingGroup',
     description: 'Deletes a group that the user is an admin/manager of'
   })
   @Delete('managing/:id')
@@ -180,7 +168,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'deleteMembershipGroup',
+    summary: 'deleteMembershipGroup',
     description: 'Removes the current user as a member from the group'
   })
   @Delete('membership/:id')
@@ -201,7 +189,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'getMembership',
+    summary: 'getMembership',
     description: 'Gets the groups that the currently logged-in user is a member of. This operation assumes that the user is not belonging to more than 50 groups.'
   })
   @Get('membership')
@@ -237,7 +225,7 @@ export class GroupController extends BaseFhirController {
   }
 
   @ApiOperation({
-    title: 'getManaging',
+    summary: 'getManaging',
     description: 'Gets the groups that the currently logged-in user is an admin/manager of'
   })
   @Get('managing')

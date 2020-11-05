@@ -16,8 +16,8 @@ export class ConfigService {
   public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
   public project?: {
     implementationGuideId: string,
-    name: string,
-    securityTags: Coding[]
+    name?: string,
+    securityTags?: Coding[]
   };
   public statusMessage: string;
   public showingIntroduction = false;
