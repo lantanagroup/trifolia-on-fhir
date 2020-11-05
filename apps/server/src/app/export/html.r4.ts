@@ -106,6 +106,11 @@ export class R4HtmlExporter extends HtmlExporter {
   }
 
   protected populatePageInfos() {
+    if (!this.r4ImplementationGuide.definition) {
+      this.pageInfos = [];
+      return;
+    }
+
     // Ensure that the implementation guide has an index page
     if (!this.r4ImplementationGuide.definition.page) {
       this.r4ImplementationGuide.definition.page = new ImplementationGuidePageComponent();

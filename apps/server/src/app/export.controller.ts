@@ -18,8 +18,9 @@ import * as path from 'path';
 import * as tmp from 'tmp';
 import {MSWordExporter} from './export/msword';
 import {ExportService} from './export.service';
-import {FhirServerVersion} from './server.decorators';
+import {FhirServerVersion, User} from './server.decorators';
 import {HtmlExporter} from './export/html';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -156,10 +157,11 @@ export class ExportController extends BaseController {
   public async exportHtmlPackage(
     @Req() request: ITofRequest,
     @Res() response: Response,
+    @User() user: ITofUser,
     @Param('implementationGuideId') implementationGuideId: string) {
 
     const options = new ExportOptions(request.query);
-    const exporter = createHtmlExporter(
+    const exporter = await createHtmlExporter(
       this.configService,
       this.httpService,
       this.logger,
@@ -169,6 +171,7 @@ export class ExportController extends BaseController {
       request.fhir,
       request.io,
       options.socketId,
+      user,
       implementationGuideId);
 
     try {
@@ -199,9 +202,9 @@ export class ExportController extends BaseController {
   }
 
   @Get(':implementationGuideId/publish')
-  public async publishImplementationGuide(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId) {
+  public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
-    const exporter: HtmlExporter = createHtmlExporter(
+    const exporter: HtmlExporter = await createHtmlExporter(
       this.configService,
       this.httpService,
       this.logger,
@@ -211,6 +214,7 @@ export class ExportController extends BaseController {
       request.fhir,
       request.io,
       options.socketId,
+      user,
       implementationGuideId);
 
     this.exportService.exports.push(exporter);
@@ -231,7 +235,7 @@ export class ExportController extends BaseController {
       }
 
       try {
-        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);;
+        await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
       } finally {

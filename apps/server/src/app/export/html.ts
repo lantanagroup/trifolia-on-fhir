@@ -32,9 +32,15 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
+import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
 
 export class HtmlExporter {
+  public queuedAt: Date;
+  public publishStartedAt: Date;
+  public user: ITofUser;
+
+  private initPromise: Promise<void>;
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
     protected configService: ConfigService,
@@ -51,6 +57,47 @@ export class HtmlExporter {
     this.homedir = require('os').homedir();
   }
 
+  public async init() {
+    this.queuedAt = new Date();
+
+    this.initPromise = new Promise<void>(async (resolve, reject) => {
+      try {
+        this.rootPath = await this.createTempDirectory();
+
+        this.controlPath = path.join(this.rootPath, 'ig.ini');
+        this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
+
+        this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
+
+        const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
+        this.bundle = await bundleExporter.getBundle();
+
+        const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
+          .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
+          .resource;
+
+        if (!implementationGuide) {
+          throw new Error('Bundle export did not include the ImplementationGuide!');
+        }
+
+        if (this.fhirVersion === 'r4') {
+          this.implementationGuide = new R4ImplementationGuide(implementationGuide);
+        } else if (this.fhirVersion === 'stu3') {
+          this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
+        } else {
+          throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
+        }
+
+        resolve();
+      } catch (ex) {
+        this.logger.error(`Error while initializing export: ${ex.message}`, ex.stack);
+        reject(ex);
+      }
+    });
+
+    return this.initPromise;
+  }
+
   protected get stu3ImplementationGuide(): STU3ImplementationGuide {
     return <STU3ImplementationGuide>this.implementationGuide;
   }
@@ -65,6 +112,7 @@ export class HtmlExporter {
   public rootPath: string;
   public controlPath: string;
   public igPublisherProcess: ChildProcess;
+  public publishing: Promise<void>;
   protected igPublisherLocation: string;
   protected pageInfos: PageInfo[];
 
@@ -144,10 +192,15 @@ export class HtmlExporter {
 
   // noinspection JSUnusedLocalSymbols
   public async publish(format: Formats, useTerminologyServer: boolean, downloadOutput: boolean, includeIgPublisherJar: boolean, version: string) {
+    await this.initPromise;
+
     if (!this.packageId) {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
-    return new Promise(async (resolve, reject) => {
+
+    this.publishing = new Promise(async (resolve, reject) => {
+      this.publishStartedAt = new Date();
+
       const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
 
@@ -268,9 +321,10 @@ export class HtmlExporter {
             }
           });
         }
-
       });
     });
+
+    return this.publishing;
   }
 
   public updatePublishStatuses(status: boolean){
@@ -289,46 +343,14 @@ export class HtmlExporter {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
 
-    const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
     let control;
-
-    this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}`);
-
-    try {
-      this.rootPath = await this.createTempDirectory();
-      this.controlPath = path.join(this.rootPath, 'ig.ini');
-      this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
-    } catch (ex) {
-      this.logger.error(`Error while creating temporary directory for export: ${ex.message}`, ex.stack);
-      throw ex;
-    }
-
-    this.logger.log('Retrieving resources for export');
-
-    try {
-      this.bundle = await bundleExporter.getBundle();
-    } catch (ex) {
-      this.logger.error(`Error while retrieving bundle: ${ex.message}`, ex.stack);
-      throw ex;
-    }
 
     const inputDir = path.join(this.rootPath, 'input');
     fs.ensureDirSync(inputDir);
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-    const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
-      .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
-      .resource;
-
-    if (this.fhirVersion === 'r4') {
-      this.implementationGuide = new R4ImplementationGuide(implementationGuide);
-    } else if (this.fhirVersion === 'stu3') {
-      this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
-    } else {
-      throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
-    }
 
     // Write the ignoreWarnings.txt file
     let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
@@ -340,7 +362,6 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
-
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
