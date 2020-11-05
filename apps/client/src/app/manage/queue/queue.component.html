@@ -1,0 +1,39 @@
+<h2>Publishing Queue</h2>
+
+<table class="table table-striped" *ngIf="queueInfos">
+  <thead>
+  <tr>
+    <th>Package ID</th>
+    <th>Implementation Guide ID</th>
+    <th>User</th>
+    <th>Queued At</th>
+    <th class="actions-column-1">Publishing?</th>
+    <th class="actions-column-1">&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let qi of queueInfos">
+    <td>{{qi.packageId}}</td>
+    <td>{{qi.implementationGuideId}}</td>
+    <td>
+      <span>{{qi.userName}} </span>
+      <i class="fas fa-question" [ngbPopover]="qi.userId"></i>
+    </td>
+    <td>{{qi.queuedAt?.toLocaleString()}}</td>
+    <td *ngIf="qi.active">
+      <span>Yes </span>
+      <i class="fas fa-question" [ngbPopover]="qi.publishStartedAt?.toLocaleString()"></i>
+    </td>
+    <td *ngIf="!qi.active">No</td>
+    <td>
+      <button type="button" class="btn btn-primary" (click)="cancel(qi.packageId)">Cancel</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<button type="button" class="btn btn-primary" (click)="init()">Refresh</button>
+
+<footer class="footer">
+  {{message || ''}}
+</footer>
