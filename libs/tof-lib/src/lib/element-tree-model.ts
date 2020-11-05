@@ -9,7 +9,7 @@ import {
   ElementDefinitionTypeRefComponent
 } from './r4/fhir';
 import { Globals } from './globals';
-import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
+import {IElementDefinition, IElementDefinitionType, IStructureDefinition} from './fhirInterfaces';
 
 export class ElementTreeModel {
   public constrainedElement?: IElementDefinition;
@@ -175,13 +175,13 @@ export class ElementTreeModel {
     const constrainedElement = this.constrainedElement;
 
     if (constrainedElement && constrainedElement.type && constrainedElement.type.length > 0) {
-      return this.getTypeRefDisplay(<(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> constrainedElement.type);
+      return ElementTreeModel.getTypeRefDisplay(constrainedElement.type);
     }
 
     if (!this.baseElement.type) {
       return '';
     }
-    return this.getTypeRefDisplay(<(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> (<STU3ElementDefinition | R4ElementDefinition> this.baseElement).type);
+    return ElementTreeModel.getTypeRefDisplay(this.baseElement.type);
   }
 
   get isSlice(): boolean {
@@ -320,7 +320,7 @@ export class ElementTreeModel {
     }
   }
 
-  private getTypeRefDisplay(typeRefs: (TypeRefComponent | ElementDefinitionTypeRefComponent)[]): string {
+  static getTypeRefDisplay(typeRefs: IElementDefinitionType[]): string {
     const typeCounts = {};
 
     typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
@@ -341,7 +341,9 @@ export class ElementTreeModel {
       }
     }
 
-    return types.join(', ');
+    return types
+      .join(', ')
+      .replace(/http:\/\/hl7.org\/fhir\/cda\/StructureDefinition\//g, '');    // For CDA
   }
 
   private getBindingDisplay(element: IElementDefinition): string {

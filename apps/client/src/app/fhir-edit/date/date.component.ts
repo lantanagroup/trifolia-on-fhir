@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {CookieService} from 'angular2-cookie/core';
 import {NgbDateStruct, NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,7 @@ export class FhirDateComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() allowTime = false;
   @Input() label? = true;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   /**
    * Indicates that the value of the component should be remembered in cookies
@@ -82,15 +83,23 @@ export class FhirDateComponent implements OnInit {
     }
   }
 
-  public get value(): any {
-    if (!this.parentObject) {
+  public get value(): string {
+    if (!this.parentObject || !this.parentObject[this.propertyName]) {
       return '';
     }
 
-    return this.parentObject[this.propertyName];
+    if (this.parentObject[this.propertyName] instanceof Date) {
+      const theDate = <Date> this.parentObject[this.propertyName];
+      return theDate.formatFhir();
+    } else if (typeof this.parentObject[this.propertyName] === 'string') {
+      return this.parentObject[this.propertyName];
+    } else {
+      console.error('Unexpected date type/value for DateComponent');
+      return this.parentObject[this.propertyName];
+    }
   }
 
-  public set value(newValue: any) {
+  public set value(newValue: string) {
     if (!newValue && this.parentObject && this.parentObject.hasOwnProperty(this.propertyName)) {
       delete this.parentObject[this.propertyName];
 
@@ -104,6 +113,7 @@ export class FhirDateComponent implements OnInit {
         this.cookieService.put(this.cookieKey, newValue);
       }
     }
+    this.change.emit();
   }
 
   public valueChanged() {

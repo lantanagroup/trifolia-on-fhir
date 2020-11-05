@@ -60,6 +60,10 @@ export class ImplementationGuideService {
   }
   */
 
+  public getExamples(implementationGuideId: string) {
+    return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
+  }
+
   public getPublished(): Observable<PublishedGuideContainerModel[]> {
     return this.http.get<PublishedGuideContainerModel[]>('/api/implementationGuide/published');
   }

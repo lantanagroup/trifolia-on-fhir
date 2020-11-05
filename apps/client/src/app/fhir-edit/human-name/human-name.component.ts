@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirHumanNameModalComponent} from '../human-name-modal/human-name-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,7 @@ export class FhirHumanNameComponent implements OnInit {
   @Input() defaultValue = '';
   @Input() tooltipKey: string;
   @Input() tooltipPath: string;
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public Globals = Globals;
 
@@ -83,6 +84,9 @@ export class FhirHumanNameComponent implements OnInit {
   editHumanName() {
     const modalRef = this.modalService.open(FhirHumanNameModalComponent, {backdrop: 'static'});
     modalRef.componentInstance.humanName = this.parentObject[this.propertyName];
+    modalRef.result.then(() => {
+      this.change.emit();
+    });
   }
 
   ngOnInit() {

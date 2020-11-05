@@ -416,27 +416,6 @@ export class GithubService {
   }
 
   public async updateContents(ownerLogin: string, repositoryName: string, message: string, files: FileModel[], branchName = 'master', responseFormat: string) {
-    //Go through each resource file and convert xml to json if responseFormat is json or vice versa if responseFormat is xml
-    const fhirService = this.fhirService;
-    files.forEach(function(file){
-      const extension = file.path.substring(file.path.lastIndexOf(".") + 1).toLowerCase();
-      if(extension === "xml" && responseFormat === 'application/json'){
-        const xmlContent = file.content.indexOf("<ul") === 0 ? null : fhirService.deserialize(file.content);
-        if(xmlContent && xmlContent.resourceType){
-          file.content = JSON.stringify(xmlContent);
-          file.path = file.path.substring(0, file.path.lastIndexOf(".")) + ".json";
-        }
-
-      } else if(extension === "json" && responseFormat === 'application/xml'){
-        const jsonContent = JSON.parse(file.content);
-        if(jsonContent && jsonContent.resourceType){
-          file.content = fhirService.serialize(jsonContent);
-          file.path = file.path.substring(0, file.path.lastIndexOf(".")) + ".xml";
-        }
-
-      }
-    });
-
     // Create a blob for each of the files
     const filesRequiringBlob = files.filter(f => f.action !== 'nothing' && f.action !== 'delete' && f.content);
     const blobPromises = filesRequiringBlob

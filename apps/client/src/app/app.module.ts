@@ -75,6 +75,9 @@ import {ElementDefinitionConstraintComponent} from './modals/element-definition-
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import { QueueComponent } from './manage/queue/queue.component';
+import {ExamplesComponent} from './examples/examples.component';
+import { IgnoreWarningsComponent } from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
+import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -136,7 +139,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always'},
+  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
   {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
   {path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent},
   {path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
@@ -156,6 +159,7 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
   {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
+  {path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent},
   {path: ':fhirServer/import', component: ImportComponent},
   {path: ':fhirServer/users/me', component: UserComponent},
   {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
@@ -231,7 +235,7 @@ const authModuleConfig: OAuthModuleConfig = {
     ImplementationGuideWrapperComponent, RouteTransformerDirective,
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent
+    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent, ExamplesComponent, IgnoreWarningsComponent, JiraSpecComponent
   ],
   imports: [
     RouterModule.forRoot(

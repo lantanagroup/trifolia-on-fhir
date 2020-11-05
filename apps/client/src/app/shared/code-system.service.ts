@@ -26,7 +26,7 @@ export class CodeSystemService {
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
         }
-        
+
         if (implementationGuideId) {
           url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
         }

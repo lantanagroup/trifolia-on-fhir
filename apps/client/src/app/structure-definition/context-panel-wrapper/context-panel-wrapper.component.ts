@@ -1,9 +1,9 @@
 import {
   Component,
-  ComponentFactoryResolver, ComponentRef,
+  ComponentFactoryResolver, ComponentRef, EventEmitter,
   Input,
   OnChanges,
-  OnInit,
+  OnInit, Output,
   SimpleChanges,
   ViewContainerRef
 } from '@angular/core';
@@ -17,6 +17,7 @@ import {StructureDefinition as R4StructureDefinition} from '../../../../../../li
 import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface IContextPanelComponent {
+  change: EventEmitter<void>;
   structureDefinition: STU3StructureDefinition | R4StructureDefinition;
 }
 
@@ -28,6 +29,7 @@ export class ContextPanelWrapperComponent implements OnInit, OnChanges {
   @Input()
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   private component: ComponentRef<IContextPanelComponent>;
+  @Output() change = new EventEmitter<void>();
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -57,6 +59,7 @@ export class ContextPanelWrapperComponent implements OnInit, OnChanges {
     this.configService.fhirServerChanged.subscribe(() => {
       this.versionChanged();
     });
+    this.component.instance.change.subscribe(this.change);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

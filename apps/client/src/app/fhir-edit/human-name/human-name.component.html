@@ -1,12 +1,12 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {})" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {}); change.emit()" />
         {{title || 'Human Name'}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
-        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
-        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" placeholder="Family"/>
+        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" (change)="change.emit()" placeholder="Given"/>
+        <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily"  (change)="change.emit()" placeholder="Family"/>
         <div class="input-group-btn">
             <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
                 <i class="fa fa-edit"></i>
@@ -16,12 +16,12 @@
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="!required">
-        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {})" />
+        <input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, {}); change.emit()" />
         {{title || 'Human Name'}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
-    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" placeholder="Given"/>
-    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" placeholder="Family"/>
+    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameGiven" (change)="change.emit()" placeholder="Given"/>
+    <input type="text" class="form-control" [disabled]="!parentObject.hasOwnProperty(propertyName)" [(ngModel)]="humanNameFamily" (change)="change.emit()" placeholder="Family"/>
     <div class="input-group-btn">
         <button type="button" class="btn btn-default" (click)="editHumanName()" title="Edit this human name">
             <i class="fa fa-edit"></i>

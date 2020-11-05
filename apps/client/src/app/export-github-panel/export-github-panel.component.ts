@@ -84,6 +84,7 @@ export class ExportGithubPanelComponent implements OnInit {
   public async branchChanged() {
     if (!this.branch) return;
 
+    this.message = "Loading files from IG to be exported...";
     await this.igFilesPromise;
 
     this.allFiles = await this.githubService.getFiles(this.repository.owner.login, this.repository.name, this.branch);
@@ -104,6 +105,31 @@ export class ExportGithubPanelComponent implements OnInit {
     });
 
     this.allFiles.sort((a, b) => (a.path > b.path) ? 1 : (a.path === b.path) ? 0 : -1);
+    this.allFiles.forEach((file: FileModel) => {
+      const mainFilePath = file.path.substring(0, file.path.lastIndexOf("."));
+      const foundFiles: FileModel[] = this.allFiles.filter(f => f.path.indexOf(mainFilePath) >= 0);
+
+      if(foundFiles.length > 1){
+        foundFiles.forEach((foundFile: FileModel) => {
+          if((this.responseFormat.indexOf("xml") >= 0 && foundFile.path.indexOf("json") >= 0) ||
+            (this.responseFormat.indexOf("json") >= 0 && foundFile.path.indexOf("xml") >= 0)){
+            foundFile.action = "delete";
+          }
+        });
+      }
+    });
+    this.message = "Done loading";
+    setTimeout(() => {
+      this.message = "";
+    }, 5000);
+  }
+
+  public async responseFormatChanged() {
+    this.allFiles = [];
+    this.igFiles = [];
+    this.igFilesPromise = this.loadFiles();
+    await this.igFilesPromise;
+    await this.branchChanged();
   }
 
   private async loadFiles() {
@@ -113,7 +139,7 @@ export class ExportGithubPanelComponent implements OnInit {
         htmlPackage = await this.exportService.exportHtml(<any>{
           implementationGuideId: this.configService.project.implementationGuideId,
           includeIgPublisherJar: false,
-          responseFormat: 'application/json'
+          responseFormat: this.responseFormat
         }).toPromise();
       } catch (ex) {
         this.message = getErrorString(ex);

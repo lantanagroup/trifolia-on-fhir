@@ -114,7 +114,7 @@ export class CustomR4Validator extends CustomValidator {
     allPages.forEach((page: ImplementationGuidePageComponent) => {
       const pageClone = new ImplementationGuidePageComponent(page);
 
-      if (page === implementationGuide.definition.page && pageClone.fileName !== 'index.html') {
+      if (page === implementationGuide.definition.page && pageClone.fileName !== 'index.md') {
         messages.push({
           location: 'ImplementationGuide.definition.page',
           resourceId: implementationGuide.id,
@@ -130,6 +130,16 @@ export class CustomR4Validator extends CustomValidator {
           severity: Severities.Warning,
           message: `Page with title ${page.title} does not specify a file name and will not publish correctly.`
         });
+      }
+
+      const regexp: RegExp = /[^A-Za-z0-9\._\-]/;
+      if(regexp.test(pageClone.fileName)) {
+        messages.push({
+          location: 'ImplementationGuide.definition.page+',
+          resourceId: implementationGuide.id,
+          severity: Severities.Error,
+          message: `Page with title ${page.title} must not include special characters such as "&" and "/" in the file name.`
+        })
       }
 
       if (!pageClone.reuseDescription && !pageClone.contentMarkdown) {

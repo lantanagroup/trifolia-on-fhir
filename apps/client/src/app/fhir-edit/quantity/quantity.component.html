@@ -1,26 +1,31 @@
 <div class="form-group" *ngIf="isFormGroup && parentObject">
     <label>
-        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue)" />
+        <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)"
+               (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()" />
         {{title || 'Quantity'}}
     </label>
     <div class="input-group">
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('unit')" (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'unit', '')" />
+            <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('unit')"
+                   (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'unit', ''); change.emit()" />
         </div>
-        <input type="string" [disabled]="!parentObject[propertyName].hasOwnProperty('unit')" [(ngModel)]="parentObject[propertyName].unit" placeholder="Unit" />
+        <input type="string" [disabled]="!parentObject[propertyName].hasOwnProperty('unit')" [(ngModel)]="parentObject[propertyName].unit" placeholder="Unit" (change)="change.emit()"/>
         <div class="input-group-addon">
-            <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'value', 0)" />
+            <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')"
+                   (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'value', 0); change.emit()" />
         </div>
-        <input type="number" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" />
+        <input type="number" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" (change)="change.emit()"/>
     </div>
 </div>
 <div class="input-group" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('unit')" (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'unit', '')" />
+        <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('unit')"
+               (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'unit', ''); change.emit()" />
     </div>
-    <input type="string" class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('unit')" [(ngModel)]="parentObject[propertyName].unit" placeholder="Unit" />
+    <input type="string" class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('unit')" [(ngModel)]="parentObject[propertyName].unit" placeholder="Unit" (change)="change.emit()"/>
     <div class="input-group-addon">
-        <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'value', 0)" />
+        <input type="checkbox" [ngModel]="parentObject[propertyName].hasOwnProperty('value')"
+               (ngModelChange)="Globals.toggleProperty(parentObject[propertyName], 'value', 0); change.emit()" />
     </div>
-    <input type="number" class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" />
+    <input type="number" class="form-control" [disabled]="!parentObject[propertyName].hasOwnProperty('value')" [(ngModel)]="parentObject[propertyName].value" placeholder="Value" (change)="change.emit()"/>
 </div>
