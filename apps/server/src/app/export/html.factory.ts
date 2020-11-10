@@ -32,7 +32,7 @@ export async function createHtmlExporter(
       break;
   }
 
-  const exporter = new theClass(configService, httpService, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
+  const exporter = new theClass(configService, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
   exporter.user = user;
   await exporter.init();
   return exporter;
