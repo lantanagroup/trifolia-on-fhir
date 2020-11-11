@@ -346,15 +346,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           display: result.display
         };
 
-        this.implementationGuide.definition.resource.push({
-          extension: [{
-            url: Globals.extensionUrls['extension-ig-resource-file-path'],
-            valueString: getDefaultImplementationGuideResourcePath(newReference)
-          }],
-          reference: newReference,
-          name: result.display,
-          exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
-        });
+        let tempObj;
+
+        if(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile){
+          tempObj = {
+            extension: [{
+              url: Globals.extensionUrls['extension-ig-resource-file-path'],
+              valueString: getDefaultImplementationGuideResourcePath(newReference)
+            }],
+            reference: newReference,
+            name: result.display,
+            exampleFor: result.resource.meta.profile
+          };
+        }
+        else {
+          tempObj = {
+            extension: [{
+              url: Globals.extensionUrls['extension-ig-resource-file-path'],
+              valueString: getDefaultImplementationGuideResourcePath(newReference)
+            }],
+            reference: newReference,
+            name: result.display,
+            exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
+          };
+        }
+
+        this.implementationGuide.definition.resource.push(tempObj);
       });
     });
   }
