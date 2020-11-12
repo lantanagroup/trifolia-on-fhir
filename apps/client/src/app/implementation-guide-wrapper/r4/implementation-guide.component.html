@@ -1,4 +1,4 @@
-<h1>Implementation Guide (R4)</h1>
+<link rel="stylesheet" href="implementation-guide.component.css"><h1>Implementation Guide (R4)</h1>
 
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
@@ -338,25 +338,28 @@
             <thead>
             <tr>
               <td colspan="4">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="btn-group-toggle" data-toggle="buttons">
-                      <label class="btn" [class.btn-primary]="!isFilterResourceTypeAll" [class.btn-info]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')">
-                        All
-                      </label>
-                      <label class="btn" [class.btn-primary]="!filterResourceType.profile" [class.btn-info]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')">
-                        Profiles
-                      </label>
-                      <label class="btn" [class.btn-primary]="!filterResourceType.terminology" [class.btn-info]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')">
-                        Terminology
-                      </label>
-                      <label class="btn" [class.btn-primary]="!filterResourceType.example" [class.btn-info]="filterResourceType.example" (click)="toggleFilterResourceType('example')">
-                        Examples
-                      </label>
-                    </div>
+                <div class="row filter-row">
+                  <div class="col-md-6 checkboxes">
+                    <label>
+                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')"> All
+                    </label>
+                    <label>
+                      <input type="checkbox" [ngModel]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')"> Profiles
+                    </label>
+                    <label>
+                      <input type="checkbox" [ngModel]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')"> Terminology
+                    </label>
+                    <label>
+                      <input type="checkbox" [ngModel]="filterResourceType.example" (click)="toggleFilterResourceType('example')"> Examples
+                    </label>
                   </div>
                   <div class="col-md-6">
                     <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
+                  </div>
+                  <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition && implementationGuide.definition.grouping && implementationGuide.definition.grouping.length > 0">
+                    <label *ngFor="let group of implementationGuide.definition.grouping">
+                      <input type="checkbox" [ngModel]="filterGroup[group.id]" (click)="toggleFilterGroup(group.id)"> {{group.name}}
+                    </label>
                   </div>
                 </div>
               </td>
@@ -401,9 +404,26 @@
                   <option *ngFor="let g of implementationGuide.definition?.grouping" [ngValue]="g.id">{{g.name || g.id}}</option>
                 </select>
               </td>
-              <td>
+              <td style="width:25%">
+                <!--
                 <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" [isFormGroup]="false" *ngIf="!resource.hasOwnProperty('exampleCanonical')" (change)="igChanging.emit(true)"></app-fhir-boolean>
                 <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
+                -->
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <input type="checkbox" [ngModel]="resource.exampleBoolean || resource.exampleCanonical" (ngModelChange)="setExampleBoolean(resource, $event)" />
+                    </div>
+                  </div>
+                  <input type="text" class="form-control" [ngModel]="resource.exampleCanonical" (ngModelChange)="setExampleCanonical(resource, $event)" />
+                  <div class="input-group-append">
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-primary" (click)="selectExampleCanonical(resource)">
+                        <i class="fas fa-hand-pointer"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </td>
               <td>
                 <div class="btn-group pull-right">
