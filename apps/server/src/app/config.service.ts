@@ -101,19 +101,28 @@ export class ConfigService {
     const allVersions = await this.httpService.get<{ id: string, name: string }[]>(url).toPromise();
 
     const igPublisherDir = path.resolve(this.server.latestIgPublisherPath || 'assets/ig-publisher');
+
+    // Make sure the directory exists before we try to read from it
+    fs.ensureDirSync(igPublisherDir);
+
+    // List any JARs that already exist in the directory
     const jars = fs.readdirSync(igPublisherDir);
 
     for (const nextJar of jars) {
       if (!nextJar.toLowerCase().endsWith('.jar')) continue;
 
+      // Find the ID of the JAR in the list of versions indicated by GitHub
       const nextJarId = nextJar.substring(0, nextJar.lastIndexOf('.'));
       const nextJarVersion = allVersions.data.find(f => f.id.toString() === nextJarId);
 
+      // Determine if this version name matches what we need based on semver
       if (nextJarVersion && semver.satisfies(nextJarVersion.name, '>=1.1.35')) {
         return path.join(igPublisherDir, nextJar);
       }
     }
 
+    // If we got here, we don't have an adequate version of the IG Publisher and
+    // we should get the latest version from GitHub.
     return await this.getIgPublisher(allVersions.data[0].id);
   }
 
