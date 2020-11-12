@@ -1,16 +1,17 @@
 import {STU3HtmlExporter} from './html.stu3';
 import {R4HtmlExporter} from './html.r4';
 import {IFhirConfigServer} from '../models/fhir-config';
-import {HttpService, Logger} from '@nestjs/common';
+import {HttpService} from '@nestjs/common';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
+import {TofLogger} from '../tof-logger';
 
 export async function createHtmlExporter(
   configService: ConfigService,
   httpService: HttpService,
-  logger: Logger,
+  logger: TofLogger,
   fhirServerBase: string,
   fhirServerId: string,
   fhirVersion: string,
