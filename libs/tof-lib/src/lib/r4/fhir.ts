@@ -14649,7 +14649,7 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
   public name?: string;
   public description?: string;
   public exampleBoolean? = false;
-  public exampleCanonical?: string;
+  public exampleCanonical?: string[];
   public groupingId?: string;
 
   constructor(obj?: any) {
@@ -14668,7 +14668,11 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
         this.exampleBoolean = obj.exampleBoolean;
       }
       if (obj.hasOwnProperty('exampleCanonical')) {
-        this.exampleCanonical = obj.exampleCanonical;
+        this.exampleCanonical = [];
+        for(const o of obj.exampleCanonical || []){
+          this.exampleCanonical.push(o);
+        }
+
       }
       if (obj.hasOwnProperty('groupingId')) {
         this.groupingId = obj.groupingId;

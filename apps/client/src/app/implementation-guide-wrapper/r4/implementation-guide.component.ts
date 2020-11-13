@@ -366,10 +366,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           display: result.display
         };
 
-        let tempObj;
-
-        if(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile){
-          tempObj = {
+        this.implementationGuide.definition.resource.push(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile ?
+          {
             extension: [{
               url: Globals.extensionUrls['extension-ig-resource-file-path'],
               valueString: getDefaultImplementationGuideResourcePath(newReference)
@@ -377,10 +375,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             reference: newReference,
             name: result.display,
             exampleCanonical: result.resource.meta.profile
-          };
-        }
-        else {
-          tempObj = {
+          } :
+          {
             extension: [{
               url: Globals.extensionUrls['extension-ig-resource-file-path'],
               valueString: getDefaultImplementationGuideResourcePath(newReference)
@@ -388,10 +384,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             reference: newReference,
             name: result.display,
             exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
-          };
-        }
-
-        this.implementationGuide.definition.resource.push(tempObj);
+          }
+        );
       });
     });
   }
@@ -987,7 +981,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
     delete resource.exampleBoolean;
-    resource.exampleCanonical = value;
+    resource.exampleCanonical.push(value);
   }
 
   public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
@@ -998,7 +992,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     modalRef.result.then((result: ResourceSelection) => {
       delete resource.exampleBoolean;
-      resource.exampleCanonical = (<StructureDefinition> result.resource).url;
+      resource.exampleCanonical.push((<StructureDefinition> result.resource).url);
     });
   }
 }
