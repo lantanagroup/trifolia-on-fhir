@@ -381,7 +381,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             }],
             reference: newReference,
             name: result.display,
-            exampleFor: result.resource.meta.profile
+            exampleCanonical: result.resource.meta.profile
           };
         }
         else {
