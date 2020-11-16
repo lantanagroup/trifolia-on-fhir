@@ -111,28 +111,27 @@ export class StructureDefinitionController extends BaseFhirController {
         const dependencies = await this.fhirController.searchDependency(request.fhirServerBase, implementationGuideId, fhirServerVersion, 'StructureDefinition',
           null, null, null, null, null, url, false);
 
+        // if length === 1 then just return
         if (dependencies.entry.length === 1) {
           ret.base = dependencies.entry[0].resource['resource'];
           return ret;
-        } else {
-          let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(request.fhirServerBase, url);
-          // console.log(profileWithSnapshot);
+        }
+        let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(request.fhirServerBase, url);
 
-          // The snapshot is not already generated for the profile, so we need to generate it now.
-          if (!profileWithSnapshot.snapshot) {
-            if (fhirServer.supportsSnapshot) {
-              const snapshotUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, '$snapshot', { url: url });
-              const results = await this.httpService.get(snapshotUrl).toPromise();
-              profileWithSnapshot = results.data;
-            } else {
-              profileWithSnapshot = await this.generateInternalSnapshot(request.fhirServerBase, request.fhir, url);
-            }
+        // The snapshot is not already generated for the profile, so we need to generate it now.
+        if (!profileWithSnapshot.snapshot) {
+          if (fhirServer.supportsSnapshot) {
+            const snapshotUrl = buildUrl(request.fhirServerBase, 'StructureDefinition', null, '$snapshot', { url: url });
+            const results = await this.httpService.get(snapshotUrl).toPromise();
+            profileWithSnapshot = results.data;
+          } else {
+            profileWithSnapshot = await this.generateInternalSnapshot(request.fhirServerBase, request.fhir, url);
           }
+        }
 
-          if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {
-            ret.base = profileWithSnapshot;
-            return ret;
-          }
+        if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {
+          ret.base = profileWithSnapshot;
+          return ret;
         }
       } catch (ex) {
         ret.message = ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome' ? getErrorString(null, ex.response.data) : ex.message;

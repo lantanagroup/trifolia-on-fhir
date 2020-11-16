@@ -695,7 +695,7 @@ export class FhirController extends BaseController {
     @Query('_content') resourceContent?: string,
     @Query('type') structureDefinitionType?: string,
     @Query('url') structureDefinitionUrl?: string,
-    @Query('isLightweight') isLightweight?: boolean) {
+    @Query('isLightweight') isLightweight = true) {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
     const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
     const ig = igResults.data;
@@ -777,7 +777,7 @@ export class FhirController extends BaseController {
           if (!structureDefinition.type || structureDefinition.type !== structureDefinitionType) continue;
         }
 
-        if (null != isLightweight && !isLightweight) {
+        if (!isLightweight) {
           responseBundle.entry.push({
             resource: <any>{
               resourceType: resource.resourceType,
