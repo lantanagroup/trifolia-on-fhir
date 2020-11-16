@@ -365,7 +365,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
             reference: resourceReferenceString,
             display: display
           },
-          exampleCanonical: resource.meta.profile,
+          exampleCanonical: resource.meta.profile[0],
           name: display
         } :
         {

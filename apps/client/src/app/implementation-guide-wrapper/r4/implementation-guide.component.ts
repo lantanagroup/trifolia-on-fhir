@@ -981,7 +981,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
     delete resource.exampleBoolean;
-    resource.exampleCanonical.push(value);
+    resource.exampleCanonical = value;
   }
 
   public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
@@ -992,7 +992,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     modalRef.result.then((result: ResourceSelection) => {
       delete resource.exampleBoolean;
-      resource.exampleCanonical.push((<StructureDefinition> result.resource).url);
+      resource.exampleCanonical = (<StructureDefinition> result.resource).url;
     });
   }
 }

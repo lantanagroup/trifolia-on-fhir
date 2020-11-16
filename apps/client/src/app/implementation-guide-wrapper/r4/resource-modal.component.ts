@@ -54,7 +54,7 @@ export class R4ResourceModalComponent {
         delete this.resource.exampleBoolean;
       }
 
-      this.resource.exampleCanonical.push(result.resource.url);
+      this.resource.exampleCanonical = result.resource.url;
     })
   }
 
