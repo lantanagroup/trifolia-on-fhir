@@ -418,7 +418,7 @@
                   <input type="text" class="form-control" [ngModel]="resource.exampleCanonical" (ngModelChange)="setExampleCanonical(resource, $event)" />
                   <div class="input-group-append">
                     <div class="input-group-btn">
-                      <button type="button" class="btn btn-primary" (click)="selectExampleCanonical(resource)">
+                      <button type="button" class="btn btn-primary" [disabled]="!resource.exampleBoolean && !resource.exampleCanonical" (click)="selectExampleCanonical(resource)">
                         <i class="fas fa-hand-pointer"></i>
                       </button>
                     </div>

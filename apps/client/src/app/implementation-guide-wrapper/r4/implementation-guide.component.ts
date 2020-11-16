@@ -126,7 +126,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           return true;
         }
 
-        return this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0;
+        return (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) ||
+          (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]);
       })
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {
@@ -143,12 +144,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
          */
 
         return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
-      })
-      .filter((resource: ImplementationGuideResourceComponent) => {
-        if(!this.filterGroup || !this.filterGroup.hasOwnProperty(resource.groupingId)){
-          return true;
-        }
-        return this.filterGroup[resource.groupingId];
       });
   }
 
@@ -381,7 +376,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             }],
             reference: newReference,
             name: result.display,
-            exampleFor: result.resource.meta.profile
+            exampleCanonical: result.resource.meta.profile
           };
         }
         else {
