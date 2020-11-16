@@ -1,9 +1,10 @@
 import {Fhir} from 'fhir/fhir';
-import {Bundle, DomainResource, Extension} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, DomainResource} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuidePageComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {HttpService, Logger} from '@nestjs/common';
 import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset'|'transaction';
@@ -120,7 +121,7 @@ export class BundleExporter {
         const value = obj[key];
 
         if (key === 'extension') {
-          const extensions: Extension[] = value;
+          const extensions: IExtension[] = value;
           const removeExtensions = extensions.filter((extension) => extensionUrls.indexOf(extension.url) >= 0);
 
           // Remove any extensions from the resource that are for Trifolia
@@ -128,6 +129,10 @@ export class BundleExporter {
             const index = extensions.indexOf(removeExtension);
             extensions.splice(index, 1);
           });
+
+          if (extensions.length === 0) {
+            delete obj[key];
+          }
         } else if (value instanceof Array) {
           for (const next of value) {
             this.cleanupResource(next, false);
