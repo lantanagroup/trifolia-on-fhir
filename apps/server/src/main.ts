@@ -186,7 +186,8 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions
+    httpsOptions,
+    logger: false
   });
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

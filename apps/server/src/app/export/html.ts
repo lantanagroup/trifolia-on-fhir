@@ -752,7 +752,7 @@ export class HtmlExporter {
     const fullResourcePath = path.join(inputDir, 'resources', resourcePath);
     const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf(path.sep));
 
-    this.logger.log(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
+    this.logger.debug(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
     fs.ensureDirSync(resourceDir);
 
     return fullResourcePath;

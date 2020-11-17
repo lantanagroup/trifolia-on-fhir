@@ -292,8 +292,8 @@
               </th>
             </tr>
             </thead>
-            <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.grouping && implementationGuide.definition.grouping.length > 0">
-            <tr *ngFor="let group of implementationGuide.definition.grouping; let i = index">
+            <tbody *ngIf="implementationGuide.definition?.grouping && implementationGuide.definition.grouping.length > 0">
+            <tr *ngFor="let group of implementationGuide.definition?.grouping || []; let i = index">
               <td>
                 {{group.id || ''}}
                 <span *ngIf="!group.id" style="color: red;">A group ID is required to associate resources to this group. Edit the group and create/assign an ID to it.</span>
@@ -319,7 +319,7 @@
               </td>
             </tr>
             </tbody>
-            <tfoot *ngIf="!implementationGuide.definition || !implementationGuide.definition.grouping || implementationGuide.definition.grouping.length === 0">
+            <tfoot *ngIf="!implementationGuide.definition?.grouping || implementationGuide.definition.grouping.length === 0">
             <tr>
               <th colspan="3">
                 <p>No groups have been defined for this implementation guide.</p>
@@ -356,7 +356,7 @@
                   <div class="col-md-6">
                     <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
                   </div>
-                  <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition && implementationGuide.definition.grouping && implementationGuide.definition.grouping.length > 0">
+                  <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition?.grouping && implementationGuide.definition.grouping.length > 0">
                     <label *ngFor="let group of implementationGuide.definition.grouping">
                       <input type="checkbox" [ngModel]="filterGroup[group.id]" (click)="toggleFilterGroup(group.id)"> {{group.name}}
                     </label>

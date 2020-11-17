@@ -116,7 +116,7 @@ export class TofLogger extends Logger {
 
     super.log(message, context);
 
-    if (this.serverConfig.logFileName) {
+    if (this.serverConfig.logFileName && !context) {
       this.rotateLogs();
 
       try {

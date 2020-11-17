@@ -163,11 +163,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public get isFilterResourceTypeAll() {
     let check = true;
-    if(this.filterGroup && this.implementationGuide.definition.grouping){
+
+    if (this.filterGroup && this.implementationGuide.definition && this.implementationGuide.definition.grouping) {
       this.implementationGuide.definition.grouping.forEach((group) => {
         check = check && this.filterGroup[group.id];
       });
     }
+
     return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example && check;
   }
 
