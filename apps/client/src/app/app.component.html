@@ -97,7 +97,7 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item" *ngIf="configService.project">
           <a class="nav-link" href="javascript:void(0)" title="The currently selected project">
-            <div class="badge badge-info">{{configService.project.name}}</div>
+            <div class="badge badge-info">{{configService.project.name || configService.project.implementationGuideId}}</div>
           </a>
         </li>
         <li class="nav-item">

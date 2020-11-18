@@ -265,6 +265,7 @@ export class FhirService {
    * @param {boolean} [sortID]
    * @param {number} [page]
    * @param {number} [count]
+   * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
   public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10, ignoreContext = false) {
     let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;

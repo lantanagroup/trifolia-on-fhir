@@ -42,7 +42,6 @@ export class AppComponent implements OnInit {
     private cookieService: CookieService,
     private socketService: SocketService) {
 
-
       this.router.events.subscribe(async (event) => {
         this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
         if (event instanceof RoutesRecognized && event.state.root.firstChild) {
@@ -50,9 +49,11 @@ export class AppComponent implements OnInit {
           const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
           if (implementationGuideId) {
-            this.configService.project = {
-              implementationGuideId: implementationGuideId
-            };
+            if (this.configService.project && this.configService.project.implementationGuideId !== implementationGuideId) {
+              this.configService.project = {
+                implementationGuideId: implementationGuideId
+              };
+            }
           } else {
             this.configService.project = null;
           }
@@ -150,12 +151,12 @@ export class AppComponent implements OnInit {
       return Promise.resolve(this.configService.project);
     }
 
-    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId) {
+    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId && this.configService.project.name && this.configService.project.securityTags) {
       return Promise.resolve(this.configService.project);
     }
 
     return await new Promise((resolve, reject) => {
-      this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId).toPromise()
+      this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId, null, false, false, null, 10, true).toPromise()
         .then((bundle: Bundle) => {
           if (bundle && bundle.total === 1) {
             const ig = <ImplementationGuide>bundle.entry[0].resource;
