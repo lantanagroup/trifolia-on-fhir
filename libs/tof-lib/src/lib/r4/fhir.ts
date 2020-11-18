@@ -14669,6 +14669,7 @@ export class ImplementationGuideResourceComponent extends BackboneElement {
       }
       if (obj.hasOwnProperty('exampleCanonical')) {
         this.exampleCanonical = obj.exampleCanonical;
+
       }
       if (obj.hasOwnProperty('groupingId')) {
         this.groupingId = obj.groupingId;

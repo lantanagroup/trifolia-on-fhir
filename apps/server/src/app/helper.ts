@@ -359,7 +359,16 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
-      r4.definition.resource.push({
+      r4.definition.resource.push(Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0 && resource.meta.profile ?
+        {
+          reference: {
+            reference: resourceReferenceString,
+            display: display
+          },
+          exampleCanonical: resource.meta.profile[0],
+          name: display
+        } :
+        {
         reference: {
           reference: resourceReferenceString,
           display: display

@@ -368,10 +368,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           display: result.display
         };
 
-        let tempObj;
-
-        if(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile){
-          tempObj = {
+        this.implementationGuide.definition.resource.push(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile ?
+          {
             extension: [{
               url: Globals.extensionUrls['extension-ig-resource-file-path'],
               valueString: getDefaultImplementationGuideResourcePath(newReference)
@@ -379,10 +377,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             reference: newReference,
             name: result.display,
             exampleCanonical: result.resource.meta.profile
-          };
-        }
-        else {
-          tempObj = {
+          } :
+          {
             extension: [{
               url: Globals.extensionUrls['extension-ig-resource-file-path'],
               valueString: getDefaultImplementationGuideResourcePath(newReference)
@@ -390,10 +386,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             reference: newReference,
             name: result.display,
             exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
-          };
-        }
-
-        this.implementationGuide.definition.resource.push(tempObj);
+          }
+        );
       });
     });
   }
