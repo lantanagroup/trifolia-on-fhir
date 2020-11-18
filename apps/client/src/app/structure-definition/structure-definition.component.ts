@@ -205,6 +205,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       } else {
         this.structureDefinition = new STU3StructureDefinition(sd);
       }
+
+      if (!this.structureDefinition.differential) {
+        this.structureDefinition.differential = {
+          element: []
+        };
+      }
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
