@@ -2,7 +2,7 @@ import { PipeTransform, Pipe } from '@angular/core';
 
 @Pipe({name: 'fhirDisplay'})
 export class FhirDisplayPipe implements PipeTransform {
-    transform(value, args: string[]): any {
+    transform(value): any {
         let typeDisplay = '';
 
         switch (value.resourceType) {

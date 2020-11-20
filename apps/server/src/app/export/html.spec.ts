@@ -39,7 +39,7 @@ describe('HtmlExporter', () => {
       }]
     };
 
-    const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, null, 'test-ig');
+    const htmlExporter = new STU3HtmlExporter(null, null, null, null, null, null, null, null, null, 'test-ig');
 
     it('should create a basic control file with xml extension', () => {
       htmlExporter.implementationGuide = <ImplementationGuide> bundle.entry[0].resource;

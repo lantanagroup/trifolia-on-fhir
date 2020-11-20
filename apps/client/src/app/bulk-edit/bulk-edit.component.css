@@ -1,0 +1,16 @@
+.card {
+  margin-bottom: 5px;
+}
+
+.card-body,
+.card-header {
+  padding: 5px 15px;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 5px !important;
+}

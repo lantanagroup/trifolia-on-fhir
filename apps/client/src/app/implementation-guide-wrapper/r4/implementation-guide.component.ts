@@ -18,7 +18,7 @@ import {
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
   OperationOutcome,
-  ResourceReference
+  ResourceReference, StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
@@ -44,6 +44,10 @@ class PageDefinition {
   public level: number;
 }
 
+interface GroupFilterObject {
+  [key: string]: boolean
+}
+
 @Component({
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
@@ -60,9 +64,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     terminology: true,
     example: true
   };
+  public filterGroup: GroupFilterObject = {};
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
+  public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     private modal: NgbModal,
@@ -77,6 +83,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+
+    this.igChanging.subscribe((value) => {
+      this.isDirty = value;
+      this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
+    });
   }
 
   protected get packageId(): string {
@@ -115,7 +126,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           return true;
         }
 
-        return this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0;
+        return (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) ||
+          (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]);
       })
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {
@@ -150,7 +162,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public get isFilterResourceTypeAll() {
-    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+    let check = true;
+
+    if (this.filterGroup && this.implementationGuide.definition && this.implementationGuide.definition.grouping) {
+      this.implementationGuide.definition.grouping.forEach((group) => {
+        check = check && this.filterGroup[group.id];
+      });
+    }
+
+    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example && check;
   }
 
   public addDependencies(){
@@ -206,6 +226,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       id: newId,
       name: 'New Group'
     });
+
+    this.filterGroup[newId] = true;
   }
 
   public moveGroupUp(group: ImplementationGuideGroupingComponent) {
@@ -246,10 +268,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editGroup(group: ImplementationGuideGroupingComponent) {
+    const originalId = group.id;
     const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+    modalRef.result.then((result: ImplementationGuideGroupingComponent) => {
+      this.filterGroup[result.id] = this.filterGroup[originalId];
+      delete this.filterGroup[originalId];
+      this.igChanging.emit(true);
+    });
   }
 
   public removeGroup(group: ImplementationGuideGroupingComponent) {
@@ -263,6 +290,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     const index = this.implementationGuide.definition.grouping.indexOf(group);
     this.implementationGuide.definition.grouping.splice(index, 1);
+    delete this.filterGroup[group.id];
   }
 
   public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up'|'down') {
@@ -285,7 +313,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();})
+    modalRef.result.then(() => {this.igChanging.emit(true)})
   }
 
   public changeId() {
@@ -297,7 +325,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => {this.isDirty = true; this.nameChanged();});
+    modalRef.result.then(() => {this.igChanging.emit(true)});
   }
 
   public sortResources() {
@@ -340,17 +368,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           display: result.display
         };
 
-        this.implementationGuide.definition.resource.push({
-          extension: [{
-            url: Globals.extensionUrls['extension-ig-resource-file-path'],
-            valueString: getDefaultImplementationGuideResourcePath(newReference)
-          }],
-          reference: newReference,
-          name: result.display,
-          exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
-        });
+        this.implementationGuide.definition.resource.push(allProfilingTypes.indexOf(result.resourceType) < 0 && result.resource.meta.profile ?
+          {
+            extension: [{
+              url: Globals.extensionUrls['extension-ig-resource-file-path'],
+              valueString: getDefaultImplementationGuideResourcePath(newReference)
+            }],
+            reference: newReference,
+            name: result.display,
+            exampleCanonical: result.resource.meta.profile
+          } :
+          {
+            extension: [{
+              url: Globals.extensionUrls['extension-ig-resource-file-path'],
+              valueString: getDefaultImplementationGuideResourcePath(newReference)
+            }],
+            reference: newReference,
+            name: result.display,
+            exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
+          }
+        );
       });
     });
+  }
+
+  public toggleFilterGroup(type: string){
+    this.filterGroup[type] = !this.filterGroup[type];
   }
 
   public toggleFilterResourceType(type: string) {
@@ -359,6 +402,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.filterResourceType.profile = true;
         this.filterResourceType.terminology = true;
         this.filterResourceType.example = true;
+        if(this.filterGroup && this.implementationGuide.definition.grouping){
+          this.implementationGuide.definition.grouping.forEach((group) => {
+            this.filterGroup[group.id] = true;
+          });
+        }
         break;
       case 'profile':
         this.filterResourceType.profile = !this.filterResourceType.profile;
@@ -405,8 +453,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         dependsOn.packageId = guide['npm-name'];
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
-        this.isDirty = true;
-        this.nameChanged();
+        this.igChanging.emit(true);
       }
     });
   }
@@ -416,8 +463,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.isDirty = false;
-    this.nameChanged();
+    this.igChanging.emit(true);
     this.getImplementationGuide();
   }
 
@@ -427,7 +473,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
-        this.nameChanged();
+        this.igChanging.emit(false);
         this.initPages();
       } else {
         // noinspection JSIgnoredPromiseFromCall
@@ -447,7 +493,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
 
           this.implementationGuide = new ImplementationGuide(results);
-          this.nameChanged();
+          this.igChanging.emit(false);
           this.initPages();
         }, (err) => {
           this.igNotFound = err.status === 404;
@@ -511,8 +557,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.result.then((page: ImplementationGuidePageComponent) => {
       Object.assign(pageDef.page, page);
       this.initPages();
-      this.isDirty = true;
-      this.nameChanged();
+      this.igChanging.emit(true);
     });
 
   }
@@ -544,7 +589,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.title = 'Downloads';
       newPage.navMenu = 'Downloads';
       newPage.fileName = 'downloads.md';
-      newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\n**Validator Pack and Definitions**\n\nThe validator.pack file is a zip file that contains all the value sets, profiles, extensions, list of pages and urls in the IG, etc defined as part of the this Implementation Guides.\n\nIt is used:\n\n* by the validator if you refer to the IG directly by it’s canonical URL\n* by the IG publisher if you declare that one IG depends on another\n* by a FHIR server, if you add the IG to server load list\n\nYou may [download the validator.pack](validator.pack) file here.\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+      newPage.contentMarkdown = '**Full Implementation Guide**\\n\\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\\n\\nIn addition there are format specific definitions files.\\n\\n* [XML](definitions.xml.zip)\\n* [JSON](definitions.json.zip)\\n* [TTL](definitions.ttl.zip)\\n\\n**Examples:** all the examples that are used in this Implementation Guide available for download:\\n\\n* [XML](examples.xml.zip)\\n* [JSON](examples.json.zip)\\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
       newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
@@ -587,7 +632,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.initPages();
-    this.isDirty=true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {
@@ -604,7 +649,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index - 1, 0, pageDef.page);
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageDownDisabled(pageDef: PageDefinition) {
@@ -621,7 +666,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index + 1, 0, pageDef.page);
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageOutDisabled(pageDef: PageDefinition) {
@@ -647,7 +692,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     grandParentPage.page.splice(parentIndex + 1, 0, pageDef.page);
 
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public isMovePageInDisabled(pageDef: PageDefinition) {
@@ -670,7 +715,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     newParentPage.page.push(pageDef.page);
 
     this.initPages();
-    this.isDirty = true;
+    this.igChanging.emit(true);
   }
 
   public getDependsOnName(dependsOn: ImplementationGuideDependsOnComponent) {
@@ -760,8 +805,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.isFile) {
       this.fileService.saveFile();
-      this.isDirty = false;
-      this.nameChanged();
+      this.igChanging.emit(false);
       return;
     }
 
@@ -780,8 +824,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
 
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
-          this.nameChanged();
+          this.igChanging.emit(false);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -836,10 +879,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public canDeactivate(): boolean{
     return !this.isDirty;
-  }
-
-  nameChanged() {
-    this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
   }
 
   ngOnDestroy() {
@@ -930,5 +969,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         }
       }
     }
+  }
+
+  public setExampleBoolean(resource: ImplementationGuideResourceComponent, value: boolean) {
+    if (!value) {
+      delete resource.exampleBoolean;
+      delete resource.exampleCanonical;
+    } else {
+      delete resource.exampleCanonical;
+      resource.exampleBoolean = value;
+    }
+  }
+
+  public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
+    delete resource.exampleBoolean;
+    resource.exampleCanonical = value;
+  }
+
+  public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
+    //Can only set Structure Definitions to exampleCanonical according to FHIR R4 standard
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = "StructureDefinition";
+    modalRef.componentInstance.hideResourceType = true;
+
+    modalRef.result.then((result: ResourceSelection) => {
+      delete resource.exampleBoolean;
+      resource.exampleCanonical = (<StructureDefinition> result.resource).url;
+    });
   }
 }

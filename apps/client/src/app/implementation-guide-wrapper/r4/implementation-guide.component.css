@@ -22,3 +22,17 @@ tr.page-prefix-6 td:first-child {
 tr.page-highlight {
   background-color: lightgray;
 }
+
+.filter-row {
+  padding-left: 15px;
+}
+
+.filter-row label {
+  margin-right: 5px;
+}
+
+.filter-row .col-md-6.checkboxes {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 10px 10px 0px;
+}

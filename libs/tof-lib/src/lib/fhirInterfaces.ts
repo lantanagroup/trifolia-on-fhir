@@ -233,7 +233,9 @@ export interface IElementDefinition extends IElement {
 export interface IStructureDefinition extends IDomainResource {
   url: string;
   identifier?: IIdentifier[];
+  type: string;
   name: string;
+  description?: string;
   title?: string;
   status: string;
   snapshot?: {
@@ -242,6 +244,8 @@ export interface IStructureDefinition extends IDomainResource {
   differential?: {
     element: IElementDefinition[];
   };
+  intro: string;
+  notes: string;
 }
 
 export interface IAuditEvent {

@@ -5,17 +5,18 @@ import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {AxiosRequestConfig} from 'axios';
-import {ApiImplicitQuery, ApiOAuth2Auth, ApiUseTags} from '@nestjs/swagger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
-@ApiUseTags('Practitioner')
-@ApiOAuth2Auth()
+@ApiTags('Practitioner')
+@ApiOAuth2([])
 export class PractitionerController extends BaseFhirController {
   resourceType = 'Practitioner';
 

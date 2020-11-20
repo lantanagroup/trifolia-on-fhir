@@ -5,6 +5,42 @@
   </button>
 </div>
 <div class="modal-body">
+  <ngb-tabset orientation="vertical" (tabChange)="tabChanged($event)">
+    <ngb-tab id="server" title="Server">
+      <ng-template ngbTabContent>
+        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab id="dependency" title="Dependency" *ngIf="resourceType === 'StructureDefinition'">
+      <ng-template ngbTabContent>
+        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab id="base" title="Base">
+      <ng-template ngbTabContent>
+        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</div>
+<div class="modal-footer">
+  <div class="pull-left footer-criteria">
+    <p *ngIf="configService.project && searchLocation === 'server'">
+      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge badge-info">{{configService.project.name}}</span> implementation guide.
+    </p>
+    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge badge-info">{{structureDefinitionType}}</span>.</p>
+  </div>
+  <div class="pull-left" *ngIf="selected.length > 0">
+    Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
+    [ <a href="javascript:void(0)" (click)="selected.splice(0, selected.length)">clear</a> ]
+  </div>
+  <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple"
+          [disabled]="selected.length === 0">OK
+  </button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
+</div>
+
+<ng-template #tabContent>
   <div class="row">
     <!-- Type -->
     <div class="col-md-6" *ngIf="!resourceType || !hideResourceType">
@@ -14,19 +50,6 @@
         </div>
         <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
           <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Where (only applies to StructureDefinition resources) -->
-    <div class="col-md-6" *ngIf="resourceType === 'StructureDefinition'">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Where</div>
-        </div>
-        <select class="form-control" [(ngModel)]="selectedSearchLocation" (ngModelChange)="criteriaChangedEvent.next($event)">
-          <option value="base">Base Resources</option>
-          <option value="server">Resources on the server</option>
         </select>
       </div>
     </div>
@@ -104,20 +127,4 @@
     </tr>
     </tfoot>
   </table>
-</div>
-<div class="modal-footer">
-  <div class="pull-left footer-criteria">
-    <p *ngIf="configService.project && selectedSearchLocation === 'server'">
-      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge badge-info">{{configService.project.name}}</span> implementation guide.
-    </p>
-    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge badge-info">{{structureDefinitionType}}</span>.</p>
-  </div>
-  <div class="pull-left" *ngIf="selected.length > 0">
-    Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
-    [ <a href="javascript:void(0)" (click)="selected.splice(0, selected.length)">clear</a> ]
-  </div>
-  <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple"
-          [disabled]="selected.length === 0">OK
-  </button>
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
-</div>
+</ng-template>

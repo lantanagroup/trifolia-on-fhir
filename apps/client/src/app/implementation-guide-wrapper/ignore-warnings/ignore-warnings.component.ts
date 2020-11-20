@@ -24,6 +24,15 @@ export class IgnoreWarningsComponent implements OnInit, OnChanges {
       });
   }
 
+  get intervalValue() {
+    return this.value;
+  }
+
+  set intervalValue(value: string) {
+    this.value = value;
+    this.valueChanged.emit();
+  }
+
   public updateIgnoreWarningsValue() {
     if (!this.implementationGuide) return;
 

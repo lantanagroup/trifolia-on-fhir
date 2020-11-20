@@ -265,6 +265,7 @@ export class FhirService {
    * @param {boolean} [sortID]
    * @param {number} [page]
    * @param {number} [count]
+   * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
   public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10, ignoreContext = false) {
     let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
@@ -374,6 +375,11 @@ export class FhirService {
     return this.http.put<Resource>(url, resource);
   }
 
+  public patch(resourceType: string, id: string, patches: {op: string, path: string, value: any}[]) {
+    const url = `/api/fhir/${resourceType}/${id}`;
+    return this.http.patch(url, patches);
+  }
+
   /**
    * Creates the specified resource on the FHIR server
    * @param {Resource} resource
@@ -385,6 +391,10 @@ export class FhirService {
 
     const url = `/api/fhir/${resource.resourceType}`;
     return this.http.post<DomainResource>(url, resource);
+  }
+
+  public transaction(bundle: IBundle) {
+    return this.http.post<IBundle>('/api/fhir', bundle);
   }
 
   public batch(data: string, contentType: string, shouldRemovePermissions = true, applyContextPermissions = true) {
