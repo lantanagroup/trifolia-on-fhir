@@ -15,6 +15,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {Formats} from '../models/export-options';
 import {ExceptionHandler} from '@nestjs/core/errors/exception-handler';
 import {HttpException, HttpStatus} from '@nestjs/common';
+import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -123,7 +124,7 @@ export class R4HtmlExporter extends HtmlExporter {
     this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
-  protected prepareImplementationGuide(): DomainResource {
+  protected prepareImplementationGuide(): IImplementationGuide {
     super.prepareImplementationGuide();
 
     this.r4ImplementationGuide.fhirVersion = [this.getOfficialFhirVersion()];

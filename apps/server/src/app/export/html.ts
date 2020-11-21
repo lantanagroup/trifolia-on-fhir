@@ -22,7 +22,13 @@ import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Formats} from '../models/export-options';
 import {PageInfo} from './html.models';
-import {getDefaultImplementationGuideResourcePath, getExtensionString, getIgnoreWarningsValue} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getExtensionString,
+  getIgnoreWarningsValue,
+  setIgnoreWarningsValue,
+  setJiraSpecValue
+} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
@@ -351,7 +357,6 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-
     // Write the ignoreWarnings.txt file
     let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
 
@@ -362,6 +367,7 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
+
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
@@ -376,7 +382,11 @@ export class HtmlExporter {
       PackageListModel.removePackageList(this.implementationGuide);
     }
 
-    const igToWrite: DomainResource = this.prepareImplementationGuide();
+    const igToWrite: IImplementationGuide = this.prepareImplementationGuide();
+
+    // Remove contained DocumentReferences and extensions that will make the IG Publisher complain
+    setIgnoreWarningsValue(igToWrite, null);
+    setJiraSpecValue(igToWrite, null);
 
     // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
     // to the ig that needs to get written.
@@ -534,7 +544,7 @@ export class HtmlExporter {
    * Makes sure that parameters required by the IG publisher are populated.
    * Override in version-specific FHIR implementations
    */
-  protected prepareImplementationGuide(): DomainResource {
+  protected prepareImplementationGuide(): IImplementationGuide {
     // Set the fhirVersion on each of the profiles
     (this.bundle.entry || [])
       .filter(entry => entry.resource && entry.resource.resourceType === 'StructureDefinition')

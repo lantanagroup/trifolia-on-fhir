@@ -234,6 +234,67 @@ export function codeableConceptHasCode(codeableConcept: ICodeableConcept, code: 
   });
 }
 
+export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide, value: string) {
+  if (!implementationGuide) return;
+
+  implementationGuide.extension = implementationGuide.extension || [];
+  let foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+  let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
+    implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+    null;
+
+  if (!value) {
+    if (foundExtension) {
+      const foundExtensionIndex = implementationGuide.extension.indexOf(foundExtension);
+      implementationGuide.extension.splice(foundExtensionIndex, foundExtensionIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.extension.length) delete implementationGuide.extension;
+    }
+
+    if (foundContained) {
+      const foundContainedIndex = implementationGuide.contained.indexOf(foundContained);
+      implementationGuide.contained.splice(foundContainedIndex, foundContainedIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.contained.length) delete implementationGuide.contained;
+    }
+  } else {
+    if (!foundExtension) {
+      foundExtension = {
+        url: Globals.extensionUrls['extension-ig-ignore-warnings'],
+        valueReference: {
+          reference: `#${generateId()}`
+        }
+      };
+      implementationGuide.extension.push(foundExtension);
+    }
+
+    implementationGuide.contained = implementationGuide.contained || [];
+
+    if (!foundContained) {
+      foundContained = <IDocumentReference> {
+        resourceType: 'DocumentReference',
+        id: foundExtension.valueReference.reference.substring(1),
+        type: {
+          coding: [{
+            code: 'ignore-warnings'
+          }]
+        },
+        content: [{
+          attachment: {
+            contentType: 'text/plain',
+            title: 'ignoreWarnings.txt',
+            data: btoa(value)
+          }
+        }]
+      };
+      implementationGuide.contained.push(foundContained);
+    } else {
+      const docRef = <IDocumentReference> foundContained;
+      docRef.content[0].attachment.data = btoa(value);
+    }
+  }
+}
+
 export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide): string {
   if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
@@ -262,6 +323,67 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
       return atob(documentReference.content[0].attachment.data);
     } else {
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+    }
+  }
+}
+
+export function setJiraSpecValue(implementationGuide: IImplementationGuide, value: string) {
+  if (!implementationGuide) return;
+
+  implementationGuide.extension = implementationGuide.extension || [];
+  let foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
+  let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
+    implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+    null;
+
+  if (!value) {
+    if (foundExtension) {
+      const foundExtensionIndex = implementationGuide.extension.indexOf(foundExtension);
+      implementationGuide.extension.splice(foundExtensionIndex, foundExtensionIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.extension.length) delete implementationGuide.extension;
+    }
+
+    if (foundContained) {
+      const foundContainedIndex = implementationGuide.contained.indexOf(foundContained);
+      implementationGuide.contained.splice(foundContainedIndex, foundContainedIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.contained.length) delete implementationGuide.contained;
+    }
+  } else {
+    if (!foundExtension) {
+      foundExtension = {
+        url: Globals.extensionUrls['extension-ig-jira-spec'],
+        valueReference: {
+          reference: `#${generateId()}`
+        }
+      };
+      implementationGuide.extension.push(foundExtension);
+    }
+
+    implementationGuide.contained = implementationGuide.contained || [];
+
+    if (!foundContained) {
+      foundContained = <IDocumentReference> {
+        resourceType: 'DocumentReference',
+        id: foundExtension.valueReference.reference.substring(1),
+        type: {
+          coding: [{
+            code: 'jira-spec'
+          }]
+        },
+        content: [{
+          attachment: {
+            contentType: 'text/plain',
+            title: 'jira-spec.xml',
+            data: btoa(value)
+          }
+        }]
+      };
+      implementationGuide.contained.push(foundContained);
+    } else {
+      const docRef = <IDocumentReference> foundContained;
+      docRef.content[0].attachment.data = btoa(value);
     }
   }
 }
