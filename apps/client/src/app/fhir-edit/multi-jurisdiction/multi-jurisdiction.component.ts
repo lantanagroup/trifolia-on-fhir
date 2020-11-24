@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
-import {ICodeableConcept} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ICodeableConcept, ICoding} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {Coding} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 @Component({
   selector: 'app-fhir-multi-jurisdiction',
@@ -19,6 +20,9 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   public tooltip: string;
   public Globals = Globals;
+  public editFields: boolean[][] = [[]];
+  public jurisdictionSearch: string;
+  public jurisdictionCodes: Coding[];
 
   constructor(
     private fhirService: FhirService) {
@@ -34,9 +38,11 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   addJurisdiction() {
     if (!this.jurisdictions) {
       this.parentObject[this.propertyName] = [];
+      this.editFields = [[]];
     }
 
     this.jurisdictions.push({ });
+    this.addCoding(this.jurisdictions[this.jurisdictions.length - 1], this.jurisdictions.length - 1);
   }
 
   getText(jurisdiction: ICodeableConcept) {
@@ -51,28 +57,104 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     }
   }
 
-  addCoding(jurisdiction: ICodeableConcept) {
+  addCoding(jurisdiction: ICodeableConcept, index: number) {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
+    if(this.editFields.length < index + 1){
+      this.editFields.push([]);
+    }
+    this.editFields[index].push(false);
   }
 
   isInvalid(){
-    return this.required && (!this.jurisdictions[0].text ||
-      (this.jurisdictions[0].coding && (!this.jurisdictions[0].coding[0].code || !this.jurisdictions[0].coding[0].display || !this.jurisdictions[0].coding[0].system)));
+    return this.required && (this.jurisdictions && this.checkForCompletedJurisdiction());
+  }
+
+  checkForCompletedJurisdiction(){
+    for(let x = 0; x < this.jurisdictions.length; x++){
+      if(this.jurisdictions[x].text && this.jurisdictions[x].coding){
+        for(let y = 0; y < this.jurisdictions[x].coding.length; y++){
+          if(this.jurisdictions[x].text && this.jurisdictions[x].coding[y].code && this.jurisdictions[x].coding[y].display
+            && this.jurisdictions[x].coding[y].system){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 
   removeJurisdiction(index: number){
     this.jurisdictions.splice(index, 1);
+    this.editFields.splice(index, 1);
     if(this.jurisdictions.length === 0){
       delete this.parentObject[this.propertyName];
+      this.editFields = [[]];
     }
   }
 
+  /*
+  public typeaheadSearch = (text$: Observable<string>) => text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map((term: string) => term.length < 2 ? [] : this.searchCodes(term))
+  );
+
+  private searchCodes(term: string) {
+    const searchTerm = term.toLowerCase();
+    return this.jurisdictionCodes
+      .filter((coding) => {
+        if (coding.code && coding.code.toLowerCase().indexOf(searchTerm) >= 0) {
+          return true;
+        }
+        if (coding.system && coding.system.toLowerCase().indexOf(searchTerm) >= 0) {
+          return true;
+        }
+        if (coding.display && coding.display.toLowerCase().indexOf(searchTerm) >= 0) {
+          return true;
+        }
+        return false;
+      })
+      .map((coding) => coding.code);
+  };
+
+  public typeaheadFormatter = (result: string) => {
+    const foundCode = this.jurisdictionCodes.find((coding) => coding.code === result);
+
+    if (foundCode && foundCode.display) {
+      return foundCode.display + ' (' + foundCode.code + ')';
+    }
+
+    return result;
+  };
+  */
+
   ngOnInit() {
+    if(!this.jurisdictionCodes){
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes("http://hl7.org/fhir/ValueSet/iso3166-1-2");
+    }
+
     if (this.tooltipKey) {
       this.tooltip = Globals.tooltips[this.tooltipKey];
     } else if (this.tooltipPath) {
       this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
     }
+  }
+
+  getJurisdictionCode(coding: ICoding) {
+    if (!this.jurisdictionCodes) return null;
+    return this.jurisdictionCodes.find(j => j.code === coding.code && j.display === coding.display && j.system === coding.system);
+  }
+
+  setJurisdictionCode(jurisdiction: ICodeableConcept, index: number, coding: ICoding) {
+    if (!jurisdiction.text) {
+      jurisdiction.text = coding.display;
+    }
+
+    jurisdiction.coding[index] = {
+      code: coding.code,
+      display: coding.display,
+      system: coding.system
+    };
   }
 }
