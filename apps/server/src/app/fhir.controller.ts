@@ -693,7 +693,9 @@ export class FhirController extends BaseController {
     @Query('name') name?: string,
     @Query('title') title?: string,
     @Query('_content') resourceContent?: string,
-    @Query('type') structureDefinitionType?: string) {
+    @Query('type') structureDefinitionType?: string,
+    @Query('url') structureDefinitionUrl?: string,
+    @Query('isLightweight') isLightweight = true) {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
     const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
     const ig = igResults.data;
@@ -762,6 +764,12 @@ export class FhirController extends BaseController {
         // _content search
         if (resourceContent && fileContent.toLowerCase().indexOf(resourceContent.toLowerCase()) < 0) continue;
 
+        // structureDefinitionUrl. this applies in structure-definition.controller.ts when retrieving dependencies
+        if (structureDefinitionUrl && resource.resourceType === 'StructureDefinition') {
+          const structureDefinition = <IStructureDefinition> resource;
+          if (!structureDefinition.url || structureDefinition.url !== structureDefinitionUrl) continue;
+        }
+
         // type (only applies to StructureDefinition)
         if (structureDefinitionType && resource.resourceType === 'StructureDefinition') {
           const structureDefinition = <IStructureDefinition> resource;
@@ -769,14 +777,26 @@ export class FhirController extends BaseController {
           if (!structureDefinition.type || structureDefinition.type !== structureDefinitionType) continue;
         }
 
-        responseBundle.entry.push({
-          resource: <any>{
-            resourceType: resource.resourceType,
-            id: resource.id,
-            name: resource.name,
-            url: resource.url
-          }
-        });
+        if (!isLightweight) {
+          responseBundle.entry.push({
+            resource: <any>{
+              resourceType: resource.resourceType,
+              id: resource.id,
+              name: resource.name,
+              url: resource.url,
+              resource: resource
+            }
+          });
+        } else {
+          responseBundle.entry.push({
+            resource: <any>{
+              resourceType: resource.resourceType,
+              id: resource.id,
+              name: resource.name,
+              url: resource.url
+            }
+          });
+        }
       }
     }
 
