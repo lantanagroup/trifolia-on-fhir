@@ -21,7 +21,6 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   public tooltip: string;
   public Globals = Globals;
   public editFields: boolean[][] = [[]];
-  public jurisdictionSearch: string;
   public jurisdictionCodes: Coding[];
 
   constructor(
@@ -92,42 +91,6 @@ export class FhirMultiJurisdictionComponent implements OnInit {
       this.editFields = [[]];
     }
   }
-
-  /*
-  public typeaheadSearch = (text$: Observable<string>) => text$.pipe(
-    debounceTime(200),
-    distinctUntilChanged(),
-    map((term: string) => term.length < 2 ? [] : this.searchCodes(term))
-  );
-
-  private searchCodes(term: string) {
-    const searchTerm = term.toLowerCase();
-    return this.jurisdictionCodes
-      .filter((coding) => {
-        if (coding.code && coding.code.toLowerCase().indexOf(searchTerm) >= 0) {
-          return true;
-        }
-        if (coding.system && coding.system.toLowerCase().indexOf(searchTerm) >= 0) {
-          return true;
-        }
-        if (coding.display && coding.display.toLowerCase().indexOf(searchTerm) >= 0) {
-          return true;
-        }
-        return false;
-      })
-      .map((coding) => coding.code);
-  };
-
-  public typeaheadFormatter = (result: string) => {
-    const foundCode = this.jurisdictionCodes.find((coding) => coding.code === result);
-
-    if (foundCode && foundCode.display) {
-      return foundCode.display + ' (' + foundCode.code + ')';
-    }
-
-    return result;
-  };
-  */
 
   ngOnInit() {
     if(!this.jurisdictionCodes){
