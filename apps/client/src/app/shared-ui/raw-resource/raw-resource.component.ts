@@ -9,11 +9,9 @@ import * as vkbeautify from 'vkbeautify';
     templateUrl: './raw-resource.component.html',
     styleUrls: ['./raw-resource.component.css']
 })
-export class RawResourceComponent implements OnInit, OnChanges {
+export class RawResourceComponent {
     @Input() shown?: boolean;
     @Input() resource: Resource;
-
-    public xml: string;
 
     constructor(private fhirService: FhirService) {
     }
@@ -47,25 +45,13 @@ export class RawResourceComponent implements OnInit, OnChanges {
         saveAs(blob, this.baseFileName + '.xml');
     }
 
-    private serialize() {
+    public get xml() {
         if (!this.resource) {
             return;
         }
 
         const xml = this.fhirService.serialize(this.resource);
 
-        if (xml) {
-            this.xml = vkbeautify.xml(xml);
-        } else {
-            this.xml = '';
-        }
-    }
-
-    ngOnInit() {
-        this.serialize();
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        this.serialize();
+        return xml ? vkbeautify.xml(xml) : '';
     }
 }
