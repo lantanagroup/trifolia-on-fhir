@@ -662,6 +662,10 @@
           <app-tooltip-icon tooltipKey="ig.dependsOn.location"></app-tooltip-icon>
         </th-->
         <th>
+          Dependency ID
+          <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.id"></app-tooltip-icon>
+        </th>
+        <th>
           Package ID
           <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
         </th>
@@ -694,6 +698,9 @@
                  (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
         </td-->
         <td>
+          <app-fhir-string [parentObject]="dependsOn" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
         </td>
         <!--td>
@@ -708,7 +715,7 @@
               <button type="button" class="btn btn-primary" (click)="selectPublishedIg(dependsOn)">
                 <i class="fas fa-hand-pointer"></i>
               </button>
-              <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1); igChanging.emit(true)">
+              <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="removeDependency(di); igChanging.emit(true)">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>

@@ -451,6 +451,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.result.then((guide: PublishedGuideModel) => {
       if(guide){
         dependsOn.packageId = guide['npm-name'];
+        dependsOn.id = guide['npm-name'];
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
         this.igChanging.emit(true);
@@ -996,5 +997,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       delete resource.exampleBoolean;
       resource.exampleCanonical = (<StructureDefinition> result.resource).url;
     });
+  }
+
+  public removeDependency(index: number){
+    this.implementationGuide.dependsOn.splice(index, 1)
+    if(this.implementationGuide.dependsOn.length === 0){
+      delete this.implementationGuide.dependsOn;
+    }
   }
 }

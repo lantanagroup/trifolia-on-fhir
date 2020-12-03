@@ -206,6 +206,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
+      this.setDependencyID(dependency, guide['npm-name'])
       this.setDependencyName(dependency, guide['npm-name']);
       this.setDependencyVersion(dependency, guide.version);
       this.igChanging.emit(true);
@@ -291,6 +292,31 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.implementationGuide.extension.push(newDependency);
 
     return newDependency;
+  }
+
+  public getDependencyID(dependency: Extension): string {
+    const idExtension = (dependency.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-id']);
+
+    if (idExtension) {
+      return idExtension.valueUri;
+    }
+  }
+
+  public setDependencyID(dependency: Extension, name: string) {
+    let idExtension = (dependency.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-id']);
+
+    if (!idExtension) {
+      idExtension = new Extension();
+      idExtension.url = Globals.extensionUrls['extension-ig-dependency-id'];
+
+      if (!dependency.extension) {
+        dependency.extension = [];
+      }
+
+      dependency.extension.push(idExtension);
+    }
+
+    idExtension.valueUri = name;
   }
 
   public getDependencyLocation(dependency: Extension): string {
