@@ -144,12 +144,16 @@ export class STU3HtmlExporter extends HtmlExporter {
         const versionExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-version']);
         const nameExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-name']);
         const locationExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-location']);
+        const idExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-id']);
+        // TODO: capture ID extension
 
         return {
           uri: locationExt ? locationExt.valueUri : undefined,
           packageId: nameExt ? nameExt.valueString : undefined,
-          version: versionExt ? versionExt.valueString : undefined
-        };
+          version: versionExt ? versionExt.valueString : undefined,
+          id: idExt ? idExt.valueString : undefined;
+          // TODO: Output ID from extension
+        }
       });
 
     const foundPackageExtension = (this.stu3ImplementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-package-id']);
