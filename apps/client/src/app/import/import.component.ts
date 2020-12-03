@@ -86,8 +86,7 @@ export class ImportComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
-    public modalService: NgbModal,
-    private route: ActivatedRoute) {
+    public modalService: NgbModal) {
 
     const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
     const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
@@ -481,7 +480,7 @@ export class ImportComponent implements OnInit {
       this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
-    this.importService.importVsac(this.vsacCriteria, this.implementationGuideId)
+    this.importService.importVsac(this.vsacCriteria)
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
@@ -712,6 +711,5 @@ export class ImportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
   }
 }

@@ -159,7 +159,7 @@ export class ImportController extends BaseController {
     @Headers('vsacauthorization') vsacAuthorization: string,
     @Param('id') id: string,
     @Param('applyContextPermissions') applyContextPermissions = true,
-    @Query('implementationGuideId') contextImplementationGuideId) {
+    @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
 
     const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);

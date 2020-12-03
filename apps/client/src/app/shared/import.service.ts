@@ -26,12 +26,9 @@ export class ImportService {
     return this.http.post<{ [resourceReference: string]: 'add'|'update'|'unauthorized'|'unknown'}>('/api/import/resourcesStatus', resourceReferences).toPromise();
   }
 
-  public importVsac(criteria: VSACImportCriteria, implementationGuideId: string): Observable<any> {
+  public importVsac(criteria: VSACImportCriteria): Observable<any> {
     return new Observable<any>((subscriber) => {
-      let url = `/api/import/vsac/${encodeURIComponent(criteria.id)}`;
-      if (implementationGuideId) {
-        url += `?implementationGuideId=${encodeURIComponent(implementationGuideId)}`;
-      }
+      const url = `/api/import/vsac/${encodeURIComponent(criteria.id)}`;
       const authorization = btoa(criteria.username + ':' + criteria.password);
       const headers = {
         'vsacAuthorization': 'Basic ' + authorization
