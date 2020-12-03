@@ -151,7 +151,7 @@ export class STU3HtmlExporter extends HtmlExporter {
           uri: locationExt ? locationExt.valueUri : undefined,
           packageId: nameExt ? nameExt.valueString : undefined,
           version: versionExt ? versionExt.valueString : undefined,
-          id: idExt ? idExt.valueString : undefined;
+          id: idExt ? idExt.valueString : undefined
           // TODO: Output ID from extension
         }
       });
