@@ -5,7 +5,7 @@ import {
   Get,
   Headers,
   HttpService,
-  Param, Post,
+  Param, Post, Query,
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
@@ -158,7 +158,11 @@ export class ImportController extends BaseController {
     @User() user: ITofUser,
     @Headers('vsacauthorization') vsacAuthorization: string,
     @Param('id') id: string,
-    @Param('applyContextPermissions') applyContextPermissions = true) {
+    @Param('applyContextPermissions') applyContextPermissions = true,
+    @Query('implementationGuideId') contextImplementationGuideId) {
+
+    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
+    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
     if (!vsacAuthorization) {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
@@ -196,6 +200,9 @@ export class ImportController extends BaseController {
       const proxyUrl = `/${vsacResults.data.resourceType}/${vsacResults.data.id}`;
       const fhirProxy = new FhirController(this.httpService, this.configService);
       const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data, applyContextPermissions);
+      if (contextImplementationGuide) {
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, proxyResults.data, userSecurityInfo, contextImplementationGuide, true);
+      }
       return proxyResults.data;
     } catch (ex) {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);

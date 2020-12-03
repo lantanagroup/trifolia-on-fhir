@@ -25,6 +25,7 @@ import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {UpdateDiffComponent} from './update-diff/update-diff.component';
+import {ActivatedRoute} from '@angular/router';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -69,6 +70,7 @@ export class ImportComponent implements OnInit {
   public rememberVsacCredentials: boolean;
   public applyContextPermissions = true;
   public Globals = Globals;
+  public implementationGuideId: string;
 
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
@@ -84,7 +86,8 @@ export class ImportComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
-    public modalService: NgbModal) {
+    public modalService: NgbModal,
+    private route: ActivatedRoute) {
 
     const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
     const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
@@ -478,7 +481,7 @@ export class ImportComponent implements OnInit {
       this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
-    this.importService.importVsac(this.vsacCriteria)
+    this.importService.importVsac(this.vsacCriteria, this.implementationGuideId)
       .subscribe((results: OperationOutcome | Bundle) => {
         if (results.resourceType === 'OperationOutcome') {
           this.outcome = <OperationOutcome>results;
@@ -709,5 +712,6 @@ export class ImportComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
   }
 }
