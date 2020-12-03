@@ -25,6 +25,7 @@ import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {UpdateDiffComponent} from './update-diff/update-diff.component';
+import {ActivatedRoute} from '@angular/router';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -69,6 +70,7 @@ export class ImportComponent implements OnInit {
   public rememberVsacCredentials: boolean;
   public applyContextPermissions = true;
   public Globals = Globals;
+  public implementationGuideId: string;
 
   private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
