@@ -101,7 +101,7 @@ export class ImportComponent implements OnInit {
     modalRef.componentInstance.importResource = resource;
   }
 
-  private createMedia(name: string, buffer: ArrayBuffer) {
+  private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
     const b64content = btoa(new Uint8Array(buffer)
       .reduce((data, byte) => data + String.fromCharCode(byte), ''));
 
@@ -116,6 +116,7 @@ export class ImportComponent implements OnInit {
         value: name
       }];
       media.content = {
+        contentType,
         data: b64content
       };
       return media;
@@ -130,6 +131,7 @@ export class ImportComponent implements OnInit {
         value: name
       }];
       media.content = {
+        contentType,
         data: b64content
       };
       return media;
@@ -181,7 +183,7 @@ export class ImportComponent implements OnInit {
 
             importFileModel.vsBundle = convertResults.bundle;
           } else if (importFileModel.contentType === ContentTypes.Image) {
-            importFileModel.resource = this.createMedia(file.name, result);
+            importFileModel.resource = this.createMedia(file.name, file.type, result);
           }
         } catch (ex) {
           importFileModel.message = ex.message;
