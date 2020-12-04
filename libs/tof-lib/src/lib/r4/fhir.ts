@@ -227,10 +227,10 @@ export class Period extends Element {
     super(obj);
     if (obj) {
       if (obj.hasOwnProperty('start')) {
-        this.start = new Date(obj.start);
+        this.start = obj.start;
       }
       if (obj.hasOwnProperty('end')) {
-        this.end = new Date(obj.end);
+        this.end = obj.end;
       }
     }
   }
@@ -1192,7 +1192,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -1650,7 +1650,7 @@ export class Observation extends DomainResource {
         this.effective = new Element(obj.effective);
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('performer')) {
         this.performer = [];
@@ -1771,7 +1771,7 @@ export class BundleRequestComponent extends BackboneElement {
         this.ifNoneMatch = obj.ifNoneMatch;
       }
       if (obj.hasOwnProperty('ifModifiedSince')) {
-        this.ifModifiedSince = new Date(obj.ifModifiedSince);
+        this.ifModifiedSince = obj.ifModifiedSince;
       }
       if (obj.hasOwnProperty('ifMatch')) {
         this.ifMatch = obj.ifMatch;
@@ -1804,7 +1804,7 @@ export class BundleResponseComponent extends BackboneElement {
         this.etag = obj.etag;
       }
       if (obj.hasOwnProperty('lastModified')) {
-        this.lastModified = new Date(obj.lastModified);
+        this.lastModified = obj.lastModified;
       }
       if (obj.hasOwnProperty('outcome')) {
         this.outcome = new Resource(obj.outcome);
@@ -1870,7 +1870,7 @@ export class Signature extends Element {
         }
       }
       if (obj.hasOwnProperty('when')) {
-        this.when = new Date(obj.when);
+        this.when = obj.when;
       }
       if (obj.hasOwnProperty('who')) {
         this.who = new ResourceReference(obj.who);
@@ -1914,7 +1914,7 @@ export class Bundle extends Resource implements IBundle {
         this.type = obj.type;
       }
       if (obj.hasOwnProperty('timestamp')) {
-        this.timestamp = new Date(obj.timestamp);
+        this.timestamp = obj.timestamp;
       }
       if (obj.hasOwnProperty('total')) {
         this.total = obj.total;
@@ -2140,7 +2140,7 @@ export class CodeSystem extends DomainResource implements ICodeSystem {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -2428,7 +2428,7 @@ export class ConceptMap extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -3018,7 +3018,7 @@ export class ActivityDefinition extends DomainResource {
         this.subject = new Element(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -3054,10 +3054,10 @@ export class ActivityDefinition extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -3326,13 +3326,13 @@ export class AdverseEvent extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('detected')) {
-        this.detected = new Date(obj.detected);
+        this.detected = obj.detected;
       }
       if (obj.hasOwnProperty('recordedDate')) {
-        this.recordedDate = new Date(obj.recordedDate);
+        this.recordedDate = obj.recordedDate;
       }
       if (obj.hasOwnProperty('resultingCondition')) {
         this.resultingCondition = [];
@@ -3412,7 +3412,7 @@ export class Annotation extends Element {
         this.author = new Element(obj.author);
       }
       if (obj.hasOwnProperty('time')) {
-        this.time = new Date(obj.time);
+        this.time = obj.time;
       }
       if (obj.hasOwnProperty('text')) {
         this.text = obj.text;
@@ -3447,7 +3447,7 @@ export class AllergyIntoleranceReactionComponent extends BackboneElement {
         this.description = obj.description;
       }
       if (obj.hasOwnProperty('onset')) {
-        this.onset = new Date(obj.onset);
+        this.onset = obj.onset;
       }
       if (obj.hasOwnProperty('severity')) {
         this.severity = obj.severity;
@@ -3522,7 +3522,7 @@ export class AllergyIntolerance extends DomainResource {
         this.onset = new Element(obj.onset);
       }
       if (obj.hasOwnProperty('recordedDate')) {
-        this.recordedDate = new Date(obj.recordedDate);
+        this.recordedDate = obj.recordedDate;
       }
       if (obj.hasOwnProperty('recorder')) {
         this.recorder = new ResourceReference(obj.recorder);
@@ -3531,7 +3531,7 @@ export class AllergyIntolerance extends DomainResource {
         this.asserter = new ResourceReference(obj.asserter);
       }
       if (obj.hasOwnProperty('lastOccurrence')) {
-        this.lastOccurrence = new Date(obj.lastOccurrence);
+        this.lastOccurrence = obj.lastOccurrence;
       }
       if (obj.hasOwnProperty('note')) {
         this.note = [];
@@ -3665,10 +3665,10 @@ export class Appointment extends DomainResource {
         }
       }
       if (obj.hasOwnProperty('start')) {
-        this.start = new Date(obj.start);
+        this.start = obj.start;
       }
       if (obj.hasOwnProperty('end')) {
-        this.end = new Date(obj.end);
+        this.end = obj.end;
       }
       if (obj.hasOwnProperty('minutesDuration')) {
         this.minutesDuration = obj.minutesDuration;
@@ -3680,7 +3680,7 @@ export class Appointment extends DomainResource {
         }
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('comment')) {
         this.comment = obj.comment;
@@ -3735,10 +3735,10 @@ export class AppointmentResponse extends DomainResource {
         this.appointment = new ResourceReference(obj.appointment);
       }
       if (obj.hasOwnProperty('start')) {
-        this.start = new Date(obj.start);
+        this.start = obj.start;
       }
       if (obj.hasOwnProperty('end')) {
-        this.end = new Date(obj.end);
+        this.end = obj.end;
       }
       if (obj.hasOwnProperty('participantType')) {
         this.participantType = [];
@@ -4024,7 +4024,7 @@ export class Basic extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -4269,7 +4269,7 @@ export class CapabilityStatementSoftwareComponent extends BackboneElement {
         this.version = obj.version;
       }
       if (obj.hasOwnProperty('releaseDate')) {
-        this.releaseDate = new Date(obj.releaseDate);
+        this.releaseDate = obj.releaseDate;
       }
     }
   }
@@ -4689,7 +4689,7 @@ export class CapabilityStatement extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -4987,7 +4987,7 @@ export class CarePlan extends DomainResource {
         this.period = new Period(obj.period);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -5289,7 +5289,7 @@ export class ChargeItem extends DomainResource {
         this.enterer = new ResourceReference(obj.enterer);
       }
       if (obj.hasOwnProperty('enteredDate')) {
-        this.enteredDate = new Date(obj.enteredDate);
+        this.enteredDate = obj.enteredDate;
       }
       if (obj.hasOwnProperty('reason')) {
         this.reason = [];
@@ -5461,7 +5461,7 @@ export class ChargeItemDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -5491,10 +5491,10 @@ export class ChargeItemDefinition extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -5678,7 +5678,7 @@ export class ClaimProcedureComponent extends BackboneElement {
         this.sequence = obj.sequence;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('procedure')) {
         this.procedure = new Element(obj.procedure);
@@ -5735,7 +5735,7 @@ export class ClaimAccidentComponent extends BackboneElement {
     super(obj);
     if (obj) {
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('type')) {
         this.type = new CodeableConcept(obj.type);
@@ -6051,7 +6051,7 @@ export class Claim extends DomainResource {
         this.billablePeriod = new Period(obj.billablePeriod);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('enterer')) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -6519,7 +6519,7 @@ export class ClaimResponsePaymentComponent extends BackboneElement {
         this.adjustmentReason = new CodeableConcept(obj.adjustmentReason);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('amount')) {
         this.amount = new Money(obj.amount);
@@ -6640,7 +6640,7 @@ export class ClaimResponse extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('insurer')) {
         this.insurer = new ResourceReference(obj.insurer);
@@ -6816,7 +6816,7 @@ export class ClinicalImpression extends DomainResource {
         this.effective = new Element(obj.effective);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('assessor')) {
         this.assessor = new ResourceReference(obj.assessor);
@@ -6987,10 +6987,10 @@ export class Communication extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('sent')) {
-        this.sent = new Date(obj.sent);
+        this.sent = obj.sent;
       }
       if (obj.hasOwnProperty('received')) {
-        this.received = new Date(obj.received);
+        this.received = obj.received;
       }
       if (obj.hasOwnProperty('recipient')) {
         this.recipient = [];
@@ -7139,7 +7139,7 @@ export class CommunicationRequest extends DomainResource {
         this.occurrence = new Element(obj.occurrence);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -7234,7 +7234,7 @@ export class CompartmentDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -7286,7 +7286,7 @@ export class CompositionAttesterComponent extends BackboneElement {
         this.mode = obj.mode;
       }
       if (obj.hasOwnProperty('time')) {
-        this.time = new Date(obj.time);
+        this.time = obj.time;
       }
       if (obj.hasOwnProperty('party')) {
         this.party = new ResourceReference(obj.party);
@@ -7440,7 +7440,7 @@ export class Composition extends DomainResource {
         this.encounter = new ResourceReference(obj.encounter);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = [];
@@ -7601,7 +7601,7 @@ export class Condition extends DomainResource {
         this.abatement = new Element(obj.abatement);
       }
       if (obj.hasOwnProperty('recordedDate')) {
-        this.recordedDate = new Date(obj.recordedDate);
+        this.recordedDate = obj.recordedDate;
       }
       if (obj.hasOwnProperty('recorder')) {
         this.recorder = new ResourceReference(obj.recorder);
@@ -7665,7 +7665,7 @@ export class ConsentVerificationComponent extends BackboneElement {
         this.verifiedWith = new ResourceReference(obj.verifiedWith);
       }
       if (obj.hasOwnProperty('verificationDate')) {
-        this.verificationDate = new Date(obj.verificationDate);
+        this.verificationDate = obj.verificationDate;
       }
     }
   }
@@ -7827,7 +7827,7 @@ export class Consent extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('dateTime')) {
-        this.dateTime = new Date(obj.dateTime);
+        this.dateTime = obj.dateTime;
       }
       if (obj.hasOwnProperty('performer')) {
         this.performer = [];
@@ -7888,7 +7888,7 @@ export class ContractContentDefinitionComponent extends BackboneElement {
         this.publisher = new ResourceReference(obj.publisher);
       }
       if (obj.hasOwnProperty('publicationDate')) {
-        this.publicationDate = new Date(obj.publicationDate);
+        this.publicationDate = obj.publicationDate;
       }
       if (obj.hasOwnProperty('publicationStatus')) {
         this.publicationStatus = obj.publicationStatus;
@@ -8081,7 +8081,7 @@ export class ContractValuedItemComponent extends BackboneElement {
         this.identifier = new Identifier(obj.identifier);
       }
       if (obj.hasOwnProperty('effectiveTime')) {
-        this.effectiveTime = new Date(obj.effectiveTime);
+        this.effectiveTime = obj.effectiveTime;
       }
       if (obj.hasOwnProperty('quantity')) {
         this.quantity = new SimpleQuantity(obj.quantity);
@@ -8102,7 +8102,7 @@ export class ContractValuedItemComponent extends BackboneElement {
         this.payment = obj.payment;
       }
       if (obj.hasOwnProperty('paymentDate')) {
-        this.paymentDate = new Date(obj.paymentDate);
+        this.paymentDate = obj.paymentDate;
       }
       if (obj.hasOwnProperty('responsible')) {
         this.responsible = new ResourceReference(obj.responsible);
@@ -8372,7 +8372,7 @@ export class ContractTermComponent extends BackboneElement {
         this.identifier = new Identifier(obj.identifier);
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('applies')) {
         this.applies = new Period(obj.applies);
@@ -8555,7 +8555,7 @@ export class Contract extends DomainResource {
         this.contentDerivative = new CodeableConcept(obj.contentDerivative);
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('applies')) {
         this.applies = new Period(obj.applies);
@@ -8994,7 +8994,7 @@ export class CoverageEligibilityRequest extends DomainResource {
         this.serviced = new Element(obj.serviced);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('enterer')) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -9211,7 +9211,7 @@ export class CoverageEligibilityResponse extends DomainResource {
         this.serviced = new Element(obj.serviced);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('requestProvider')) {
         this.requestProvider = new ResourceReference(obj.requestProvider);
@@ -9392,7 +9392,7 @@ export class DetectedIssueMitigationComponent extends BackboneElement {
         this.action = new CodeableConcept(obj.action);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -9438,7 +9438,7 @@ export class DetectedIssue extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -9649,10 +9649,10 @@ export class Device extends DomainResource {
         this.manufacturer = obj.manufacturer;
       }
       if (obj.hasOwnProperty('manufactureDate')) {
-        this.manufactureDate = new Date(obj.manufactureDate);
+        this.manufactureDate = obj.manufactureDate;
       }
       if (obj.hasOwnProperty('expirationDate')) {
-        this.expirationDate = new Date(obj.expirationDate);
+        this.expirationDate = obj.expirationDate;
       }
       if (obj.hasOwnProperty('lotNumber')) {
         this.lotNumber = obj.lotNumber;
@@ -10096,7 +10096,7 @@ export class DeviceMetricCalibrationComponent extends BackboneElement {
         this.state = obj.state;
       }
       if (obj.hasOwnProperty('time')) {
-        this.time = new Date(obj.time);
+        this.time = obj.time;
       }
     }
   }
@@ -10263,7 +10263,7 @@ export class DeviceRequest extends DomainResource {
         this.occurrence = new Element(obj.occurrence);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -10362,7 +10362,7 @@ export class DeviceUseStatement extends DomainResource {
         this.timing = new Element(obj.timing);
       }
       if (obj.hasOwnProperty('recordedOn')) {
-        this.recordedOn = new Date(obj.recordedOn);
+        this.recordedOn = obj.recordedOn;
       }
       if (obj.hasOwnProperty('source')) {
         this.source = new ResourceReference(obj.source);
@@ -10469,7 +10469,7 @@ export class DiagnosticReport extends DomainResource {
         this.effective = new Element(obj.effective);
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('performer')) {
         this.performer = [];
@@ -10610,7 +10610,7 @@ export class DocumentManifest extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('agent')) {
         this.agent = [];
@@ -10798,7 +10798,7 @@ export class DocumentReference extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('agent')) {
         this.agent = [];
@@ -11230,7 +11230,7 @@ export class EnrollmentRequest extends DomainResource {
         this.status = obj.status;
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('insurer')) {
         this.insurer = new ResourceReference(obj.insurer);
@@ -11282,7 +11282,7 @@ export class EnrollmentResponse extends DomainResource {
         this.disposition = obj.disposition;
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('organization')) {
         this.organization = new ResourceReference(obj.organization);
@@ -11365,7 +11365,7 @@ export class EntryDefinition extends DomainResource {
         this.validityPeriod = new Period(obj.validityPeriod);
       }
       if (obj.hasOwnProperty('lastUpdated')) {
-        this.lastUpdated = new Date(obj.lastUpdated);
+        this.lastUpdated = obj.lastUpdated;
       }
       if (obj.hasOwnProperty('additionalCharacteristic')) {
         this.additionalCharacteristic = [];
@@ -11605,7 +11605,7 @@ export class EventDefinition extends DomainResource {
         this.subject = new Element(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -11641,10 +11641,10 @@ export class EventDefinition extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -11998,7 +11998,7 @@ export class ExampleScenario extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -12206,7 +12206,7 @@ export class ExplanationOfBenefitProcedureComponent extends BackboneElement {
         this.sequence = obj.sequence;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('procedure')) {
         this.procedure = new Element(obj.procedure);
@@ -12243,7 +12243,7 @@ export class ExplanationOfBenefitAccidentComponent extends BackboneElement {
     super(obj);
     if (obj) {
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('type')) {
         this.type = new CodeableConcept(obj.type);
@@ -12802,7 +12802,7 @@ export class ExplanationOfBenefitPaymentComponent extends BackboneElement {
         this.adjustmentReason = new CodeableConcept(obj.adjustmentReason);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('amount')) {
         this.amount = new Money(obj.amount);
@@ -12974,7 +12974,7 @@ export class ExplanationOfBenefit extends DomainResource {
         this.billablePeriod = new Period(obj.billablePeriod);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('enterer')) {
         this.enterer = new ResourceReference(obj.enterer);
@@ -13170,7 +13170,7 @@ export class FamilyMemberHistory extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('name')) {
         this.name = obj.name;
@@ -13296,7 +13296,7 @@ export class Goal extends DomainResource {
         this.target = new GoalTargetComponent(obj.target);
       }
       if (obj.hasOwnProperty('statusDate')) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.hasOwnProperty('statusReason')) {
         this.statusReason = obj.statusReason;
@@ -13473,7 +13473,7 @@ export class GraphDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -13670,7 +13670,7 @@ export class GuidanceResponse extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('occurrenceDateTime')) {
-        this.occurrenceDateTime = new Date(obj.occurrenceDateTime);
+        this.occurrenceDateTime = obj.occurrenceDateTime;
       }
       if (obj.hasOwnProperty('performer')) {
         this.performer = new ResourceReference(obj.performer);
@@ -13732,10 +13732,10 @@ export class HealthcareServiceAvailableTimeComponent extends BackboneElement {
         this.allDay = obj.allDay;
       }
       if (obj.hasOwnProperty('availableStartTime')) {
-        this.availableStartTime = new Date(obj.availableStartTime);
+        this.availableStartTime = obj.availableStartTime;
       }
       if (obj.hasOwnProperty('availableEndTime')) {
-        this.availableEndTime = new Date(obj.availableEndTime);
+        this.availableEndTime = obj.availableEndTime;
       }
     }
   }
@@ -14048,7 +14048,7 @@ export class ImagingStudySeriesComponent extends BackboneElement {
         }
       }
       if (obj.hasOwnProperty('started')) {
-        this.started = new Date(obj.started);
+        this.started = obj.started;
       }
       if (obj.hasOwnProperty('performer')) {
         this.performer = [];
@@ -14115,7 +14115,7 @@ export class ImagingStudy extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('started')) {
-        this.started = new Date(obj.started);
+        this.started = obj.started;
       }
       if (obj.hasOwnProperty('basedOn')) {
         this.basedOn = [];
@@ -14222,10 +14222,10 @@ export class ImmunizationEducationComponent extends BackboneElement {
         this.reference = obj.reference;
       }
       if (obj.hasOwnProperty('publicationDate')) {
-        this.publicationDate = new Date(obj.publicationDate);
+        this.publicationDate = obj.publicationDate;
       }
       if (obj.hasOwnProperty('presentationDate')) {
-        this.presentationDate = new Date(obj.presentationDate);
+        this.presentationDate = obj.presentationDate;
       }
     }
   }
@@ -14316,7 +14316,7 @@ export class Immunization extends DomainResource {
         this.occurrence = new Element(obj.occurrence);
       }
       if (obj.hasOwnProperty('recorded')) {
-        this.recorded = new Date(obj.recorded);
+        this.recorded = obj.recorded;
       }
       if (obj.hasOwnProperty('primarySource')) {
         this.primarySource = obj.primarySource;
@@ -14334,7 +14334,7 @@ export class Immunization extends DomainResource {
         this.lotNumber = obj.lotNumber;
       }
       if (obj.hasOwnProperty('expirationDate')) {
-        this.expirationDate = new Date(obj.expirationDate);
+        this.expirationDate = obj.expirationDate;
       }
       if (obj.hasOwnProperty('site')) {
         this.site = new CodeableConcept(obj.site);
@@ -14436,7 +14436,7 @@ export class ImmunizationEvaluation extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('authority')) {
         this.authority = new ResourceReference(obj.authority);
@@ -14484,7 +14484,7 @@ export class ImmunizationRecommendationDateCriterionComponent extends BackboneEl
         this.code = new CodeableConcept(obj.code);
       }
       if (obj.hasOwnProperty('value')) {
-        this.value = new Date(obj.value);
+        this.value = obj.value;
       }
     }
   }
@@ -14588,7 +14588,7 @@ export class ImmunizationRecommendation extends DomainResource {
         this.patient = new ResourceReference(obj.patient);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('authority')) {
         this.authority = new ResourceReference(obj.authority);
@@ -15064,7 +15064,7 @@ export class ImplementationGuide extends DomainResource implements IImplementati
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -15575,7 +15575,7 @@ export class Invoice extends DomainResource {
         this.recipient = new ResourceReference(obj.recipient);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('participant')) {
         this.participant = [];
@@ -15647,10 +15647,10 @@ export class ItemInstance extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('manufactureDate')) {
-        this.manufactureDate = new Date(obj.manufactureDate);
+        this.manufactureDate = obj.manufactureDate;
       }
       if (obj.hasOwnProperty('expiryDate')) {
-        this.expiryDate = new Date(obj.expiryDate);
+        this.expiryDate = obj.expiryDate;
       }
       if (obj.hasOwnProperty('currentSWVersion')) {
         this.currentSWVersion = obj.currentSWVersion;
@@ -15781,7 +15781,7 @@ export class Library extends DomainResource {
         this.subject = new Element(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -15817,10 +15817,10 @@ export class Library extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -15944,7 +15944,7 @@ export class ListEntryComponent extends BackboneElement {
         this.deleted = obj.deleted;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('item')) {
         this.item = new ResourceReference(obj.item);
@@ -15998,7 +15998,7 @@ export class List extends DomainResource {
         this.encounter = new ResourceReference(obj.encounter);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('source')) {
         this.source = new ResourceReference(obj.source);
@@ -16064,10 +16064,10 @@ export class LocationHoursOfOperationComponent extends BackboneElement {
         this.allDay = obj.allDay;
       }
       if (obj.hasOwnProperty('openingTime')) {
-        this.openingTime = new Date(obj.openingTime);
+        this.openingTime = obj.openingTime;
       }
       if (obj.hasOwnProperty('closingTime')) {
-        this.closingTime = new Date(obj.closingTime);
+        this.closingTime = obj.closingTime;
       }
     }
   }
@@ -16191,7 +16191,7 @@ export class MarketingStatus extends BackboneElement {
         this.dateRange = new Period(obj.dateRange);
       }
       if (obj.hasOwnProperty('restoreDate')) {
-        this.restoreDate = new Date(obj.restoreDate);
+        this.restoreDate = obj.restoreDate;
       }
     }
   }
@@ -16381,7 +16381,7 @@ export class Measure extends DomainResource {
         this.subject = new Element(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -16417,10 +16417,10 @@ export class Measure extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -16675,7 +16675,7 @@ export class MeasureReport extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('reporter')) {
         this.reporter = new ResourceReference(obj.reporter);
@@ -16771,7 +16771,7 @@ export class Media extends DomainResource {
         this.created = new Element(obj.created);
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('operator')) {
         this.operator = new ResourceReference(obj.operator);
@@ -16851,7 +16851,7 @@ export class MedicationBatchComponent extends BackboneElement {
         this.lotNumber = obj.lotNumber;
       }
       if (obj.hasOwnProperty('expirationDate')) {
-        this.expirationDate = new Date(obj.expirationDate);
+        this.expirationDate = obj.expirationDate;
       }
       if (obj.hasOwnProperty('serialNumber')) {
         this.serialNumber = obj.serialNumber;
@@ -17210,10 +17210,10 @@ export class MedicationDispense extends DomainResource {
         this.daysSupply = new SimpleQuantity(obj.daysSupply);
       }
       if (obj.hasOwnProperty('whenPrepared')) {
-        this.whenPrepared = new Date(obj.whenPrepared);
+        this.whenPrepared = obj.whenPrepared;
       }
       if (obj.hasOwnProperty('whenHandedOver')) {
-        this.whenHandedOver = new Date(obj.whenHandedOver);
+        this.whenHandedOver = obj.whenHandedOver;
       }
       if (obj.hasOwnProperty('destination')) {
         this.destination = new ResourceReference(obj.destination);
@@ -17885,7 +17885,7 @@ export class MedicationRequest extends DomainResource {
         }
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -18039,7 +18039,7 @@ export class MedicationStatement extends DomainResource {
         this.effective = new Element(obj.effective);
       }
       if (obj.hasOwnProperty('dateAsserted')) {
-        this.dateAsserted = new Date(obj.dateAsserted);
+        this.dateAsserted = obj.dateAsserted;
       }
       if (obj.hasOwnProperty('informationSource')) {
         this.informationSource = new ResourceReference(obj.informationSource);
@@ -18165,7 +18165,7 @@ export class MedicinalProductManufacturingBusinessOperationComponent extends Bac
         this.authorisationReferenceNumber = new Identifier(obj.authorisationReferenceNumber);
       }
       if (obj.hasOwnProperty('effectiveDate')) {
-        this.effectiveDate = new Date(obj.effectiveDate);
+        this.effectiveDate = obj.effectiveDate;
       }
       if (obj.hasOwnProperty('confidentialityIndicator')) {
         this.confidentialityIndicator = new CodeableConcept(obj.confidentialityIndicator);
@@ -18211,7 +18211,7 @@ export class MedicinalProductSpecialDesignationComponent extends BackboneElement
         this.status = new CodeableConcept(obj.status);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('species')) {
         this.species = new CodeableConcept(obj.species);
@@ -18495,10 +18495,10 @@ export class MedicinalProductAuthorization extends DomainResource {
         this.status = new CodeableConcept(obj.status);
       }
       if (obj.hasOwnProperty('statusDate')) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.hasOwnProperty('restoreDate')) {
-        this.restoreDate = new Date(obj.restoreDate);
+        this.restoreDate = obj.restoreDate;
       }
       if (obj.hasOwnProperty('validityPeriod')) {
         this.validityPeriod = new Period(obj.validityPeriod);
@@ -18507,10 +18507,10 @@ export class MedicinalProductAuthorization extends DomainResource {
         this.dataExclusivityPeriod = new Period(obj.dataExclusivityPeriod);
       }
       if (obj.hasOwnProperty('dateOfFirstAuthorization')) {
-        this.dateOfFirstAuthorization = new Date(obj.dateOfFirstAuthorization);
+        this.dateOfFirstAuthorization = obj.dateOfFirstAuthorization;
       }
       if (obj.hasOwnProperty('internationalBirthDate')) {
-        this.internationalBirthDate = new Date(obj.internationalBirthDate);
+        this.internationalBirthDate = obj.internationalBirthDate;
       }
       if (obj.hasOwnProperty('legalBasis')) {
         this.legalBasis = new CodeableConcept(obj.legalBasis);
@@ -19835,7 +19835,7 @@ export class MessageDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -20110,7 +20110,7 @@ export class NamingSystem extends DomainResource {
         this.kind = obj.kind;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -20396,7 +20396,7 @@ export class NutritionOrder extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('dateTime')) {
-        this.dateTime = new Date(obj.dateTime);
+        this.dateTime = obj.dateTime;
       }
       if (obj.hasOwnProperty('orderer')) {
         this.orderer = new ResourceReference(obj.orderer);
@@ -20742,7 +20742,7 @@ export class OperationDefinition extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -21178,7 +21178,7 @@ export class Patient extends DomainResource {
         this.gender = obj.gender;
       }
       if (obj.hasOwnProperty('birthDate')) {
-        this.birthDate = new Date(obj.birthDate);
+        this.birthDate = obj.birthDate;
       }
       if (obj.hasOwnProperty('deceased')) {
         this.deceased = new Element(obj.deceased);
@@ -21264,10 +21264,10 @@ export class PaymentNotice extends DomainResource {
         this.response = new ResourceReference(obj.response);
       }
       if (obj.hasOwnProperty('statusDate')) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('target')) {
         this.target = new ResourceReference(obj.target);
@@ -21311,7 +21311,7 @@ export class PaymentReconciliationDetailsComponent extends BackboneElement {
         this.payee = new ResourceReference(obj.payee);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('amount')) {
         this.amount = new Money(obj.amount);
@@ -21371,7 +21371,7 @@ export class PaymentReconciliation extends DomainResource {
         this.period = new Period(obj.period);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('organization')) {
         this.organization = new ResourceReference(obj.organization);
@@ -21467,7 +21467,7 @@ export class Person extends DomainResource {
         this.gender = obj.gender;
       }
       if (obj.hasOwnProperty('birthDate')) {
-        this.birthDate = new Date(obj.birthDate);
+        this.birthDate = obj.birthDate;
       }
       if (obj.hasOwnProperty('address')) {
         this.address = [];
@@ -21858,7 +21858,7 @@ export class PlanDefinition extends DomainResource {
         this.subject = new Element(obj.subject);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -21894,10 +21894,10 @@ export class PlanDefinition extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -22034,7 +22034,7 @@ export class Practitioner extends DomainResource implements IPractitioner {
         this.gender = obj.gender;
       }
       if (obj.hasOwnProperty('birthDate')) {
-        this.birthDate = new Date(obj.birthDate);
+        this.birthDate = obj.birthDate;
       }
       if (obj.hasOwnProperty('photo')) {
         this.photo = [];
@@ -22075,10 +22075,10 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
         this.allDay = obj.allDay;
       }
       if (obj.hasOwnProperty('availableStartTime')) {
-        this.availableStartTime = new Date(obj.availableStartTime);
+        this.availableStartTime = obj.availableStartTime;
       }
       if (obj.hasOwnProperty('availableEndTime')) {
-        this.availableEndTime = new Date(obj.availableEndTime);
+        this.availableEndTime = obj.availableEndTime;
       }
     }
   }
@@ -22514,7 +22514,7 @@ export class ServiceRequest extends DomainResource {
         this.asNeeded = new Element(obj.asNeeded);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -22657,7 +22657,7 @@ export class ProcessRequest extends DomainResource {
         this.target = new ResourceReference(obj.target);
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('provider')) {
         this.provider = new ResourceReference(obj.provider);
@@ -22740,7 +22740,7 @@ export class ProcessResponse extends DomainResource {
         this.status = obj.status;
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('organization')) {
         this.organization = new ResourceReference(obj.organization);
@@ -22863,7 +22863,7 @@ export class Provenance extends DomainResource {
         this.occurred = new Element(obj.occurred);
       }
       if (obj.hasOwnProperty('recorded')) {
-        this.recorded = new Date(obj.recorded);
+        this.recorded = obj.recorded;
       }
       if (obj.hasOwnProperty('policy')) {
         this.policy = obj.policy;
@@ -23105,7 +23105,7 @@ export class Questionnaire extends DomainResource {
         this.subjectType = obj.subjectType;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -23138,10 +23138,10 @@ export class Questionnaire extends DomainResource {
         this.copyright = obj.copyright;
       }
       if (obj.hasOwnProperty('approvalDate')) {
-        this.approvalDate = new Date(obj.approvalDate);
+        this.approvalDate = obj.approvalDate;
       }
       if (obj.hasOwnProperty('lastReviewDate')) {
-        this.lastReviewDate = new Date(obj.lastReviewDate);
+        this.lastReviewDate = obj.lastReviewDate;
       }
       if (obj.hasOwnProperty('effectivePeriod')) {
         this.effectivePeriod = new Period(obj.effectivePeriod);
@@ -23265,7 +23265,7 @@ export class QuestionnaireResponse extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('authored')) {
-        this.authored = new Date(obj.authored);
+        this.authored = obj.authored;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -23346,7 +23346,7 @@ export class RelatedPerson extends DomainResource {
         this.gender = obj.gender;
       }
       if (obj.hasOwnProperty('birthDate')) {
-        this.birthDate = new Date(obj.birthDate);
+        this.birthDate = obj.birthDate;
       }
       if (obj.hasOwnProperty('address')) {
         this.address = [];
@@ -23590,7 +23590,7 @@ export class RequestGroup extends DomainResource {
         this.context = new ResourceReference(obj.context);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('author')) {
         this.author = new ResourceReference(obj.author);
@@ -24158,7 +24158,7 @@ export class SearchParameter extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -24666,10 +24666,10 @@ export class Slot extends DomainResource {
         this.status = obj.status;
       }
       if (obj.hasOwnProperty('start')) {
-        this.start = new Date(obj.start);
+        this.start = obj.start;
       }
       if (obj.hasOwnProperty('end')) {
-        this.end = new Date(obj.end);
+        this.end = obj.end;
       }
       if (obj.hasOwnProperty('overbooked')) {
         this.overbooked = obj.overbooked;
@@ -24824,7 +24824,7 @@ export class Specimen extends DomainResource {
         this.subject = new ResourceReference(obj.subject);
       }
       if (obj.hasOwnProperty('receivedTime')) {
-        this.receivedTime = new Date(obj.receivedTime);
+        this.receivedTime = obj.receivedTime;
       }
       if (obj.hasOwnProperty('parent')) {
         this.parent = [];
@@ -25352,7 +25352,7 @@ export class StructureMap extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -25454,7 +25454,7 @@ export class Subscription extends DomainResource {
         }
       }
       if (obj.hasOwnProperty('end')) {
-        this.end = new Date(obj.end);
+        this.end = obj.end;
       }
       if (obj.hasOwnProperty('reason')) {
         this.reason = obj.reason;
@@ -25491,7 +25491,7 @@ export class SubstanceInstanceComponent extends BackboneElement {
         this.identifier = new Identifier(obj.identifier);
       }
       if (obj.hasOwnProperty('expiry')) {
-        this.expiry = new Date(obj.expiry);
+        this.expiry = obj.expiry;
       }
       if (obj.hasOwnProperty('quantity')) {
         this.quantity = new SimpleQuantity(obj.quantity);
@@ -26288,7 +26288,7 @@ export class SubstanceSpecificationSubstanceCodeComponent extends BackboneElemen
         this.status = new CodeableConcept(obj.status);
       }
       if (obj.hasOwnProperty('statusDate')) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.hasOwnProperty('comment')) {
         this.comment = obj.comment;
@@ -26316,7 +26316,7 @@ export class SubstanceSpecificationOfficialNameComponent extends BackboneElement
         this.status = new CodeableConcept(obj.status);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
     }
   }
@@ -26603,7 +26603,7 @@ export class SupplyRequest extends DomainResource {
         this.occurrence = new Element(obj.occurrence);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -26796,10 +26796,10 @@ export class Task extends DomainResource {
         this.executionPeriod = new Period(obj.executionPeriod);
       }
       if (obj.hasOwnProperty('authoredOn')) {
-        this.authoredOn = new Date(obj.authoredOn);
+        this.authoredOn = obj.authoredOn;
       }
       if (obj.hasOwnProperty('lastModified')) {
-        this.lastModified = new Date(obj.lastModified);
+        this.lastModified = obj.lastModified;
       }
       if (obj.hasOwnProperty('requester')) {
         this.requester = new ResourceReference(obj.requester);
@@ -27127,7 +27127,7 @@ export class TerminologyCapabilities extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -27412,7 +27412,7 @@ export class TestReport extends DomainResource {
         this.tester = obj.tester;
       }
       if (obj.hasOwnProperty('issued')) {
-        this.issued = new Date(obj.issued);
+        this.issued = obj.issued;
       }
       if (obj.hasOwnProperty('participant')) {
         this.participant = [];
@@ -28179,7 +28179,7 @@ export class TestScript extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -28342,10 +28342,10 @@ export class UserSession extends DomainResource {
         }
       }
       if (obj.hasOwnProperty('created')) {
-        this.created = new Date(obj.created);
+        this.created = obj.created;
       }
       if (obj.hasOwnProperty('expires')) {
-        this.expires = new Date(obj.expires);
+        this.expires = obj.expires;
       }
       if (obj.hasOwnProperty('context')) {
         this.context = [];
@@ -28473,7 +28473,7 @@ export class ValueSetComposeComponent extends BackboneElement {
     super(obj);
     if (obj) {
       if (obj.hasOwnProperty('lockedDate')) {
-        this.lockedDate = new Date(obj.lockedDate);
+        this.lockedDate = obj.lockedDate;
       }
       if (obj.hasOwnProperty('inactive')) {
         this.inactive = obj.inactive;
@@ -28576,7 +28576,7 @@ export class ValueSetExpansionComponent extends BackboneElement {
         this.identifier = obj.identifier;
       }
       if (obj.hasOwnProperty('timestamp')) {
-        this.timestamp = new Date(obj.timestamp);
+        this.timestamp = obj.timestamp;
       }
       if (obj.hasOwnProperty('total')) {
         this.total = obj.total;
@@ -28650,7 +28650,7 @@ export class ValueSet extends DomainResource {
         this.experimental = obj.experimental;
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('publisher')) {
         this.publisher = obj.publisher;
@@ -28727,7 +28727,7 @@ export class VerificationResultPrimarySourceComponent extends BackboneElement {
         this.validationStatus = new CodeableConcept(obj.validationStatus);
       }
       if (obj.hasOwnProperty('validationDate')) {
-        this.validationDate = new Date(obj.validationDate);
+        this.validationDate = obj.validationDate;
       }
       if (obj.hasOwnProperty('canPushUpdates')) {
         this.canPushUpdates = new CodeableConcept(obj.canPushUpdates);
@@ -28766,7 +28766,7 @@ export class VerificationResultAttestationComponent extends BackboneElement {
         this.method = new CodeableConcept(obj.method);
       }
       if (obj.hasOwnProperty('date')) {
-        this.date = new Date(obj.date);
+        this.date = obj.date;
       }
       if (obj.hasOwnProperty('sourceIdentityCertificate')) {
         this.sourceIdentityCertificate = obj.sourceIdentityCertificate;
@@ -28843,7 +28843,7 @@ export class VerificationResult extends DomainResource {
         this.status = obj.status;
       }
       if (obj.hasOwnProperty('statusDate')) {
-        this.statusDate = new Date(obj.statusDate);
+        this.statusDate = obj.statusDate;
       }
       if (obj.hasOwnProperty('validationType')) {
         this.validationType = new CodeableConcept(obj.validationType);
@@ -28858,10 +28858,10 @@ export class VerificationResult extends DomainResource {
         this.frequency = new Timing(obj.frequency);
       }
       if (obj.hasOwnProperty('lastPerformed')) {
-        this.lastPerformed = new Date(obj.lastPerformed);
+        this.lastPerformed = obj.lastPerformed;
       }
       if (obj.hasOwnProperty('nextScheduled')) {
-        this.nextScheduled = new Date(obj.nextScheduled);
+        this.nextScheduled = obj.nextScheduled;
       }
       if (obj.hasOwnProperty('failureAction')) {
         this.failureAction = new CodeableConcept(obj.failureAction);
@@ -29006,7 +29006,7 @@ export class VisionPrescription extends DomainResource {
         this.encounter = new ResourceReference(obj.encounter);
       }
       if (obj.hasOwnProperty('dateWritten')) {
-        this.dateWritten = new Date(obj.dateWritten);
+        this.dateWritten = obj.dateWritten;
       }
       if (obj.hasOwnProperty('prescriber')) {
         this.prescriber = new ResourceReference(obj.prescriber);
