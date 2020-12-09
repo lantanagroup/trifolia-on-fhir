@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -191,7 +191,7 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">MSWord Export Format</span></span></h3>
 <p class="rvps2"><span class="rvts6">A new export format is added to produce an MS Word (docx) document for an implementation guide. This MSWord export format is intended only to be used for tech editing and review purposes, and is not intended for publication/distribution. The document exports narrative content that may require tech editing (grammar, spelling, etc.), such as the implementation guide's description, pages, profile's description, and more.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Support for package-list.json</span></span></h3>
-<p class="rvps2"><span class="rvts6">The HL7 IG Publisher recently requires that a </span><a class="rvts11" href="https://wiki.hl7.org/FHIR_IG_PackageList_doco" target="_blank">package-list.json</a><span class="rvts6">&nbsp;file be present in the export. The package-list.json file is intended to provide a history of versions of the implementation guide, as well as some meta-data that is not available in the ImplementationGuide resource, such as the "Canonical URL" of the implementation guide. To satisfy this requirement, users can create a package-list.json definition in the "Edit Implementation Guide" screen's Other tab. When specified, the package-list.json file is included in the HTML export and in the Publish process.</span></p>
+<p class="rvps2"><span class="rvts6">The HL7 IG Publisher recently requires that a </span><a class="rvts11" href="https://wiki.hl7.org/FHIR_IG_PackageList_doco" target="_blank">package-list.json</a><span class="rvts6"> file be present in the export. The package-list.json file is intended to provide a history of versions of the implementation guide, as well as some meta-data that is not available in the ImplementationGuide resource, such as the "Canonical URL" of the implementation guide. To satisfy this requirement, users can create a package-list.json definition in the "Edit Implementation Guide" screen's Other tab. When specified, the package-list.json file is included in the HTML export and in the Publish process.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Profile Intro/Notes</span></span></h3>
 <p class="rvps2"><span class="rvts6">New fields for "Intro" and "Notes" have been added to the "Edit Profile" screen's Narrative tab. The intro and notes are included in published profile page.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Profile Elements</span></span></h3>
@@ -201,42 +201,43 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (28)</span></span></h3>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts96">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-147">TRIFFHIR-147</a><span class="rvts97">] - Create export format for "Tech Edit Document"</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-284">TRIFFHIR-284</a><span class="rvts97">] - Create audit records for changes to resources</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-298">TRIFFHIR-298</a><span class="rvts97">] - Add "intro" and "notes" fields to profile editing screen and enhance export</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-307">TRIFFHIR-307</a><span class="rvts97">] - Support IG parameters for new template</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-319">TRIFFHIR-319</a><span class="rvts97">] - Allow user to select template and version from publish screen</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-322">TRIFFHIR-322</a><span class="rvts97">] - Generating snapshots when saving and loading</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-147">TRIFFHIR-147</a><span class="rvts97">] - Create export format for "Tech Edit Document"</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-284">TRIFFHIR-284</a><span class="rvts97">] - Create audit records for changes to resources</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-298">TRIFFHIR-298</a><span class="rvts97">] - Add "intro" and "notes" fields to profile editing screen and enhance export</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-307">TRIFFHIR-307</a><span class="rvts97">] - Support IG parameters for new template</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-319">TRIFFHIR-319</a><span class="rvts97">] - Allow user to select template and version from publish screen</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-322">TRIFFHIR-322</a><span class="rvts97">] - Generating snapshots when saving and loading</span></li>
 </ul>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts99">Defects</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-87">TRIFFHIR-87</a><span class="rvts97">] - View FHIR Implementation Guide generates "The specified page could not be found" error</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-178">TRIFFHIR-178</a><span class="rvts97">] - Editing Pages pop-up module (text-box) disappears when dragging a clicked mouse from inside to outside of module</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-210">TRIFFHIR-210</a><span class="rvts97">] - Errors during Export to GITHUB</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-220">TRIFFHIR-220</a><span class="rvts97">] - Wrong default FHIR version</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-245">TRIFFHIR-245</a><span class="rvts97">] - ServiceRequest/ServiceDefinition for CapabilityStatement &gt; ReST &gt; Resource &gt; Type</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-255">TRIFFHIR-255</a><span class="rvts97">] - Element profiling improvements</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-277">TRIFFHIR-277</a><span class="rvts97">] - Import text not adding file to project</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-286">TRIFFHIR-286</a><span class="rvts97">] - IG Publisher - Remove download text when "Download" = "No"</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-287">TRIFFHIR-287</a><span class="rvts97">] - Changing the Implementation Guide ID results in an error</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-297">TRIFFHIR-297</a><span class="rvts97">] - When the selected FHIR server is down, show an error message</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-303">TRIFFHIR-303</a><span class="rvts97">] - Remove non-standard characters from file name of pages when exporting</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-308">TRIFFHIR-308</a><span class="rvts97">] - User id (practitioner.id), not names, appear in permissions when creating new resources: code system and value sets</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-313">TRIFFHIR-313</a><span class="rvts97">] - Import Text option generates errors for copy/pasted XML</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-87">TRIFFHIR-87</a><span class="rvts97">] - View FHIR Implementation Guide generates "The specified page could not be found" error</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-178">TRIFFHIR-178</a><span class="rvts97">] - Editing Pages pop-up module (text-box) disappears when dragging a clicked mouse from inside to outside of module</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-210">TRIFFHIR-210</a><span class="rvts97">] - Errors during Export to GITHUB</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-220">TRIFFHIR-220</a><span class="rvts97">] - Wrong default FHIR version</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-245">TRIFFHIR-245</a><span class="rvts97">] - ServiceRequest/ServiceDefinition for CapabilityStatement &gt; ReST &gt; Resource &gt; Type</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-255">TRIFFHIR-255</a><span class="rvts97">] - Element profiling improvements</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-277">TRIFFHIR-277</a><span class="rvts97">] - Import text not adding file to project</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-286">TRIFFHIR-286</a><span class="rvts97">] - IG Publisher - Remove download text when "Download" = "No"</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-287">TRIFFHIR-287</a><span class="rvts97">] - Changing the Implementation Guide ID results in an error</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-297">TRIFFHIR-297</a><span class="rvts97">] - When the selected FHIR server is down, show an error message</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-303">TRIFFHIR-303</a><span class="rvts97">] - Remove non-standard characters from file name of pages when exporting</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-308">TRIFFHIR-308</a><span class="rvts97">] - User id (practitioner.id), not names, appear in permissions when creating new resources: code system and value sets</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-313">TRIFFHIR-313</a><span class="rvts97">] - Import Text option generates errors for copy/pasted XML</span></li>
 </ul>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts99">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-222">TRIFFHIR-222</a><span class="rvts97">] - Separate functionality for "Other Resources" into two screens</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-229">TRIFFHIR-229</a><span class="rvts97">] - Create package-list.json in the root of the IG Publisher Package</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-235">TRIFFHIR-235</a><span class="rvts97">] - Add notification (exclamation point) when a Resource contains no permissions.</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-247">TRIFFHIR-247</a><span class="rvts97">] - Add button to delete IG from "Edit" screen</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-248">TRIFFHIR-248</a><span class="rvts97">] - Update references when changing the ID of a resource</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-288">TRIFFHIR-288</a><span class="rvts97">] - Ability to Export a Transaction Bundle</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-320">TRIFFHIR-320</a><span class="rvts97">] - Remove 'Introduction' header so only 'Description' remains</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-324">TRIFFHIR-324</a><span class="rvts97">] - Support elementdefinition-profile-element extension in type settings within editor</span></li>
-<li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-326">TRIFFHIR-326</a><span class="rvts97">] - Allow editing flags and cardinality from element table</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-222">TRIFFHIR-222</a><span class="rvts97">] - Separate functionality for "Other Resources" into two screens</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-229">TRIFFHIR-229</a><span class="rvts97">] - Create package-list.json in the root of the IG Publisher Package</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-235">TRIFFHIR-235</a><span class="rvts97">] - Add notification (exclamation point) when a Resource contains no permissions.</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-247">TRIFFHIR-247</a><span class="rvts97">] - Add button to delete IG from "Edit" screen</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-248">TRIFFHIR-248</a><span class="rvts97">] - Update references when changing the ID of a resource</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-288">TRIFFHIR-288</a><span class="rvts97">] - Ability to Export a Transaction Bundle</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-320">TRIFFHIR-320</a><span class="rvts97">] - Remove 'Introduction' header so only 'Description' remains</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-324">TRIFFHIR-324</a><span class="rvts97">] - Support elementdefinition-profile-element extension in type settings within editor</span></li>
+ <li class="rvps2"><span class="rvts97">[</span><a class="rvts98" href="https://trifolia.atlassian.net/browse/TRIFFHIR-326">TRIFFHIR-326</a><span class="rvts97">] - Allow editing flags and cardinality from element table</span></li>
 </ul>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com">Free EPub and documentation generator</a></p>
 
             </div>
             
@@ -267,29 +268,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

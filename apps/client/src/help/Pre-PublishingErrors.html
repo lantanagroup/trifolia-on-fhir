@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,73 +185,87 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps29"><span class="rvts65">Common Pre-publishing Errors</span></p>
-<p class="rvps29"><span class="rvts66"><br/></span></p>
-<p class="rvps29"><span class="rvts67">A pre-publishing error has occurred when the string of codes results in IG Publisher finished with code 1. This means that there’s an error in your implementation guide (IG) that needs to be resolved before Trifolia-on-FHIR can publish the IG. This guide provides the steps for resolving these pre-publishing error examples:</span></p>
-<p class="rvps29"><span class="rvts67"><br/></span></p>
+<p class="rvps28"><span class="rvts62">Common Pre-publishing Errors</span></p>
+<p class="rvps28"><span class="rvts63"><br/></span></p>
+<p class="rvps28"><span class="rvts64">A pre-publishing error has occurred when the string of codes results in IG Publisher finished with code 1. This means that there’s an error in your implementation guide (IG) that needs to be resolved before Trifolia-on-FHIR can publish the IG. This guide provides the steps for resolving these pre-publishing error examples:</span></p>
+<p class="rvps28"><span class="rvts64"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">IG Version</span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">Generating Snapshot</span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">IG Package ID</span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">Terminology server connection</span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">Dependency</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">IG Version</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">Generating Snapshot</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">IG Package ID</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">Terminology server connection</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">Dependency</span></li>
 </ul>
-<p class="rvps29"><span class="rvts67"><br/></span></p>
-<p class="rvps29"><span class="rvts67">For other pre-publishing errors, go to </span><a class="rvts68" href="https://chat.fhir.org/login/" target="_blank">chat.fhir.org</a><span class="rvts67">. </span></p>
-<p class="rvps29"><span class="rvts65">&nbsp;</span></p>
-<p class="rvps29"><span class="rvts65">Identifying the Error</span></p>
-<p class="rvps29"><span class="rvts65"><br/></span></p>
-<p class="rvps29"><span class="rvts67">To identify the type of error, follow these steps: &nbsp;</span></p>
+<p class="rvps28"><span class="rvts64"><br/></span></p>
+<p class="rvps28"><span class="rvts64">For other pre-publishing errors, go to </span><a class="rvts65" href="https://chat.fhir.org/login/" target="_blank">chat.fhir.org</a><span class="rvts64">.&nbsp;</span></p>
+<p class="rvps28"><span class="rvts62">&nbsp;</span></p>
+<p class="rvps28"><span class="rvts62">Identifying the Error</span></p>
+<p class="rvps28"><span class="rvts62"><br/></span></p>
+<p class="rvps28"><span class="rvts64">To identify the type of error, follow these steps: &nbsp;</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" style="margin-left: 0px" class="rvps28"><span class="rvts63">In the Publishing Status text, find the phrase, “Publishing Content Failed.”</span></li>
+ <li value="1" style="margin-left: 0px" class="rvps27"><span class="rvts60">In the Publishing Status text, find the phrase, “Publishing Content Failed.”</span></li>
 </ol>
-<p class="rvps30"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error.png"></p>
-<p class="rvps30"><span class="rvts63">2. &nbsp;Look at the error message that follows this phrase to determine the type of pre-publishing error. </span></p>
-<p class="rvps30"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing error-2.png"></p>
-<p class="rvps29"><span class="rvts66">Note:</span><span class="rvts67">&nbsp;IG Version and IG Package ID errors have similar error codes. Look at the numbers and letters bolded for emphasis to determine which error is occurring. </span></p>
-<p class="rvps29"><span class="rvts67"><br/></span></p>
-<div class="rvps31"><table border="1" cellpadding="4" cellspacing="-1" style="border-width: 0px; border-collapse: collapse;">
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts66">Error Message</span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts66">Type of Pre-publishing Error</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts67">Fatal error during transformation using XXXXXX-</span><span class="rvts66">1t1UQG0X5t3Cm</span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><a class="rvts68" href="IGVersion.html">IG Version</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts67">Error generating snapshot </span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><a class="rvts68" href="GeneratingSnapshot.html">Generating Snapshot</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts67">Fatal error during transformation using XXXXX</span><span class="rvts69">-</span><span class="rvts66">1lBB6wlpjUFlB</span></p>
-</td>
-<td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><a class="rvts68" href="IGPackageID.html">IG Package ID</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts67">Unable to connect to terminology server</span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><a class="rvts68" href="TerminologyServerConnection.html">Terminology Server Connection</a></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><span class="rvts67">The package “hl7.fhir.us” has no entry on the current build server</span></p>
-</td>
-<td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;"><p class="rvps25"><a class="rvts68" href="Dependency.html">Dependency</a></p>
-</td>
-</tr>
+<p class="rvps29"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing%20error.png"></p>
+<p class="rvps29"><span class="rvts60">2. &nbsp;Look at the error message that follows this phrase to determine the type of pre-publishing error.&nbsp;</span></p>
+<p class="rvps29"><img width="608" height="220" alt="" style="padding : 1px;" src="lib/publishing%20error-2.png"></p>
+<p class="rvps28"><span class="rvts63">Note:</span><span class="rvts64"> IG Version and IG Package ID errors have similar error codes. Look at the numbers and letters bolded for emphasis to determine which error is occurring.&nbsp;</span></p>
+<p class="rvps28"><span class="rvts64"><br/></span></p>
+<div class="rvps30">
+<table border="1" cellpadding="4" cellspacing="-1" style="border-width: 0px; border-collapse: collapse;">
+ <tr valign="top">
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts63">Error Message</span></p>
+  </td>
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts63">Type of Pre-publishing Error</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts64">Fatal error during transformation using XXXXXX-</span><span class="rvts63">1t1UQG0X5t3Cm</span></p>
+  </td>
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><a class="rvts65" href="IGVersion.html">IG Version</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts64">Error generating snapshot&nbsp;</span></p>
+  </td>
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><a class="rvts65" href="GeneratingSnapshot.html">Generating Snapshot</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts64">Fatal error during transformation using XXXXX</span><span class="rvts66">-</span><span class="rvts63">1lBB6wlpjUFlB</span></p>
+  </td>
+  <td width="297" height="43" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><a class="rvts65" href="IGPackageID.html">IG Package ID</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts64">Unable to connect to terminology server</span></p>
+  </td>
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><a class="rvts65" href="TerminologyServerConnection.html">Terminology Server Connection</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><span class="rvts64">The package “hl7.fhir.us” has no entry on the current build server</span></p>
+  </td>
+  <td width="297" valign="top" style="border-width : 1px; border-color: #000000; border-style: solid; padding: 0px 7px;">
+   <p class="rvps24"><a class="rvts65" href="Dependency.html">Dependency</a></p>
+  </td>
+ </tr>
 </table>
 </div>
-<p class="rvps29"><span class="rvts67"><br/></span></p>
-<p class="rvps30"><span class="rvts63"><br/></span></p>
+<p class="rvps28"><span class="rvts64"><br/></span></p>
+<p class="rvps29"><span class="rvts60"><br/></span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com">Full-featured Documentation generator</a></p>
 
             </div>
             
@@ -282,29 +296,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,41 +185,42 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps9"><span class="rvts0"><span class="rvts29">Guidelines and Best Practices</span></span></h1>
-<p class="rvps2"><span class="rvts6">Trifolia-on-FHIR has the functionality to allow users to completely customize resources. By following these guidelines, users can ensure the FHIR publisher successfully processes the Implementation Guide. </span></p>
+<h1 class="rvps8"><span class="rvts0"><span class="rvts27">Guidelines and Best Practices</span></span></h1>
+<p class="rvps2"><span class="rvts6">Trifolia-on-FHIR has the functionality to allow users to completely customize resources. By following these guidelines, users can ensure the FHIR publisher successfully processes the Implementation Guide.&nbsp;</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Implementation Guide</span></span></h2>
-<p class="rvps2"><span class="rvts6">An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher. </span></p>
+<p class="rvps2"><span class="rvts6">An implementation guide (IG) is a set of rules about how FHIR resources are used (or should be used) to solve a particular problem, with associated documentation to support and clarify the usage. Classically, FHIR implementation guides are published on the web after they are generated using the FHIR Implementation Guide Publisher.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6">The ImplementationGuide resource is a single resource that defines the logical content of the IG, along with the important entry pages into the publication, so that the logical package that the IG represents, so that the contents are computable. In particular, validators are able to use the ImplementationGuide resource to validate content against the implementation guide as a whole. The significant conformance expectation introduced by the ImplementationGuide resource is the idea of Default Profiles. Implementations may conform to multiple implementation guides at once, but this requires that the implementation guides are compatible.</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts6">The URL of the Implementation Guide must be in the format of </span><span class="rvts43">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts6">. For example: </span><span class="rvts43">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
-<li class="rvps2"><span class="rvts6">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts43">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts6">, the id must be "</span><span class="rvts43">myproject-ig</span><span class="rvts6">". Users can select the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
-<li class="rvps2"><span class="rvts6">The Implementation Guide should have a description. The main screen of the FHIR IG Publisher export displays the description.</span></li>
-<li class="rvps2"><span class="rvts6">All contacts in the Implementation Guide appear as authors in the FHIR IG Publisher export.</span></li>
-<li class="rvps2"><span class="rvts6">ToF only exports resources referenced directly within the Implementation Guide resource. Confirm the Implementation Guide resource references all resources.</span></li>
+ <li class="rvps2"><span class="rvts6">The URL of the Implementation Guide must be in the format of </span><span class="rvts40">http[s]://xxx.yyy/zzz/aaa/ImplementationGuide/my-ig-id</span><span class="rvts6">. For example: </span><span class="rvts40">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span></li>
+ <li class="rvps2"><span class="rvts6">The "id" of the implementation guide must align with the URL of the implementation guide. For example: If the URL of your implementation guide is </span><span class="rvts40">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts6">, the id must be "</span><span class="rvts40">myproject-ig</span><span class="rvts6">". Users can select the "Change this resource's ID" button on the "Browse Implementation Guide" screen.</span></li>
+ <li class="rvps2"><span class="rvts6">The Implementation Guide should have a description. The main screen of the FHIR IG Publisher export displays the description.</span></li>
+ <li class="rvps2"><span class="rvts6">All contacts in the Implementation Guide appear as authors in the FHIR IG Publisher export.</span></li>
+ <li class="rvps2"><span class="rvts6">ToF only exports resources referenced directly within the Implementation Guide resource. Confirm the Implementation Guide resource references all resources.</span></li>
 </ul>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Resources</span></span></h2>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts47">The FHIR specification defines a set of resources, and an infrastructure for handling resources. In order to use FHIR to create solutions for integration requirements, implementers must map their problems to resources and their content.</span></span></h2>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts44">The FHIR specification defines a set of resources, and an infrastructure for handling resources. In order to use FHIR to create solutions for integration requirements, implementers must map their problems to resources and their content.</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps11"><span class="rvts34">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts44">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts34">&nbsp;then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><a class="rvts45" href="http://myproject.com/someRoot/StructureDefinition/">http://myproject.com/someRoot/StructureDefinition/</a><span class="rvts34">.</span></li>
+ <li class="rvps10"><span class="rvts31">All resources within an Implementation Guide need URLs in one format. Based on the example above, if your implementation guide's URL is </span><span class="rvts41">http://myproject.com/someRoot/ImplementationGuide/myproject-ig</span><span class="rvts31"> then all profiles (StructureDefinition resources) within the Implementation Guide must have URLs that start with </span><a class="rvts42" href="http://myproject.com/someRoot/StructureDefinition/">http://myproject.com/someRoot/StructureDefinition/</a><span class="rvts31">.</span></li>
 </ul>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Creating an Implementation Guide in Trifolia on FHIR</span></span></h2>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps2"><span class="rvts6">Open and log into Trifolia-on-FHIR.</span></li>
-<li value="2" class="rvps2"><span class="rvts6">Select File &gt; New Project.</span></li>
-<li value="3" class="rvps2"><span class="rvts6">Specify an ID that is unique to your IG (e.g., test-ig).</span></li>
-<li value="4" class="rvps2"><span class="rvts6">Specify a URL unique to your IG (e.g., http://test.com/fhir/implementationguide/test-ig). The last leaf/level of the URL should match the ID to prevent errors during publishing.</span></li>
-<li value="5" class="rvps2"><span class="rvts39">Specify a name for your IG. This is the computable format of the name, used similarly (but not the same) as the ID. &nbsp;</span><span class="rvts48">A natural language name identifying the implementation guide. This name should be usable as an identifier for the module by machine processing applications such as code generation.</span></li>
-<li value="6" class="rvps2"><span class="rvts39">Specify a title for your IG. </span><span class="rvts48">A short, descriptive, user-friendly title for the implementation guide. </span><span class="rvts39">This is what is displayed to readers of the IG. &nbsp;</span></li>
-<li value="7" class="rvps2"><span class="rvts6">Specify a Package ID. If developing an HL7 IG, you will receive this information pending PSS approval.</span></li>
-<li value="8" class="rvps2"><span class="rvts6">Define permissions using the “Permissions” tab.</span></li>
-<li value="9" class="rvps2"><span class="rvts6">Save the IG. It is now set as the project you are working on.</span></li>
+ <li value="1" class="rvps2"><span class="rvts6">Open and log into Trifolia-on-FHIR.</span></li>
+ <li value="2" class="rvps2"><span class="rvts6">Select File &gt; New Project.</span></li>
+ <li value="3" class="rvps2"><span class="rvts6">Specify an ID that is unique to your IG (e.g., test-ig).</span></li>
+ <li value="4" class="rvps2"><span class="rvts6">Specify a URL unique to your IG (e.g., http://test.com/fhir/implementationguide/test-ig). The last leaf/level of the URL should match the ID to prevent errors during publishing.</span></li>
+ <li value="5" class="rvps2"><span class="rvts36">Specify a name for your IG. This is the computable format of the name, used similarly (but not the same) as the ID. &nbsp;</span><span class="rvts45">A natural language name identifying the implementation guide. This name should be usable as an identifier for the module by machine processing applications such as code generation.</span></li>
+ <li value="6" class="rvps2"><span class="rvts36">Specify a title for your IG. </span><span class="rvts45">A short, descriptive, user-friendly title for the implementation guide. </span><span class="rvts36">This is what is displayed to readers of the IG. &nbsp;</span></li>
+ <li value="7" class="rvps2"><span class="rvts6">Specify a Package ID. If developing an HL7 IG, you will receive this information pending PSS approval.</span></li>
+ <li value="8" class="rvps2"><span class="rvts6">Define permissions using the “Permissions” tab.</span></li>
+ <li value="9" class="rvps2"><span class="rvts6">Save the IG. It is now set as the project you are working on.</span></li>
 </ol>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12"><br/></span></span></h2>
-<p class="rvps2"><span class="rvts46"><br/></span></p>
+<p class="rvps2"><span class="rvts43"><br/></span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12"><br/></span></span></h2>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15"><br/></span></span></h3>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour">Easily create Qt Help files</a></p>
 
             </div>
             
@@ -250,29 +251,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

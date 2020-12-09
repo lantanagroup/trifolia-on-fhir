@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,24 +185,25 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps2"><span class="rvts32">Overview</span></p>
+<p class="rvps2"><span class="rvts29">Overview</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts6">Open source</span></li>
-<li class="rvps2"><span class="rvts6">Web-based</span></li>
-<li class="rvps2"><span class="rvts6">Supports multiple versions of FHIR</span></li>
-<li class="rvps2"><span class="rvts6">Single interface for CDA templating and FHIR profiling</span></li>
-<li class="rvps2"><span class="rvts6">Integrated ImplementationGuide editor--supports most common profiling tasks</span></li>
-<li class="rvps2"><span class="rvts6">Exports a complete FHIR build package (zip) or standalone web-based implementation guide (IG)</span></li>
-<li class="rvps2"><span class="rvts6">FHIR API support--Includes FHIR API endpoints for each supported FHIR version</span></li>
-<li class="rvps2"><span class="rvts6">Integrated value set authoring and VSAC integration</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li style="margin-left: 0px" class="rvps10"><span class="rvts6">Supports importing value sets from VSAC </span></li>
-<li style="margin-left: 0px" class="rvps10"><span class="rvts6">Can re-use value sets created in other specifications, such as C-CDA, US-Core, etc.</span></li>
-</ul>
-<li class="rvps2"><span class="rvts6">Limited API support for conformance resources</span></li>
-<li class="rvps2"><span class="rvts6">Supports creating enumerated value sets manually in Trifolia-on-FHIR</span></li>
+ <li class="rvps2"><span class="rvts6">Open source</span></li>
+ <li class="rvps2"><span class="rvts6">Web-based</span></li>
+ <li class="rvps2"><span class="rvts6">Supports multiple versions of FHIR</span></li>
+ <li class="rvps2"><span class="rvts6">Single interface for CDA templating and FHIR profiling</span></li>
+ <li class="rvps2"><span class="rvts6">Integrated ImplementationGuide editor--supports most common profiling tasks</span></li>
+ <li class="rvps2"><span class="rvts6">Exports a complete FHIR build package (zip) or standalone web-based implementation guide (IG)</span></li>
+ <li class="rvps2"><span class="rvts6">FHIR API support--Includes FHIR API endpoints for each supported FHIR version</span></li>
+ <li class="rvps2"><span class="rvts6">Integrated value set authoring and VSAC integration</span></li>
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li style="margin-left: 0px" class="rvps9"><span class="rvts6">Supports importing value sets from VSAC&nbsp;</span></li>
+  <li style="margin-left: 0px" class="rvps9"><span class="rvts6">Can re-use value sets created in other specifications, such as C-CDA, US-Core, etc.</span></li>
+ </ul>
+ <li class="rvps2"><span class="rvts6">Limited API support for conformance resources</span></li>
+ <li class="rvps2"><span class="rvts6">Supports creating enumerated value sets manually in Trifolia-on-FHIR</span></li>
 </ul>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/create-epub-ebooks">Produce electronic books easily</a></p>
 
             </div>
             
@@ -233,29 +234,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

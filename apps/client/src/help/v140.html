@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -200,242 +200,331 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Profile editor supports data-type constraints</span></span></h3>
 <p class="rvps2"><span class="rvts6">We've added additional functionality to the profile editor that allows the user to drill deeper into the elements of a profile. This release allows the user to expand data-type elements and constrain more details about the profile.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log</span></span></h3>
-<div class="rvps2"><table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts101">Type</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts101">Key</span></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts101">Summary</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">New Feature</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-207" target="_blank">TRIFFHIR-207</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Add guided walk-through to the "Other Resources" screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">New Feature</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-184" target="_blank">TRIFFHIR-184</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Allow drill-down into data types</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">New Feature</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-163" target="_blank">TRIFFHIR-163</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Image support in ImplementationGuide</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">New Feature</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-126" target="_blank">TRIFFHIR-126</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Export and publish improvements</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-213" target="_blank">TRIFFHIR-213</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Value Sets Editor - Add VS Name to the form</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-206" target="_blank">TRIFFHIR-206</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Add guided walk-through to implementation guide editing screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-205" target="_blank">TRIFFHIR-205</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Add guided walk-through to publish screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-203" target="_blank">TRIFFHIR-203</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Add guided walk-through to import screen</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-196" target="_blank">TRIFFHIR-196</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Include selected FHIR server in the browser's URL</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-193" target="_blank">TRIFFHIR-193</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Limit users ability to constrain min[x], max[x] and maxLength</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-192" target="_blank">TRIFFHIR-192</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Limit the types available to the user for in the element definition's Binding min Value [x], max Value [x], pattern[x] and fixed[x]</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-191" target="_blank">TRIFFHIR-191</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">targetProfile doesn't allow selection of just a plain resource</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-189" target="_blank">TRIFFHIR-189</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Validate the user's entry of min and max cardinalities</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-186" target="_blank">TRIFFHIR-186</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Allow user to cancel changes to an IG's Edit Pages form</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-182" target="_blank">TRIFFHIR-182</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Show elements from base profile</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-181" target="_blank">TRIFFHIR-181</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Enabling a new item shouldn't collapse the right-hand menu</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-176" target="_blank">TRIFFHIR-176</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Use typeahead for IG selection on browse and edit profile screens</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-175" target="_blank">TRIFFHIR-175</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Add .sh and .bat files when exporting with the IG publisher jar file</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-173" target="_blank">TRIFFHIR-173</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Update publication framework to use title instead of name</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-171" target="_blank">TRIFFHIR-171</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improve readability/usability of "Type" drop down when creating new profile</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-153" target="_blank">TRIFFHIR-153</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Create new profile - Type should not default to Account</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-120" target="_blank">TRIFFHIR-120</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Clarify "Move" functionality for pages with tooltips and help documentation</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Improvement</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-62" target="_blank">TRIFFHIR-62</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Allow user to publish from "View Implementation Guide" page</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Defect</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-209" target="_blank">TRIFFHIR-209</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">An IG page that has a filename including / or \ characters crashes the publish process</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Defect</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-194" target="_blank">TRIFFHIR-194</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Import fails in DEV without meaningful message to user</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Defect</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-183" target="_blank">TRIFFHIR-183</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">HTML Export not including one of the resources referenced by the IG</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Defect</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-177" target="_blank">TRIFFHIR-177</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Implementation Guide Validation/RAW not refreshing</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="111" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Defect</span></p>
-</td>
-<td width="120" valign="middle" style="padding: 1px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-121" target="_blank">TRIFFHIR-121</a></p>
-</td>
-<td width="951" valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts26">Description field appears blank until clicked</span></p>
-</td>
-</tr>
+<div class="rvps2">
+<table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts101">Type</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts101">Key</span></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts101">Summary</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">New Feature</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-207" target="_blank">TRIFFHIR-207</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Add guided walk-through to the "Other Resources" screen</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">New Feature</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-184" target="_blank">TRIFFHIR-184</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Allow drill-down into data types</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">New Feature</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-163" target="_blank">TRIFFHIR-163</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Image support in ImplementationGuide</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">New Feature</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-126" target="_blank">TRIFFHIR-126</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Export and publish improvements</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-213" target="_blank">TRIFFHIR-213</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Value Sets Editor - Add VS Name to the form</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-206" target="_blank">TRIFFHIR-206</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Add guided walk-through to implementation guide editing screen</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-205" target="_blank">TRIFFHIR-205</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Add guided walk-through to publish screen</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-203" target="_blank">TRIFFHIR-203</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Add guided walk-through to import screen</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-196" target="_blank">TRIFFHIR-196</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Include selected FHIR server in the browser's URL</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-193" target="_blank">TRIFFHIR-193</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Limit users ability to constrain min[x], max[x] and maxLength</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-192" target="_blank">TRIFFHIR-192</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Limit the types available to the user for in the element definition's Binding min Value [x], max Value [x], pattern[x] and fixed[x]</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-191" target="_blank">TRIFFHIR-191</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">targetProfile doesn't allow selection of just a plain resource</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-189" target="_blank">TRIFFHIR-189</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Validate the user's entry of min and max cardinalities</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-186" target="_blank">TRIFFHIR-186</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Allow user to cancel changes to an IG's Edit Pages form</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-182" target="_blank">TRIFFHIR-182</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Show elements from base profile</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-181" target="_blank">TRIFFHIR-181</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Enabling a new item shouldn't collapse the right-hand menu</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-176" target="_blank">TRIFFHIR-176</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Use typeahead for IG selection on browse and edit profile screens</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-175" target="_blank">TRIFFHIR-175</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Add .sh and .bat files when exporting with the IG publisher jar file</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-173" target="_blank">TRIFFHIR-173</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Update publication framework to use title instead of name</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-171" target="_blank">TRIFFHIR-171</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improve readability/usability of "Type" drop down when creating new profile</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-153" target="_blank">TRIFFHIR-153</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Create new profile - Type should not default to Account</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-120" target="_blank">TRIFFHIR-120</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Clarify "Move" functionality for pages with tooltips and help documentation</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Improvement</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-62" target="_blank">TRIFFHIR-62</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Allow user to publish from "View Implementation Guide" page</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Defect</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-209" target="_blank">TRIFFHIR-209</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">An IG page that has a filename including / or \ characters crashes the publish process</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Defect</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-194" target="_blank">TRIFFHIR-194</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Import fails in DEV without meaningful message to user</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Defect</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-183" target="_blank">TRIFFHIR-183</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">HTML Export not including one of the resources referenced by the IG</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Defect</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-177" target="_blank">TRIFFHIR-177</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Implementation Guide Validation/RAW not refreshing</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="111" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Defect</span></p>
+  </td>
+  <td width="120" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-121" target="_blank">TRIFFHIR-121</a></p>
+  </td>
+  <td width="951" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts81">Description field appears blank until clicked</span></p>
+  </td>
+ </tr>
 </table>
 </div>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/create-epub-ebooks">Full-featured EPub generator</a></p>
 
             </div>
             
@@ -466,29 +555,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app
