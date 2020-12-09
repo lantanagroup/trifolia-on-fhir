@@ -1,3 +1,5 @@
+import {CodeableConcept} from './r4/fhir';
+
 export function setChoice(source: any, dest: any, choiceName: string, ... choices: string[]) {
   const primitives = ['base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid'];
 
@@ -320,4 +322,17 @@ export interface IDocumentReference extends IDomainResource {
     attachment: IAttachment;
     format?: ICoding;
   }[];
+}
+
+export interface IOperationOutcomeIssue {
+  severity: string;
+  code: string;
+  details?: CodeableConcept;
+  diagnostics?: string;
+  location?: string[];
+  expression?: string[];
+}
+
+export interface IOperationOutcome extends IDomainResource {
+  issue: IOperationOutcomeIssue[];
 }

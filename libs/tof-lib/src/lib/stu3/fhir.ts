@@ -17,7 +17,7 @@ import {
   IExtension,
   IHumanName,
   IImplementationGuide,
-  INetworkComponent,
+  INetworkComponent, IOperationOutcome,
   IPractitioner,
   IResourceReference,
   IStructureDefinition,
@@ -13433,7 +13433,7 @@ export class IssueComponent extends BackboneElement {
 
 }
 
-export class OperationOutcome extends DomainResource {
+export class OperationOutcome extends DomainResource implements IOperationOutcome {
   public resourceType = 'OperationOutcome';
   public issue: IssueComponent[];
   public location?: string[];

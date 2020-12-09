@@ -28,11 +28,11 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
 import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {default as PQueue} from 'p-queue';
-import {IBundle, IDomainResource, IImplementationGuide, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IDomainResource, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -283,9 +283,22 @@ export class FhirController extends BaseController {
                 data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
               };
             } else if (ex.response.status !== 404) {
+              let msg = `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`;
+
+              if (ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+                const oo = <IOperationOutcome> ex.response.data;
+                if (oo.issue && oo.issue.length > 0) {
+                  const newMsg = oo.issue.map(i => i.diagnostics).join(' \n');
+
+                  if (newMsg) {
+                    msg = newMsg;
+                  }
+                }
+              }
+
               return {
                 status: ex.response.status,
-                data: createOperationOutcome('fatal', 'processing', `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`)
+                data: createOperationOutcome('fatal', 'processing', msg)
               };
             }
           } else {
