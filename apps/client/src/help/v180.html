@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -189,29 +189,30 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Support for Customized Templates</span></span></h3>
 <p class="rvps2"><span class="rvts23">On the export and publish screens, you can specify a URL to a ZIP file for your implementation guide template. You can make a copy of the official FHIR template, customize it to your needs, put it on GitHub in its own repository, and use the GitHub "Download" link as the URL for your template during export/publish in ToF</span><span class="rvts87">.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Improvements to the Import Tab</span></span></h3>
-<p class="rvps8"><span class="rvts18">The JSON/XML bundle preview has been removed, and new options for "Download Transaction Bundle" in either "XML" &nbsp;or "JSON" format now appear next to the "Import" button in the footer. The results of the import now appear below the import options for each import type's tab.</span></p>
+<p class="rvps32"><span class="rvts18">The JSON/XML bundle preview has been removed, and new options for "Download Transaction Bundle" in either "XML" &nbsp;or "JSON" format now appear next to the "Import" button in the footer. The results of the import now appear below the import options for each import type's tab.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Reordering Contacts</span></span></h3>
-<p class="rvps8"><span class="rvts18">You can reorder contacts added in the Implementation Guide Editor, Other tab, contacts grid using up/down arrows to prioritize them. The reordered contact list is maintained when users export the implementation guide in either XML or JSON format.</span></p>
+<p class="rvps32"><span class="rvts18">You can reorder contacts added in the Implementation Guide Editor, Other tab, contacts grid using up/down arrows to prioritize them. The reordered contact list is maintained when users export the implementation guide in either XML or JSON format.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (28)</span></span></h3>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-360">TRIFFHIR-360</a><span class="rvts18">] - Support customized templates</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-360">TRIFFHIR-360</a><span class="rvts18">] - Support customized templates</span></li>
 </ul>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts21">Defects</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-224">TRIFFHIR-224</a><span class="rvts18">] - StructureDefinition.context issues</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-331">TRIFFHIR-331</a><span class="rvts18">] - Markdown editor, available media not displaying to insert within Profile &gt; Narrative</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-358">TRIFFHIR-358</a><span class="rvts18">] - Validation error after saving structure definition</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-359">TRIFFHIR-359</a><span class="rvts18">] - Publish process gets server error 500</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-364">TRIFFHIR-364</a><span class="rvts18">] - Adding package-list.json crashes IG publisher</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-224">TRIFFHIR-224</a><span class="rvts18">] - StructureDefinition.context issues</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-331">TRIFFHIR-331</a><span class="rvts18">] - Markdown editor, available media not displaying to insert within Profile &gt; Narrative</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-358">TRIFFHIR-358</a><span class="rvts18">] - Validation error after saving structure definition</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-359">TRIFFHIR-359</a><span class="rvts18">] - Publish process gets server error 500</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-364">TRIFFHIR-364</a><span class="rvts18">] - Adding package-list.json crashes IG publisher</span></li>
 </ul>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts21">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-312">TRIFFHIR-312</a><span class="rvts18">] - Add the ability to reorder contacts in the IG Editor</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-338">TRIFFHIR-338</a><span class="rvts18">] - Move "Results" tab for Import to be inline each import type's tab</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-361">TRIFFHIR-361</a><span class="rvts18">] - ignoreWarnings.txt format changes</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-312">TRIFFHIR-312</a><span class="rvts18">] - Add the ability to reorder contacts in the IG Editor</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-338">TRIFFHIR-338</a><span class="rvts18">] - Move "Results" tab for Import to be inline each import type's tab</span></li>
+ <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-361">TRIFFHIR-361</a><span class="rvts18">] - ignoreWarnings.txt format changes</span></li>
 </ul>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour/create-ebooks-for-amazon-kindle">Write eBooks for the Kindle</a></p>
 
             </div>
             
@@ -242,29 +243,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

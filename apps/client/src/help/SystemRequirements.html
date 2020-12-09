@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -186,28 +186,31 @@
                 
 <p></p>
 <p class="rvps2"><span class="rvts6">The only requirement for using Trifolia-on-FHIR (ToF) is a browser. Organizations may want to install ToF to keep data in their own database or to keep their users separate from a publicly available tool.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Browser </span></span></h2>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Browser&nbsp;</span></span></h2>
 <p class="rvps2"><span class="rvts6">ToF requires Chrome, Firefox, Internet Explorer, Microsoft Edge, Safari, or another modern &nbsp;browser.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Installation </span></span></h2>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Installation&nbsp;</span></span></h2>
 <p class="rvps2"><span class="rvts6">To install ToF on your individual servers, administrators must have the following requirements :</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps11"><span class="rvts33">Windows </span><span class="rvts34">or</span><span class="rvts35">&nbsp;</span><span class="rvts33">Linux</span></li>
-<li class="rvps11"><span class="rvts33">Java 8+</span><span class="rvts34">&nbsp;(to execute the publish process using the FHIR IG Publisher)</span></li>
-<li class="rvps11"><span class="rvts33">Jekyll </span><span class="rvts34">(to successfully complete the publish process using the FHIR IG Publisher)</span></li>
-<li class="rvps11"><span class="rvts33">FHIR Server </span><span class="rvts34">(STU3 or R4) must support:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps2"><span class="rvts6">Creating resources via a PUT with an ID</span></li>
-<li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a></li>
-<li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-meta-delete.html" target="_blank">$meta-delete operation</a></li>
-<li class="rvps2"><span class="rvts6">ImplementationGuide search query parameters:</span></li>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
-<li class="rvps2"><span class="rvts6">resource</span></li>
-<li class="rvps2"><span class="rvts6">global</span></li>
+ <li class="rvps10"><span class="rvts30">Windows </span><span class="rvts31">or</span><span class="rvts32"> </span><span class="rvts30">Linux</span></li>
+ <li class="rvps10"><span class="rvts30">Java 8+</span><span class="rvts31"> (to execute the publish process using the FHIR IG Publisher)</span></li>
+ <li class="rvps10"><span class="rvts30">Jekyll </span><span class="rvts31">(to successfully complete the publish process using the FHIR IG Publisher)</span></li>
+ <li class="rvps10"><span class="rvts30">FHIR Server </span><span class="rvts31">(STU3 or R4) must support:</span></li>
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts6">Creating resources via a PUT with an ID (</span><a class="rvts11" href="http://www.hl7.org/fhir/http.html#upsert" target="_blank">Update as Create</a><span class="rvts6">)</span></li>
+  <li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a></li>
+  <li class="rvps2"><span class="rvts6">The </span><a class="rvts11" href="https://www.hl7.org/fhir/operation-resource-meta-delete.html" target="_blank">$meta-delete operation</a></li>
+  <li class="rvps2"><span class="rvts6">ImplementationGuide search query parameters:</span></li>
+  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
+   <li class="rvps2"><span class="rvts6">resource</span></li>
+   <li class="rvps2"><span class="rvts6">global</span></li>
+  </ul>
+  <li class="rvps2"><span class="rvts6"> </span><a class="rvts11" href="http://www.hl7.org/fhir/search.html#has" target="_blank">_has</a><span class="rvts6"> (reverse chaining) search criteria. For example: GET /StructureDefinition?_has:ImplementationGuide:resource:_id=&lt;IG_ID&gt;</span></li>
+  <li class="rvps2"><span class="rvts6"> </span><a class="rvts11" href="http://www.hl7.org/fhir/search.html#include" target="_blank">_include</a><span class="rvts6"> search criteria to get a list of all resources related to an implementation guide. For example: GET /ImplementationGuide?_id=some-ig-id&amp;_include=ImplementationGuide:resource&amp;ImplementationGuide:global</span></li>
+  <li class="rvps2"><a class="rvts11" href="http://www.hl7.org/fhir/http.html#patch" target="_blank">PATCH</a><span class="rvts6"> operation is required for bulk editing</span></li>
+ </ul>
 </ul>
-<li class="rvps2"><span class="rvts6">&nbsp;_has (reverse chaining) search criteria. For example: GET /StructureDefinition?_has:ImplementationGuide:resource:_id=&lt;IG_ID&gt;</span></li>
-<li class="rvps2"><span class="rvts6">&nbsp;_include search criteria to get a list of all resources related to an implementation guide. For example: GET /ImplementationGuide?_id=some-ig-id&amp;_include=ImplementationGuide:resource&amp;ImplementationGuide:global</span></li>
-</ul></ul>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/create-epub-ebooks">Write EPub books for the iPad</a></p>
 
             </div>
             
@@ -238,29 +241,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

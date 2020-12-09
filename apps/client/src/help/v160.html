@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -189,17 +189,17 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">New Template</span></span></h3>
 <p class="rvps2"><span class="rvts6">HL7 released an official style and template for implementation guides. ToF now supports this new template, which streamlines the look and feel of published implementation guides and simplifies the export format. The export no longer includes a "framework" folder that contains 300+ files.</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">The new template also provides some flexibility with the top (red) navigation bar. Customize the navigation for a page in the implementation guide by selecting "Show on Top Nav Menu" and indicating the name of the menu to nest the page. See </span><a class="rvts11" href="NarrativePages.html">Narrative Pages</a><span class="rvts6">&nbsp;for more information.</span></p>
+<p class="rvps2"><span class="rvts6">The new template also provides some flexibility with the top (red) navigation bar. Customize the navigation for a page in the implementation guide by selecting "Show on Top Nav Menu" and indicating the name of the menu to nest the page. See </span><a class="rvts11" href="NarrativePages.html">Narrative Pages</a><span class="rvts6"> for more information.</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <p class="rvps2"><span class="rvts6">The new template automatically generates a Table of Contents and an "Artifact Index" page.</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Permissions </span></span></h3>
-<p class="rvps2"><span class="rvts6">This new option copies permissions for an implementation guide to all resources within the implementation guide. This functionality primarily affects cases where the permissions to the implementation guide have changed and those changes need to apply to all resources within the implementation guide. </span></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Permissions&nbsp;</span></span></h3>
+<p class="rvps2"><span class="rvts6">This new option copies permissions for an implementation guide to all resources within the implementation guide. This functionality primarily affects cases where the permissions to the implementation guide have changed and those changes need to apply to all resources within the implementation guide.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">You cannot change permissions for a resource if you do not have access. If you do not have access to one or more of the resources within the implementation guide, you cannot copy permissions from the implementation guide to those resources. See </span><a class="rvts11" href="AccessandPermissions.html#IGPermissions">Security and Permissions</a><span class="rvts6">&nbsp;for more information.</span></p>
+<p class="rvps2"><span class="rvts6">You cannot change permissions for a resource if you do not have access. If you do not have access to one or more of the resources within the implementation guide, you cannot copy permissions from the implementation guide to those resources. See </span><a class="rvts11" href="AccessandPermissions.html#IGPermissions">Security and Permissions</a><span class="rvts6"> for more information.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Admin Role</span></span></h3>
 <p class="rvps2"><span class="rvts6">The new Admin role designates users as administrators of the system with full control over ToF installations. Admins can list users who log in to ToF and broadcast messages to other active users. This update will support additional administrative functionality (e.g., reporting) in the future.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Publication Queue</span></span></h3>
-<p class="rvps2"><span class="rvts6">As ToF gets more popular, more users publish more implementation guides simultaneously. These resource-intensive "Publish" requests can tax servers. We implemented a queue, which allows administrators to configure the maximum number of publication requests that can run in parallel. For example, if an installation is configured to run two publication requests in parallel, then each additional request will enter the queue. </span></p>
+<p class="rvps2"><span class="rvts6">As ToF gets more popular, more users publish more implementation guides simultaneously. These resource-intensive "Publish" requests can tax servers. We implemented a queue, which allows administrators to configure the maximum number of publication requests that can run in parallel. For example, if an installation is configured to run two publication requests in parallel, then each additional request will enter the queue.&nbsp;</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log</span></span></h3>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts96">New Feature</span></span></h4>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-225" target="_blank">TRIFFHIR-225</a><span class="rvts6">] - Search elements for content when editing a structure definition</span></p>
@@ -223,6 +223,7 @@
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-248" target="_blank">TRIFFHIR-248</a><span class="rvts6">] - Update references when changing the ID of a resource</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-260" target="_blank">TRIFFHIR-260</a><span class="rvts6">] - Support specifying identifiers on CodeSystem</span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour/create-ebooks-for-amazon-kindle">Write eBooks for the Kindle</a></p>
 
             </div>
             
@@ -253,29 +254,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

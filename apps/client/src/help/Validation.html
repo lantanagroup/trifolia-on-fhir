@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,17 +185,18 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps2"><span class="rvts77">Validation</span></p>
+<p class="rvps2"><span class="rvts74">Validation</span></p>
 <p class="rvps2"><span class="rvts6">Trifolia-on-FHIR uses three validation methods to provide as much feedback to IG authors as possible:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps11"><span class="rvts33">Real-time UI Validation</span><br/><span class="rvts34">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time. </span></li>
-<li value="2" class="rvps11"><span class="rvts33">Pre-publish Validation</span><br/><span class="rvts34">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts78" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts80" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">&nbsp;</a><span class="rvts34">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
+ <li value="1" class="rvps10"><span class="rvts30">Real-time UI Validation</span><br/><span class="rvts31">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time.&nbsp;</span></li>
+ <li value="2" class="rvps10"><span class="rvts30">Pre-publish Validation</span><br/><span class="rvts31">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts75" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts77" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank"> </a><span class="rvts31">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
 </ol>
-<p class="rvps11"><span class="rvts34"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts34">&nbsp; &nbsp; &nbsp; Please see the </span><a class="rvts78" href="FAQ.html">FAQ</a><span class="rvts34">&nbsp;page, </span><span class="rvts79">Publishing with the FHIR IG Publisher</span><span class="rvts34">&nbsp;section for examples of errors and steps to resolve.</span></p>
+<p class="rvps10"><span class="rvts31"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts31"> &nbsp; &nbsp; &nbsp;Please see the </span><a class="rvts75" href="FAQ.html">FAQ</a><span class="rvts31"> page, </span><span class="rvts76">Publishing with the FHIR IG Publisher</span><span class="rvts31"> section for examples of errors and steps to resolve.</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
-<li value="3" class="rvps11"><span class="rvts33">HL7 IG Publisher Validation</span><br/><span class="rvts34">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts79">during </span><span class="rvts34">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
+ <li value="3" class="rvps10"><span class="rvts30">HL7 IG Publisher Validation</span><br/><span class="rvts31">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts76">during </span><span class="rvts31">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
 </ol>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/help-authoring-tool">Full-featured multi-format Help generator</a></p>
 
             </div>
             
@@ -226,29 +227,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

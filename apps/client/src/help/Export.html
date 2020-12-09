@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,38 +185,45 @@
             <div class="main-content">
                 
 <p></p>
-<h1 class="rvps9"><span class="rvts0"><span class="rvts29">Export</span></span></h1>
-<p class="rvps2"><span class="rvts6">Select Export in the tabbed tool bar on the top of the screen. </span></p>
+<h1 class="rvps8"><span class="rvts0"><span class="rvts27">Export</span></span></h1>
+<p class="rvps2"><span class="rvts6">Select Export in the tabbed tool bar on the top of the screen.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6">in order to export artifacts, you must first select the Implementation Guide(IG).</span></p>
 <p class="rvps2"><span class="rvts6">The Export page contains form fields that allow users to specify the details of their exports. Users can export the Implementation Guides (IGs) saved under the Browse/Edit tab at the top right side of the screen. Users can export IGs as bundles or HTML with the IG Publisher. Once the form fields are complete, select the Export button on the left side of the scrolling tab at the bottom of the screen.</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps2"><span class="rvts6">The "IG Publisher Package" generates a package using the published version of the IG to be used with the FHIR IG Publisher. &nbsp;</span></li>
+ <li value="1" class="rvps2"><span class="rvts6">The "IG Publisher Package" generates a package using the published version of the IG to be used with the FHIR IG Publisher. &nbsp;</span></li>
 </ol>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li style="margin-left: 0px" class="rvps10"><span class="rvts6">Users can select either JSON or XML format for the output</span></li>
-<li style="margin-left: 0px" class="rvps10"><span class="rvts6">The "FHIR IG Publisher JAR" can be included in the export package</span></li>
-<li class="rvps2"><span class="rvts6">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export. </span></li>
-<li class="rvps2"><span class="rvts6">After completing the process, the export will automatically download to users' computers in a compressed folder, and tthe user is prompted to download a ZIP package of all files necessary to execute the FHIR IG publisher.</span></li>
-<li class="rvps2"><span class="rvts6">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview. &nbsp;</span></li>
-<li class="rvps2"><span class="rvts6">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts11" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts6">. </span></li>
-</ul></ul>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li style="margin-left: 0px" class="rvps9"><span class="rvts6">Users can select either JSON or XML format for the output</span></li>
+  <li style="margin-left: 0px" class="rvps9"><span class="rvts6">The "FHIR IG Publisher JAR" can be included in the export package</span></li>
+  <li class="rvps2"><span class="rvts6">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export.&nbsp;</span></li>
+  <li class="rvps2"><span class="rvts6">After completing the process, the export will automatically download to users' computers in a compressed folder, and tthe user is prompted to download a ZIP package of all files necessary to execute the FHIR IG publisher.</span></li>
+  <li class="rvps2"><span class="rvts6">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview. &nbsp;</span></li>
+  <li class="rvps2"><span class="rvts6">HTML exports produce a package (ZIP file) for use with the FHIR </span><a class="rvts11" href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_blank">IG Publisher</a><span class="rvts6">.&nbsp;</span></li>
+ </ul>
+</ul>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="2" class="rvps2"><span class="rvts6">The "Bundle" export format is a Bundle of all resources referenced by the selected implementation guide, including the implementation guide resource</span></li>
+ <li value="2" class="rvps2"><span class="rvts6">The "Bundle" export format is a Bundle of all resources referenced by the selected implementation guide, including the implementation guide resource</span></li>
 </ol>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps2"><span class="rvts6">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts11" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts6">&nbsp;that can be used to import the resources for the implementation guide in another FHIR environment.</span></li>
-<li class="rvps2"><span class="rvts6">Users can select the type of output, JSON or XML, the bundle will be exported in.</span></li>
-</ul></ul>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts6">Bundle exports produce a single download (pretty quickly) as a single XML file. This XML file is a FHIR </span><a class="rvts11" href="http://hl7.org/fhir/bundle.html" target="_blank">Bundle</a><span class="rvts6"> that can be used to import the resources for the implementation guide in another FHIR environment.</span></li>
+  <li class="rvps2"><span class="rvts6">Users can select the type of output, JSON or XML, the bundle will be exported in.</span></li>
+ </ul>
+</ul>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="3" class="rvps2"><span class="rvts6">The "GitHub" export format places all the resources within the IG into the specified GITHub repository/branch</span></li>
+ <li value="3" class="rvps2"><span class="rvts6">The "GitHub" export format places all the resources within the IG into the specified GITHub repository/branch</span></li>
 </ol>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li class="rvps2"><span class="rvts6">Only resources that have a repository, branch and path will be exported to GitHub. &nbsp;At least one resource must have GitHub location information specified to export</span></li>
-<li class="rvps2"><span class="rvts6">If the file already exists in GitHub, it will be completely overwritten by this export</span></li>
-<li class="rvps2"><span class="rvts6">When this tab is selected from the Export page, the user will be prompted to enter their GitHub credentials. &nbsp; If the user does not log into GitHub initially, the "Login to GitHub" button can be selected before the export is commenced.</span></li>
-<li class="rvps2"><span class="rvts6">After a user has selected an Implementation Guide, the user must enter a commit message that will be associated with the IG on GitHub.</span></li>
-</ul></ul>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts6">Only resources that have a repository, branch and path will be exported to GitHub. &nbsp;At least one resource must have GitHub location information specified to export</span></li>
+  <li class="rvps2"><span class="rvts6">If the file already exists in GitHub, it will be completely overwritten by this export</span></li>
+  <li class="rvps2"><span class="rvts6">When this tab is selected from the Export page, the user will be prompted to enter their GitHub credentials. &nbsp; If the user does not log into GitHub initially, the "Login to GitHub" button can be selected before the export is commenced.</span></li>
+  <li class="rvps2"><span class="rvts6">After a user has selected an Implementation Guide, the user must enter a commit message that will be associated with the IG on GitHub.</span></li>
+ </ul>
+</ul>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com">Free HTML Help documentation generator</a></p>
 
             </div>
             
@@ -247,29 +254,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

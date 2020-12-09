@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,32 +185,35 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps25"><span class="rvts23">An implementation guide (IG) is a set of rules on how FHIR resources are used to solve a particular problem, with associated documentation to support and clarify the usage. The FHIR Implementation Guide Publisher generates an IG for online publication. </span></p>
+<p class="rvps24"><span class="rvts23">An implementation guide (IG) is a set of rules on how FHIR resources are used to solve a particular problem, with associated documentation to support and clarify the usage. The FHIR Implementation Guide Publisher generates an IG for online publication.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts23">The HL7 IG Publisher tool is developed by HL7 and is not part of Trifolia-on-FHIR (ToF). Questions related to the execution of the HL7 IG Publisher should be directed to </span><a class="rvts20" href="https://chat.fhir.org/login/" target="_blank">chat.fhir.org</a><span class="rvts23">.</span></p>
-<p class="rvps25"><span class="rvts23">The main screen of the FHIR IG Publisher export displays the description of the Implementation Guide. The main page of the IG publisher executes the HL7 IG Publisher. </span></p>
+<p class="rvps24"><span class="rvts23">The main screen of the FHIR IG Publisher export displays the description of the Implementation Guide. The main page of the IG publisher executes the HL7 IG Publisher.&nbsp;</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">The </span><span class="rvts64">Options</span><span class="rvts63">&nbsp;tab allows users to specify options you would like to use for the export. </span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">The </span><span class="rvts64">Validation</span><span class="rvts63">&nbsp;tab lists any validation issues &nbsp;returned by the FHIR server's $validate operation. These validation issues may vary depending on the implementation of the FHIR server. </span></li>
-<li style="margin-left: 0px" class="rvps28"><span class="rvts63">The </span><span class="rvts64">Status</span><span class="rvts63">&nbsp;tab allows users to monitor the status of the publication process (the FHIR IG Publisher)</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">The </span><span class="rvts61">Options</span><span class="rvts60"> tab allows users to specify options you would like to use for the export.&nbsp;</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">The </span><span class="rvts61">Validation</span><span class="rvts60"> tab lists any validation issues &nbsp;returned by the FHIR server's $validate operation. These validation issues may vary depending on the implementation of the FHIR server.&nbsp;</span></li>
+ <li style="margin-left: 0px" class="rvps27"><span class="rvts60">The </span><span class="rvts61">Status</span><span class="rvts60"> tab allows users to monitor the status of the publication process (the FHIR IG Publisher)</span></li>
 </ul>
-<p class="rvps25"><span class="rvts23">To publish your IG, follow these steps: </span></p>
-<p class="rvps25"><span class="rvts23">1. &nbsp;From the top navigation menu, click </span><span class="rvts61">Publish</span><span class="rvts23">. </span></p>
-<p class="rvps25"><span class="rvts23">2. &nbsp;Select the options for your publication.</span></p>
-<p class="rvps25"><img width="632" height="193" alt="" style="padding : 1px;" src="lib/publishing1.png"></p>
-<p class="rvps26"><span class="rvts23">a. </span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts61">Use latest FHIR IG Publisher</span><span class="rvts23">&nbsp;field, select </span><span class="rvts61">Yes</span><span class="rvts23">. </span></p>
-<p class="rvps27"><span class="rvts61">Note</span><span class="rvts23">: HL7 requires the latest IG publisher for ballots. The IG publisher updates occasionally include bugs, resulting in errors. You can select </span><span class="rvts61">No</span><span class="rvts23">&nbsp;pending resolution of the bugs.</span></p>
-<p class="rvps26"><span class="rvts23">b.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts61">Use terminology server </span><span class="rvts23">field, </span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;"><ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-<li style="margin-left: 0px" class="rvps26"><span class="rvts23">Select </span><span class="rvts61">No</span><span class="rvts23">&nbsp;if the IG does not require connection to the terminology server. This speeds up up the publishing process. </span></li>
-<li style="margin-left: 0px" class="rvps26"><span class="rvts23">Select </span><span class="rvts61">Yes</span><span class="rvts23">&nbsp;if the IG needs to connect to the terminology server to check terminology bindings. </span></li>
-</ul></ul>
-<p class="rvps26"><span class="rvts23">c.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts61">Download?</span><span class="rvts23">&nbsp;field, select </span><span class="rvts61">Yes</span><span class="rvts23">&nbsp;to download the entire published package to your computer when complete.</span></p>
-<p class="rvps25"><span class="rvts23">3. &nbsp; Click </span><span class="rvts61">Publish</span><span class="rvts23">.</span></p>
-<p class="rvps26"><span class="rvts61">Note</span><span class="rvts23">: This process can be time-consuming, depending on the size of your IG. Once published, click the link on the status screen to view the IG or Select </span><span class="rvts61">Browse/Edit</span><span class="rvts23">&nbsp;then select </span><span class="rvts61">View Implementation Guide</span><span class="rvts23">.</span></p>
-<p class="rvps25"><span class="rvts62"><br/></span></p>
-<p class="rvps25"><span class="rvts23"><br/></span></p>
-<p class="rvps25"><span class="rvts23"><br/></span></p>
+<p class="rvps24"><span class="rvts23">To publish your IG, follow these steps:&nbsp;</span></p>
+<p class="rvps24"><span class="rvts23">1. &nbsp;From the top navigation menu, click </span><span class="rvts58">Publish</span><span class="rvts23">.&nbsp;</span></p>
+<p class="rvps24"><span class="rvts23">2. &nbsp;Select the options for your publication.</span></p>
+<p class="rvps24"><img width="632" height="193" alt="" style="padding : 1px;" src="lib/publishing1.png"></p>
+<p class="rvps25"><span class="rvts23">a.&nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts58">Use latest FHIR IG Publisher</span><span class="rvts23"> field, select </span><span class="rvts58">Yes</span><span class="rvts23">.&nbsp;</span></p>
+<p class="rvps26"><span class="rvts58">Note</span><span class="rvts23">: HL7 requires the latest IG publisher for ballots. The IG publisher updates occasionally include bugs, resulting in errors. You can select </span><span class="rvts58">No</span><span class="rvts23"> pending resolution of the bugs.</span></p>
+<p class="rvps25"><span class="rvts23">b.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts58">Use terminology server </span><span class="rvts23">field,&nbsp;</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li style="margin-left: 0px" class="rvps25"><span class="rvts23">Select </span><span class="rvts58">No</span><span class="rvts23"> if the IG does not require connection to the terminology server. This speeds up up the publishing process.&nbsp;</span></li>
+  <li style="margin-left: 0px" class="rvps25"><span class="rvts23">Select </span><span class="rvts58">Yes</span><span class="rvts23"> if the IG needs to connect to the terminology server to check terminology bindings.&nbsp;</span></li>
+ </ul>
+</ul>
+<p class="rvps25"><span class="rvts23">c.</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">In the </span><span class="rvts58">Download?</span><span class="rvts23"> field, select </span><span class="rvts58">Yes</span><span class="rvts23"> to download the entire published package to your computer when complete.</span></p>
+<p class="rvps24"><span class="rvts23">3. &nbsp; Click </span><span class="rvts58">Publish</span><span class="rvts23">.</span></p>
+<p class="rvps25"><span class="rvts58">Note</span><span class="rvts23">: This process can be time-consuming, depending on the size of your IG. Once published, click the link on the status screen to view the IG or Select </span><span class="rvts58">Browse/Edit</span><span class="rvts23"> then select </span><span class="rvts58">View Implementation Guide</span><span class="rvts23">.</span></p>
+<p class="rvps24"><span class="rvts59"><br/></span></p>
+<p class="rvps24"><span class="rvts23"><br/></span></p>
+<p class="rvps24"><span class="rvts23"><br/></span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour/create-help-files-for-the-qt-help-framework">Produce online help for Qt applications</a></p>
 
             </div>
             
@@ -241,29 +244,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

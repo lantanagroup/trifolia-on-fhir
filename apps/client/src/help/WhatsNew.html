@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,46 +185,55 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps2"><span class="rvts19">Release 1.16.0</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Examples Screen</span></span></h2>
-<p class="rvps2"><span class="rvts26">We added a new menu item under Browse/Edit. Click Examples to display the example resources &nbsp;associated with your implementation guide.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts27">Generating HL7 JIRA Spec</span></span></h2>
-<p class="rvps2"><span class="rvts26">The "Edit Implementation Guide" screen's "Publish" tab has a panel for "JIRA Spec" which allows the user to define the JIRA Spec for the current IG. ToF can automatically generate a new JIRA Spec and even update the artifacts/pages of an existing JIRA Spec.</span></p>
-<p class="rvps2"><span class="rvts26">See </span><a class="rvts28" href="JIRASpecGeneration.html">JIRA Spec Generation</a><span class="rvts26">&nbsp;for more information.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts27">Support for ignoreWarnings.txt</span></span></h2>
-<p class="rvps2"><span class="rvts26">The IG Publisher allows you to define warnings that should be ignored during the publish process. This is particularly important in HL7 ballots where HL7 requires that there be no errors/warnings in your IG before publication. If balloting an HL7 implementation guide, each ignored warning must be approved by the FHIR-I working group.</span></p>
-<p class="rvps2"><span class="rvts26">The "Edit Implementation Guide" screen's "Publish" tab has a panel for "ignoreWarnings.txt" which allows the user to specify the warnings that should be ignored by the IG Publisher, separated by a line-break. When exporting/publishing, this field is exported as the input/ignoreWarnings.txt file, which the IG Publisher uses to determine which warnings should be ignored in the final publish QA report.</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts25">Unsaved Content Warning</span></span></h3>
-<p class="rvps2"><span class="rvts6">A pop-up warns you of unsaved content when you navigate from most screens to confirm you wish to discard changes.</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">New Examples Form</span></span></h3>
-<p class="rvps8"><span class="rvts18">A menu item has been created under "Browse/Edit" for "Examples", below "Other Examples". &nbsp;When clicked, &nbsp;a new screen appearsnamed "Examples". &nbsp;The "Examples" screen displays all of the example resources that are associated with their implementation guide</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Editor Updates</span></span></h3>
-<p class="rvps2"><span class="rvts6">A pop-up warns you of unsaved content when you navigate from most screens to confirm you wish to discard changes.</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (6)</span></span></h3>
+<p class="rvps2"><span class="rvts19">Release 2.0.0</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts25">Bulk Editing for IGs</span></span></h2>
+<p class="rvps2"><span class="rvts6">We've made editing your IGs easier by adding a new feature which allows for bulk editing of multiple profiles and narrative pages within an implementation guide (IG) at the same time.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts6">Click </span><span class="rvts26">Browse</span><span class="rvts6"> and select </span><span class="rvts26">Bulk Edit IG</span><span class="rvts6">. The Bulk Edit screen displays. &nbsp;&nbsp;</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts6">Select Profiles to edit the Description, Intro, and Notes sections of all profiles associated with that IG.</span></li>
+ <li class="rvps2"><span class="rvts6">Select Elements to add or edit the Short, Definition, and Requirements details for each profile within the IG.</span></li>
+ <li class="rvps2"><span class="rvts6">Select Pages to edit the Title and Content for each narrative page.&nbsp;</span></li>
+</ul>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Copy a Profile</span></span></h2>
+<p class="rvps2"><span class="rvts6">You can now copy an existing profile to create a new profile. On the </span><span class="rvts26">Browse</span><span class="rvts6"> screen, click the copy icon and enter the ID, URL, Name, and Title of the new profile. &nbsp;&nbsp;</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Jurisdiction Field Now Required</span></span></h2>
+<p class="rvps2"><span class="rvts6">On the </span><span class="rvts26">General</span><span class="rvts6"> tab, the </span><span class="rvts26">Jurisdiction</span><span class="rvts6"> field is now a required element. When adding a new Jurisdiction, "A jurisdiction must exist with all fields filled" appears. &nbsp;</span></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (12)</span></span></h3>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-461" target="_blank">TRIFFHIR-461</a><span class="rvts18">] - </span><span class="rvts23">Add "Examples" to the Browse/Edit menu</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-403" target="_blank">TRIFFHIR-403</a><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-450" target="_blank">]</a><span class="rvts23">&nbsp;- </span><span class="rvts18">Prompt user when leaving Edit Profile screen without saving changes</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-454" target="_blank">TRIFFHIR-454</a><span class="rvts18">] - Add support for ignoreWarnings.txt file</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-446" target="_blank">TRIFFHIR-446</a><span class="rvts18">] - Generate JIRA Spec XML file for HL7 ballots</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-285">TRIFFHIR-285 </a><span class="rvts18">- </span><span class="rvts23">Copy a profile, prompt for key details of the copy</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-357">TRIFFHIR-357 </a><span class="rvts18">- Bulk editing for implementation guides</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-421">TRIFFHIR-421 </a><span class="rvts18">- </span><span class="rvts23">Show IG Edit Screen's "Jurisdiction" as required</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-476">TRIFFHIR-476 </a><span class="rvts18">- </span><span class="rvts23">Download IG Dependencies&nbsp;</span></li>
 </ul>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts22">Improvements</span></span></h4>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-425" target="_blank">TRIFFHIR-425</a><span class="rvts23">] - Boolean fixed values are yes/no and should be true/false</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-474" target="_blank">TRIFFHIR-474</a><span class="rvts23">] - Narrative page file Name format prompt</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-468">TRIFFHIR-468</a><span class="rvts23">] - </span><span class="rvts18">Support moving pages up and down parent/child pages</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-473" target="_blank">TRIFFHIR-473</a><span class="rvts18">] - Hide Export-related fields on 'Publish'</span></li>
-</ul>
+<div class="rvps2">
+<table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="632" valign="middle" style="padding: 1px;">
+   <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-373">TRIFFHIR-373 </a><span class="rvts23">- &nbsp;Don't allow ID's to change, only case sensitivity</span></li>
+    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-466">TRIFFHIR-466</a><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-479"> </a><span class="rvts23">- &nbsp;Category, Date and Sequence for package-list.json</span></li>
+    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-479">TRIFFHIR-479 &nbsp;</a><span class="rvts23">- When importing, detect exampleFor based on meta.profile</span></li>
+   </ul>
+  </td>
+  <td width="314" valign="middle" style="padding: 1px;">
+   <br/>
+  </td>
+ </tr>
+</table>
+</div>
 <h4 class="rvps7"><span class="rvts0"><span class="rvts21">Defects</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-<li class="rvps2"><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-386">[TRIFFHIR-386</a><span class="rvts18">] - ValueSet and CodeSystems ID change resource id botton always errors</span></li>
-<li class="rvps2"><span class="rvts18">[</span><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-469">TRIFFHIR-469</a><span class="rvts18">] - </span><span class="rvts23">New Downloads page has wrong name url</span></li>
-<li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-423">[TRIFFHIR-423</a><span class="rvts23">] - Fix ability to select output format in GitHub export</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-465" target="_blank">TRIFFHIR-465</a><span class="rvts23">] - Don't allow forward-slashes in page file name(s)</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-415" target="_blank">TRIFFHIR-415</a><span class="rvts23">] - Deleting package-list.json in ToF does not remove it from contained in export</span></li>
-<li class="rvps2"><span class="rvts23">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-477" target="_blank">TRIFFHIR-477</a><span class="rvts23">] - Package-list.json file added to an IG is not being preserved</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-424">TRIFFHIR-424</a><span class="rvts18"> - Exporting to a brand new (empty) GitHub repository fails</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-484">TRIFFHIR-484&nbsp;</a><span class="rvts18"> - Delay in "Ignore Warnings" value being updated in IG</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-490">TRIFFHIR-490</a><span class="rvts18"> - Extensions removed from profiles results in an empty array</span></li>
+ <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-494">TRIFFHIR-494 </a><span class="rvts18">- Project/IG Context not consistently appearing next to HAPI version selected</span></li>
+ <li class="rvps2"><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-508" target="_blank">TRIFFHIR-508</a><span class="rvts18"> - Measure Resources are missing contentType on attachment</span></li>
 </ul>
+<p class="rvps2"><span class="rvts24"><br/></span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com">Free CHM Help documentation generator</a></p>
 
             </div>
             
@@ -255,29 +264,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

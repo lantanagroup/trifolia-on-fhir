@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,19 +185,20 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps29"><span class="rvts66">IG Package ID Errors</span></p>
-<p class="rvps29"><span class="rvts67">This example shows the text indicating the cause of this IG Package ID error: the ID doesn’t begin with hl7.</span></p>
-<p class="rvps29"><img width="678" height="241" alt="" style="padding : 1px;" src="lib/IG Package ID.png"></p>
-<p class="rvps29"><span class="rvts67">To resolve the IG Package ID error shown in this example, follow these steps:</span></p>
+<p class="rvps28"><span class="rvts63">IG Package ID Errors</span></p>
+<p class="rvps28"><span class="rvts64">This example shows the text indicating the cause of this IG Package ID error: the ID doesn’t begin with hl7.</span></p>
+<p class="rvps28"><img width="678" height="241" alt="" style="padding : 1px;" src="lib/IG%20Package%20ID.png"></p>
+<p class="rvps28"><span class="rvts64">To resolve the IG Package ID error shown in this example, follow these steps:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" style="margin-left: 0px" class="rvps28"><span class="rvts63">In the IG Editor, open the IG. </span></li>
-<li value="2" style="margin-left: 0px" class="rvps28"><span class="rvts63">In the General tab, in the </span><span class="rvts64">Package ID</span><span class="rvts63">&nbsp;field, enter a package ID that begins with “hl7.” (e.g., hl7.fhir.us.mytestig).</span></li>
+ <li value="1" style="margin-left: 0px" class="rvps27"><span class="rvts60">In the IG Editor, open the IG.&nbsp;</span></li>
+ <li value="2" style="margin-left: 0px" class="rvps27"><span class="rvts60">In the General tab, in the </span><span class="rvts61">Package ID</span><span class="rvts60"> field, enter a package ID that begins with “hl7.” (e.g., hl7.fhir.us.mytestig).</span></li>
 </ol>
-<p class="rvps30"><img width="692" height="166" alt="" style="padding : 1px;" src="lib/IG Package ID-2.png"></p>
-<p class="rvps30"><span class="rvts63">3. </span><span class="rvts63"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts63">Click </span><span class="rvts64">Save</span><span class="rvts63">&nbsp;and then</span><span class="rvts64">&nbsp;</span><span class="rvts63">publish. </span></p>
-<p class="rvps30"><span class="rvts72"><br/></span></p>
-<p class="rvps28"><span class="rvts63"><br/></span></p>
+<p class="rvps29"><img width="692" height="166" alt="" style="padding : 1px;" src="lib/IG%20Package%20ID-2.png"></p>
+<p class="rvps29"><span class="rvts60">3.&nbsp;</span><span class="rvts60"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts60">Click </span><span class="rvts61">Save</span><span class="rvts60"> and then</span><span class="rvts61"> </span><span class="rvts60">publish.&nbsp;</span></p>
+<p class="rvps29"><span class="rvts69"><br/></span></p>
+<p class="rvps27"><span class="rvts60"><br/></span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpauthoringsoftware.com">News and information about help authoring tools and software</a></p>
 
             </div>
             
@@ -228,29 +229,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

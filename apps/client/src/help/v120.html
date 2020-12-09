@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -189,75 +189,101 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Navigation improvements</span></span></h3>
 <p class="rvps2"><span class="rvts6">Most of the individual icons in the top-right navigation bar have been moved to a new "File" menu, which replaces the "Home" button. The "Home" button is now a menu item within the "File" menu.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log</span></span></h3>
-<div class="rvps2"><table width="100%" border="2" cellpadding="6" cellspacing="4" style="border-color: #000000; border-style: solid; border-spacing: 4px;">
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts30">Key</span></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts30">Type</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts30">Summary</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-131" target="_blank">TRIFFHIR-131</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">New Feature</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Pages should create unique page names</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-132" target="_blank">TRIFFHIR-132</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Improvement</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Add additional guidance for the ID on VSAC import page</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-139" target="_blank">TRIFFHIR-139</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Improvement</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Allow users to change the id of "other" resources</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-152" target="_blank">TRIFFHIR-152</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Defect</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Adding a StructureDefinition to an IG via the "Edit Structure Definition" screen does not work</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-151" target="_blank">TRIFFHIR-151</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Improvement</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Re-arrange navigation bar's individual icons into a File menu</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-150" target="_blank">TRIFFHIR-150</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Defect</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Exported ig publisher package's ig.json file has incorrect specification property</span></p>
-</td>
-</tr>
-<tr valign="top">
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-149" target="_blank">TRIFFHIR-149</a></p>
-</td>
-<td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Defect</span></p>
-</td>
-<td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;"><p class="rvps2"><span class="rvts6">Editing a profile's ElementDefinition.type is incorrect for R4</span></p>
-</td>
-</tr>
+<div class="rvps2">
+<table width="100%" border="2" cellpadding="6" cellspacing="4" style="border-color: #000000; border-style: solid; border-spacing: 4px;">
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts26">Key</span></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts26">Type</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts26">Summary</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-131" target="_blank">TRIFFHIR-131</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">New Feature</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Pages should create unique page names</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-132" target="_blank">TRIFFHIR-132</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Improvement</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Add additional guidance for the ID on VSAC import page</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-139" target="_blank">TRIFFHIR-139</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Improvement</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Allow users to change the id of "other" resources</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-152" target="_blank">TRIFFHIR-152</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Adding a StructureDefinition to an IG via the "Edit Structure Definition" screen does not work</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-151" target="_blank">TRIFFHIR-151</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Improvement</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Re-arrange navigation bar's individual icons into a File menu</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-150" target="_blank">TRIFFHIR-150</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Exported ig publisher package's ig.json file has incorrect specification property</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-149" target="_blank">TRIFFHIR-149</a></p>
+  </td>
+  <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  </td>
+  <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
+   <p class="rvps2"><span class="rvts6">Editing a profile's ElementDefinition.type is incorrect for R4</span></p>
+  </td>
+ </tr>
 </table>
 </div>
-<p class="rvps39"><span class="rvts46"><br/></span></p>
+<p class="rvps39"><span class="rvts43"><br/></span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour">Easily create Help documents</a></p>
 
             </div>
             
@@ -288,29 +314,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app

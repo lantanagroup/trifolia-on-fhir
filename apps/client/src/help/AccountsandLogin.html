@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 6.8.0.521">
+  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -43,7 +43,7 @@
     <![endif]-->
 
   <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.7/themes/default/style.min.css" rel="stylesheet"/>
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
 
   <!-- Hnd styles -->
   <link href="css/layout.min.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
     
   </header>
 
-  <nav class="md-nav-expanded">
+  <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
       <li id="nav-close"> 
@@ -185,31 +185,32 @@
             <div class="main-content">
                 
 <p></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts40">Users</span></span></h2>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts37">Users</span></span></h2>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps13"><span class="rvts39">On the top right side of the screen, click the Login button. &nbsp;If you do not have an account, you may register via this screen. &nbsp;Trifolia-on-FHIR (ToF) re-directs users to the identity provider to either register or login. </span></li>
+ <li value="1" class="rvps12"><span class="rvts36">On the top right side of the screen, click the Login button. &nbsp;If you do not have an account, you may register via this screen. &nbsp;Trifolia-on-FHIR (ToF) re-directs users to the identity provider to either register or login.&nbsp;</span></li>
 </ol>
-<p class="rvps14"><span class="rvts41">Note:</span><span class="rvts39">&nbsp;After you have registered and logged-in with the identity provider, your browser will redirect to the ToF homepage.</span></p>
+<p class="rvps13"><span class="rvts38">Note:</span><span class="rvts36"> After you have registered and logged-in with the identity provider, your browser will redirect to the ToF homepage.</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="2" class="rvps13"><span class="rvts39">If this is your first time logging-in to Trifolia-on-FHIR (ToF), you must create a profile (represented by a FHIR </span><a class="rvts11" href="http://www.hl7.org/fhir/practitioner.html" target="_blank">Practitioner</a><span class="rvts39">&nbsp;resource in ToF's FHIR server). If you configure ToF with multiple FHIR servers, you may need to create a new profile for each FHIR server.</span></li>
+ <li value="2" class="rvps12"><span class="rvts36">If this is your first time logging-in to Trifolia-on-FHIR (ToF), you must create a profile (represented by a FHIR </span><a class="rvts11" href="http://www.hl7.org/fhir/practitioner.html" target="_blank">Practitioner</a><span class="rvts36"> resource in ToF's FHIR server). If you configure ToF with multiple FHIR servers, you may need to create a new profile for each FHIR server.</span></li>
 </ol>
-<p class="rvps14"><span class="rvts41">Note:</span><span class="rvts39">&nbsp;ToF identifies you as the author of resources and associates your profile with audit records when changing resources. </span></p>
+<p class="rvps13"><span class="rvts38">Note:</span><span class="rvts36"> ToF identifies you as the author of resources and associates your profile with audit records when changing resources.&nbsp;</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="3" class="rvps13"><span class="rvts6">Click your name at the top right side of the screen to edit your profile for the selected FHIR server.</span></li>
+ <li value="3" class="rvps12"><span class="rvts6">Click your name at the top right side of the screen to edit your profile for the selected FHIR server.</span></li>
 </ol>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Groups</span></span></h2>
 <p class="rvps2"><span class="rvts6">Create a group to share resources and grant permissions to members. All users can create/manage their groups. A group may only have one manager. When you create a group, you are automatically added as a member to the group. You cannot remove yourself as a member from the group.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Managing Groups</span></span></h3>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
-<li value="1" class="rvps2"><span class="rvts6">Click your name in the top-right of ToF</span></li>
-<li value="2" class="rvps2"><span class="rvts6">In the Edit/User Person screen, select the Groups tab. </span></li>
-<li value="3" class="rvps2"><span class="rvts6">Under the Managing Groups section, click the plus icon to create a group. </span></li>
-<li value="4" class="rvps2"><span class="rvts6">Enter a name for the group.</span></li>
-<li value="5" class="rvps2"><span class="rvts6">Search for group members by name or email. Click the plus to add them to the group.</span></li>
-<li value="6" class="rvps2"><span class="rvts6">Click </span><span class="rvts30">Save</span><span class="rvts6">.</span></li>
+ <li value="1" class="rvps2"><span class="rvts6">Click your name in the top-right of ToF</span></li>
+ <li value="2" class="rvps2"><span class="rvts6">In the Edit/User Person screen, select the Groups tab.&nbsp;</span></li>
+ <li value="3" class="rvps2"><span class="rvts6">Under the Managing Groups section, click the plus icon to create a group.&nbsp;</span></li>
+ <li value="4" class="rvps2"><span class="rvts6">Enter a name for the group.</span></li>
+ <li value="5" class="rvps2"><span class="rvts6">Search for group members by name or email. Click the plus to add them to the group.</span></li>
+ <li value="6" class="rvps2"><span class="rvts6">Click </span><span class="rvts26">Save</span><span class="rvts6">.</span></li>
 </ol>
-<p class="rvps2"><span class="rvts30">Note: </span><span class="rvts6">Changes to the "Groups" tab are persisted immediately. The "Save" button only applies to editing information for your profile.</span></p>
+<p class="rvps2"><span class="rvts26">Note: </span><span class="rvts6">Changes to the "Groups" tab are persisted immediately. The "Save" button only applies to editing information for your profile.</span></p>
 <p></p>
+<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour/create-ebooks-for-amazon-kindle">Generate Kindle eBooks with ease</a></p>
 
             </div>
             
@@ -240,29 +241,28 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.4.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.1/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.7/imageMapResizer.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  
-  <!-- Headroom -->
-  <script src="vendors/headroom-0.9.4/headroom.min.js"></script>
-  <script src="vendors/headroom-0.9.4/jquery.headroom.min.js"></script>
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
 
-  <!-- JsTree -->
-  <script src="vendors/jstree-3.3.7/jstree.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
 
   <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
   <script src="_translations.js"></script>
   <script src="js/hndsd.min.js"></script>
   <script src="js/hndse.min.js"></script>
   <script src="js/app.min.js"></script>
 
-  <!-- Scripts -->
+  <!-- Init script -->
   <script>
     $(function() {
       // Create the app
