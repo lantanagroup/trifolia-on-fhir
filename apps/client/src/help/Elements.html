@@ -187,28 +187,28 @@
 <p></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Elements</span></span></h2>
-<p class="rvps2"><span class="rvts45">As the base type for all elements included in a resource, </span><span class="rvts55">Element</span><span class="rvts45"> is an important structural element of FHIR. Even the primitive types inherit the base features and representation rules that apply to the Element type.</span></p>
-<p class="rvps2"><span class="rvts45"><br/></span></p>
-<p class="rvps14"><span class="rvts36">content:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps15"><a class="rvts54" href="https://www.hl7.org/fhir/extensibility.html">Extensions</a></li>
- <li class="rvps15"><span class="rvts36">An internal id</span></li>
-</ul>
-<p class="rvps14"><span class="rvts36">There are 3 kinds of descendant types that specialize </span><span class="rvts55">Element</span><span class="rvts36">:</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps15"><a class="rvts54" href="https://www.hl7.org/fhir/datatypes.html#primitive">Primitive data types</a><span class="rvts36">, that add a primitive value property of the specified type</span></li>
- <li class="rvps15"><a class="rvts54" href="https://www.hl7.org/fhir/datatypes.html#complex">Complex data types</a><span class="rvts36">, that add their own children (all of which are also elements)</span></li>
- <li class="rvps15"><a class="rvts54" href="https://www.hl7.org/fhir/backboneelement.html">BackboneElement</a><span class="rvts36">, A specialization that adds modifierExtension, which is the super-type of all the element types defined in resource definitions (e.g. </span><a class="rvts54" href="https://www.hl7.org/fhir/patient.html#resource">Patient.contact</a><span class="rvts36">)</span></li>
-</ul>
-<p class="rvps14"><span class="rvts36">Note that resources themselves all specialize the base type </span><a class="rvts54" href="https://www.hl7.org/fhir/resource.html">Resource</a><span class="rvts36">. For more information on the backbone element, visit </span><a class="rvts56" href="https://www.hl7.org/fhir/backboneelement.html">https://www.hl7.org/fhir/backboneelement.html&nbsp;</a></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Element Definition in Trifolia on FHIR</span></span></h3>
+<p class="rvps2"><span class="rvts43">As the base type for all elements included in a resource, </span><span class="rvts53">Element</span><span class="rvts43"> is an important structural element of FHIR. Even the primitive types inherit the base features and representation rules that apply to the Element type.</span></p>
 <p class="rvps2"><span class="rvts43"><br/></span></p>
+<p class="rvps14"><span class="rvts35">content:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps15"><a class="rvts52" href="https://www.hl7.org/fhir/extensibility.html">Extensions</a></li>
+ <li class="rvps15"><span class="rvts35">An internal id</span></li>
+</ul>
+<p class="rvps14"><span class="rvts35">There are 3 kinds of descendant types that specialize </span><span class="rvts53">Element</span><span class="rvts35">:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps15"><a class="rvts52" href="https://www.hl7.org/fhir/datatypes.html#primitive">Primitive data types</a><span class="rvts35">, that add a primitive value property of the specified type</span></li>
+ <li class="rvps15"><a class="rvts52" href="https://www.hl7.org/fhir/datatypes.html#complex">Complex data types</a><span class="rvts35">, that add their own children (all of which are also elements)</span></li>
+ <li class="rvps15"><a class="rvts52" href="https://www.hl7.org/fhir/backboneelement.html">BackboneElement</a><span class="rvts35">, A specialization that adds modifierExtension, which is the super-type of all the element types defined in resource definitions (e.g. </span><a class="rvts52" href="https://www.hl7.org/fhir/patient.html#resource">Patient.contact</a><span class="rvts35">)</span></li>
+</ul>
+<p class="rvps14"><span class="rvts35">Note that resources themselves all specialize the base type </span><a class="rvts52" href="https://www.hl7.org/fhir/resource.html">Resource</a><span class="rvts35">. For more information on the backbone element, visit </span><a class="rvts54" href="https://www.hl7.org/fhir/backboneelement.html">https://www.hl7.org/fhir/backboneelement.html&nbsp;</a></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Element Definition in Trifolia on FHIR</span></span></h3>
+<p class="rvps2"><span class="rvts23"><br/></span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li style="margin-left: 0px" class="rvps17"><span class="rvts6">The profile editor loads the elements from the snapshot of the “base definition” profile.&nbsp;</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
   <li style="margin-left: 0px" class="rvps22"><span class="rvts6">If the base definition represents a profile that does not yet have a snapshot, it attempts to create a snapshot for the base definition profile.</span></li>
   <li style="margin-left: 0px" class="rvps22"><span class="rvts6">If the base definition has other base definition profiles that are not in the system, the snapshot it returns will simply be the core FHIR profile for the “type” selected (ex: the underlying profile for “Observation”)</span></li>
-  <li style="margin-left: 0px" class="rvps18"><span class="rvts6">The “Base Definition” field should allow you to select pre-existing profiles that are based on a matching “type”, or the core FHIR specification’s profile </span><span class="rvts33">for </span><span class="rvts6">the underlying type.&nbsp;</span></li>
+  <li style="margin-left: 0px" class="rvps18"><span class="rvts6">The “Base Definition” field should allow you to select pre-existing profiles that are based on a matching “type”, or the core FHIR specification’s profile </span><span class="rvts32">for </span><span class="rvts6">the underlying type.&nbsp;</span></li>
  </ul>
  <li style="margin-left: 0px" class="rvps17"><span class="rvts6">Cardinality</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
@@ -228,9 +228,9 @@
   <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
    <li class="rvps2"><span class="rvts6">Text entered in "Short" will be displayed in the "Description &amp; Constraints" column of the Differential Table for the profile.</span><br/><span class="rvts6"><br/></span></li>
   </ul>
-  <li class="rvps2"><span class="rvts26">Definition:&nbsp;</span><span class="rvts6"> </span><span class="rvts57">Provides a complete explanation of the meaning of the data element for human readability. For the case of elements derived from existing elements (e.g. constraints), the definition SHALL be consistent with the base definition, but convey the meaning of the element in the particular context of use of the resource.</span></li>
+  <li class="rvps2"><span class="rvts26">Definition:&nbsp;</span><span class="rvts6"> </span><span class="rvts55">Provides a complete explanation of the meaning of the data element for human readability. For the case of elements derived from existing elements (e.g. constraints), the definition SHALL be consistent with the base definition, but convey the meaning of the element in the particular context of use of the resource.</span></li>
   <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;">
-   <li class="rvps2"><span class="rvts57">Text entered in the "Definition" field will be displayed in the "Detailed Descriptions" page for the specific element.</span></li>
+   <li class="rvps2"><span class="rvts55">Text entered in the "Definition" field will be displayed in the "Detailed Descriptions" page for the specific element.</span></li>
   </ul>
  </ul>
 </ul>
