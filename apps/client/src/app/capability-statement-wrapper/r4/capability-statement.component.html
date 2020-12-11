@@ -769,7 +769,7 @@
           <th>
             <div class="pull-right">
               <button type="button" class="btn btn-default" title="Add document"
-                      (click)="capabilityStatement.document.push({ mode: 'producer', profile: { reference: '', display: '' }})">
+                      (click)="capabilityStatement.document.push({ mode: 'producer', profile: ''})">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -793,6 +793,7 @@
               resourceType="StructureDefinition"
               [isFormGroup]="false"
               [required]="true"
+              [isCanonical]="true"
               [hideResourceType]="true"></app-fhir-reference>
           </td>
           <td>
