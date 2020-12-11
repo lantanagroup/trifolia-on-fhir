@@ -59,6 +59,9 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   addCoding(jurisdiction: ICodeableConcept, index: number) {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
+    if(jurisdiction.coding.length === 1){
+      this.setJurisdictionCode(this.jurisdictions[0], 0, this.jurisdictionCodes[0]);
+    }
     if(this.editFields.length < index + 1){
       this.editFields.push([]);
     }
@@ -71,12 +74,10 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   checkForCompletedJurisdiction(){
     for(let x = 0; x < this.jurisdictions.length; x++){
-      if(this.jurisdictions[x].text && this.jurisdictions[x].coding){
-        for(let y = 0; y < this.jurisdictions[x].coding.length; y++){
-          if(this.jurisdictions[x].text && this.jurisdictions[x].coding[y].code && this.jurisdictions[x].coding[y].display
-            && this.jurisdictions[x].coding[y].system){
-            return false;
-          }
+      for(let y = 0; y < this.jurisdictions[x].coding.length; y++){
+        if(this.jurisdictions[x].text && this.jurisdictions[x].coding[y].code && this.jurisdictions[x].coding[y].display
+          && this.jurisdictions[x].coding[y].system){
+          return false;
         }
       }
     }
@@ -95,6 +96,16 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   ngOnInit() {
     if(!this.jurisdictionCodes){
       this.jurisdictionCodes = this.fhirService.getValueSetCodes("http://hl7.org/fhir/ValueSet/iso3166-1-2");
+      this.jurisdictionCodes.sort(function(a, b){
+        if(a.display < b.display) return -1;
+        if(a.display > b.display) return 1;
+        return 0;
+      });
+      const us = this.jurisdictionCodes.find(jc =>
+        jc.display === "United States of America");
+      const index = this.jurisdictionCodes.indexOf(us);
+      this.jurisdictionCodes.splice(index, 1);
+      this.jurisdictionCodes.splice(0, 0, us);
     }
 
     if (this.tooltipKey) {
