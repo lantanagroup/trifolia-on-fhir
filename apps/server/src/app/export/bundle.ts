@@ -4,7 +4,7 @@ import {ImplementationGuidePageComponent} from '../../../../../libs/tof-lib/src/
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {HttpService, Logger} from '@nestjs/common';
 import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {IExtension} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IExtension, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset'|'transaction';
@@ -168,6 +168,13 @@ export class BundleExporter {
 
     bundle.total = (bundle.entry || []).length;
     bundle.type = type;
+    if(bundle.entry){
+      bundle.entry.forEach(entry => {
+        if(entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition"){
+          delete (<IStructureDefinition> entry.resource).snapshot;
+        }
+      });
+    }
 
     if (bundle.type === 'transaction') {
       bundle.entry.forEach(entry => {
@@ -191,6 +198,14 @@ export class BundleExporter {
       this.getBundle(removeExtensions, false, type)
         .then((results) => {
           let response: Bundle | string = results;
+
+          if(results.entry){
+            results.entry.forEach(entry => {
+              if(entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition"){
+                delete (<IStructureDefinition> entry.resource).snapshot;
+              }
+            });
+          }
 
           if (format === 'xml' || format === 'application/xml') {
             response = this.fhir.objToXml(results);

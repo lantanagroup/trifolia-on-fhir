@@ -173,13 +173,13 @@ export class StructureDefinitionController extends BaseFhirController {
 
   @Post()
   public async create(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
-    body = await this.generateProfileSnapshot(fhirServerId, body);
+    delete body.snapshot;
     return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId, applyContextPermissions);
   }
 
   @Put(':id')
   public async update(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
-    body = await this.generateProfileSnapshot(fhirServerId, body);
+    delete body.snapshot;
     return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId, applyContextPermissions);
   }
 
@@ -217,7 +217,7 @@ export class StructureDefinitionController extends BaseFhirController {
       return list;
     };
 
-    let baseProfiles, baseUrl, baseTypeProfile;
+    let baseProfiles;
 
     try {
       baseProfiles = await getNextBase(url);
@@ -239,6 +239,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
    * @param fhirServerId
    * @param body
+   * @deprecated This is no longer used, but may be used in future, so it is preserved.
    */
   private async generateProfileSnapshot(fhirServerId: string, body: any) {
     const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
