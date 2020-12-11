@@ -60,7 +60,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
     if(jurisdiction.coding.length === 1){
-      this.setJurisdictionCode(this.jurisdictions[0], 0, this.jurisdictionCodes[0]);
+      this.setJurisdictionCode(this.jurisdictions[index], 0, this.jurisdictionCodes[0]);
     }
     if(this.editFields.length < index + 1){
       this.editFields.push([]);
