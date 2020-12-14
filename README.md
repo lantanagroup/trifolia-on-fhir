@@ -120,12 +120,13 @@ See the Wiki's [Authentication](https://github.com/lantanagroup/trifolia-on-fhir
 
 | Resource | Create | Edit | Save | Validate | Versions | Additional | Not supported | Notes |
 | -------- | ------ | ---- | ---- | -------- | ------ | ------ | ----- | ------ |
-| ImplementationGuide | X | X | X | X | DSTU3 | | | |
-| StructureDefinition | X | X | X | X | DSTU3 | | | Element definitions support both DSTU3 and R4. Other properties in StructureDefinition may be different for R4. |
-| ValueSet | X | X | X | X | DSTU3 | $expand | .compose.include.concept.designation | |
-| CodeSystem | X | X | X | X | DSTU3 | | | |
+| ImplementationGuide | X | X | X | X | DSTU3, R4 | | | |
+| StructureDefinition | X | X | X | X | DSTU3, R4 | | | Element definitions support both DSTU3 and R4. Other properties in StructureDefinition may be different for R4. |
+| ValueSet | X | X | X | X | DSTU3, R4 | $expand | .compose.include.concept.designation | |
+| CodeSystem | X | X | X | X | DSTU3, R4 | | | |
 | CapabilityStatement | X | X | X | X | DSTU3, R4 | | | |
-| OperationDefinition | X | X | X | X | DSTU3 | | | |
+| OperationDefinition | X | X | X | X | DSTU3, R4 | | | |
+| Questionnaire | X | X | X | X | DSTU3, R4 | | | |
 
 ## Additional
 
