@@ -307,10 +307,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       if (e instanceof NavigationEnd && e.url.startsWith('/structure-definition/')) {
         // noinspection JSIgnoredPromiseFromCall
         this.getStructureDefinition();
+        delete this.structureDefinition.snapshot;
       }
     });
     // noinspection JSIgnoredPromiseFromCall
     this.getStructureDefinition();
+    delete this.structureDefinition.snapshot;
   }
 
   ngDoCheck() {

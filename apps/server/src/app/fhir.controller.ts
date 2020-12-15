@@ -256,6 +256,10 @@ export class FhirController extends BaseController {
     shouldRemovePermissions = true,
     applyContextPermissions = false) {
 
+    if(entry.resource && entry.resource.resourceType === "StructureDefinition"){
+      delete (<IStructureDefinition> entry.resource).snapshot;
+    }
+
     // Make sure the user has permission to edit the pre-existing resource
     if (entry.request.method !== 'POST') {
       const id = entry.resource.id;
