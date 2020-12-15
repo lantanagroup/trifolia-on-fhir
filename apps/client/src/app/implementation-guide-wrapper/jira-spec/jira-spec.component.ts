@@ -30,7 +30,6 @@ export class JiraSpecComponent implements OnInit, OnChanges {
 
   constructor(private configSerivce: ConfigService) {
     this.valueChanged
-      .pipe(debounceTime(500))
       .subscribe(() => {
         this.updateJiraSpecValue();
         this.change.emit(this.value);
