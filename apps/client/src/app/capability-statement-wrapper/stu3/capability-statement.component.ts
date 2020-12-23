@@ -5,7 +5,7 @@ import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComp
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
-import {NgbModal, NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
@@ -72,6 +72,26 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }
 
     this.getCapabilityStatement();
+  }
+
+  public moveRestLeft(rest: RestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex > 0) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex - 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex-1));
+    }
+  }
+
+  public moveRestRight(rest: RestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex < this.capabilityStatement.rest.length) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex + 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex+1));
+    }
   }
 
   public save() {

@@ -11,7 +11,7 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {Observable} from 'rxjs';
 import {RecentItemService} from '../../shared/recent-item.service';
 import {FhirService} from '../../shared/fhir.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
@@ -90,6 +90,26 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
 
     this.getCapabilityStatement();
+  }
+
+  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex > 0) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex - 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex-1));
+    }
+  }
+
+  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex < this.capabilityStatement.rest.length) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex + 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex+1));
+    }
   }
 
   public save() {

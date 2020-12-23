@@ -23,7 +23,7 @@
               Formats
               <app-tooltip-icon tooltipPath="CapabilityStatement.format"></app-tooltip-icon>
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format"
+                <button type="button" class="btn btn-primary btn-sm" title="Add a format"
                         (click)="capabilityStatement.format.push('')">
                   <i class="fa fa-plus"></i>
                 </button>
@@ -38,7 +38,7 @@
                 </td>
                 <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format"
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this format"
                             (click)="capabilityStatement.format.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
@@ -54,7 +54,7 @@
               <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('patchFormat')"
                      (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'patchFormat', [''])"/>
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format"
+                <button type="button" class="btn btn-primary btn-sm" title="Add a format"
                         [disabled]="!capabilityStatement.hasOwnProperty('patchFormat')"
                         (click)="capabilityStatement.patchFormat.push('')">
                   <i class="fa fa-plus"></i>
@@ -72,7 +72,7 @@
                 </td>
                 <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format"
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this format"
                             (click)="capabilityStatement.patchFormat.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
@@ -173,7 +173,7 @@
             <th>URI</th>
             <th class="actions-column-2">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add an implementation guide"
+                <button type="button" class="btn btn-primary" title="Add an implementation guide"
                         (click)="capabilityStatement.implementationGuide.push('')">
                   <i class="fa fa-plus"></i>
                 </button>
@@ -188,11 +188,11 @@
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Select an implementation guide"
+                <button type="button" class="btn btn-primary" title="Select an implementation guide"
                         (click)="selectImplementationGuide(igi)">
                   <i class="fas fa-hand-pointer"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Remove this implementation guide"
+                <button type="button" class="btn btn-primary" title="Remove this implementation guide"
                         (click)="capabilityStatement.implementationGuide.splice(igi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
@@ -224,7 +224,7 @@
             <th>Reference</th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add a profile"
+                <button type="button" class="btn btn-primary" title="Add a profile"
                         (click)="capabilityStatement.profile.push({ reference: '', display: '' })">
                   <i class="fa fa-plus"></i>
                 </button>
@@ -240,7 +240,7 @@
             </td>
             <td>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Remove this profile"
+                <button type="button" class="btn btn-primary" title="Remove this profile"
                         (click)="capabilityStatement.profile.splice(pi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
@@ -292,10 +292,20 @@
         <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
           <ng-template ngbTabTitle>
             <span>REST {{ri + 1}} </span>
-            <i class="fas fa-trash-alt" title="Remove this REST entry"
-               (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
           </ng-template>
           <ng-template ngbTabContent>
+            <div class="btn-group rest-actions">
+              <button type="button" class="btn btn-primary" [disabled]="ri === 0" (click)="moveRestLeft(r, restTabSet)">
+                <i class="fas fa-arrow-left" title="Move this REST entry left/previous"></i>
+              </button>
+              <button type="button" class="btn btn-primary" [disabled]="ri === capabilityStatement.rest.length - 1" (click)="moveRestRight(r, restTabSet)">
+                <i class="fas fa-arrow-right" title="Move this REST entry right/next" style="margin-left: 3px; margin-right: 3px;"></i>
+              </button>
+              <button type="button" class="btn btn-primary" (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)">
+                <i class="fas fa-trash-alt" title="Remove this REST entry"></i>
+              </button>
+            </div>
+
             <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode"
                                          valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode"
                                          [required]="true"
@@ -339,7 +349,7 @@
                       </th>
                       <th>
                         <div class="pull-right">
-                          <button type="button" class="btn btn-default" title="Add a certificate"
+                          <button type="button" class="btn btn-primary" title="Add a certificate"
                                   (click)="r.security.certificate.push({})">
                             <i class="fa fa-plus"></i>
                           </button>
@@ -357,7 +367,7 @@
                       </td>
                       <td>
                         <div class="pull-right">
-                          <button type="button" class="btn btn-default" title="Remove this certificate"
+                          <button type="button" class="btn btn-primary" title="Remove this certificate"
                                   (click)="r.security.certificate.splice(ci, 1)">
                             <i class="fas fa-trash-alt"></i>
                           </button>
@@ -395,7 +405,7 @@
                   </th>
                   <th class="actions-column-3">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a resource"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a resource"
                               (click)="r.resource.push({ type: 'Account', interaction: [] })">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -418,15 +428,15 @@
                   </td>
                   <td>
                     <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Edit this resource"
+                      <button type="button" class="btn btn-primary btn-sm" title="Edit this resource"
                               (click)="editResource(res)">
                         <i class="fa fa-edit"></i>
                       </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Duplicate this resource"
+                      <button type="button" class="btn btn-primary btn-sm" title="Duplicate this resource"
                               (click)="copyResource(r, res)">
                         <i class="fa fa-copy"></i>
                       </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this resource"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this resource"
                               (click)="r.resource.splice(resi, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -457,7 +467,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an interaction"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an interaction"
                               (click)="r.interaction.push({ code: 'transaction' })">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -478,7 +488,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this interaction"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this interaction"
                               (click)="r.interaction.splice(ii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -518,7 +528,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a search param"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a search param"
                               (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -546,7 +556,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this search param"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this search param"
                               (click)="r.searchParam.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -576,7 +586,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an operation"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
                               (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -596,7 +606,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this operation"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
                               (click)="r.operation.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -621,7 +631,7 @@
                   <th>Name</th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an compartment"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an compartment"
                               (click)="r.compartment.push('')">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -637,7 +647,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this compartment"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this compartment"
                               (click)="r.compartment.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -651,7 +661,7 @@
         </ngb-tab>
         <ngb-tab id="add">
           <ng-template ngbTabTitle>
-            <button type="button" class="btn btn-default" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
+            <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
               Add
             </button>
           </ng-template>
@@ -695,7 +705,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an endpoint"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an endpoint"
                               (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -718,7 +728,7 @@
                   </td>
                   <td>
                     <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this endpoint"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this endpoint"
                               (click)="messaging.endpoint.splice(ei, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -764,7 +774,7 @@
                   </th>
                   <th class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a supported message"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a supported message"
                               (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -785,7 +795,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this supported message"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this supported message"
                               (click)="messaging.supportedMessage.splice(smi, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -824,7 +834,7 @@
                   </th>
                   <th class="actions-column-2">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an event"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an event"
                               (click)="messaging.event.push(getDefaultMessagingEvent())">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -861,11 +871,11 @@
                   </td>
                   <td>
                     <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Edit this event"
+                      <button type="button" class="btn btn-primary btn-sm" title="Edit this event"
                               (click)="editEvent(event)">
                         <i class="fa fa-edit"></i>
                       </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this event"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this event"
                               (click)="messaging.event.splice(eventi, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -879,7 +889,7 @@
         </ngb-tab>
         <ngb-tab [disabled]="true">
           <ng-template ngbTabTitle>
-            <button type="button" class="btn btn-default" title="Add a messaging entry"
+            <button type="button" class="btn btn-primary" title="Add a messaging entry"
                     (click)="addMessagingEntry(messagingTabSet)">Add
             </button>
           </ng-template>
@@ -911,7 +921,7 @@
           </th>
           <th class="actions-column-1">
             <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Add document"
+              <button type="button" class="btn btn-primary" title="Add document"
                       (click)="capabilityStatement.document.push({ mode: 'producer', profile: { reference: '', display: '' }})">
                 <i class="fa fa-plus"></i>
               </button>
@@ -940,7 +950,7 @@
           </td>
           <td>
             <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Remove this document"
+              <button type="button" class="btn btn-primary" title="Remove this document"
                       (click)="capabilityStatement.document.splice(i, 1)">
                 <i class="fas fa-trash-alt"></i>
               </button>
