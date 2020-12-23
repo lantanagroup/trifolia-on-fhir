@@ -35,14 +35,22 @@ export class FhirStringComponent implements OnInit {
    */
   @Input() cookieKey?: string;
 
-  private changeEvent = new Subject();
+  public changeEvent = new Subject();
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private cookieService: CookieService) {
 
+    // Throttle how often this.change gets emitted so that it doesn't trigger for every single key press
     this.changeEvent.pipe(debounceTime(500))
-      .subscribe((value: string) => this.change.emit(value));
+      .subscribe(() => this.change.emit(this.value));
+  }
+
+  public changeValue(value: string) {
+    if (value !== this.value) {
+      this.value = value;
+      this.changeEvent.next();
+    }
   }
 
   public get value() {
