@@ -32,7 +32,10 @@
         </thead>
         <tbody>
         <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
-          <td>{{f.name}}</td>
+          <td>
+            {{f.name}}
+            <i *ngIf="f.message" class="fas fa-exclamation" style="color: red;" [ngbTooltip]="f.message"></i>
+          </td>
           <td>{{getIdDisplay(f)}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
