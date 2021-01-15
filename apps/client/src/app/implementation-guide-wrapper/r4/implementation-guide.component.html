@@ -595,6 +595,10 @@
           </div>
 
           <div class="col-md-12">
+            <trifolia-fhir-custom-menu [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-custom-menu>
+          </div>
+
+          <div class="col-md-12">
             <trifolia-fhir-jira-spec [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-jira-spec>
           </div>
         </div>

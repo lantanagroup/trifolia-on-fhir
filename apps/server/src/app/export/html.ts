@@ -23,6 +23,7 @@ import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/ex
 import {Formats} from '../models/export-options';
 import {PageInfo} from './html.models';
 import {
+  getCustomMenu,
   getDefaultImplementationGuideResourcePath,
   getExtensionString,
   getIgnoreWarningsValue,
@@ -47,70 +48,7 @@ export class HtmlExporter {
   public user: ITofUser;
 
   private initPromise: Promise<void>;
-  // TODO: Refactor so that there aren't so many constructor params
-  constructor(
-    protected configService: ConfigService,
-    protected httpService: HttpService,
-    protected logger: Logger,
-    protected fhirServerBase: string,
-    protected fhirServerId: string,
-    protected fhirVersion: string,
-    protected fhir: FhirModule,
-    protected io: Server,
-    protected socketId: string,
-    protected implementationGuideId: string) {
 
-    this.homedir = require('os').homedir();
-  }
-
-  public async init() {
-    this.queuedAt = new Date();
-
-    this.initPromise = new Promise<void>(async (resolve, reject) => {
-      try {
-        this.rootPath = await this.createTempDirectory();
-
-        this.controlPath = path.join(this.rootPath, 'ig.ini');
-        this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
-
-        this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
-
-        const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
-        this.bundle = await bundleExporter.getBundle();
-
-        const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
-          .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
-          .resource;
-
-        if (!implementationGuide) {
-          throw new Error('Bundle export did not include the ImplementationGuide!');
-        }
-
-        if (this.fhirVersion === 'r4') {
-          this.implementationGuide = new R4ImplementationGuide(implementationGuide);
-        } else if (this.fhirVersion === 'stu3') {
-          this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
-        } else {
-          throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
-        }
-
-        resolve();
-      } catch (ex) {
-        this.logger.error(`Error while initializing export: ${ex.message}`, ex.stack);
-        reject(ex);
-      }
-    });
-
-    return this.initPromise;
-  }
-
-  protected get stu3ImplementationGuide(): STU3ImplementationGuide {
-    return <STU3ImplementationGuide>this.implementationGuide;
-  }
-
-  protected get r4ImplementationGuide(): R4ImplementationGuide {
-    return <R4ImplementationGuide>this.implementationGuide;
-  }
   readonly homedir: string;
   public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   public bundle: IBundle;
@@ -177,6 +115,71 @@ export class HtmlExporter {
     }
 
     return content;
+  }
+
+  // TODO: Refactor so that there aren't so many constructor params
+  constructor(
+    protected configService: ConfigService,
+    protected httpService: HttpService,
+    protected logger: Logger,
+    protected fhirServerBase: string,
+    protected fhirServerId: string,
+    protected fhirVersion: string,
+    protected fhir: FhirModule,
+    protected io: Server,
+    protected socketId: string,
+    protected implementationGuideId: string) {
+
+    this.homedir = require('os').homedir();
+  }
+
+  public async init() {
+    this.queuedAt = new Date();
+
+    this.initPromise = new Promise<void>(async (resolve, reject) => {
+      try {
+        this.rootPath = await this.createTempDirectory();
+
+        this.controlPath = path.join(this.rootPath, 'ig.ini');
+        this.packageId = this.rootPath.substring(this.rootPath.lastIndexOf(path.sep) + 1);
+
+        this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
+
+        const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
+        this.bundle = await bundleExporter.getBundle();
+
+        const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
+          .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
+          .resource;
+
+        if (!implementationGuide) {
+          throw new Error('Bundle export did not include the ImplementationGuide!');
+        }
+
+        if (this.fhirVersion === 'r4') {
+          this.implementationGuide = new R4ImplementationGuide(implementationGuide);
+        } else if (this.fhirVersion === 'stu3') {
+          this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
+        } else {
+          throw new Error(`Unknown/unexpected FHIR version ${this.fhirVersion}`);
+        }
+
+        resolve();
+      } catch (ex) {
+        this.logger.error(`Error while initializing export: ${ex.message}`, ex.stack);
+        reject(ex);
+      }
+    });
+
+    return this.initPromise;
+  }
+
+  protected get stu3ImplementationGuide(): STU3ImplementationGuide {
+    return <STU3ImplementationGuide>this.implementationGuide;
+  }
+
+  protected get r4ImplementationGuide(): R4ImplementationGuide {
+    return <R4ImplementationGuide>this.implementationGuide;
   }
 
   /**
@@ -388,10 +391,11 @@ export class HtmlExporter {
     setIgnoreWarningsValue(igToWrite, null);
     setJiraSpecValue(igToWrite, null);
 
-    // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
+    // createMenu() must be called before writeResourceContent() for the IG because createMenu() might make changes
     // to the ig that needs to get written.
     this.logger.log('Updating the IG publisher templates for the resources');
-    this.updateTemplates(this.rootPath, this.bundle);
+    const customMenu = getCustomMenu(this.implementationGuide);
+    this.createMenu(this.rootPath, this.bundle, customMenu);
 
     this.writeResourceContent(inputDir, igToWrite, isXml);
 
@@ -573,9 +577,15 @@ export class HtmlExporter {
    * with links to the resources in the implementation guide.
    * @param rootPath
    * @param bundle
+   * @param customMenu
    */
-  protected updateTemplates(rootPath: string, bundle) {
+  protected createMenu(rootPath: string, bundle, customMenu?: string) {
     fs.ensureDirSync(path.join(rootPath, 'input/includes'));
+
+    if(customMenu){
+      fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), customMenu);
+      return;
+    }
 
     const allPageMenuNames = this.pageInfos
       .filter(pi => {

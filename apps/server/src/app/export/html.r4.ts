@@ -177,7 +177,7 @@ export class R4HtmlExporter extends HtmlExporter {
     return this.r4ImplementationGuide;
   }
 
-  protected updateTemplates(rootPath: string, bundle) {
+  protected createMenu(rootPath: string, bundle, customMenu) {
     if (!this.r4ImplementationGuide.definition) {
       this.r4ImplementationGuide.definition = {
         resource: []
@@ -186,7 +186,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
     this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
 
-    super.updateTemplates(rootPath, bundle);
+    super.createMenu(rootPath, bundle, customMenu);
   }
 
   protected writePages(rootPath: string) {

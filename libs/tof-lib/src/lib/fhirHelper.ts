@@ -2,9 +2,10 @@ import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, Resource
 import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 import * as semver from 'semver';
-import {Versions} from 'fhir/fhir';
+import {Fhir, Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
+import {FhirReferenceModalComponent} from '../../../../apps/client/src/app/fhir-edit/reference-modal/reference-modal.component';
 
 export function identifyRelease(fhirVersion: string): Versions {
   if (!fhirVersion) {
@@ -235,10 +236,11 @@ export function codeableConceptHasCode(codeableConcept: ICodeableConcept, code: 
 }
 
 export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide, value: string) {
+  const Global = Globals;
   if (!implementationGuide) return;
 
   implementationGuide.extension = implementationGuide.extension || [];
-  let foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+  let foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-ignore-warnings']);
   let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
     implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
     null;
@@ -260,7 +262,7 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
   } else {
     if (!foundExtension) {
       foundExtension = {
-        url: Globals.extensionUrls['extension-ig-ignore-warnings'],
+        url: Global.extensionUrls['extension-ig-ignore-warnings'],
         valueReference: {
           reference: `#${generateId()}`
         }
@@ -296,10 +298,11 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
 }
 
 export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide): string {
+  const Global = Globals;
   if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
   // Find the extension that references the contained DocumentReference
-  const foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-ignore-warnings']);
+  const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-ignore-warnings']);
   if (!foundExtension) return;
   const ignoreWarningsReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
   if (!ignoreWarningsReference.startsWith('#')) return;
@@ -327,11 +330,12 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
   }
 }
 
-export function setJiraSpecValue(implementationGuide: IImplementationGuide, value: string) {
+export function setCustomMenu(implementationGuide: IImplementationGuide, value: string) {
+  const Global = Globals;
   if (!implementationGuide) return;
 
   implementationGuide.extension = implementationGuide.extension || [];
-  let foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
+  let foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-custom-menu']);
   let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
     implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
     null;
@@ -353,7 +357,102 @@ export function setJiraSpecValue(implementationGuide: IImplementationGuide, valu
   } else {
     if (!foundExtension) {
       foundExtension = {
-        url: Globals.extensionUrls['extension-ig-jira-spec'],
+        url: Global.extensionUrls['extension-ig-custom-menu'],
+        valueReference: {
+          reference: `#${generateId()}`
+        }
+      };
+      implementationGuide.extension.push(foundExtension);
+    }
+
+    implementationGuide.contained = implementationGuide.contained || [];
+
+    if (!foundContained) {
+      foundContained = <IDocumentReference> {
+        resourceType: 'DocumentReference',
+        id: foundExtension.valueReference.reference.substring(1),
+        type: {
+          coding: [{
+            code: 'custom-menu'
+          }]
+        },
+        content: [{
+          attachment: {
+            contentType: 'application/xml',
+            title: 'menu.xml',
+            data: btoa(value)
+          }
+        }]
+      };
+      implementationGuide.contained.push(foundContained);
+    } else {
+      const docRef = <IDocumentReference> foundContained;
+      docRef.content[0].attachment.data = btoa(value);
+    }
+  }
+}
+
+export function getCustomMenu(implementationGuide: IImplementationGuide): string {
+  const Global = Globals;
+  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+
+  // Find the extension that references the contained DocumentReference
+  const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-custom-menu']);
+  if (!foundExtension) return;
+  const customMenuReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+  if (!customMenuReference.startsWith('#')) return;
+
+  // Find the contained DocumentReference based on the extension reference
+  const foundContained = implementationGuide.contained.find(c => {
+    if (c.resourceType !== 'DocumentReference' || c.id !== customMenuReference.substring(1)) return false;
+    const docRef = <IDocumentReference>c;
+    return codeableConceptHasCode(docRef.type, 'custom-menu') &&
+      docRef.content &&
+      docRef.content.length === 1 &&
+      docRef.content[0].attachment &&
+      docRef.content[0].attachment.data;
+  });
+
+  if (foundContained) {
+    const documentReference = <IDocumentReference>foundContained;
+
+    // Set the data after decoding it from base64
+    if (typeof atob === 'function') {
+      return atob(documentReference.content[0].attachment.data);
+    } else {
+      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+    }
+  }
+}
+
+export function setJiraSpecValue(implementationGuide: IImplementationGuide, value: string) {
+  const Global = Globals;
+  if (!implementationGuide) return;
+
+  implementationGuide.extension = implementationGuide.extension || [];
+  let foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-jira-spec']);
+  let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
+    implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+    null;
+
+  if (!value) {
+    if (foundExtension) {
+      const foundExtensionIndex = implementationGuide.extension.indexOf(foundExtension);
+      implementationGuide.extension.splice(foundExtensionIndex, foundExtensionIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.extension.length) delete implementationGuide.extension;
+    }
+
+    if (foundContained) {
+      const foundContainedIndex = implementationGuide.contained.indexOf(foundContained);
+      implementationGuide.contained.splice(foundContainedIndex, foundContainedIndex >= 0 ? 1 : 0);
+
+      if (!implementationGuide.contained.length) delete implementationGuide.contained;
+    }
+  } else {
+    if (!foundExtension) {
+      foundExtension = {
+        url: Global.extensionUrls['extension-ig-jira-spec'],
         valueReference: {
           reference: `#${generateId()}`
         }
@@ -389,10 +488,11 @@ export function setJiraSpecValue(implementationGuide: IImplementationGuide, valu
 }
 
 export function getJiraSpecValue(implementationGuide: IImplementationGuide): string {
+  const Global = Globals;
   if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
   // Find the extension that references the contained DocumentReference
-  const foundExtension = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
+  const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-jira-spec']);
   if (!foundExtension) return;
   const jiraSpecReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
   if (!jiraSpecReference.startsWith('#')) return;
@@ -421,17 +521,19 @@ export function getJiraSpecValue(implementationGuide: IImplementationGuide): str
 }
 
 export function getSTU3Dependencies(ig: STU3ImplementationGuide): string[] {
+  const Global = Globals;
+
   if (!ig || !ig.extension) return [];
   return ig.extension
     .filter(e => {
-      return e.url === Globals.extensionUrls['extension-ig-dependency'] &&
+      return e.url === Global.extensionUrls['extension-ig-dependency'] &&
         e.extension &&
-        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-name'] && next.valueString) && // has ig-dependency-name
-        e.extension.find(next => next.url === Globals.extensionUrls['extension-ig-dependency-version'] && next.valueString); // has ig-dependency-version
+        e.extension.find(next => next.url === Global.extensionUrls['extension-ig-dependency-name'] && next.valueString) && // has ig-dependency-name
+        e.extension.find(next => next.url === Global.extensionUrls['extension-ig-dependency-version'] && next.valueString); // has ig-dependency-version
     })
     .map(e => {
-      const nameExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-name']);
-      const versionExtension = (e.extension || []).find((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency-version']);
+      const nameExtension = (e.extension || []).find((extension: Extension) => extension.url === Global.extensionUrls['extension-ig-dependency-name']);
+      const versionExtension = (e.extension || []).find((extension: Extension) => extension.url === Global.extensionUrls['extension-ig-dependency-version']);
       return nameExtension.valueString +
         '#' +
         (versionExtension.valueString || 'current');
