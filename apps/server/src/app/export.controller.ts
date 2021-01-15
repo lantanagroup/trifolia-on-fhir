@@ -176,7 +176,8 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion, options.useTerminologyServer);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
+        options.template, options.templateVersion, options.useTerminologyServer);
 
       if(exporter.bundle && exporter.bundle.entry) {
         exporter.bundle.entry.forEach(e => {
@@ -255,7 +256,8 @@ export class ExportController extends BaseController {
 
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version,
+        options.templateType, options.template, options.templateVersion, null);
 
       runPublish();
 
