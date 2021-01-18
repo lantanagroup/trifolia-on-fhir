@@ -2,7 +2,6 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {ChildProcess, spawn} from 'child_process';
 import {
-  ContactDetail,
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
@@ -16,16 +15,13 @@ import {
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
-import {IServerConfig} from '../models/server-config';
-import {IFhirConfig} from '../models/fhir-config';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Formats} from '../models/export-options';
-import {PageInfo} from './html.models';
+import {PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
-  getExtensionString,
   getIgnoreWarningsValue,
   setIgnoreWarningsValue,
   setJiraSpecValue
@@ -34,13 +30,14 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
 import {FhirInstances, unzip} from '../helper';
-import {createTableFromArray, escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -83,38 +80,6 @@ export class HtmlExporter {
       default:
         return '.md';
     }
-  }
-
-  protected static getIndexContent(implementationGuide: IImplementationGuide) {
-    let content = '### Overview\n\n';
-
-    if (implementationGuide.description) {
-      const descriptionContent = implementationGuide.description + '\n\n';
-      content += descriptionContent + '\n\n';
-    } else {
-      content += 'This implementation guide does not have a description, yet.\n\n';
-    }
-
-    if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
-        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
-
-        let display: string;
-
-        if (foundEmail) {
-          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
-        } else if (foundURL) {
-          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
-        }
-
-        return [contact.name, display || ''];
-      });
-      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
-      content += authorsContent;
-    }
-
-    return content;
   }
 
   // TODO: Refactor so that there aren't so many constructor params
@@ -587,56 +552,7 @@ export class HtmlExporter {
       return;
     }
 
-    const allPageMenuNames = this.pageInfos
-      .filter(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return !!extension && extension.valueString;
-      })
-      .map(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return escapeForXml(extension.valueString);
-      });
-    const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
-      if (init.indexOf(next) < 0) init.push(next);
-      return init;
-    }, []);
-    const pageMenuContent = distinctPageMenuNames.map(pmn => {
-      const menuPages = this.pageInfos
-        .filter(pi => {
-          const extensions = <IExtension[]>(pi.page.extension || []);
-          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-          return extension && extension.valueString === pmn && pi.fileName;
-        });
-
-      if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].title);
-        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
-        return `  <li><a href="${fileName}">${title}</a></li>\n`;
-      } else {
-        const pageMenuItems = menuPages
-          .map(pi => {
-            const title = escapeForXml(pi.title);
-            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
-            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
-          });
-
-        return '  <li class="dropdown">\n' +
-          `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
-          '      </b>\n' +
-          '    </a>\n' +
-          '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
-          '    </ul>\n' +
-          '  </li>';
-      }
-    });
-
-    const menuContent = '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
-      '  <li><a href="index.html">IG Home</a></li>\n' +
-      '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
-      '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
-      '</ul>\n';
+    const menuContent = IgPageHelper.getMenuContent(this.pageInfos);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 

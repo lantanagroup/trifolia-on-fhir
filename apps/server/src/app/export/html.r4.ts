@@ -1,21 +1,10 @@
 import {HtmlExporter} from './html';
-import {PageInfo} from './html.models';
-import {
-  Binary as R4Binary,
-  DomainResource,
-  ImplementationGuide,
-  ImplementationGuidePageComponent,
-  ImplementationGuideResourceComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {ContactDetail, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {Formats} from '../models/export-options';
-import {ExceptionHandler} from '@nestjs/core/errors/exception-handler';
-import {HttpException, HttpStatus} from '@nestjs/common';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -84,28 +73,6 @@ export class R4HtmlExporter extends HtmlExporter {
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
   }
 
-  public static getPagesList(theList: PageInfo[], page: ImplementationGuidePageComponent, implementationGuide: ImplementationGuide) {
-    if (!page) {
-      return theList;
-    }
-
-    const pageInfo = new PageInfo();
-    pageInfo.page = page;
-    pageInfo.fileName = page.fileName || page.nameUrl;
-
-    if (page.reuseDescription) {
-      pageInfo.content = this.getIndexContent(implementationGuide);
-    } else {
-      pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
-    }
-
-    theList.push(pageInfo);
-
-    (page.page || []).forEach((next) => this.getPagesList(theList, next, implementationGuide));
-
-    return theList;
-  }
-
   protected populatePageInfos() {
     if (!this.r4ImplementationGuide.definition) {
       this.pageInfos = [];
@@ -121,7 +88,7 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 
-    this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
+    this.pageInfos = IgPageHelper.getR4PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
   protected prepareImplementationGuide(): IImplementationGuide {

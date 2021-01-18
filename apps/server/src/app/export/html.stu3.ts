@@ -1,19 +1,11 @@
 import {HtmlExporter} from './html';
-import {PageInfo} from './html.models';
-import {
-  Binary as STU3Binary, ContactDetail,
-  DomainResource,
-  ImplementationGuide,
-  PackageResourceComponent,
-  PageComponent,
-  StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PackageResourceComponent, PageComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {release} from 'os';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class STU3HtmlExporter extends HtmlExporter {
   protected removeNonExampleMedia() {
@@ -219,41 +211,8 @@ export class STU3HtmlExporter extends HtmlExporter {
     return newIg;
   }
 
-  public static getPagesList(theList: PageInfo[], page: PageComponent, implementationGuide: ImplementationGuide) {
-    if (!page) {
-      return theList;
-    }
-
-    if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
-      const contentExtension = (page.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-ig-page-content']);
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-
-      if (page.source) {
-        if (page.source.lastIndexOf('.') > 0) {
-          pageInfo.fileName = page.source.substring(0, page.source.lastIndexOf('.')) + page.getExtension();
-        } else {
-          pageInfo.fileName = page.source;
-        }
-      }
-
-      if (page.reuseDescription) {
-        pageInfo.content = this.getIndexContent(implementationGuide);
-      } else {
-        pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
-      }
-
-      theList.push(pageInfo);
-    }
-
-    (page.page || []).forEach((next) => STU3HtmlExporter.getPagesList(theList, next, implementationGuide));
-
-    return theList;
-  }
-
   protected populatePageInfos() {
-    this.pageInfos = STU3HtmlExporter.getPagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
+    this.pageInfos = IgPageHelper.getSTU3PagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
   }
 
   protected writePages(rootPath: string) {
