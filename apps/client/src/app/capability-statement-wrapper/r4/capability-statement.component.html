@@ -391,7 +391,7 @@
                 <tr>
                   <th>Type</th>
                   <th>Profile</th>
-                  <th>
+                  <th class="actions-column">
                     <div class="pull-right">
                       <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="r.resource.push({ type: 'Account' })">
                         <i class="fa fa-plus"></i>
@@ -401,7 +401,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let res of r.resource; let resi = index">
+                <tr *ngFor="let res of r.resource; let resourceIndex = index">
                   <td>
                     <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false"
                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
@@ -414,17 +414,27 @@
                       [isCanonical]="true"
                       resourceType="StructureDefinition"></app-fhir-reference>
                   </td>
-                  <td class="actions-column-3">
-                    <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-primary btn-sm" title="Edit this resource" (click)="editResource(res)">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary btn-sm" title="Duplicate this resource" (click)="copyResource(r, res)">
-                        <i class="fa fa-copy"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary btn-sm" title="Remove this resource" (click)="r.resource.splice(resi, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
+                  <td>
+                    <div class="btn-toolbar pull-right">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="moveResource(r, res, 'up')">
+                          <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="moveResource(r, res, 'down')">
+                          <i class="fas fa-arrow-down"></i>
+                        </button>
+                      </div>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-primary" title="Edit this resource" (click)="editResource(res)">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="copyResource(r, res)">
+                          <i class="fa fa-copy"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Remove this resource" (click)="r.resource.splice(resourceIndex, 1)">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>

@@ -11,3 +11,7 @@
   margin-right: auto;
   display: table;
 }
+
+.actions-column {
+  width: 225px;
+}

@@ -112,6 +112,22 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
+  public moveResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent, direction: 'up'|'down') {
+    const index = rest.resource.indexOf(resource);
+
+    if (direction === 'up') {
+      if (index > 0) {
+        rest.resource.splice(index, 1);
+        rest.resource.splice(index - 1, 0, resource);
+      }
+    } else if (direction === 'down') {
+      if (index < rest.resource.length - 1) {
+        rest.resource.splice(index, 1);
+        rest.resource.splice(index + 1, 0, resource);
+      }
+    }
+  }
+
   public save() {
     if (!this.validation.valid && !confirm('This capability statement is not valid, are you sure you want to save?')) {
       return;
