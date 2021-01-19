@@ -2,7 +2,7 @@ import '../date-extensions';
 import {
   IAgentComponent, IAttachment,
   IAuditEvent,
-  IBundle,
+  IBundle, ICapabilityStatement,
   ICodeableConcept,
   ICodeSystem,
   ICoding,
@@ -4428,7 +4428,7 @@ export class DocumentComponent extends BackboneElement {
 
 }
 
-export class CapabilityStatement extends DomainResource {
+export class CapabilityStatement extends DomainResource implements ICapabilityStatement {
   public resourceType = 'CapabilityStatement';
   public url?: string;
   public version?: string;

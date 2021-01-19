@@ -366,8 +366,7 @@
             <!-- Security -->
             <div class="card">
               <div class="card-header">
-                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')"
-                       (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
+                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
                 Security
               </div>
               <div class="card-body" *ngIf="r.hasOwnProperty('security')">
@@ -375,7 +374,7 @@
 
                 <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
 
-                <p>Service: TODO</p>
+                <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
               </div>
             </div>
 

@@ -329,6 +329,8 @@
                 <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"
                                  tooltipPath="CapabilityStatement.rest.security.description"></app-fhir-string>
 
+                <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
+
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="r.security.hasOwnProperty('certificate')"
@@ -377,10 +379,6 @@
                     </tbody>
                   </table>
                 </div>
-
-                <p>
-                  Service: TODO
-                </p>
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 import {
   IAgentComponent, IAttachment,
   IAuditEvent,
-  IBundle, ICodeableConcept,
+  IBundle, ICapabilityStatement, ICodeableConcept,
   ICodeSystem,
   IContactDetail,
   IContactPoint,
@@ -4638,7 +4638,7 @@ export class CapabilityStatementDocumentComponent extends BackboneElement {
 
 }
 
-export class CapabilityStatement extends DomainResource {
+export class CapabilityStatement extends DomainResource implements ICapabilityStatement {
   public resourceType = 'CapabilityStatement';
   public url?: string;
   public version?: string;
@@ -4646,7 +4646,7 @@ export class CapabilityStatement extends DomainResource {
   public title?: string;
   public status: string;
   public experimental?: boolean;
-  public date: Date;
+  public date: string = new Date().formatFhir();
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;

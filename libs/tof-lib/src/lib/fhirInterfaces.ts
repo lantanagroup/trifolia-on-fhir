@@ -336,3 +336,33 @@ export interface IOperationOutcomeIssue {
 export interface IOperationOutcome extends IDomainResource {
   issue: IOperationOutcomeIssue[];
 }
+
+export interface ICapabilityStatementRestComponent {
+  mode: string;
+  documentation?: string;
+  security?: ICapabilityStatementSecurityComponent;
+}
+
+export interface ICapabilityStatementSecurityComponent {
+  cors?: boolean;
+  service?: CodeableConcept[];
+  description?: string;
+}
+
+export interface ICapabilityStatement extends IDomainResource {
+  url?: string;
+  version?: string;
+  name?: string;
+  title?: string;
+  status: string;
+  experimental?: boolean;
+  date: string;
+  publisher?: string;
+  contact?: IContactDetail[];
+  description?: string;
+  jurisdiction?: ICodeableConcept[];
+  purpose?: string;
+  copyright?: string;
+  kind: string;
+  rest?: ICapabilityStatementRestComponent[];
+}
