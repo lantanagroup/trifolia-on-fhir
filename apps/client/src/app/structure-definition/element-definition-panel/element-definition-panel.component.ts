@@ -264,7 +264,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const maxRequired = this.element.max || this.elementTreeModel.baseElement.max;
     const minValue = this.element.min;
 
-    if (minValue < this.elementTreeModel.baseElement.min) {
+    if (!this.elementTreeModel.isSlice && minValue < this.elementTreeModel.baseElement.min) {
       return false;
     }
 
@@ -284,7 +284,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const maxValue = this.element.max;
     const minRequired = this.element.min || this.elementTreeModel.baseElement.min;
 
-    if (maxValue !== undefined && ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
+    if (!this.elementTreeModel.isSlice && maxValue !== undefined &&
+      ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
       || (maxValue === "*" && this.elementTreeModel.baseElement.max !== "*"))) {
       return false;
     }
