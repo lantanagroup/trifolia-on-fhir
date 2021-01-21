@@ -45,7 +45,8 @@ export class Globals {
     'extension-ig-page-reuse-description': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
     'extension-ig-ignore-warnings': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-ignore-warnings',
     'extension-ig-jira-spec': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-jira-spec',
-    'extension-ig-custom-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-custom-menu'
+    'extension-ig-custom-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-custom-menu',
+    'extension-ig-pub-template': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template'
   };
 
   static readonly introText = {
@@ -173,7 +174,9 @@ export class Globals {
     'ig.page.showTopNavMenu': 'This indicates if the page should be shown as a button in the top navigation menu. The value of this field should be the text you want displayed in the menu. If the same value is used for multiple pages, it will as a drop-down menu with the titles of the pages within the drop-down menu.',
     'ig.page.format': 'The format of the content for the page. It is suggested that this be left to "markdown", as this is the only format currently supported by ToF.',
     'ig.ignoreWarnings': 'The content of this file is exported as "input/ignoreWarnings.txt" when exporting as a publisher package. Each line should represent a warning copy-and-pasted from the IG Publisher\'s QA report that should be ignored by future publish operations.',
-    'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.'
+    'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.',
+    'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
+    'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.'
   };
 
   static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links'];

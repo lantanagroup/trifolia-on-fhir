@@ -62,7 +62,7 @@ export class ExportComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
 
     if (this.options.templateType === 'official') {
-      this.templateVersions = await this.configService.getTemplateVersions(this.options);
+      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
 
       const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
       if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
@@ -110,7 +110,7 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public implementationGuideChanged(implementationGuide: ImplementationGuide) {
+  public async implementationGuideChanged(implementationGuide: ImplementationGuide) {
     this.selectedImplementationGuide = implementationGuide;
     this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
 
@@ -120,6 +120,27 @@ export class ExportComponent implements OnInit {
       this.cookieService.put(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.remove(cookieKey);
+    }
+
+    const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
+
+    if (pubTemplateExt) {
+      if (pubTemplateExt.valueUri) {
+        this.options.templateType = 'custom-uri';
+        this.options.template = pubTemplateExt.valueUri;
+      } else if (pubTemplateExt.valueString) {
+        this.options.templateType = 'official';
+
+        if (pubTemplateExt.valueString.indexOf('#') >= 0) {
+          this.options.template = pubTemplateExt.valueString.substring(0, pubTemplateExt.valueString.indexOf('#'));
+          this.options.templateVersion = pubTemplateExt.valueString.substring(pubTemplateExt.valueString.indexOf('#') + 1);
+        } else {
+          this.options.template = pubTemplateExt.valueString;
+          this.options.templateVersion = 'current';
+        }
+
+        this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
+      }
     }
   }
 
@@ -245,12 +266,19 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
     }
 
-    this.templateChanged();
+    if (this.options.implementationGuideId) {
+      this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
+        .subscribe((implementationGuide: ImplementationGuide) => {
+          this.implementationGuideChanged(implementationGuide);
+        }, (err) => this.message = getErrorString(err));
+    }
+
+    await this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
