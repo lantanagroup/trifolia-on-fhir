@@ -149,22 +149,29 @@ export class BulkEditComponent implements OnInit {
     this.message = 'Saving...';
     const bulkUpdateRequest = new BulkUpdateRequest();
 
+    const getOp = (old, current) => {
+      if(old && current) return 'replace';
+      else if(old && !current) return 'remove';
+      else if(!old && current) return 'add';
+      else return undefined;
+    };
+
     try {
       if (this.configService.isFhirR4) {
         const originalIg = <R4ImplementationGuide> this.originalImplementationGuide;
         const ig = <R4ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
-        bulkUpdateRequest.pageOp = originalIg.definition && originalIg.definition.page ?
-          'replace' : (ig.definition && ig.definition.page ? 'add' : undefined);
+        bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
       } else if (this.configService.isFhirSTU3) {
         const originalIg = <STU3ImplementationGuide> this.originalImplementationGuide;
         const ig = <STU3ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.page;
-        bulkUpdateRequest.pageOp = originalIg.page ? 'replace' : (
-          ig.page ? 'add' : undefined);
+        bulkUpdateRequest.pageOp = getOp(originalIg.page, ig.page);
       } else {
         throw new Error('Unexpected FHIR version');
       }
+
+
 
       bulkUpdateRequest.profiles = this.profiles
         .filter(profile => {
@@ -175,14 +182,11 @@ export class BulkEditComponent implements OnInit {
           return <BulkUpdateRequestProfile> {
             id: profile.id,
             description: profile.description,
-            descriptionOp: originalProfile.description ? 'replace' :
-              (profile.description ? 'add' : undefined),
+            descriptionOp: getOp(originalProfile.description, profile.description),
             extension: profile.extension,
-            extensionOp: originalProfile.extension ? 'replace' :
-              (profile.extension ? 'add' : undefined),
+            extensionOp: getOp(originalProfile.extension, profile.extension),
             diffElement: profile.differential && profile.differential.element ? profile.differential.element : null,
-            diffElementOp: originalProfile.differential && originalProfile.differential.element ? 'replace' :
-              (profile.differential && profile.differential.element ? 'add' : undefined)
+            diffElementOp: getOp(originalProfile.differential, profile.differential)
           };
         });
 
