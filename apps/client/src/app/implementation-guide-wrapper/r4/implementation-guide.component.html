@@ -581,6 +581,11 @@
     <ngb-tab id="publishing" title="Publishing">
       <ng-template ngbTabContent>
         <div class="row">
+          <div class="col-md-6">
+            <trifolia-fhir-publishing-template [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-publishing-template>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-12">
             <trifolia-fhir-package-list
               [implementationGuide]="implementationGuide"

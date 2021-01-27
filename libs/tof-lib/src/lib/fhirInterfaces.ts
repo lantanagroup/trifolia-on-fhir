@@ -86,6 +86,7 @@ export interface IExtension {
   url: string;
   valueBoolean?: boolean;
   valueString?: string;
+  valueUri?: string;
   valueReference?: IResourceReference;
   valueMarkdown?: string;
 }

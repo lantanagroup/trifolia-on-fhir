@@ -27,14 +27,16 @@ export class ConfigService {
     this.fhirServer = localStorage.getItem('fhirServer');
   }
 
-  public async getTemplateVersions(options: ExportOptions): Promise<string[]> {
+  public async getTemplateVersions(template: string): Promise<string[]> {
     let url = '';
     let templateVersions = [];
 
-    if (options.template === 'hl7.fhir.template') {
+    if (template === 'hl7.fhir.template') {
       url = 'https://raw.githubusercontent.com/HL7/ig-template-fhir/master/package-list.json';
-    } else if(options.template === 'hl7.cda.template') {
+    } else if (template === 'hl7.cda.template') {
       url = 'https://raw.githubusercontent.com/HL7/ig-template-cda/master/package-list.json';
+    } else if (template === 'hl7.base.template') {
+      url = 'https://raw.githubusercontent.com/HL7/ig-template-base/master/package-list.json';
     }
 
     try {
@@ -49,6 +51,10 @@ export class ConfigService {
       }
     } catch(ex) {
       templateVersions = ['current'];
+    }
+
+    if (templateVersions.indexOf('dev') < 0) {
+      templateVersions.push('dev');
     }
 
     return templateVersions;
