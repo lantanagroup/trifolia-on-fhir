@@ -707,7 +707,7 @@
                  (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
         </td-->
         <td>
-          <app-fhir-string [parentObject]="dependsOn" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
+          <app-fhir-string [parentObject]="dependsOn" alphabetical="true" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
         </td>
         <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>

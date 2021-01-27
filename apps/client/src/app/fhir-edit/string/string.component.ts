@@ -23,6 +23,7 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
   @Input() label = true;
+  @Input() alphabetical = false;
 
   @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
@@ -48,7 +49,7 @@ export class FhirStringComponent implements OnInit {
 
   public changeValue(value: string) {
     if (value !== this.value) {
-      this.value = value;
+      this.value = this.alphabetical ? value.replace(/[^a-zA-Z]/gi, '') : value;
       this.changeEvent.next();
     }
   }
@@ -58,7 +59,7 @@ export class FhirStringComponent implements OnInit {
       return '';
     }
 
-    return this.parentObject[this.propertyName];
+    return this.parentObject[this.propertyName].replace(/[^a-zA-Z]/gi, '');
   }
 
   public get isValid() {
@@ -76,6 +77,7 @@ export class FhirStringComponent implements OnInit {
   }
 
   public set value(newValue: string) {
+    newValue = this.alphabetical && newValue ? newValue.replace(/[^a-zA-Z]/gi, '') : newValue;
     if (!newValue && this.parentObject[this.propertyName]) {
       delete this.parentObject[this.propertyName];
 
