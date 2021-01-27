@@ -59,7 +59,9 @@ export class FhirStringComponent implements OnInit {
       return '';
     }
 
-    return this.parentObject[this.propertyName].replace(/[^a-zA-Z]/gi, '');
+    return this.alphabetical ?
+      this.parentObject[this.propertyName].replace(/[^a-zA-Z]/gi, '') :
+      this.parentObject[this.propertyName];
   }
 
   public get isValid() {
