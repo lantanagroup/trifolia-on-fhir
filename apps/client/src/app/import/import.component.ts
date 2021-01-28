@@ -209,26 +209,6 @@ export class ImportComponent implements OnInit {
           this.files.push(importFileModel);
         }
 
-        // If the file being imported is a transaction/batch bundle, ask the user if they want
-        // the resources imported individually, or if the bundle should be treated as a single resource
-        if (importFileModel.resource.resourceType === 'Bundle') {
-          const bundle = importFileModel.resource as IBundle;
-
-          if (bundle.type === 'transaction' || bundle.type === 'batch') {
-            if (confirm(`Click OK to import all of the resources in the Bundle for file ${importFileModel.name}, or click Cancel to treat import this Bundle as a single resource.`)) {
-              const resourceFiles = bundle.entry.map((en, index) => {
-                const ifm = new ImportFileModel();
-                ifm.contentType = importFileModel.contentType;
-                ifm.name = importFileModel.name + ` #${index+1}`;
-                ifm.resource = en.resource;
-                return ifm;
-              });
-              this.files.splice(this.files.indexOf(importFileModel), 1);
-              this.files.push(... resourceFiles);
-            }
-          }
-        }
-
         this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
