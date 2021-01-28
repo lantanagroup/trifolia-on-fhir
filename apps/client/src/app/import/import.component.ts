@@ -23,7 +23,7 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {UpdateDiffComponent} from './update-diff/update-diff.component';
 import {ActivatedRoute} from '@angular/router';
 
@@ -208,8 +208,28 @@ export class ImportComponent implements OnInit {
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
         }
-        this.importBundle = this.getFileBundle();
 
+        // If the file being imported is a transaction/batch bundle, ask the user if they want
+        // the resources imported individually, or if the bundle should be treated as a single resource
+        if (importFileModel.resource.resourceType === 'Bundle') {
+          const bundle = importFileModel.resource as IBundle;
+
+          if (bundle.type === 'transaction' || bundle.type === 'batch') {
+            if (confirm(`Click OK to import all of the resources in the Bundle for file ${importFileModel.name}, or click Cancel to treat import this Bundle as a single resource.`)) {
+              const resourceFiles = bundle.entry.map((en, index) => {
+                const ifm = new ImportFileModel();
+                ifm.contentType = importFileModel.contentType;
+                ifm.name = importFileModel.name + ` #${index+1}`;
+                ifm.resource = en.resource;
+                return ifm;
+              });
+              this.files.splice(this.files.indexOf(importFileModel), 1);
+              this.files.push(... resourceFiles);
+            }
+          }
+        }
+
+        this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
         resolve();
