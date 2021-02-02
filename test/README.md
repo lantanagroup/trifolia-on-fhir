@@ -12,6 +12,10 @@ Ensures that `/metadata` returns information about the FHIR server
 
 Ensures that a resource can be created using `PUT <base>/<resourceType>/<id>`
 
+### Search
+
+Tests that the FHIR server can be searched using query parameters
+
 ### _has
 
 Ensures that the `_has` search parameter works as expected. This is used to find all resources references by an implementation guide in ToF.
