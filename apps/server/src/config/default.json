@@ -34,7 +34,9 @@
   },
   "github": {
     "clientId": "",
-    "secret": ""
+    "secret": "",
+    "authBase": "https://github.com/",
+    "apiBase": "https://api.github.com/"
   },
   "announcementService": {
     "type": "",

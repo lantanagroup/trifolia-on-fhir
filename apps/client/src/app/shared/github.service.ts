@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {FhirService} from './fhir.service';
+import {joinUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface FileModel {
   path: string;
@@ -230,7 +231,7 @@ export class GithubService {
 
   public async logout() {
     try {
-      const url = `https://api.github.com/authorizations/${this.token}`;
+      const url = joinUrl(this.configService.config.github.apiBase, `/authorizations/${this.token}`);
       await this.http.delete(url, this.getOptions()).toPromise();
     } catch (ex) {
       console.error('Failed to notify GitHub of logout (still going to forget GitHub token):' + getErrorString(ex));
@@ -248,7 +249,8 @@ export class GithubService {
     }
 
     const redirectUri = location.origin + '/github/callback';
-    const url = 'https://github.com/login/oauth/authorize?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
+    const url = joinUrl(this.configService.config.github.authBase, '/login/oauth/authorize') +
+      '?client_id=' + this.configService.config.github.clientId + '&scope=user,repo&allow_signup=false&redirect_uri=' + redirectUri;
     this.loginWin = window.open(url, 'loginGitHub', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize');
 
     if (!this.loginWin) {
@@ -274,7 +276,7 @@ export class GithubService {
 
   public async getUser(): Promise<UserModel> {
     await this.login();
-    return await this.http.get<UserModel>('https://api.github.com/user', this.getOptions()).toPromise();
+    return await this.http.get<UserModel>(joinUrl(this.configService.config.github.apiBase, '/user'), this.getOptions()).toPromise();
   }
 
   public async getRepositories(requirePush = false): Promise<RepositoryModel[]> {
@@ -284,7 +286,8 @@ export class GithubService {
       await this.login();
 
       const getNextRepositories = async (page = 1) => {
-        const next = await this.http.get<RepositoryModel[]>('https://api.github.com/user/repos?per_page=100&page=' + page, this.getOptions()).toPromise();
+        const next = await this.http.get<RepositoryModel[]>(joinUrl(this.configService.config.github.apiBase, '/user/repos') +
+          '?per_page=100&page=' + page, this.getOptions()).toPromise();
 
         if (next) {
           repositories.push(...next);
@@ -316,7 +319,7 @@ export class GithubService {
    */
   public async getCommits(ownerLogin: string, repositoryName: string, branchName?: string): Promise<any> {
     await this.login();
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`);
     try {
       return await this.http.get<any>(url, this.getOptions()).toPromise();
     } catch (ex) {
@@ -329,7 +332,7 @@ export class GithubService {
   public async getBranches(ownerLogin: string, repositoryName: string): Promise<BranchModel[]> {
     await this.login();
 
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/branches`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/branches`);
     return await this.http.get<BranchModel[]>(url, this.getOptions()).toPromise();
   }
 
@@ -355,10 +358,10 @@ export class GithubService {
   public async getFiles(ownerLogin: string, repositoryName: string, branchName: string) {
     await this.login();
 
-    const commitsUrl = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`;
+    const commitsUrl = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/commits/${branchName}`);
     const commitsResults = await this.http.get<CommitsModel>(commitsUrl, this.getOptions()).toPromise();
 
-    const treesUrl = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${commitsResults.commit.tree.sha}?recursive=true`;
+    const treesUrl = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/trees/${commitsResults.commit.tree.sha}?recursive=true`);
     const treesResponse = await this.http.get<RepositoryTreeModel>(treesUrl, this.getOptions()).toPromise();
 
     return treesResponse.tree
@@ -375,7 +378,7 @@ export class GithubService {
   public async getContents(ownerLogin: string, repositoryName: string, branchName?: string, path?: string): Promise<ContentModel[]> {
     await this.login();
 
-    let url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents`;
+    let url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/contents`);
 
     if (path) {
       url += `/${path}`;
@@ -389,13 +392,13 @@ export class GithubService {
   }
 
   public async fetchHead(ownerLogin: string, repositoryName: string, branch = 'master') {
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`);
     return this.http.get<RepositoryReferenceModel>(url, this.getOptions()).toPromise();
   }
 
   public async fetchTree(ownerLogin: string, repositoryName: string, branch = 'master'): Promise<RepositoryTreeModel> {
     const reference = await this.fetchHead(ownerLogin, repositoryName, branch)
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees/${reference.object.sha}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/trees/${reference.object.sha}`);
     return await this.http.get<RepositoryTreeModel>(url, this.getOptions()).toPromise();
   }
 
@@ -411,7 +414,7 @@ export class GithubService {
         };
       })
     };
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/trees`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/trees`);
     return this.http.post<RepositoryTreeModel>(url, body, this.getOptions()).toPromise();
   }
 
@@ -421,12 +424,12 @@ export class GithubService {
       tree: treeSha,
       parents: [parentSha]
     };
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/commits`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/commits`);
     return this.http.post<CommitCreatedResponseModel>(url, body, this.getOptions()).toPromise();
   }
 
   public async updateHead(ownerLogin: string, repositoryName: string, sha: string, branch = 'master') {
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/refs/heads/${branch}`);
     const body = {
       sha: sha,
       force: true
@@ -439,7 +442,7 @@ export class GithubService {
     const filesRequiringBlob = files.filter(f => f.action !== 'nothing' && f.action !== 'delete' && f.content);
     const blobPromises = filesRequiringBlob
       .map((file) => {
-        const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/git/blobs`;
+        const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/git/blobs`);
         const body = {
           content: file.content,
           encoding: 'utf-8'
@@ -481,7 +484,7 @@ export class GithubService {
    * @param message commit message
    */
   public async createContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string) {
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/contents/${path}`);
     const encoded = btoa(content);
     const options = this.getOptions();
     const data = {
@@ -494,7 +497,7 @@ export class GithubService {
   }
 
   public async updateContent(ownerLogin: string, repositoryName: string, path: string, content: string, message?: string, branchName?: string) {
-    const url = `https://api.github.com/repos/${ownerLogin}/${repositoryName}/contents/${path}`;
+    const url = joinUrl(this.configService.config.github.apiBase, `/repos/${ownerLogin}/${repositoryName}/contents/${path}`);
     const encoded = btoa(content);
     const options = this.getOptions();
     const update = async (lastSha?: string) => {

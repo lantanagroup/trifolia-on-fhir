@@ -17,6 +17,8 @@ export interface ConfigModel {
   };
   github: {
     clientId: string;
+    authBase: string;
+    apiBase: string;
   };
   nonEditableResources: {
     [resourceType: string]: string[];
