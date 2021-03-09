@@ -72,7 +72,6 @@ export class ImportComponent implements OnInit {
   public Globals = Globals;
   public implementationGuideId: string;
 
-  private readonly vsacUsernameCookieKey = 'vsac_username';
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
   @ViewChild('importGithubPanel', { static: false })
@@ -88,11 +87,9 @@ export class ImportComponent implements OnInit {
     public githubService: GithubService,
     public modalService: NgbModal) {
 
-    const vsacUsername = this.cookieService.get(this.vsacUsernameCookieKey);
     const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
 
-    if (vsacUsername && vsacPassword) {
-      this.vsacCriteria.username = vsacUsername;
+    if (vsacPassword) {
       this.vsacCriteria.password = atob(vsacPassword);
       this.rememberVsacCredentials = true;
     }
@@ -478,7 +475,6 @@ export class ImportComponent implements OnInit {
 
   private importVsac(tabSet: NgbTabset) {
     if (this.rememberVsacCredentials) {
-      this.cookieService.put(this.vsacUsernameCookieKey, this.vsacCriteria.username);
       this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
@@ -676,7 +672,7 @@ export class ImportComponent implements OnInit {
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
-        return !this.vsacCriteria.id || !this.vsacCriteria.username || !this.vsacCriteria.password;
+        return !this.vsacCriteria.id || !this.vsacCriteria.password;
       } else if (this.importGithubPanel && this.activeTab === 'github') {
         return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
       }

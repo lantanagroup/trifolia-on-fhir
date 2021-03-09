@@ -29,7 +29,7 @@ export class ImportService {
   public importVsac(criteria: VSACImportCriteria): Observable<any> {
     return new Observable<any>((subscriber) => {
       const url = `/api/import/vsac/${encodeURIComponent(criteria.id)}`;
-      const authorization = btoa(criteria.username + ':' + criteria.password);
+      const authorization = btoa((criteria.username || '') + ':' + criteria.password);
       const headers = {
         'vsacAuthorization': 'Basic ' + authorization
       };
