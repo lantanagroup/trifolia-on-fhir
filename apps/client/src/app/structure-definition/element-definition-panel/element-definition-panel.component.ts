@@ -12,6 +12,7 @@ import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
 import {IElementDefinition, IElementDefinitionConstraint, IElementDefinitionType} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ElementDefinitionConstraintComponent} from '../../modals/element-definition-constraint/element-definition-constraint.component';
 import {generateId} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ConstraintManager} from '../../../../../../libs/tof-lib/src/lib/constraint-manager';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -24,6 +25,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   @Input() structureDefinition: StructureDefinition;
   @Input() disabled = false;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
+  @Input() constraintManager: ConstraintManager;
 
   public editingSliceName: boolean;
   public editedSliceName: string;
@@ -99,6 +101,20 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
+  async typeChanged() {
+    if (!this.elementTreeModel) return;
+
+    const children = await this.constraintManager.findChildren(this.element, this.elementTreeModel.constrainedElement);
+    this.elementTreeModel.hasChildren = children.length > 0;
+
+    this.change.emit();
+  }
+
+  async removeType(index: number) {
+    this.element.type.splice(index, 1);
+    this.typeChanged();
+  }
+
   editMappings() {
     const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
@@ -139,7 +155,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  openTypeModel(element, type) {
+  openTypeModal(element, type) {
     let modalRef;
 
     if (this.configService.isFhirSTU3) {
@@ -152,8 +168,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     modalRef.componentInstance.element = element;
     modalRef.componentInstance.type = type;
-    modalRef.result.then(() => {
-      this.change.emit();
+    modalRef.result.then(async () => {
+      await this.typeChanged();
     });
   }
 
@@ -245,9 +261,11 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  addType() {
+  async addType() {
     const elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.element.type;
     elementTypes.push({code: this.getDefaultType()});
+
+    await this.typeChanged();
   }
 
   isPrimitiveExceptBoolean() {
