@@ -407,7 +407,8 @@
         [elementTreeModel]="selectedElement"
         [disabled]="false"
         [elementTreeModels]="constraintManager.elements"
-        [structureDefinition]="structureDefinition" #edPanel (change)="isDirty=true; nameChanged()">
+        [structureDefinition]="structureDefinition" #edPanel (change)="isDirty=true; nameChanged()"
+        [constraintManager]="constraintManager">
       </app-element-definition-panel>
 
       <div *ngIf="!selectedElement.constrainedElement">
