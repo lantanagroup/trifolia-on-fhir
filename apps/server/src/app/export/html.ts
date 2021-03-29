@@ -390,8 +390,10 @@ export class HtmlExporter {
 
         fs.ensureDirSync(customTemplatePath);
 
-        if (templatePathSplit.length > 3) {
-          const subDirName = templatePathSplit[templatePathSplit.length - 3] + '-' + fileNameWithoutExt;
+        // Expects github template URLs to be formatted like so:
+        // XXX/ig-template-carequality/archive/refs/heads/master.zip
+        if (templatePathSplit.length > 5 && template.toLowerCase().indexOf('/archive/refs/heads/') > 0) {
+          const subDirName = templatePathSplit[templatePathSplit.length - 5] + '-' + fileNameWithoutExt;
           await unzip(retrieveTemplateResults.data, customTemplatePath, subDirName);
         } else {
           await unzip(retrieveTemplateResults.data, customTemplatePath);
