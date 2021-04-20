@@ -2105,7 +2105,7 @@ export class CodeSystem extends DomainResource implements ICodeSystem {
   public hierarchyMeaning?: string;
   public compositional?: boolean;
   public versionNeeded?: boolean;
-  public content: string;
+  public content = 'complete';
   public supplements?: string;
   public count?: number;
   public filter?: CodeSystemFilterComponent[];

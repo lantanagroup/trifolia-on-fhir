@@ -3,7 +3,8 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CodeSystemService} from '../shared/code-system.service';
-import {CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CodeSystem as R4CodeSystem} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
@@ -12,13 +13,14 @@ import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
+import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   templateUrl: './codesystem.component.html',
   styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public codeSystem: CodeSystem;
+  public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
   public pagedConcepts: ConceptDefinitionComponent[] = [];
   public message: string;
@@ -45,8 +47,12 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     private fhirService: FhirService) {
 
     super(configService, authService);
+    if (this.configService.isFhirR4) {
+      this.codeSystem = new R4CodeSystem({ meta: this.authService.getDefaultMeta() });
+    } else if (this.configService.isFhirSTU3) {
+      this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
+    }
 
-    this.codeSystem = new CodeSystem({ meta: this.authService.getDefaultMeta() });
   }
 
   public get isNew(): boolean {
@@ -159,7 +165,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     }
 
     this.codeSystemService.save(this.codeSystem)
-      .subscribe((codeSystem: CodeSystem) => {
+      .subscribe((codeSystem: ICodeSystem) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
@@ -184,7 +190,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.codeSystem = <CodeSystem>this.fileService.file.resource;
+        this.codeSystem = <ICodeSystem>this.fileService.file.resource;
         this.nameChanged();
         this.refreshConcepts();
       } else {
@@ -204,7 +210,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             return;
           }
 
-          this.codeSystem = <CodeSystem>cs;
+          this.codeSystem = <ICodeSystem>cs;
           this.nameChanged();
           this.refreshConcepts();
           this.recentItemService.ensureRecentItem(
