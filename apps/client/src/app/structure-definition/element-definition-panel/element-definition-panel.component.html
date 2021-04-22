@@ -120,7 +120,8 @@
           <label>
             <input type="checkbox"
                    [ngModel]="element.hasOwnProperty('type')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]); change.emit()"/>
+                   (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]);
+                   typeChanged(true)"/>
             Type
             <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
           </label>
