@@ -176,7 +176,8 @@ export class Globals {
     'ig.ignoreWarnings': 'The content of this file is exported as "input/ignoreWarnings.txt" when exporting as a publisher package. Each line should represent a warning copy-and-pasted from the IG Publisher\'s QA report that should be ignored by future publish operations.',
     'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.',
     'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
-    'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.'
+    'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.',
+    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip'
   };
 
   static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links'];

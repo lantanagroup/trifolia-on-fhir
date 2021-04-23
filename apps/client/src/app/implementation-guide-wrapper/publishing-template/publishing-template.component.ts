@@ -17,6 +17,8 @@ export class PublishingTemplateComponent implements OnInit {
   officialVersions: string[];
   customUri: string;
 
+  Globals = Globals;
+
   constructor(private configService: ConfigService) { }
 
   get extension() {
