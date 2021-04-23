@@ -110,6 +110,15 @@
       </div>
     </ng-template>
   </ngb-tab>
+  <ngb-tab id="customPublishingTemplate">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['publish.custom']">Custom Publish Settings</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <trifolia-fhir-custom-publish-settings [readOnly]="true" [selectedImplementationGuide]="selectedImplementationGuide"
+                                             [packageId]="packageId"></trifolia-fhir-custom-publish-settings>
+    </ng-template>
+  </ngb-tab>
   <ngb-tab id="status">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>

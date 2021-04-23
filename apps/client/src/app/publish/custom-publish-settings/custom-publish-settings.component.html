@@ -1,0 +1,31 @@
+<div class="alert alert-warning" [hidden]="!readOnly">The below Publish settings can only be changed within the Publishing tab of the Edit IG page</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <trifolia-fhir-publishing-template [implementationGuide]="selectedImplementationGuide" [readOnly]="readOnly"></trifolia-fhir-publishing-template>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <trifolia-fhir-package-list
+      [implementationGuide]="selectedImplementationGuide"
+      [defaultPackageId]="packageId"
+      [defaultTitle]="selectedImplementationGuide.title"
+      [defaultName]="selectedImplementationGuide.name"
+      [readOnly]="readOnly"
+      (change)="change.emit()">
+    </trifolia-fhir-package-list>
+  </div>
+
+  <div class="col-md-12">
+    <trifolia-fhir-ignore-warnings [implementationGuide]="selectedImplementationGuide" [readOnly]="readOnly" (change)="change.emit()"></trifolia-fhir-ignore-warnings>
+  </div>
+
+  <div class="col-md-12">
+    <trifolia-fhir-custom-menu [implementationGuide]="selectedImplementationGuide" [readOnly]="readOnly" (change)="change.emit()"></trifolia-fhir-custom-menu>
+  </div>
+
+  <div class="col-md-12">
+    <trifolia-fhir-jira-spec [implementationGuide]="selectedImplementationGuide" [readOnly]="readOnly" (change)="change.emit()"></trifolia-fhir-jira-spec>
+  </div>
+</div>

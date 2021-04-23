@@ -24,6 +24,7 @@ class JiraSpecDef {
 })
 export class JiraSpecComponent implements OnInit, OnChanges {
   @Input() implementationGuide: IImplementationGuide;
+  @Input() readOnly = false;
   @Output() change = new EventEmitter<string>();
   public valueChanged = new EventEmitter();
   public value: string;

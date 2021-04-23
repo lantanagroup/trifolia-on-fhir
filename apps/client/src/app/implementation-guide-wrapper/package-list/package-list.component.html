@@ -1,4 +1,4 @@
-<input type="file" style="display: none;" #importFile (change)="import(importFile.files[0])" accept="application/json" />
+<input type="file" style="display: none;" #importFile (change)="import(importFile.files[0])" accept="application/json" [disabled]="readOnly"/>
 <div>
   <ngb-tabset>
     <ngb-tab>
@@ -10,28 +10,30 @@
           <div class="card-body" *ngIf="!packageList">
             <p>No package-list.json has been specified for this IG.</p>
             <div class="btn-group">
-              <button type="button" class="btn btn-primary" (click)="initPackageList();">Add package-list.json</button>
-              <button type="button" class="btn btn-primary" (click)="importFile.click();">Import from computer</button>
+              <button type="button" class="btn btn-primary" (click)="initPackageList();" [disabled]="readOnly">Add package-list.json</button>
+              <button type="button" class="btn btn-primary" (click)="importFile.click();" [disabled]="readOnly">Import from computer</button>
             </div>
           </div>
           <div class="card-body" *ngIf="packageList">
             <div class="card-header-btn">
               <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-sm" title="Import the package-list.json from your computer" (click)="importFile.click();">
+                <button type="button" class="btn btn-primary btn-sm" title="Import the package-list.json from your computer"
+                        (click)="importFile.click();" [disabled]="readOnly">
                   <i class="fas fa-file-upload"></i>
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" title="Remove the package-list.json" *ngIf="packageList" (click)="remove();">
+                <button type="button" class="btn btn-primary btn-sm" title="Remove the package-list.json" *ngIf="packageList"
+                        (click)="remove();" [disabled]="readOnly">
                   <i class="fa fa-times"></i>
                 </button>
               </div>
             </div>
-            <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="change.emit()"></app-fhir-string>
+            <app-fhir-string [parentObject]="packageList" propertyName="package-id" [required]="true" title="Package ID" (change)="change.emit()" [disabled]="readOnly"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="change.emit()"></app-fhir-string>
+            <app-fhir-string [parentObject]="packageList" propertyName="title" title="Title" (change)="change.emit()" [disabled]="readOnly"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="change.emit()"></app-fhir-string>
+            <app-fhir-string [parentObject]="packageList" propertyName="canonical" title="Canonical URL" [required]="true" (change)="change.emit()" [disabled]="readOnly"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="packageList" propertyName="category" title="Category" (change)="change.emit()"></app-fhir-string>
+            <app-fhir-string [parentObject]="packageList" propertyName="category" title="Category" (change)="change.emit()" [disabled]="readOnly"></app-fhir-string>
 
             <table class="table table-striped">
               <thead>
@@ -45,7 +47,7 @@
                   <th class="small-col">Status</th>
                   <th class="small-col">Current?</th>
                   <th class="actions-column-1">
-                    <button type="button" class="btn btn-primary" title="Add a version to the list." (click)="addVersion()">
+                    <button type="button" class="btn btn-primary" title="Add a version to the list." (click)="addVersion()" [disabled]="readOnly">
                       <i class="fa fa-plus"></i>
                     </button>
                   </th>
@@ -54,25 +56,25 @@
               <tbody>
                 <tr *ngFor="let v of packageList.list; let vi = index">
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="change.emit()" />
+                    <input type="text" class="form-control" [(ngModel)]="v.version" [class.is-invalid]="!v.version" (change)="change.emit()" [disabled]="readOnly"/>
                   </td>
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="change.emit()" />
+                    <input type="text" class="form-control" [(ngModel)]="v.desc" (change)="change.emit()" [disabled]="readOnly"/>
                   </td>
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="change.emit()" />
+                    <input type="text" class="form-control" [(ngModel)]="v.path" [class.is-invalid]="!v.path" (change)="change.emit()" [disabled]="readOnly"/>
                   </td>
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="change.emit()" />
+                    <input type="text" class="form-control" [(ngModel)]="v.fhirversion" [class.is-invalid]="!v.fhirversion" (change)="change.emit()" [disabled]="readOnly"/>
                   </td>
                   <td>
-                    <app-fhir-date [label]="false" [isFormGroup]="false" [parentObject]="v" propertyName="date" (change)="change.emit()"></app-fhir-date>
+                    <app-fhir-date [label]="false" [isFormGroup]="false" [parentObject]="v" propertyName="date" (change)="change.emit()" [disabled]="readOnly"></app-fhir-date>
                   </td>
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="v.sequence" (change)="change.emit()" />
+                    <input type="text" class="form-control" [(ngModel)]="v.sequence" (change)="change.emit()" [disabled]="readOnly"/>
                   </td>
                   <td>
-                    <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit()">
+                    <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit()" [disabled]="readOnly">
                       <option value="ci-build">CI Build</option>
                       <option value="draft">Draft</option>
                       <option value="ballot">Ballot</option>
@@ -81,14 +83,14 @@
                     </select>
                   </td>
                   <td>
-                    <select class="form-control" [(ngModel)]="v.current" (change)="change.emit()">
+                    <select class="form-control" [(ngModel)]="v.current" (change)="change.emit()" [disabled]="readOnly">
                       <option [ngValue]="undefined">Unspecified</option>
                       <option [ngValue]="true">Yes</option>
                       <option [ngValue]="false">No</option>
                     </select>
                   </td>
                   <td>
-                    <button type="button" class="btn btn-primary" title="Remove this version from the list." (click)="removeVersion(vi); change.emit()">
+                    <button type="button" class="btn btn-primary" title="Remove this version from the list." (click)="removeVersion(vi); change.emit()" [disabled]="readOnly">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </td>
@@ -105,7 +107,8 @@
       </ng-template>
       <ng-template ngbTabContent>
         <div class="card">
-          <textarea class="form-control" rows="23" [(ngModel)]="packageListJSON" (change)="valueChange.emit()" [ngModelOptions]="{ updateOn: 'change' }"></textarea>
+          <textarea class="form-control" rows="23" [(ngModel)]="packageListJSON" (change)="valueChange.emit()"
+                    [ngModelOptions]="{ updateOn: 'change' }" [disabled]="readOnly"></textarea>
         </div>
       </ng-template>
     </ngb-tab>

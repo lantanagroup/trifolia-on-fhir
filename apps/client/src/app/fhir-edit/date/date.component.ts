@@ -20,6 +20,7 @@ export class FhirDateComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() allowTime = false;
   @Input() label? = true;
+  @Input() disabled: boolean;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   /**

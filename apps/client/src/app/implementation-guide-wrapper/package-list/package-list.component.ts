@@ -14,6 +14,7 @@ export class PackageListComponent implements OnInit {
   @Input() defaultPackageId: string;
   @Input() defaultName: string;
   @Input() defaultTitle: string;
+  @Input() readOnly = false;
   public packageList: PackageListModel;
   public packageListJSON;
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();

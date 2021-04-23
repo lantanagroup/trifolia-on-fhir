@@ -10,6 +10,7 @@ import {ConfigService} from '../../shared/config.service';
 })
 export class PublishingTemplateComponent implements OnInit {
   @Input() implementationGuide: IImplementationGuide;
+  @Input() readOnly = false;
   @Output() change = new EventEmitter<IExtension>();
   templateType: 'not-specified'|'official'|'custom-uri';
   officialTemplate: string;
