@@ -83,7 +83,7 @@
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
           <div class="form-group">
             <label>Template (Archive/ZIP URL)</label>
-            <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
+            <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!options.template" />
             <div class="help-block">Note: The URI must be a ZIP file.</div>
           </div>
         </div>

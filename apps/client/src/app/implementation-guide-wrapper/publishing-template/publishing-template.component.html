@@ -17,7 +17,7 @@
     <select class="form-control" *ngIf="templateType === 'not-specified' || templateType === 'official'" [(ngModel)]="officialVersion" (change)="officialTemplateChanged(false)">
       <option *ngFor="let version of officialVersions" [value]="version">{{version}}</option>
     </select>
-    <input type="text" class="form-control" *ngIf="templateType === 'custom-uri'" [(ngModel)]="customUri" (change)="valueUriChanged()" placeholder="ex: https://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!valueUriValid" />
+    <input type="text" class="form-control" *ngIf="templateType === 'custom-uri'" [(ngModel)]="customUri" (change)="valueUriChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!valueUriValid" />
     <div class="input-group-append" *ngIf="templateType === 'custom-uri'">
       <div class="input-group-text">
         <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>

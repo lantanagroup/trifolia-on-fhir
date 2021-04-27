@@ -101,11 +101,21 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  async typeChanged() {
+  async typeChanged(init = false) {
     if (!this.elementTreeModel) return;
+
+    const isExpanded = this.elementTreeModel.expanded;
+
+    if (isExpanded) {
+      await this.constraintManager.toggleExpand(this.elementTreeModel);
+    }
 
     const children = await this.constraintManager.findChildren(this.element, this.elementTreeModel.constrainedElement);
     this.elementTreeModel.hasChildren = children.length > 0;
+
+    if (isExpanded && this.elementTreeModel.hasChildren && !init) {
+      await this.constraintManager.toggleExpand(this.elementTreeModel);
+    }
 
     this.change.emit();
   }

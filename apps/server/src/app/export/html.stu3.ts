@@ -1,5 +1,5 @@
 import {HtmlExporter} from './html';
-import {PackageResourceComponent, PageComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PackageResourceComponent, PageComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -143,7 +143,7 @@ export class STU3HtmlExporter extends HtmlExporter {
           uri: locationExt ? locationExt.valueUri : undefined,
           packageId: nameExt ? nameExt.valueString : undefined,
           version: versionExt ? versionExt.valueString : undefined,
-          id: idExt ? idExt.valueString : undefined
+          id: idExt ? idExt.valueUri : undefined
           // TODO: Output ID from extension
         }
       });
