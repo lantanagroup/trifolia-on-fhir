@@ -20,7 +20,7 @@ tr.page-prefix-6 td:first-child {
     margin-bottom: 15px;
 }
 tr.page-highlight {
-  background-color: lightgray;
+  background-color: lightgray !important;
 }
 
 .filter-row {
