@@ -15,7 +15,6 @@ import {PageInfo} from '../../../../../../libs/tof-lib/src/lib/ig-page-helper';
 })
 export class CustomMenuComponent implements OnInit, OnChanges {
   @Input() implementationGuide: IImplementationGuide;
-  @Input() readOnly = false;
   @Output() change = new EventEmitter<string>();
   public valueChanged = new EventEmitter();
   public value: string;

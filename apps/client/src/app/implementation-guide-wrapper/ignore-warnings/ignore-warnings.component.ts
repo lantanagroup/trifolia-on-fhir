@@ -11,7 +11,6 @@ import {debounceTime} from 'rxjs/operators';
 })
 export class IgnoreWarningsComponent implements OnInit, OnChanges {
   @Input() implementationGuide: IImplementationGuide;
-  @Input() readOnly = false;
   @Output() change = new EventEmitter<string>();
   public valueChanged = new EventEmitter();
   public value: string;

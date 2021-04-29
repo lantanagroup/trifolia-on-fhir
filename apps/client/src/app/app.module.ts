@@ -85,7 +85,6 @@ import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira
 import { CustomMenuComponent } from './implementation-guide-wrapper/custom-menu/custom-menu.component';
 import { SecurityServicesComponent } from './capability-statement-wrapper/security-services/security-services.component';
 import { PublishingTemplateComponent } from './implementation-guide-wrapper/publishing-template/publishing-template.component';
-import { CustomPublishSettingsComponent } from './publish/custom-publish-settings/custom-publish-settings.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -245,7 +244,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, CustomPublishSettingsComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent
   ],
   imports: [
     RouterModule.forRoot(

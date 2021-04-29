@@ -3,12 +3,12 @@
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </label>
   <div class="input-group">
-    <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()" [disabled]="disabled">
+    <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
     <div class="input-group-append">
-      <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside" [disabled]="disabled">
+      <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
         <i class="fa fa-calendar"></i>
       </button>
-      <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime" [disabled]="disabled">
+      <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
         <i class="fas fa-clock"></i>
       </button>
     </div>
@@ -18,12 +18,12 @@
   <div class="input-group-addon" *ngIf="label && (!required || title)">
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </div>
-  <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()" [disabled]="disabled">
+  <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
   <div class="input-group-append">
-    <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside" [disabled]="disabled">
+    <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
       <i class="fa fa-calendar"></i>
     </button>
-    <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime" [disabled]="disabled">
+    <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
       <i class="fas fa-clock"></i>
     </button>
   </div>

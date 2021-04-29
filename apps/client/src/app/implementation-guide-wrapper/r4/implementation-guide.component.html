@@ -580,8 +580,33 @@
     <!-- Publishing -->
     <ngb-tab id="publishing" title="Publishing">
       <ng-template ngbTabContent>
-        <trifolia-fhir-custom-publish-settings [selectedImplementationGuide]="implementationGuide" [packageId]="packageId"
-                                               (change)="igChanging.emit(true)"></trifolia-fhir-custom-publish-settings>
+        <div class="row">
+          <div class="col-md-6">
+            <trifolia-fhir-publishing-template [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-publishing-template>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <trifolia-fhir-package-list
+              [implementationGuide]="implementationGuide"
+              [defaultPackageId]="packageId"
+              [defaultTitle]="this.implementationGuide.title"
+              [defaultName]="this.implementationGuide.name" (change)="igChanging.emit(true)">
+            </trifolia-fhir-package-list>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-ignore-warnings [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-ignore-warnings>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-custom-menu [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-custom-menu>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-jira-spec [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-jira-spec>
+          </div>
+        </div>
       </ng-template>
     </ngb-tab>
 

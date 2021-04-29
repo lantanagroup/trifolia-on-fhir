@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {ExportOptions, ExportService} from '../shared/export.service';

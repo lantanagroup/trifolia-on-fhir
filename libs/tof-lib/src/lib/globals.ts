@@ -109,7 +109,6 @@ export class Globals {
     'import.results': 'The results of importing from the "Files" tab are shown here.',
     'publish.implementation-guide': 'Select the implementation guide that you would like to publish. This is a type-ahead field, so begin typing the name of the implementation guide you would like and the field will show you matching options.',
     'publish.options': 'Specify options you would like to use for the export.',
-    'publish.custom': 'Customize the publishing template',
     'publish.validation': 'This lists any validation issues that were returned by the FHIR server\'s $validate operation. These validation issues may vary depending on the implementation of the FHIR server.',
     'publish.status': 'The publication process takes a little while to finish... While it runs, you can monitor the status of the publication process (the <a href="http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation" target="_new">FHIR IG Publisher</a>) in the "Status" tab.',
     'publish.publish-btn': 'When you are satisfied with the options, press this button to start the publication process.',
