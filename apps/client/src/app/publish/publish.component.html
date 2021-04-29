@@ -70,11 +70,12 @@
           </div>
         </div>
       </div>
+      <div class="alert alert-info">Publishing Template customizations can only be done on the Edit IG Publishing tab</div>
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
             <label>Template Type</label>
-            <select class="form-control" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
+            <select class="form-control" [(ngModel)]="options.templateType" [disabled]="true">
               <option value="official">Official</option>
               <option value="custom-uri">Custom</option>
             </select>
@@ -83,14 +84,14 @@
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
           <div class="form-group">
             <label>Template (Archive/ZIP URL)</label>
-            <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
+            <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="true" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
             <div class="help-block">Note: The URI must be a ZIP file.</div>
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official'">
           <div class="form-group">
             <label>Template</label>
-            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
+            <select class="form-control" [(ngModel)]="options.template" [disabled]="true">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
               <option value="hl7.base.template">HL7 Base Template</option>
@@ -101,7 +102,7 @@
           <div class="form-group">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
+              <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="true">
                 <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
               </select>
             </div>
