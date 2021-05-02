@@ -189,7 +189,7 @@
             </tr>
             </thead>
             <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.page">
-            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}" [class.page-highlight]="selectedPage === p" (click)="selectedPage = p" (focusin)="selectedPage = p">
+            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}" [class.page-highlight]="selectedPage === p" (click)="selectedPage = p" (focusin)="selectedPage = p; selectedResource = null;">
               <td>
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="igChanging.emit(true)"/>
               </td>
@@ -382,7 +382,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let resource of resources; let ri = index">
+            <tr *ngFor="let resource of resources; let ri = index"  [class.page-highlight]="selectedResource === resource" (click)="selectedResource = resource" (focusin)="selectedResource = resource; selectedPage = null">
               <td>
                 <app-fhir-reference
                   [parentObject]="resource"
@@ -430,10 +430,10 @@
                   <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="ri <= 0" (click)="moveResource(resource, 'up'); igChanging.emit(true)">
+                  <button type="button" class="btn btn-primary" title="Move this resource up in the list (CTRL+ALT+UP)" [disabled]="ri <= 0" (click)="moveResource(resource, 'up'); igChanging.emit(true)">
                     <i class="fas fa-arrow-up"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="ri >= implementationGuide.definition.resource.length - 1" (click)="moveResource(resource, 'down'); igChanging.emit(true)">
+                  <button type="button" class="btn btn-primary" title="Move this resource down in the list (CTRL+ALT+DOWN)" [disabled]="ri >= implementationGuide.definition.resource.length - 1" (click)="moveResource(resource, 'down'); igChanging.emit(true)">
                     <i class="fas fa-arrow-down"></i>
                   </button>
                   <button type="button" class="btn btn-outline-primary" (click)="removeResource(resource); igChanging.emit(true)">
