@@ -70,12 +70,13 @@
           </div>
         </div>
       </div>
-      <div class="alert alert-info">Publishing Template customizations can only be done on the Edit IG Publishing tab</div>
+      <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
             <label>Template Type</label>
-            <select class="form-control" [(ngModel)]="options.templateType" [disabled]="true">
+            <select class="form-control" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
+              <option value="not-specified">Not Specified</option>
               <option value="official">Official</option>
               <option value="custom-uri">Custom</option>
             </select>
@@ -84,14 +85,14 @@
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
           <div class="form-group">
             <label>Template (Archive/ZIP URL)</label>
-            <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="true" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
+            <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
             <div class="help-block">Note: The URI must be a ZIP file.</div>
           </div>
         </div>
-        <div class="col-md-4" *ngIf="options.templateType === 'official'">
+        <div class="col-md-4" *ngIf="options.templateType === 'official' || options.templateType === 'not-specified'">
           <div class="form-group">
             <label>Template</label>
-            <select class="form-control" [(ngModel)]="options.template" [disabled]="true">
+            <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
               <option value="hl7.base.template">HL7 Base Template</option>
@@ -102,7 +103,7 @@
           <div class="form-group">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="true">
+              <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">
                 <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
               </select>
             </div>
