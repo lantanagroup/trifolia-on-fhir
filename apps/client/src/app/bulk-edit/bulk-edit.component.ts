@@ -171,14 +171,12 @@ export class BulkEditComponent implements OnInit {
         throw new Error('Unexpected FHIR version');
       }
 
-
-
       bulkUpdateRequest.profiles = this.profiles
         .filter(profile => {
           return this.changedProfiles[profile.id];
         })
         .map((profile, profileIndex) => {
-          const originalProfile = this.originalProfiles[profileIndex];
+          const originalProfile = this.originalProfiles.find(p => p.id === profile.id);
           return <BulkUpdateRequestProfile> {
             id: profile.id,
             description: profile.description,
