@@ -427,7 +427,7 @@
               </td>
               <td>
                 <div class="btn-group pull-right">
-                  <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
+                  <button type="button" class="btn btn-primary" [class.btn-danger]='!isResourceValid(resource)'  title="Edit additional fields for this resource" (click)="editResource(resource)">
                     <i class="fa fa-edit"></i>
                   </button>
                   <button type="button" class="btn btn-primary" title="Move this resource up in the list (CTRL+ALT+UP)" [disabled]="ri <= 0" (click)="moveResource(resource, 'up'); igChanging.emit(true)">

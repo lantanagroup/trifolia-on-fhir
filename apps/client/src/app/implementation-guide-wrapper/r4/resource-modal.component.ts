@@ -38,6 +38,11 @@ export class R4ResourceModalComponent {
     return this.resource.exampleCanonical || !this.resource.hasOwnProperty('exampleBoolean');
   }
 
+
+  get isDescriptionRequired() {
+    return !this.resource.description && ((this.resource.hasOwnProperty('exampleBoolean') && this.resource.exampleBoolean === true) || (this.resource.hasOwnProperty('exampleCanonical') && this.resource.exampleCanonical !== ''));
+  }
+
   exampleBooleanChanged() {
     if (this.resource.hasOwnProperty('exampleCanonical')) {
       delete this.resource.exampleCanonical;
