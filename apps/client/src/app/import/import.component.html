@@ -34,7 +34,7 @@
         <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
           <td>
             {{f.name}}
-            <i *ngIf="f.message" class="fas fa-exclamation" style="color: red;" [ngbTooltip]="f.message"></i>
+            <i *ngIf="f.message" class="fas fa-exclamation" style="color: #ff0000;" [ngbTooltip]="f.message"></i>
           </td>
           <td>{{getIdDisplay(f)}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
@@ -43,6 +43,7 @@
             <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f.resource)">
               <i class="fas fa-eye"></i>
             </a>
+            <i *ngIf="f.multiple" class="fas fa-exclamation" style="padding-left:15px; color: #ff0000;" [ngbTooltip]="f.multipleMessage"></i>
           </td>
           <td class="actions-column-1">
             <div class="pull-right">

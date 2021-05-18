@@ -1,31 +1,22 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {ImportService, VSACImportCriteria} from '../shared/import.service';
-import {
-  Bundle,
-  DomainResource,
-  EntryComponent,
-  IssueComponent,
-  Media as STU3Media,
-  OperationOutcome,
-  RequestComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {FileSystemFileEntry, UploadEvent, UploadFile} from 'ngx-file-drop';
-import {FhirService} from '../shared/fhir.service';
-import {CookieService} from 'angular2-cookie/core';
-import {ContentModel, GithubService} from '../shared/github.service';
-import {ImportGithubPanelComponent} from './import-github-panel/import-github-panel.component';
-import {forkJoin} from 'rxjs';
-import {v4 as uuidv4} from 'uuid';
-import {saveAs} from 'file-saver';
-import {HttpClient} from '@angular/common/http';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../shared/config.service';
-import {Media as R4Media} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {IBundle, IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {UpdateDiffComponent} from './update-diff/update-diff.component';
-import {ActivatedRoute} from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ImportService, VSACImportCriteria } from '../shared/import.service';
+import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { FileSystemFileEntry, UploadEvent, UploadFile } from 'ngx-file-drop';
+import { FhirService } from '../shared/fhir.service';
+import { CookieService } from 'angular2-cookie/core';
+import { ContentModel, GithubService } from '../shared/github.service';
+import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
+import { forkJoin } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import { saveAs } from 'file-saver';
+import { HttpClient } from '@angular/common/http';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ConfigService } from '../shared/config.service';
+import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { UpdateDiffComponent } from './update-diff/update-diff.component';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -44,6 +35,8 @@ class ImportFileModel {
   public vsBundle?: Bundle;
   public message: string;
   public status: 'add'|'update'|'unauthorized'|'pending'|'unknown' = 'pending';
+  public multiple = false;
+  public multipleMessage: "";
 }
 
 class GitHubImportContent {
@@ -205,7 +198,9 @@ export class ImportComponent implements OnInit {
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
         }
-
+        if (this.configService.project && this.configService.project.implementationGuideId) {
+          this.getList(importFileModel);
+        }
         this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
@@ -231,6 +226,22 @@ export class ImportComponent implements OnInit {
       }
     }
   }
+
+  public async getList(importFileModel) {
+
+    let url = `/api/fhir/${importFileModel.resource.resourceType}`;
+
+    if (importFileModel.resource.id) {
+      url += `/${importFileModel.resource.id}`;
+    };
+    url += `/$list-ig`;
+    const multiple = await this.httpClient.get(url).toPromise();
+    if(multiple){
+      importFileModel.multiple = true;
+      importFileModel.multipleMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
+    }
+  }
+
 
   public removeImportFile(index: number) {
     //reset the error message
