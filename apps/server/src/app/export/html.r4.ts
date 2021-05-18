@@ -42,17 +42,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
   private writePage(pagesPath: string, page: ImplementationGuidePageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
-    const pageInfoIndex = this.pageInfos.indexOf(pageInfo);
-    const previousPage = pageInfoIndex > 0 ? this.pageInfos[pageInfoIndex - 1] : null;
-    const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
-
-    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
-      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
-      undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
-      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
-      undefined;
 
     if (pageInfo.fileName) {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -67,7 +57,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
       const newPagePath = path.join(pagesPath, fileName);
 
-      fs.writeFileSync(newPagePath, `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`);
+      fs.writeFileSync(newPagePath, `${pageInfo.content || 'No content has been specified for this page.'}`);
     }
 
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));

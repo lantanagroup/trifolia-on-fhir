@@ -448,6 +448,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public isResourceValid(resource) {
+    if (!resource.name || !resource.reference || ((resource.hasOwnProperty('exampleBoolean') && resource.exampleBoolean === true) || (resource.hasOwnProperty('exampleCanonical') && resource.exampleCanonical !== ''))) {
+      return false;
+    }
+    return true;
+  }
+
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
