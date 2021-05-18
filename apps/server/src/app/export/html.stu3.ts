@@ -228,15 +228,6 @@ export class STU3HtmlExporter extends HtmlExporter {
 
   private writePage(pagesPath: string, page: PageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
-    const pageIndex = pageInfo ? this.pageInfos.indexOf(pageInfo) : -1;
-    const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
-    const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
-      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
-      undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
-      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
-      undefined;
 
     if (pageInfo && page.kind !== 'toc') {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -250,7 +241,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       }
 
       const newPagePath = path.join(pagesPath, pageInfo.fileName);
-      const content = `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`;
+      const content = `${pageInfo.content || 'No content has been specified for this page.'}`;
 
       fs.writeFileSync(newPagePath, content);
     }
