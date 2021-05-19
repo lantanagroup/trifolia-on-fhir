@@ -1,4 +1,4 @@
-import {BaseController, IUserSecurityInfo} from './base.controller';
+import { BaseController, IUserSecurityInfo } from './base.controller';
 import {
   All,
   BadRequestException,
@@ -17,26 +17,26 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Response} from 'express';
-import {AuthGuard} from '@nestjs/passport';
-import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig} from 'axios';
-import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
-import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {default as PQueue} from 'p-queue';
-import {IBundle, IDomainResource, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { TofLogger } from './tof-logger';
+import { AxiosRequestConfig } from 'axios';
+import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
+import { ConfigService } from './config.service';
+import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
+import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
+import { Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuide as R4ImplementationGuide, OperationOutcome } from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import { format as formatUrl, parse as parseUrl, UrlWithStringQuery } from 'url';
+import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
+import { default as PQueue } from 'p-queue';
+import { IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import {ImplementationGuideController} from './implementation-guide.controller';
+import { ImplementationGuideController } from './implementation-guide.controller';
 
 export interface ProxyResponse {
   status: number;
@@ -54,6 +54,36 @@ export class FhirController extends BaseController {
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(configService, httpService);
   }
+
+
+
+  @Get(':resourceType/:id/([\$])validate-single-ig')
+  @Header('Content-Type', 'text/plain')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'validateSingleIg', description: 'Validate Single Ig', operationId: 'validateSingleIg' })
+  async validateSingleIg(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
+
+    const res = resourceType + "/" + id;
+    const currentOptions: AxiosRequestConfig = {
+      url: buildUrl(fhirServerBase, 'ImplementationGuide', null, null, { resource: res }),
+      method: 'GET'
+    };
+
+    // Get the all the implementation guides for that resource
+    try {
+      const getResponse = await this.httpService.request(currentOptions).toPromise();
+      const bundle:Bundle = getResponse.data;
+      if (bundle.entry.length >= 2 || bundle.entry.length === 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
+        return false;
+      }
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
+    }
+
+    return true;
+  }
+
+
 
   @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
