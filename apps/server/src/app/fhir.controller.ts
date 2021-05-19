@@ -57,11 +57,11 @@ export class FhirController extends BaseController {
 
 
 
-  @Get(':resourceType/:id/([\$])list-ig')
+  @Get(':resourceType/:id/([\$])validate-single-ig')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
-  @ApiOperation({ summary: 'listIg', description: 'List Ig ', operationId: 'listIg' })
-  async listIg(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
+  @ApiOperation({ summary: 'validateSingleIg', description: 'Validate Single Ig', operationId: 'validateSingleIg' })
+  async validateSingleIg(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
 
     const res = resourceType + "/" + id;
     const currentOptions: AxiosRequestConfig = {
@@ -74,13 +74,13 @@ export class FhirController extends BaseController {
       const getResponse = await this.httpService.request(currentOptions).toPromise();
       const bundle:Bundle = getResponse.data;
       if (bundle.entry.length >= 2 || bundle.entry.length === 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
-        return true;
+        return false;
       }
     } catch (ex) {
       this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
     }
 
-    return false;
+    return true;
   }
 
 

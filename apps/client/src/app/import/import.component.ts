@@ -35,8 +35,8 @@ class ImportFileModel {
   public vsBundle?: Bundle;
   public message: string;
   public status: 'add'|'update'|'unauthorized'|'pending'|'unknown' = 'pending';
-  public multiple = false;
-  public multipleMessage: "";
+  public singleIg = true;
+  public multipleIgMessage: "";
 }
 
 class GitHubImportContent {
@@ -229,16 +229,16 @@ export class ImportComponent implements OnInit {
 
   public async getList(importFileModel) {
 
-    let url = `/api/fhir/${importFileModel.resource.resourceType}`;
+    if (!importFileModel.resource || !importFileModel.resource.resourceType || !importFileModel.resource.id) return;
 
-    if (importFileModel.resource.id) {
-      url += `/${importFileModel.resource.id}`;
-    };
-    url += `/$list-ig`;
-    const multiple = await this.httpClient.get(url).toPromise();
-    if(multiple){
-      importFileModel.multiple = true;
-      importFileModel.multipleMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
+    let url = `/api/fhir/${importFileModel.resource.resourceType}`;
+    url += `/${importFileModel.resource.id}`;
+    url += `/$validate-single-ig`;
+
+    const singleIg = await this.httpClient.get(url).toPromise();
+    if(!singleIg){
+      importFileModel.singleIg = false;
+      importFileModel.singleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
     }
   }
 

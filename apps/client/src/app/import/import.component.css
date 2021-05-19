@@ -5,3 +5,7 @@ tr.invalid td {
 .card.results {
   margin-top: 10px;
 }
+
+i.warning {
+  color: #ff0000;
+}
