@@ -238,7 +238,7 @@ export class ImportComponent implements OnInit {
     const singleIg = await this.httpClient.get(url).toPromise();
     if(!singleIg){
       importFileModel.singleIg = false;
-      importFileModel.singleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
+      importFileModel.multipleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
     }
   }
 
