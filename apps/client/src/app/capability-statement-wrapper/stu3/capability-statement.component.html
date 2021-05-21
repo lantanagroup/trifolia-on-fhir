@@ -403,8 +403,7 @@
                   </th>
                   <th class="actions-column-3">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-primary btn-sm" title="Add a resource"
-                              (click)="r.resource.push({ type: 'Account', interaction: [] })">
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="defaultResource(r.resource)">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -414,7 +413,7 @@
                 <tbody>
                 <tr *ngFor="let res of r.resource; let resi = index">
                   <td>
-                    <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false"
+                    <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="getCodes(r.resource, resi)"
                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
                   </td>
                   <td>

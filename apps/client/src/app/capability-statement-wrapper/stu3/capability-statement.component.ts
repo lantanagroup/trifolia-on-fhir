@@ -1,20 +1,20 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {CapabilityStatementService} from '../../shared/capability-statement.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../../shared/recent-item.service';
-import {FhirService} from '../../shared/fhir.service';
-import {NgbModal, NgbTabChangeEvent, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
-import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
-import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {ConfigService} from '../../shared/config.service';
-import {FileService} from '../../shared/file.service';
-import {ClientHelper} from '../../clientHelper';
-import {AuthService} from '../../shared/auth.service';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../../base.component';
+import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
+import { CapabilityStatementService } from '../../shared/capability-statement.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { RecentItemService } from '../../shared/recent-item.service';
+import { FhirService } from '../../shared/fhir.service';
+import { NgbModal, NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import { FhirMessagingEventModalComponent } from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
+import { FhirReferenceModalComponent } from '../../fhir-edit/reference-modal/reference-modal.component';
+import { ConfigService } from '../../shared/config.service';
+import { FileService } from '../../shared/file.service';
+import { ClientHelper } from '../../clientHelper';
+import { AuthService } from '../../shared/auth.service';
+import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { BaseComponent } from '../../base.component';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -30,6 +30,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   public csNotFound = false;
   public Globals = Globals;
   public ClientHelper = ClientHelper;
+  public codes: Coding[] = [];
 
   private navSubscription: any;
 
@@ -58,6 +59,35 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  getCodes(list: any, resourceIndex) {
+    if (list != null) {
+      const remainingCodes = [];
+      this.codes.forEach((coding) => {
+        const listIndex = list.findIndex((element) => {
+          if (element.type === coding.code) {
+            return true;
+          }
+        });
+        if (listIndex === resourceIndex || listIndex === -1) remainingCodes.push(coding);
+      });
+      return remainingCodes;
+    }
+  }
+
+  public defaultResource(list: any) {
+    if (list != null) {
+      const remainingCodes = [];
+      this.codes.forEach((coding) => {
+        const foundCode = list.find((elem) => elem.type === coding.code);
+        if (foundCode === undefined) {
+          remainingCodes.push(coding);
+          return;
+        }
+      });
+      list.push({ type: remainingCodes[0].code });
+    }
+  }
+
   public urlChanged() {
     const lastIndex = this.capabilityStatement.url.lastIndexOf('/');
 
@@ -80,7 +110,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     if (currentIndex > 0) {
       this.capabilityStatement.rest.splice(currentIndex, 1);
       this.capabilityStatement.rest.splice(currentIndex - 1, 0, rest);
-      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex-1));
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex - 1));
     }
   }
 
@@ -90,7 +120,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     if (currentIndex < this.capabilityStatement.rest.length) {
       this.capabilityStatement.rest.splice(currentIndex, 1);
       this.capabilityStatement.rest.splice(currentIndex + 1, 0, rest);
-      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex+1));
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex + 1));
     }
   }
 
@@ -122,7 +152,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   public editResource(resource: ResourceComponent) {
-    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FhirCapabilityStatementResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
   }
 
@@ -136,18 +166,18 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       code: this.messageEventCodes[0],
       mode: 'sender',
       focus: 'Account',
-      request: {reference: '', display: ''},
-      response: {reference: '', display: ''}
+      request: { reference: '', display: '' },
+      response: { reference: '', display: '' }
     };
   }
 
   public editEvent(event: EventComponent) {
-    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FhirMessagingEventModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.event = event;
   }
 
   public selectImplementationGuide(implementationGuideIndex) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.hideResourceType = true;
 
@@ -157,7 +187,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   public addRestEntry(restTabSet) {
-    this.capabilityStatement.rest.push({mode: 'client'});
+    this.capabilityStatement.rest.push({ mode: 'client' });
     setTimeout(() => {
       const lastIndex = this.capabilityStatement.rest.length - 1;
       const newRestTabId = 'rest-' + lastIndex.toString();
@@ -178,6 +208,33 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       const newMessagingTabId = 'messaging-' + lastIndex.toString();
       messagingTabSet.select(newMessagingTabId);
     }, 50);
+  }
+
+  nameChanged() {
+    this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
+  }
+
+  ngOnInit() {
+    this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
+    this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
+    this.codes =  this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+    this.navSubscription = this.router.events.subscribe((e: any) => {
+      if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
+        this.getCapabilityStatement();
+      }
+    });
+    this.getCapabilityStatement();
+  }
+
+  ngOnDestroy() {
+    this.navSubscription.unsubscribe();
+    this.configService.setTitle(null);
+  }
+
+  ngDoCheck() {
+    if (this.capabilityStatement) {
+      this.validation = this.fhirService.validate(this.capabilityStatement);
+    }
   }
 
   private getCapabilityStatement() {
@@ -215,32 +272,6 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
           this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
         });
-    }
-  }
-
-  nameChanged() {
-    this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
-  }
-
-  ngOnInit() {
-    this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
-    this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
-    this.navSubscription = this.router.events.subscribe((e: any) => {
-      if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
-        this.getCapabilityStatement();
-      }
-    });
-    this.getCapabilityStatement();
-  }
-
-  ngOnDestroy() {
-    this.navSubscription.unsubscribe();
-    this.configService.setTitle(null);
-  }
-
-  ngDoCheck() {
-    if (this.capabilityStatement) {
-      this.validation = this.fhirService.validate(this.capabilityStatement);
     }
   }
 }
