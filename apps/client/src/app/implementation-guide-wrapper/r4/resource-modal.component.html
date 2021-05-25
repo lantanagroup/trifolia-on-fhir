@@ -24,7 +24,7 @@
     <button type="button" class="btn btn-primary" *ngIf="resource.reference && resource.reference.reference" (click)="copyDescription()">Copy description from target resource</button>
   </p>
 
-  <app-fhir-boolean [parentObject]="this" propertyName="exampleBoolean" trueLabel="Yes" falseLabel="No" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
+  <app-fhir-boolean *ngIf="!resource.exampleCanonical" [parentObject]="resource" propertyName="exampleBoolean" trueLabel="Yes" falseLabel="No" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
 
   <div class="form-group">
     <label>
@@ -35,6 +35,9 @@
       <div class="input-group-append">
         <button type="button" class="btn btn-primary" title="Select a profile that this resource is an example of" (click)="selectExampleCanonical()">
           <i class="fas fa-hand-pointer"></i>
+        </button>
+        <button type="button" class="btn btn-primary" title="Remove the canonical url example" (click)="removeExampleCanonical()">
+          <i class="fa fa-times"></i>
         </button>
       </div>
     </div>
