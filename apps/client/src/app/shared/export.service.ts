@@ -17,7 +17,7 @@ export class ExportOptions {
   public template = 'hl7.fhir.template';
   public templateVersion = "current";
   public removeExtensions = false;
-  public bundleType: 'searchset'|'transaction' = 'searchset';
+  public bundleType: 'searchset'|'transaction' = 'transaction';
 }
 
 @Injectable()
