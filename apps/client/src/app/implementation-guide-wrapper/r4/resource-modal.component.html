@@ -24,7 +24,7 @@
     <button type="button" class="btn btn-primary" *ngIf="resource.reference && resource.reference.reference" (click)="copyDescription()">Copy description from target resource</button>
   </p>
 
-  <app-fhir-boolean [parentObject]="resource" propertyName="exampleBoolean" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
+  <app-fhir-boolean [parentObject]="this" propertyName="exampleBoolean" trueLabel="Yes" falseLabel="No" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
 
   <div class="form-group">
     <label>
