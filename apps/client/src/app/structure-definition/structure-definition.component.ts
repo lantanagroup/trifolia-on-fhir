@@ -302,26 +302,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       }, (err) => {
         this.message = getErrorString(err);
       });
-
-    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
-    const resources = (<ImplementationGuide> implementationGuide).definition.resource;
-
-
-    const index = resources.findIndex(resource => {
-      return resource.reference.reference.indexOf(this.structureDefinition.id) > 0;
-    });
-
-
-    if(index >= 0){
-      (<ImplementationGuide> implementationGuide).definition.resource[index].name =
-        this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
-
-      await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
-        .toPromise()
-        .catch(err => console.log(err));
-    }
-
   }
 
   ngOnInit() {
