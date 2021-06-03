@@ -311,13 +311,17 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     const index = resources.findIndex(resource => {
       return resource.reference.reference.indexOf(this.structureDefinition.id) > 0;
     });
-    if(index === -1) throw new Error(`Couldn't find structure definition in resources`);
 
-    (<ImplementationGuide> implementationGuide).definition.resource[index].name =
-      this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
-    await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
-      .subscribe( () => {});
+    if(index >= 0){
+      (<ImplementationGuide> implementationGuide).definition.resource[index].name =
+        this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
+
+      await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
+        .toPromise()
+        .catch(err => console.log(err));
+    }
+
   }
 
   ngOnInit() {
