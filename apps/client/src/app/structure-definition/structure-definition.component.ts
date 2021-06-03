@@ -24,7 +24,7 @@ import {
 import {
   ElementDefinition as R4ElementDefinition,
   ElementDefinitionConstraintComponent,
-  ElementDefinitionTypeRefComponent,
+  ElementDefinitionTypeRefComponent, ImplementationGuide,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { RecentItemService } from '../shared/recent-item.service';
@@ -43,6 +43,7 @@ import { Severities, ValidatorResponse } from 'fhir/validator';
 import {CanComponentDeactivate} from '../guards/resource.guard';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -76,6 +77,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     protected authService: AuthService,
     private router: Router,
     private strucDefService: StructureDefinitionService,
+    private implementationGuideService: ImplementationGuideService,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fhirService: FhirService,
@@ -270,7 +272,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.getStructureDefinition();
   }
 
-  public save() {
+  public async save() {
     if (!this.validation.valid && !confirm('This structure definition is not valid, are you sure you want to save?')) {
       return;
     }
@@ -282,7 +284,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.strucDefService.save(this.structureDefinition)
+    await this.strucDefService.save(this.structureDefinition)
       .subscribe((updatedStructureDefinition: STU3StructureDefinition | R4StructureDefinition) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
@@ -300,6 +302,22 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       }, (err) => {
         this.message = getErrorString(err);
       });
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
+    const resources = (<ImplementationGuide> implementationGuide).definition.resource;
+
+
+    const index = resources.findIndex(resource => {
+      return resource.reference.reference.indexOf(this.structureDefinition.id) > 0;
+    });
+    if(index === -1) throw new Error(`Couldn't find structure definition in resources`);
+
+    (<ImplementationGuide> implementationGuide).definition.resource[index].name =
+      this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
+
+    await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
+      .subscribe( () => {});
   }
 
   ngOnInit() {
