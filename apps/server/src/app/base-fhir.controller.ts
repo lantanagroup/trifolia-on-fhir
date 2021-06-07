@@ -285,18 +285,21 @@ export class BaseFhirController extends BaseController {
       const updateResults = await this.httpService.request(options).toPromise();
       const resource = updateResults.data;
 
-      const resources = (<ImplementationGuide> contextImplementationGuide).definition.resource;
-      const index = resources.findIndex(r => {
-        return r.reference.reference.indexOf(id) > 0;
-      });
+      if (fhirServerVersion === 'r4' && contextImplementationGuide) {
+        const ig = contextImplementationGuide as ImplementationGuide;
+        const resources = ig.definition && ig.definition.resource ? ig.definition.resource : [];
+        const index = resources.findIndex(r => {
+          return r.reference.reference.indexOf(id) > 0;
+        });
 
-      if(index >= 0 && (data.title || data.name)){
-        //If data.title exists, set to data.title. Else if data.name exists, set to data.name. Else if data.title and data.name don't exist, do nothing.
-        (<ImplementationGuide> contextImplementationGuide).definition.resource[index].name =
-          data.title ? data.title : data.name;
+        if (index >= 0 && (data.title || data.name)) {
+          //If data.title exists, set to data.title. Else if data.name exists, set to data.name. Else if data.title and data.name don't exist, do nothing.
+          (<ImplementationGuide>contextImplementationGuide).definition.resource[index].name =
+            data.title ? data.title : data.name;
 
-        const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId);
-        await this.httpService.put<ImplementationGuide>(igUrl, contextImplementationGuide).toPromise();
+          const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId);
+          await this.httpService.put<ImplementationGuide>(igUrl, contextImplementationGuide).toPromise();
+        }
       }
 
       // If we're in the context of an IG and the resource is not another IG or security-related resources
