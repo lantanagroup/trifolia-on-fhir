@@ -135,32 +135,32 @@ span.rvts23
  font-family: 'Times New Roman', 'Times', serif;
  color: #000000;
 }
-a.rvts24, span.rvts24
+span.rvts24
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- color: #0000ff;
- text-decoration: underline;
 }
 span.rvts25
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
-}
-span.rvts26
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-style: italic;
  color: #000000;
 }
+span.rvts26
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #1d1c1d;
+ background-color: #f8f8f8;
+}
 span.rvts27
 {
- font-size: 16pt;
  font-weight: bold;
 }
 span.rvts28
 {
+ font-size: 16pt;
  font-weight: bold;
 }
 span.rvts29
@@ -323,187 +323,187 @@ span.rvts60
  font-size: 12pt;
  font-family: 'Garamond';
 }
-span.rvts61
+a.rvts61, span.rvts61
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ color: #0000ff;
+ text-decoration: underline;
 }
 span.rvts62
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
 }
 span.rvts63
 {
- font-size: 14pt;
+ font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- font-style: italic;
  font-weight: bold;
 }
 span.rvts64
 {
- font-size: 12pt;
+ font-size: 14pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-style: italic;
  font-weight: bold;
 }
 span.rvts65
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
 }
-a.rvts66, span.rvts66
+span.rvts66
+{
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
+}
+a.rvts67, span.rvts67
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts67
+span.rvts68
 {
  font-family: 'Times New Roman', 'Times', serif;
  color: #000000;
-}
-a.rvts68, span.rvts68
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
- color: #0000ff;
- text-decoration: underline;
 }
 a.rvts69, span.rvts69
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts70
+a.rvts70, span.rvts70
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
+ color: #0000ff;
+ text-decoration: underline;
 }
 span.rvts71
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
 }
 span.rvts72
 {
- font-family: 'Courier New', 'Courier', monospace;
+ font-size: 12pt;
+ font-family: 'Times New Roman', 'Times', serif;
 }
 span.rvts73
+{
+ font-family: 'Courier New', 'Courier', monospace;
+}
+span.rvts74
 {
  font-size: 11pt;
  font-weight: bold;
 }
-span.rvts74
+span.rvts75
 {
  font-weight: bold;
  color: #c00000;
 }
-span.rvts75
+span.rvts76
 {
  font-size: 14pt;
  font-style: italic;
  font-weight: bold;
 }
-a.rvts76, span.rvts76
+a.rvts77, span.rvts77
 {
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts77
+span.rvts78
 {
  font-style: italic;
 }
-a.rvts78, span.rvts78
+a.rvts79, span.rvts79
 {
  color: #0000ff;
  text-decoration: none;
-}
-span.rvts79
-{
- font-size: 14pt;
- font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
 }
 span.rvts80
 {
  font-size: 14pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
 }
 span.rvts81
+{
+ font-size: 14pt;
+ font-family: 'Times New Roman', 'Times', serif;
+}
+span.rvts82
 {
  font-size: 14pt;
  font-style: italic;
  font-weight: bold;
 }
-span.rvts82
+span.rvts83
 {
  color: #000000;
 }
-a.rvts83, span.rvts83
+a.rvts84, span.rvts84
 {
  color: #000000;
  text-decoration: underline;
 }
-span.rvts84
+span.rvts85
 {
  font-size: 11pt;
  font-family: 'Calibri';
 }
-span.rvts85
+span.rvts86
 {
  font-size: 11pt;
  font-family: 'Calibri';
  font-style: italic;
  font-weight: bold;
 }
-a.rvts86, span.rvts86
+a.rvts87, span.rvts87
 {
  font-size: 11pt;
  font-family: 'Calibri';
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts87
+span.rvts88
 {
  font-size: 11pt;
  font-family: 'Calibri';
  font-weight: bold;
 }
-span.rvts88
+span.rvts89
 {
  font-size: 12pt;
 }
-span.rvts89
+span.rvts90
 {
  font-size: 18pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-style: italic;
  font-weight: bold;
 }
-span.rvts90
-{
- font-size: 12pt;
- font-family: 'Times New Roman', 'Times', serif;
- color: #000000;
-}
 span.rvts91
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
+ color: #000000;
 }
 span.rvts92
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
  font-weight: bold;
- color: #000000;
 }
 span.rvts93
 {
@@ -516,63 +516,70 @@ span.rvts94
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
  color: #000000;
 }
 span.rvts95
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
- font-weight: bold;
  color: #000000;
 }
 span.rvts96
 {
  font-size: 12pt;
  font-family: 'Times New Roman', 'Times', serif;
+ font-weight: bold;
  color: #000000;
 }
 span.rvts97
 {
  font-size: 12pt;
- font-style: italic;
- font-weight: bold;
+ font-family: 'Times New Roman', 'Times', serif;
+ color: #000000;
 }
 span.rvts98
 {
  font-size: 12pt;
+ font-style: italic;
+ font-weight: bold;
+}
+span.rvts99
+{
+ font-size: 12pt;
  color: #000000;
 }
-a.rvts99, span.rvts99
+a.rvts100, span.rvts100
 {
  font-size: 12pt;
  color: #0000ff;
  text-decoration: underline;
 }
-span.rvts100
+span.rvts101
 {
  font-size: 12pt;
  font-style: italic;
  font-weight: bold;
  color: #000000;
 }
-span.rvts101
+span.rvts102
 {
  font-size: 11pt;
  font-family: 'Calibri';
  color: #000000;
 }
-span.rvts102
+span.rvts103
 {
  font-weight: bold;
  color: #000000;
 }
-span.rvts103
+span.rvts104
 {
  font-size: 13pt;
  font-style: italic;
  font-weight: bold;
 }
-a.rvts104, span.rvts104
+a.rvts105, span.rvts105
 {
  font-size: 11pt;
  font-family: 'Calibri';
