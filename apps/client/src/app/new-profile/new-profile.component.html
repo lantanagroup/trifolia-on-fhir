@@ -12,7 +12,12 @@
                            tooltipPath="StructureDefinition.id"></app-fhir-string>
         </div>
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="structureDefinition" propertyName="name" title="Name" [required]="true"
+          <app-fhir-string [parentObject]="structureDefinition"
+                           propertyName="name"
+                           title="Name"
+                           [required]="true"
+                           [pattern]="Globals.regexPatterns.namePattern"
+                           [patternMessage]="Globals.tooltips['name.validation.failed']"
                            tooltipPath="StructureDefinition.name"></app-fhir-string>
         </div>
         <div class="col-md-4">

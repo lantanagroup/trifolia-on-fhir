@@ -1,20 +1,10 @@
 import {HtmlExporter} from './html';
-import {PageInfo} from './html.models';
-import {
-  Binary as R4Binary,
-  DomainResource,
-  ImplementationGuide,
-  ImplementationGuidePageComponent,
-  ImplementationGuideResourceComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {ContactDetail, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {Formats} from '../models/export-options';
-import {ExceptionHandler} from '@nestjs/core/errors/exception-handler';
-import {HttpException, HttpStatus} from '@nestjs/common';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class R4HtmlExporter extends HtmlExporter {
   /**
@@ -52,17 +42,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
   private writePage(pagesPath: string, page: ImplementationGuidePageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
-    const pageInfoIndex = this.pageInfos.indexOf(pageInfo);
-    const previousPage = pageInfoIndex > 0 ? this.pageInfos[pageInfoIndex - 1] : null;
-    const nextPage = pageInfoIndex < this.pageInfos.length - 1 ? this.pageInfos[pageInfoIndex + 1] : null;
     const fileName = pageInfo.fileName;
-
-    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
-      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
-      undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
-      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
-      undefined;
 
     if (pageInfo.fileName) {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -77,32 +57,10 @@ export class R4HtmlExporter extends HtmlExporter {
 
       const newPagePath = path.join(pagesPath, fileName);
 
-      fs.writeFileSync(newPagePath, `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`);
+      fs.writeFileSync(newPagePath, `${pageInfo.content || 'No content has been specified for this page.'}`);
     }
 
     (page.page || []).forEach((subPage) => this.writePage(pagesPath, subPage, level + 1));
-  }
-
-  public static getPagesList(theList: PageInfo[], page: ImplementationGuidePageComponent, implementationGuide: ImplementationGuide) {
-    if (!page) {
-      return theList;
-    }
-
-    const pageInfo = new PageInfo();
-    pageInfo.page = page;
-    pageInfo.fileName = page.fileName || page.nameUrl;
-
-    if (page.reuseDescription) {
-      pageInfo.content = this.getIndexContent(implementationGuide);
-    } else {
-      pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
-    }
-
-    theList.push(pageInfo);
-
-    (page.page || []).forEach((next) => this.getPagesList(theList, next, implementationGuide));
-
-    return theList;
   }
 
   protected populatePageInfos() {
@@ -120,10 +78,10 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 
-    this.pageInfos = R4HtmlExporter.getPagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
+    this.pageInfos = IgPageHelper.getR4PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
-  protected prepareImplementationGuide(): DomainResource {
+  protected prepareImplementationGuide(): IImplementationGuide {
     super.prepareImplementationGuide();
 
     this.r4ImplementationGuide.fhirVersion = [this.getOfficialFhirVersion()];
@@ -176,7 +134,7 @@ export class R4HtmlExporter extends HtmlExporter {
     return this.r4ImplementationGuide;
   }
 
-  protected updateTemplates(rootPath: string, bundle) {
+  protected createMenu(rootPath: string, bundle, customMenu) {
     if (!this.r4ImplementationGuide.definition) {
       this.r4ImplementationGuide.definition = {
         resource: []
@@ -185,7 +143,7 @@ export class R4HtmlExporter extends HtmlExporter {
 
     this.r4ImplementationGuide.definition.parameter = this.r4ImplementationGuide.definition.parameter || [];
 
-    super.updateTemplates(rootPath, bundle);
+    super.createMenu(rootPath, bundle, customMenu);
   }
 
   protected writePages(rootPath: string) {

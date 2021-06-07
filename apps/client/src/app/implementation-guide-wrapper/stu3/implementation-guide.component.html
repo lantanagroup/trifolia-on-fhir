@@ -45,6 +45,7 @@
                   <thead>
                   <tr>
                     <th>Package ID</th>
+                    <th>Dependency ID</th>
                     <th>URI</th>
                     <th>Version</th>
                     <th class="actions-column-1">
@@ -68,6 +69,10 @@
                           </button>
                         </div>
                       </div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control" [class.is-invalid]="!getDependencyID(dependency)" [ngModel]="getDependencyID(dependency)"
+                             (ngModelChange)="setDependencyID(dependency, $event)" (change)="igChanging.emit(true);"/>
                     </td>
                     <td>
                       <input type="text" class="form-control" [class.is-invalid]="!getDependencyLocation(dependency)" [ngModel]="getDependencyLocation(dependency)"

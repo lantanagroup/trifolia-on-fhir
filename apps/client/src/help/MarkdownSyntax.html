@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="generator" content="HelpNDoc Professional Edition 7.1.1.256">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico"/>
+
+  <title>Markdown Syntax</title>
+  <meta name="description" content="" /> 
+  <meta name="keywords" content="">
+
+
+
+  
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Markdown Syntax">
+  <meta name="twitter:description" content="">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="Markdown Syntax" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="" />
+  <meta property="og:site_name" content="Trifolia-on-FHIR" /> 
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="vendors/html5shiv-3.7.3/html5shiv.min.js"></script>
+      <script src="vendors/respond-1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  <!-- JsTree styles -->
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
+
+  <!-- Hnd styles -->
+  <link href="css/layout.min.css" rel="stylesheet" />
+  <link href="css/effects.min.css" rel="stylesheet" />
+  <link href="css/theme-light-blue.min.css" rel="stylesheet" />
+  <link href="css/print.min.css" rel="stylesheet" media="print" />
+  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+
+  <!-- Content style -->
+  <link href="css/hnd.content.css" rel="stylesheet" />
+
+  
+
+
+
+</head>
+
+<body class="md-nav-expanded">
+
+
+
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible">Skip to main content</a>
+  </div>
+
+  <header class="headroom">
+    <button class="hnd-toggle btn btn-default">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>        
+    </button>
+    <h1>Trifolia-on-FHIR</h1>
+    
+  </header>
+
+  <nav id="panel-left" class="md-nav-expanded">
+    <!-- Nav tabs -->
+    <ul class="tab-tabs nav nav-tabs" role="tablist">
+      <li id="nav-close"> 
+        <button class="hnd-toggle btn btn-default">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+      </li>
+      
+	  
+        <li role="presentation" class="tab active">
+            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-list"></i>
+                Contents
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-asterisk"></i>
+                Index
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-search"></i>
+                Search
+            </a>
+        </li>
+      
+    </ul>  <!-- /Nav tabs -->
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+	  
+      <div role="tabpanel" class="tab-pane active" id="contents">
+        <div id="toc" class="tree-container unselectable"
+            data-url="_toc.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /contents-->
+      
+      <div role="tabpanel" class="tab-pane" id="index">
+        <div id="keywords" class="tree-container unselectable"
+            data-url="_keywords.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /index-->
+      
+      <div role="tabpanel" class="tab-pane" id="search">
+        <div class="search-content">
+          <div class="search-input">
+            <form id="search-form">
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>  <!-- /search-input -->
+          <div class="search-result">
+            <div id="search-info"></div>
+            <div class="tree-container unselectable" id="search-tree"></div>
+          </div>  <!-- /search-result -->
+        </div>  <!-- /search-content -->
+      </div>  <!-- /search-->
+      
+    </div>  <!-- /Tab panes -->
+
+  </nav>
+
+  <div id="main">
+
+    <article>
+        <div id="topic-content" class="container-fluid" 
+		  data-hnd-id="MarkdownSyntax"
+		  data-hnd-context="56"
+		  data-hnd-title="Markdown Syntax"
+		>
+            
+                <div class="navigation">
+                    <ol class="breadcrumb">
+                        <li><a href="ImplementationGuides.html">Implementation Guides</a></li><li><a href="NarrativePages.html">Narrative Pages</a></li>
+                    </ol>
+                    <div class="nav-arrows">
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="NarrativePages.html" title="Narrative Pages" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="NarrativePages.html" title="Narrative Pages" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="JIRASpecGeneration.html" title="JIRA Spec Generation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                    </div>
+                </div> 
+            
+
+            <a id="main-content"></a>
+
+            <h2>Markdown Syntax</h2>
+
+            <div class="main-content">
+                
+<p></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Headers</span></span></h2>
+<p class="rvps2"><span class="rvts6"># H1</span></p>
+<p class="rvps2"><span class="rvts6">## H2</span></p>
+<p class="rvps2"><span class="rvts6">### H3</span></p>
+<p class="rvps2"><span class="rvts6">#### H4</span></p>
+<p class="rvps2"><span class="rvts6">##### H5</span></p>
+<p class="rvps2"><span class="rvts6">###### H6</span></p>
+<p class="rvps2"><span class="rvts6">Alternatively, for H1 and H2, an underline-ish style:</span></p>
+<p class="rvps2"><span class="rvts6">Alt-H1</span></p>
+<p class="rvps2"><span class="rvts6">======</span></p>
+<p class="rvps2"><span class="rvts6">Alt-H2</span></p>
+<p class="rvps2"><span class="rvts6">------</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Emphasis</span></span></h2>
+<p class="rvps2"><span class="rvts6">Emphasis, aka italics, with *asterisks* or _underscores_.</span></p>
+<p class="rvps2"><span class="rvts6">Strong emphasis, aka bold, with **asterisks** or __underscores__.</span></p>
+<p class="rvps2"><span class="rvts6">Combined emphasis with **asterisks and _underscores_**.</span></p>
+<p class="rvps2"><span class="rvts6">Strikethrough uses two tildes. ~~Scratch this.~~</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Lists</span></span></h2>
+<p class="rvps2"><span class="rvts6">1. First ordered list item</span></p>
+<p class="rvps2"><span class="rvts6">2. Another item</span></p>
+<p class="rvps2"><span class="rvts6">&nbsp; * Unordered sub-list.</span></p>
+<p class="rvps2"><span class="rvts6">1. Actual numbers don't matter, just that it's a number</span></p>
+<p class="rvps2"><span class="rvts6">&nbsp; 1. Ordered sub-list</span></p>
+<p class="rvps2"><span class="rvts6">4. And another item.</span></p>
+<p class="rvps2"><span class="rvts6">To have a line break without a paragraph, you will need to use two trailing spaces</span></p>
+<p class="rvps2"><span class="rvts6">* Unordered list can use asterisks</span></p>
+<p class="rvps2"><span class="rvts6">- Or minuses</span></p>
+<p class="rvps2"><span class="rvts6">+ Or pluses</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Links</span></span></h2>
+<p class="rvps2"><span class="rvts6">There are two ways to create links.</span></p>
+<p class="rvps2"><span class="rvts6">[I'm an inline-style link](https://www.google.com)</span></p>
+<p class="rvps2"><span class="rvts6">[I'm an inline-style link with title](https://www.google.com "Google's Homepage")</span></p>
+<p class="rvps2"><span class="rvts6">[I'm a reference-style link][Arbitrary case-insensitive reference text]</span></p>
+<p class="rvps2"><span class="rvts6">[I'm a relative reference to a repository file](../blob/master/LICENSE)</span></p>
+<p class="rvps2"><span class="rvts6">[You can use numbers for reference-style link definitions][1]</span></p>
+<p class="rvps2"><span class="rvts6">Or leave it empty and use the [link text itself].</span></p>
+<p class="rvps2"><span class="rvts6">URLs and URLs in angle brackets will automatically get turned into links.</span></p>
+<p class="rvps2"><span class="rvts6">http://www.example.com or &lt;http://www.example.com&gt; and sometimes example.com (but not on Github, for example).</span></p>
+<p class="rvps2"><span class="rvts6">Some text to show that the reference links can follow later.</span></p>
+<p class="rvps2"><span class="rvts6">[arbitrary case-insensitive reference text]: https://www.mozilla.org</span></p>
+<p class="rvps2"><span class="rvts6">[1]: http://slashdot.org</span></p>
+<p class="rvps2"><span class="rvts6">[link text itself]: http://www.reddit.com</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Images</span></span></h2>
+<p class="rvps2"><span class="rvts6">Here's the markdown component's logo (hover to see the title text):</span></p>
+<p class="rvps2"><span class="rvts6">Inline-style:</span></p>
+<p class="rvps2"><span class="rvts6">![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")</span></p>
+<p class="rvps2"><span class="rvts6">Reference-style:</span></p>
+<p class="rvps2"><span class="rvts6">![alt text][logo]</span></p>
+<p class="rvps2"><span class="rvts6">[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Code and Syntax Highlighting</span></span></h2>
+<p class="rvps2"><span class="rvts6">Inline `code` has `back-ticks around` it.</span></p>
+<p class="rvps2"><span class="rvts6">Specify the multi-line code with the language:</span></p>
+<p class="rvps2"><span class="rvts6">```javascript</span></p>
+<p class="rvps2"><span class="rvts6">var s = "JavaScript syntax highlighting";</span></p>
+<p class="rvps2"><span class="rvts6">alert(s);</span></p>
+<p class="rvps2"><span class="rvts6">```</span></p>
+<p class="rvps2"><span class="rvts6">No language indicated, so no syntax highlighting:</span></p>
+<p class="rvps2"><span class="rvts6">```</span></p>
+<p class="rvps2"><span class="rvts6">But let's throw in a &lt;b&gt;tag&lt;/b&gt;.</span></p>
+<p class="rvps2"><span class="rvts6">```</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Blockquotes</span></span></h2>
+<p class="rvps2"><span class="rvts6">&gt; Blockquotes are very handy in email to emulate reply text.</span></p>
+<p class="rvps2"><span class="rvts6">&gt; This line is part of the same quote.</span></p>
+<p class="rvps2"><span class="rvts6">Quote break.</span></p>
+<p class="rvps2"><span class="rvts6">&gt; This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Horizontal Rule</span></span></h2>
+<p class="rvps2"><span class="rvts6">Three or more...</span></p>
+<p class="rvps2"><span class="rvts6">---</span></p>
+<p class="rvps2"><span class="rvts6">Hyphens</span></p>
+<p class="rvps2"><span class="rvts6">***</span></p>
+<p class="rvps2"><span class="rvts6">Asterisks</span></p>
+<p class="rvps2"><span class="rvts6">___</span></p>
+<p class="rvps2"><span class="rvts6">Underscores</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Tables</span></span></h2>
+<p class="rvps2"><span class="rvts6">Colons can be used to align columns.</span></p>
+<p class="rvps2"><span class="rvts6">| Tables &nbsp; &nbsp; &nbsp; &nbsp;| Are &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Cool &nbsp;|</span></p>
+<p class="rvps2"><span class="rvts6">| ------------- |:-------------:| -----:|</span></p>
+<p class="rvps2"><span class="rvts6">| col 3 is &nbsp; &nbsp; &nbsp;| right-aligned | $1600 |</span></p>
+<p class="rvps2"><span class="rvts6">| col 2 is &nbsp; &nbsp; &nbsp;| centered &nbsp; &nbsp; &nbsp;| &nbsp; $12 |</span></p>
+<p class="rvps2"><span class="rvts6">| zebra stripes | are neat &nbsp; &nbsp; &nbsp;| &nbsp; &nbsp;$1 |</span></p>
+<p class="rvps2"><span class="rvts6">There must be at least 3 dashes separating each header cell.</span></p>
+<p class="rvps2"><span class="rvts6">The outer pipes (|) are optional, and you don't need to make the</span></p>
+<p class="rvps2"><span class="rvts6">raw Markdown line up prettily. You can also use inline Markdown.</span></p>
+<p class="rvps2"><span class="rvts6">Markdown | Less | Pretty</span></p>
+<p class="rvps2"><span class="rvts6">--- | --- | ---</span></p>
+<p class="rvps2"><span class="rvts6">*Still* | `renders]` | **nicely**</span></p>
+<p class="rvps2"><span class="rvts6">1 | 2 | 3</span></p>
+<p class="rvps2"><span class="rvts6">123123123</span></p>
+<p class="rvps2"><span class="rvts6">**[](http://)**</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+            </div>
+            
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2021 by Lantana Consulting Group. All Rights Reserved.</div></div>
+        </div>  <!-- /#topic-content -->
+    </article>
+
+    <footer></footer>
+
+  </div>  <!-- /#main -->
+
+  <div class="mask" data-toggle="sm-nav-expanded"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="hndModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 350px"></div>  
+
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
+
+  <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
+  <script src="_translations.js"></script>
+  <script src="js/hndsd.min.js"></script>
+  <script src="js/hndse.min.js"></script>
+  <script src="js/app.min.js"></script>
+
+  <!-- Init script -->
+  <script>
+    $(function() {
+      // Create the app
+      var app = new Hnd.App();
+      // Update translations
+      hnd_ut(app);
+	  // Instanciate imageMapResizer
+	  imageMapResize();
+	  // Custom JS
+	  
+      // Boot the app
+      app.Boot();
+    });
+  </script>
+
+
+
+</body>
+
+</html>
+

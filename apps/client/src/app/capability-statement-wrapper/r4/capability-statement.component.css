@@ -5,3 +5,13 @@
 .card {
     margin-bottom: 15px;
 }
+
+.rest-actions {
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+}
+
+.actions-column {
+  width: 225px;
+}

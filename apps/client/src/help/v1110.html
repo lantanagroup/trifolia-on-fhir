@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
+  <meta name="generator" content="HelpNDoc Professional Edition 7.1.1.256">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -185,38 +185,37 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps2"><span class="rvts19">Release 1.11.2</span></p>
+<p class="rvps2"><span class="rvts18">Release 1.11.2</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">New Prompt to Avoid Losing Unsaved Changes&nbsp;</span></span></h2>
-<p class="rvps32"><span class="rvts23">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen.&nbsp;</span></p>
-<p class="rvps2"><span class="rvts18">We will add this pop-up to additional edit screens in future releases.</span></p>
+<p class="rvps8"><span class="rvts24">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts23">We will add this pop-up to additional edit screens in future releases.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Improvements to Page Editing</span></span></h2>
-<p class="rvps32"><span class="rvts23">The </span><span class="rvts58">Edit Page</span><span class="rvts23"> popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
+<p class="rvps8"><span class="rvts24">The </span><span class="rvts59">Edit Page</span><span class="rvts24"> popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps33"><span class="rvts60">A </span><span class="rvts61">File Name </span><span class="rvts60">field&nbsp;</span></li>
- <li class="rvps33"><span class="rvts60">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts&nbsp;</span></li>
+ <li class="rvps33"><span class="rvts62">A </span><span class="rvts63">File Name </span><span class="rvts62">field&nbsp;</span></li>
+ <li class="rvps33"><span class="rvts62">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts&nbsp;</span></li>
 </ul>
-<p class="rvps32"><span class="rvts23">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts58">tools</span><span class="rvts23"> command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts88">Disabled GitHub Exports</span></span></h2>
-<p class="rvps32"><span class="rvts23">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
+<p class="rvps8"><span class="rvts24">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts59">tools</span><span class="rvts24"> command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts90">Disabled GitHub Exports</span></span></h2>
+<p class="rvps8"><span class="rvts24">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (5)</span></span></h3>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts20">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts18">] - Add "Base" for OperationDefinition editing</span></li>
- <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts18">] - Allow configuration of types listed for selection on new profile creation</span></li>
- <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts18">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
- <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts18">] - Allow user to edit "use" on value set concept designations</span></li>
+ <li class="rvps2"><span class="rvts23">[</span><a class="rvts61" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts23">] - Add "Base" for OperationDefinition editing</span></li>
+ <li class="rvps2"><span class="rvts23">[</span><a class="rvts61" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts23">] - Allow configuration of types listed for selection on new profile creation</span></li>
+ <li class="rvps2"><span class="rvts23">[</span><a class="rvts61" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts23">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
+ <li class="rvps2"><span class="rvts23">[</span><a class="rvts61" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts23">] - Allow user to edit "use" on value set concept designations</span></li>
 </ul>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts21">Improvements</span></span></h4>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts19">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts18">[</span><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts18">] - </span><span class="rvts23">Improve page editing functionality</span></li>
+ <li class="rvps2"><span class="rvts23">[</span><a class="rvts61" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts23">] - </span><span class="rvts24">Improve page editing functionality</span></li>
 </ul>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts21"><br/></span></span></h4>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts19"><br/></span></span></h4>
 <p></p>
-<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com/feature-tour/iphone-website-generation">Create iPhone web-based documentation</a></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2020 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2021 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 

@@ -8,26 +8,6 @@ export interface FhirControlDependency {
   package: string;
 }
 
-export class PageInfo {
-  page: PageComponent | ImplementationGuidePageComponent;
-  fileName: string;
-  content: string;
-
-  get title() {
-    if (this.page) {
-      return this.page.title;
-    }
-
-    return this.fileName;
-  }
-
-  get finalFileName() {
-    if (this.fileName && this.fileName.endsWith('.md')) {
-      return this.fileName.substring(0, this.fileName.lastIndexOf('.')) + '.html';
-    }
-  }
-}
-
 export class ExportResults {
   rootPath: string;
   packageId: string;

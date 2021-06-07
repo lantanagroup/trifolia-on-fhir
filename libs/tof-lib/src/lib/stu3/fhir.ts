@@ -2,7 +2,7 @@ import '../date-extensions';
 import {
   IAgentComponent, IAttachment,
   IAuditEvent,
-  IBundle,
+  IBundle, ICapabilityStatement,
   ICodeableConcept,
   ICodeSystem,
   ICoding,
@@ -17,7 +17,7 @@ import {
   IExtension,
   IHumanName,
   IImplementationGuide,
-  INetworkComponent,
+  INetworkComponent, IOperationOutcome,
   IPractitioner,
   IResourceReference,
   IStructureDefinition,
@@ -2131,7 +2131,7 @@ export class CodeSystem extends DomainResource implements ICodeSystem {
   public hierarchyMeaning?: string;
   public compositional?: boolean;
   public versionNeeded?: boolean;
-  public content = 'not-present';
+  public content = 'complete';
   public count?: number;
   public filter?: FilterComponent[];
   public property?: PropertyComponent[];
@@ -4428,7 +4428,7 @@ export class DocumentComponent extends BackboneElement {
 
 }
 
-export class CapabilityStatement extends DomainResource {
+export class CapabilityStatement extends DomainResource implements ICapabilityStatement {
   public resourceType = 'CapabilityStatement';
   public url?: string;
   public version?: string;
@@ -13433,7 +13433,7 @@ export class IssueComponent extends BackboneElement {
 
 }
 
-export class OperationOutcome extends DomainResource {
+export class OperationOutcome extends DomainResource implements IOperationOutcome {
   public resourceType = 'OperationOutcome';
   public issue: IssueComponent[];
   public location?: string[];

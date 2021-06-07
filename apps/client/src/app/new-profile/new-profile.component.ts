@@ -11,8 +11,8 @@ import {
 import {AuthService} from '../shared/auth.service';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { BaseComponent } from '../base.component';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {BaseComponent} from '../base.component';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
@@ -24,7 +24,7 @@ import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logica
 export class NewProfileComponent extends BaseComponent {
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
-  public Globals: Globals;
+  public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
 
   constructor(

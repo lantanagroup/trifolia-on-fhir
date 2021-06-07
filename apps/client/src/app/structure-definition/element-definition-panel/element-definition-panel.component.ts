@@ -12,6 +12,7 @@ import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
 import {IElementDefinition, IElementDefinitionConstraint, IElementDefinitionType} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ElementDefinitionConstraintComponent} from '../../modals/element-definition-constraint/element-definition-constraint.component';
 import {generateId} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ConstraintManager} from '../../../../../../libs/tof-lib/src/lib/constraint-manager';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -24,6 +25,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   @Input() structureDefinition: StructureDefinition;
   @Input() disabled = false;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
+  @Input() constraintManager: ConstraintManager;
 
   public editingSliceName: boolean;
   public editedSliceName: string;
@@ -99,6 +101,30 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
+  async typeChanged(init = false) {
+    if (!this.elementTreeModel) return;
+
+    const isExpanded = this.elementTreeModel.expanded;
+
+    if (isExpanded) {
+      await this.constraintManager.toggleExpand(this.elementTreeModel);
+    }
+
+    const children = await this.constraintManager.findChildren(this.element, this.elementTreeModel.constrainedElement);
+    this.elementTreeModel.hasChildren = children.length > 0;
+
+    if (isExpanded && this.elementTreeModel.hasChildren && !init) {
+      await this.constraintManager.toggleExpand(this.elementTreeModel);
+    }
+
+    this.change.emit();
+  }
+
+  async removeType(index: number) {
+    this.element.type.splice(index, 1);
+    this.typeChanged();
+  }
+
   editMappings() {
     const modalRef = this.modalService.open(MappingModalComponent, {size: 'xl', backdrop: 'static'});
     modalRef.componentInstance.mappings = this.element.mapping;
@@ -139,7 +165,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  openTypeModel(element, type) {
+  openTypeModal(element, type) {
     let modalRef;
 
     if (this.configService.isFhirSTU3) {
@@ -152,8 +178,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     modalRef.componentInstance.element = element;
     modalRef.componentInstance.type = type;
-    modalRef.result.then(() => {
-      this.change.emit();
+    modalRef.result.then(async () => {
+      await this.typeChanged();
     });
   }
 
@@ -245,9 +271,11 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  addType() {
+  async addType() {
     const elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.element.type;
     elementTypes.push({code: this.getDefaultType()});
+
+    await this.typeChanged();
   }
 
   isPrimitiveExceptBoolean() {
@@ -264,7 +292,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const maxRequired = this.element.max || this.elementTreeModel.baseElement.max;
     const minValue = this.element.min;
 
-    if (minValue < this.elementTreeModel.baseElement.min) {
+    if (!this.elementTreeModel.isSlice && minValue < this.elementTreeModel.baseElement.min) {
       return false;
     }
 
@@ -284,7 +312,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
     const maxValue = this.element.max;
     const minRequired = this.element.min || this.elementTreeModel.baseElement.min;
 
-    if (maxValue !== undefined && ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
+    if (!this.elementTreeModel.isSlice && maxValue !== undefined &&
+      ((maxValue !== "*" && this.elementTreeModel.baseElement.max !== "*" && maxValue > this.elementTreeModel.baseElement.max)
       || (maxValue === "*" && this.elementTreeModel.baseElement.max !== "*"))) {
       return false;
     }

@@ -120,15 +120,16 @@
           <label>
             <input type="checkbox"
                    [ngModel]="element.hasOwnProperty('type')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]); change.emit()"/>
+                   (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]);
+                   typeChanged(true)"/>
             Type
             <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
           </label>
           <div class="pull-right" *ngIf="element.hasOwnProperty('type')">
-            <i class="fa fa-plus clickable" title="Add a type" (click)="addType(); change.emit()"></i>
+            <i class="fa fa-plus clickable" title="Add a type" (click)="addType()"></i>
           </div>
           <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
-            <select class="form-control" [(ngModel)]="t.code" (change)="change.emit()">
+            <select class="form-control" [(ngModel)]="t.code" (change)="typeChanged()">
               <option [ngValue]="t.code">{{getTypeDisplay(t)}}</option>
               <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{getTypeDisplay(o)}}</option>
             </select>
@@ -136,10 +137,10 @@
                    value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
                    title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="openTypeModel(element, t)" title="Edit this type">
+              <button type="button" class="btn btn-primary clickable" (click)="openTypeModal(element, t)" title="Edit this type">
                 <i class="fa fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-primary clickable" (click)="element.type.splice(i, 1); change.emit()" title="Remove this type">
+              <button type="button" class="btn btn-primary clickable" (click)="removeType(i)" title="Remove this type">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>

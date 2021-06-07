@@ -9,8 +9,8 @@
            placeholder="{{placeholder}}"
            [disabled]="disabled"
            [pattern]="pattern"
-           [(ngModel)]="value"
-           (keyup)="changeEvent.next(parentObject[propertyName])"
+           [ngModel]="value"
+           (ngModelChange)="changeValue($event)"
            [class.is-invalid]="!isValid" />
 
     <span class="help-block" *ngIf="value && patternMessage && formGroupModel.errors?.pattern">{{patternMessage}}</span>
@@ -25,8 +25,8 @@
            placeholder="{{placeholder}}"
            [disabled]="disabled"
            [pattern]="pattern"
-           [(ngModel)]="value"
-           (keyup)="changeEvent.next(parentObject[propertyName])"
+           [ngModel]="value"
+           (ngModelChange)="changeValue($event)"
            [class.is-invalid]="!isValid" />
 
     <span class="help-block" *ngIf="value && patternMessage && model.errors?.pattern">{{patternMessage}}</span>

@@ -2,7 +2,6 @@ import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
 import {ChildProcess, spawn} from 'child_process';
 import {
-  ContactDetail,
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
@@ -16,24 +15,29 @@ import {
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
-import {IServerConfig} from '../models/server-config';
-import {IFhirConfig} from '../models/fhir-config';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
 import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Formats} from '../models/export-options';
-import {PageInfo} from './html.models';
-import {getDefaultImplementationGuideResourcePath, getExtensionString, getIgnoreWarningsValue} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+import {
+  getCustomMenu,
+  getDefaultImplementationGuideResourcePath,
+  getIgnoreWarningsValue,
+  setIgnoreWarningsValue,
+  setJiraSpecValue
+} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
 import {FhirInstances, unzip} from '../helper';
-import {createTableFromArray, escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -41,6 +45,43 @@ export class HtmlExporter {
   public user: ITofUser;
 
   private initPromise: Promise<void>;
+
+  readonly homedir: string;
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public bundle: IBundle;
+  public packageId: string;
+  public rootPath: string;
+  public controlPath: string;
+  public igPublisherProcess: ChildProcess;
+  public publishing: Promise<void>;
+  protected igPublisherLocation: string;
+  protected pageInfos: PageInfo[];
+
+  protected static getExtensionFromFormat(format: Formats) {
+    switch (format) {
+      case 'application/fhir+xml':
+      case 'application/xml':
+      case 'xml':
+        return '.xml';
+      default:
+        return '.json';
+    }
+  }
+
+  protected static getPageExtension(page: ImplementationGuidePageComponent) {
+    switch (page.generation) {
+      case 'html':
+      case 'generated':
+        return '.html';
+      case 'xml':
+        return '.xml';
+      case 'markdown':
+        return '.md';
+      default:
+        return '.md';
+    }
+  }
+
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
     protected configService: ConfigService,
@@ -104,73 +145,6 @@ export class HtmlExporter {
 
   protected get r4ImplementationGuide(): R4ImplementationGuide {
     return <R4ImplementationGuide>this.implementationGuide;
-  }
-  readonly homedir: string;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
-  public bundle: IBundle;
-  public packageId: string;
-  public rootPath: string;
-  public controlPath: string;
-  public igPublisherProcess: ChildProcess;
-  public publishing: Promise<void>;
-  protected igPublisherLocation: string;
-  protected pageInfos: PageInfo[];
-
-  protected static getExtensionFromFormat(format: Formats) {
-    switch (format) {
-      case 'application/fhir+xml':
-      case 'application/xml':
-      case 'xml':
-        return '.xml';
-      default:
-        return '.json';
-    }
-  }
-
-  protected static getPageExtension(page: ImplementationGuidePageComponent) {
-    switch (page.generation) {
-      case 'html':
-      case 'generated':
-        return '.html';
-      case 'xml':
-        return '.xml';
-      case 'markdown':
-        return '.md';
-      default:
-        return '.md';
-    }
-  }
-
-  protected static getIndexContent(implementationGuide: IImplementationGuide) {
-    let content = '### Overview\n\n';
-
-    if (implementationGuide.description) {
-      const descriptionContent = implementationGuide.description + '\n\n';
-      content += descriptionContent + '\n\n';
-    } else {
-      content += 'This implementation guide does not have a description, yet.\n\n';
-    }
-
-    if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
-        const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
-        const foundURL = (contact.telecom || []).find(t => t.system === 'url');
-
-        let display: string;
-
-        if (foundEmail) {
-          display = `<a href="mailto:${foundEmail.value}">${foundEmail.value}</a>`;
-        } else if (foundURL) {
-          display = `<a href="${foundURL.value}" target="_new">${foundURL.value}</a>`;
-        }
-
-        return [contact.name, display || ''];
-      });
-      const authorsContent = '### Authors\n\n' + createTableFromArray(['Name', 'Email/URL'], authorsData) + '\n\n';
-      content += authorsContent;
-    }
-
-    return content;
   }
 
   /**
@@ -351,7 +325,6 @@ export class HtmlExporter {
 
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
-
     // Write the ignoreWarnings.txt file
     let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
 
@@ -362,6 +335,7 @@ export class HtmlExporter {
     }
 
     fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
+
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
@@ -376,12 +350,17 @@ export class HtmlExporter {
       PackageListModel.removePackageList(this.implementationGuide);
     }
 
-    const igToWrite: DomainResource = this.prepareImplementationGuide();
+    const igToWrite: IImplementationGuide = this.prepareImplementationGuide();
 
-    // updateTemplates() must be called before writeResourceContent() for the IG because updateTemplates() might make changes
+    // Remove contained DocumentReferences and extensions that will make the IG Publisher complain
+    setIgnoreWarningsValue(igToWrite, null);
+    setJiraSpecValue(igToWrite, null);
+
+    // createMenu() must be called before writeResourceContent() for the IG because createMenu() might make changes
     // to the ig that needs to get written.
     this.logger.log('Updating the IG publisher templates for the resources');
-    this.updateTemplates(this.rootPath, this.bundle);
+    const customMenu = getCustomMenu(this.implementationGuide);
+    this.createMenu(this.rootPath, this.bundle, customMenu);
 
     this.writeResourceContent(inputDir, igToWrite, isXml);
 
@@ -411,8 +390,10 @@ export class HtmlExporter {
 
         fs.ensureDirSync(customTemplatePath);
 
-        if (templatePathSplit.length > 3) {
-          const subDirName = templatePathSplit[templatePathSplit.length - 3] + '-' + fileNameWithoutExt;
+        // Expects github template URLs to be formatted like so:
+        // XXX/ig-template-carequality/archive/refs/heads/master.zip
+        if (templatePathSplit.length > 5 && template.toLowerCase().indexOf('/archive/refs/heads/') > 0) {
+          const subDirName = templatePathSplit[templatePathSplit.length - 5] + '-' + fileNameWithoutExt;
           await unzip(retrieveTemplateResults.data, customTemplatePath, subDirName);
         } else {
           await unzip(retrieveTemplateResults.data, customTemplatePath);
@@ -534,7 +515,7 @@ export class HtmlExporter {
    * Makes sure that parameters required by the IG publisher are populated.
    * Override in version-specific FHIR implementations
    */
-  protected prepareImplementationGuide(): DomainResource {
+  protected prepareImplementationGuide(): IImplementationGuide {
     // Set the fhirVersion on each of the profiles
     (this.bundle.entry || [])
       .filter(entry => entry.resource && entry.resource.resourceType === 'StructureDefinition')
@@ -563,60 +544,17 @@ export class HtmlExporter {
    * with links to the resources in the implementation guide.
    * @param rootPath
    * @param bundle
+   * @param customMenu
    */
-  protected updateTemplates(rootPath: string, bundle) {
+  protected createMenu(rootPath: string, bundle, customMenu?: string) {
     fs.ensureDirSync(path.join(rootPath, 'input/includes'));
 
-    const allPageMenuNames = this.pageInfos
-      .filter(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return !!extension && extension.valueString;
-      })
-      .map(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return escapeForXml(extension.valueString);
-      });
-    const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
-      if (init.indexOf(next) < 0) init.push(next);
-      return init;
-    }, []);
-    const pageMenuContent = distinctPageMenuNames.map(pmn => {
-      const menuPages = this.pageInfos
-        .filter(pi => {
-          const extensions = <IExtension[]>(pi.page.extension || []);
-          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-          return extension && extension.valueString === pmn && pi.fileName;
-        });
+    if(customMenu){
+      fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), customMenu);
+      return;
+    }
 
-      if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].title);
-        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
-        return `  <li><a href="${fileName}">${title}</a></li>\n`;
-      } else {
-        const pageMenuItems = menuPages
-          .map(pi => {
-            const title = escapeForXml(pi.title);
-            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
-            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
-          });
-
-        return '  <li class="dropdown">\n' +
-          `    <a data-toggle="dropdown" href="#" class="dropdown-toggle">${pmn}<b class="caret">\n` +
-          '      </b>\n' +
-          '    </a>\n' +
-          '    <ul class="dropdown-menu">\n' + pageMenuItems.join('\n') +
-          '    </ul>\n' +
-          '  </li>';
-      }
-    });
-
-    const menuContent = '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
-      '  <li><a href="index.html">IG Home</a></li>\n' +
-      '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
-      '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
-      '</ul>\n';
+    const menuContent = IgPageHelper.getMenuContent(this.pageInfos);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 

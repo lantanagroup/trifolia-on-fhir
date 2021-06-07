@@ -38,8 +38,10 @@ export class ConfigService {
     jwksUri: ''
   };
   public github: IGithubConfig = {
-    clientId:  'gh-clientid',
-    secret: 'secr3t'
+    clientId: 'gh-clientid',
+    secret: 'secr3t',
+    apiBase: 'https://api.github.com',
+    authBase: 'https://github.com'
   };
   public publish: IPublishConfig = {
     queueLimit: 2,

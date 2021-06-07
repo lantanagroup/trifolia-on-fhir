@@ -1,5 +1,6 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Headers, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {FhirController} from './fhir.controller';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
@@ -24,6 +25,7 @@ import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
 @ApiOAuth2([])
 export class StructureDefinitionController extends BaseFhirController {
   resourceType = 'StructureDefinition';
+  fhirController = new FhirController(this.httpService, this.configService);
 
   constructor(protected httpService: HttpService, protected configService: ConfigService) {
     super(httpService, configService);
@@ -99,12 +101,21 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param type {string}
    */
   @Get('base')
-  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string): Promise<BaseDefinitionResponseModel> {
+  public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string, @RequestHeaders("implementationGuideId") implementationGuideId: string,
+                                          @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<BaseDefinitionResponseModel> {
     const ret = new BaseDefinitionResponseModel();
     const fhirServer = this.configService.fhir.servers.find(s => s.id === request.fhirServerId);
 
     if (!url.startsWith('http://hl7.org/fhir/StructureDefinition/')) {
       try {
+        const dependencies = await this.fhirController.searchDependency(request.fhirServerBase, implementationGuideId, fhirServerVersion, 'StructureDefinition',
+          null, null, null, null, null, url, false);
+
+        // if length === 1 then just return
+        if (dependencies.entry.length === 1) {
+          ret.base = dependencies.entry[0].resource['resource'];
+          return ret;
+        }
         let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(request.fhirServerBase, url);
 
         // The snapshot is not already generated for the profile, so we need to generate it now.
@@ -162,13 +173,13 @@ export class StructureDefinitionController extends BaseFhirController {
 
   @Post()
   public async create(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
-    body = await this.generateProfileSnapshot(fhirServerId, body);
+    delete body.snapshot;
     return super.baseCreate(fhirServerBase, fhirServerVersion, body, user, contextImplementationGuideId, applyContextPermissions);
   }
 
   @Put(':id')
   public async update(@FhirServerBase() fhirServerBase, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
-    body = await this.generateProfileSnapshot(fhirServerId, body);
+    delete body.snapshot;
     return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user, contextImplementationGuideId, applyContextPermissions);
   }
 
@@ -206,7 +217,7 @@ export class StructureDefinitionController extends BaseFhirController {
       return list;
     };
 
-    let baseProfiles, baseUrl, baseTypeProfile;
+    let baseProfiles;
 
     try {
       baseProfiles = await getNextBase(url);
@@ -228,6 +239,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
    * @param fhirServerId
    * @param body
+   * @deprecated This is no longer used, but may be used in future, so it is preserved.
    */
   private async generateProfileSnapshot(fhirServerId: string, body: any) {
     const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);

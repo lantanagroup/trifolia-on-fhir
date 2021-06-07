@@ -1,13 +1,22 @@
 import {Document, HeadingLevel, IParagraphOptions, Packer, Paragraph, Table, TableCell, TableOfContents, TableRow, TextRun, VerticalAlign} from 'docx';
-import {Bundle, StructureDefinition as R4StructureDefinition, Extension as R4Extension, ValueSet as R4ValueSet, ImplementationGuide as R4ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  Bundle,
+  Extension as R4Extension,
+  ImplementationGuide as R4ImplementationGuide,
+  StructureDefinition as R4StructureDefinition,
+  ValueSet as R4ValueSet
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {TofLogger} from '../tof-logger';
-import {StructureDefinition as STU3StructureDefinition, Extension as STU3Extension, ValueSet as STU3ValueSet, ImplementationGuide as STU3ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Extension as STU3Extension,
+  ImplementationGuide as STU3ImplementationGuide,
+  StructureDefinition as STU3StructureDefinition,
+  ValueSet as STU3ValueSet
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import * as fs from 'fs';
-import {R4HtmlExporter} from './html.r4';
-import {PageInfo} from './html.models';
-import {STU3HtmlExporter} from './html.stu3';
 import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IgPageHelper, PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 /**
  * This class is responsible for creating an MSWord DOCX document from a bundle of
@@ -113,11 +122,11 @@ export class MSWordExporter {
 
       if (version === 'stu3') {
         const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
-        pageInfos = STU3HtmlExporter.getPagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+        pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
       } else if (version === 'r4') {
         const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
         if (r4ImplementationGuide.definition) {
-          pageInfos = R4HtmlExporter.getPagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+          pageInfos = IgPageHelper.getR4PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
         }
       }
 

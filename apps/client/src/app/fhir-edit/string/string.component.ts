@@ -23,6 +23,7 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
   @Input() label = true;
+  @Input() alphanumeric = false;
 
   @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
@@ -35,14 +36,22 @@ export class FhirStringComponent implements OnInit {
    */
   @Input() cookieKey?: string;
 
-  private changeEvent = new Subject();
+  public changeEvent = new Subject();
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private cookieService: CookieService) {
 
+    // Throttle how often this.change gets emitted so that it doesn't trigger for every single key press
     this.changeEvent.pipe(debounceTime(500))
-      .subscribe((value: string) => this.change.emit(value));
+      .subscribe(() => this.change.emit(this.value));
+  }
+
+  public changeValue(value: string) {
+    if (value !== this.value) {
+      this.value = this.alphanumeric ? value.replace(/[^a-zA-Z0-9]/gi, '') : value;
+      this.changeEvent.next();
+    }
   }
 
   public get value() {
@@ -50,7 +59,9 @@ export class FhirStringComponent implements OnInit {
       return '';
     }
 
-    return this.parentObject[this.propertyName];
+    return this.alphanumeric ?
+      this.parentObject[this.propertyName].replace(/[^a-zA-Z0-9]/gi, '') :
+      this.parentObject[this.propertyName];
   }
 
   public get isValid() {
@@ -68,6 +79,7 @@ export class FhirStringComponent implements OnInit {
   }
 
   public set value(newValue: string) {
+    newValue = this.alphanumeric && newValue ? newValue.replace(/[^a-zA-Z0-9]/gi, '') : newValue;
     if (!newValue && this.parentObject[this.propertyName]) {
       delete this.parentObject[this.propertyName];
 

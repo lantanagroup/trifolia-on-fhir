@@ -205,7 +205,7 @@ export class MarkdownComponent implements OnInit {
       '|',
       {
         name: 'guide',
-        action: 'http://wowubuntu.com/markdown/index.html',
+        action: location.origin + '/help/MarkdownSyntax.html',
         className: 'smdi smdi-question',
         title: 'Markdown Guide',
         default: true

@@ -1,28 +1,26 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {CapabilityStatementService} from '../../shared/capability-statement.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
+import { CapabilityStatementService } from '../../shared/capability-statement.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import {
   CapabilityStatement,
   CapabilityStatementResourceComponent,
   CapabilityStatementRestComponent,
-  Coding, StructureDefinition
+  Coding,
+  StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {Observable} from 'rxjs';
-import {RecentItemService} from '../../shared/recent-item.service';
-import {FhirService} from '../../shared/fhir.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import {FileService} from '../../shared/file.service';
-import {ConfigService} from '../../shared/config.service';
-import {ClientHelper} from '../../clientHelper';
-import {AuthService} from '../../shared/auth.service';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {BaseComponent} from '../../base.component';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { Observable } from 'rxjs';
+import { RecentItemService } from '../../shared/recent-item.service';
+import { FhirService } from '../../shared/fhir.service';
+import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import { FileService } from '../../shared/file.service';
+import { ConfigService } from '../../shared/config.service';
+import { ClientHelper } from '../../clientHelper';
+import { AuthService } from '../../shared/auth.service';
+import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
+import { BaseComponent } from '../../base.component';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -38,7 +36,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   public csNotFound = false;
   public Globals = Globals;
   public ClientHelper = ClientHelper;
-
+  public codes: Coding[] = [];
   private navSubscription: any;
 
   constructor(
@@ -55,6 +53,33 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+  }
+
+  getCodes(list: any, resourceIndex) {
+    if(list != null) {
+      const remainingCodes = [];
+      this.codes.forEach((coding, index) => {
+        const listIndex = list.findIndex((element) => {
+          if (element.type === coding.code) {
+            return true;
+          }
+        })
+        if (listIndex === resourceIndex || listIndex === -1) remainingCodes.push(coding);
+      });
+      return remainingCodes;
+    }
+  }
+
+
+  public defaultResource(list: any) {
+    if(list != null) {
+      const remainingCodes = [];
+      this.codes.forEach((coding, index) => {
+        const foundCode = list.find((elem) => elem.type === coding.code);
+        if (foundCode === undefined) { remainingCodes.push(coding);return;}
+      });
+      list.push({ type: remainingCodes[0].code });
+    }
   }
 
   addFormat() {
@@ -90,6 +115,44 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
 
     this.getCapabilityStatement();
+  }
+
+
+
+  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex > 0) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex - 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex-1));
+    }
+  }
+
+  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+    const currentIndex = this.capabilityStatement.rest.indexOf(rest);
+
+    if (currentIndex < this.capabilityStatement.rest.length) {
+      this.capabilityStatement.rest.splice(currentIndex, 1);
+      this.capabilityStatement.rest.splice(currentIndex + 1, 0, rest);
+      setTimeout(() => tabSet.activeId = 'rest-' + (currentIndex+1));
+    }
+  }
+
+  public moveResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent, direction: 'up'|'down') {
+    const index = rest.resource.indexOf(resource);
+
+    if (direction === 'up') {
+      if (index > 0) {
+        rest.resource.splice(index, 1);
+        rest.resource.splice(index - 1, 0, resource);
+      }
+    } else if (direction === 'down') {
+      if (index < rest.resource.length - 1) {
+        rest.resource.splice(index, 1);
+        rest.resource.splice(index + 1, 0, resource);
+      }
+    }
   }
 
   public save() {
@@ -218,6 +281,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
   ngOnInit() {
     this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
+    this.codes =  this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {

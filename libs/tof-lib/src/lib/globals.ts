@@ -27,6 +27,7 @@ export class Globals {
     'extension-ig-dependency-name': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
     'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
     'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
+    'extension-ig-dependency-id': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-id',
     'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
     'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
@@ -43,7 +44,9 @@ export class Globals {
     'extension-ig-page-filename': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-filename',
     'extension-ig-page-reuse-description': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
     'extension-ig-ignore-warnings': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-ignore-warnings',
-    'extension-ig-jira-spec': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-jira-spec'
+    'extension-ig-jira-spec': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-jira-spec',
+    'extension-ig-custom-menu': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-custom-menu',
+    'extension-ig-pub-template': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template'
   };
 
   static readonly introText = {
@@ -151,6 +154,7 @@ export class Globals {
     'external.terminology.server': 'When left unspecified, terminology services built into the selected FHIR server will be used. When specified, indicates an external terminology server to use for the expansion. Assumes the server is unsecured. The value of this field should be the base url of the FHIR terminology server (ex: "http://tx.fhir.org/r4").',
     'ig.dependsOn.location': 'This is used to populate the IG publisher control file\'s dependencyList.location property',
     'ig.dependsOn.name': 'This is used to populate the IG publisher control file\'s dependencyList.name property',
+    'ig.dependsOn':'This field represents "ImplementationGuide.dependsOn" from the core FHIR specification.',
     'support.button.clicked': 'A separate window/tab will be opened to bring you to Atlassian\'s JIRA Service Desk. An Atlassian account is required to submit support requests. If you have not registered or logged into Atlassian already, you will be prompted to do so, first.',
     'name.validation.failed': 'Name should be usable as an identifier for the module by machine processing applications such as code generation. The name must start with a capital letter, have at least two characters, and cannot contain spaces or special characters.',
     'resource.move': 'To change the ID of this resource, go back to the browse screen for the resource and click the "Change ID" button.',
@@ -169,7 +173,11 @@ export class Globals {
     'ig.page.generation': 'This indicates the syntax of the page content, such as "Markdown" or "HTML". Currently, Trifolia-on-FHIR only supports specifying Markdown content. It is recommended that you leave the "Generation" field as "Markdown".',
     'ig.page.showTopNavMenu': 'This indicates if the page should be shown as a button in the top navigation menu. The value of this field should be the text you want displayed in the menu. If the same value is used for multiple pages, it will as a drop-down menu with the titles of the pages within the drop-down menu.',
     'ig.page.format': 'The format of the content for the page. It is suggested that this be left to "markdown", as this is the only format currently supported by ToF.',
-    'ig.ignoreWarnings': 'The content of this file is exported as "input/ignoreWarnings.txt" when exporting as a publisher package. Each line should represent a warning copy-and-pasted from the IG Publisher\'s QA report that should be ignored by future publish operations.'
+    'ig.ignoreWarnings': 'The content of this file is exported as "input/ignoreWarnings.txt" when exporting as a publisher package. Each line should represent a warning copy-and-pasted from the IG Publisher\'s QA report that should be ignored by future publish operations.',
+    'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.',
+    'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
+    'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.',
+    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip'
   };
 
   static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links'];

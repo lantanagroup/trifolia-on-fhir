@@ -1,19 +1,11 @@
 import {HtmlExporter} from './html';
-import {PageInfo} from './html.models';
-import {
-  Binary as STU3Binary, ContactDetail,
-  DomainResource,
-  ImplementationGuide,
-  PackageResourceComponent,
-  PageComponent,
-  StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {PackageResourceComponent, PageComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {createTableFromArray, parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
+import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent, ImplementationGuideResourceComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {release} from 'os';
+import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class STU3HtmlExporter extends HtmlExporter {
   protected removeNonExampleMedia() {
@@ -144,12 +136,16 @@ export class STU3HtmlExporter extends HtmlExporter {
         const versionExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-version']);
         const nameExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-name']);
         const locationExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-location']);
+        const idExt = (dependencyExt.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-dependency-id']);
+        // TODO: capture ID extension
 
         return {
           uri: locationExt ? locationExt.valueUri : undefined,
           packageId: nameExt ? nameExt.valueString : undefined,
-          version: versionExt ? versionExt.valueString : undefined
-        };
+          version: versionExt ? versionExt.valueString : undefined,
+          id: idExt ? idExt.valueUri : undefined
+          // TODO: Output ID from extension
+        }
       });
 
     const foundPackageExtension = (this.stu3ImplementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-package-id']);
@@ -215,41 +211,8 @@ export class STU3HtmlExporter extends HtmlExporter {
     return newIg;
   }
 
-  public static getPagesList(theList: PageInfo[], page: PageComponent, implementationGuide: ImplementationGuide) {
-    if (!page) {
-      return theList;
-    }
-
-    if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
-      const contentExtension = (page.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-ig-page-content']);
-
-      const pageInfo = new PageInfo();
-      pageInfo.page = page;
-
-      if (page.source) {
-        if (page.source.lastIndexOf('.') > 0) {
-          pageInfo.fileName = page.source.substring(0, page.source.lastIndexOf('.')) + page.getExtension();
-        } else {
-          pageInfo.fileName = page.source;
-        }
-      }
-
-      if (page.reuseDescription) {
-        pageInfo.content = this.getIndexContent(implementationGuide);
-      } else {
-        pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
-      }
-
-      theList.push(pageInfo);
-    }
-
-    (page.page || []).forEach((next) => STU3HtmlExporter.getPagesList(theList, next, implementationGuide));
-
-    return theList;
-  }
-
   protected populatePageInfos() {
-    this.pageInfos = STU3HtmlExporter.getPagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
+    this.pageInfos = IgPageHelper.getSTU3PagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
   }
 
   protected writePages(rootPath: string) {
@@ -265,15 +228,6 @@ export class STU3HtmlExporter extends HtmlExporter {
 
   private writePage(pagesPath: string, page: PageComponent, level: number) {
     const pageInfo = this.pageInfos.find(next => next.page === page);
-    const pageIndex = pageInfo ? this.pageInfos.indexOf(pageInfo) : -1;
-    const previousPage = pageIndex === 0 ? null : this.pageInfos[pageIndex - 1];
-    const nextPage = pageIndex === this.pageInfos.length - 1 ? null : this.pageInfos[pageIndex + 1];
-    const previousPageLink = previousPage && previousPage.finalFileName && previousPage.title ?
-      `[Previous Page - ${previousPage.title}](${previousPage.finalFileName})\n\n` :
-      undefined;
-    const nextPageLink = nextPage && nextPage.finalFileName && nextPage.title ?
-      `\n\n[Next Page - ${nextPage.title}](${nextPage.finalFileName})` :
-      undefined;
 
     if (pageInfo && page.kind !== 'toc') {
       const pagesPathFiles = fs.readdirSync(pagesPath);
@@ -287,7 +241,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       }
 
       const newPagePath = path.join(pagesPath, pageInfo.fileName);
-      const content = `${previousPageLink || ''}${pageInfo.content || 'No content has been specified for this page.'}${nextPageLink || ''}`;
+      const content = `${pageInfo.content || 'No content has been specified for this page.'}`;
 
       fs.writeFileSync(newPagePath, content);
     }

@@ -21,6 +21,7 @@ import {ExportService} from './export.service';
 import {FhirServerVersion, User} from './server.decorators';
 import {HtmlExporter} from './export/html';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -175,7 +176,16 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion, options.useTerminologyServer);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
+        options.template, options.templateVersion, options.useTerminologyServer);
+
+      if(exporter.bundle && exporter.bundle.entry) {
+        exporter.bundle.entry.forEach(e => {
+          if(e.resource.resourceType && e.resource.resourceType === "StructureDefinition"){
+            delete (<IStructureDefinition> e.resource).snapshot;
+          }
+        });
+      }
 
       // Zip up the dir, send it to client, and then delete the directory
       await this.sendPackageResponse(exporter.packageId, response);
@@ -246,7 +256,8 @@ export class ExportController extends BaseController {
 
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType, options.template, options.templateVersion);
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version,
+        options.templateType, options.template, options.templateVersion, null);
 
       runPublish();
 

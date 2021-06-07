@@ -1,7 +1,7 @@
 import {
   IAgentComponent, IAttachment,
   IAuditEvent,
-  IBundle, ICodeableConcept,
+  IBundle, ICapabilityStatement, ICodeableConcept,
   ICodeSystem,
   IContactDetail,
   IContactPoint,
@@ -15,7 +15,7 @@ import {
   IExtension,
   IHumanName,
   IImplementationGuide,
-  INetworkComponent,
+  INetworkComponent, IOperationOutcome,
   IPractitioner, IResourceReference,
   IStructureDefinition,
   setChoice
@@ -2105,7 +2105,7 @@ export class CodeSystem extends DomainResource implements ICodeSystem {
   public hierarchyMeaning?: string;
   public compositional?: boolean;
   public versionNeeded?: boolean;
-  public content: string;
+  public content = 'complete';
   public supplements?: string;
   public count?: number;
   public filter?: CodeSystemFilterComponent[];
@@ -4638,7 +4638,7 @@ export class CapabilityStatementDocumentComponent extends BackboneElement {
 
 }
 
-export class CapabilityStatement extends DomainResource {
+export class CapabilityStatement extends DomainResource implements ICapabilityStatement {
   public resourceType = 'CapabilityStatement';
   public url?: string;
   public version?: string;
@@ -4646,7 +4646,7 @@ export class CapabilityStatement extends DomainResource {
   public title?: string;
   public status: string;
   public experimental?: boolean;
-  public date: Date;
+  public date: string = new Date().formatFhir();
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -20852,7 +20852,7 @@ export class OperationOutcomeIssueComponent extends BackboneElement {
 
 }
 
-export class OperationOutcome extends DomainResource {
+export class OperationOutcome extends DomainResource implements IOperationOutcome {
   public resourceType = 'OperationOutcome';
   public issue: OperationOutcomeIssueComponent[];
 

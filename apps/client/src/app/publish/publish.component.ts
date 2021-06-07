@@ -13,7 +13,6 @@ import {saveAs} from 'file-saver';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -45,8 +44,7 @@ export class PublishComponent implements OnInit {
     private implementationGuideService: ImplementationGuideService,
     private cookieService: CookieService,
     public configService: ConfigService,
-    private exportService: ExportService,
-    private http: HttpClient) {
+    private exportService: ExportService) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
     this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
@@ -63,7 +61,7 @@ export class PublishComponent implements OnInit {
     });
   }
 
-  public implementationGuideChanged(implementationGuide: ImplementationGuide) {
+  public async implementationGuideChanged(implementationGuide: ImplementationGuide) {
     this.selectedImplementationGuide = implementationGuide;
     this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
 
@@ -73,6 +71,27 @@ export class PublishComponent implements OnInit {
       this.cookieService.put(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.remove(cookieKey);
+    }
+
+    const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
+
+    if (pubTemplateExt) {
+      if (pubTemplateExt.valueUri) {
+        this.options.templateType = 'custom-uri';
+        this.options.template = pubTemplateExt.valueUri;
+      } else if (pubTemplateExt.valueString) {
+        this.options.templateType = 'official';
+
+        if (pubTemplateExt.valueString.indexOf('#') >= 0) {
+          this.options.template = pubTemplateExt.valueString.substring(0, pubTemplateExt.valueString.indexOf('#'));
+          this.options.templateVersion = pubTemplateExt.valueString.substring(pubTemplateExt.valueString.indexOf('#') + 1);
+        } else {
+          this.options.template = pubTemplateExt.valueString;
+          this.options.templateVersion = 'current';
+        }
+
+        this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
+      }
     }
   }
 
@@ -129,11 +148,10 @@ export class PublishComponent implements OnInit {
     this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
 
     if (this.options.templateType === 'official') {
-      this.templateVersions = await this.configService.getTemplateVersions(this.options);
+      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
 
-      const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
-      if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
-        this.options.templateVersion = templateVersionCookie;
+      if (this.templateVersions && this.options.templateVersion && this.templateVersions.indexOf(this.options.templateVersion) < 0) {
+        this.templateVersions.push(this.options.templateVersion);
       } else if (this.templateVersions && this.templateVersions.length > 0) {
         this.options.templateVersion = this.templateVersions[0];
       } else {
@@ -182,11 +200,15 @@ export class PublishComponent implements OnInit {
     });
   }
 
+  public get igSpecifiesTemplate(){
+    return !!this.selectedImplementationGuide.extension.find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template');
+  }
+
   public getPackageId(){
     return this.packageId;
   }
 
-  public ngOnInit() {
+  async ngOnInit() {
     if (this.configService.project) {
       this.options.implementationGuideId = this.configService.project.implementationGuideId;
     }
@@ -198,7 +220,7 @@ export class PublishComponent implements OnInit {
         }, (err) => this.message = getErrorString(err));
     }
 
-    this.templateChanged();
+    await this.templateChanged();
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {

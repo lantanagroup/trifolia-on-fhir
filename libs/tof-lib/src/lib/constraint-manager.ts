@@ -44,7 +44,7 @@ export class ConstraintManager {
   async initializeRoot() {
     const rootElement = await this.createElementTreeModel(this.base.snapshot.element[0]);
     this.elements = [rootElement];
-    this.associate(this.elements);
+    await this.associate(this.elements);
 
     // Expand the first element
     await this.toggleExpand(rootElement);
@@ -101,7 +101,7 @@ export class ConstraintManager {
       // Find all children of the requested element
       const children = await this.findChildren(etm.baseElement, etm.constrainedElement);
       const nextIndex = this.elements.indexOf(etm) + 1;
-      const newTreeModels = [];
+      const newTreeModels: ElementTreeModel[] = [];
 
       for (let i = children.length - 1; i >= 0; i--) {
         // Insert the element right after the element that is being expanded
@@ -110,7 +110,8 @@ export class ConstraintManager {
         newTreeModels.push(newEtm);
       }
 
-      this.associate(newTreeModels);
+      await this.associate(newTreeModels);
+
       etm.expanded = true;
     } else {
       this.expandedStructure = null;
@@ -327,7 +328,7 @@ export class ConstraintManager {
    * Associate constraints to tree models
    * @param elementTreeModels The tree models to associate to constraints
    */
-  private associate(elementTreeModels: ElementTreeModel[]) {
+  public async associate(elementTreeModels: ElementTreeModel[]) {
     //const baseInfo = this.base.snapshot.element.map(e => e.id + ' - ' + e.path);
     //console.log(JSON.stringify(baseInfo, null, '\t'));
     const unassociated = this.structureDefinition.differential.element.filter(e => !this.elements.find(etm => etm.constrainedElement === e));
@@ -369,5 +370,10 @@ export class ConstraintManager {
         }
       }
     });
+
+    for (const newTreeModel of elementTreeModels) {
+      const newTreeModelChildren = await this.findChildren(newTreeModel.baseElement, newTreeModel.constrainedElement);
+      newTreeModel.hasChildren = newTreeModelChildren.length > 0;
+    }
   }
 }

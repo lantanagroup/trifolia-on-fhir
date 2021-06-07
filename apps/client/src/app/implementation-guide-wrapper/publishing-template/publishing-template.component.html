@@ -1,0 +1,28 @@
+<div class="form-group">
+  <label>
+    Publishing Template
+    <app-tooltip-icon tooltipKey="ig.publishing.template"></app-tooltip-icon>
+  </label>
+  <div class="input-group">
+    <select class="form-control" [ngModel]="templateType" (ngModelChange)="setTemplateType($event)">
+      <option value="not-specified">Not Specified</option>
+      <option value="official">Official</option>
+      <option value="custom-uri">Custom</option>
+    </select>
+    <select class="form-control" *ngIf="templateType === 'not-specified' || templateType === 'official'" [disabled]="templateType === 'not-specified'" [(ngModel)]="officialTemplate" (change)="officialTemplateChanged()">
+      <option value="hl7.fhir.template">FHIR</option>
+      <option value="hl7.cda.template">CDA</option>
+      <option value="hl7.base.template">Base</option>
+    </select>
+    <select class="form-control" *ngIf="templateType === 'not-specified' || templateType === 'official'" [disabled]="templateType === 'not-specified'" [(ngModel)]="officialVersion" (change)="officialTemplateChanged(false)">
+      <option *ngFor="let version of officialVersions" [value]="version">{{version}}</option>
+    </select>
+    <input type="text" class="form-control" *ngIf="templateType === 'custom-uri'" [(ngModel)]="customUri" (change)="valueUriChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!valueUriValid" />
+    <div class="input-group-append" *ngIf="templateType === 'custom-uri'">
+      <div class="input-group-text">
+        <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>
+      </div>
+    </div>
+  </div>
+  <p class="help-block" *ngIf="!valueUriValid">The custom template specified must be a valid URL.</p>
+</div>

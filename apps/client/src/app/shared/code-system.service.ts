@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Injectable()
 export class CodeSystemService {
@@ -11,12 +12,12 @@ export class CodeSystemService {
 
   }
 
-    public save(codeSystem: CodeSystem): Observable<CodeSystem> {
+    public save(codeSystem: ICodeSystem): Observable<ICodeSystem> {
         if (codeSystem.id) {
             const url = '/api/codeSystem/' + encodeURIComponent(codeSystem.id);
-            return this.http.put<CodeSystem>(url, codeSystem);
+            return this.http.put<ICodeSystem>(url, codeSystem);
         } else {
-            return this.http.post<CodeSystem>('/api/codeSystem', codeSystem);
+            return this.http.post<ICodeSystem>('/api/codeSystem', codeSystem);
         }
     }
 
@@ -37,7 +38,7 @@ export class CodeSystemService {
     }
 
     public get(id: string) {
-        let url = '/api/codeSystem/' + encodeURIComponent(id);
+        const url = '/api/codeSystem/' + encodeURIComponent(id);
         return this.http.get<CodeSystem | OperationOutcome>(url);
     }
 

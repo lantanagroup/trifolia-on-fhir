@@ -44,6 +44,7 @@ class PageDefinition {
   public level: number;
 }
 
+
 interface GroupFilterObject {
   [key: string]: boolean
 }
@@ -68,6 +69,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
+  public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
@@ -446,11 +448,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public isResourceValid(resource) {
+    if (!resource.name || !resource.reference || ((resource.hasOwnProperty('exampleBoolean') && resource.exampleBoolean === true) || (resource.hasOwnProperty('exampleCanonical') && resource.exampleCanonical !== ''))) {
+      return false;
+    }
+    return true;
+  }
+
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       if(guide){
         dependsOn.packageId = guide['npm-name'];
+        dependsOn.id = guide['npm-name'];
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
         this.igChanging.emit(true);
@@ -893,9 +903,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {  // right
-    if (this.selectedPage) {
+    if (this.selectedPage || this.selectedResource) {
       if (event.altKey && !event.ctrlKey) {
-        if (this.selectedPage.page === this.implementationGuide.definition.page && event.code === 'ArrowDown') {
+        if (this.selectedPage && this.selectedPage.page === this.implementationGuide.definition.page && event.code === 'ArrowDown') {
           // Current page is root page and the user wants to navigate down
           if (this.selectedPage.page.page && this.selectedPage.page.page.length > 0) {
             // If the current page is the root page and there are child pages, select the first child
@@ -953,19 +963,30 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
         }
       } else if (event.altKey && event.ctrlKey) {
-        switch (event.code) {
-          case 'ArrowRight':
-            this.movePageIn(this.selectedPage);
-            break;
-          case 'ArrowLeft':
-            this.movePageOut(this.selectedPage);
-            break;
-          case 'ArrowUp':
-            this.movePageUp(this.selectedPage);
-            break;
-          case 'ArrowDown':
-            this.movePageDown(this.selectedPage);
-            break;
+        if (this.selectedPage) {
+          switch (event.code) {
+            case 'ArrowRight':
+              this.movePageIn(this.selectedPage);
+              break;
+            case 'ArrowLeft':
+              this.movePageOut(this.selectedPage);
+              break;
+            case 'ArrowUp':
+              this.movePageUp(this.selectedPage);
+              break;
+            case 'ArrowDown':
+              this.movePageDown(this.selectedPage);
+              break;
+          }
+        } else if (this.selectedResource) {
+          switch (event.code) {
+            case 'ArrowUp':
+              this.moveResource(this.selectedResource, 'up');
+              break;
+            case 'ArrowDown':
+              this.moveResource(this.selectedResource, 'down');
+              break;
+          }
         }
       }
     }
@@ -996,5 +1017,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       delete resource.exampleBoolean;
       resource.exampleCanonical = (<StructureDefinition> result.resource).url;
     });
+  }
+
+  public removeDependency(index: number){
+    this.implementationGuide.dependsOn.splice(index, 1)
+    if(this.implementationGuide.dependsOn.length === 0){
+      delete this.implementationGuide.dependsOn;
+    }
   }
 }

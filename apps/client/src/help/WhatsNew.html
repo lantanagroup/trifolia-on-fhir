@@ -7,13 +7,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 7.0.0.199">
+  <meta name="generator" content="HelpNDoc Professional Edition 7.1.1.256">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
   <title>What's New</title>
   <meta name="description" content="" /> 
-  <meta name="keywords" content="">
+  <meta name="keywords" content="TRIFFHIR-570">
 
 
 
@@ -170,10 +170,10 @@
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="Introduction.html">Introduction</a></li>
+                        <li><a href="Introduction.html">Introduction</a></li><li><a href="Welcome.html">Welcome</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Navigation.html" title="Navigation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Navigation.html" title="Navigation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -185,59 +185,65 @@
             <div class="main-content">
                 
 <p></p>
-<p class="rvps2"><span class="rvts19">Release 2.0.0</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts25">Bulk Editing for IGs</span></span></h2>
-<p class="rvps2"><span class="rvts6">We've made editing your IGs easier by adding a new feature which allows for bulk editing of multiple profiles and narrative pages within an implementation guide (IG) at the same time.&nbsp;</span></p>
-<p class="rvps2"><span class="rvts6">Click </span><span class="rvts26">Browse</span><span class="rvts6"> and select </span><span class="rvts26">Bulk Edit IG</span><span class="rvts6">. The Bulk Edit screen displays. &nbsp;&nbsp;</span></p>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts6">Select Profiles to edit the Description, Intro, and Notes sections of all profiles associated with that IG.</span></li>
- <li class="rvps2"><span class="rvts6">Select Elements to add or edit the Short, Definition, and Requirements details for each profile within the IG.</span></li>
- <li class="rvps2"><span class="rvts6">Select Pages to edit the Title and Content for each narrative page.&nbsp;</span></li>
+<p class="rvps2"><span class="rvts18">Release 2.1.0</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts22">Template Updates</span></span></h2>
+<p class="rvps2"><span class="rvts6">If an IG template is not selected, Trifolia-on-FHIR (ToF) defaults to the HL7 template or the last selected/remembered template.</span></p>
+<p class="rvps2"><span class="rvts6">We've made using non-HL7 commercial templates easier.&nbsp;</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 13px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts6">The </span><span class="rvts27">Publish</span><span class="rvts6"> screen and the </span><span class="rvts27">Edit IG's Publishing</span><span class="rvts6"> tab have the same fields.&nbsp;</span></li>
+ <li class="rvps2"><span class="rvts6">The template specified on the </span><span class="rvts27">Publishing</span><span class="rvts6"> tab pre-populates on the </span><span class="rvts27">Publish</span><span class="rvts6"> screen.</span></li>
 </ul>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Copy a Profile</span></span></h2>
-<p class="rvps2"><span class="rvts6">You can now copy an existing profile to create a new profile. On the </span><span class="rvts26">Browse</span><span class="rvts6"> screen, click the copy icon and enter the ID, URL, Name, and Title of the new profile. &nbsp;&nbsp;</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Jurisdiction Field Now Required</span></span></h2>
-<p class="rvps2"><span class="rvts6">On the </span><span class="rvts26">General</span><span class="rvts6"> tab, the </span><span class="rvts26">Jurisdiction</span><span class="rvts6"> field is now a required element. When adding a new Jurisdiction, "A jurisdiction must exist with all fields filled" appears. &nbsp;</span></p>
-<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (12)</span></span></h3>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts22">New Features</span></span></h4>
-<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-285">TRIFFHIR-285 </a><span class="rvts18">- </span><span class="rvts23">Copy a profile, prompt for key details of the copy</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-357">TRIFFHIR-357 </a><span class="rvts18">- Bulk editing for implementation guides</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-421">TRIFFHIR-421 </a><span class="rvts18">- </span><span class="rvts23">Show IG Edit Screen's "Jurisdiction" as required</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-476">TRIFFHIR-476 </a><span class="rvts18">- </span><span class="rvts23">Download IG Dependencies&nbsp;</span></li>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts22">Publication Menu Updates</span></span></h2>
+<p class="rvps8"><span class="rvts23">If an IG uses a custom publishing template, an extension has been added that preserves the URL to the zip file. &nbsp;Therefore, the &nbsp;custom template is remembered per IG.</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 13px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps8"><span class="rvts23">The same template selection fields from the publish screen now appear on the "Edit IG" screen's "Publishing" tab. The user can indicate what template should be used to publish, that is then persisted with the IG.</span></li>
+ <li class="rvps8"><span class="rvts23">If the user has specified a template on the Publishing tab of the "Edit IG" screen, that template selection is pre-populated in the "Publish" screen.</span></li>
+ <li class="rvps8"><span class="rvts23">If the user </span><span class="rvts25">has not</span><span class="rvts23"> specified a template for the IG, it is defaulted to the last selected/remembered template, or to the Official FHIR template if nothing has been selected/remembered before.</span></li>
 </ul>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts22">Improvements</span></span></h4>
-<div class="rvps2">
-<table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
- <tr valign="top">
-  <td width="632" valign="middle" style="padding: 1px;">
-   <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
-    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-373">TRIFFHIR-373 </a><span class="rvts23">- &nbsp;Don't allow ID's to change, only case sensitivity</span></li>
-    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-466">TRIFFHIR-466</a><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-479"> </a><span class="rvts23">- &nbsp;Category, Date and Sequence for package-list.json</span></li>
-    <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-479">TRIFFHIR-479 &nbsp;</a><span class="rvts23">- When importing, detect exampleFor based on meta.profile</span></li>
-   </ul>
-  </td>
-  <td width="314" valign="middle" style="padding: 1px;">
-   <br/>
-  </td>
- </tr>
-</table>
-</div>
-<h4 class="rvps7"><span class="rvts0"><span class="rvts21">Defects</span></span></h4>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (27)</span></span></h3>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts20">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-424">TRIFFHIR-424</a><span class="rvts18"> - Exporting to a brand new (empty) GitHub repository fails</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-484">TRIFFHIR-484&nbsp;</a><span class="rvts18"> - Delay in "Ignore Warnings" value being updated in IG</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-490">TRIFFHIR-490</a><span class="rvts18"> - Extensions removed from profiles results in an empty array</span></li>
- <li class="rvps2"><a class="rvts20" href="https://trifolia.atlassian.net/browse/TRIFFHIR-494">TRIFFHIR-494 </a><span class="rvts18">- Project/IG Context not consistently appearing next to HAPI version selected</span></li>
- <li class="rvps2"><a class="rvts24" href="https://trifolia.atlassian.net/browse/TRIFFHIR-508" target="_blank">TRIFFHIR-508</a><span class="rvts18"> - Measure Resources are missing contentType on attachment</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-501" target="_blank">TRIFFHIR-501</a><span class="rvts24"> - </span><span class="rvts6">Ability to overwrite ToF publication menu with custom menu&nbsp;</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-521" target="_blank">TRIFFHIR-521</a><span class="rvts24"> - </span><span class="rvts6">Preserve custom publishing templates with IGs</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-550">TRIFFHIR-550</a><span class="rvts26">&nbsp;- </span><span class="rvts6">Keyboard shortcut support for re-ordering resources in an IG</span></li>
 </ul>
-<p class="rvps2"><span class="rvts24"><br/></span></p>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts20">Improvements</span></span></h4>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-401">TRIFFHIR-401</a><span class="rvts26">&nbsp;- </span><span class="rvts6">Under Edit Settings, move Selected FHIR Server to the top</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-428">TRIFFHIR-428</a><span class="rvts6">&nbsp;- Use dependencies for base definition snapshot with the constraint manager</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-497" target="_blank">TRIFFHIR-497 </a><span class="rvts6">- Allow sorting of resources within CapabilityStatement.rest</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-513" target="_blank">TRIFFHIR-513</a><span class="rvts6">&nbsp;- IG resource details are required</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-522">TRIFFHIR-522</a><span class="rvts6">&nbsp;- Add support for CapabilityStatement.rest.security.service</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-531">TRIFFHIR-531</a><span class="rvts6">&nbsp;- Allow github configuration to point to other github urls (such as enterprise)</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-533">TRIFFHIR-533</a><span class="rvts6">&nbsp;- Detect if imported resource exists in a different IG</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-538">TRIFFHIR-538</a><span class="rvts6">&nbsp;- VSAC API Key authentication changes</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-540">TRIFFHIR-540</a><span class="rvts6">&nbsp;- 'Machine-processable' rules should be displayed to user when creating a new profile</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-540" target="_blank">TRIFFHIR-570&nbsp;</a><span class="rvts6">- Remove next/previous page buttons now that IG Publisher does this automatically</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-572">TRIFFHIR-572</a><span class="rvts6">&nbsp;- Change default Bundle export to Transaction</span></li>
+</ul>
+<h4 class="rvps7"><span class="rvts0"><span class="rvts19">Defects</span></span></h4>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank">TRIFFHIR-487 </a><span class="rvts6">- Remove DocumentReference(s) from ImplementationGuide during export</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-506" target="_blank">TRIFFHIR-506</a><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank"> </a><span class="rvts6">- JIRA-Spec change detection is lagged</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-507" target="_blank">TRIFFHIR-507</a><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank"> </a><span class="rvts6">- Imported VSAC ValueSets are not associated with context IG</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-510" target="_blank">TRIFFHIR-510</a><span class="rvts6"> - R4 CapabilityStatement.document.profile should be canonical URL</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-511" target="_blank">TRIFFHIR-511 </a><span class="rvts6">- Error when removing text during bulk edit</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-512" target="_blank">TRIFFHIR-512 </a><span class="rvts6">- Unexpected Import Error in Dev on Dev</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-515" target="_blank">TRIFFHIR-515 </a><span class="rvts6">- Min cardinality problem with slices</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-519" target="_blank">TRIFFHIR-519 </a><span class="rvts6">- Only flag IG as changed when something actually changes</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-526">TRIFFHIR-526</a><span class="rvts6">&nbsp;- Import Transaction bundle missing multiple resources</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-527">TRIFFHIR-527</a><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank"> </a><span class="rvts6">- Still issue with Publishing template default between IGs</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-528" target="_blank">TRIFFHIR-528</a><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank"> </a><span class="rvts6">- Link to markdown editor's HELP is no longer valid</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-545">TRIFFHIR-545</a><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-487" target="_blank"> </a><span class="rvts6">- Recent changes to github export url format causes publish with custom template to fail</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-568" target="_blank">TRIFFHIR-568</a><span class="rvts6">&nbsp;- Bulk editing fails to update profile elements</span></li>
+</ul>
+<p class="rvps2"><span class="rvts26"><br/></span></p>
+<p class="rvps2"><span class="rvts21"><br/></span></p>
 <p></p>
-<p class="rvps5" style="clear: both;"><span class="rvts13">Created with the Personal Edition of HelpNDoc: </span><a class="rvts14" href="https://www.helpndoc.com">Free CHM Help documentation generator</a></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2020 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2021 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 

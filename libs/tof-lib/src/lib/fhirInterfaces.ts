@@ -1,3 +1,5 @@
+import {CodeableConcept} from './r4/fhir';
+
 export function setChoice(source: any, dest: any, choiceName: string, ... choices: string[]) {
   const primitives = ['base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid'];
 
@@ -84,6 +86,7 @@ export interface IExtension {
   url: string;
   valueBoolean?: boolean;
   valueString?: string;
+  valueUri?: string;
   valueReference?: IResourceReference;
   valueMarkdown?: string;
 }
@@ -320,4 +323,47 @@ export interface IDocumentReference extends IDomainResource {
     attachment: IAttachment;
     format?: ICoding;
   }[];
+}
+
+export interface IOperationOutcomeIssue {
+  severity: string;
+  code: string;
+  details?: CodeableConcept;
+  diagnostics?: string;
+  location?: string[];
+  expression?: string[];
+}
+
+export interface IOperationOutcome extends IDomainResource {
+  issue: IOperationOutcomeIssue[];
+}
+
+export interface ICapabilityStatementRestComponent {
+  mode: string;
+  documentation?: string;
+  security?: ICapabilityStatementSecurityComponent;
+}
+
+export interface ICapabilityStatementSecurityComponent {
+  cors?: boolean;
+  service?: CodeableConcept[];
+  description?: string;
+}
+
+export interface ICapabilityStatement extends IDomainResource {
+  url?: string;
+  version?: string;
+  name?: string;
+  title?: string;
+  status: string;
+  experimental?: boolean;
+  date: string;
+  publisher?: string;
+  contact?: IContactDetail[];
+  description?: string;
+  jurisdiction?: ICodeableConcept[];
+  purpose?: string;
+  copyright?: string;
+  kind: string;
+  rest?: ICapabilityStatementRestComponent[];
 }

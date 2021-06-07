@@ -37,8 +37,10 @@ export class ConfigController extends BaseController {
         issuer: this.configService.auth.issuer,
         logoutUrl: this.configService.auth.logoutUrl
       },
-      github: {
-        clientId: this.configService.github.clientId
+      github: !this.configService.github ? null : {
+        clientId: this.configService.github.clientId,
+        authBase: this.configService.github.authBase,
+        apiBase: this.configService.github.apiBase
       },
       nonEditableResources: this.configService.fhir.nonEditableResources,
       announcementService: !!this.configService.announcementService && !!this.configService.announcementService.type

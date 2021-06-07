@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {IDocumentReference, IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {debounceTime} from 'rxjs/operators';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {generateId, getJiraSpecValue} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {generateId, getJiraSpecValue, setJiraSpecValue} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {js2xml, xml2js} from 'xml-js';
 import * as vkbeautify from 'vkbeautify';
 import {ConfigService} from '../../shared/config.service';
@@ -30,7 +30,6 @@ export class JiraSpecComponent implements OnInit, OnChanges {
 
   constructor(private configSerivce: ConfigService) {
     this.valueChanged
-      .pipe(debounceTime(500))
       .subscribe(() => {
         this.updateJiraSpecValue();
         this.change.emit(this.value);
@@ -303,60 +302,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
   }
 
   public updateJiraSpecValue() {
-    if (!this.implementationGuide) return;
-
-    this.implementationGuide.extension = this.implementationGuide.extension || [];
-    let foundExtension = this.implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-jira-spec']);
-    let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
-      this.implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
-      null;
-
-    if (!this.value) {
-      if (foundExtension) {
-        const foundExtensionIndex = this.implementationGuide.extension.indexOf(foundExtension);
-        this.implementationGuide.extension.splice(foundExtensionIndex, foundExtensionIndex >= 0 ? 1 : 0);
-      }
-
-      if (foundContained) {
-        const foundContainedIndex = this.implementationGuide.contained.indexOf(foundContained);
-        this.implementationGuide.contained.splice(foundContainedIndex, foundContainedIndex >= 0 ? 1 : 0);
-      }
-    } else {
-      if (!foundExtension) {
-        foundExtension = {
-          url: Globals.extensionUrls['extension-ig-jira-spec'],
-          valueReference: {
-            reference: `#${generateId()}`
-          }
-        };
-        this.implementationGuide.extension.push(foundExtension);
-      }
-
-      this.implementationGuide.contained = this.implementationGuide.contained || [];
-
-      if (!foundContained) {
-        foundContained = <IDocumentReference> {
-          resourceType: 'DocumentReference',
-          id: foundExtension.valueReference.reference.substring(1),
-          type: {
-            coding: [{
-              code: 'jira-spec'
-            }]
-          },
-          content: [{
-            attachment: {
-              contentType: 'text/plain',
-              title: 'jira-spec.xml',
-              data: btoa(this.value)
-            }
-          }]
-        };
-        this.implementationGuide.contained.push(foundContained);
-      } else {
-        const docRef = <IDocumentReference> foundContained;
-        docRef.content[0].attachment.data = btoa(this.value);
-      }
-    }
+    setJiraSpecValue(this.implementationGuide, this.value);
   }
 
   public download() {

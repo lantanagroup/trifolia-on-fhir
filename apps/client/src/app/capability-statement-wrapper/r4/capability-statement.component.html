@@ -22,7 +22,7 @@
             <div class="card-header">
               Formats
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format" (click)="addFormat()">
+                <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="addFormat()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -35,7 +35,7 @@
                 </td>
                 <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format" (click)="capabilityStatement.format.splice(i, 1)">
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this format" (click)="capabilityStatement.format.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </div>
@@ -52,7 +52,7 @@
             <div class="card-header">
               Patch Formats
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a format" (click)="addPatchFormat()">
+                <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="addPatchFormat()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -66,7 +66,7 @@
                 </td>
                 <td class="actions-column-1">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" title="Remove this format" (click)="capabilityStatement.patchFormat.splice(i, 1)">
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this format" (click)="capabilityStatement.patchFormat.splice(i, 1)">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </div>
@@ -339,15 +339,23 @@
              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
       capability statement includes REST entries
 
-      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet
-                  [destroyOnHide]="false">
+      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
         <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
           <ng-template ngbTabTitle>
             <span>REST {{ri + 1}} </span>
-            <i class="fas fa-trash-alt" title="Remove this REST entry"
-               (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)"></i>
           </ng-template>
           <ng-template ngbTabContent>
+            <div class="btn-group rest-actions">
+              <button type="button" class="btn btn-primary" [disabled]="ri === 0" (click)="moveRestLeft(r, restTabSet)">
+                <i class="fas fa-arrow-left" title="Move this REST entry left/previous"></i>
+              </button>
+              <button type="button" class="btn btn-primary" [disabled]="ri === capabilityStatement.rest.length - 1" (click)="moveRestRight(r, restTabSet)">
+                <i class="fas fa-arrow-right" title="Move this REST entry right/next" style="margin-left: 3px; margin-right: 3px;"></i>
+              </button>
+              <button type="button" class="btn btn-primary" (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)">
+                <i class="fas fa-trash-alt" title="Remove this REST entry"></i>
+              </button>
+            </div>
             <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode"
                                          valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode"
                                          [required]="true"></app-fhir-select-single-code>
@@ -358,8 +366,7 @@
             <!-- Security -->
             <div class="card">
               <div class="card-header">
-                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')"
-                       (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
+                <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
                 Security
               </div>
               <div class="card-body" *ngIf="r.hasOwnProperty('security')">
@@ -367,7 +374,7 @@
 
                 <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
 
-                <p>Service: TODO</p>
+                <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
               </div>
             </div>
 
@@ -383,9 +390,9 @@
                 <tr>
                   <th>Type</th>
                   <th>Profile</th>
-                  <th>
+                  <th class="actions-column">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a resource" (click)="r.resource.push({ type: 'Account' })">
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="defaultResource(r.resource)">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -393,9 +400,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let res of r.resource; let resi = index">
+                <tr *ngFor="let res of r.resource; let resourceIndex = index">
                   <td>
-                    <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false"
+                    <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="getCodes(r.resource, resourceIndex)"
                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
                   </td>
                   <td>
@@ -406,17 +413,27 @@
                       [isCanonical]="true"
                       resourceType="StructureDefinition"></app-fhir-reference>
                   </td>
-                  <td class="actions-column-3">
-                    <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Edit this resource" (click)="editResource(res)">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Duplicate this resource" (click)="copyResource(r, res)">
-                        <i class="fa fa-copy"></i>
-                      </button>
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this resource" (click)="r.resource.splice(resi, 1)">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
+                  <td>
+                    <div class="btn-toolbar pull-right">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="moveResource(r, res, 'up')">
+                          <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="moveResource(r, res, 'down')">
+                          <i class="fas fa-arrow-down"></i>
+                        </button>
+                      </div>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-primary" title="Edit this resource" (click)="editResource(res)">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="copyResource(r, res)">
+                          <i class="fa fa-copy"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Remove this resource" (click)="r.resource.splice(resourceIndex, 1)">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -438,7 +455,7 @@
                   <th>Documentation</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an interaction" (click)="r.interaction.push({ code: 'read' })">
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an interaction" (click)="r.interaction.push({ code: 'read' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -458,7 +475,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this interaction"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this interaction"
                               (click)="r.interaction.splice(ii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -485,7 +502,7 @@
                   <th>Documentation</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a search param" (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a search param" (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -512,7 +529,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this search param"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this search param"
                               (click)="r.searchParam.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -537,7 +554,7 @@
                   <th>Definition</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an operation"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
                               (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -557,7 +574,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this operation"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
                               (click)="r.operation.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -581,7 +598,7 @@
                   <th>Name</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a compartment" (click)="r.compartment.push('')">
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a compartment" (click)="r.compartment.push('')">
                         <i class="fa fa-plus"></i>
                       </button>
                     </div>
@@ -595,7 +612,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -608,9 +625,7 @@
         </ngb-tab>
         <ngb-tab>
           <ng-template ngbTabTitle>
-            <button type="button" class="btn btn-default" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
-              Add
-            </button>
+            <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">Add</button>
           </ng-template>
           <ng-template ngbTabContent></ng-template>
         </ngb-tab>
@@ -647,7 +662,7 @@
                   <th>Address</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add an endpoint"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add an endpoint"
                               (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -670,7 +685,7 @@
                   </td>
                   <td>
                     <div class="pull-right btn-group">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this endpoint"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this endpoint"
                               (click)="messaging.endpoint.splice(ei, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -708,7 +723,7 @@
                   <th>Definition</th>
                   <th>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Add a supported message"
+                      <button type="button" class="btn btn-primary btn-sm" title="Add a supported message"
                               (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
                         <i class="fa fa-plus"></i>
                       </button>
@@ -729,7 +744,7 @@
                   </td>
                   <td>
                     <div class="pull-right">
-                      <button type="button" class="btn btn-default btn-sm" title="Remove this supported message"
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this supported message"
                               (click)="messaging.supportedMessage.splice(smi, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -743,7 +758,7 @@
         </ngb-tab>
         <ngb-tab [disabled]="true">
           <ng-template ngbTabTitle>
-            <button type="button" class="btn btn-default" title="Add a messaging entry"
+            <button type="button" class="btn btn-primary" title="Add a messaging entry"
                     (click)="addMessagingEntry(messagingTabSet)">Add
             </button>
           </ng-template>
@@ -768,8 +783,8 @@
           <th>Profile</th>
           <th>
             <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Add document"
-                      (click)="capabilityStatement.document.push({ mode: 'producer', profile: { reference: '', display: '' }})">
+              <button type="button" class="btn btn-primary" title="Add document"
+                      (click)="capabilityStatement.document.push({ mode: 'producer', profile: ''})">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -793,11 +808,12 @@
               resourceType="StructureDefinition"
               [isFormGroup]="false"
               [required]="true"
+              [isCanonical]="true"
               [hideResourceType]="true"></app-fhir-reference>
           </td>
           <td>
             <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Remove this document"
+              <button type="button" class="btn btn-primary" title="Remove this document"
                       (click)="capabilityStatement.document.splice(i, 1)">
                 <i class="fas fa-trash-alt"></i>
               </button>
