@@ -19,7 +19,8 @@
         </div>
 
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+          <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+          <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
           <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
 
@@ -154,7 +155,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(questionnaire)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(questionnaire) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

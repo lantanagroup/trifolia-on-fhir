@@ -83,6 +83,29 @@ export class FhirController extends BaseController {
     return true;
   }
 
+  @Get(':resourceType/:id/([\$])check-id')
+  @Header('Content-Type', 'text/plain')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
+  async checkUniqueId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string): Promise<boolean> {
+
+    const currentOptions: AxiosRequestConfig = {
+      url: buildUrl(fhirServerBase, resourceType, id),
+      method: 'GET'
+    };
+    // Get the resources by id
+    try {
+      await this.httpService.request(currentOptions).toPromise();
+     // this.logger.error(`Resource id ${id} already exists`);
+      return false;
+    } catch (ex) {
+        if(ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
+          throw ex;
+        }
+    }
+    return true;
+  }
+
 
 
   @Post(':resourceType/:id/([\$])change-id')

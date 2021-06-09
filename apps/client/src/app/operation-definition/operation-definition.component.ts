@@ -12,6 +12,8 @@ import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: './operation-definition.component.html',
@@ -23,6 +25,11 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   public validation: any;
   public odNotFound = false;
   public Globals = Globals;
+
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
+
 
   private navSubscription: any;
 
@@ -40,7 +47,20 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     super(configService, authService);
 
     this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
-  }
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.operationDefinition);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
+    }
 
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');

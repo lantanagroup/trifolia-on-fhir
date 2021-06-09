@@ -532,6 +532,15 @@ export class FhirService {
     return resourceTypes;
   }
 
+  public async checkUniqueId(resource: DomainResource) {
+
+    let url = `/api/fhir/${resource.resourceType}`;
+    url += `/${resource.id}`;
+    url += `/$check-id`;
+
+    return await this.http.get(url).toPromise();
+  }
+
   /**
    * Executed by the FHIR module. Performs custom validation on resources.
    * @param resource

@@ -4,7 +4,7 @@ import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CodeSystemService} from '../shared/code-system.service';
 import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CodeSystem as R4CodeSystem} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
@@ -14,6 +14,8 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './codesystem.component.html',
@@ -32,8 +34,11 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
   public page = 1;
   public csNotFound = false;
   public Globals = Globals;
-
   private navSubscription: any;
+
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
 
   constructor(
     public route: ActivatedRoute,
@@ -53,6 +58,18 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
     }
 
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.codeSystem);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.codeSystem.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
   }
 
   public get isNew(): boolean {

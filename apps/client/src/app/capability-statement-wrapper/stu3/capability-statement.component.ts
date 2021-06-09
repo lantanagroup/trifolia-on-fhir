@@ -15,6 +15,8 @@ import { ClientHelper } from '../../clientHelper';
 import { AuthService } from '../../shared/auth.service';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../../base.component';
+import {debounceTime} from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -22,6 +24,9 @@ import { BaseComponent } from '../../base.component';
 })
 export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
 
   public message: string;
   public validation: any;
@@ -48,6 +53,19 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.capabilityStatement);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
   }
 
   public get isNew(): boolean {
