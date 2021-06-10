@@ -19,6 +19,7 @@ export class PageComponentModalComponent implements OnInit {
   public inputPage: ImplementationGuidePageComponent;
   public page: ImplementationGuidePageComponent;
   public implementationGuide: ImplementationGuide;
+  public level: number;
   public rootPage: boolean;
   public pageNavMenus: string[];
 

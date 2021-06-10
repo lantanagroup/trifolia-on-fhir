@@ -557,6 +557,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
+    componentInstance.level = pageDef.level;
 
     if (this.implementationGuide.definition.page === pageDef.page) {
       componentInstance.rootPage = true;
