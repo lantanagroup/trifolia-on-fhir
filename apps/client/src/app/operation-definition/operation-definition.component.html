@@ -23,7 +23,8 @@
           <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
         </div>
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+          <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+          <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
           <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
 
@@ -241,7 +242,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(operationDefinition)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(operationDefinition) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
