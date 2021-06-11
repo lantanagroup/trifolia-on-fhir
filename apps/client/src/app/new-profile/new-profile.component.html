@@ -58,9 +58,9 @@
                                        valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
                                        tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
         </div>
-        <div class="col-md-4" *ngIf="structureDefinition.type">
-          <app-profile-base-definition [parentObject]="structureDefinition" propertyName="baseDefinition"
-                                       [profileType]="structureDefinition.type"></app-profile-base-definition>
+        <div class="col-md-4" *ngIf="structureDefinition.type">\
+          <app-fhir-reference [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" [isCanonical]="true" resourceType="StructureDefinition"
+                              [structureDefinitionType]="structureDefinition.type" [hideResourceType]="true"></app-fhir-reference>
         </div>
       </div>
       <div class="row" *ngIf="configService.isFhirR4 && structureDefinition.type === 'Extension'">
