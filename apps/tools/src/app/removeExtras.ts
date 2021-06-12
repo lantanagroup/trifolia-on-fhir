@@ -36,19 +36,21 @@ export class RemoveExtras {
     delete resource.differential;
     delete resource.experimental;
     delete resource.contact;
+    delete resource.fhirVersion;
 
     if (resource.resourceType === 'StructureDefinition') {
+      delete resource.mapping;
+      delete resource._baseDefinition;
+
       for (let i = 0; i < resource.snapshot.element.length; i++) {
         const element = resource.snapshot.element[i];
 
         delete element.comment;
         delete element.constraint;
         delete element.mapping;
-        delete element.isSummary;
         delete element.alias;
         delete element.extension;
         delete element.base;
-        delete element.isModifier;
 
         if (element.binding) {
           delete element.binding.extension;
@@ -90,9 +92,15 @@ export class RemoveExtras {
         console.log(`Processing ${filePath}`);
 
         if (resource.resourceType === 'Bundle') {
-          for (let i = 0; i < resource.entry.length; i++) {
+          for (let i = resource.entry.length - 1; i >= 0; i--) {
             const entry = resource.entry[i];
-            this.cleanResource(entry.resource);
+
+            if (['CapabilityStatement', 'CompartmentDefinition', 'OperationDefinition'].indexOf(entry.resource.resourceType) >= 0) {
+              console.log(`Removing ${entry.resource.resourceType}/${entry.resource.id}`);
+              resource.entry.splice(i, 1);
+            } else {
+              this.cleanResource(entry.resource);
+            }
           }
         } else if (resource.resourceType) {
           this.cleanResource(resource);
