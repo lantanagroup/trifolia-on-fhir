@@ -177,7 +177,8 @@ export class Globals {
     'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.',
     'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
     'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.',
-    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip'
+    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip',
+    'vsac.apikey': 'To find your API KEY, login to <a href="https://uts.nlm.nih.gov/uts/" target="_new">UMLS Terminology Services</a>, select "Visit Your Profile" under "UTF Profile" (on the right), and copy/paste the value from the "API KEY" field.'
   };
 
   static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links', 'jira-code'];
