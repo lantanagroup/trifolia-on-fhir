@@ -12,8 +12,8 @@
            [ngModel]="value"
            (ngModelChange)="changeValue($event)"
            [class.is-invalid]="!isValid" />
-
-    <span class="help-block" *ngIf="value && patternMessage && formGroupModel.errors?.pattern">{{patternMessage}}</span>
+    <span class="help-block error" *ngIf="value && patternMessage && formGroupModel.errors?.pattern">{{patternMessage}}</span>
+    <span class="help-block error" *ngIf="required && !value && requiredMessage">{{requiredMessage}}</span>
 </div>
 <div [class.input-group]="title" *ngIf="!isFormGroup && parentObject">
     <div class="input-group-addon" *ngIf="title">

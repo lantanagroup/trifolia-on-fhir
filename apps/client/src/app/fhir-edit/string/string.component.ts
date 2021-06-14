@@ -14,6 +14,7 @@ export class FhirStringComponent implements OnInit {
   @Input() propertyName: string;
   @Input() title: string;
   @Input() required = false;
+  @Input() requiredMessage = 'This field is required.';
   @Input() isFormGroup = true;
   @Input() defaultValue = '';
   @Input() tooltipKey: string;
