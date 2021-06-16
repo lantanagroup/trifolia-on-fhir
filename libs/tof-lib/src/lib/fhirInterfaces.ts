@@ -91,6 +91,16 @@ export interface IExtension {
   valueMarkdown?: string;
 }
 
+/*
+export interface IMeta {
+  versionId?: string;
+  lastUpdated?: string;
+  profile?: string;
+  security?: ICoding[];
+  tag?: ICoding[];
+}
+ */
+
 export interface IResource {
   id?: string;
   meta?: any;

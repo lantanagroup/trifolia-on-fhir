@@ -338,9 +338,14 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public history(resourceType: string, id: string) {
-    const url = `/api/fhir/${resourceType}/${id}/_history`;
-    return this.http.get(url);
+  public getHistory(resourceType: string, id: string, page = 1) {
+    let url = `/api/fhir/${resourceType}/${id}/_history?`;
+
+    if (page > 1) {
+      url += `page=${page}`;
+    }
+
+    return this.http.get<IBundle>(url).toPromise();
   }
 
   /**
