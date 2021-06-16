@@ -12,12 +12,17 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
+        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.versionId}}{{resource.meta?.versionId === entry.resource?.meta?.versionId ? ' (current)' : ''}}</a></td>
         <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.lastUpdated}}</a></td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
       </tbody>
     </table>
+    <ngb-pagination
+    [(page)]="page"
+    [pageSize]="20"
+    [collectionSize]="historyBundle.total"
+    (pageChange)="getHistory()"></ngb-pagination>
   </div>
   <div class="col-md-8" *ngIf="compareResource">
     <h3>

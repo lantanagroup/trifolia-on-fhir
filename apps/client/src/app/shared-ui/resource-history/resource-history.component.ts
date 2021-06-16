@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
 import {Bundle, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {IBundle, IDomainResource} from "../../../../../../libs/tof-lib/src/lib/fhirInterfaces";
 
 @Component({
   selector: 'app-resource-history',
@@ -9,13 +10,14 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
   styleUrls: ['./resource-history.component.css']
 })
 export class ResourceHistoryComponent implements OnInit {
-  @Input() public resource: any;
+  @Input() public resource: IDomainResource;
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
-  public historyBundle: Bundle;
+  public historyBundle: IBundle;
   public message: string;
   public compareResource: any;
+  public page = 1;
 
   constructor(private fhirService: FhirService) {
   }
@@ -48,14 +50,17 @@ export class ResourceHistoryComponent implements OnInit {
     this.message = `Done loading version ${this.compareResource.meta.versionId}`;
   }
 
-  ngOnInit() {
+  public async getHistory() {
     if (this.resource && this.resource.resourceType && this.resource.id) {
-      this.fhirService.history(this.resource.resourceType, this.resource.id)
-        .subscribe((bundle: Bundle) => {
-          this.historyBundle = bundle;
-        }, (err) => {
-          this.message = getErrorString(err);
-        });
+      try {
+        this.historyBundle = await this.fhirService.getHistory(this.resource.resourceType, this.resource.id, this.page);
+      } catch (ex) {
+        this.message = getErrorString(ex);
+      }
     }
+  }
+
+  async ngOnInit() {
+    await this.getHistory();
   }
 }

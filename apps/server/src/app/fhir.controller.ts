@@ -289,6 +289,25 @@ export class FhirController extends BaseController {
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
   }
 
+  @Get(':resourceType/:id/_history')
+  @ApiOperation({ summary: 'getHistory', description: 'Get history for a resource. Supports paging.', operationId: 'getHistory' })
+  async getHistory(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @Query('page') page = 1) {
+    const pageSize = 20;
+    let url =  buildUrl(fhirServerBase, resourceType, id) + '/_history?_count=' + pageSize.toString();
+
+    if (page !== 1) {
+      url += '&_getpagesoffset=' + (page - 1) * 20;
+    }
+
+    try {
+      const getResponse = await this.httpService.get(url).toPromise();
+      const bundle: IBundle = getResponse.data;
+      return bundle;
+    } catch (ex) {
+      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
+    }
+  }
+
   /**
    * Processes an individual entry in the batch.
    * If the resource already exists, checks permissions to make sure the user can edit.
