@@ -791,6 +791,16 @@ simplemde .editor-statusbar {
   min-height: 100px !important;
 }
 
+simplemde.is-invalid > .editor-toolbar {
+  border: 1px solid red;
+  border-bottom: inherit;
+}
+
+simplemde.is-invalid > .CodeMirror-wrap {
+  border: 1px solid red;
+  border-top: 1px solid #ddd;
+}
+
 .bulk-edit .CodeMirror,
 .bulk-edit .CodeMirror-scroll {
   max-height: 200px;

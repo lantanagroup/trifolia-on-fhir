@@ -15,6 +15,7 @@ export class FhirStringComponent implements OnInit {
   @Input() title: string;
   @Input() required = false;
   @Input() requiredMessage = 'This field is required.';
+  @Input() whiteSpaceMessage = 'This field should not start or end with a white-space.';
   @Input() isFormGroup = true;
   @Input() defaultValue = '';
   @Input() tooltipKey: string;
@@ -69,14 +70,16 @@ export class FhirStringComponent implements OnInit {
     if (this.required && !this.value) {
       return false;
     }
-
     if (this.isFormGroup && this.formGroupModel && this.formGroupModel.invalid) {
       return false;
     } else if (!this.isFormGroup && this.model && this.model.invalid) {
       return false;
     }
+    return !this.whiteSpace();
+  }
 
-    return true;
+  public whiteSpace() {
+    return this.value && this.value !== this.value.trim();
   }
 
   public set value(newValue: string) {
