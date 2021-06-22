@@ -148,7 +148,7 @@ export class AuthService {
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login') {
         this.router.navigate([path]);
-      } else {
+      } else if (window.location.pathname === '/') {
         this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
       }
 
