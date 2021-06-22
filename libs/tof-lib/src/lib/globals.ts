@@ -17,8 +17,6 @@ export class Globals {
 
   static readonly extensionUrls = {
     'resource-meta-source': 'http://hapifhir.io/fhir/StructureDefinition/resource-meta-source',
-    'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
-    'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
     'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
     'stu3-github-branch': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
     'r4-github-path': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-path',
