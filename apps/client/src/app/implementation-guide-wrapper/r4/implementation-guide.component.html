@@ -48,7 +48,7 @@
           </div>
 
           <div class="col-md-3">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" (change)="igChanging.emit(true)"></app-fhir-string>
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" (change)="igChanging.emit(true)" [required]="true"></app-fhir-string>
           </div>
 
           <div class="col-md-3">
@@ -58,8 +58,8 @@
                 <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
               </label>
               <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" (change)="igChanging.emit(true); packageIdChanged()" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
-              <span class="help-block" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
-              <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
+              <span class="help-block error" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
+              <div class="help-block error" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
                 <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
               </div>
             </div>
@@ -189,7 +189,7 @@
             </tr>
             </thead>
             <tbody *ngIf="implementationGuide.definition && implementationGuide.definition.page">
-            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}" [class.page-highlight]="selectedPage === p" (click)="selectedPage = p" (focusin)="selectedPage = p">
+            <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}" [class.page-highlight]="selectedPage === p" (click)="selectedPage = p" (focusin)="selectedPage = p; selectedResource = null;">
               <td>
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="igChanging.emit(true)"/>
               </td>
@@ -382,7 +382,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let resource of resources; let ri = index">
+            <tr *ngFor="let resource of resources; let ri = index"  [class.page-highlight]="selectedResource === resource" (click)="selectedResource = resource" (focusin)="selectedResource = resource; selectedPage = null">
               <td>
                 <app-fhir-reference
                   [parentObject]="resource"
@@ -427,13 +427,13 @@
               </td>
               <td>
                 <div class="btn-group pull-right">
-                  <button type="button" class="btn btn-primary" title="Edit additional fields for this resource" (click)="editResource(resource)">
+                  <button type="button" class="btn btn-primary" [class.btn-danger]='!isResourceValid(resource)'  title="Edit additional fields for this resource" (click)="editResource(resource)">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="ri <= 0" (click)="moveResource(resource, 'up'); igChanging.emit(true)">
+                  <button type="button" class="btn btn-primary" title="Move this resource up in the list (CTRL+ALT+UP)" [disabled]="ri <= 0" (click)="moveResource(resource, 'up'); igChanging.emit(true)">
                     <i class="fas fa-arrow-up"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="ri >= implementationGuide.definition.resource.length - 1" (click)="moveResource(resource, 'down'); igChanging.emit(true)">
+                  <button type="button" class="btn btn-primary" title="Move this resource down in the list (CTRL+ALT+DOWN)" [disabled]="ri >= implementationGuide.definition.resource.length - 1" (click)="moveResource(resource, 'down'); igChanging.emit(true)">
                     <i class="fas fa-arrow-down"></i>
                   </button>
                   <button type="button" class="btn btn-outline-primary" (click)="removeResource(resource); igChanging.emit(true)">
@@ -581,6 +581,11 @@
     <ngb-tab id="publishing" title="Publishing">
       <ng-template ngbTabContent>
         <div class="row">
+          <div class="col-md-6">
+            <trifolia-fhir-publishing-template [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-publishing-template>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-12">
             <trifolia-fhir-package-list
               [implementationGuide]="implementationGuide"
@@ -592,6 +597,10 @@
 
           <div class="col-md-12">
             <trifolia-fhir-ignore-warnings [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-ignore-warnings>
+          </div>
+
+          <div class="col-md-12">
+            <trifolia-fhir-custom-menu [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-custom-menu>
           </div>
 
           <div class="col-md-12">
@@ -648,7 +657,7 @@
   <div class="card">
     <div class="card-header">
       Dependencies
-      <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn"></app-tooltip-icon>
+      <app-tooltip-icon tooltipKey="ig.dependsOn"></app-tooltip-icon>
     </div>
     <table class="table table-striped">
       <thead>
@@ -661,6 +670,10 @@
           Location
           <app-tooltip-icon tooltipKey="ig.dependsOn.location"></app-tooltip-icon>
         </th-->
+        <th>
+          Dependency ID
+          <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.id"></app-tooltip-icon>
+        </th>
         <th>
           Package ID
           <app-tooltip-icon tooltipPath="ImplementationGuide.dependsOn.packageId"></app-tooltip-icon>
@@ -694,6 +707,9 @@
                  (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
         </td-->
         <td>
+          <app-fhir-string [parentObject]="dependsOn" alphanumeric="true" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
+        </td>
+        <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
         </td>
         <!--td>
@@ -708,7 +724,7 @@
               <button type="button" class="btn btn-primary" (click)="selectPublishedIg(dependsOn)">
                 <i class="fas fa-hand-pointer"></i>
               </button>
-              <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="implementationGuide.dependsOn.splice(di, 1); igChanging.emit(true)">
+              <button type="button" class="btn btn-primary" title="Remove this dependency" (click)="removeDependency(di); igChanging.emit(true)">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
