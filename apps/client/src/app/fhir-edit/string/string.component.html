@@ -5,12 +5,6 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
 
- <!-- <pre>
-    {{changeValue}}
-    {{value}}
-    {{whiteSpaceMessage}}
-  </pre>-->
-
     <input type="text" class="form-control"
            #formGroupModel="ngModel"
            placeholder="{{placeholder}}"
@@ -36,11 +30,5 @@
            [ngModel]="value"
            (ngModelChange)="changeValue($event)"
            [class.is-invalid]="!isValid" />
-
-
-
-
     <span class="help-block" *ngIf="value && patternMessage && model.errors?.pattern">{{patternMessage}}</span>
-
-
 </div>
