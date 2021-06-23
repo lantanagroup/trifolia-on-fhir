@@ -24,7 +24,6 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
   @Input() label = true;
-  @Input() alphanumeric = false;
 
   @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
@@ -50,7 +49,7 @@ export class FhirStringComponent implements OnInit {
 
   public changeValue(value: string) {
     if (value !== this.value) {
-      this.value = this.alphanumeric ? value.replace(/[^a-zA-Z0-9]/gi, '') : value;
+      this.value = value;
       this.changeEvent.next();
     }
   }

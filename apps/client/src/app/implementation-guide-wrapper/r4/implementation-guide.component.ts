@@ -459,8 +459,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
       if(guide){
-        dependsOn.packageId = guide['npm-name'];
-        dependsOn.id = guide['npm-name'];
+        const npmName = guide['npm-name'];
+        dependsOn.id = npmName;
+        dependsOn.id = npmName ? npmName.replace(/[^A-z0-9]/gi, '') : '';
         dependsOn.uri = guide.url;
         dependsOn.version = guide.version;
         this.igChanging.emit(true);
