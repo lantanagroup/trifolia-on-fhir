@@ -60,9 +60,7 @@ export class FhirStringComponent implements OnInit {
       return '';
     }
 
-    return this.alphanumeric ?
-      this.parentObject[this.propertyName].replace(/[^a-zA-Z0-9]/gi, '') :
-      this.parentObject[this.propertyName];
+    return this.parentObject[this.propertyName];
   }
 
   public get isValid() {
@@ -82,7 +80,6 @@ export class FhirStringComponent implements OnInit {
   }
 
   public set value(newValue: string) {
-    newValue = this.alphanumeric && newValue ? newValue.replace(/[^a-zA-Z0-9]/gi, '') : newValue;
     if (!newValue && this.parentObject[this.propertyName]) {
       delete this.parentObject[this.propertyName];
 
