@@ -1,14 +1,13 @@
 <h1>Questionnaires</h1>
-<app-tooltip-icon tooltipKey="questionnaire.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
     <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
-            <i class="fa fa-times"></i>
+            <i class="fa fa-times"></i> Clear
         </button>
         <button type="button" class="btn btn-primary" title="Refresh" (click)="getQuestionnaires()">
-            <i class="fa fa-search"></i>
+            <i class="fa fa-search"></i> Search
         </button>
     </div>
 </div>

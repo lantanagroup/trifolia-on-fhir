@@ -1,5 +1,4 @@
 <h1>Value Sets</h1>
-<app-tooltip-icon tooltipKey="valueset.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
 
 <div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
     <input type="text" class="form-control" [ngModel]="idText" (ngModelChange)="idTextChanged($event)" placeholder="Search ID" />
@@ -7,10 +6,10 @@
     <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete URL" />
     <div class="input-group-btn">
         <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
-            <i class="fa fa-times"></i>
+            <i class="fa fa-times"></i> Clear
         </button>
         <button type="button" class="btn btn-primary" title="Refresh" (click)="getValueSets()">
-            <i class="fa fa-search"></i>
+            <i class="fa fa-search"></i> Search
         </button>
     </div>
 </div>
