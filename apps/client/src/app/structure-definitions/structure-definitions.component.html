@@ -1,66 +1,25 @@
 <h1>Profiles/Extensions (Structure Definitions)</h1>
 
-<app-tooltip-icon tooltipKey="structuredefinition.description" [showAsAlert]="true"
-                  alertTitle="Description"></app-tooltip-icon>
+<div class="input-group">
+  <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name"/>
+  <input type="text" class="form-control" [ngModel]="IDText" (ngModelChange)="IDTextChanged($event)" placeholder="Search ID"/>
+</div>
+<div class="input-group" *ngIf="showMoreSearch">
+  <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title"/>
+  <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)" placeholder="Search complete url"/>
+  <input type="text" class="form-control" [ngModel]="typeText" (ngModelChange)="typeTextChanged($event)" placeholder="Search type (exact match)"/>
+</div>
 
-<div class="card" [attr.data-intro]="Globals.introText['browse.search']">
-  <div class="card-header">Search</div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)"
-                 placeholder="Search name"/>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <label>ID</label>
-          <input type="text" class="form-control" [ngModel]="IDText" (ngModelChange)="IDTextChanged($event)"
-                 placeholder="Search ID"/>
-        </div>
-      </div>
-      <div class="col-md-6" *ngIf="showMoreSearch">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)"
-                 placeholder="Search title"/>
-        </div>
-      </div>
-      <div class="col-md-6" *ngIf="showMoreSearch">
-        <div class="form-group">
-          <label>URL</label>
-          <input type="text" class="form-control" [ngModel]="urlText" (ngModelChange)="urlTextChanged($event)"
-                 placeholder="Search complete url"/>
-        </div>
-      </div>
-      <div class="col-md-6" *ngIf="showMoreSearch">
-        <div class="form-group">
-          <label>Type</label>
-          <input type="text" class="form-control" [ngModel]="typeText" (ngModelChange)="typeTextChanged($event)" placeholder="Must be an exact match"/>
-        </div>
-      </div>
-      <div class="col-md-6" *ngIf="!configService.project">
-        <label>Implementation Guide</label>
-        <app-implementation-guide-typeahead [implementationGuideId]="implementationGuideId" (implementationGuideIdChange)="implementationGuideIdChanged($event)"></app-implementation-guide-typeahead>
-      </div>
-      <div class="col-md-12">
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
-            <i class="fa fa-times"></i> Clear
-          </button>
-          <button type="button" class="btn btn-primary" title="Refresh" (click)="getStructureDefinitions()">
-            <i class="fa fa-search"></i> Search
-          </button>
-          <button type="button" class="btn btn-primary" title="Show more/less" (click)="toggleSearchOptions()">
-            <i class="fas" [class.fa-chevron-circle-down]="!showMoreSearch"
-               [class.fa-chevron-circle-up]="showMoreSearch"></i> {{showMoreSearch ? 'Less' : 'More'}} options
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="btn-group">
+  <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+    <i class="fa fa-times"></i> Clear
+  </button>
+  <button type="button" class="btn btn-primary" title="Refresh" (click)="getStructureDefinitions()">
+    <i class="fa fa-search"></i> Search
+  </button>
+  <button type="button" class="btn btn-primary" title="Show more/less" (click)="toggleSearchOptions()">
+    <i class="fas" [class.fa-chevron-circle-down]="!showMoreSearch" [class.fa-chevron-circle-up]="showMoreSearch"></i> {{showMoreSearch ? 'Less' : 'More'}} search options
+  </button>
 </div>
 
 <br/>
