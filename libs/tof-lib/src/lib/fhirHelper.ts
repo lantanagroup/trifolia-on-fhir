@@ -285,14 +285,14 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
           attachment: {
             contentType: 'text/plain',
             title: 'ignoreWarnings.txt',
-            data: btoa(value)
+            data: btoa(encodeURIComponent(value))
           }
         }]
       };
       implementationGuide.contained.push(foundContained);
     } else {
       const docRef = <IDocumentReference> foundContained;
-      docRef.content[0].attachment.data = btoa(value);
+      docRef.content[0].attachment.data = btoa(encodeURIComponent(value));
     }
   }
 }
@@ -323,9 +323,9 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
 
     // Set the data after decoding it from base64
     if (typeof atob === 'function') {
-      return atob(documentReference.content[0].attachment.data);
+      return decodeURIComponent(atob(documentReference.content[0].attachment.data));
     } else {
-      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+      return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
     }
   }
 }
