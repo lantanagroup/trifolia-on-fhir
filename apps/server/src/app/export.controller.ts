@@ -1,27 +1,27 @@
-import { BaseController } from './base.controller';
-import { Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { BundleExporter } from './export/bundle';
-import { ITofRequest } from './models/tof-request';
-import { Bundle, DomainResource, OperationOutcome } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { buildUrl, joinUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { ServerValidationResult } from '../../../../libs/tof-lib/src/lib/server-validation-result';
-import { emptydir, rmdir, zip } from './helper';
-import { ExportOptions } from './models/export-options';
-import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
-import { TofLogger } from './tof-logger';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { ConfigService } from './config.service';
-import { AxiosRequestConfig } from 'axios';
-import { createHtmlExporter } from './export/html.factory';
+import {BaseController} from './base.controller';
+import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
+import {BundleExporter} from './export/bundle';
+import {ITofRequest} from './models/tof-request';
+import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {buildUrl, joinUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
+import {emptydir, rmdir, zip} from './helper';
+import {ExportOptions} from './models/export-options';
+import {AuthGuard} from '@nestjs/passport';
+import {Response} from 'express';
+import {TofLogger} from './tof-logger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
+import {AxiosRequestConfig} from 'axios';
+import {createHtmlExporter} from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { MSWordExporter } from './export/msword';
-import { ExportService } from './export.service';
-import { FhirServerId, FhirServerVersion, User } from './server.decorators';
-import { HtmlExporter } from './export/html';
-import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import { IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {MSWordExporter} from './export/msword';
+import {ExportService} from './export.service';
+import {FhirServerId, FhirServerVersion, User} from './server.decorators';
+import {HtmlExporter} from './export/html';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import nodemailer from 'nodemailer';
 
 @Controller('api/export')
@@ -180,10 +180,10 @@ export class ExportController extends BaseController {
       await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
         options.template, options.templateVersion, options.useTerminologyServer);
 
-      if(exporter.bundle && exporter.bundle.entry) {
+      if (exporter.bundle && exporter.bundle.entry) {
         exporter.bundle.entry.forEach(e => {
-          if(e.resource.resourceType && e.resource.resourceType === "StructureDefinition"){
-            delete (<IStructureDefinition> e.resource).snapshot;
+          if (e.resource.resourceType && e.resource.resourceType === 'StructureDefinition') {
+            delete (<IStructureDefinition>e.resource).snapshot;
           }
         });
       }
@@ -253,7 +253,7 @@ export class ExportController extends BaseController {
         this.sendNotification(options.notifyMe, user, false, implementationGuideId, fhirServerId, exporter.logs);
       } finally {
         const index = this.exportService.exports.indexOf(exporter);
-        if(index >= 0) this.exportService.exports.splice(index, 1);
+        if (index >= 0) this.exportService.exports.splice(index, 1);
       }
     };
 
@@ -305,7 +305,7 @@ export class ExportController extends BaseController {
           `Your implementation guide has successfully published. You can view it here: ${link}.` :
           `Your implementation guide encountered errors when publishing:\r\n\r\n${logs}`,
         html: success ?
-          `'Your implementation guide has successfully published. You can view it <a href='${link}'>here</a>.` :
+          `'Your implementation guide has successfully published. You can view it <a href="${link}">here</a>.` :
           `<p>Your implementation guide encountered errors when publishing:</p><p>${logs.replace(/\r\n/g, '\r\n<br/>')}</p>`
       });
 

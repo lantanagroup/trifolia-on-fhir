@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import { HtmlExporter } from './export/html';
+import {HtmlExporter} from './export/html';
 
 @Injectable()
 export class ExportService {
@@ -16,7 +16,7 @@ export class ExportService {
       this.exports.splice(index, 1);
 
       if (exporter.igPublisherProcess) {
-        exporter.igPublisherProcess.kill("SIGKILL");
+        exporter.igPublisherProcess.kill('SIGKILL');
       }
 
       exporter.publishLog('progress', 'You have been removed from the queue');

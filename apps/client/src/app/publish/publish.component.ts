@@ -251,7 +251,6 @@ export class PublishComponent implements OnInit {
 
           this.socketOutput += msg;
 
-
           if (this.autoScroll && this.outputEle) {
             setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
           }
