@@ -305,7 +305,7 @@ export class ExportController extends BaseController {
           `Your implementation guide has successfully published. You can view it here: ${link}.` :
           `Your implementation guide encountered errors when publishing:\r\n\r\n${logs}`,
         html: success ?
-          `'Your implementation guide has successfully published. You can view it <a href="${link}">here</a>.` :
+          `Your implementation guide has successfully published. You can view it <a href="${link}">here</a>.` :
           `<p>Your implementation guide encountered errors when publishing:</p><p>${logs.replace(/\r\n/g, '\r\n<br/>')}</p>`
       });
 
