@@ -1,6 +1,9 @@
 <h1>Publish</h1>
 
-<div class="alert alert-warning">This page executes the <a href="https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation" target="_blank">HL7 IG Publisher</a>. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. Questions related to the execution of the HL7 IG Publisher should be directed to <a href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.</div>
+<div class="alert alert-warning">This page executes the <a href="https://confluence.hl7.org/display/FHIR/IG+Publisher+Documentation" target="_blank">HL7 IG Publisher</a>. The HL7
+  IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. Questions related to the execution of the HL7 IG Publisher should be directed to <a
+    href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.
+</div>
 
 <div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
@@ -11,7 +14,7 @@
            [ngbTypeahead]="searchImplementationGuide"
            [resultFormatter]="searchFormatter"
            [inputFormatter]="searchFormatter"
-           autocomplete="off"/>
+           autocomplete="off" />
     <div class="input-group-btn">
       <button type="button" class="btn btn-default" title="Clear the selection" (click)="clearImplementationGuide()">
         <i class="fa fa-times"></i>
@@ -42,20 +45,30 @@
 
         <div class="col-md-6">
           <app-fhir-boolean
+            [cookieKey]="Globals.cookieKeys.exportLastIncludeFhirIgPublisher"
             [parentObject]="options"
             [required]="true"
             propertyName="includeIgPublisherJar"
-            [cookieKey]="Globals.cookieKeys.exportLastIncludeFhirIgPublisher"
             title="Include FHIR IG Publisher JAR?">
           </app-fhir-boolean>
         </div>
 
         <div class="col-md-6">
+          <div class="form-group">
+            <label>Notify via email after done publishing?</label>
+            <select [(ngModel)]="options.notifyMe" class="form-control">
+              <option [ngValue]="false">No</option>
+              <option [ngValue]="true">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
           <app-fhir-boolean
+            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
             [parentObject]="options"
             [required]="true"
             propertyName="downloadOutput"
-            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
             title="Download after publish?">
           </app-fhir-boolean>
         </div>
@@ -63,11 +76,21 @@
         <div class="col-md-6">
           <div class="form-group">
             <label>Output Format</label>
-            <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+            <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-control">
               <option value="application/json">JSON</option>
               <option value="application/xml">XML</option>
             </select>
           </div>
+        </div>
+
+        <div class="col-md-6">
+          <app-fhir-boolean
+            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
+            [parentObject]="options"
+            [required]="true"
+            propertyName="downloadOutput"
+            title="Download after publish?">
+          </app-fhir-boolean>
         </div>
       </div>
       <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
@@ -85,14 +108,16 @@
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
           <div class="form-group">
             <label>Template (Archive/ZIP URL)</label>
-            <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate" placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
+            <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate"
+                   placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
             <div class="help-block">Note: The URI must be a ZIP file.</div>
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official' || options.templateType === 'not-specified'">
           <div class="form-group">
             <label>Template</label>
-            <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate">
+            <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
+                    [disabled]="igSpecifiesTemplate">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
               <option value="hl7.base.template">HL7 Base Template</option>
@@ -118,13 +143,14 @@
     </ng-template>
     <ng-template ngbTabContent>
       <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
-      <input type="checkbox" [(ngModel)]="autoScroll"/> Automatically scroll to bottom when status is updated
+      <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
     </ng-template>
   </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>
-  <button type="button" class="btn btn-primary" (click)="cancel()" [disabled]="!getPackageId() || !inProgress" [attr.data-intro]="Globals.introText['publish.cancel-btn']">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="cancel()" [disabled]="!getPackageId() || !inProgress" [attr.data-intro]="Globals.introText['publish.cancel-btn']">Cancel
+  </button>
   <span class="message">{{message}}</span>
 </footer>
