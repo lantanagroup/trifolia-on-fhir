@@ -14,7 +14,7 @@
   <div class="form-group">
     <label>
       Description
-      <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
+      <app-tooltip-icon tooltipKey="ig.definition.resource.description"></app-tooltip-icon>
     </label>
     <textarea class="form-control" [(ngModel)]="resource.description" [class.is-invalid]="isDescriptionRequired"></textarea>
     <span  *ngIf="isDescriptionRequired">When a resource is an example, description is required.</span>
