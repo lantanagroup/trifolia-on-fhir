@@ -19,7 +19,7 @@ export class ExportService {
         exporter.igPublisherProcess.kill("SIGKILL");
       }
 
-      exporter.sendSocketMessage('progress', 'You have been removed from the queue');
+      exporter.publishLog('progress', 'You have been removed from the queue');
       return true;
     }
 

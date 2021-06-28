@@ -13,11 +13,12 @@ export class ExportOptions {
   public version: string;
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
-  public templateType: 'official'|'custom-uri' = 'official';
+  public templateType: 'official' | 'custom-uri' = 'official';
   public template = 'hl7.fhir.template';
-  public templateVersion = "current";
+  public templateVersion = 'current';
   public removeExtensions = false;
-  public bundleType: 'searchset'|'transaction' = 'transaction';
+  public bundleType: 'searchset' | 'transaction' = 'transaction';
+  public notifyMe = false;
 }
 
 @Injectable()
@@ -112,8 +113,10 @@ export class ExportService {
     url += 'socketId=' + encodeURIComponent(this.socketService.socketId) + '&';
     url += 'templateType=' + encodeURIComponent(options.templateType) + '&';
     url += 'template=' + encodeURIComponent(options.template) + '&';
-    url += 'templateVersion=' + encodeURIComponent(options.templateVersion);
-    return this.http.get(url, {responseType: 'text'});
+    url += 'templateVersion=' + encodeURIComponent(options.templateVersion) + '&';
+    url += 'notifyMe=' + encodeURIComponent(options.notifyMe) + '&';
+
+    return this.http.get(url, { responseType: 'text' });
   }
 
   public cancel(packageId: string){

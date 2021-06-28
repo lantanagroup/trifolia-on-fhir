@@ -15,6 +15,7 @@ export class ExportOptions {
   public templateType: 'official'|'custom-uri' = 'official';
   public template = 'hl7.fhir.template';
   public templateVersion = 'current';
+  public notifyMe: boolean;
 
   public get isXml() {
     return this.format === 'application/xml' ||
@@ -70,6 +71,10 @@ export class ExportOptions {
 
       if (query.hasOwnProperty('version')) {
         this.version = query.version;
+      }
+
+      if (query.hasOwnProperty('notifyMe')) {
+        this.notifyMe = query.notifyMe === 'true';
       }
     }
   }
