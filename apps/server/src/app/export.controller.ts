@@ -292,8 +292,7 @@ export class ExportController extends BaseController {
 
     try {
       const transporter = nodemailer.createTransport(this.configService.server.mailTransport);
-
-      const link = joinUrl(this.configService.server.mailOptions.hostUrl, fhirServerId, implementationGuideId, 'home');
+      const link = joinUrl(this.configService.server.mailOptions.hostUrl, fhirServerId, implementationGuideId, 'implementation-guide', 'view');
 
       this.logger.log(`Attempting to send email to ${user.email} indicating the publish of ${implementationGuideId} has completed.`);
 
