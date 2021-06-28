@@ -538,12 +538,11 @@ export class FhirService {
   }
 
   public async checkUniqueId(resource: DomainResource) {
-
     let url = `/api/fhir/${resource.resourceType}`;
     url += `/${resource.id}`;
     url += `/$check-id`;
 
-    return await this.http.get(url).toPromise();
+    return await this.http.get<boolean>(url).toPromise();
   }
 
   /**

@@ -1,4 +1,4 @@
-import { BaseController, IUserSecurityInfo } from './base.controller';
+import {BaseController, IUserSecurityInfo} from './base.controller';
 import {
   All,
   BadRequestException,
@@ -17,26 +17,26 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import { buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
-import { TofLogger } from './tof-logger';
-import { AxiosRequestConfig } from 'axios';
-import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
-import { ConfigService } from './config.service';
-import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
-import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
-import { Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { ImplementationGuide as R4ImplementationGuide, OperationOutcome } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { format as formatUrl, parse as parseUrl, UrlWithStringQuery } from 'url';
-import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import { default as PQueue } from 'p-queue';
-import { IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Response} from 'express';
+import {AuthGuard} from '@nestjs/passport';
+import {TofLogger} from './tof-logger';
+import {AxiosRequestConfig} from 'axios';
+import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
+import {FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
+import {ConfigService} from './config.service';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
+import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
+import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import {default as PQueue} from 'p-queue';
+import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ImplementationGuideController } from './implementation-guide.controller';
+import {ImplementationGuideController} from './implementation-guide.controller';
 
 export interface ProxyResponse {
   status: number;
@@ -56,14 +56,13 @@ export class FhirController extends BaseController {
   }
 
 
-
   @Get(':resourceType/:id/([\$])validate-single-ig')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ summary: 'validateSingleIg', description: 'Validate Single Ig', operationId: 'validateSingleIg' })
   async validateSingleIg(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
 
-    const res = resourceType + "/" + id;
+    const res = resourceType + '/' + id;
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, 'ImplementationGuide', null, null, { resource: res }),
       method: 'GET'
@@ -72,7 +71,7 @@ export class FhirController extends BaseController {
     // Get the all the implementation guides for that resource
     try {
       const getResponse = await this.httpService.request(currentOptions).toPromise();
-      const bundle:Bundle = getResponse.data;
+      const bundle: Bundle = getResponse.data;
       if (bundle.entry.length >= 2 || bundle.entry.length === 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
         return false;
       }
@@ -84,28 +83,27 @@ export class FhirController extends BaseController {
   }
 
   @Get(':resourceType/:id/([\$])check-id')
-  @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
   async checkUniqueId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string): Promise<boolean> {
-
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, id),
       method: 'GET'
     };
+
     // Get the resources by id
     try {
       await this.httpService.request(currentOptions).toPromise();
-     // this.logger.error(`Resource id ${id} already exists`);
       return false;
     } catch (ex) {
-        if(ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
-          throw ex;
-        }
+      if (ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
+        this.logger.error(`Error checking if resource already exists with specified ie: ${ex.message}`);
+        throw ex;
+      }
     }
+
     return true;
   }
-
 
 
   @Post(':resourceType/:id/([\$])change-id')
@@ -114,7 +112,7 @@ export class FhirController extends BaseController {
   @ApiOperation({ summary: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
   async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string,
                  @Query('newId') newId: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId,
-                 @FhirServerVersion() fhirVersion: 'stu3'|'r4'): Promise<any> {
+                 @FhirServerVersion() fhirVersion: 'stu3' | 'r4'): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
@@ -161,12 +159,12 @@ export class FhirController extends BaseController {
     };
 
     this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
-    try{
+    try {
       await this.httpService.request(checkOptions).toPromise();
       this.logger.error(`Resource id ${newId} already exists`);
       return `Resource id ${newId} already exists`;
-    }catch (ex){
-      if(ex.response && ex.response.status !== 404 && ex.response.status !== 410){
+    } catch (ex) {
+      if (ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
         throw ex;
       }
     }
@@ -193,7 +191,7 @@ export class FhirController extends BaseController {
 
         const results = await this.httpService.get(searchUrl).toPromise();
         const bundle: Bundle = results.data;
-        const resources = (bundle.entry || []).map(entry => <DomainResource> entry.resource);
+        const resources = (bundle.entry || []).map(entry => <DomainResource>entry.resource);
 
         resolve(resources);
       });
@@ -208,9 +206,9 @@ export class FhirController extends BaseController {
 
     let igFound = false;
     allResults.forEach(result => {
-      if(!igFound){
+      if (!igFound) {
         result.forEach(r => {
-          if(r.id === contextImplementationGuideId && r.resourceType === "ImplementationGuide"){
+          if (r.id === contextImplementationGuideId && r.resourceType === 'ImplementationGuide') {
             igFound = true;
           }
         });
@@ -229,7 +227,7 @@ export class FhirController extends BaseController {
     const findReferences = (obj: any) => {
       if (!obj) return;
 
-      if (obj.hasOwnProperty("reference") && obj.reference === `${resourceType}/${currentId}`) {
+      if (obj.hasOwnProperty('reference') && obj.reference === `${resourceType}/${currentId}`) {
         references.push(obj);
       }
 
@@ -249,9 +247,9 @@ export class FhirController extends BaseController {
       references = [];
       findReferences(result);
       if (references.length > 0) {
-        const anyResource = <any> resource;
+        const anyResource = <any>resource;
         references.forEach(foundReference => {
-          foundReference.reference =  `${resourceType}/${newId}`;
+          foundReference.reference = `${resourceType}/${newId}`;
           if (anyResource.title) {
             foundReference.display = anyResource.title;
           } else if (typeof anyResource.name === 'string') {
@@ -276,10 +274,9 @@ export class FhirController extends BaseController {
         };
       });
 
-      try{
+      try {
         await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
-      }
-      catch(ex){
+      } catch (ex) {
         this.logger.error(`Error from FHIR server when persisting changes to the resources: ${ex.message}`);
         throw ex;
       }
@@ -293,7 +290,7 @@ export class FhirController extends BaseController {
   @ApiOperation({ summary: 'getHistory', description: 'Get history for a resource. Supports paging.', operationId: 'getHistory' })
   async getHistory(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @Query('page') page = 1) {
     const pageSize = 20;
-    let url =  buildUrl(fhirServerBase, resourceType, id) + '/_history?_count=' + pageSize.toString();
+    let url = buildUrl(fhirServerBase, resourceType, id) + '/_history?_count=' + pageSize.toString();
 
     if (page !== 1) {
       url += '&_getpagesoffset=' + (page - 1) * 20;
@@ -328,8 +325,8 @@ export class FhirController extends BaseController {
     shouldRemovePermissions = true,
     applyContextPermissions = false) {
 
-    if(entry.resource && entry.resource.resourceType === "StructureDefinition"){
-      delete (<IStructureDefinition> entry.resource).snapshot;
+    if (entry.resource && entry.resource.resourceType === 'StructureDefinition') {
+      delete (<IStructureDefinition>entry.resource).snapshot;
     }
 
     // Make sure the user has permission to edit the pre-existing resource
@@ -362,7 +359,7 @@ export class FhirController extends BaseController {
               let msg = `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`;
 
               if (ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
-                const oo = <IOperationOutcome> ex.response.data;
+                const oo = <IOperationOutcome>ex.response.data;
                 if (oo.issue && oo.issue.length > 0) {
                   const newMsg = oo.issue.map(i => i.diagnostics).join(' \n');
 
@@ -444,13 +441,13 @@ export class FhirController extends BaseController {
     }
 
     let action = '';
-    if(entry.request.method === 'POST'){
+    if (entry.request.method === 'POST') {
       action = 'C';
-    }else if(entry.request.method === 'GET'){
+    } else if (entry.request.method === 'GET') {
       action = 'R';
-    }else if(entry.request.method === 'PUT'){
+    } else if (entry.request.method === 'PUT') {
       action = 'U';
-    }else if(entry.request.method.indexOf('DEL') > 0){
+    } else if (entry.request.method.indexOf('DEL') > 0) {
       action = 'D';
     }
 
@@ -472,7 +469,7 @@ export class FhirController extends BaseController {
   private async processBatch(
     bundle: Bundle,
     fhirServerBase: string,
-    fhirServerVersion: 'stu3'|'r4',
+    fhirServerVersion: 'stu3' | 'r4',
     userSecurityInfo: IUserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
     shouldRemovePermissions = true,
@@ -490,7 +487,7 @@ export class FhirController extends BaseController {
     (bundle.entry || []).forEach((entry, index) => {
       if (!entry.request || !entry.request.url || !entry.request.method) {
         throw new BadRequestException('Transaction entries must have an request.url and request.method');
-      } else if (['GET','POST','PUT','DELETE'].indexOf(entry.request.method) < 0) {
+      } else if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(entry.request.method) < 0) {
         throw new BadRequestException(`Transaction entry[${index}] method must be GET, POST, PUT or DELETE`);
       }
     });
@@ -521,7 +518,7 @@ export class FhirController extends BaseController {
     };
 
     responseBundle.entry = results.map((result, index) => {
-      const responseEntry = <EntryComponent> {
+      const responseEntry = <EntryComponent>{
         request: {
           method: bundle.entry[index].request.method,
           url: bundle.entry[index].request.url
@@ -536,9 +533,9 @@ export class FhirController extends BaseController {
         responseEntry.response.outcome = result.data;
       } else {
         if (result.data && result.data.resourceType) {
-          responseEntry.response.outcome = createOperationOutcome('information', 'informational', `Successfully created/updated resource ${result.data.resourceType}/${result.data.id}`)
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', `Successfully created/updated resource ${result.data.resourceType}/${result.data.id}`);
         } else {
-          responseEntry.response.outcome = createOperationOutcome('information', 'informational', 'Successfully created/updated resource.')
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', 'Successfully created/updated resource.');
         }
       }
 
@@ -562,10 +559,10 @@ export class FhirController extends BaseController {
    */
   public async proxy(
     url: string,
-    headers: {[key: string]: any},
+    headers: { [key: string]: any },
     method: string,
     fhirServerBase: string,
-    fhirServerVersion: 'stu3'|'r4',
+    fhirServerVersion: 'stu3' | 'r4',
     user: ITofUser,
     body?,
     shouldRemovePermissions = true,
@@ -716,7 +713,7 @@ export class FhirController extends BaseController {
       }
     }
 
-    const options = <AxiosRequestConfig> {
+    const options = <AxiosRequestConfig>{
       url: proxyUrl,
       method: method,
       headers: proxyHeaders,
@@ -735,7 +732,7 @@ export class FhirController extends BaseController {
       // (indicated by the fact that the results returned a resource with an id) then add
       // the resource to the implementation guide
       if (contextImplementationGuide && results.data.resourceType && results.data.id && ['POST', 'PUT'].indexOf(method) >= 0) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide,true);
+        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, results.data, userSecurityInfo, contextImplementationGuide, true);
       }
 
       let action = '';
@@ -776,7 +773,7 @@ export class FhirController extends BaseController {
   public async searchDependency(
     @FhirServerBase() fhirServerBase,
     @Headers('implementationguideid') implementationGuideId: string,
-    @FhirServerVersion() fhirServerVersion: 'stu3'|'r4',
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
     @Query('resourceType') resourceType?: string,
     @Query('_id') resourceId?: string,
     @Query('name') name?: string,
@@ -794,10 +791,10 @@ export class FhirController extends BaseController {
 
     switch (fhirServerVersion) {
       case 'stu3':
-        dependencies = getSTU3Dependencies(<STU3ImplementationGuide> ig);
+        dependencies = getSTU3Dependencies(<STU3ImplementationGuide>ig);
         break;
       case 'r4':
-        dependencies = getR4Dependencies(<R4ImplementationGuide> ig);
+        dependencies = getR4Dependencies(<R4ImplementationGuide>ig);
         break;
       default:
         throw new Error(`Unexpected FHIR server version ${fhirServerVersion}`);
@@ -855,13 +852,13 @@ export class FhirController extends BaseController {
 
         // structureDefinitionUrl. this applies in structure-definition.controller.ts when retrieving dependencies
         if (structureDefinitionUrl && resource.resourceType === 'StructureDefinition') {
-          const structureDefinition = <IStructureDefinition> resource;
+          const structureDefinition = <IStructureDefinition>resource;
           if (!structureDefinition.url || structureDefinition.url !== structureDefinitionUrl) continue;
         }
 
         // type (only applies to StructureDefinition)
         if (structureDefinitionType && resource.resourceType === 'StructureDefinition') {
-          const structureDefinition = <IStructureDefinition> resource;
+          const structureDefinition = <IStructureDefinition>resource;
 
           if (!structureDefinition.type || structureDefinition.type !== structureDefinitionType) continue;
         }
@@ -895,16 +892,16 @@ export class FhirController extends BaseController {
   @All()
   public async proxyRequest(
     @RequestUrl() url: string,
-    @Headers() headers: {[key: string]: any},
+    @Headers() headers: { [key: string]: any },
     @RequestMethod() method: string,
     @FhirServerBase() fhirServerBase: string,
-    @FhirServerVersion() fhirServerVersion: 'stu3'|'r4',
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
     @Res() response: Response,
     @User() user: ITofUser,
     @Body() body?) {
 
     const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
-    const applyContextPermissions = url.indexOf("applyContextPermissions=true") > -1;
+    const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
     const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions, applyContextPermissions);
 
     response.status(results.status);

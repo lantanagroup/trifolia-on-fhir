@@ -8,9 +8,13 @@
           <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true" tooltipPath="StructureDefinition.url" (change)="urlChanged()"></app-fhir-string>
         </div>
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="structureDefinition" propertyName="id" title="ID" placeholder="Auto generate" (change)='idChangedEvent.next()'
-                           tooltipPath="StructureDefinition.id"></app-fhir-string>
-          <div class="help-block">{{alreadyInUseIDMessage}}</div>
+          <div class="form-group">
+            <label>
+              ID <app-tooltip-icon tooltipPath="StructureDefinition.id"></app-tooltip-icon>
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" placeholder="Auto generate" (change)="idChangedEvent.next()" [class.is-invalid]="!isIdUnique" />
+            <div class="help-block" *ngIf="!isIdUnique">The specified ID already exists.</div>
+          </div>
         </div>
         <div class="col-md-8">
           <app-fhir-string [parentObject]="structureDefinition"
@@ -90,6 +94,6 @@
 </ngb-tabset>
 
 <footer class="footer">
-  <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled() ||!isIdUnique">Save</button>
+  <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled()">Save</button>
   <span class="message">{{message}}</span>
 </footer>

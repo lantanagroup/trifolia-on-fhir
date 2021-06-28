@@ -29,7 +29,6 @@ export class NewProfileComponent extends BaseComponent {
   public selectedType: ILogicalTypeDefinition;
 
   public isIdUnique = true;
-  public alreadyInUseIDMessage = '';
   public idChangedEvent = new Subject();
 
   constructor(
@@ -48,15 +47,7 @@ export class NewProfileComponent extends BaseComponent {
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
-        const isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
-        if(!isIdUnique){
-          this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.structureDefinition.id  + " is already used.";
-        }
-        else{
-          this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
-        }
+        this.isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
       });
   }
 
@@ -73,7 +64,8 @@ export class NewProfileComponent extends BaseComponent {
   };
 
   public saveDisabled() {
-    return !this.structureDefinition.url ||
+    return !this.isIdUnique ||
+      !this.structureDefinition.url ||
       !this.structureDefinition.baseDefinition ||
       !this.structureDefinition.name ||
       !this.structureDefinition.type ||
@@ -111,6 +103,7 @@ export class NewProfileComponent extends BaseComponent {
 
     if (lastIndex) {
       this.structureDefinition.id = this.structureDefinition.url.substring(lastIndex + 1);
+      this.idChangedEvent.next();
     }
   }
 }
