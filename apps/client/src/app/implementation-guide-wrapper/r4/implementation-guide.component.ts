@@ -37,6 +37,7 @@ import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-mo
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
+import {CookieService} from 'angular2-cookie/core';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -72,6 +73,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+
   constructor(
     private modal: NgbModal,
     private router: Router,
@@ -80,6 +82,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     private fhirService: FhirService,
     protected authService: AuthService,
     public configService: ConfigService,
+
     public route: ActivatedRoute) {
 
     super(configService, authService);
@@ -91,6 +94,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
     });
   }
+
 
   protected get packageId(): string {
     return this.implementationGuide.packageId;
@@ -104,6 +108,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public get mediaReferences(): MediaReference[] {
     return getImplementationGuideMediaReferences('r4', this.implementationGuide);
   }
+
 
   public get resources(): ImplementationGuideResourceComponent[] {
     if (!this.implementationGuide.definition) {

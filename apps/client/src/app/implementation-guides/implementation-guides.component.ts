@@ -13,6 +13,8 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {CookieService} from 'angular2-cookie';
+import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-implementation-guides',
@@ -27,11 +29,13 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   public titleText: string;
   public criteriaChangedEvent = new Subject();
   public Globals = Globals;
+  public recentIgs: RecentImplementationGuide[] = [];
 
   constructor(
     public configService: ConfigService,
     protected authService: AuthService,
     private igService: ImplementationGuideService,
+    public cookieService: CookieService,
     private modalService: NgbModal) {
 
     super(configService, authService);
@@ -41,6 +45,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
         this.getImplementationGuides();
       });
   }
+
 
   public clearFilters() {
     this.nameText = null;
@@ -79,12 +84,41 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   }
 
   public changeId(implementationGuide: ImplementationGuide) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, {backdrop: 'static'});
+    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = implementationGuide.id;
     modalRef.result.then((newId) => {
       implementationGuide.id = newId;
     });
+  }
+
+  public projectReselected(recentIg: RecentImplementationGuide) {
+    const currentIndex = this.recentIgs.indexOf(recentIg);
+    this.recentIgs.splice(currentIndex, 1);
+    this.recentIgs.splice(0, 0, recentIg);
+    this.cookieService.put('recentIgs', JSON.stringify(this.recentIgs));
+  }
+
+  public projectSelected(ig: IImplementationGuide) {
+    const foundRecent = this.recentIgs.find(ri => ri.id === ig.id);
+
+    if (!foundRecent) {
+      this.recentIgs.splice(0, 0, {
+        id: ig.id,
+        name: ig.name,
+        title: (ig as any).title
+      });
+    } else if (this.recentIgs.indexOf(foundRecent) !== 0) {
+      const currentIndex = this.recentIgs.indexOf(foundRecent);
+      this.recentIgs.splice(currentIndex, 1);
+      this.recentIgs.splice(0, 0, foundRecent);
+    }
+
+    if (this.recentIgs.length > 3) {
+      this.recentIgs = this.recentIgs.slice(0, 3);
+    }
+
+    this.cookieService.put('recentIgs', JSON.stringify(this.recentIgs));
   }
 
   public get implementationGuides() {
@@ -110,5 +144,16 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.getImplementationGuides();
     this.configService.fhirServerChanged.subscribe((fhirServer) => this.getImplementationGuides());
+
+    if (!!this.cookieService.get('recentIgs')) {
+      this.recentIgs = JSON.parse(this.cookieService.get('recentIgs'));
+    }
+    ;
   }
+}
+
+export class RecentImplementationGuide {
+  public name: string;
+  public title: string;
+  public id: string;
 }
