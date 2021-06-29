@@ -13,6 +13,7 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {CookieService} from 'angular2-cookie';
 
 @Component({
   selector: 'app-implementation-guides',
@@ -32,6 +33,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     private igService: ImplementationGuideService,
+    public cookieService: CookieService,
     private modalService: NgbModal) {
 
     super(configService, authService);
@@ -41,6 +43,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
         this.getImplementationGuides();
       });
   }
+
 
   public clearFilters() {
     this.nameText = null;
@@ -111,4 +114,23 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     this.getImplementationGuides();
     this.configService.fhirServerChanged.subscribe((fhirServer) => this.getImplementationGuides());
   }
+}
+
+export class RecentImplementationGuide {
+
+  public name: string;
+  public title: string;
+  public id: string;
+  public recentIgsHolder: string[];
+
+
+  constructor() {
+
+    if (this.cookieService.isPresent('recentIgs')) {
+      return;
+    }
+    ;
+
+  }
+
 }
