@@ -176,6 +176,8 @@ export class Globals {
     'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
     'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.',
     'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip',
+    'ig.definition.resource.description': 'Reason why included in guide. This text will appear on [todo] within the rendered IG',
+    'structureDefinition.description': 'Natural language description of the structure definition. This text will appear in the right column of this resource row on the Artifact Index page.',
     'vsac.apikey': 'To find your API KEY, login to <a href="https://uts.nlm.nih.gov/uts/" target="_new">UMLS Terminology Services</a>, select "Visit Your Profile" under "UTF Profile" (on the right), and copy/paste the value from the "API KEY" field.'
   };
 

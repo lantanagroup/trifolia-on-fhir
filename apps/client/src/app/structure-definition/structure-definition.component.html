@@ -98,7 +98,7 @@
       <ng-template ngbTabContent>
         <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
-        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipKey="structureDefinition.description"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="intro" title="Intro" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
