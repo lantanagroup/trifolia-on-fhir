@@ -32,17 +32,17 @@
             </div>
             <input type="text" class="form-control" [disabled]="!typeahead[ci]" [(ngModel)]="jurisdictionSearch" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
           </div-->
-          <select class="form-control" [ngModel]="getJurisdictionCode(jurisdictions[ji].coding[ci])" (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)"
-                  *ngIf="!editFields[ji][ci]">
+          <select (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)" *ngIf="!editFields[ji][ci]" [ngModel]="getJurisdictionCode(jurisdictions[ji].coding[ci])"
+                  class="form-control">
             <option [ngValue]="undefined">SELECT ONE</option>
             <option *ngFor="let code of jurisdictionCodes" [ngValue]="code">{{code.display}} ({{code.code}})</option>
           </select>
-          <input  type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
-          <input  type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
-          <input  type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
+          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
+          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
+          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
           <div class="input-group-append">
-            <button type="button" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction" *ngIf="jurisdictionCodes"
-                    (click)="editFields[ji][ci] = !editFields[ji][ci]">
+            <button (click)="editFields[ji][ci] = !editFields[ji][ci]" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
+                    type="button">
               <i class="fa fa-edit"></i>
             </button>
             <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1); change.emit();">
@@ -68,8 +68,11 @@
       </tr>
     </tbody>
     <tfoot>
-      <span *ngIf="isInvalid()" style="color: red;">
-        A jurisdiction must exist with all fields filled in. Please note that it is required to match the jurisdiction of the package ID to Trifolia-on-FHIR's UI.</span>
+    <tr>
+      <td colspan="2">
+        <span *ngIf="isInvalid()" style="color: red;">A jurisdiction must exist with all fields filled in. Please note that it is required to match the jurisdiction of the package ID to Trifolia-on-FHIR's UI.</span>
+      </td>
+    </tr>
     </tfoot>
   </table>
 </div>

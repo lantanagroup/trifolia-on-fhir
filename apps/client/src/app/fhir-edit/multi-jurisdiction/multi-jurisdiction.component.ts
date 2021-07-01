@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {FhirService} from '../../shared/fhir.service';
 import {ICodeableConcept, ICoding} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
@@ -139,10 +139,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   }
 
   setJurisdictionCode(jurisdiction: ICodeableConcept, index: number, coding: ICoding) {
-    if (!jurisdiction.text) {
-      jurisdiction.text = coding.display;
-    }
-
+    jurisdiction.text = coding.display;
     jurisdiction.coding[index] = {
       code: coding.code,
       display: coding.display,
