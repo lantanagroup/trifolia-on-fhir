@@ -20,7 +20,7 @@
     <tbody *ngIf="jurisdictions && jurisdictions.length > 0">
     <tr *ngFor="let j of jurisdictions; let ji = index">
       <td>
-        <input type="text" class="form-control" [ngModel]="getText(j)" (ngModelChange)="setText(j, $event); change.emit();"/>
+        <input (ngModelChange)="setText(j, $event); change.emit();" [ngModel]="getText(jurisdictions[ji])" class="form-control" type="text" />
       </td>
       <td>
         <div class="input-group" *ngFor="let c of (j.coding || []); let ci = index">
