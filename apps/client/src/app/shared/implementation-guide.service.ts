@@ -1,22 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import {
-  Bundle,
-  ImplementationGuide as STU3ImplementationGuide,
-  OperationOutcome as STU3OperationOutcome
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  ImplementationGuide as R4ImplementationGuide,
-  OperationOutcome as R4OperationOutcome
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { ConfigService } from './config.service';
-import { Router } from '@angular/router';
-import {
-  SearchImplementationGuideResponse,
-  SearchImplementationGuideResponseContainer
-} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from './config.service';
+import {Router} from '@angular/router';
+import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 
@@ -83,7 +73,7 @@ export class ImplementationGuideService {
     return this.http.get<any[]>('/api/implementationGuide/published?name=' + name);
   }
 
-  public getImplementationGuides(page = 1, name?: string, title?: string) {
+  public getImplementationGuides(page = 1, name?: string, title?: string, id?: string) {
     let url = '/api/implementationGuide?page=' + page + '&';
 
     if (name) {
@@ -92,6 +82,10 @@ export class ImplementationGuideService {
 
     if (title) {
       url += 'title=' + encodeURIComponent(title) + '&';
+    }
+
+    if (id) {
+      url += '_id=' + encodeURIComponent(id) + '&';
     }
 
     url += '_sort=name';

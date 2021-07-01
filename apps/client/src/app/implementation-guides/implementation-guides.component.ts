@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
-import {Bundle, ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
@@ -9,10 +9,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
-import {
-  SearchImplementationGuideResponse,
-  SearchImplementationGuideResponseContainer
-} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {CookieService} from 'angular2-cookie';
 import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
@@ -27,6 +24,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   public page = 1;
   public nameText: string;
   public titleText: string;
+  public idText: string;
   public criteriaChangedEvent = new Subject();
   public Globals = Globals;
   public recentIgs: RecentImplementationGuide[] = [];
@@ -50,6 +48,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   public clearFilters() {
     this.nameText = null;
     this.titleText = null;
+    this.idText = null;
     this.page = 1;
     this.criteriaChangedEvent.next();
   }
@@ -58,7 +57,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     this.results = null;
     this.configService.setStatusMessage('Loading implementation guides');
 
-    this.igService.getImplementationGuides(this.page, this.nameText, this.titleText)
+    this.igService.getImplementationGuides(this.page, this.nameText, this.titleText, this.idText)
       .subscribe((res: SearchImplementationGuideResponseContainer) => {
         this.results = res.responses;
         this.total = res.total;
@@ -141,14 +140,19 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     this.criteriaChangedEvent.next();
   }
 
+  public idTextChanged(value: string) {
+    this.idText = value;
+    this.page = 1;
+    this.criteriaChangedEvent.next();
+  }
+
   ngOnInit() {
     this.getImplementationGuides();
-    this.configService.fhirServerChanged.subscribe((fhirServer) => this.getImplementationGuides());
+    this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
 
     if (!!this.cookieService.get('recentIgs')) {
       this.recentIgs = JSON.parse(this.cookieService.get('recentIgs'));
     }
-    ;
   }
 }
 
