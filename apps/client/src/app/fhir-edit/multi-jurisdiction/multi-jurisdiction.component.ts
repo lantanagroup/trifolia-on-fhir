@@ -94,18 +94,36 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(!this.jurisdictionCodes){
-      this.jurisdictionCodes = this.fhirService.getValueSetCodes("http://hl7.org/fhir/ValueSet/iso3166-1-2");
-      this.jurisdictionCodes.sort(function(a, b){
-        if(a.display < b.display) return -1;
-        if(a.display > b.display) return 1;
+    if (!this.jurisdictionCodes) {
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+      this.jurisdictionCodes.sort(function(a, b) {
+        if (a.display < b.display) return -1;
+        if (a.display > b.display) return 1;
         return 0;
       });
       const us = this.jurisdictionCodes.find(jc =>
-        jc.display === "United States of America");
+        jc.display === 'United States of America');
       const index = this.jurisdictionCodes.indexOf(us);
       this.jurisdictionCodes.splice(index, 1);
-      this.jurisdictionCodes.splice(0, 0, us);
+
+      const u = <ICoding>{
+        system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
+        code: '001',
+        version: '2.2.0',
+        display: 'Universal'
+      };
+      const universal = <ICodeableConcept>{
+        coding: u
+      };
+
+      this.setJurisdictionCode(universal, 0, u);
+      this.jurisdictionCodes.push(u);
+
+      const uv = this.jurisdictionCodes.find(jc =>
+        jc.display === 'Universal');
+      const indexOfUniversal = this.jurisdictionCodes.indexOf(uv);
+      this.jurisdictionCodes.splice(indexOfUniversal, 1);
+      this.jurisdictionCodes.splice(0, 0, u, us);
     }
 
     if (this.tooltipKey) {
