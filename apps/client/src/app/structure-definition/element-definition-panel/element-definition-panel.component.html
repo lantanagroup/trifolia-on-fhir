@@ -371,9 +371,8 @@
               </td>
               <td>
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm"
-                          title="Remove this discriminator"
-                          (click)="element.slicing.disciminator.splice(di, 1); change.emit()">
+                  <button (click)="element.slicing.discriminator.splice(di, 1); change.emit()" class="btn btn-primary btn-sm" title="Remove this discriminator"
+                          type="button">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
@@ -443,19 +442,20 @@
       <ng-template ngbTabContent>
         <app-element-definition-binding [element]="element" (change)="change.emit()"></app-element-definition-binding>
 
-        <app-fhir-choice [parentObject]="element" propertyName="fixed" title="Fixed"
+        <app-fhir-choice [disabled]="isFixedDisabled" [parentObject]="element" propertyName="fixed" title="Fixed"
                          tooltipPath="ElementDefinition.fixed[x]" [allowedType]="getAllowedType('fixed')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="pattern" title="Pattern"
+        <app-fhir-choice [disabled]="isPatternDisabled" [parentObject]="element" propertyName="pattern" title="Pattern"
                          tooltipPath="ElementDefinition.pattern[x]" [allowedType]="getAllowedType('pattern')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="defaultValue" title="Default Value" tooltipPath="ElementDefinition.defaultValue[x]" (change)="change.emit()"></app-fhir-choice>
+        <app-fhir-choice (change)="change.emit()" [disabled]="isDefaultDisabled" [parentObject]="element" propertyName="defaultValue" title="Default Value"
+                         tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="minValue" title="Min Value"
+        <app-fhir-choice [disabled]="isMinDisabled" [parentObject]="element" propertyName="minValue" title="Min Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice [parentObject]="element" propertyName="maxValue" title="Max Value"
+        <app-fhir-choice [disabled]="isMaxDisabled" [parentObject]="element" propertyName="maxValue" title="Max Value"
                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
                          tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')" (change)="change.emit()"></app-fhir-choice>
 

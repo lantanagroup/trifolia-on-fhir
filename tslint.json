@@ -47,8 +47,11 @@
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
     "prefer-const": true,
-    "radix": true,
-    "triple-equals": [true, "allow-null-check"],
+    "radix": false,
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
     "unified-signatures": true,
     "variable-name": false,
     "nx-enforce-module-boundaries": [
@@ -58,7 +61,9 @@
         "depConstraints": [
           {
             "sourceTag": "*",
-            "onlyDependOnLibsWithTags": ["*"]
+            "onlyDependOnLibsWithTags": [
+              "*"
+            ]
           }
         ]
       }
