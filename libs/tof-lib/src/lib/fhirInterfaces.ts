@@ -241,6 +241,9 @@ export interface IElementDefinition extends IElement {
   isModifier?: boolean;
   mustSupport?: boolean;
   condition?: string[];
+  representation?: string[];
+  maxLength?: number;
+  code?: ICoding[];
 }
 
 export interface IStructureDefinition extends IDomainResource {

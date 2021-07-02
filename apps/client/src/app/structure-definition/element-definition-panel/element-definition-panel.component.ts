@@ -44,6 +44,64 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   }
 
+  get isFixedDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'pattern') ||
+      this.propertyExistWithPrefix(this.element, 'min') ||
+      this.propertyExistWithPrefix(this.element, 'default') ||
+      this.propertyExistWithPrefix(this.element, 'max') ||
+      this.propertyExistWithPrefix(this.element, 'example')) return true;
+  }
+
+  get isPatternDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'pattern')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed') ||
+      this.propertyExistWithPrefix(this.element, 'min') ||
+      this.propertyExistWithPrefix(this.element, 'default') ||
+      this.propertyExistWithPrefix(this.element, 'max') ||
+      this.propertyExistWithPrefix(this.element, 'example')) return true;
+  }
+
+  get isDefaultDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'default')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed') ||
+      this.propertyExistWithPrefix(this.element, 'pattern')) return true;
+  }
+
+  get isMinDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'min')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed') ||
+      this.propertyExistWithPrefix(this.element, 'pattern')) return true;
+  }
+
+  get isMaxDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'max')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed') ||
+      this.propertyExistWithPrefix(this.element, 'pattern')) return true;
+  }
+
+  get isExampleDisabled() {
+    if (!this.element) return false;
+    if (this.propertyExistWithPrefix(this.element, 'example')) return false;
+    if (this.propertyExistWithPrefix(this.element, 'fixed') ||
+      this.propertyExistWithPrefix(this.element, 'pattern')) return true;
+  }
+
+  set min(value: string) {
+    if (this.element) {
+      if (value === '0') {
+        this.element.min = parseInt(value);
+      } else if (!value) {
+        delete this.element.min;
+      }
+    }
+  }
+
   get element(): IElementDefinition {
     if (this.elementTreeModel) {
       return this.elementTreeModel.constrainedElement;
@@ -58,13 +116,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return '';
   }
 
-  set min(value: string) {
+  set max(value: string) {
     if (this.element) {
-      if (value || value == '0') {
-        const valueNum = parseInt(value);
-        this.element.min = valueNum;
-      } else if (!value) {
-        delete this.element.min;
+      if (value || value === '0') {
+        this.element.max = value.toString();
+      } else if (!value && this.element.max) {
+        delete this.element.max;
       }
     }
   }
@@ -81,14 +138,10 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return '';
   }
 
-  set max(value: string) {
-    if (this.element) {
-      if (value || value == '0') {
-        this.element.max = value.toString();
-      } else if (!value && this.element.max) {
-        delete this.element.max;
-      }
-    }
+  propertyExistWithPrefix(obj: any, prefix: string) {
+    const objKeys = Object.keys(obj);
+    const found = objKeys.find(key => key.startsWith(prefix));
+    return !!found;
   }
 
   focus() {
@@ -216,8 +269,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
             childElement.sliceName = this.editedSliceName;
           }
 
-          const newChildElementId = newId + childElement.id.substring(this.element.id.length);
-          childElement.id = newChildElementId;
+          childElement.id = newId + childElement.id.substring(this.element.id.length);
         });
 
       this.element.sliceName = this.editedSliceName;
@@ -326,14 +378,14 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return true;
   }
 
-  private refreshExamples() {
+  public refreshExamples() {
     let elementTypes = this.elementTreeModel.constrainedElement ?
-      <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.constrainedElement.type : [];
+      <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]>this.elementTreeModel.constrainedElement.type : [];
 
-    const elementExamples = <(ExampleComponent | ElementDefinitionExampleComponent)[]> this.element.example;
+    const elementExamples = <(ExampleComponent | ElementDefinitionExampleComponent)[]>this.element.example;
 
     if (!elementTypes || elementTypes.length === 0) {
-      elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]> this.elementTreeModel.baseElement.type;
+      elementTypes = <(TypeRefComponent | ElementDefinitionTypeRefComponent)[]>this.elementTreeModel.baseElement.type;
     }
 
     for (const type of elementTypes) {
