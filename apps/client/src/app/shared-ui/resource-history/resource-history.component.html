@@ -5,6 +5,8 @@
     <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
       <thead>
       <tr>
+        <th>Left</th>
+        <th>Right</th>
         <th>Version ID</th>
         <th>Timestamp</th>
         <th>Action</th>
@@ -12,8 +14,10 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.versionId}}{{resource.meta?.versionId === entry.resource?.meta?.versionId ? ' (current)' : ''}}</a></td>
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.lastUpdated}}</a></td>
+        <td><input (click)="originalResource = entry.resource" name="leftSelect" type="radio" /></td>
+        <td><input (click)="compareResource = entry.resource" name="rightSelect" type="radio" /></td>
+        <td>{{entry.resource?.meta?.versionId}}{{resource.meta?.versionId === entry.resource?.meta?.versionId ? ' (In Editor)' : ''}}</td>
+        <td>{{entry.resource?.meta?.lastUpdated}}</td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
       </tbody>
@@ -26,11 +30,17 @@
   </div>
   <div class="col-md-8" *ngIf="compareResource">
     <h3>
-      Comparing version {{resource.meta.versionId}} to version {{compareResource.meta.versionId}}
-      <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Restore this version. Must press 'Save' before this restored version is persisted.">
+      Comparing version {{originalResource.meta.versionId}}
+      <button (click)="loadHistory(originalResource)" class="btn btn-default" title="Restore this version. Must press 'Save' before this restored version is persisted."
+              type="button">
+        <i class="fas fa-upload"></i>
+      </button>
+      to version {{compareResource.meta.versionId}}
+      <button (click)="loadHistory(compareResource)" class="btn btn-default" title="Restore this version. Must press 'Save' before this restored version is persisted."
+              type="button">
         <i class="fas fa-upload"></i>
       </button>
     </h3>
-    <pre diff [left]="compareResource | json" [right]="resource | json"></pre>
+    <pre [left]="compareResource | json" [right]="originalResource | json" diff></pre>
   </div>
 </div>

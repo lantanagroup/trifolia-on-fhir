@@ -1,8 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
-import {Bundle, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {IBundle, IDomainResource} from "../../../../../../libs/tof-lib/src/lib/fhirInterfaces";
+import {IBundle, IBundleEntry, IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-resource-history',
@@ -16,13 +15,14 @@ export class ResourceHistoryComponent implements OnInit {
 
   public historyBundle: IBundle;
   public message: string;
+  public originalResource: any;
   public compareResource: any;
   public page = 1;
 
   constructor(private fhirService: FhirService) {
   }
 
-  public getActionDisplay(entry: EntryComponent) {
+  public getActionDisplay(entry: IBundleEntry) {
     if (!entry || !entry.request || !entry.request.method) {
       return 'Unknown';
     }
