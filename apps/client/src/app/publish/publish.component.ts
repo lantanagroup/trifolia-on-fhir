@@ -201,6 +201,7 @@ export class PublishComponent implements OnInit {
   }
 
   public get igSpecifiesTemplate(){
+    if (!this.selectedImplementationGuide.extension) return false;
     return !!this.selectedImplementationGuide.extension.find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template');
   }
 
