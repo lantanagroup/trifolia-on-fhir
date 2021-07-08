@@ -91,11 +91,25 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     });
   }
 
+  public get selectCookie() {
+    if (this.configService.fhirServer) {
+      if (this.configService.fhirServer === 'lantana_prod_hapi_r4') {
+        return 'r4ProdRecentIgs';
+      } else if (this.configService.fhirServer === 'lantana_hapi_r4') {
+        return 'r4DevRecentIgs';
+      } else if (this.configService.fhirServer === 'lantana_prod_hapi_stu3')
+        return 'stu3ProdRecentIgs';
+      else {
+        return 'stu3DevRecentIgs';
+      }
+    }
+  }
+
   public projectReselected(recentIg: RecentImplementationGuide) {
     const currentIndex = this.recentIgs.indexOf(recentIg);
     this.recentIgs.splice(currentIndex, 1);
     this.recentIgs.splice(0, 0, recentIg);
-    this.cookieService.put('recentIgs', JSON.stringify(this.recentIgs));
+    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public projectSelected(ig: IImplementationGuide) {
@@ -117,7 +131,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
       this.recentIgs = this.recentIgs.slice(0, 3);
     }
 
-    this.cookieService.put('recentIgs', JSON.stringify(this.recentIgs));
+    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public get implementationGuides() {
@@ -150,8 +164,8 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     this.getImplementationGuides();
     this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
 
-    if (!!this.cookieService.get('recentIgs')) {
-      this.recentIgs = JSON.parse(this.cookieService.get('recentIgs'));
+    if (!!this.cookieService.get(this.selectCookie)) {
+      this.recentIgs = JSON.parse(this.cookieService.get(this.selectCookie));
     }
   }
 }
