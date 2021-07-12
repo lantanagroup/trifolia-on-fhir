@@ -1,14 +1,6 @@
-import {
-  Component,
-  DoCheck,
-  EventEmitter, HostListener,
-  Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import {Component, DoCheck, EventEmitter, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
-  Binary,
   Coding,
   Extension,
   ImplementationGuide,
@@ -18,7 +10,8 @@ import {
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
   OperationOutcome,
-  ResourceReference, StructureDefinition
+  ResourceReference,
+  StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
@@ -37,7 +30,6 @@ import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-mo
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
-import {CookieService} from 'angular2-cookie/core';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -68,6 +60,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   };
   public filterGroup: GroupFilterObject = {};
   public filterResourceQuery: string;
+  public groupName: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
   public selectedResource: ImplementationGuideResourceComponent;
@@ -125,16 +118,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
         const parsedReference = parseReference(resource.reference.reference);
 
-        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) === -1) {
           return true;
         }
 
-        if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) >= 0) {
+        if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) === -1) {
           return true;
         }
 
-        return (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) ||
-          (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]);
+        if (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) === -1) {
+          return true;
+        }
+
+        if (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]) {
+          return true;
+        }
+
+        return false;
       })
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {

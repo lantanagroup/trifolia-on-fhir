@@ -358,7 +358,7 @@
                   </div>
                   <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition?.grouping && implementationGuide.definition.grouping.length > 0">
                     <label *ngFor="let group of implementationGuide.definition.grouping">
-                      <input type="checkbox" [ngModel]="filterGroup[group.id]" (click)="toggleFilterGroup(group.id)"> {{group.name}}
+                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterResourceType[group.id]" type="checkbox"> {{group.name}}
                     </label>
                   </div>
                 </div>

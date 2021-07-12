@@ -93,13 +93,13 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
 
   public get selectCookie() {
     if (this.configService.fhirServer) {
-      if (this.configService.fhirServer === 'lantana_prod_hapi_r4') {
+      if (this.configService.fhirServer === 'lantana_hapi_r4_prod') {
         return 'r4ProdRecentIgs';
       } else if (this.configService.fhirServer === 'lantana_hapi_r4') {
         return 'r4DevRecentIgs';
-      } else if (this.configService.fhirServer === 'lantana_prod_hapi_stu3')
+      } else if (this.configService.fhirServer === 'lantana_hapi_stu3_prod')
         return 'stu3ProdRecentIgs';
-      else {
+      else if (this.configService.fhirServer === 'lantana_hapi_stu3') {
         return 'stu3DevRecentIgs';
       }
     }
