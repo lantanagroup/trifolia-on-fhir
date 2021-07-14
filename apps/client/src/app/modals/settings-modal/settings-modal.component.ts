@@ -3,7 +3,7 @@ import {ConfigService} from '../../shared/config.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
 import {OAuthService} from 'angular-oauth2-oidc';
-import { AuthService } from '../../shared/auth.service';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
   templateUrl: './settings-modal.component.html',
@@ -46,7 +46,7 @@ export class SettingsModalComponent implements OnInit {
       this.configService.project = null;
       this.authService.practitioner = null;
       // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate([`/${this.fhirServerId}/home`]);
+      this.router.navigate([`/${this.fhirServerId}/implementation-guide/open`]);
     }
 
     this.activeModal.close();
