@@ -118,24 +118,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
         const parsedReference = parseReference(resource.reference.reference);
 
-        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) === -1) {
+        if ((this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) === -1)
+        || (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) === -1)
+        || (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) === -1)){
           return true;
         }
-
-        if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) === -1) {
-          return true;
-        }
-
-        if (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) === -1) {
-          return true;
-        }
-
-        if (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]) {
-          return true;
-        }
-
         return false;
       })
+
+      .filter((resource: ImplementationGuideResourceComponent) => {
+
+        if(this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]) {
+            return false;
+        }
+        else
+          return true;
+      })
+
       .filter((resource: ImplementationGuideResourceComponent) => {
         if (!this.filterResourceQuery) {
           return true;
