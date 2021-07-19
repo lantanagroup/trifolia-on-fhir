@@ -1,7 +1,6 @@
 import {ParseConformance} from 'fhir/parseConformance';
 import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
-import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
 import {BadRequestException, HttpService, Logger, UnauthorizedException} from '@nestjs/common';
@@ -40,23 +39,24 @@ export class FhirInstances {
   }
 }
 
-export const zip = (p): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    zipdir(p, (err, buffer) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(buffer);
+export const zip = async (p: string, zipper: JSZip) => {
+  return new Promise((resolve) => {
+
+    return resolve(zipper.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: {
+        level: 6,
       }
-    });
+    }))
   });
 };
 
 export const unzip = async (buffer: Buffer, destinationPath: string, bypassSubDir?: string) => {
-  const zip = await JSZip.loadAsync(buffer);
-  const fileNames = Object.keys(zip.files);
+  const zipFile = await JSZip.loadAsync(buffer);
+  const fileNames = Object.keys(zipFile.files);
   const promises = fileNames.map(async fileName => {
-    const file = zip.file(fileName);
+    const file = zipFile.file(fileName);
     const bypassedFileName = bypassSubDir && fileName.startsWith(bypassSubDir + '/') ?
       fileName.substring(bypassSubDir.length + 1) :
       fileName;
@@ -156,7 +156,7 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
       throw new Error(`Cannot create AuditEvent for unexpected FHIR server version ${fhirServerVersion}`);
     }
 
-    let url: string = buildUrl(fhirServerBase, "AuditEvent");
+    const url: string = buildUrl(fhirServerBase, "AuditEvent");
 
     await httpService.post(url, auditEvent).toPromise();
   } catch (ex) {

@@ -23,6 +23,7 @@ import {HtmlExporter} from './export/html';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import nodemailer from 'nodemailer';
+import JSZip from "jszip";
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -30,6 +31,7 @@ import nodemailer from 'nodemailer';
 @ApiOAuth2([])
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
+  public jsZipObj = new JSZip();
 
   constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
     super(configService, httpService);
@@ -42,7 +44,7 @@ export class ExportController extends BaseController {
       let validationRequests = [];
 
       const validateResource = (resource: DomainResource) => {
-        return new Promise((innerResolve, innerReject) => {
+        return new Promise((innerResolve) => {
           const options: AxiosRequestConfig = {
             url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
             method: 'POST',
@@ -177,8 +179,9 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
-        options.template, options.templateVersion, options.useTerminologyServer);
+
+      this.jsZipObj = await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
+        options.template, options.templateVersion, this.jsZipObj, options.useTerminologyServer);
 
       if (exporter.bundle && exporter.bundle.entry) {
         exporter.bundle.entry.forEach(e => {
@@ -189,7 +192,7 @@ export class ExportController extends BaseController {
       }
 
       // Zip up the dir, send it to client, and then delete the directory
-      await this.sendPackageResponse(exporter.packageId, response);
+      await this.sendPackageResponse(exporter.packageId, response, this.jsZipObj);
     } catch (ex) {
       this.logger.error(`Error during HTML export: ${ex.message}`, ex.stack);
       throw ex;
@@ -259,7 +262,7 @@ export class ExportController extends BaseController {
 
     try {
       await exporter.export(options.format, options.includeIgPublisherJar, options.version,
-        options.templateType, options.template, options.templateVersion, null);
+        options.templateType, options.template, options.templateVersion, this.jsZipObj,null);
 
       runPublish();
 
@@ -314,12 +317,12 @@ export class ExportController extends BaseController {
     }
   }
 
-  private async sendPackageResponse(packageId: string, res: Response) {
+  private async sendPackageResponse(packageId: string, res: Response, zipper: JSZip) {
     this.logger.log(`Packaging export with id ${packageId}`);
 
     const rootPath = path.join((<any>tmp).tmpdir, packageId);
 
-    const buffer = await zip(rootPath);
+    const buffer = await zip(rootPath, zipper);
 
     this.logger.log(`Sending export with id ${packageId} to caller`);
 
@@ -339,6 +342,6 @@ export class ExportController extends BaseController {
 
   @Get(':packageId')
   public async getPublishedPackage(@Param('packageId') packageId: string, @Res() res: Response) {
-    await this.sendPackageResponse(packageId, res);
+    await this.sendPackageResponse(packageId, res, this.jsZipObj);
   }
 }
