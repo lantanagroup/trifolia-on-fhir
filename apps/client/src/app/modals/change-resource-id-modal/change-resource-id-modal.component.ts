@@ -4,22 +4,42 @@ import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from '../../shared/config.service';
 import {Router} from '@angular/router';
+import {Subject} from "rxjs";
+import {AuthService} from "../../shared/auth.service";
+import {StructureDefinition as R4StructureDefinition} from "../../../../../../libs/tof-lib/src/lib/r4/fhir";
+import {StructureDefinition as STU3StructureDefinition} from "../../../../../../libs/tof-lib/src/lib/stu3/fhir";
+import {debounceTime} from "rxjs/operators";
 
 @Component({
   templateUrl: './change-resource-id-modal.component.html',
   styleUrls: ['./change-resource-id-modal.component.css']
 })
 export class ChangeResourceIdModalComponent implements OnInit {
+  public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   @Input() resourceType: string;
   @Input() originalId: string;
   public newId: string;
   public message: string;
 
+  public isIdUnique = true;
+  public idChangedEvent = new Subject();
+
   constructor(
     public activeModal: NgbActiveModal,
     private router: Router,
     private configService: ConfigService,
+    protected authService: AuthService,
     private fhirService: FhirService) {
+
+    this.structureDefinition = this.configService.isFhirR4 ?
+      new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
+      new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        this.structureDefinition.id = this.newId;
+        this.isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
+      });
   }
 
   public ok() {
@@ -40,7 +60,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
   get idIsValid() {
     if (!this.newId) return false;
-    const theRegex = /^[A-Za-z0-9\-\.]{1,64}$/gm;
+    const theRegex = /^[A-Za-z0-9\-]{1,64}$/gm;
     return theRegex.test(this.newId);
   }
 
