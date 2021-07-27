@@ -356,9 +356,15 @@
                   <div class="col-md-6">
                     <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
                   </div>
-                  <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition?.grouping && implementationGuide.definition.grouping.length > 0">
-                    <label *ngFor="let group of implementationGuide.definition.grouping">
-                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterResourceType[group.id]" type="checkbox"> {{group.name}}
+                  <div class="col-md-6 checkboxes">
+                    <label>
+                      <input type="checkbox" [ngModel]="isFilterResourceGroupAll" (click)="toggleFilterGroup('all')"> All
+                    </label>
+                    <label *ngFor="let group of implementationGuide.definition?.grouping || 0">
+                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox"> {{group.name}}
+                    </label>
+                    <label>
+                      <input type="checkbox" [(ngModel)]="filterGroupUnspecified"> Unspecified
                     </label>
                   </div>
                 </div>
