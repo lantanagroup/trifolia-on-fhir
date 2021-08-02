@@ -4,6 +4,7 @@ div.elements {
 
 div.element-definition > .card-header > .pull-right {
   display: none;
+  direction: ltr;
 }
 
 div.elements > .element {
@@ -36,6 +37,7 @@ div.elements > .element span.action {
 
   div.element-definition > .card-header > .pull-right {
     display: inherit;
+
   }
 }
 
@@ -44,12 +46,16 @@ div.element-definition {
   width: 33%;
   right: 23px;
   top: 0px;
-  height: 100%;
+  height: 98%;
+  resize:horizontal;
+  overflow: auto;
+  direction: rtl;
 }
 
 tr.selected > td {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
+  background-color: darkgray;
 }
 
 tr.selected > td:first-child {
@@ -58,10 +64,6 @@ tr.selected > td:first-child {
 
 tr.selected > td:last-child {
   border-right: 1px solid black;
-}
-
-tr.selected > td {
-  background-color: darkgray;
 }
 
 tr.constrained {
@@ -93,11 +95,13 @@ tr.constrained {
 div.element-definition > div.card-body {
   height: 100%;
   overflow-y: auto;
+
 }
 
 div.element-definition .card-body {
   padding: 0px;
   margin-top: -1px;
+  direction: ltr;
 }
 
 .card.context {
@@ -123,8 +127,18 @@ table.elements > tbody > tr:last-child {
   height: 100%;
 }
 
+th.element-type, td.element-type {
+  width: 200px;
+}
+
+td.element-type > div {
+  display: inline-block;
+  word-break: break-word;
+}
+
 th.element-binding, td.element-binding {
   word-wrap: break-word;
+  width: 45%;
 }
 
 div.element-definition.card .card-body {
@@ -148,5 +162,11 @@ table.elements tr td:last-child {
 }
 
 table.elements td.element-cardinality {
-  width: 135px;
+  width: 15%;
+}
+
+.element-definition-panel-resize {
+  position: absolute;
+  left: 0;
+  bottom: 0;
 }

@@ -137,13 +137,22 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
   }
 
-  public toggleSelectedElement(element?: ElementTreeModel, disableDeselect = false) {
+  public toggleSelectedElement(element?: ElementTreeModel, disableDeselect = false, ele = null) {
     if (!element || this.selectedElement === element) {
       if (!disableDeselect) {
         this.selectedElement = null;
       }
     } else if (element) {
       this.selectedElement = element;
+    }
+
+    if (ele) {
+      setTimeout(() => {
+        ele.scrollIntoView({
+          block: 'center',
+          inline: 'center'
+        });
+      }, 500);
     }
   }
 
