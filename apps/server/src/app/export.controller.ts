@@ -180,7 +180,7 @@ export class ExportController extends BaseController {
 
     try {
 
-      this.jsZipObj = await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
         options.template, options.templateVersion, this.jsZipObj, options.useTerminologyServer);
 
       if (exporter.bundle && exporter.bundle.entry) {
@@ -192,7 +192,7 @@ export class ExportController extends BaseController {
       }
 
       // Zip up the dir, send it to client, and then delete the directory
-      await this.sendPackageResponse(exporter.packageId, response, this.jsZipObj);
+      await this.sendPackageResponse(exporter.packageId, response);
     } catch (ex) {
       this.logger.error(`Error during HTML export: ${ex.message}`, ex.stack);
       throw ex;
@@ -317,12 +317,12 @@ export class ExportController extends BaseController {
     }
   }
 
-  private async sendPackageResponse(packageId: string, res: Response, zipper: JSZip) {
+  private async sendPackageResponse(packageId: string, res: Response) {
     this.logger.log(`Packaging export with id ${packageId}`);
 
     const rootPath = path.join((<any>tmp).tmpdir, packageId);
 
-    const buffer = await zip(rootPath, zipper);
+    const buffer = await zip(rootPath);
 
     this.logger.log(`Sending export with id ${packageId} to caller`);
 
@@ -342,6 +342,6 @@ export class ExportController extends BaseController {
 
   @Get(':packageId')
   public async getPublishedPackage(@Param('packageId') packageId: string, @Res() res: Response) {
-    await this.sendPackageResponse(packageId, res, this.jsZipObj);
+    await this.sendPackageResponse(packageId, res);
   }
 }

@@ -11,7 +11,11 @@ import {
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {AuditEvent as R4AuditEvent, DomainResource as R4DomainResource, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  AuditEvent as R4AuditEvent,
+  DomainResource as R4DomainResource,
+  ImplementationGuide as R4ImplementationGuide
+} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
@@ -39,16 +43,45 @@ export class FhirInstances {
   }
 }
 
-export const zip = async (p: string, zipper: JSZip) => {
-  return new Promise((resolve) => {
+export const zip = async (p: string) => {
+  const getFilePathsRecursiveSync = (dir: string) => {
+    let results = [];
+    const list = fs.readdirSync(dir);
+    let pending = list.length;
+    if (!pending) return results;
 
-    return resolve(zipper.generateAsync({
-      type: 'nodebuffer',
-      compression: 'DEFLATE',
-      compressionOptions: {
-        level: 6,
+    for (let file of list) {
+      file = path.resolve(dir, file);
+      const stat = fs.statSync(file);
+      if (stat && stat.isDirectory()) {
+        const res = getFilePathsRecursiveSync(file);
+        results = results.concat(res);
+      } else {
+        results.push(file);
       }
-    }))
+      if (!--pending) return results;
+    }
+
+    return results;
+  };
+
+  const getZippedFolderSync = (dir: string) => {
+    const allPaths = getFilePathsRecursiveSync(dir);
+    const newZip = new JSZip();
+
+    for (const filePath of allPaths) {
+      const addPath = path.relative(dir, filePath);
+      newZip.file(addPath, fs.readFileSync(filePath));
+    }
+
+    return newZip;
+  };
+
+  return new Promise((resolve) => {
+    const zipped = getZippedFolderSync(p);
+    zipped.generateAsync({type: "nodebuffer"}).then((content) => {
+      resolve(content);
+    });
   });
 };
 

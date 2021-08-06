@@ -99,7 +99,6 @@
     "web-animations-js": "^2.3.2",
     "xlsx": "^0.14.5",
     "yargs": "^16.1.0",
-    "zip-dir": "^1.0.2",
     "zone.js": "^0.9.1"
   },
   "devDependencies": {

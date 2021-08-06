@@ -22,7 +22,14 @@ import {StructureDefinitionsComponent} from './structure-definitions/structure-d
 import {UserComponent} from './user/user.component';
 import {NewProfileComponent} from './new-profile/new-profile.component';
 import {CookieService} from 'angular2-cookie/core';
-import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
 import {STU3TypeModalComponent} from './structure-definition/element-definition-panel/stu3-type-modal/type-modal.component';
@@ -65,7 +72,14 @@ import {AuthService} from './shared/auth.service';
 import {FhirService} from './shared/fhir.service';
 import {R4ResourceModalComponent} from './implementation-guide-wrapper/r4/resource-modal.component';
 import {STU3ResourceModalComponent} from './implementation-guide-wrapper/stu3/resource-modal.component';
-import {JwksValidationHandler, OAuthModule, OAuthModuleConfig, OAuthService, OAuthStorage, ValidationHandler} from 'angular-oauth2-oidc';
+import {
+  JwksValidationHandler,
+  OAuthModule,
+  OAuthModuleConfig,
+  OAuthService,
+  OAuthStorage,
+  ValidationHandler
+} from 'angular-oauth2-oidc';
 import {UsersComponent} from './manage/users/users.component';
 import {GroupModalComponent} from './implementation-guide-wrapper/r4/group-modal.component';
 import {OtherResourcesResultComponent} from './other-resources/other-resources-result/other-resources-result.component';
@@ -74,17 +88,18 @@ import {ResourceGuard} from './guards/resource.guard';
 import {ElementDefinitionConstraintComponent} from './modals/element-definition-constraint/element-definition-constraint.component';
 import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
-import { QueueComponent } from './manage/queue/queue.component';
+import {QueueComponent} from './manage/queue/queue.component';
 import {ExamplesComponent} from './examples/examples.component';
 import {BulkEditComponent} from './bulk-edit/bulk-edit.component';
 import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.component';
 import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
 import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
 import {IgnoreWarningsComponent} from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
-import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
-import { CustomMenuComponent } from './implementation-guide-wrapper/custom-menu/custom-menu.component';
-import { SecurityServicesComponent } from './capability-statement-wrapper/security-services/security-services.component';
-import { PublishingTemplateComponent } from './implementation-guide-wrapper/publishing-template/publishing-template.component';
+import {JiraSpecComponent} from './implementation-guide-wrapper/jira-spec/jira-spec.component';
+import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/custom-menu.component';
+import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
+import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
+import {NewProjectComponent} from './new-project/new-project.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -140,16 +155,34 @@ const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: ':fhirServer/home', component: HomeComponent},
   {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
+  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
   {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
+  {
+    path: ':fhirServer/:implementationGuideId/implementation-guide/view',
+    component: ImplementationGuideViewComponent,
+    runGuardsAndResolvers: 'always'
+  },
+  {
+    path: ':fhirServer/:implementationGuideId/implementation-guide',
+    component: ImplementationGuideWrapperComponent,
+    runGuardsAndResolvers: 'always',
+    canDeactivate: [ResourceGuard]
+  },
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
+  {
+    path: ':fhirServer/:implementationGuideId/structure-definition/:id',
+    component: StructureDefinitionComponent,
+    runGuardsAndResolvers: 'always',
+    canDeactivate: [ResourceGuard]
+  },
   {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
   {path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent},
-  {path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
+  {
+    path: ':fhirServer/:implementationGuideId/capability-statement/:id',
+    component: CapabilityStatementWrapperComponent,
+    runGuardsAndResolvers: 'always'
+  },
   {path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent},
   {path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
@@ -244,7 +277,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, NewProjectComponent
   ],
   imports: [
     RouterModule.forRoot(
