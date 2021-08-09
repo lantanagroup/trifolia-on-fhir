@@ -276,7 +276,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, NewProjectComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent
   ],
   imports: [
     RouterModule.forRoot(
