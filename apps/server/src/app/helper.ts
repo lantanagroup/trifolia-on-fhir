@@ -1,7 +1,6 @@
 import {ParseConformance} from 'fhir/parseConformance';
 import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
-import * as zipdir from 'zip-dir';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
 import {BadRequestException, HttpService, Logger, UnauthorizedException} from '@nestjs/common';
@@ -12,7 +11,11 @@ import {
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {AuditEvent as R4AuditEvent, DomainResource as R4DomainResource, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  AuditEvent as R4AuditEvent,
+  DomainResource as R4DomainResource,
+  ImplementationGuide as R4ImplementationGuide
+} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
@@ -40,23 +43,53 @@ export class FhirInstances {
   }
 }
 
-export const zip = (p): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    zipdir(p, (err, buffer) => {
-      if (err) {
-        reject(err);
+export const zip = async (p: string) => {
+  const getFilePathsRecursiveSync = (dir: string) => {
+    let results = [];
+    const list = fs.readdirSync(dir);
+    let pending = list.length;
+    if (!pending) return results;
+
+    for (let file of list) {
+      file = path.resolve(dir, file);
+      const stat = fs.statSync(file);
+      if (stat && stat.isDirectory()) {
+        const res = getFilePathsRecursiveSync(file);
+        results = results.concat(res);
       } else {
-        resolve(buffer);
+        results.push(file);
       }
+      if (!--pending) return results;
+    }
+
+    return results;
+  };
+
+  const getZippedFolderSync = (dir: string) => {
+    const allPaths = getFilePathsRecursiveSync(dir);
+    const newZip = new JSZip();
+
+    for (const filePath of allPaths) {
+      const addPath = path.relative(dir, filePath);
+      newZip.file(addPath, fs.readFileSync(filePath));
+    }
+
+    return newZip;
+  };
+
+  return new Promise((resolve) => {
+    const zipped = getZippedFolderSync(p);
+    zipped.generateAsync({type: "nodebuffer"}).then((content) => {
+      resolve(content);
     });
   });
 };
 
 export const unzip = async (buffer: Buffer, destinationPath: string, bypassSubDir?: string) => {
-  const zip = await JSZip.loadAsync(buffer);
-  const fileNames = Object.keys(zip.files);
+  const zipFile = await JSZip.loadAsync(buffer);
+  const fileNames = Object.keys(zipFile.files);
   const promises = fileNames.map(async fileName => {
-    const file = zip.file(fileName);
+    const file = zipFile.file(fileName);
     const bypassedFileName = bypassSubDir && fileName.startsWith(bypassSubDir + '/') ?
       fileName.substring(bypassSubDir.length + 1) :
       fileName;
@@ -156,7 +189,7 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
       throw new Error(`Cannot create AuditEvent for unexpected FHIR server version ${fhirServerVersion}`);
     }
 
-    let url: string = buildUrl(fhirServerBase, "AuditEvent");
+    const url: string = buildUrl(fhirServerBase, "AuditEvent");
 
     await httpService.post(url, auditEvent).toPromise();
   } catch (ex) {
