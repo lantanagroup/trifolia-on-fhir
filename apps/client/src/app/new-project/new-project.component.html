@@ -1,0 +1,88 @@
+<div *ngIf="step === 1">
+  Step 1
+
+  <div class="form-group">
+    <label>Is this implementation guide intended to be published by HL7?</label>
+    <select class="form-control" style="width: 200px;" [(ngModel)]="isHL7">
+      <option [ngValue]="true">Yes</option>
+      <option [ngValue]="false">No</option>
+    </select>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
+</div>
+<div *ngIf="showHL7Step2">
+  Step 2 Hl7
+
+  <div class="form-group">
+    <label>Family</label>
+    <select class="form-control family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
+      <option [ngValue]="true">FHIR</option>
+      <option [ngValue]="false">CDA</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Realm</label>
+    <select class="form-control realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()">
+      <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Project Code</label>
+    <input type="text" class="form-control standard" [(ngModel)]="projectCode" (change)="packageIdCriteriaChanged()"/>
+  </div>
+
+  <div class="form-group">
+    <label>Package ID</label>
+    <input type="text" class="form-control standard" [(ngModel)]="packageId"/>
+  </div>
+
+  <div class="form-group">
+    <label>Canonical URL: </label>
+    <input type="text" class="form-control standard" [(ngModel)]="canonicalURL"/>
+  </div>
+
+  <div class="form-group">
+    <label>IG URL: </label>
+    <input type="text" class="form-control standard" [(ngModel)]="igUrl"/>
+  </div>
+
+  <div class="form-group">
+    <label>FHIR Version: </label>
+    <input type="text" class="form-control standard" [ngModel]="igVersion" readonly="readonly"/>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
+</div>
+
+<div *ngIf="showHL7Step3">
+  Step HL7 3
+  <div class="form-group">
+    <label>IG Title: </label>
+    <input type="text" class="form-control" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+  </div>
+
+  <div class="form-group">
+    <label>IG Name: </label>
+    <input type="text" class="form-control" [(ngModel)]="igName"/>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
+</div>
+<div *ngIf="showPrivateStep2">
+  Step Private 2
+
+  <div class="form-group">
+    <label>Canonical URL: </label>
+    <input type="text" class="form-control" [(ngModel)]="canonicalURL"/>
+  </div>
+
+  <div class="form-group">
+    <label>ID</label>
+    <input type="text" class="form-control" [(ngModel)]="projectCode"/>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
+</div>
