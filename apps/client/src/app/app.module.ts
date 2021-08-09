@@ -99,7 +99,6 @@ import {JiraSpecComponent} from './implementation-guide-wrapper/jira-spec/jira-s
 import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/custom-menu.component';
 import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
 import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
-import {NewProjectComponent} from './new-project/new-project.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -155,7 +154,7 @@ const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: ':fhirServer/home', component: HomeComponent},
   {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
+  {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
   {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
   {
     path: ':fhirServer/:implementationGuideId/implementation-guide/view',
