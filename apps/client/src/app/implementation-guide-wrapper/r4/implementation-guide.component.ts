@@ -22,10 +22,17 @@ import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
-import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {
+  FhirReferenceModalComponent,
+  ResourceSelection
+} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {R4ResourceModalComponent} from './resource-modal.component';
-import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {
+  getDefaultImplementationGuideResourcePath,
+  getImplementationGuideMediaReferences,
+  MediaReference
+} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
@@ -35,6 +42,11 @@ class PageDefinition {
   public page: ImplementationGuidePageComponent;
   public parent?: ImplementationGuidePageComponent;
   public level: number;
+}
+
+
+interface GroupFilterObject {
+  [key: string]: boolean
 }
 
 @Component({
@@ -53,13 +65,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     terminology: true,
     example: true
   };
-  public filterGroups = [];
-  public filterGroupUnspecified = true;
+  public filterGroup: GroupFilterObject = {};
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
   public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
+
 
   constructor(
     private modal: NgbModal,
@@ -69,12 +81,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     private fhirService: FhirService,
     protected authService: AuthService,
     public configService: ConfigService,
-
     public route: ActivatedRoute) {
 
     super(configService, authService);
 
-    this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+    this.implementationGuide = new ImplementationGuide({meta: this.authService.getDefaultMeta()});
 
     this.igChanging.subscribe((value) => {
       this.isDirty = value;
@@ -111,42 +122,33 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         }
 
         const parsedReference = parseReference(resource.reference.reference);
-        const isProfile = Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0;
-        const isTerminology = terminologyTypes.indexOf(parsedReference.resourceType) >= 0;
-        const isExample = Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) >= 0;
-        const resourceTypeValid = [];
 
-        if (this.filterResourceType.profile) {
-          resourceTypeValid.push(isProfile);
+        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
+          return true;
         }
 
-        if (this.filterResourceType.terminology) {
-          resourceTypeValid.push(isTerminology);
+        if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) >= 0) {
+          return true;
         }
 
-        if (this.filterResourceType.example) {
-          resourceTypeValid.push(isExample);
+        return (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) ||
+          (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]);
+      })
+      .filter((resource: ImplementationGuideResourceComponent) => {
+        if (!this.filterResourceQuery) {
+          return true;
         }
 
-        if (resourceTypeValid.length > 0 && resourceTypeValid.indexOf(true) < 0) {
-          return false;
-        }
+        const reference = resource.reference && resource.reference.reference ?
+          resource.reference.reference.toLowerCase().trim() :
+          '';
+        /*
+        const name = resource.name ?
+          resource.name.toLowerCase().trim() :
+          '';
+         */
 
-        if (!this.isFilterResourceGroupAll) {
-          if (!resource.groupingId && !this.filterGroupUnspecified) {
-            return false;
-          }
-
-          if (resource.groupingId && this.filterGroups.indexOf(resource.groupingId) < 0) {
-            return false;
-          }
-        }
-
-        if (this.filterResourceQuery && resource.reference.reference.toLowerCase().trim().indexOf(this.filterResourceQuery.toLowerCase().trim()) === -1) {
-          return false;
-        }
-
-        return true;
+        return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
       });
   }
 
@@ -165,24 +167,24 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public get isFilterResourceTypeAll() {
-    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
+    let check = true;
+
+    if (this.filterGroup && this.implementationGuide.definition && this.implementationGuide.definition.grouping) {
+      this.implementationGuide.definition.grouping.forEach((group) => {
+        check = check && this.filterGroup[group.id];
+      });
+    }
+
+    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example && check;
   }
 
-  public get isFilterResourceGroupAll() {
-    const groupingLength = this.implementationGuide.definition && this.implementationGuide.definition.grouping ?
-      this.implementationGuide.definition.grouping.length :
-      0;
-    return this.filterGroups.length === groupingLength;
-  }
-
-  public addDependencies(){
-    if(!this.implementationGuide.dependsOn){
+  public addDependencies() {
+    if (!this.implementationGuide.dependsOn) {
       this.implementationGuide.dependsOn = [{
         uri: '',
         version: ''
       }];
-    }
-    else{
+    } else {
       this.implementationGuide.dependsOn.push({
         uri: '',
         version: ''
@@ -229,7 +231,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       name: 'New Group'
     });
 
-    this.filterGroups.push(newId);
+    this.filterGroup[newId] = true;
   }
 
   public moveGroupUp(group: ImplementationGuideGroupingComponent) {
@@ -271,20 +273,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public editGroup(group: ImplementationGuideGroupingComponent) {
     const originalId = group.id;
-    const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modal.open(GroupModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.result.then((result: ImplementationGuideGroupingComponent) => {
-      // Make sure the group is selected in the filter
-      if (this.filterGroups.indexOf(originalId) >= 0) {
-        // The group id may have changed. Remove it from the list if it exists.
-        this.filterGroups.splice(this.filterGroups.indexOf(originalId), 1);
-      }
-      // Always add the new group id to the list
-      if (this.filterGroups.indexOf(result.id) < 0) {
-        this.filterGroups.push(result.id);
-      }
-
+      this.filterGroup[result.id] = this.filterGroup[originalId];
+      delete this.filterGroup[originalId];
       this.igChanging.emit(true);
     });
   }
@@ -300,13 +294,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     const index = this.implementationGuide.definition.grouping.indexOf(group);
     this.implementationGuide.definition.grouping.splice(index, 1);
-
-    if (this.filterGroups.indexOf(group.id) >= 0) {
-      this.filterGroups.splice(this.filterGroups.indexOf(group.id), 1);
-    }
+    delete this.filterGroup[group.id];
   }
 
-  public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up'|'down') {
+  public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up' | 'down') {
     const index = this.implementationGuide.definition.resource.indexOf(resource);
 
     if (direction === 'up') {
@@ -323,10 +314,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editResource(resource: ImplementationGuideResourceComponent) {
-    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modal.open(R4ResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
-    modalRef.result.then(() => {this.igChanging.emit(true)})
+    modalRef.result.then(() => {
+      this.igChanging.emit(true)
+    })
   }
 
   public changeId() {
@@ -334,11 +327,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modal.open(ChangeResourceIdModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => {this.igChanging.emit(true)});
+    modalRef.result.then(() => {
+      this.igChanging.emit(true)
+    });
   }
 
   public sortResources() {
@@ -361,7 +356,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public addResources() {
-    if (!this.implementationGuide.definition) this.implementationGuide.definition = { resource: [] };
+    if (!this.implementationGuide.definition) this.implementationGuide.definition = {resource: []};
     if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
 
     const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
@@ -405,8 +400,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
-  public toggleFilterGroup(type: string){
-    // TODO
+  public toggleFilterGroup(type: string) {
+    this.filterGroup[type] = !this.filterGroup[type];
   }
 
   public toggleFilterResourceType(type: string) {
@@ -415,6 +410,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.filterResourceType.profile = true;
         this.filterResourceType.terminology = true;
         this.filterResourceType.example = true;
+        if (this.filterGroup && this.implementationGuide.definition.grouping) {
+          this.implementationGuide.definition.grouping.forEach((group) => {
+            this.filterGroup[group.id] = true;
+          });
+        }
         break;
       case 'profile':
         this.filterResourceType.profile = !this.filterResourceType.profile;
@@ -464,7 +464,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
     const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.result.then((guide: PublishedGuideModel) => {
-      if(guide){
+      if (guide) {
         const npmName = guide['npm-name'];
         dependsOn.packageId = npmName;
         dependsOn.id = npmName ? npmName.replace(/[^A-z0-9]/gi, '') : '';
@@ -752,12 +752,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.implementationGuide.definition.parameter = this.implementationGuide.definition.parameter || [];
-    this.implementationGuide.definition.parameter.push({ code: '', value: '' });
+    this.implementationGuide.definition.parameter.push({code: '', value: ''});
   }
 
   public addGlobal() {
     this.implementationGuide.global = this.implementationGuide.global || [];
-    this.implementationGuide.global.push({type: '', profile: '' });
+    this.implementationGuide.global.push({type: '', profile: ''});
   }
 
   public setDependsOnName(dependsOn: ImplementationGuideDependsOnComponent, name: any) {
@@ -895,7 +895,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
-  public canDeactivate(): boolean{
+  public canDeactivate(): boolean {
     return !this.isDirty;
   }
 
@@ -1017,19 +1017,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
     //Can only set Structure Definitions to exampleCanonical according to FHIR R4 standard
-    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
     modalRef.componentInstance.resourceType = "StructureDefinition";
     modalRef.componentInstance.hideResourceType = true;
 
     modalRef.result.then((result: ResourceSelection) => {
       delete resource.exampleBoolean;
-      resource.exampleCanonical = (<StructureDefinition> result.resource).url;
+      resource.exampleCanonical = (<StructureDefinition>result.resource).url;
     });
   }
 
-  public removeDependency(index: number){
+  public removeDependency(index: number) {
     this.implementationGuide.dependsOn.splice(index, 1)
-    if(this.implementationGuide.dependsOn.length === 0){
+    if (this.implementationGuide.dependsOn.length === 0) {
       delete this.implementationGuide.dependsOn;
     }
   }
