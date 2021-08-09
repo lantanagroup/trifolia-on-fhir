@@ -4,7 +4,6 @@ div.elements {
 
 div.element-definition > .card-header > .pull-right {
   display: none;
-  direction: ltr;
 }
 
 div.elements > .element {
@@ -20,7 +19,7 @@ div.elements > .element span.action {
 
 @media (max-width: 1024px) {
   div.element-definition {
-    top: 0px;
+    top: 0;
     height: 100%;
     left: 6px;
     width: auto !important;
@@ -37,7 +36,6 @@ div.elements > .element span.action {
 
   div.element-definition > .card-header > .pull-right {
     display: inherit;
-
   }
 }
 
@@ -45,17 +43,15 @@ div.element-definition {
   position: absolute;
   width: 33%;
   right: 23px;
-  top: 0px;
-  height: 98%;
-  resize:horizontal;
+  top: 0;
+  height: 100%;
+  resize: horizontal;
   overflow: auto;
-  direction: rtl;
 }
 
 tr.selected > td {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
-  background-color: darkgray;
 }
 
 tr.selected > td:first-child {
@@ -64,6 +60,10 @@ tr.selected > td:first-child {
 
 tr.selected > td:last-child {
   border-right: 1px solid black;
+}
+
+tr.selected > td {
+  background-color: darkgray;
 }
 
 tr.constrained {
@@ -99,9 +99,8 @@ div.element-definition > div.card-body {
 }
 
 div.element-definition .card-body {
-  padding: 0px;
+  padding: 0;
   margin-top: -1px;
-  direction: ltr;
 }
 
 .card.context {
@@ -127,18 +126,8 @@ table.elements > tbody > tr:last-child {
   height: 100%;
 }
 
-th.element-type, td.element-type {
-  width: 200px;
-}
-
-td.element-type > div {
-  display: inline-block;
-  word-break: break-word;
-}
-
 th.element-binding, td.element-binding {
   word-wrap: break-word;
-  width: 45%;
 }
 
 div.element-definition.card .card-body {
@@ -162,11 +151,5 @@ table.elements tr td:last-child {
 }
 
 table.elements td.element-cardinality {
-  width: 15%;
-}
-
-.element-definition-panel-resize {
-  position: absolute;
-  left: 0;
-  bottom: 0;
+  width: 135px;
 }
