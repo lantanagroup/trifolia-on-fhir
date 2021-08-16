@@ -1,5 +1,3 @@
-import {CodeableConcept} from './r4/fhir';
-
 export function setChoice(source: any, dest: any, choiceName: string, ... choices: string[]) {
   const primitives = ['base64Binary', 'boolean', 'canonical', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'url', 'uuid'];
 
@@ -70,6 +68,7 @@ export interface IEntityComponent {
 }
 
 export interface ICoding {
+  extension?: IExtension[];
   system?: string;
   version?: string;
   code?: string;
@@ -100,6 +99,14 @@ export interface IMeta {
   tag?: ICoding[];
 }
  */
+
+export interface IMeta {
+  versionId?: string;
+  lastUpdated?: string;
+  profile?: string[];
+  security?: ICoding[];
+  tag?: ICoding[];
+}
 
 export interface IResource {
   id?: string;
@@ -341,7 +348,7 @@ export interface IDocumentReference extends IDomainResource {
 export interface IOperationOutcomeIssue {
   severity: string;
   code: string;
-  details?: CodeableConcept;
+  details?: ICodeableConcept;
   diagnostics?: string;
   location?: string[];
   expression?: string[];
@@ -359,7 +366,7 @@ export interface ICapabilityStatementRestComponent {
 
 export interface ICapabilityStatementSecurityComponent {
   cors?: boolean;
-  service?: CodeableConcept[];
+  service?: ICodeableConcept[];
   description?: string;
 }
 

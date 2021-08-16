@@ -41,32 +41,63 @@ export class FhirPractitionerComponent implements OnInit {
     }
   }
 
+  get alias() {
+    const aliasName = (this.practitioner.name || []).find(n => n.use === 'anonymous');
+
+    if (aliasName) {
+      return aliasName.text;
+    }
+  }
+
+  set alias(value: string) {
+    this.practitioner.name = this.practitioner.name || [];
+    let aliasName = this.practitioner.name.find(n => n.use === 'anonymous');
+
+    if (value) {
+      if (!aliasName) {
+        aliasName = {
+          use: 'anonymous'
+        };
+        this.practitioner.name.push(aliasName);
+      }
+
+      aliasName.text = value;
+    } else if (aliasName && aliasName.text) {
+      this.practitioner.name.splice(this.practitioner.name.indexOf(aliasName), 1);
+    }
+  }
+
   get firstName() {
-    if (this.practitioner.name && this.practitioner.name.length > 0 && this.practitioner.name[0].given && this.practitioner.name[0].given.length > 0) {
-      return this.practitioner.name[0].given[0];
+    const officialName = (this.practitioner.name || []).find(n => n.use === 'official' || !n.use);
+    if (officialName && officialName.given && officialName.given.length > 0) {
+      return officialName.given[0];
     }
   }
 
   set firstName(value: string) {
+    this.practitioner.name = this.practitioner.name || [];
+    let officialName = this.practitioner.name.find(n => n.use === 'official' || !n.use);
+
     if (value) {
-      this.practitioner.name = this.practitioner.name || [];
-
-      if (this.practitioner.name.length === 0) {
-        this.practitioner.name.push({});
+      if (!officialName) {
+        officialName = {
+          use: 'official'
+        };
+        this.practitioner.name.push(officialName);
       }
 
-      this.practitioner.name[0].given = this.practitioner.name[0].given || [];
+      officialName.given = officialName.given || [];
 
-      if (this.practitioner.name[0].given.length === 0) {
-        this.practitioner.name[0].given.push('');
+      if (officialName.given.length === 0) {
+        officialName.given.push('');
       }
 
-      this.practitioner.name[0].given[0] = value;
-    } else if (this.practitioner.name && this.practitioner.name.length > 0 && this.practitioner.name[0].given) {
-      if (this.practitioner.name[0].given.length === 1) {
-        delete this.practitioner.name[0].given;
-      } else if (this.practitioner.name[0].given.length > 1) {
-        this.practitioner.name[0].given[0] = '';
+      officialName.given[0] = value;
+    } else if (officialName && officialName.given) {
+      if (officialName.given.length === 1) {
+        delete officialName.given;
+      } else if (officialName.given.length > 1) {
+        officialName.given[0] = '';
       }
 
       this.checkNames();
@@ -74,22 +105,27 @@ export class FhirPractitionerComponent implements OnInit {
   }
 
   get lastName() {
-    if (this.practitioner.name && this.practitioner.name.length > 0) {
-      return this.practitioner.name[0].family;
+    const officialName = (this.practitioner.name || []).find(n => n.use === 'official' || !n.use);
+    if (officialName && officialName.family) {
+      return officialName.family;
     }
   }
 
   set lastName(value: string) {
-    if (value) {
-      this.practitioner.name = this.practitioner.name || [];
+    this.practitioner.name = this.practitioner.name || [];
+    let officialName = this.practitioner.name.find(n => n.use === 'official' || !n.use);
 
-      if (this.practitioner.name.length === 0) {
-        this.practitioner.name.push({});
+    if (value) {
+      if (!officialName) {
+        officialName = {
+          use: 'official'
+        };
+        this.practitioner.name.push(officialName);
       }
 
-      this.practitioner.name[0].family = value;
-    } else if (this.practitioner.name && this.practitioner.name.length > 0 && this.practitioner.name[0].family) {
-      delete this.practitioner.name[0].family;
+      officialName.family = value;
+    } else if (officialName && officialName.family) {
+      delete officialName.family;
       this.checkNames();
     }
   }

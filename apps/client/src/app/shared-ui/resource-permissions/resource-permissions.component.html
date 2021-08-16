@@ -174,8 +174,13 @@
           </thead>
           <tbody>
           <tr *ngFor="let u of foundUsers">
-            <td>{{u.id}}</td>
-            <td title="{{getIdentifierDisplay(u)}}">{{getHumanNamesDisplay(u.name)}}</td>
+            <td title="{{getIdentifierDisplay(u)}}">
+              <span>{{u.id}}</span>
+              <span *ngIf="getIdentifierSource(u)"> - {{getIdentifierSource(u)}}</span>
+            </td>
+            <td>
+              {{getHumanNamesDisplay(u.name)}}
+            </td>
             <td>{{getPractitionerEmail(u)}}</td>
             <td class="actions-column-1">
               <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); change.emit();">

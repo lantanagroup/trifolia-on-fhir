@@ -20,6 +20,7 @@ import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
+import {IPractitioner} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -104,11 +105,42 @@ export class ResourcePermissionsComponent implements OnInit {
     );
   };
 
-  getIdentifierDisplay(user: Practitioner) {
-    const identifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
+  getIdentifierDisplay(user: IPractitioner) {
+    const tofIdentifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
 
-    if (identifier) {
-      return identifier.value;
+    if (tofIdentifier && tofIdentifier.value) {
+      const valueParts = tofIdentifier.value.split('|');
+
+      if (valueParts && valueParts.length > 1) {
+        return valueParts[1];
+      } else {
+        return tofIdentifier.value;
+      }
+    }
+  }
+
+  getIdentifierSource(user: IPractitioner) {
+    const tofIdentifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
+
+    if (tofIdentifier && tofIdentifier.value) {
+      const valueParts = tofIdentifier.value.split('|');
+
+      if (valueParts && valueParts.length > 1) {
+        switch (valueParts[0]) {
+          case 'waad':
+            return 'User/Pass';
+          case 'google-oauth2':
+            return 'Google';
+          case 'windowslive':
+            return 'Microsoft';
+          case 'github':
+            return 'GitHub';
+          case 'facebook':
+            return 'Facebook';
+          default:
+            return valueParts[0];
+        }
+      }
     }
   }
 
